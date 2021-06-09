@@ -12,18 +12,18 @@ Build App iOS
 9.Build App Android
 
 Chi tiết
-1. Tạo App trong trang admin.tickid.vn, tạo API Key bằng tay trong DB
-2. Vào Appstore và Google Play, khởi tạo ứng dụng. Tài khoản sẽ tùy theo từng dự án.
-3. Tạo App trên Onesignal
-	3.1. Firebase: Đăng ký Cloud Message cho Android
-	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
-4. Tạo Google Analytic: Tạo GA cho web
-5. Code Push: chạy các lệnh sau, thay thế bằng 
 
-code-push app add tick-tickid-ios ios react-native
+Tạo App trong trang admin.tickid.vn, tạo API Key bằng tay trong DB
+Vào Appstore và Google Play, khởi tạo ứng dụng. Tài khoản sẽ tùy theo từng dự án.
+Tạo App trên Onesignal
+3.1. Firebase: Đăng ký Cloud Message cho Android
+3.2. Appstore Connect: Tạo Key theo hướng dẫn
+Tạo Google Analytic: Tạo GA cho web
+Code Push: chạy các lệnh sau, thay thế bằng
+code-push app add tick-huongcang-ios ios react-native
 
-appcenter apps create -d tick-test-ios -o iOS -p React-Native
-appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Production
+appcenter apps create -d tick-huongcang-ios -o iOS -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -32,10 +32,10 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Produ
 │ Staging │ │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push app add tick-tickid-android android react-native
+code-push app add tick-huongcang-android android react-native
 
-appcenter apps create -d tick-test-android -o Android -p React-Native
-appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android Production
+appcenter apps create -d tick-huongcang-android -o Android -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-android Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -46,13 +46,10 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android P
 code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
 code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
-code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-ios -d "Production" -m --description "new app"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-android -d "Production" -m --description "new app"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
-
-6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
+FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase.
 
 Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
 Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets

@@ -1,20 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, Image, StyleSheet, Platform} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
+import imageIconNext from '../../../../images/next.png';
 import PointRechargeButton from './PointRechargeButton';
 import {
   isActivePackageOptionConfig,
   PACKAGE_OPTIONS_TYPE,
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
-import Themes from 'src/Themes';
-
-const homeThemes = Themes.getNameSpace('home');
-const primaryActionStyles = homeThemes('styles.home.primaryAction');
 
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
@@ -40,7 +36,6 @@ class PrimaryActions extends Component {
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
-
     return (
       <View style={styles.container}>
         <View style={[styles.actionsWrapper, actionsWrapper]}>
@@ -73,13 +68,13 @@ class PrimaryActions extends Component {
               containerStyle={styles.surplusContainer}
               onPress={() => props.onSurplusNext()}>
               <View style={styles.walletInfoWrapper}>
-                <Text style={[styles.walletNameLabel]}>{props.walletName}</Text>
+                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
 
                 <View style={styles.walletLabelRight}>
-                  <Text style={[styles.surplus]}>{props.surplus}</Text>
+                  <Text style={styles.surplus}>{props.surplus}</Text>
                 </View>
                 <View style={styles.iconNextWrapper}>
-                  <Icon name="chevron-right" size={20} color="#9F9F9F" />
+                  <Image style={styles.iconNext} source={imageIconNext} />
                 </View>
               </View>
             </Button>
@@ -133,7 +128,7 @@ PrimaryActions.defaultProps = {
   onPressItem: defaultListener,
 };
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
@@ -150,10 +145,10 @@ let styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   walletInfoWrapper: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
   },
   pointRechargeBtnContainer: {
     flexDirection: 'row',
@@ -193,7 +188,7 @@ let styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   scanIcon: {
-    fontSize: 28,
+    fontSize: 36,
     color: appConfig.colors.primary,
     // paddingRight: 10
   },
@@ -224,12 +219,9 @@ let styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
   },
   actionTitle: {
-    fontSize: 12,
     marginTop: 10,
-    color: '#1a1a1a',
+    ...appConfig.styles.typography.sub
   },
 });
-
-styles = Themes.mergeStyles(styles, primaryActionStyles);
 
 export default observer(PrimaryActions);

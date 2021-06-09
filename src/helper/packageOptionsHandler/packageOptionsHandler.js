@@ -12,8 +12,8 @@ export const isActivePackageOptionConfig = (...types) => {
     if (store.packageOptions && optionKey) {
       isActive =
         types.length > 1
-          ? isActive || !!store.packageOptions[optionKey]
-          : !!store.packageOptions[optionKey];
+          ? isActive || !!Number(store.packageOptions[optionKey])
+          : !!Number(store.packageOptions[optionKey]);
     }
   });
 

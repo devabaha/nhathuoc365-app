@@ -1,4 +1,4 @@
-import { languages } from '../constants';
+import {languages} from '../constants';
 
 import vi_common from './vi/common.json';
 import en_common from './en/common.json';
@@ -52,6 +52,10 @@ import vi_rateApp from './vi/rateApp.json';
 import en_rateApp from './en/rateApp.json';
 import vi_commissionIncomeStatement from './vi/commissionIncomeStatement.json';
 import en_commissionIncomeStatement from './en/commissionIncomeStatement.json';
+import vi_social from './vi/social.json';
+import en_social from './en/social.json';
+import vi_salesReport from './vi/salesReport.json';
+import en_salesReport from './en/salesReport.json';
 
 import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
@@ -84,7 +88,9 @@ export default {
     resetPassword: vi_resetPassword,
     rateApp: vi_rateApp,
     cardWallet: vi_cardWallet,
-    commissionIncomeStatement: vi_commissionIncomeStatement
+    commissionIncomeStatement: vi_commissionIncomeStatement,
+    social: vi_social,
+    salesReport: vi_salesReport,
   },
   [languages.en.value]: {
     common: en_common,
@@ -113,6 +119,8 @@ export default {
     resetPassword: en_resetPassword,
     rateApp: en_rateApp,
     cardWallet: en_cardWallet,
-    commissionIncomeStatement: en_commissionIncomeStatement
-  }
+    commissionIncomeStatement: en_commissionIncomeStatement,
+    social: en_social,
+    salesReport: en_salesReport,
+  },
 };

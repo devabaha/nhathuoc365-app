@@ -9,10 +9,7 @@ import {
   BackHandler,
 } from 'react-native';
 
-import {
-  CameraPermission,
-  PhotoLibraryPermission,
-} from '../../../../helper/permissionHelper';
+import {CameraPermission, PhotoLibraryPermission} from '../../../../helper/permissionHelper';
 
 class ModalGalleryOptionAndroid extends Component {
   state = {};
@@ -62,7 +59,7 @@ class ModalGalleryOptionAndroid extends Component {
         PhotoLibraryPermission.openPermissionAskingModal();
       }, 500);
     }
-  };
+  }
 
   handleBackPress = () => {
     this.props.onClose();

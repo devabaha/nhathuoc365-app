@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'column',
     flex: 1,
-    ...appConfig.styles.shadow
+    ...appConfig.styles.shadow,
   },
   container: {
     marginTop: 10,
@@ -93,22 +93,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleWrapper: {
-    paddingHorizontal: 5,
-    paddingLeft: 8,
-    paddingVertical: 15,
+    padding: 15,
+    // paddingVertical: 15,
   },
   title: {
-    fontSize: 15,
+    ...appConfig.styles.typography.heading3,
   },
   specialSubTitle: {
-    fontWeight: '600',
-    fontSize: 15,
-    color: '#00b140',
+    ...appConfig.styles.typography.heading1,
+    color: appConfig.colors.highlight[1],
   },
   subTitle: {
-    fontSize: 14,
     marginTop: 5,
-    color: '#444',
+    ...appConfig.styles.typography.text,
   },
   loading: {
     height: '100%',

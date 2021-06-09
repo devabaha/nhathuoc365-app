@@ -67,6 +67,12 @@ const styles = StyleSheet.create({
     color: 'black',
     marginTop: 20,
   },
+  txtDescription: {
+    fontSize: 17,
+    fontWeight: '200',
+    color: 'black',
+    marginTop: 20,
+  },
   resSendOTP: {
     fontSize: 17,
     color: '#528BC5',
@@ -83,6 +89,7 @@ class AuthConfirm extends Component {
   state = {
     requestNewOtpCounter: RESEND_OTP_INTERVAL,
     message: '',
+    showDescription: false,
   };
   timer = -1;
 
@@ -102,6 +109,7 @@ class AuthConfirm extends Component {
     this.props.onRequestNewOtp();
     this.setState(
       {
+        showDescription: true,
         requestNewOtpCounter: RESEND_OTP_INTERVAL,
       },
       () => this.startCountDown(),
@@ -121,6 +129,7 @@ class AuthConfirm extends Component {
   }
 
   onBack() {
+    this.setState({showDescription: false});
     this.props.onBackToPhoneInput();
   }
 
@@ -192,6 +201,9 @@ class AuthConfirm extends Component {
                 : t('requestNewCode')}
             </Text>
           </TouchableOpacity>
+          {this.state.showDescription && (
+            <Text style={styles.txtDescription}>{t('description')}</Text>
+          )}
         </View>
       </ScrollView>
     );

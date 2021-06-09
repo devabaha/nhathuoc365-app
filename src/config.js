@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.5.4';
+    return 'r11.6.5';
   }
 
   get appName() {
@@ -134,6 +134,12 @@ class Config {
       placeholder: '#c7c7cd',
       ribbon: '#FD0D1B',
       sale: '#FD0D1B',
+      highlight: {
+        1: '#51B748',
+      },
+      action: {
+        1: '#126DEA',
+      },
     };
   }
 
@@ -148,18 +154,18 @@ class Config {
           fontSize: 16,
           color: this.colors.typography.text,
         },
-        title: {
+        text: {
           fontSize: 14,
           color: this.colors.typography.text,
         },
-        text: {
+        sub: {
           fontSize: 12,
           color: this.colors.typography.text,
         },
         secondary: {
           fontSize: 14,
           color: this.colors.typography.secondary,
-        }
+        },
       },
       shadow: {
         shadowColor: '#000',
@@ -211,8 +217,10 @@ class Config {
 
       scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
+      qrBarCodeInputable: 'qrBarCodeInputable',
 
       notifies: 'notifies',
+      notifiesVertical: 'notifiesVertical',
       notifyDetail: 'notify_item',
 
       detailHistoryPayment: 'detail_history_payment',
@@ -280,6 +288,8 @@ class Config {
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
+      modalComment: 'modalComment',
+      modalEditImages: 'modalEditImages',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -320,6 +330,14 @@ class Config {
 
       // Gamification
       lotteryGame: 'lotteryGame',
+      filterProduct: 'filterProduct',
+      salesReport: 'saleReport',
+      // Social
+      social: 'social',
+      socialGroup: 'socialGroup',
+      socialCreatePost: 'socialCreatePost',
+
+      webview: 'webview',
     };
   }
 }

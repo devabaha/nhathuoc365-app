@@ -1,4 +1,11 @@
-import {reaction, observable, action, toJS} from 'mobx';
+import {
+  reaction,
+  observable,
+  action,
+  toJS,
+  computed,
+  extendObservable,
+} from 'mobx';
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -8,6 +15,8 @@ import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import equal from 'deep-equal';
+import {uploadImages} from 'app-helper/image';
+
 @autobind
 class Store {
   constructor() {
@@ -122,7 +131,7 @@ class Store {
           if (!equal(user, this.user_info)) {
             this.setUserInfo(user);
           }
-          
+
           if (!equal(notifies, this.notify)) {
             this.setNotify(notifies);
           }
@@ -288,6 +297,7 @@ class Store {
   @observable app_data = null;
   @observable deep_link_data = null;
   @observable stores_finish = false;
+  @observable selectedFilter = {};
 
   @action setStoresFinish(flag) {
     this.stores_finish = flag;
@@ -316,6 +326,10 @@ class Store {
 
   @action setDeepLinkData(data) {
     this.deep_link_data = data;
+  }
+
+  @action setSelectedFilter(data) {
+    this.selectedFilter = data;
   }
 
   /*********** home begin **********/
@@ -595,6 +609,154 @@ class Store {
     const isFirebaseSignedIn = !!firebaseAuth().currentUser;
     if (isFirebaseSignedIn) {
       firebaseAuth().signOut();
+    }
+  }
+
+  @observable socialNews = observable.map(new Map());
+  @action setSocialNews(socialNews = {}) {
+    this.socialNews.merge(socialNews);
+  }
+
+  @action updateSocialNews(id, data = {}) {
+    let temp = this.socialNews.get(id) || {};
+    this.socialNews.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialNews() {
+    this.socialNews.replace(new Map());
+  }
+
+  @observable socialPosts = observable.map(new Map());
+  @action setSocialPosts(socialPosts = {}) {
+    this.socialPosts.merge(socialPosts);
+  }
+
+  @action updateSocialPost(id, data = {}) {
+    let temp = this.socialPosts.get(id) || {};
+    this.socialPosts.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialPosts() {
+    this.socialPosts.replace(new Map());
+  }
+
+  @observable socialPostingData = {};
+  @action setSocialPostingData(data = {}) {
+    this.socialPostingData = data;
+  }
+
+  @action socialCreatePost(
+    data = {},
+    t = () => {},
+    formatPostStoreData = (data) => {
+      return data;
+    },
+  ) {
+    this.setSocialPostingData({...data, progress: 0});
+    this.updateSocialPost(data.id, formatPostStoreData(data));
+
+    const postData = async (data = {}) => {
+      const postParams = {
+        site_id: data.site_id,
+        group_id: data.group_id,
+      };
+      if (data.content) {
+        postParams.content = data.content;
+      }
+      if (!!data.images?.length) {
+        postParams.images = JSON.stringify(data.images);
+      }
+
+      let socialPostingData = {...this.socialPostingData, progress: 100};
+
+      try {
+        const response = await APIHandler.social_create_post(
+          postParams,
+        ).promise();
+
+        if (response) {
+          if (response.status === STATUS_SUCCESS) {
+            if (response.data?.post) {
+              this.updateSocialPost(
+                data.id,
+                formatPostStoreData(response.data.post),
+              );
+            }
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || t('common:api.error.message'),
+            });
+            socialPostingData.error = true;
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: t('common:api.error.message'),
+          });
+          socialPostingData.error = true;
+        }
+      } catch (error) {
+        console.log('create_social_post', error);
+        flashShowMessage({
+          type: 'danger',
+          message: t('common:api.error.message'),
+        });
+        socialPostingData.error = true;
+      } finally {
+        this.setSocialPostingData(socialPostingData);
+      }
+    };
+
+    if (data?.images?.length) {
+      let imagesProgress = [];
+      let images = Array.from({length: data.images.length});
+      let totalUploaded = 0;
+      const requests = uploadImages(
+        APIHandler.url_user_upload_image(),
+        data.images,
+        (progress, image, index) => {
+          imagesProgress[index] = progress * (100 / data.images.length);
+          this.setSocialPostingData({
+            ...this.socialPostingData,
+            progress: imagesProgress.reduce(
+              (prev, current) => (prev || 0) + (current || 0),
+              0,
+            ),
+          });
+        },
+        (response, image, index) => {
+          totalUploaded++;
+
+          images[index] = {
+            name: response.data.name,
+            width: image.width,
+            height: image.height,
+          };
+
+          if (totalUploaded === data.images.length) {
+            if (images.every((image) => !!image?.name)) {
+              postData({...data, images});
+            } else {
+              this.setSocialPostingData({
+                ...this.socialPostingData,
+                error: true,
+                progress: undefined,
+              });
+            }
+          }
+        },
+        (error, image, index) => {
+          requests.forEach((request) => !!request?.cancel && request.cancel());
+          this.setSocialPostingData({
+            ...this.socialPostingData,
+            error: true,
+            progress: undefined,
+          });
+        },
+      );
+    } else {
+      postData(data);
     }
   }
 }

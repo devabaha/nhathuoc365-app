@@ -20,6 +20,16 @@ import EventTracker from '../../helper/EventTracker';
 import RightButtonNavBar from '../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 import Container from '../Layout/Container';
+import ActionContainer from '../Social/ActionContainer';
+import {
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  getSocialCommentsCount,
+  handleSocialActionBarPress,
+  calculateLikeCountFriendly,
+} from 'src/helper/social';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -80,6 +90,16 @@ class NotifyItem extends Component {
           var response = await APIHandler.user_news(this.state.item.id);
 
           if (response && response.status == STATUS_SUCCESS) {
+            if (response.data) {
+              store.updateSocialNews(this.state.item.id, {
+                like_count: response.data.like_count || 0,
+                like_flag: response.data.like_flag || 0,
+                share_count: response.data.share_count || 0,
+                comment_count: response.data.comment_count || 0,
+                like_count_friendly:
+                  calculateLikeCountFriendly(response.data) || 0,
+              });
+            }
             if (!this.state.item_data) {
               this.eventTracker.logCurrentView({
                 params: {
@@ -88,9 +108,6 @@ class NotifyItem extends Component {
                 },
               });
             }
-            // action(() => {
-            //   store.setStoreId(response.data.site_id);
-            // })();
 
             setTimeout(() => {
               this.setState(
@@ -198,6 +215,7 @@ class NotifyItem extends Component {
                 source={{html: item_data.content}}
                 zoomable={false}
                 scrollEnabled={false}
+                viewportContent={'width=device-width, user-scalable=no'}
                 customScript={`
 
                   `}
@@ -226,14 +244,14 @@ class NotifyItem extends Component {
           {item_data != null &&
             item_data.related &&
             item_data.related.length !== 0 && (
-              <View>
-                <Text style={styles.product_related_text}>
-                  {t('relatedItems')}
-                </Text>
+             
                 <FlatList
                   onEndReached={(num) => {}}
                   onEndReachedThreshold={0}
                   style={[styles.items_box]}
+                ListHeaderComponent={() => (
+                  <ListHeader title={`—  ${t('relatedItems')}  —`} />
+                )}
                   data={item_data.related}
                   renderItem={({item, index}) => (
                     <Items
@@ -257,16 +275,37 @@ class NotifyItem extends Component {
                     paddingVertical: 20,
                   }}
                 />
-              </View>
             )}
         </ScrollView>
 
-        {item_data != null && item_data.related && (
+        {!!item_data && (
+          <ActionContainer
+            style={styles.actionContainer}
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            commentsCount={getSocialCommentsCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            onActionBarPress={(type) =>
+              handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, item_data)
+            }
+            hasInfoExtraBottom={false}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
+                SOCIAL_BUTTON_TYPES.COMMENT,
+                item_data,
+                false,
+              )
+            }
+          />
+        )}
+
+        {/* {item_data != null && item_data.related && (
           <CartFooter
             prefix="item"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
-        )}
+        )} */}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -348,18 +387,6 @@ class NotifyItem extends Component {
   }
 }
 
-const html_styles = StyleSheet.create({
-  p: {
-    color: '#404040',
-    fontSize: 14,
-    lineHeight: 24,
-  },
-  a: {
-    fontWeight: '300',
-    color: DEFAULT_COLOR,
-  },
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -427,6 +454,10 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     paddingHorizontal: 10,
     paddingTop: 10,
+  },
+  actionContainer: {
+    backgroundColor: '#fff',
+    ...elevationShadowStyle(7),
   },
 });
 

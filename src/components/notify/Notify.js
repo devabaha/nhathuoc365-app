@@ -87,10 +87,7 @@ class Notify extends Component {
   async _getData(delay) {
     const {t} = this.props;
     try {
-      var response = await APIHandler.user_news_list(
-        this.state.news_type,
-        this.props.id,
-      );
+      var response = await APIHandler.user_news_list(this.state.news_type, this.props.id);
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const news = response.data.find(

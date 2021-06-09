@@ -1,20 +1,24 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import {
   TouchableOpacity,
   TextInput,
   Animated,
   StyleSheet,
   View,
-  Platform
+  Platform,
 } from 'react-native';
-import { MIN_HEIGHT_COMPOSER } from '../../constants';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {MIN_HEIGHT_COMPOSER} from '../../constants';
 
 class CustomComposer extends PureComponent {
+  static defaultProps = {
+    onInputSizeChanged: () => {},
+    onTextChanged: () => {},
+    onKeyPress: () => {},
+  };
   state = {};
   contentSize = undefined;
-  onContentSizeChange = e => {
-    const { contentSize } = e.nativeEvent;
+  onContentSizeChange = (e) => {
+    const {contentSize} = e.nativeEvent;
     // Support earlier versions of React Native on Android.
     if (!contentSize) {
       return;
@@ -29,7 +33,7 @@ class CustomComposer extends PureComponent {
       this.props.onInputSizeChanged(this.contentSize);
     }
   };
-  onChangeText = text => {
+  onChangeText = (text) => {
     this.props.onTyping(text);
     this.props.onTextChanged(text);
   };
@@ -41,20 +45,17 @@ class CustomComposer extends PureComponent {
         style={[
           styles.container,
           {
-            height: props.composerHeight
-          }
-        ]}
-      >
+            height: props.composerHeight,
+          },
+        ]}>
         {props.showInput ? (
           <TouchableOpacity
             activeOpacity={1}
             style={[styles.containerInput]}
-            onPress={props.onFocusInput}
-          >
+            onPress={props.onFocusInput}>
             <View
               pointerEvents={props.editable ? 'auto' : 'none'}
-              style={[styles.containerInput]}
-            >
+              style={[styles.containerInput]}>
               <TextInput
                 style={[styles.input]}
                 ref={props.refInput}
@@ -66,6 +67,7 @@ class CustomComposer extends PureComponent {
                 onChange={this.onContentSizeChange}
                 onContentSizeChange={this.onContentSizeChange}
                 onChangeText={this.onChangeText}
+                onKeyPress={this.props.onKeyPress}
               />
             </View>
           </TouchableOpacity>
@@ -80,13 +82,12 @@ class CustomComposer extends PureComponent {
                   {
                     scale: props.animatedBtnBackValue.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [1.2, 1]
-                    })
-                  }
-                ]
-              }
-            ]}
-          ></Animated.View>
+                      outputRange: [1.2, 1],
+                    }),
+                  },
+                ],
+              },
+            ]}></Animated.View>
         )}
       </View>
     );
@@ -98,21 +99,21 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     flex: 1,
-    minHeight: MIN_HEIGHT_COMPOSER
+    minHeight: MIN_HEIGHT_COMPOSER,
   },
   containerInput: {
     width: '100%',
     minHeight: MIN_HEIGHT_COMPOSER,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   input: {
     width: '100%',
     paddingHorizontal: 10,
     paddingTop: 0,
     paddingBottom: 0,
-    color: '#404040'
-  }
+    color: '#404040',
+  },
 });
 
 export default CustomComposer;

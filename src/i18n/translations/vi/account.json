@@ -16,10 +16,10 @@
       "label": "Fanpage {{appName}}",
       "desc": "Facebook Fanpage chăm sóc khách hàng"
     },
-    "termOfUse": {
-      "label": "Về {{appName}}",
+    "termsOfUse": {
+      "label": "Giới thiệu về chúng tôi",
       "desc": "Điều khoản sử dụng",
-      "webViewTitle": "Về {{appName}}"
+      "webViewTitle": "Về chúng tôi"
     },
     "appInformation": {
       "label": "Thông tin ứng dụng",
@@ -49,6 +49,10 @@
     "commissionIncomeStatement": {
       "label": "Báo cáo hoa hồng",
       "desc": "Tra cứu hoa hồng theo tháng"
+    },
+    "salesReport": {
+      "label": "Báo cáo doanh số giới thiệu",
+      "desc": "Doanh số của những người được giới thiệu"
     }
   },
   "avatarPicker": {

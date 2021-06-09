@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.6.5] - 2021-06-08
+### Added
+- Webview for servicesHandler.
+- DISABLE_PACKAGE_OPTION_LOYALTY_BOX in package options by [lamah.dev@gmail.com].
+### Changed
+- Refactor Payment method in Confirm.
+- Product has only 1 attr will be auto selected.
+### Fixed
+- Status bar light-content in Modal Comment being pushed from NotifyItem (temporary fixing, don't know the exactly cause).
+- NotifyItem request wrong info when press total comments.
+
+## [r11.6.4] - 2021-06-03
+### Added
+- Create Post, Group.
+- qrBarCodeInputable in ProductStamps by [lamah.dev@gmail.com].
+### Changed
+- Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
+- Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
+### Fixed
+- Wrong params for Filter product News-est and Best-selling mode.
+
+## [r11.6.3] - 2021-05-24
+### Added
+- Update moment locale relative time when change language.
+### Changed
+- Unsubscribe all listener if unmounted in Account.
+- Add site_id for change avatar api.
+- Unpublished FilterProduct.
+- Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
+### Fixed
+- Not refresh comments when tap bolt.
+- Not correct clip comment if too long in Android.
+- Logic to clip comment if too long.
+- Upload avatar.
+- Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
+
+## [r11.6.2] - 2021-05-19
+### Added
+- Show month commission in Commission report by [duylinhdang1998@gmail.com].
+
+## [r11.6.1] - 2021-05-18
+### Added
+- Image component with custom render if loading error.
+- ScreenWrapper take sceneBackground as backgroundColor.
+- Common component for social like Feeds, ActionBar.
+- Like, comment, share for news.
+### Changed
+- Container can select reanimated or animated wrapper.
+- UI/ UX, logic of News (Notify) screen.
+
+## [r11.5.5] - 2021-05-08
+### Fixed
+- Fix resend otp calling.
+- Fix crash app in wallet (WalletRow) by [lamah.dev@gmail.com].
+
 ## [r11.5.4] - 2021-04-27
 ### Added
 - Enter voucher code in My Voucher screen.

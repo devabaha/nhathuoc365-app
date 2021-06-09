@@ -24,6 +24,10 @@ import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 import Themes from 'src/Themes';
+import {
+  isActivePackageOptionConfig,
+  PACKAGE_OPTIONS_TYPE,
+} from '../../helper/packageOptionsHandler';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -177,10 +181,17 @@ class Home extends Component {
   get hasProducts() {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
+
   get hasProduct_groups() {
     return (
       Array.isArray(this.props.product_groups) &&
       this.props.product_groups.length > 0
+    );
+  }
+
+  get isVisibleLoyaltyBox() {
+    return !isActivePackageOptionConfig(
+      PACKAGE_OPTIONS_TYPE.DISABLE_PACKAGE_OPTION_LOYALTY_BOX,
     );
   }
 
@@ -338,7 +349,7 @@ class Home extends Component {
               useNativeDriver: true,
             },
           )}
-          contentContainerStyle={{paddingTop: this.state.headerHeight, paddingBottom: 30}}
+          contentContainerStyle={{paddingTop: this.state.headerHeight || 80, paddingBottom: 30}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -356,24 +367,33 @@ class Home extends Component {
           /> */}
 
           <View style={styles.block}>
-            <PrimaryActions
-              walletName={
-                // this.props.userInfo && this.props.userInfo.default_wallet
-                //   ? this.props.userInfo.default_wallet.name
-                //   : ''
-                name
-              }
-              surplus={
-                this.props.userInfo && this.props.userInfo.default_wallet
-                  ? this.props.userInfo.default_wallet.balance_view
-                  : ''
-              }
-              primaryActions={
-                this.props.showPrimaryActions ? this.props.primaryActions : null
-              }
-              onPressItem={this.props.onActionPress}
-              onSurplusNext={this.props.onSurplusNext}
-            />
+            {this.isVisibleLoyaltyBox ? (
+              <PrimaryActions
+                walletName={
+                  // this.props.userInfo && this.props.userInfo.default_wallet
+                  //   ? this.props.userInfo.default_wallet.name
+                  //   : ''
+                  name
+                }
+                surplus={
+                  this.props.userInfo && this.props.userInfo.default_wallet
+                    ? this.props.userInfo.default_wallet.balance_view
+                    : ''
+                }
+                primaryActions={
+                  this.props.showPrimaryActions
+                    ? this.props.primaryActions
+                    : null
+                }
+                onPressItem={this.props.onActionPress}
+                onSurplusNext={this.props.onSurplusNext}
+              />
+            ) : this.hasPromotion && (
+              <Promotion
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
           </View>
 
           {this.hasServices ? (
@@ -391,13 +411,14 @@ class Home extends Component {
             <ListServiceSkeleton />
           ) : null}
 
-          {this.hasPromotion && (
-            <Promotion
-              containerStyle={styles.promotionBlock}
-              data={this.props.promotions}
-              onPress={this.props.onPromotionPressed}
-            />
-          )}
+          <View style={styles.contentWrapper}>
+            {this.isVisibleLoyaltyBox && this.hasPromotion && (
+              <Promotion
+                containerStyle={styles.promotionBlock}
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
 
           {this.hasProduct_groups ? (
             this.props.product_groups.map((productGroup, index) => {
@@ -504,6 +525,7 @@ class Home extends Component {
           ) : this.props.apiFetching ? (
             <HomeCardListSkeleton />
           ) : null}
+      </View>
         </ScrollView>
 
         <StatusBarBackground />

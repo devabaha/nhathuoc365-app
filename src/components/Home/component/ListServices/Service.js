@@ -8,6 +8,8 @@ import {IMAGE_ICON_TYPE} from '../../constants';
 import Loading from '../../../Loading';
 import {SERVICES_TYPE} from '../../../../helper/servicesHandler';
 
+import appConfig from 'app-config';
+
 const styles = StyleSheet.create({
   buttonWrapper: {
     paddingVertical: 10,
@@ -32,9 +34,8 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: 12,
-    color: '#2B2B2B',
     marginTop: BASE_TITLE_MARGIN,
+    ...appConfig.styles.typography.sub
   },
   notifyWrapper: {
     right: -8,

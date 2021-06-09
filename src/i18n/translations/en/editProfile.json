@@ -15,6 +15,7 @@
       "defaultValue": "Choose a gender",
       "male": "Male",
       "female": "Female",
+      "other": "Others",
       "cancel": "Cancel"
     },
     "email": {

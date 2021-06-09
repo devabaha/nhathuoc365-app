@@ -9,12 +9,12 @@
   "item": {
     "title": "Orders #{{code}}",
     "next": "Continue",
-    "store": "Go to store",
+    "store": "Store",
     "edit": "Edit",
     "note": "Note",
     "cancel": "Cancel",
     "totalSelected": "{{total}} product(s)",
-    "totalPaymentMessage": "Total"
+    "totalPaymentMessage": "Total payment"
   },
   "confirm": {
     "process": {

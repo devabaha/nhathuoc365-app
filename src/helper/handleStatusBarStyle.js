@@ -8,8 +8,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) {
     if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
       StatusBar.setBarStyle(store.homeStatusBar.barStyle, true);
-      StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
-      StatusBar.setTranslucent(false);
+      StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor)
       return;
     }
     if (Actions.currentScene === `${appConfig.routes.item}_1`) {
@@ -31,6 +30,9 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.qrBarCode,
     appConfig.routes.modalWebview,
     appConfig.routes.transaction,
+    appConfig.routes.modalComment,
+    appConfig.routes.modalEditImages,
+    appConfig.routes.socialCreatePost,
 
     appConfig.routes.myVoucher,
     appConfig.routes.voucherDetail,

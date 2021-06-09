@@ -18,7 +18,6 @@ import {DiscountBadge} from '../../components/Badges';
 import {PRODUCT_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
-import Ribbon from '../Ribbon/Ribbon';
 class Items extends Component {
   constructor(props) {
     super(props);
@@ -37,6 +36,7 @@ class Items extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.setState({loadmore: false});
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
@@ -156,7 +156,7 @@ class Items extends Component {
             ]}>
             <View
               ref={(ref) => (this.ref_item = ref)}
-              style={styles.item_image_box}>
+              style={[styles.item_image_box, this.props.imageStyle]}>
               {!!item.logo_url && (
                 <FastImage
                   style={styles.item_image}
@@ -208,7 +208,7 @@ class Items extends Component {
             if (onPress) {
               onPress();
             }
-
+            console.log('tai sao lai chay vao day');
             this.setState({
               loadmore: true,
             });
@@ -218,6 +218,8 @@ class Items extends Component {
             style={[
               styles.item_box,
               {
+                marginRight: index % 2 == 0 ? 8 : 0,
+                marginLeft: index % 2 == 0 ? 8 : 0,
                 justifyContent: 'center',
                 alignItems: 'center',
               },
@@ -250,106 +252,118 @@ class Items extends Component {
     const {containerStyle, contentStyle} = this.props;
     return (
       <TouchableHighlight onPress={onPress} underlayColor="transparent">
-        <View style={[styles.item_box, containerStyle]}>
-          <View style={[styles.item_box_container, contentStyle]}>
-            <View
-              ref={(ref) => (this.ref_item = ref)}
-              style={[styles.item_image_box, this.props.imageStyle]}>
-              {!!item.image && (
-                <FastImage
-                  style={styles.item_image}
-                  source={{uri: item.image}}
-                  resizeMode="cover"
-                />
-              )}
-            </View>
-            {item.discount_percent > 0 && (
-              <View style={styles.discountBadgeContainer}>
-                <Ribbon text={saleFormat(item.discount_percent)} />
-              </View>
+        <View
+          style={[
+            styles.item_box,
+            {
+              marginRight: index % 2 == 0 ? 8 : 0,
+              marginLeft: index % 2 == 0 ? 8 : 0,
+            },
+          ]}>
+          <View
+            ref={(ref) => (this.ref_item = ref)}
+            style={styles.item_image_box}>
+            {!!item.image && (
+              <FastImage
+                style={styles.item_image}
+                source={{uri: item.image}}
+                resizeMode="cover"
+              />
             )}
-            <View style={styles.item_info_box}>
-              <View>
-                <Text style={styles.item_info_name} numberOfLines={2}>
-                  {item.name}
-                </Text>
-              </View>
-              <View style={styles.price_box}>
-                <View
-                  style={{
-                    maxWidth: '80%',
-                  }}>
-                  {item.discount_percent > 0 && (
-                    <Text style={styles.item_safe_off_price}>
-                      <Text style={{textDecorationLine: 'line-through'}}>
-                        {item.discount_view}
-                      </Text>
-                      / {item.unit_name}
+            <TouchableHighlight
+              style={styles.item_add_cart_btn}
+              underlayColor="transparent"
+              onPress={() => this.handlePressActionBtnProduct(item)}>
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}>
+                <View style={styles.item_add_cart_box}>
+                  {this.state.buying ? (
+                    <View
+                      style={{
+                        width: 24,
+                        height: 24,
+                      }}>
+                      <Indicator size="small" />
+                    </View>
+                  ) : this.isServiceProduct(item) ? (
+                    <Icon name="calendar-plus-o" size={22} color="#0eac24" />
+                  ) : (
+                    <Icon name="cart-plus" size={22} color={'#0eac24'} />
+                  )}
+                  {this.isServiceProduct(item) ? (
+                    <Text style={styles.item_add_cart_title}>
+                      {t('product:shopTitle.book')}
+                    </Text>
+                  ) : (
+                    <Text style={styles.item_add_cart_title}>
+                      {t('product:shopTitle.buy')}
                     </Text>
                   )}
 
-                  <Text
-                    style={[
-                      styles.item_info_price,
-                      {
-                        color:
-                          // item.discount_percent > 0 ? "#fa7f50" :
-                          DEFAULT_COLOR,
-                      },
-                    ]}>
-                    {item.price_view}
+                  {quantity > 0 && (
+                    <View style={styles.quantity_box}>
+                      <Text style={styles.quantity_value}>{quantity}</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </TouchableHighlight>
+
+            {item.discount_percent > 0 && (
+              <DiscountBadge
+                containerStyle={styles.item_safe_off}
+                label={saleFormat(item.discount_percent)}
+              />
+            )}
+          </View>
+
+          <View style={styles.item_info_box}>
+            <View>
+              <View style={styles.item_info_made}>
+                <View style={styles.directionRow}>
+                  {item.made_in != '' && (
+                    <>
+                      <Icon name="map-marker" size={12} color="#666666" />
+                      <Text
+                        numberOfLines={2}
+                        style={styles.item_info_made_title}>
+                        {item.made_in}
+                      </Text>
+                    </>
+                  )}
+                </View>
+
+                <View style={styles.item_info_weight}>
+                  <Text style={styles.item_info_made_title}>
+                    {item.unit_name_view}
                   </Text>
                 </View>
-                <TouchableHighlight
-                  style={styles.item_add_cart_btn}
-                  underlayColor="transparent"
-                  onPress={() => this.handlePressActionBtnProduct(item)}>
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                    }}>
-                    <View style={styles.item_add_cart_box}>
-                      {this.state.buying ? (
-                        <View
-                          style={{
-                            width: 24,
-                            height: 24,
-                          }}>
-                          <Indicator size="small" />
-                        </View>
-                      ) : this.isServiceProduct(item) ? (
-                        <Icon
-                          name="calendar-plus-o"
-                          size={22}
-                          color="#0eac24"
-                        />
-                      ) : (
-                        <MaterialIcons
-                          name="add-shopping-cart"
-                          size={22}
-                          color={'#0eac24'}
-                        />
-                      )}
-                      {/* {this.isServiceProduct(item) ? (
-                        <Text style={styles.item_add_cart_title}>
-                          {t('product:shopTitle.book')}
-                        </Text>
-                      ) : (
-                        <Text style={styles.item_add_cart_title}>
-                          {t('product:shopTitle.buy')}
-                        </Text>
-                      )} */}
-
-                      {quantity > 0 && (
-                        <View style={styles.quantity_box}>
-                          <Text style={styles.quantity_value}>{quantity}</Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                </TouchableHighlight>
               </View>
+              <Text style={styles.item_info_name} numberOfLines={2}>
+                {item.name}
+              </Text>
+            </View>
+            <View style={styles.price_box}>
+              {item.discount_percent > 0 && (
+                <Text style={styles.item_safe_off_price}>
+                  {item.discount_view}
+                </Text>
+              )}
+
+              <Text
+                style={[
+                  styles.item_info_price,
+                  {
+                    color:
+                      // item.discount_percent > 0 ? "#fa7f50" :
+                      DEFAULT_COLOR,
+                  },
+                ]}>
+                {item.price_view}
+              </Text>
             </View>
           </View>
         </View>
@@ -364,38 +378,19 @@ Items.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
-const ITEM_WIDTH = appConfig.device.width / 2 - 5;
+const ITEM_WIDTH = Util.size.width / 2 - 12;
 const ITEM_HEIGHT = (Util.size.width / 2) * 1.333;
 const ITEM_IMG_HEIGHT = (Util.size.width / 2) * 1.333 * 0.666;
 
 const styles = StyleSheet.create({
   item_box: {
     width: ITEM_WIDTH,
-    paddingVertical: 5,
-    flex: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#333',
-        shadowOffset: {
-          width: 1,
-          height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-    overflow: 'visible',
-  },
-  item_box_container: {
-    overflow: 'visible',
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-    flex: 1,
-    borderRadius: 7,
-    elevation: 4,
+    // height: ITEM_HEIGHT,
+    // borderWidth: Util.pixel,
+    // borderWidth: Util.pixel,
+    // borderColor: "#dddddd",
+    backgroundColor: '#ffffff',
+    marginBottom: 8,
   },
   directionRow: {
     flex: 1,
@@ -403,10 +398,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item_image_box: {
-    width: ITEM_WIDTH - 10,
-    height: ITEM_WIDTH - 10,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
+    width: ITEM_WIDTH,
+    height: ITEM_WIDTH,
   },
   item_image: {
     zIndex: 1,
@@ -418,11 +411,15 @@ const styles = StyleSheet.create({
   },
   item_info_box: {
     flex: 1,
+    backgroundColor: 'red',
+    // minHeight: "34%",
     paddingHorizontal: 8,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 7,
-    position: 'relative',
+    paddingVertical: 7,
+    // position: "absolute",
+    // left: 0,
+    // bottom: 0,
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,255,255,0.7)',
   },
   item_info_made: {
     flexDirection: 'row',
@@ -454,15 +451,22 @@ const styles = StyleSheet.create({
   },
   item_add_cart_btn: {
     position: 'absolute',
-    bottom: 0,
+    top: 0,
     right: 0,
+    // width: 50,
+    // height: 50,
     zIndex: 2,
   },
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: hexToRgbA('#ffffff', 0.8),
+    // backgroundColor: hexToRgbA("#0eac24", .6),
     paddingVertical: 2,
+    // borderTopLeftRadius: 15,
+    // padding: 10,
+    width: 50,
+    height: 45,
   },
   item_add_cart_title: {
     color: '#0eac24',
@@ -500,10 +504,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   item_safe_off_price: {
-    color: '#A0A0A0',
-    fontSize: 13,
+    color: '#404040',
+    fontSize: 11,
+    textDecorationLine: 'line-through',
     marginRight: 4,
-    paddingBottom: 4,
   },
 
   quantity_box: {
@@ -525,11 +529,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   price_box: {
-    paddingVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 'auto',
+    marginTop: 2,
   },
   nameLocation: {
     fontSize: 14,
@@ -537,12 +539,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
     fontWeight: 'bold',
-  },
-  discountBadgeContainer: {
-    top: 10,
-    left: -3,
-    position: 'absolute',
-    zIndex: 99,
   },
 });
 

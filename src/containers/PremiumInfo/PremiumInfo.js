@@ -210,12 +210,9 @@ const styles = StyleSheet.create({
   },
   premiumBenefitHeading: {
     color: '#aaa',
-    textAlign: 'center',
+    paddingTop: 15,
+    textAlign: 'right',
     paddingHorizontal: 15,
-    backgroundColor: '#f9f9f9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 10,
   },
   loyaltyContainer: {
     marginTop: 7,
@@ -341,11 +338,9 @@ class PremiumInfo extends Component {
   }
 
   renderTabBarLabel(props) {
-    const {
-      route: {title, key},
-    } = props;
+    const {route: {title, key}} = props;
     const focused = key === this.state.index;
-
+    
     return (
       <Text
         numberOfLines={2}

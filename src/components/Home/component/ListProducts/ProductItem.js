@@ -121,11 +121,9 @@ class ProductItem extends PureComponent {
                     / {this.props.unit_name}
                   </Text>
                 )}
-                
+
                 <View style={[styles.priceBox]}>
-                  <Text style={[styles.price]}>
-                    {this.props.price_view}
-                  </Text>
+                  <Text style={[styles.price]}>{this.props.price_view}</Text>
 
                   <TouchableOpacity
                     style={styles.item_add_cart_box}
@@ -139,12 +137,11 @@ class ProductItem extends PureComponent {
                         <Indicator size="small" />
                       </View>
                     ) : this.isServiceProduct(item) ? (
-                      <Icon name="calendar-plus-o" size={18} color={appConfig.colors.status.success} />
+                      <Icon name="calendar-plus-o" style={styles.icon} />
                     ) : (
                       <MaterialIcons
                         name="add-shopping-cart"
-                        size={18}
-                        color={appConfig.colors.status.success}
+                        style={styles.icon}
                       />
                     )}
                   </TouchableOpacity>
@@ -187,7 +184,7 @@ let styles = StyleSheet.create({
   name: {
     flex: 1,
     marginBottom: 8,
-    ...appConfig.styles.typography.title,
+    ...appConfig.styles.typography.text,
   },
   priceWrapper: {
     width: '100%',
@@ -240,6 +237,11 @@ let styles = StyleSheet.create({
   },
   deletedTitle: {
     textDecorationLine: 'line-through',
+  },
+
+  icon: {
+    fontSize: 18,
+    color: appConfig.colors.highlight[1],
   },
 });
 

@@ -29,8 +29,7 @@ export default class Loading extends Component {
         <View
           style={[
             styles.container,
-            (this.props.blur || this.props.highlight) &&
-              styles.blurContentContainer,
+            (this.props.blur || this.props.highlight) && styles.blurContentContainer,
             this.props.containerStyle,
           ]}>
           <ActivityIndicator
@@ -119,9 +118,7 @@ export const BlurFilter = React.memo(({visible}) => {
   }, [visible]);
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[styles.blurContainer, {opacity: animatedOpacity}]}>
+    <Animated.View pointerEvents="none" style={[styles.blurContainer, {opacity: animatedOpacity}]}>
       <BlurView
         style={styles.blurContainer}
         reducedTransparencyFallbackColor="#fff"

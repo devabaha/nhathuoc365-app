@@ -4,7 +4,7 @@
       "title": "Select month"
     }
   },
-  "total_revenue": "Total F1",
-  "level": "Level commission",
-  "total_commission_month": "commission"
+  "total_revenue": "Total Revenue",
+  "level": "Level",
+  "total_commission_month": "Total commission month"
 }

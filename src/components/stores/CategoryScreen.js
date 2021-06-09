@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, View, RefreshControl} from 'react-native';
+import {StyleSheet, ScrollView, View, RefreshControl, Text} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Animated from 'react-native-reanimated';
 import Items from './Items';
@@ -8,6 +8,11 @@ import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
+import FilterProduct from './FilterProduct';
+import APIHandler from 'src/network/APIHandler';
+import {filter, isEmpty, isEqual} from 'lodash';
+import mobx, {reaction} from 'mobx';
+import Store from 'app-store';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -41,6 +46,8 @@ class CategoryScreen extends Component {
       promotions,
       isAll: item.id == 0,
       fetched: false,
+      filter_data: [],
+      filter_data_bak: [],
     };
 
     this.unmounted = false;
@@ -55,9 +62,7 @@ class CategoryScreen extends Component {
   componentDidMount() {
     var {item, index} = this.props;
     this.start_time = 0;
-
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
-
     if (index == 0 || index == 1) {
       this._getItemByCateId(item.id);
     } else {
@@ -78,42 +83,42 @@ class CategoryScreen extends Component {
     Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
       Events.removeAll(keyAutoLoad);
     });
+
+    // this.getListFilterTag();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     const {item, index, cate_index} = nextProps;
-
     if (
       (index == cate_index || nextProps.isAutoLoad) &&
       this.state.items_data == null &&
       Object.keys(this.props).some(
         (key) => nextProps[key] != this.props[key],
       ) &&
-      !nextState.loading
+      !nextState.loading &&
+      isEmpty(nextProps.paramsFilter)
     ) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
-
     return true;
   }
 
-  // UNSAFE_componentWillReceiveProps(nextProps) {
-  //   var {item, index, cate_index} = nextProps;
-
-  //   if (
-  //     index == cate_index &&
-  //     this.state.items_data == null &&
-  //     Object.keys(this.props).some(key=> nextProps[key] != this.props[key]) &&
-  //     !this.state.loading
-  //   ) {
-  //     this.start_time = time();
-  //     console.log(nextProps, this.props !== nextProps)
-  //     // get list products by category_id
-  //     this._getItemByCateId(item.id);
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    const {item, index, cate_index, isAutoLoad} = this.props;
+    if (
+      index === cate_index &&
+      !isEmpty(this.props.paramsFilter) &&
+      !this.state.loading &&
+      Object.keys(prevProps).some((key) => prevProps[key] != this.props[key]) &&
+      (!isEqual(prevProps.paramsFilter, this.props.paramsFilter) ||
+        isEmpty(this.state.filter_data))
+    ) {
+      console.log('render vo han');
+      this.getItemByFilter(item.id, false);
+    }
+  }
 
   componentWillUnmount() {
     this.unmounted = true;
@@ -143,7 +148,6 @@ class CategoryScreen extends Component {
   _getItemByCateId(category_id) {
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-
     this.setState(
       {
         loading: this.state.items_data ? false : true,
@@ -188,11 +192,74 @@ class CategoryScreen extends Component {
             }, this._delay());
           })
           .catch((err) => {
-            console.log('get_item_by_cate_id', err);
+            console.log('get_item_by_cate_id_local', err);
             this._getItemByCateIdFromServer(category_id);
           });
       },
     );
+  }
+
+  async getItemByFilter(category_id, loadmore = false) {
+    const store_category_key =
+      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+    const site_id = this.props.site_id || store.store_id;
+    if (loadmore) {
+      this.state.page += 1;
+    } else {
+      this.state.page = 0;
+    }
+    if (isEmpty(this.state.filter_data)) {
+      await this.setState({
+        loading: true,
+      });
+    }
+    try {
+      const response = await APIHandler.site_category_product_by_filter(
+        site_id,
+        category_id,
+        this.state.page,
+        this.props.paramsFilter,
+      );
+      if (response && response.status == STATUS_SUCCESS) {
+        if (response.data) {
+          console.log({dataFilter: response.data});
+          setTimeout(() => {
+            if (this.props.index == 0) {
+              layoutAnimation();
+            }
+            const filter_data = loadmore
+              ? [...this.state.filter_data_bak, ...response.data]
+              : response.data;
+            this.setState({
+              filter_data:
+                response.data.length >= STORES_LOAD_MORE
+                  ? [...filter_data, {id: -1, type: 'loadmore'}]
+                  : filter_data,
+              loading: false,
+              fetched: true,
+              refreshing: false,
+              page: this.state.page,
+              filter_data_bak: filter_data,
+            });
+            action(() => {
+              store.setStoresFinish(true);
+            })();
+            // load next category
+            this._loadNextCate();
+          }, 200);
+        } else {
+          this.setState({
+            filter_data: [],
+            loading: false,
+            fetched: true,
+            refreshing: false,
+          });
+          this._loadNextCate();
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async _getItemByCateIdFromServer(category_id, delay, loadmore) {
@@ -205,12 +272,11 @@ class CategoryScreen extends Component {
       this.state.page = 0;
     }
     try {
-      var response = await APIHandler.site_category_product(
+      const response = await APIHandler.site_category_product(
         site_id,
         category_id,
         this.state.page,
       );
-
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
@@ -274,15 +340,21 @@ class CategoryScreen extends Component {
     Events.removeAll(keyAutoLoad);
   }
 
-  _loadMore() {
+  _loadMore = async () => {
+    const {paramsFilter} = this.props;
+    if (!isEmpty(paramsFilter)) {
+      this.getItemByFilter(this.props.item.id, true);
+      return;
+    }
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
-  }
+  };
 
   render() {
-    const {t} = this.props;
-
+    const {t, paramsFilter} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-
+    const dataProducts = !isEmpty(paramsFilter)
+      ? this.state.filter_data
+      : this.state.items_data;
     return (
       <>
         <View style={styles.containerScreen}>
@@ -363,11 +435,10 @@ class CategoryScreen extends Component {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                marginVertical: 5,
-                paddingHorizontal: 5,
+                paddingTop: 7,
               }}>
-              {items_data != null
-                ? items_data.map((item, index) => (
+              {dataProducts !== null
+                ? dataProducts.map((item, index) => (
                     <Items
                       key={index}
                       item={item}
@@ -375,13 +446,13 @@ class CategoryScreen extends Component {
                       onPress={
                         item.type != 'loadmore'
                           ? this._goItem.bind(this, item)
-                          : this._loadMore.bind(this)
+                          : this._loadMore
                       }
                     />
                   ))
                 : null}
             </View>
-            {items_data == null ? (
+            {items_data == null || isEmpty(dataProducts) ? (
               <View style={[styles.containerScreen]}>
                 {fetched && (
                   <NoResult
@@ -403,7 +474,6 @@ const styles = StyleSheet.create({
   containerScreen: {
     width: Util.size.width,
     flex: 1,
-    backgroundColor: '#F5F7F8',
   },
 });
 

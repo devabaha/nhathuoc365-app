@@ -12,7 +12,7 @@ import {default as NetInfo} from '@react-native-community/netinfo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import store from '../../store';
-import {ORIGIN_API_DOMAIN} from '../../network/API/BaseAPI';
+import {LIVE_API_DOMAIN} from '../../network/API/BaseAPI';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -208,7 +208,7 @@ class NetWorkInfo extends Component {
   }
 
   renderDevServerModeWaterMark() {
-    const isLiveServer = store.apiDomain === ORIGIN_API_DOMAIN;
+    const isLiveServer = store.apiDomain === LIVE_API_DOMAIN;
     if (!isLiveServer) {
       return (
         <SafeAreaView

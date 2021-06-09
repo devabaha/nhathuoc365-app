@@ -93,8 +93,7 @@ class Notification extends PureComponent {
       ],
     };
     return (
-      <Animated.View
-        style={[styles.wrapper, extraStyle, this.props.wrapperStyle]}>
+      <Animated.View style={[styles.wrapper, extraStyle, this.props.wrapperStyle]}>
         <Animated.View
           style={[
             styles.container,

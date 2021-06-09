@@ -49,7 +49,7 @@ export const home = {
     actionsWrapper: {
     },
     walletNameLabel: {
-      ...appConfig.styles.typography.title,
+      ...appConfig.styles.typography.text,
     },
     walletLabelRight: {
      

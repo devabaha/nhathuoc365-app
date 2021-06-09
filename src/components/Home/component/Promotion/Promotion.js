@@ -36,7 +36,7 @@ class Promotion extends Component {
     data: [],
     ratio: '3:1',
     padding: 16,
-    containerSlideStyle: {},
+    containerSlideStyle: {}
   };
 
   constructor(props) {
@@ -45,10 +45,6 @@ class Promotion extends Component {
     this.state = {};
     this.index = 0;
     this.paginationLeft = new Animated.Value(0);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
   }
 
   renderItem = (promotion, index, dimensionStyle) => {
@@ -119,9 +115,9 @@ class Promotion extends Component {
         ) : (
           <Animated.View
             style={{
-              width: PAGINATION_WIDTH + 1,
-              height: PAGINATION_WIDTH + 1,
-              borderRadius: PAGINATION_WIDTH / 2,
+              width: PAGINATION_WIDTH+1,
+              height: PAGINATION_WIDTH+1,
+              borderRadius: (PAGINATION_WIDTH) / 2,
               overflow: 'hidden',
               position: 'absolute',
 
@@ -132,10 +128,10 @@ class Promotion extends Component {
                 <RadialGradient
                   id="Gradient"
                   gradientUnits="userSpaceOnUse"
-                  cx={PAGINATION_WIDTH / 2}
-                  cy={PAGINATION_WIDTH / 2}
-                  rx={PAGINATION_WIDTH / 2}
-                  ry={PAGINATION_WIDTH / 2}>
+                  cx={(PAGINATION_WIDTH) / 2}
+                  cy={(PAGINATION_WIDTH) / 2}
+                  rx={(PAGINATION_WIDTH) / 2}
+                  ry={(PAGINATION_WIDTH) / 2}>
                   <Stop offset="0.3" stopColor="#fff" stopOpacity="0" />
                   <Stop offset="1" stopColor="#fff" stopOpacity="1" />
                 </RadialGradient>
@@ -147,9 +143,9 @@ class Promotion extends Component {
                   width="100%"
                   height="100%">
                   <Circle
-                    cx={PAGINATION_WIDTH / 2}
-                    cy={PAGINATION_WIDTH / 2}
-                    r={(PAGINATION_WIDTH + 1) / 2}
+                    cx={(PAGINATION_WIDTH) / 2}
+                    cy={(PAGINATION_WIDTH) / 2}
+                    r={(PAGINATION_WIDTH+1) / 2}
                     width="100%"
                     height="100%"
                     fill="url(#Gradient)"
@@ -159,7 +155,7 @@ class Promotion extends Component {
                   id="Text"
                   cx={(PAGINATION_WIDTH + 1) / 2}
                   cy={(PAGINATION_WIDTH + 1) / 2}
-                  r={PAGINATION_WIDTH / 2}
+                  r={(PAGINATION_WIDTH) / 2}
                   strokeWidth="4"
                   stroke="rgba(0,0,0,.2)"
                 />
@@ -190,7 +186,7 @@ class Promotion extends Component {
       width,
       height,
     };
-
+    
     return (
       <View style={[styles.container, this.props.containerStyle]}>
         <Swiper
@@ -203,7 +199,7 @@ class Promotion extends Component {
           containerStyle={{
             ...styles.slideContainerStyle,
             ...dimensionStyle,
-            ...this.props.containerStyle,
+            ...this.props.containerStyle
           }}
           style={styles.slideStyle}>
           {this.props.data.map((promotion, index) =>

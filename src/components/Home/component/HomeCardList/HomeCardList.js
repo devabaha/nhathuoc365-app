@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   viewAll: {
-    ...appConfig.styles.typography.title,
+    ...appConfig.styles.typography.text,
     color: '#0084ff',
   },
   listContainer: {

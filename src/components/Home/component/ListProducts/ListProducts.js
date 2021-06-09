@@ -140,11 +140,10 @@ const styles = StyleSheet.create({
   heading: {
     flex: 1,
     marginRight: 20,
-    textTransform: 'lowercase',
     ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
   },
   contentHorizontal: {},
   listVertical: {

@@ -22,6 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
+  Drawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -140,7 +141,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import CameraView from './components/CameraView/CameraView';
-import {CaptureFaceID} from './containers/IView';
+import { CaptureFaceID } from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
@@ -162,6 +163,12 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
+import ModalFilter from './components/stores/ModalFilter';
+import FilterComponent from './components/stores/FilterDrawer';
+import {ModalComment, SocialCreatePost} from './components/Social';
+import {Social, SocialNews, SocialGroup} from './containers/Social';
+import ModalEditImages from './components/ModalEditImages';
+import SalesReport from './containers/SalesReport/SalesReport';
 
 /**
  * Not allow font scaling
@@ -330,6 +337,7 @@ class App extends Component {
       }
 
       try {
+        console.log('APP', params, this.props);
         if (params['+clicked_branch_link']) {
           if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
@@ -357,6 +365,7 @@ class App extends Component {
   handleOpenningNotification = (openResult) => {
     const {t} = this.props;
     const params = openResult.notification.payload.additionalData;
+    console.log(params);
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
     } else {
@@ -596,7 +605,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{overflow: 'scroll', flex: 1}}>
+      <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <GPSStoreLocation /> */}
         {this.state.header}
         <NetWorkInfo />
@@ -729,6 +738,19 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
+              {/* <Drawer
+                key="drawer-filter"
+                hideNavBar={true}
+                drawerPosition="right"
+                drawerWidth={350}
+                contentComponent={FilterComponent}>
+                <Scene
+                  key={`${appConfig.routes.store}_1`}
+                  component={StoreContainer}
+                  {...navBarConfig}
+                  back
+                />
+              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -753,7 +775,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
-                    iconName="home-outline"
+                    iconName="store"
                     iconSize={24}>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
@@ -770,12 +792,12 @@ class RootRouter extends Component {
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="newspaper-outline"
+                    iconName="bell"
                     iconSize={24}
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={SocialNews}
                     />
                   </Stack>
 
@@ -783,7 +805,8 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    primaryColor={appConfig.colors.primary}
+                  >
                     <Scene component={() => null} />
                   </Stack>
 
@@ -795,8 +818,9 @@ class RootRouter extends Component {
                     icon={TabIcon}
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
-                    iconName="cart-outline"
-                    notifyKey="notify_cart">
+                    iconName="cart"
+                    notifyKey="notify_cart"
+                  >
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
@@ -817,7 +841,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.accountTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab5.title')}
-                    iconName="person-outline"
+                    iconName="account-circle"
                     notifyKey="notify_account"
                     navigationBarStyle={{
                       backgroundColor: '#fff',
@@ -838,6 +862,56 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ SOCIAL ================ */}
+                <Stack key={appConfig.routes.social}>
+                  <Scene
+                    key={`${appConfig.routes.social}_1`}
+                    component={Social}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL GROUPS ================ */}
+                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroup}>
+                  <Scene
+                    key={`${appConfig.routes.socialGroup}_1`}
+                    component={SocialGroup}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL CREATE POST ================ */}
+                <Stack key={appConfig.routes.socialCreatePost}>
+                  <Scene
+                    key={`${appConfig.routes.socialCreatePost}_1`}
+                    component={SocialCreatePost}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL EDIT IMAGES ================ */}
+                <Stack key={appConfig.routes.modalEditImages}>
+                  <Scene
+                    key={`${appConfig.routes.modalEditImages}_1`}
+                    component={ModalEditImages}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
@@ -866,6 +940,15 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     title={t('screen.commissionIncomeStatement.mainTitle')}
                     component={CommissionIncomeStatement}
+                    back
+                  />
+                </Stack>
+                <Stack key={appConfig.routes.salesReport}>
+                  <Scene
+                    key={`${appConfig.routes.salesReport}_1`}
+                    {...navBarConfig}
+                    title={t('screen.salesReport.mainTitle')}
+                    component={SalesReport}
                     back
                   />
                 </Stack>
@@ -933,7 +1016,8 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
-                    component={Notify}
+                    component={SocialNews}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>
@@ -1019,6 +1103,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.deepLinkOrdersTab}_1`}
                     title="Đơn hàng"
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1153,6 +1243,13 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                {/* <Drawer
+                  key={appConfig.routes.store}
+                  hideNavBar={true}
+                  drawerPosition="right"
+                  drawerWidth={350}
+                  hideDrawerButton={true}
+                  contentComponent={(props) => <FilterComponent {...props} />}> */}
                 <Stack key={appConfig.routes.store}>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
@@ -1161,6 +1258,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1236,7 +1334,15 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title={t('screen.news.mainTitle')}
+                    component={SocialNews}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.notifiesVertical}>
+                  <Scene
+                    key={`${appConfig.routes.notifiesVertical}_1`}
                     component={Notify}
                     {...navBarConfig}
                     back
@@ -1326,7 +1432,7 @@ class RootRouter extends Component {
                   <Scene key="chat_1" component={Chat} {...navBarConfig} back />
                 </Stack>
 
-                <Stack key="webview">
+                <Stack key={appConfig.routes.webview}>
                   <Scene
                     key="webview_1"
                     component={WebView}
@@ -1684,6 +1790,16 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                {/* ================ QR/BAR CODE ================ */}
+                <Stack key={appConfig.routes.qrBarCodeInputable}>
+                  <Scene
+                    key={`${appConfig.routes.qrBarCodeInputable}_1`}
+                    component={QRBarCode}
+                    renderBackButton={CloseButton}
+                    back
+                  />
+                </Stack>
               </Scene>
 
               {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
@@ -1751,6 +1867,11 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
+              {/* ================ MODAL FILTER PRODUCT================ */}
+              <Stack
+                key={appConfig.routes.filterProduct}
+                component={ModalFilter}
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -1762,7 +1883,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1772,7 +1892,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -1783,7 +1902,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -1795,7 +1913,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene
@@ -1811,9 +1928,9 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.modalCameraView}_1`}
                 component={CameraView}
                 hideNavBar
-              />
+                />
             </Stack>
-
+            
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

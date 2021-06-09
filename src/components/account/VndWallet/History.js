@@ -72,11 +72,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: '#404040'
+    color: '#404040',
+    width: '80%'
   },
   des: {
     fontSize: 12,
-    color: '#404040'
+    color: '#404040',
   },
   note: {
     padding: 15,
@@ -100,7 +101,7 @@ const HistoryRow = props => {
   return (
     <TouchableOpacity
       style={[styles.history_row]}
-      onPress={this._onShowHistoryDetail}
+      onPress={_onShowHistoryDetail}
     >
       <View
         style={[
@@ -118,12 +119,12 @@ const HistoryRow = props => {
           size={24}
         />
         <View style={[styles.history_row_main_content]}>
-          <Text style={[styles.title]}>
-            {props.title.substring(0, 25) + '...'}
+          <Text numberOfLines={1} style={[styles.title]}>
+            {props.title}
           </Text>
           <Text style={[styles.des]}>{props.date}</Text>
-          <Text style={[styles.des]}>
-            Txid: {props.id.substring(0, 25) + '...'}
+          <Text numberOfLines={1} style={[styles.des, {maxWidth: '60%'}]}>
+            Txid: {props.id}
           </Text>
         </View>
       </View>

@@ -34,6 +34,8 @@ import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -54,6 +56,7 @@ class Account extends Component {
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
     this.requests = [this.getWarehouseRequest];
+    this.unmounted = false;
   }
 
   get options() {
@@ -109,20 +112,20 @@ class Account extends Component {
         labelStyle: [
           styles.premiumLabel,
           {
-            color: '#333',
+            color: premium_color,
           },
         ],
         desc: premium_info,
         descStyle: {
-          color: '#8B8B8B',
+          color: '#ccc',
         },
         rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
-        // renderAfter: () =>
-        //   this.renderProgressPremium(
-        //     premium_point,
-        //     next_premium_point,
-        //     premium_color,
-        //   ),
+        renderAfter: () =>
+          this.renderProgressPremium(
+            premium_point,
+            next_premium_point,
+            premium_color,
+          ),
         onPress: () => Actions.push(appConfig.routes.premiumInfo),
         boxIconStyle: [
           styles.boxIconStyle,
@@ -142,23 +145,19 @@ class Account extends Component {
         key: 'default_wallet',
         icon: default_wallet.icon,
         label: (
-          <Text style={styles.profile_list_label}>{default_wallet.name} </Text>
-        ),
-        isHidden: !user_info.default_wallet,
-        rightIcon: (
-          <View style={[styles.rightPremiumContainer]}>
+          <Text style={styles.profile_list_label}>
+            {default_wallet.name}:{' '}
             <Text
               style={[
                 styles.profile_list_label_balance,
-                {color: default_wallet.color, paddingLeft: 10},
+                {color: default_wallet.color},
               ]}>
               {default_wallet.balance_view}
             </Text>
-            <View style={styles.rightPremiumIconContainer}>
-              <IconAngleRight />
-            </View>
-          </View>
+          </Text>
         ),
+        isHidden: !user_info.default_wallet,
+        rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.push(appConfig.routes.vndWallet, {
             title: default_wallet.name,
@@ -300,6 +299,7 @@ class Account extends Component {
         iconColor: '#ffffff',
         marginTop: !!premium_name,
       },
+
       {
         key: 'gold_member',
         icon: 'clipboard-text-multiple',
@@ -377,6 +377,27 @@ class Account extends Component {
       },
 
       {
+        key: 'report_npp',
+        iconType: 'MaterialCommunityIcons',
+        icon: 'script-text',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.salesReport.label'),
+        desc: t('options.salesReport.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.salesReport),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#72d4d3',
+          },
+        ],
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
+      },
+
+      {
         key: 'reset_pass',
         isHidden:
           !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TRANSACTION_PASS) ||
@@ -421,16 +442,17 @@ class Account extends Component {
       {
         key: '3',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
-        desc: t('options.termOfUse.desc'),
+        label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.webview({
-            title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW,
-            }),
-            url: APP_INFO,
-          }),
+        onPress: () => {
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_DETAIL,
+            news: {
+              title: t('options.termsOfUse.webViewTitle'),
+              id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
+            },
+          });
+        },
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -438,6 +460,30 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
+        // marginTop: true
+      },
+
+      {
+        key: '4',
+        icon: 'text-box-check-outline',
+        iconType: 'MaterialCommunityIcons',
+        label: t('options.termsOfUse.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+            title: t('options.termsOfUse.desc'),
+            id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#62459b',
+          },
+        ],
+        iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
       },
 
@@ -456,17 +502,17 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage,
+            onSelect: this.handleConfirmChangeAppLanguage
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189',
-          },
+            backgroundColor: '#175189'
+          }
         ],
         iconColor: '#ffffff',
-        marginTop: true,
+        marginTop: true
       },
 
       {
@@ -577,7 +623,7 @@ class Account extends Component {
       takePhotoButtonTitle: t('avatarPicker.takePhotoTitle'),
       chooseFromLibraryButtonTitle: t('avatarPicker.chooseFromLibraryTitle'),
       storageOptions: {
-        skipBackup: true,
+        // skipBackup: true,
         path: 'images',
       },
     };
@@ -588,7 +634,14 @@ class Account extends Component {
       } else if (response.didCancel) {
         console.log(response);
       } else {
-        // console.log(response);
+        if (!response.fileName) {
+          response.fileName = new Date().getTime();
+          if (response.type) {
+            response.fileName += '.' + response.type.split('image/')[1];
+          } else {
+            response.fileName += '.jpeg';
+          }
+        }
         this.uploadAvatar(response);
         // this.uploadFaceID(response);
       }
@@ -640,20 +693,35 @@ class Account extends Component {
           {
             'Content-Type': 'multipart/form-data',
           },
-          [avatar],
+          [avatar, {name: 'site_id', data: store.store_data?.id}],
         )
           .then((resp) => {
+            if (this.unmounted) return;
+
             var {data} = resp;
             var response = JSON.parse(data);
             if (response && response.status == STATUS_SUCCESS) {
               this.showSticker();
-              this.setState({
-                avatar_loading: false,
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message:
+                  response.message || this.props.t('common:api.error.message'),
               });
             }
           })
           .catch((error) => {
             console.log(error);
+            flashShowMessage({
+              type: 'danger',
+              message: this.props.t('common:api.error.message'),
+            });
+          })
+          .finally(() => {
+            if (this.unmounted) return;
+            this.setState({
+              avatar_loading: false,
+            });
           });
       },
     );
@@ -669,6 +737,7 @@ class Account extends Component {
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
@@ -679,6 +748,8 @@ class Account extends Component {
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
+      if (this.unmounted) return;
+
       const listWarehouse =
         responseData?.stores?.map((store) => ({
           ...store,
@@ -696,6 +767,7 @@ class Account extends Component {
         message: err.message || t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
       this.setState({isWarehouseLoading: false});
     }
   }
@@ -711,6 +783,7 @@ class Account extends Component {
           store.setUserInfo(response.data);
           store.setOrdersKeyChange(store.orders_key_change + 1);
 
+          if (this.unmounted) return;
           this.setState({
             refreshing: false,
           });
@@ -725,6 +798,8 @@ class Account extends Component {
     const data = {store_id: warehouse.id};
     try {
       this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      if (this.unmounted) return;
+
       const responseData = await this.updateWarehouseRequest.promise();
       flashShowMessage({
         type: 'success',
@@ -737,6 +812,7 @@ class Account extends Component {
         message: error.message || this.props.t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
       this.setState({isWarehouseLoading: false});
     }
   }
@@ -913,7 +989,6 @@ class Account extends Component {
       <View style={styles.container}>
         <ScrollView
           ref={(ref) => (this.refs_account = ref)}
-          contentContainerStyle={{marginTop: 7.5}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -992,7 +1067,6 @@ class Account extends Component {
                           styles.profile_list_label,
                           {
                             fontSize: 18,
-                            fontWeight: 'bold',
                           },
                         ]}
                         numberOfLines={1}>
@@ -1281,57 +1355,6 @@ class Account extends Component {
       </View>
     );
   }
-
-  handleLogout() {
-    Alert.alert(
-      t('signOut.title'),
-      t('signOut.subTitle'),
-      [
-        {
-          text: t('signOut.cancel'),
-          onPress: () => {},
-        },
-        {
-          text: t('signOut.accept'),
-          onPress: this.logout,
-          style: 'destructive',
-        },
-      ],
-      {cancelable: false},
-    );
-  }
-
-  logout = async () => {
-    this.setState({
-      logout_loading: true,
-    });
-    try {
-      const response = await APIHandler.user_logout();
-      switch (response.status) {
-        case STATUS_SUCCESS:
-          store.removeAnalytics();
-          store.setUserInfo(response.data);
-          store.resetCartData();
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-          store.setOrdersKeyChange(store.orders_key_change + 1);
-          store.resetAsyncStorage();
-          flashShowMessage({
-            message: t('signOut.successMessage'),
-            type: 'success',
-          });
-          Actions.reset(appConfig.routes.sceneWrapper);
-          break;
-        default:
-          console.log('default');
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({
-        logout_loading: false,
-      });
-    }
-  };
 }
 
 const styles = StyleSheet.create({
@@ -1444,8 +1467,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   profile_list_label_balance: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 18,
+    color: '#922B21',
+    fontWeight: '600',
+    left: 20,
   },
   profile_list_label_address: {
     fontSize: 16,
@@ -1553,14 +1578,16 @@ const styles = StyleSheet.create({
   premiumContainer: {
     height: null,
     minHeight: 80,
-    backgroundColor: '#fff',
-    paddingVertical: 20,
+    backgroundColor: '#242424',
+    paddingTop: 12,
+    paddingBottom: 15,
+    ...elevationShadowStyle(4),
   },
   premiumLabel: {
-    // fontFamily: 'SairaStencilOne-Regular',
+    fontFamily: 'SairaStencilOne-Regular',
     // fontWeight: 'bold',
-    // textTransform: 'uppercase',
-    fontSize: 16,
+    textTransform: 'uppercase',
+    fontSize: 20,
     letterSpacing: 1,
   },
   rightPremiumContainer: {
@@ -1568,9 +1595,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 15,
     paddingVertical: 3,
-    // backgroundColor: '#f6f6f6',
-    // borderTopLeftRadius: 20,
-    // borderBottomLeftRadius: 20,
+    backgroundColor: '#f6f6f6',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
     marginLeft: 10,
     marginRight: -15,
   },
@@ -1578,7 +1605,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: -5,
     color: '#242424',
-    fontSize: 12,
+    fontSize: 10,
   },
   rightPremiumHighlight: {
     fontWeight: '500',
