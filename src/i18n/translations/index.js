@@ -56,6 +56,8 @@ import vi_social from './vi/social.json';
 import en_social from './en/social.json';
 import vi_salesReport from './vi/salesReport.json';
 import en_salesReport from './en/salesReport.json';
+import vi_progressTracking from './vi/progressTracking.json';
+import en_progressTracking from './en/progressTracking.json';
 
 export default {
   [languages.vi.value]: {
@@ -87,6 +89,7 @@ export default {
     commissionIncomeStatement: vi_commissionIncomeStatement,
     social: vi_social,
     salesReport: vi_salesReport,
+    progressTracking: vi_progressTracking,
   },
   [languages.en.value]: {
     common: en_common,
@@ -117,5 +120,6 @@ export default {
     commissionIncomeStatement: en_commissionIncomeStatement,
     social: en_social,
     salesReport: en_salesReport,
+    progressTracking: en_progressTracking,
   },
 };

@@ -74,8 +74,8 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.WEBVIEW:
       Actions.push(appConfig.routes.webview, {
         title: service.title,
-        url: service.url
-      })
+        url: service.url,
+      });
       break;
 
     /** QRBARCODE */
@@ -191,7 +191,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         id: service.categoryId,
       });
       break;
-      case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
+    case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
       Actions.push(appConfig.routes.notifiesVertical, {
         title: service.title,
         id: service.id,
@@ -220,7 +220,10 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
-            if (response.data.config_menu_categories && service.categoryId === undefined) {
+            if (
+              response.data.config_menu_categories &&
+              service.categoryId === undefined
+            ) {
               Actions.push(appConfig.routes.multiLevelCategory, {
                 title: response.data.name,
                 siteId: service.siteId,
@@ -392,6 +395,21 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.socialGroup, {
         id: service.id,
         groupName: service.name,
+      });
+      break;
+
+    /** PROGRESS TRACKING */
+    /** LIST */
+    case SERVICES_TYPE.LIST_PROGRESS_TRACKING:
+      Actions.push(appConfig.routes.listProgressTracking, {
+        title: service.title,
+      });
+      break;
+    /** DETAIL */
+    case SERVICES_TYPE.PROGRESS_TRACKING_DETAIL:
+      Actions.push(appConfig.routes.progressTrackingDetail, {
+        title: service.title,
+        id: service.id,
       });
       break;
     default:

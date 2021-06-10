@@ -30,6 +30,7 @@ import {
 } from 'src/helper/social';
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import ScreenWrapper from '../ScreenWrapper';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -266,25 +267,35 @@ class NotifyItem extends Component {
         </ScrollView>
 
         {!!item_data && (
-          <ActionContainer
-            style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
-            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
-            commentsCount={getSocialCommentsCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
-            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            onActionBarPress={(type) =>
-              handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, item_data)
-            }
-            hasInfoExtraBottom={false}
-            onPressTotalComments={() =>
-              handleSocialActionBarPress(
+          <ScreenWrapper
+            containerStyle={styles.actionWrapper}
+            style={styles.actionContainer}>
+            <ActionContainer
+              isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+              likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+              commentsCount={getSocialCommentsCount(
                 SOCIAL_DATA_TYPES.NEWS,
-                SOCIAL_BUTTON_TYPES.COMMENT,
                 item_data,
-                false,
-              )
-            }
-          />
+              )}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+              onActionBarPress={(type) =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  type,
+                  item_data,
+                )
+              }
+              hasInfoExtraBottom={false}
+              onPressTotalComments={() =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  item_data,
+                  false,
+                )
+              }
+            />
+          </ScreenWrapper>
         )}
 
         {/* {item_data != null && item_data.related && (
@@ -449,9 +460,13 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 
-  actionContainer: {
+  actionWrapper: {
+    flex: undefined,
     backgroundColor: '#fff',
     ...elevationShadowStyle(7),
+  },
+  actionContainer: {
+    flex: undefined,
   },
 });
 

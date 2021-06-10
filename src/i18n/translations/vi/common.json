@@ -222,5 +222,6 @@
   "copy": "Sao chép",
   "cancel": "Huỷ",
   "addImages": "Thêm ảnh",
-  "addImagesDescription": "Chạm để thêm ảnh"
+  "addImagesDescription": "Chạm để thêm ảnh",
+  "noResult": "Chưa có dữ liệu"
 }

@@ -164,6 +164,9 @@ import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
+import ProgressTracking, {
+  ProgressTrackingDetail,
+} from './containers/ProgressTracking';
 
 /**
  * Not allow font scaling
@@ -845,6 +848,26 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ LIST PROGRESS TRACKING ================ */}
+                <Stack key={appConfig.routes.listProgressTracking}>
+                  <Scene
+                    key={`${appConfig.routes.listProgressTracking}_1`}
+                    component={ProgressTracking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ PROGRESS ITEM ================ */}
+                <Stack key={appConfig.routes.progressTrackingDetail}>
+                  <Scene
+                    key={`${appConfig.routes.progressTrackingDetail}_1`}
+                    component={ProgressTrackingDetail}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ SOCIAL ================ */}
                 <Stack key={appConfig.routes.social}>
                   <Scene
@@ -856,7 +879,9 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ SOCIAL GROUPS ================ */}
-                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroup}>
+                <Stack
+                  headerLayoutPreset={'left'}
+                  key={appConfig.routes.socialGroup}>
                   <Scene
                     key={`${appConfig.routes.socialGroup}_1`}
                     component={SocialGroup}

@@ -460,16 +460,24 @@ class CommonAPI {
     return BaseAPI.socialDomain + 'groups';
   }
 
-  get SOCIAL_GROUPS_SHOW(){
+  get SOCIAL_GROUPS_SHOW() {
     return BaseAPI.socialDomain + 'groups/show';
   }
 
-  get SOCIAL_POSTS(){
+  get SOCIAL_POSTS() {
     return BaseAPI.socialDomain + 'posts';
   }
 
   get SOCIAL_CREATE_POST() {
     return BaseAPI.socialDomain + 'posts/store';
+  }
+
+  get USER_LIST_WARRANTY() {
+    return BaseAPI.apiDomain + 'apiUser/warrantys';
+  }
+
+  get USER_WARRANTY_DETAIL() {
+    return BaseAPI.apiDomain + 'apiUser/warranty_detail';
   }
 }
 

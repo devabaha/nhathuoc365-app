@@ -95,6 +95,9 @@ export const SERVICES_TYPE = {
 
   /** SOCIAL */
   SOCIAL: 'social',
-  SOCIAL_GROUP: 'social_group'
+  SOCIAL_GROUP: 'social_group',
 
+  /** PROGRESS TRACKING */
+  LIST_PROGRESS_TRACKING: 'list_progress_tracking',
+  PROGRESS_TRACKING_DETAIL: 'progress_tracking_detail',
 };

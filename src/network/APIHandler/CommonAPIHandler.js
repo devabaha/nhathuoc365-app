@@ -1160,6 +1160,22 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.SOCIAL_CREATE_POST);
     return this.postCancelableAPI(api, data);
   }
+
+  /**
+   * get list warranty
+   */
+  user_list_warranty() {
+    const api = url_for(API.USER_LIST_WARRANTY);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get warranty detail
+   */
+  user_warranty_detail(id) {
+    const api = url_for(API.USER_WARRANTY_DETAIL + '/' + id);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

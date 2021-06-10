@@ -272,7 +272,10 @@ class Config {
       socialGroup: 'socialGroup',
       socialCreatePost: 'socialCreatePost',
 
-      webview: 'webview'
+      webview: 'webview',
+
+      listProgressTracking: 'listProgressTracking',
+      progressTrackingDetail: 'progressTrackingDetail'
     };
   }
 }

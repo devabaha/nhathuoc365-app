@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- ProgressTracking list and detail.
+### Fixed
+- Lost data of current cart after deleting address in Confirm.
+
 ## [r11.6.5] - 2021-06-08
 ### Added
 - Webview for servicesHandler.

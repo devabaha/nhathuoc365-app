@@ -49,35 +49,6 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     height: 2,
   },
-
-  separator: {
-    width: '100%',
-    height: 2,
-    backgroundColor: '#cccccc',
-  },
-  headerView: {
-    backgroundColor: 'rgb(255,255,255)',
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerContentView: {
-    width: Util.size.width - 70,
-  },
-  titleHeaderTexxt: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  descHeaderTexxt: {
-    fontSize: 15,
-  },
-  boxIconStyle: {
-    backgroundColor: DEFAULT_COLOR,
-    marginRight: 10,
-    marginLeft: 6,
-    borderRadius: 15,
-  },
 });
 
 class News extends Component {
