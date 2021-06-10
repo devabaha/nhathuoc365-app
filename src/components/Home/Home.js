@@ -23,8 +23,9 @@ import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+import store from 'app-store';
 import {
-  isActivePackageOptionConfig,
+  getPackageOptionValue,
   PACKAGE_OPTIONS_TYPE,
 } from '../../helper/packageOptionsHandler';
 
@@ -184,9 +185,7 @@ class Home extends Component {
   }
 
   get isVisibleLoyaltyBox() {
-    return isActivePackageOptionConfig(
-      PACKAGE_OPTIONS_TYPE.DISABLE_PACKAGE_OPTION_LOYALTY_BOX,
-    );
+    return !getPackageOptionValue(PACKAGE_OPTIONS_TYPE.DISABLE_PACKAGE_OPTION_LOYALTY_BOX)
   }
 
   handleHeaderLayout(e) {
