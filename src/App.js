@@ -22,7 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
-  Drawer,
+  Drawer as RNRFDrawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -163,12 +163,13 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import ModalFilter from './components/stores/ModalFilter';
-import FilterComponent from './components/stores/FilterDrawer';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
+import {FilterDrawer, ModalFilterProduct} from './components/stores/FilterProduct';
+import Drawer from './components/Drawer';
+
 
 /**
  * Not allow font scaling
@@ -614,6 +615,7 @@ class App extends Component {
           t={this.props.t}
           setHeader={this.setHeader.bind(this)}
         />
+        <Drawer />
         <FlashMessage icon={'auto'} />
         {this.state.isOpenCodePushModal && (
           <AwesomeAlert
@@ -738,19 +740,6 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
-              {/* <Drawer
-                key="drawer-filter"
-                hideNavBar={true}
-                drawerPosition="right"
-                drawerWidth={350}
-                contentComponent={FilterComponent}>
-                <Scene
-                  key={`${appConfig.routes.store}_1`}
-                  component={StoreContainer}
-                  {...navBarConfig}
-                  back
-                />
-              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -932,6 +921,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
                 <Stack key={appConfig.routes.salesReport}>
                   <Scene
                     key={`${appConfig.routes.salesReport}_1`}
@@ -1232,22 +1222,23 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* <Drawer
+                <Stack key={appConfig.routes.store}>
+                  {/* <RNRFDrawer
                   key={appConfig.routes.store}
-                  hideNavBar={true}
+                  // hideNavBar={true}
                   drawerPosition="right"
                   drawerWidth={350}
                   hideDrawerButton={true}
-                  contentComponent={(props) => <FilterComponent {...props} />}> */}
-                <Stack key={appConfig.routes.store}>
+                  contentComponent={(props) => <FilterDrawer {...props} />}> */}
+
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
+                  {/* </RNRFDrawer> */}
                 </Stack>
-                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1859,7 +1850,7 @@ class RootRouter extends Component {
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
-                component={ModalFilter}
+                component={ModalFilterProduct}
               />
             </Lightbox>
 

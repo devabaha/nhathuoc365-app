@@ -197,7 +197,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  async site_category_product_by_filter(
+  site_category_product_by_filter(
     store_id,
     category_id,
     page_num,
@@ -212,8 +212,8 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         page_num,
     );
-    console.log({hii: params, category_id});
-    return await this.postAPI(api, params);
+
+    return this.postCancelableAPI(api, params);
   }
 
   /**
@@ -983,9 +983,9 @@ class CommonAPIHandler extends BaseHandler {
    * @todo get list warehouse
    *
    */
-  user_site_store() {
+  user_site_store(data) {
     const api = url_for(API.USER_SITE_STORE);
-    return this.getCancelableAPI(api, true);
+    return this.postCancelableAPI(api, data, undefined, true);
   }
 
   /**
@@ -1119,8 +1119,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.getCancelableAPI(api);
   }
 
-  getListFilterProduct(siteId) {
-    const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
+  site_get_tags(siteId) {
+    const api = url_for(API.SITE_GET_TAGS + '/' + siteId + '/' + 'product');
     return this.getCancelableAPI(api);
   }
 

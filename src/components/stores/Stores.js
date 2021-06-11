@@ -23,10 +23,10 @@ import EventTracker from '../../helper/EventTracker';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
 import APIHandler from 'src/network/APIHandler';
-import {APIRequest} from 'src/network/Entity';
 import {reaction} from 'mobx';
-import FilterProduct from './FilterProduct';
+import {FilterProduct} from './FilterProduct';
 import {isEmpty} from 'lodash';
+import {clearDrawerContent} from '../Drawer';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
@@ -81,15 +81,17 @@ class Stores extends Component {
     this.eventTracker = new EventTracker();
     this.animatedScrollY = new Animated.Value(0);
     this.animatedContentOffsetY = new Animated.Value(0);
+
+    this.disposer = () => {};
   }
 
   get isGetFullStore() {
     return this.props.categoryId === 0;
   }
 
-  handleEffect = async (value) => {
+  handleEffect = (value) => {
     if (isEmpty(value)) {
-      await this.setState({
+      this.setState({
         filterParams: {
           order: this.state.valueSort?.order ?? '',
           sort_by: this.state.valueSort?.value ?? '',
@@ -114,7 +116,7 @@ class Stores extends Component {
       order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
       sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
     };
-    await this.setState({filterParams: params});
+    this.setState({filterParams: params});
   };
 
   componentDidMount() {
@@ -133,7 +135,7 @@ class Stores extends Component {
       });
     });
     this.eventTracker.logCurrentView();
-    reaction(
+    this.disposer = reaction(
       () => store.selectedFilter,
       (data) => this.handleEffect(data),
     );
@@ -142,7 +144,9 @@ class Stores extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.disposer();
     store.setSelectedFilter({});
+    clearDrawerContent();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -407,13 +411,25 @@ class Stores extends Component {
 
   handleValue = async (value) => {
     this.setState((prev) => {
+      let order = value.order,
+        sort_by = value.value,
+        valueSort = value;
+      if (
+        order === prev.filterParams?.order &&
+        sort_by === prev.filterParams?.sort_by
+      ) {
+        order = '';
+        sort_by = '';
+        valueSort = {};
+      }
+
       return {
         filterParams: {
           ...prev.filterParams,
-          sort_by: value.value,
-          order: value.order,
+          sort_by,
+          order,
         },
-        valueSort: value,
+        valueSort,
       };
     });
   };
@@ -469,11 +485,15 @@ class Stores extends Component {
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
-        {/* <FilterProduct
-          selectedFilter={store.selectedFilter}
-          dataSort={dataSort}
-          onValueSort={this.handleValue}
-        /> */}
+        {this.state.categories_data != null && (
+          <FilterProduct
+            selectedFilter={store.selectedFilter}
+            dataSort={dataSort}
+            onValueSort={this.handleValue}
+            animatedScrollY={this.animatedScrollY}
+            animatedContentOffsetY={this.animatedContentOffsetY}
+          />
+        )}
 
         {this.state.categories_data != null && (
           <FlatList
@@ -548,7 +568,6 @@ class Stores extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: appConfig.device.bottomSpace,
   },
   right_btn_box: {
     flexDirection: 'row',

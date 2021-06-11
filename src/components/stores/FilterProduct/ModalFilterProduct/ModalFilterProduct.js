@@ -1,9 +1,8 @@
-import React, {memo, useEffect, useRef, useState} from 'react';
+import React, {memo, useRef, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Platform,
   FlatList,
   TouchableOpacity,
 } from 'react-native';
@@ -11,9 +10,8 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Feather';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
-import {isEmpty} from 'lodash';
 
-function ModalFilter({
+function ModalFilterProduct({
   onSelectValue = () => {},
   data = [],
   defaultSelected = {},
@@ -46,7 +44,7 @@ function ModalFilter({
       <TouchableOpacity style={styles.itemContainer} onPress={handleItem(item)}>
         <Text style={styles.text}>{item.name}</Text>
         {item.id === selected.id && (
-          <Icon name="check" color="#EC959F" size={20} />
+          <Icon name="check" color={appConfig.colors.primary} size={20} />
         )}
       </TouchableOpacity>
     );
@@ -55,6 +53,7 @@ function ModalFilter({
   const renderList = () => {
     return (
       <FlatList
+        contentContainerStyle={styles.contentContainer}
         data={data}
         extraData={selected}
         keyExtractor={(i, index) => `${index}__${i.id}`}
@@ -73,7 +72,9 @@ function ModalFilter({
       isOpen
       onClosed={() => Actions.pop()}
       useNativeDriver>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+      </View>
       {renderList()}
     </Modal>
   );
@@ -82,7 +83,12 @@ const styles = StyleSheet.create({
   modal: {
     height: 'auto',
     backgroundColor: '#fff',
-    paddingBottom: appConfig.device.isIphoneX ? 23 : 10,
+    paddingBottom: appConfig.device.bottomSpace
+      ? appConfig.device.bottomSpace
+      : 0,
+  },
+  contentContainer: {
+    paddingVertical: 5,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -92,40 +98,24 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   text: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#333',
   },
-  btnContainer: {
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    backgroundColor: appConfig.primaryColor,
-    marginHorizontal: 10,
-    marginTop: 15,
-  },
-  txtButton: {
-    color: '#fff',
-    fontWeight: '500',
+  titleContainer: {
+    paddingTop: 15,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    borderBottomWidth: 0.5,
+    borderColor: '#eee',
+    backgroundColor: appConfig.colors.primary
   },
   title: {
-    fontSize: 20,
-    color: '#333',
+    fontSize: 18,
     fontWeight: 'bold',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-  },
-  box: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
-  },
-  btnTag: {
-    flex: 0.5,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    color: '#fff',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 });
 
-export default memo(ModalFilter);
+export default memo(ModalFilterProduct);

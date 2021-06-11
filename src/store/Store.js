@@ -328,7 +328,7 @@ class Store {
     this.deep_link_data = data;
   }
 
-  @action setSelectedFilter(data) {
+  @action setSelectedFilter(data = {}) {
     this.selectedFilter = data;
   }
 
@@ -758,6 +758,11 @@ class Store {
     } else {
       postData(data);
     }
+  }
+
+  @observable selectedNewsId = "";
+  @action setSelectedNewsId(selectedNewsId = ""){
+    this.selectedNewsId = selectedNewsId;
   }
 }
 

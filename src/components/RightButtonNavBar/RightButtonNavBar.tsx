@@ -182,7 +182,6 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   render() {
-    // this.updateNoti();
     const TouchableComponent = this.props.touchableOpacity
       ? TouchableOpacity
       : TouchableHighlight;

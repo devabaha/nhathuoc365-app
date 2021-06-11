@@ -448,12 +448,17 @@ class CommonAPI {
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }
-  get FILTER_URL_TAG() {
-    return BaseAPI.apiDomain + 'apiSite/get_tags/';
+
+  get SITE_GET_TAGS() {
+    return BaseAPI.apiDomain + 'apiSite/get_tags';
   }
 
   get USER_LIST_NEWS_CATEGORY() {
     return BaseAPI.apiDomain + 'apiUser/list_news_category';
+  }
+
+  get USER_INVITED_REVENUE() {
+    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
   }
 
   // Social
@@ -468,9 +473,7 @@ class CommonAPI {
   get SOCIAL_LIKES() {
     return BaseAPI.socialDomain + 'likes/store';
   }
-  get USER_INVITED_REVENUE() {
-    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
-  }
+
   get SOCIAL_GROUPS() {
     return BaseAPI.socialDomain + 'groups';
   }
