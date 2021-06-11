@@ -11,10 +11,30 @@ import {showDrawer} from '../../Drawer';
 import FilterDrawer from './FilterDrawer';
 import Container from '../../Layout/Container';
 
+const SORT_OPTIONS = [
+  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
+  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'desc'},
+  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'desc'},
+  {
+    id: 4,
+    name: 'Giá từ thấp đến cao',
+    value: 'price',
+    isSelected: false,
+    order: 'asc',
+  },
+  {
+    id: 5,
+    name: 'Giá từ cao đến thấp',
+    value: 'price',
+    isSelected: false,
+    order: 'desc',
+  },
+];
+
 function FilterProduct({
   titleLeft = 'Sắp xếp',
   titleRight = 'Lọc',
-  dataSort = [],
+  options: optionsProp = SORT_OPTIONS,
   animatedScrollY = new Animated.Value(0),
   animatedContentOffsetY = new Animated.Value(0),
   wrapperStyle,
@@ -29,7 +49,7 @@ function FilterProduct({
   const translateY = useRef(new Animated.Value(0));
 
   useEffect(() => {
-    setOptions(dataSort);
+    setOptions(optionsProp);
   }, []);
 
   const handleRemoveTag = (tag) => () => {

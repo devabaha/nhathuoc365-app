@@ -30,26 +30,6 @@ import {clearDrawerContent} from '../Drawer';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
-const dataSort = [
-  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
-  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'desc'},
-  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'desc'},
-  {
-    id: 4,
-    name: 'Giá từ thấp đến cao',
-    value: 'price',
-    isSelected: false,
-    order: 'asc',
-  },
-  {
-    id: 5,
-    name: 'Giá từ cao đến thấp',
-    value: 'price',
-    isSelected: false,
-    order: 'desc',
-  },
-];
-
 class Stores extends Component {
   static propTypes = {
     categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -414,10 +394,8 @@ class Stores extends Component {
       let order = value.order,
         sort_by = value.value,
         valueSort = value;
-      if (
-        order === prev.filterParams?.order &&
-        sort_by === prev.filterParams?.sort_by
-      ) {
+
+      if (valueSort.id === prev.valueSort?.id) {
         order = '';
         sort_by = '';
         valueSort = {};
@@ -488,7 +466,6 @@ class Stores extends Component {
         {this.state.categories_data != null && (
           <FilterProduct
             selectedFilter={store.selectedFilter}
-            dataSort={dataSort}
             onValueSort={this.handleValue}
             animatedScrollY={this.animatedScrollY}
             animatedContentOffsetY={this.animatedContentOffsetY}
