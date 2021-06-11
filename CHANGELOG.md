@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.6.6] - 2021-06-11
+### Changed
+- Publish FilterProduct.
+- NewsCategory will be jumped in instead of being pushed in.
+- GPSListStore will re-call api to update data by lat, lng.
+### Fixed
+- Fix UI, finish logic of FilterProduct.
+- CartFooter is not avoid the bottom extra space.
+- Share button social not include url.
+- ListPrice of FilterProduct not scroll correctly to input when it's focused.
+
 ## [r11.6.5] - 2021-06-08
 ### Added
 - Webview for servicesHandler.
@@ -25,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
 - Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
 ### Fixed
-- Wrong params for Filter product News-est and Best-selling mode.
+- Wrong params for FilterProduct News-est and Best-selling mode.
 
 ## [r11.6.3] - 2021-05-24
 ### Added

@@ -10,9 +10,12 @@ import CartFooter from '../../components/cart/CartFooter';
 import ListStoreProductSkeleton from '../../components/stores/ListStoreProductSkeleton';
 import RightButtonChat from '../../components/RightButtonChat';
 
+import appConfig from 'app-config';
+
 const styles = StyleSheet.create({
   listContentContainer: {
     paddingTop: 8,
+    paddingBottom: appConfig.device.bottomSpace
   },
 });
 

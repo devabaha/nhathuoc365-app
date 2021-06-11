@@ -535,7 +535,7 @@ class CartFooter extends Component {
   }
 
   handleContainerLayout = (e) => {
-    const containerHeight = Math.round(e.nativeEvent.layout.height);
+    const containerHeight = Math.round(e.nativeEvent.layout.height - appConfig.device.bottomSpace);
     if (containerHeight !== this.state.containerHeight) {
       this.setState({
         containerHeight,
@@ -744,6 +744,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     ...elevationShadowStyle(7, 0, 0),
     width: '100%',
+    paddingBottom: appConfig.device.bottomSpace,
   },
   store_cart_container: {
     flex: 1,
@@ -913,6 +914,7 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     ...elevationShadowStyle(7, 0, 0, 0.5, appConfig.colors.primary),
     overflow: 'hidden',
+    marginBottom: appConfig.device.bottomSpace
   },
   quickOpenCartBtnContainer: {
     flex: 1,

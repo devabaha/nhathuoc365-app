@@ -451,6 +451,7 @@ const styles = StyleSheet.create({
 
   actionContainer: {
     backgroundColor: '#fff',
+    paddingBottom: appConfig.device.bottomSpace,
     ...elevationShadowStyle(7),
   },
 });
