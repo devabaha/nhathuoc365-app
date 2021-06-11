@@ -1,25 +1,17 @@
 import RNFetchBlob from 'rn-fetch-blob';
-import appConfig from 'app-config';
 
-export const handleDownloadImage = (url) => {
+const handleDownloadImage = (url) => {
   return (
     RNFetchBlob.fetch('GET', url)
       .then((res) => {
-        if (!!res) {
-          let status = res.info().status;
-          // let contentType = appConfig.device.isIOS ? 'Content-Type' : 'content-type';
-          // console.log(res);
-          // console.log(res.respInfo.headers[0])
-          if (status === STATUS_SUCCESS) {
-            // the conversion is done in native code
-            let base64Str = res.data;
-            let imageType = res.respInfo.headers['Content-Type'].slice(6);
-            // the following conversions are done in js, it's SYNC
-            return {base64Str: base64Str, imageType: imageType};
-          } else {
-            // handle other status codes
-            console.log('get b64 fail');
-          }
+        if (!!res && res.info().status === STATUS_SUCCESS) {
+          let imageType;
+          let base64Str = res.data;
+          if (res.respInfo.headers['content-type'] === undefined) {
+            imageType = res.respInfo.headers['Content-Type'].slice(6);
+          } else imageType = res.respInfo.headers['content-type'].slice(6);
+          // the following conversions are done in js, it's SYNC
+          return {base64Str: base64Str, imageType: imageType};
         } else {
           flashShowMessage({
             type: 'danger',
@@ -34,3 +26,5 @@ export const handleDownloadImage = (url) => {
       })
   );
 };
+
+export {handleDownloadImage};

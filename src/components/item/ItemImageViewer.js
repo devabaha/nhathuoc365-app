@@ -11,7 +11,7 @@ import EventTracker from '../../helper/EventTracker';
 import {handleSaveImage} from '../../helper/image';
 import ActionSheet from 'react-native-actionsheet';
 
-export default class ItemImageViewer extends Component {
+class ItemImageViewer extends Component {
   static defaultProps = {
     index: 0,
   };
@@ -88,3 +88,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default withTranslation('image')(observer(ItemImageViewer));

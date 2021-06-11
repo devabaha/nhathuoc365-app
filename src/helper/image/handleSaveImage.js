@@ -6,12 +6,10 @@ import {handleDownloadImage} from './handleDownloadImage';
 import showFlashNotification from '../../components/FlashNotification';
 import {PhotoLibraryPermission} from '../permissionHelper';
 
-const handleSaveImage = (data, message) => {
-  handleSaveSingleImage(data, message);
-};
-
 async function hasAndroidPermission() {
-  const granted = await PhotoLibraryPermission.request();
+  const granted = await (appConfig.device.isIOS
+    ? PhotoLibraryPermission.request()
+    : PhotoLibraryPermission.requestWriteExternalAndroid());
   if (granted) {
     return true;
   } else {
@@ -22,34 +20,28 @@ async function hasAndroidPermission() {
   }
 }
 
-const handleSaveSingleImage = async (dataURL, message) => {
+const handleSaveImage = async (url, message) => {
   const t = i18n.getFixedT(undefined, 'common');
   let base64, imageType;
   try {
-    const res = await handleDownloadImage(dataURL);
+    const res = await handleDownloadImage(url);
     if (res) {
       base64 = res.base64Str;
       imageType = res.imageType;
+      // console.log('alo',res.base64Str)
     }
-    // else {
-    //   flashShowMessage({
-    //     type: 'danger',
-    //     message: t('api.error.message'),
-    //   });
-    // }
   } catch (err) {
     console.log(err);
   }
+  // console.log(base64, imageType)
   const imageName = new Date().getTime() + '.' + imageType;
   const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
   const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
   try {
     const data = await (appConfig.device.isIOS
       ? CameraRoll.save(iOSPath, {type: 'photo'})
-      : hasAndroidPermission().then
-      ? RNFetchBlob.fs
-          .writeFile(androidPath, base64, 'base64')
-          .catch((err) => console.log(err))
+      : hasAndroidPermission()
+      ? RNFetchBlob.fs.writeFile(androidPath, base64, 'base64')
       : null);
     if (data) {
       showFlashNotification(t('saved'));
@@ -62,4 +54,5 @@ const handleSaveSingleImage = async (dataURL, message) => {
     console.log('err_save_single_image', error);
   }
 };
+
 export {handleSaveImage};
