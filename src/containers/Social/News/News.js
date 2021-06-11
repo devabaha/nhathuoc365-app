@@ -160,12 +160,15 @@ class News extends Component {
           if (response.data) {
             const routes = this.routesFormatter(response.data);
             let defaultIndex = this.props.indexTab;
-            if (this.props.id) {
+            const selectedId = store.setSelectedNewsId || this.props.id;
+            if (selectedId) {
               defaultIndex = routes.findIndex((r) => {
-                return r.id === this.props.id;
+                return r.id === selectedId;
               });
             }
             this.setState({routes, index: defaultIndex});
+
+            store.setSelectedNewsId();
           } else {
             flashShowMessage({
               type: 'danger',
