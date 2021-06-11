@@ -160,7 +160,7 @@ class News extends Component {
           if (response.data) {
             const routes = this.routesFormatter(response.data);
             let defaultIndex = this.props.indexTab;
-            const selectedId = store.setSelectedNewsId || this.props.id;
+            const selectedId = store.selectedNewsId || this.props.id;
             if (selectedId) {
               defaultIndex = routes.findIndex((r) => {
                 return r.id === selectedId;
