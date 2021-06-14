@@ -1138,8 +1138,9 @@ class Item extends Component {
               />
             </View>
           </Animated.ScrollView>
-          {this.renderCartFooter(item)}
         </SafeAreaView>
+
+        {this.renderCartFooter(item)}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
