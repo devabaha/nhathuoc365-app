@@ -11,6 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
+import { showDrawer } from 'src/components/Drawer';
 
 class Home extends Component {
   constructor(props) {

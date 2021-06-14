@@ -186,7 +186,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
-      Actions.push(appConfig.routes.notifies, {
+      store.setSelectedNewsId(service.categoryId || "")
+      // Actions.push(appConfig.routes.notifies, {
+      //   title: service.title,
+      //   id: service.categoryId,
+      // });
+      Actions.jump(appConfig.routes.newsTab, {
         title: service.title,
         id: service.categoryId,
       });

@@ -103,6 +103,11 @@ class News extends Component {
       () => this.getListNewsCategory(),
     );
 
+    this.updateSelectedTabIndex = reaction(
+      () => store.selectedNewsId,
+      (id) => this.updateSelectedTabIndexById(id),
+    );
+
     this.eventTracker = new EventTracker();
     this.getListNewsCategoryRequest = new APIRequest();
     this.requests = [this.getListNewsCategoryRequest];
@@ -125,9 +130,24 @@ class News extends Component {
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.updateNewsDisposer();
+    this.updateSelectedTabIndex();
     store.resetSocialNews();
     this.eventTracker.clearTracking();
   }
+
+  updateSelectedTabIndexById = (id) => {
+    if (!this.state.routes?.length) return;
+
+    const tabIndex = this.state.routes.findIndex((r) => {
+      return r.id === id;
+    });
+
+    if (tabIndex !== -1) {
+      this.setState({index: tabIndex});
+    }
+
+    store.setSelectedNewsId();
+  };
 
   async getListNewsCategory() {
     const {t} = this.props;
@@ -140,12 +160,15 @@ class News extends Component {
           if (response.data) {
             const routes = this.routesFormatter(response.data);
             let defaultIndex = this.props.indexTab;
-            if (this.props.id) {
+            const selectedId = store.selectedNewsId || this.props.id;
+            if (selectedId) {
               defaultIndex = routes.findIndex((r) => {
-                return r.id === this.props.id;
+                return r.id === selectedId;
               });
             }
             this.setState({routes, index: defaultIndex});
+
+            store.setSelectedNewsId();
           } else {
             flashShowMessage({
               type: 'danger',

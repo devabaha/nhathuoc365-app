@@ -224,5 +224,6 @@
   "addImages": "Thêm ảnh",
   "addImagesDescription": "Chạm để thêm ảnh",
   "saved": "Đã lưu",
-  "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại."
+  "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
+  "saveImageLabel": "Lưu ảnh"
 }

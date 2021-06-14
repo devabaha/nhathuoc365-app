@@ -28,7 +28,6 @@ const handleSaveImage = async (url, message) => {
     if (res) {
       base64 = res.base64Str;
       imageType = res.imageType;
-      // console.log('alo',res.base64Str)
     }
   } catch (err) {
     console.log(err);

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Keyboard,
   AppState,
@@ -122,8 +122,9 @@ const styles = StyleSheet.create({
 const GPSListStore = () => {
   const getListStoreRequest = new APIRequest();
   const requests = [getListStoreRequest];
-  let appState = 'active';
-  let watchID = '';
+  const appState = useRef('active');
+  const watchID = useRef('');
+  const isUpdatedListStoreByPosition = useRef(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(true);
@@ -131,7 +132,7 @@ const GPSListStore = () => {
   const [isGoToSetting, setGotoSetting] = useState(false);
   const [requestLocationLoading, setRequestLocationLoading] = useState(true);
   const [isConnectGPS, setConnectGPS] = useState(false);
-  const [requestLocationErrorCode, setRequestLocationErrorCode] = useState(0);
+  const [requestLocationErrorCode, setRequestLocationErrorCode] = useState(-1);
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
@@ -160,14 +161,20 @@ const GPSListStore = () => {
   };
 
   const unMount = () => {
-    Geolocation.clearWatch(watchID);
+    Geolocation.clearWatch(watchID.current);
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
     cancelRequests(requests);
   };
 
-  const getListStore = async () => {
-    getListStoreRequest.data = APIHandler.user_site_store();
+  const getListStore = async (data) => {
+    if (latitude !== undefined && longitude !== undefined) {
+      data = {
+        lat: latitude,
+        lng: longitude,
+      };
+    }
+    getListStoreRequest.data = APIHandler.user_site_store(data);
     try {
       const responseData = await getListStoreRequest.promise();
       setListStore(responseData?.stores || []);
@@ -185,19 +192,17 @@ const GPSListStore = () => {
 
   const handleAppStateChange = (nextAppState) => {
     if (
-      appState.match(/inactive|background/) &&
+      appState.current.match(/inactive|background/) &&
       !modalVisible &&
       nextAppState === 'active'
     ) {
       if (isGoToSetting) {
         requestLocationPermission();
-      } else if (
-        requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED
-      ) {
+      } else if (requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED) {
         updateLocation();
       }
     }
-    appState = nextAppState;
+    appState.current = nextAppState;
   };
 
   const requestLocationPermission = () => {
@@ -206,29 +211,30 @@ const GPSListStore = () => {
       (result) => {
         console.log(result);
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
+          setRequestLocationErrorCode(result);
           setGotoSetting(false);
           updateLocation();
         } else {
           handleErrorLocationPermission({code: result});
+          !listStore?.length && getListStore();
         }
       },
     );
   };
 
-  const updateLocation = (timeout = 5000, loading = false) => {
-    if (requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED)
-      return;
+  const updateLocation = (timeout = 5000) => {
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
       distanceFilter: 1,
     };
-    Geolocation.clearWatch(watchID);
-    watchID = Geolocation.watchPosition(
+    Geolocation.clearWatch(watchID.current);
+    watchID.current = Geolocation.watchPosition(
       (position) => handleSaveLocation(position),
       (err) => {
-        console.log('watch_position', watchID, err);
+        console.log('watch_position', watchID.current, err);
         setConnectGPS(false);
+        !listStore?.length && getListStore();
       },
       config,
     );
@@ -243,14 +249,19 @@ const GPSListStore = () => {
       setRequestLocationLoading(false);
       setLongitude(longitude);
       setLatitude(latitude);
+
+      if (!isUpdatedListStoreByPosition.current) {
+        isUpdatedListStoreByPosition.current = true;
+        getListStore({lat: latitude, lng: longitude});
+      }
     }
   };
 
   const handleErrorLocationPermission = (error) => {
-    Geolocation.clearWatch(watchID);
+    Geolocation.clearWatch(watchID.current);
     setRequestLocationLoading(false);
     setRequestLocationErrorCode(error.code);
-    setTimeout(() => setModalVisible(appState === 'active'), 500);
+    setTimeout(() => setModalVisible(appState.current === 'active'), 500);
   };
 
   const handleLocationError = () => {
@@ -339,8 +350,13 @@ const GPSListStore = () => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
     return (
       <Container row style={styles.storeContainer}>
-
-        <FastImage source={{uri: store.image_url}} style={[styles.image, !store.image_url && {backgroundColor: '#f5f5f5'}]} />
+        <FastImage
+          source={{uri: store.image_url}}
+          style={[
+            styles.image,
+            !store.image_url && {backgroundColor: '#f5f5f5'},
+          ]}
+        />
 
         <Container flex centerVertical={false} style={styles.infoContainer}>
           <Container centerVertical={false}>

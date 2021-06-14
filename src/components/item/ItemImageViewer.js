@@ -21,7 +21,10 @@ class ItemImageViewer extends Component {
     this.state = {
       imageIndex: 0,
     };
-    this.OPTIONS_LIST = ['Save Image', 'Cancel'];
+    this.OPTIONS_LIST = [
+      props.t('common:saveImageLabel'),
+      props.t('common:cancel'),
+    ];
   }
 
   eventTracker = new EventTracker();
@@ -48,9 +51,6 @@ class ItemImageViewer extends Component {
           imageUrls={images}
           index={this.props.index}
           onChange={(index) => this.setState({imageIndex: index})}
-          onPress={() => {
-            console.log('click');
-          }}
         />
 
         <TouchableHighlight
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('image')(observer(ItemImageViewer));
+export default withTranslation()(observer(ItemImageViewer));

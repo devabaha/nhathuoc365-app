@@ -384,126 +384,166 @@ class Search extends Component {
     }
 
     return (
-      <SafeAreaView style={styles.container}>
-        {search_data != null ? (
-          <FlatList
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-            onEndReached={(num) => {}}
-            onEndReachedThreshold={0}
-            style={[styles.items_box]}
-            ListHeaderComponent={() => (
-              <ListHeader title={this.state.header_title} />
-            )}
-            data={search_data}
-            extraData={this.state}
-            renderItem={({item, index}) => (
-              <Items
-                item={item}
-                index={index}
-                buying_idx={buying_idx}
-                onPress={this._goItem.bind(this, item)}
-                buyPress={this._updateHistory.bind(this, item)}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-          />
-        ) : (
-          <ScrollView
-            contentContainerStyle={{flexGrow: 1}}
-            keyboardDismissMode="on-drag"
-            keyboardShouldPersistTaps="always">
-            {this.state.noResult && (
-              <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
-            )}
-            {this.state.categories.length !== 0 && (
-              <ModernList
-                containerStyle={{marginBottom: 15}}
-                scrollEnabled={false}
-                headerTitle="Danh mục"
-                mainKey="name"
-                data={this.state.categories}
-                onPressItem={this.handlePressCategory}
-                bodyWrapperStyle={animatedCategoriesStyle}
-                onBodyLayout={this.handleCategoriesLayout}
-                activeStyle={{backgroundColor: DEFAULT_COLOR}}
-                activeTextStyle={{color: '#fff'}}
-                type={LIST_TYPE.TAG}
-                headerRightComponent={
-                  <CollapseIcon
-                    onPress={this.collapseCategories}
-                    style={animatedIconStyle}
-                  />
-                }
-              />
-            )}
-            {history != null &&
-              (() => {
-                let data = Object.assign([], history);
-                data = data.reverse();
-
-                return (
-                  <ModernList
-                    headerTitle="Lịch sử tìm kiếm"
-                    mainKey="name"
-                    data={data}
-                    onPressItem={(item) => this._onTouchHistory(item)}
-                    headerRightComponent={
-                      <RemoveBtn onPress={this.removeHistory} />
-                    }
-                  />
-                );
-                // return (
-                //   <ScrollView
-                //     style={[
-                //       styles.items_box,
-                //       {
-                //         marginBottom: store.keyboardTop
-                //       }
-                //     ]}
-                //     keyboardShouldPersistTaps="handled"
-                //     keyboardDismissMode="on-drag"
-                //   >
-                //     <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
-
-                //     {data.map((item, index) => {
-                //       return (
-                //         <TouchableHighlight
-                //           key={index}
-                //           underlayColor="transparent"
-                //           onPress={this._onTouchHistory.bind(this, item)}
-                //           style={styles.seach_history}
-                //         >
-                //           <View style={styles.seach_history_box}>
-                //             <View style={styles.seach_history_name_box}>
-                //               <Text style={styles.seach_history_name}>
-                //                 {item.name}
-                //               </Text>
-                //             </View>
-
-                //             <TouchableHighlight
-                //               underlayColor="transparent"
-                //               onPress={this._insertName.bind(this, item)}
-                //               style={styles.seach_history_expand}
-                //             >
-                //               <Icon name="expand" size={14} color="#999999" />
-                //             </TouchableHighlight>
-                //           </View>
-                //         </TouchableHighlight>
-                //       );
-                //     })}
-                //   </ScrollView>
-                // );
-              })()}
-            {!this.state.history &&
-              !this.state.noResult &&
-              !this.state.loading &&
-              !this.state.searchValue && (
-                <NoResult iconName="magnify" message="Nhập để tìm kiếm" />
+      <>
+        <SafeAreaView style={styles.container}>
+          {search_data != null ? (
+            <FlatList
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              onEndReached={(num) => {}}
+              onEndReachedThreshold={0}
+              style={[styles.items_box]}
+              ListHeaderComponent={() => (
+                <ListHeader title={this.state.header_title} />
               )}
-          </ScrollView>
-        )}
+              data={search_data}
+              extraData={this.state}
+              renderItem={({item, index}) => (
+                <Items
+                  item={item}
+                  index={index}
+                  buying_idx={buying_idx}
+                  onPress={this._goItem.bind(this, item)}
+                  buyPress={this._updateHistory.bind(this, item)}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              numColumns={2}
+            />
+          ) : (
+            <ScrollView
+              contentContainerStyle={{flexGrow: 1}}
+              keyboardDismissMode="on-drag"
+              keyboardShouldPersistTaps="always">
+              {this.state.noResult && (
+                <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
+              )}
+              {this.state.categories.length !== 0 && (
+                <ModernList
+                  containerStyle={{marginBottom: 15}}
+                  scrollEnabled={false}
+                  headerTitle="Danh mục"
+                  mainKey="name"
+                  data={this.state.categories}
+                  onPressItem={this.handlePressCategory}
+                  bodyWrapperStyle={animatedCategoriesStyle}
+                  onBodyLayout={this.handleCategoriesLayout}
+                  activeStyle={{backgroundColor: DEFAULT_COLOR}}
+                  activeTextStyle={{color: '#fff'}}
+                  type={LIST_TYPE.TAG}
+                  headerRightComponent={
+                    <CollapseIcon
+                      onPress={this.collapseCategories}
+                      style={animatedIconStyle}
+                    />
+                  }
+                />
+              )}
+              {history != null &&
+                (() => {
+                  let data = Object.assign([], history);
+                  data = data.reverse();
+
+                  return (
+                    <ModernList
+                      headerTitle="Lịch sử tìm kiếm"
+                      mainKey="name"
+                      data={data}
+                      onPressItem={(item) => this._onTouchHistory(item)}
+                      headerRightComponent={
+                        <RemoveBtn onPress={this.removeHistory} />
+                      }
+                    />
+                  );
+                  // return (
+                  //   <ScrollView
+                  //     style={[
+                  //       styles.items_box,
+                  //       {
+                  //         marginBottom: store.keyboardTop
+                  //       }
+                  //     ]}
+                  //     keyboardShouldPersistTaps="handled"
+                  //     keyboardDismissMode="on-drag"
+                  //   >
+                  //     <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
+
+                  //     {data.map((item, index) => {
+                  //       return (
+                  //         <TouchableHighlight
+                  //           key={index}
+                  //           underlayColor="transparent"
+                  //           onPress={this._onTouchHistory.bind(this, item)}
+                  //           style={styles.seach_history}
+                  //         >
+                  //           <View style={styles.seach_history_box}>
+                  //             <View style={styles.seach_history_name_box}>
+                  //               <Text style={styles.seach_history_name}>
+                  //                 {item.name}
+                  //               </Text>
+                  //             </View>
+
+                  //             <TouchableHighlight
+                  //               underlayColor="transparent"
+                  //               onPress={this._insertName.bind(this, item)}
+                  //               style={styles.seach_history_expand}
+                  //             >
+                  //               <Icon name="expand" size={14} color="#999999" />
+                  //             </TouchableHighlight>
+                  //           </View>
+                  //         </TouchableHighlight>
+                  //       );
+                  //     })}
+                  //   </ScrollView>
+                  // );
+                })()}
+              {!this.state.history &&
+                !this.state.noResult &&
+                !this.state.loading &&
+                !this.state.searchValue && (
+                  <NoResult iconName="magnify" message="Nhập để tìm kiếm" />
+                )}
+            </ScrollView>
+          )}
+
+          <PopupConfirm
+            ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
+            title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+            height={110}
+            noConfirm={() => {
+              if (this.refs_modal_delete_cart_item) {
+                this.refs_modal_delete_cart_item.close();
+              }
+            }}
+            yesConfirm={this._removeCartItem.bind(this)}
+            otherClose={false}
+          />
+
+          {store.cart_fly_show && (
+            <View
+              style={{
+                position: 'absolute',
+                top: store.cart_fly_position.py,
+                left: store.cart_fly_position.px,
+                width: store.cart_fly_position.width,
+                height: store.cart_fly_position.height,
+                zIndex: 999,
+                borderWidth: 1,
+                borderColor: DEFAULT_COLOR,
+                overflow: 'hidden',
+              }}>
+              {store.cart_fly_image && (
+                <CachedImage
+                  style={{
+                    width: store.cart_fly_position.width,
+                    height: store.cart_fly_position.height,
+                  }}
+                  source={store.cart_fly_image}
+                />
+              )}
+            </View>
+          )}
+        </SafeAreaView>
 
         {search_data != null && store.keyboardTop == 0 && (
           <CartFooter
@@ -511,45 +551,7 @@ class Search extends Component {
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
         )}
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
-          height={110}
-          noConfirm={() => {
-            if (this.refs_modal_delete_cart_item) {
-              this.refs_modal_delete_cart_item.close();
-            }
-          }}
-          yesConfirm={this._removeCartItem.bind(this)}
-          otherClose={false}
-        />
-
-        {store.cart_fly_show && (
-          <View
-            style={{
-              position: 'absolute',
-              top: store.cart_fly_position.py,
-              left: store.cart_fly_position.px,
-              width: store.cart_fly_position.width,
-              height: store.cart_fly_position.height,
-              zIndex: 999,
-              borderWidth: 1,
-              borderColor: DEFAULT_COLOR,
-              overflow: 'hidden',
-            }}>
-            {store.cart_fly_image && (
-              <CachedImage
-                style={{
-                  width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height,
-                }}
-                source={store.cart_fly_image}
-              />
-            )}
-          </View>
-        )}
-      </SafeAreaView>
+      </>
     );
   }
 

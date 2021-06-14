@@ -7,23 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## Added
+## [r11.6.6] - 2021-06-11
+### Changed
+- Publish FilterProduct.
+- NewsCategory will be jumped in instead of being pushed in.
+- GPSListStore will re-call api to update data by lat, lng.
+### Fixed
+- Fix UI, finish logic of FilterProduct.
+- CartFooter is not avoid the bottom extra space.
+- Share button social not include url.
+- ListPrice of FilterProduct not scroll correctly to input when it's focused.
+
+## [r11.6.5] - 2021-06-08
+### Added
 - Webview for servicesHandler.
-## Changed
+### Changed
 - Refactor Payment method in Confirm.
 - Product has only 1 attr will be auto selected.
-## Fixed
+### Fixed
 - Status bar light-content in Modal Comment being pushed from NotifyItem (temporary fixing, don't know the exactly cause).
+- NotifyItem request wrong info when press total comments.
 
 ## [r11.6.4] - 2021-06-03
-## Added
+### Added
 - Create Post, Group.
 - qrBarCodeInputable in ProductStamps by [lamah.dev@gmail.com].
 ### Changed
 - Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
 - Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
 ### Fixed
-- Wrong params for Filter product News-est and Best-selling mode.
+- Wrong params for FilterProduct News-est and Best-selling mode.
 
 ## [r11.6.3] - 2021-05-24
 ### Added
