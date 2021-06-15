@@ -11,7 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
-import { showDrawer } from 'src/components/Drawer';
+import {showDrawer} from 'src/components/Drawer';
 
 class Home extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class Home extends Component {
       primaryActions: null,
       product_groups: [],
       news_categories: [],
+      product_categories: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -108,6 +109,7 @@ class Home extends Component {
           showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups,
           news_categories: response.data.news_categories,
+          product_categories: response.data.product_categorys,
         }));
 
         this.executeDeepLink();
@@ -192,7 +194,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-    
+
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
@@ -311,6 +313,7 @@ class Home extends Component {
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
         news_categories={this.state.news_categories}
+        product_categories={this.state.product_categories}
       />
     );
   }
