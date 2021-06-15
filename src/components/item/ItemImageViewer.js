@@ -18,13 +18,14 @@ class ItemImageViewer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      imageIndex: 0,
-    };
+
+    this.imageIndex = this.props.index;
     this.OPTIONS_LIST = [
       props.t('common:saveImageLabel'),
       props.t('common:cancel'),
     ];
+
+    this.refActionSheet = React.createRef();
   }
 
   eventTracker = new EventTracker();
@@ -37,6 +38,22 @@ class ItemImageViewer extends Component {
     this.eventTracker.clearTracking();
   }
 
+  handleCloseImageView = () => Actions.pop();
+
+  handleOnSwipeDownImage = () => Actions.pop();
+
+  handleOnLongPressImage = () => this.refActionSheet.current.show();
+
+  onChangeImageIndex = (index) => {
+    this.imageIndex = index;
+  };
+
+  handleOptionPress = (index) => {
+    if (index !== this.OPTIONS_LIST.length - 1) {
+      handleSaveImage(this.props.images[this.imageIndex].url);
+    }
+  };
+
   render() {
     var {images} = this.props;
 
@@ -45,39 +62,26 @@ class ItemImageViewer extends Component {
         <ImageViewer
           enableSwipeDown={true}
           swipeDownThreshold={100}
-          onSwipeDown={() => Actions.pop()}
+          onSwipeDown={this.handleOnSwipeDownImage}
           saveToLocalByLongPress={false}
-          onLongPress={() => this.actionSheet.show()}
+          onLongPress={this.handleOnLongPressImage}
           imageUrls={images}
           index={this.props.index}
-          onChange={(index) => this.setState({imageIndex: index})}
+          onChange={this.onChangeImageIndex}
         />
 
         <TouchableHighlight
-          onPress={() => {
-            Actions.pop();
-          }}
-          style={{
-            position: 'absolute',
-            bottom: 88,
-            left: 0,
-            width: 60,
-            height: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+          onPress={this.handleCloseImageView}
+          style={styles.btnCloseImageView}>
           <Icon name="times-circle" size={32} color="#ffffff" />
         </TouchableHighlight>
+
         <ActionSheet
-          ref={(ref) => (this.actionSheet = ref)}
+          ref={this.refActionSheet}
           options={this.OPTIONS_LIST}
           cancelButtonIndex={1}
           destructiveButtonIndex={1}
-          onPress={(index) => {
-            index == 0
-              ? handleSaveImage(images[this.state.imageIndex].url)
-              : null;
-          }}
+          onPress={this.handleOptionPress}
         />
       </View>
     );
@@ -86,6 +90,15 @@ class ItemImageViewer extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  btnCloseImageView: {
+    position: 'absolute',
+    bottom: 88,
+    left: 0,
+    width: 60,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

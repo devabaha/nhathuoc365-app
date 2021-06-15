@@ -1,10 +1,10 @@
+import appConfig from 'app-config';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
-import appConfig from 'app-config';
 import CameraRoll from '@react-native-community/cameraroll';
 import {handleDownloadImage} from './handleDownloadImage';
-import showFlashNotification from '../../components/FlashNotification';
 import {PhotoLibraryPermission} from '../permissionHelper';
+import showFlashNotification from '../../components/FlashNotification';
 
 async function hasAndroidPermission() {
   const granted = await (appConfig.device.isIOS
@@ -32,7 +32,7 @@ const handleSaveImage = async (url, message) => {
   } catch (err) {
     console.log(err);
   }
-  // console.log(base64, imageType)
+
   const imageName = new Date().getTime() + '.' + imageType;
   const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
   const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
