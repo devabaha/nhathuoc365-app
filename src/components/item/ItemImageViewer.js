@@ -42,7 +42,9 @@ class ItemImageViewer extends Component {
 
   handleOnSwipeDownImage = () => Actions.pop();
 
-  handleOnLongPressImage = () => this.refActionSheet.current.show();
+  handleOnLongPressImage = () => {
+    if (this.refActionSheet.current) this.refActionSheet.current.show();
+  };
 
   onChangeImageIndex = (index) => {
     this.imageIndex = index;
