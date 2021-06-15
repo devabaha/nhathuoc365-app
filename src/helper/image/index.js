@@ -5,6 +5,7 @@ import appConfig from 'app-config';
 import {IMAGE_RATIOS} from 'src/constants/image';
 import RNFetchBlob from 'rn-fetch-blob';
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
+import {handleSaveImage} from './handleSaveImage';
 
 export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   return {
@@ -93,7 +94,7 @@ export const normalizeImages = (images) => {
 
     if (img.sourceURL) {
       img.uri = img.sourceURL;
-    } else if(img.path){
+    } else if (img.path) {
       img.uri = img.path;
     }
 
@@ -171,3 +172,5 @@ export const normalizePostImageData = async (image) => {
 
   return imageData;
 };
+
+export {handleSaveImage};

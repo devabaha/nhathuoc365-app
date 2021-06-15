@@ -222,5 +222,8 @@
   "copy": "Copy",
   "cancel": "Cancel",
   "addImages": "Add Images",
-  "addImagesDescription": "Tap to select images"
+  "addImagesDescription": "Tap to select images",
+  "saved": "Saved",
+  "saveImageFailed": "Save image unsuccessfully, please try again.",
+  "saveImageLabel": "Save image"
 }
