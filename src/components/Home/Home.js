@@ -87,6 +87,7 @@ class Home extends Component {
     onPressNoti: PropTypes.func,
     product_groups: PropTypes.array,
     listServiceItemsPerRow: PropTypes.number,
+    product_categories: PropTypes.array,
   };
 
   static defaultProps = {
@@ -122,6 +123,7 @@ class Home extends Component {
     onPressNewItem: defaultListener,
     onPressNoti: defaultListener,
     product_groups: [],
+    product_categories: [],
   };
 
   state = {
@@ -189,6 +191,13 @@ class Home extends Component {
     return (
       Array.isArray(this.props.product_groups) &&
       this.props.product_groups.length > 0
+    );
+  }
+
+  get hasProduct_categories() {
+    return (
+      Array.isArray(this.props.product_categories) &&
+      this.props.product_categories.length > 0
     );
   }
 
@@ -498,6 +507,28 @@ class Home extends Component {
                 }}
               </HomeCardList>
             )}
+            {this.hasProduct_categories ? (
+              this.props.product_categories.map((productCategory, index) => {
+                let {id, products, title, display_type} = productCategory;
+                return (
+                  <ListProducts
+                    key={id}
+                    type={display_type}
+                    data={products}
+                    title={title}
+                    onPressProduct={this.props.onPressProduct}
+                    onShowAll={
+                      !id
+                        ? null
+                        : () =>
+                            this.props.onShowAllGroupProduct(productCategory)
+                    }
+                  />
+                );
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
 
             {this.hasNewsGroups ? (
               this.props.news_categories.map((newsGroup, index) => {

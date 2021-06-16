@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Adding download image function by [kienluu612@gmail.com].
 ### Fixed
 - Themes, others UI bugs.
 
