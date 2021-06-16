@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.6.5';
+    return 'r11.6.6';
   }
 
   get appName() {
@@ -123,7 +123,7 @@ class Config {
         text: '#2B2B2B',
         secondary: '#A0A0A0',
       },
-      border: '#E5E5E5',
+      border: '#EAECED',
       icon: '#9F9F9F',
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
@@ -132,7 +132,6 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
-      ribbon: '#FD0D1B',
       sale: '#FD0D1B',
       highlight: {
         1: '#51B748',

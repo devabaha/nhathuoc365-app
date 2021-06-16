@@ -12,8 +12,8 @@ import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   buttonWrapper: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    marginBottom: 15,
+    paddingHorizontal: 15,
     alignItems: 'center',
   },
   itemWrapper: {
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     width: BASE_SERVICE_DIMENSION,
     height: BASE_SERVICE_DIMENSION,
     borderRadius: 16,
-    backgroundColor: '#eee',
+    // backgroundColor: '#eee',
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',

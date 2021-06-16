@@ -69,6 +69,8 @@ class ListProducts extends Component {
         renderItem={this.renderItemHorizontal}
         contentContainerStyle={styles.listHorizontal}
         style={{overflow: 'visible'}}
+        directionalLockEnabled
+        nestedScrollEnabled
       />
     );
   }
@@ -110,7 +112,7 @@ class ListProducts extends Component {
     return this.hasProducts ? (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text numberOfLines={1} style={styles.heading}>
+          <Text numberOfLines={2} style={styles.heading}>
             {this.props.title}
           </Text>
           {!!this.props.onShowAll && (
@@ -129,7 +131,7 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 15,
+    paddingVertical: 15,
   },
   headingWrapper: {
     flexDirection: 'row',
@@ -143,14 +145,16 @@ const styles = StyleSheet.create({
     ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 7.5,
+    paddingBottom: appConfig.device.isAndroid ? 15 : 0,
+    marginBottom: appConfig.device.isAndroid ? -15 : 0,
   },
   contentHorizontal: {},
   listVertical: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 10,
+    paddingHorizontal: 7.5,
   },
   itemVerticalWrapper: {
     // width: appConfig.device.width / 2 - 10,

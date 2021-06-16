@@ -11,6 +11,7 @@ import {
   PACKAGE_OPTIONS_TYPE,
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
+import AntDesignIcon from 'react-native-vector-icons/SimpleLineIcons';
 
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
@@ -60,9 +61,7 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : null
-            // <View style={{height: 50}} />
-            }
+            ) : null}
 
             <Button
               containerStyle={styles.surplusContainer}
@@ -73,8 +72,10 @@ class PrimaryActions extends Component {
                 <View style={styles.walletLabelRight}>
                   <Text style={styles.surplus}>{props.surplus}</Text>
                 </View>
+
                 <View style={styles.iconNextWrapper}>
-                  <Image style={styles.iconNext} source={imageIconNext} />
+                <AntDesignIcon name="arrow-right" style={styles.iconNext}/>
+                  {/* <Image style={styles.iconNext} source={imageIconNext} /> */}
                 </View>
               </View>
             </Button>
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 7.5,
     paddingHorizontal: 15,
+    minHeight: 50
   },
   walletInfoWrapper: {
     flex: 1,
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   scanIcon: {
-    fontSize: 36,
+    fontSize: 30,
     color: appConfig.colors.primary,
     // paddingRight: 10
   },
@@ -197,9 +199,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   iconNext: {
-    width: 20,
-    height: 20,
-    resizeMode: 'cover',
+    // width: 20,
+    // height: 20,
+    // resizeMode: 'cover',
+
+    color: '#9F9F9F',
+    fontSize: 12,
   },
   walletNameLabel: {
     flex: 1,
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     marginTop: 10,
-    ...appConfig.styles.typography.sub
+    ...appConfig.styles.typography.sub,
   },
 });
 

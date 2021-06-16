@@ -552,3 +552,7 @@ global.hapticFeedBack = () => {
 
   ReactNativeHapticFeedback.trigger('impactLight', options);
 };
+
+global.getNumberOnly = (text) => {
+  return text.replace(REGEX_NUMBER_ONLY, '');
+};

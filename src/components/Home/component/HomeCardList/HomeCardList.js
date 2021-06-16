@@ -41,7 +41,7 @@ class HomeCardList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 15,
+    marginTop: 15,
   },
   content: {
     paddingHorizontal: 15,
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     paddingHorizontal: 7.5,
+    paddingVertical: 15,
   },
 });
 

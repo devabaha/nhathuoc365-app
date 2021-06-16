@@ -17,7 +17,7 @@ import ExtraQuantityInput from '../cart/CartItem/ExtraQuantityInput';
 const styles = StyleSheet.create({
   cart_item_box: {
     width: '100%',
-    paddingTop: 25,
+    paddingTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 7,
     flexDirection: 'row',
@@ -161,7 +161,8 @@ const styles = StyleSheet.create({
     width: undefined,
   },
   discountBadgeContent: {
-    padding: 5,
+    padding: 3,
+    paddingHorizontal: 5,
     backgroundColor: '#FD0D1C',
   },
 });

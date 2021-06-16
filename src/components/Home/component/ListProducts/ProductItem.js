@@ -14,7 +14,6 @@ import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
 import {DiscountBadge} from '../../../Badges';
 import Themes from 'src/Themes';
-import Ribbon from 'src/components/Ribbon/Ribbon';
 import Indicator from 'src/components/Indicator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -90,78 +89,86 @@ class ProductItem extends PureComponent {
           onPress={this.handlePress}
           activeOpacity={0.8}
           style={[styles.wrapper, this.props.wrapperStyle]}>
-          <FastImage
-            source={{
-              uri: this.props.image,
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          {this.props.renderContent ? (
+            this.props.renderContent()
+          ) : (
+            <>
+              <FastImage
+                source={{
+                  uri: this.props.image,
+                }}
+                style={styles.image}
+                resizeMode="cover"
+              />
 
-          {this.props.discount_percent > 0 && (
-            <DiscountBadge
-              containerStyle={styles.saleContainer}
-              contentContainerStyle={styles.saleContentContainer}
-              tailSpace={4}
-              label={saleFormat(this.props.discount_percent)}
-            />
-          )}
-          <View style={[styles.infoWrapper]}>
-            <Text style={styles.name} numberOfLines={2}>
-              {this.props.name}
-            </Text>
+              {this.props.discount_percent > 0 && (
+                <DiscountBadge
+                  containerStyle={styles.saleContainer}
+                  contentContainerStyle={styles.saleContentContainer}
+                  tailSpace={4}
+                  label={saleFormat(this.props.discount_percent)}
+                />
+              )}
+              <View style={[styles.infoWrapper]}>
+                <Text style={styles.name} numberOfLines={2}>
+                  {this.props.name}
+                </Text>
 
-            <View style={styles.priceWrapper}>
-              <View style={styles.priceContainer}>
-                {this.props.discount_percent > 0 && (
-                  <Text style={styles.discount}>
-                    <Text style={styles.deletedTitle}>
-                      {this.props.discount_view}
-                    </Text>
-                    / {this.props.unit_name}
-                  </Text>
-                )}
-
-                <View style={[styles.priceBox]}>
-                  <Text style={[styles.price]}>{this.props.price_view}</Text>
-
-                  <TouchableOpacity
-                    style={styles.item_add_cart_box}
-                    onPress={this.handlePressActionBtnProduct}>
-                    {this.state.buying ? (
-                      <View
-                        style={{
-                          width: 18,
-                          height: 18,
-                        }}>
-                        <Indicator size="small" />
-                      </View>
-                    ) : this.isServiceProduct(item) ? (
-                      <Icon name="calendar-plus-o" style={styles.icon} />
-                    ) : (
-                      <MaterialIcons
-                        name="add-shopping-cart"
-                        style={styles.icon}
-                      />
+                <View style={styles.priceWrapper}>
+                  <View style={styles.priceContainer}>
+                    {this.props.discount_percent > 0 && (
+                      <Text style={styles.discount}>
+                        <Text style={styles.deletedTitle}>
+                          {this.props.discount_view}
+                        </Text>
+                        / {this.props.unit_name}
+                      </Text>
                     )}
-                  </TouchableOpacity>
+
+                    <View style={[styles.priceBox]}>
+                      <Text style={[styles.price]}>
+                        {this.props.price_view}
+                      </Text>
+
+                      <TouchableOpacity
+                        style={styles.item_add_cart_box}
+                        onPress={this.handlePressActionBtnProduct}>
+                        {this.state.buying ? (
+                          <View
+                            style={{
+                              width: 20,
+                              height: 20,
+                            }}>
+                            <Indicator size="small" />
+                          </View>
+                        ) : this.isServiceProduct(item) ? (
+                          <Icon name="calendar-plus-o" style={styles.icon} />
+                        ) : (
+                          <MaterialIcons
+                            name="add-shopping-cart"
+                            style={styles.icon}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     );
   }
 }
 
-const MARGIN_ITEM = 5;
-const WIDTH_ITEM = appConfig.device.width / 2 - MARGIN_ITEM * 4;
+const MARGIN_ITEM = 7.5;
+const WIDTH_ITEM = appConfig.device.width / 2 - MARGIN_ITEM * 3;
 
 let styles = StyleSheet.create({
   container: {
     marginHorizontal: MARGIN_ITEM,
-    marginTop: 10,
+    marginTop: MARGIN_ITEM * 2,
     marginBottom: 0,
     width: WIDTH_ITEM,
   },
@@ -240,7 +247,7 @@ let styles = StyleSheet.create({
   },
 
   icon: {
-    fontSize: 18,
+    fontSize: 20,
     color: appConfig.colors.highlight[1],
   },
 });

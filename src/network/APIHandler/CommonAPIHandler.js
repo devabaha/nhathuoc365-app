@@ -197,12 +197,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  async site_category_product_by_filter(
-    store_id,
-    category_id,
-    page_num,
-    params,
-  ) {
+  site_category_product_by_filter(store_id, category_id, page_num, params) {
     const api = url_for(
       API.SITE_CATEGORY_PRODUCT +
         '/' +
@@ -212,8 +207,8 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         page_num,
     );
-    console.log({hii: params, category_id});
-    return await this.postAPI(api, params);
+
+    return this.postCancelableAPI(api, params);
   }
 
   /**
@@ -230,6 +225,14 @@ class CommonAPIHandler extends BaseHandler {
   cart_confirmed(store_id, cart_id) {
     var api = url_for(API.CART_CONFIRMED + '/' + store_id + '/' + cart_id);
     return this.postCancelableAPI(api);
+  }
+
+  /**
+   * Re order completed cart.
+   */
+  cart_reorder(store_id, cart_id) {
+    var api = url_for(API.CART_REORDER + '/' + store_id + '/' + cart_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -627,7 +630,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async user_update_favor_site(store_id, updateKey) {
     var api = url_for(
-      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey,
     );
     console.log(api);
     return await this.getAPI(api);
@@ -983,9 +986,9 @@ class CommonAPIHandler extends BaseHandler {
    * @todo get list warehouse
    *
    */
-  user_site_store() {
+  user_site_store(data) {
     const api = url_for(API.USER_SITE_STORE);
-    return this.getCancelableAPI(api, true);
+    return this.postCancelableAPI(api, data, undefined, true);
   }
 
   /**
@@ -1119,8 +1122,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.getCancelableAPI(api);
   }
 
-  getListFilterProduct(siteId) {
-    const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
+  site_get_tags(siteId) {
+    const api = url_for(API.SITE_GET_TAGS + '/' + siteId + '/' + 'product');
     return this.getCancelableAPI(api);
   }
 

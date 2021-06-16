@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import appConfig from 'app-config';
+
 export default class ListHeader extends Component {
   render() {
     let { title, alignLeft, containerStyle } = this.props;
@@ -34,5 +36,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333333',
     marginVertical: 15,
+    textAlign: 'center',
+    ...appConfig.styles.typography.heading3,
   }
 });

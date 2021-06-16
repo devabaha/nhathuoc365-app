@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   iconWrapper: {
     // width: 44,
     // height: 44,
-    // borderRadius: 22,
+    // borderRadius: 20,
     // overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center'
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
   icon: {
     position: 'relative',
     // top: -2,
-    width: 45,
-    height: 45
+    width: 40,
+    height: 40
   }
 });
 

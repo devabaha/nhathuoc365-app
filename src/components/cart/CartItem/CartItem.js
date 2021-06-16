@@ -70,8 +70,9 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(3),
   },
   discountBadgeContentContainer: {
-    backgroundColor: appConfig.colors.marigold,
+    backgroundColor: appConfig.colors.sale,
     paddingVertical: 2,
+    paddingHorizontal: 5
   },
   discountBadgeLabel: {
     fontSize: 13,
@@ -104,14 +105,16 @@ const styles = StyleSheet.create({
   },
 
   store_cart_item_remove: {
-    backgroundColor: '#cc7171',
+    backgroundColor: '#333',
     borderWidth: 0,
     position: 'absolute',
-    left: 10,
-    top: 3,
+    left: 5,
+    top: 5,
     width: 20,
     height: 20,
-    borderRadius: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
     // borderTopLeftRadius: 0,
     // borderBottomLeftRadius: 0,
     ...elevationShadowStyle(2),

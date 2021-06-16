@@ -162,3 +162,5 @@ global.isIPhoneX = (() => {
 })();
 
 global.heightTabbar = global.isIPhoneX ? 83 : 49;
+
+global.REGEX_NUMBER_ONLY = /(?!\d+|-)\D*/g;

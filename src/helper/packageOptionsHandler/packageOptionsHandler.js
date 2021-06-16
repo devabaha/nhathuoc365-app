@@ -4,6 +4,10 @@ const getOptionType = type => {
   return Object.keys(store.packageOptions).find(key => key === type);
 };
 
+export const getPackageOptionValue = (type) => {
+  return !!Number(store.packageOptions[type]) 
+}
+
 export const isActivePackageOptionConfig = (...types) => {
   let isActive = store.isHomeLoaded;
   types.forEach(type => {

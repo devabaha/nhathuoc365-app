@@ -214,11 +214,15 @@ class Promotion extends Component {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    // shadow for ios
+    ...appConfig.styles.shadow
   },
   slideContainerStyle: {
     position: 'relative',
     overflow: 'hidden',
     borderRadius: 8,
+    // shadow for android
+    ...appConfig.styles.shadow
   },
   slideStyle: {},
   bannerImage: {},

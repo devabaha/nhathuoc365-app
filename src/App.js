@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   LogBox,
+  StatusBar,
 } from 'react-native';
 import {
   Scene,
@@ -22,7 +23,7 @@ import {
   Stack,
   Modal,
   Lightbox,
-  Drawer,
+  Drawer as RNRFDrawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -141,7 +142,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import CameraView from './components/CameraView/CameraView';
-import { CaptureFaceID } from './containers/IView';
+import {CaptureFaceID} from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
@@ -163,12 +164,20 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import ModalFilter from './components/stores/ModalFilter';
-import FilterComponent from './components/stores/FilterDrawer';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
+import {
+  FilterDrawer,
+  ModalFilterProduct,
+} from './components/stores/FilterProduct';
+import Drawer from './components/Drawer';
+
+import SVGHome from './images/home/home.svg';
+import SVGNews from './images/home/news.svg';
+import SVGOrders from './images/home/orders.svg';
+import SVGAccount from './images/home/account.svg';
 
 /**
  * Not allow font scaling
@@ -605,7 +614,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{ overflow: 'scroll', flex: 1 }}>
+      <View style={{overflow: 'scroll', flex: 1}}>
         {/* <GPSStoreLocation /> */}
         {this.state.header}
         <NetWorkInfo />
@@ -614,6 +623,7 @@ class App extends Component {
           t={this.props.t}
           setHeader={this.setHeader.bind(this)}
         />
+        <Drawer />
         <FlashMessage icon={'auto'} />
         {this.state.isOpenCodePushModal && (
           <AwesomeAlert
@@ -738,19 +748,6 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
-              {/* <Drawer
-                key="drawer-filter"
-                hideNavBar={true}
-                drawerPosition="right"
-                drawerWidth={350}
-                contentComponent={FilterComponent}>
-                <Scene
-                  key={`${appConfig.routes.store}_1`}
-                  component={StoreContainer}
-                  {...navBarConfig}
-                  back
-                />
-              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -776,12 +773,19 @@ class RootRouter extends Component {
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
                     iconName="store"
-                    iconSize={24}>
+                    iconSize={24}
+                    
+                    iconSVG={SVGHome}
+                    >
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
                       title={APP_NAME_SHOW}
                       component={HomeContainer}
                       hideNavBar
+                      onEnter={() => {
+                        StatusBar.setTranslucent(false);
+                        StatusBar.setBarStyle('light-content', true);
+                      }}
                     />
                   </Stack>
 
@@ -794,7 +798,10 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab2.title')}
                     iconName="bell"
                     iconSize={24}
-                    notifyKey="new_totals">
+                    notifyKey="new_totals"
+                    
+                    iconSVG={SVGNews}
+                    >
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
@@ -805,8 +812,7 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}
-                  >
+                    primaryColor={appConfig.colors.primary}>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -820,7 +826,9 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab4.title')}
                     iconName="cart"
                     notifyKey="notify_cart"
-                  >
+                    
+                    iconSVG={SVGOrders}
+                    >
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
@@ -848,7 +856,10 @@ class RootRouter extends Component {
                       height: 70,
                     }}
                     headerLayoutPreset="left"
-                    iconSize={24}>
+                    iconSize={24}
+
+                    iconSVG={SVGAccount}
+                    >
                     <Scene
                       titleStyle={{
                         color: '#333',
@@ -874,7 +885,9 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ SOCIAL GROUPS ================ */}
-                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroup}>
+                <Stack
+                  headerLayoutPreset={'left'}
+                  key={appConfig.routes.socialGroup}>
                   <Scene
                     key={`${appConfig.routes.socialGroup}_1`}
                     component={SocialGroup}
@@ -943,6 +956,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
                 <Stack key={appConfig.routes.salesReport}>
                   <Scene
                     key={`${appConfig.routes.salesReport}_1`}
@@ -1243,22 +1257,23 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* <Drawer
+                <Stack key={appConfig.routes.store}>
+                  {/* <RNRFDrawer
                   key={appConfig.routes.store}
-                  hideNavBar={true}
+                  // hideNavBar={true}
                   drawerPosition="right"
                   drawerWidth={350}
                   hideDrawerButton={true}
-                  contentComponent={(props) => <FilterComponent {...props} />}> */}
-                <Stack key={appConfig.routes.store}>
+                  contentComponent={(props) => <FilterDrawer {...props} />}> */}
+
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
+                  {/* </RNRFDrawer> */}
                 </Stack>
-                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1870,7 +1885,7 @@ class RootRouter extends Component {
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
-                component={ModalFilter}
+                component={ModalFilterProduct}
               />
             </Lightbox>
 
@@ -1928,9 +1943,9 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.modalCameraView}_1`}
                 component={CameraView}
                 hideNavBar
-                />
+              />
             </Stack>
-            
+
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

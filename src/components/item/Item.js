@@ -37,8 +37,9 @@ import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
 import NoResult from '../NoResult';
 import Shimmer from 'react-native-shimmer';
-import {HomeCardItem} from '../Home/component/HomeCardList';
+import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
+import ListStoreProduct from '../stores/ListStoreProduct';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -86,8 +87,8 @@ class Item extends Component {
       !this.isServiceProduct(this.state.item_data || this.state.item)
       ? appConfig.colors.primary
       : is_like
-      ? appConfig.colors.status.danger
-      : '#333';
+      ? appConfig.colors.primary
+      : appConfig.colors.primary;
   }
 
   isServiceProduct(product = {}) {
@@ -775,7 +776,7 @@ class Item extends Component {
       <Indicator size="small" />
     ) : this.isServiceProduct(product) ? (
       <Icon
-        name={this.state.like_flag === 1 ? 'heart' : 'heart-o'}
+        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
         size={20}
         color={this.subActionColor}
       />
@@ -882,7 +883,7 @@ class Item extends Component {
           onPressWarehouse={this.handlePressWarehouse}
         />
 
-        <View style={styles.container2}>
+        <View style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
             style={{
@@ -912,7 +913,7 @@ class Item extends Component {
             }>
             {this.renderProductSwiper(item)}
 
-            <View style={styles.item_heading_box}>
+            <View style={[styles.block, styles.item_heading_box]}>
               <View style={styles.boxDiscount}>
                 {item.discount_percent > 0 ? (
                   <DiscountBadge
@@ -1017,7 +1018,7 @@ class Item extends Component {
             </View>
 
             {item != null && (
-              <View style={styles.item_content_box}>
+              <View style={[styles.block, styles.item_content_box]}>
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
@@ -1028,15 +1029,15 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <MaterialCommunityIcons
                           name="warehouse"
                           size={16}
                           color="#999999"
                         />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
-                        Kho hàng
+                        {t('information.warehouse')}
                       </Text>
                     </View>
 
@@ -1059,9 +1060,9 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <Icon name="user" size={16} color="#999999" />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.brands')}
                       </Text>
@@ -1081,9 +1082,9 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <Icon name="map-marker" size={16} color="#999999" />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.origin')}
                       </Text>
@@ -1098,20 +1099,15 @@ class Item extends Component {
               </View>
             )}
 
-            <View style={styles.item_content_text}>
-              {item != null ? (
+            {!!item?.content && (
+              <View style={[styles.block, styles.item_content_text]}>
                 <AutoHeightWebView
-                  onError={() => console.log('on error')}
-                  onLoad={() => console.log('on load')}
-                  onLoadStart={() => console.log('on load start')}
-                  onLoadEnd={() => console.log('on load end')}
                   onShouldStartLoadWithRequest={(result) => {
-                    // console.log(result);
                     return true;
                   }}
                   style={styles.webview}
                   onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item.content || ''}}
+                  source={{html: item.content}}
                   zoomable={false}
                   scrollEnabled={false}
                   customStyle={`
@@ -1132,62 +1128,82 @@ class Item extends Component {
                     height: auto !important;
                   }`}
                 />
-              ) : (
-                <Indicator size="small" />
-              )}
-            </View>
+              </View>
+            )}
 
-            {!!item.related && item.related !== null && !isEmpty(item.related) && (
-              <View style={[styles.newsWrapper]}>
-                <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
-                <FlatList
+            <View style={styles.extraInfo}>
+              {!!item.related &&
+                item.related !== null &&
+                !isEmpty(item.related) && (
+                  <View style={[styles.newsWrapper]}>
+                    <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
+                    <ListStoreProduct products={item.related} />
+
+                    {/* <FlatList
                   data={item.related}
                   keyExtractor={(i, index) => `item-related-${i.id}`}
-                  horizontal={true}
+                  // horizontal
                   renderItem={({item: product, index}) => (
                     <Items
-                      containerStyle={{
-                        width: appConfig.device.width / 2 - 20,
-                      }}
-                      imageStyle={{
-                        width: appConfig.device.width / 2 - 30,
-                        height: appConfig.device.width / 2 - 30,
-                      }}
+                      // containerStyle={{
+                      //   width: appConfig.device.width / 2 - 20,
+                      // }}
+                      // imageStyle={{
+                      //   width: appConfig.device.width / 2 - 30,
+                      //   height: appConfig.device.width / 2 - 30,
+                      // }}
                       item={product}
                       index={index}
                       onPress={this._itemRefresh.bind(this, product)}
                     />
                   )}
-                  style={{overflow: 'visible'}}
+                  // style={{overflow: 'visible'}}
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{
-                    paddingHorizontal: 5,
-                    paddingVertical: 20,
+                    paddingRight: 15,
+                    paddingTop: 15,
                   }}
-                />
-              </View>
-            )}
-            {item.news_linking !== null &&
-              !isEmpty(item.news_linking) &&
-              typeof item.news_linking === 'object' && (
-                <View style={styles.newsWrapper}>
-                  <Text style={styles.titleRelated}>
-                    {t('TIN TỨC LIÊN QUAN')}
-                  </Text>
+                /> */}
+                  </View>
+                )}
+              {item.news_linking !== null &&
+                !isEmpty(item.news_linking) &&
+                typeof item.news_linking === 'object' && (
+                  <View style={[styles.newsWrapper, styles.newsWrapperExtra]}>
+                    {/* <FlatList
+                      data={item.news_linking}
+                      renderItem={this.renderListNews}
+                      keyExtractor={(i, index) => `news__${i.id}`}
+                      showsHorizontalScrollIndicator={false}
+                      horizontal
+                      style={{overflow: 'visible'}}
+                      contentContainerStyle={{
+                        paddingHorizontal: 2.5,
+                      }}
+                    /> */}
+                    <HomeCardList
+                      onShowAll={null}
+                      data={item.news_linking}
+                      title={
+                        <Text style={styles.titleRelated}>
+                          {t('TIN TỨC LIÊN QUAN')}
+                        </Text>
+                      }>
+                      {({item: news, index}) => {
+                        return (
+                          <HomeCardItem
+                            title={news.title}
+                            imageUrl={news.image_url}
+                            onPress={this.handleItemNews(news)}
+                            last={item.news_linking.length - 1 === index}
+                          />
+                        );
+                      }}
+                    </HomeCardList>
+                  </View>
+                )}
+            </View>
 
-                  <FlatList
-                    data={item.news_linking}
-                    renderItem={this.renderListNews}
-                    keyExtractor={(i, index) => `news__${i.id}`}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal
-                    style={{overflow: 'visible'}}
-                    contentContainerStyle={{
-                      paddingHorizontal: 2.5,
-                    }}
-                  />
-                </View>
-              )}
             <View style={styles.boxButtonActions}>
               <Button
                 onPress={this._goStores.bind(this, this.state.store_data)}
@@ -1197,9 +1213,9 @@ class Item extends Component {
               />
             </View>
           </Animated.ScrollView>
-
-          {this.renderCartFooter(item)}
         </View>
+
+        {this.renderCartFooter(item)}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1235,12 +1251,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
+  block: {
+    paddingHorizontal: 15,
+    borderColor: appConfig.colors.border,
+    borderBottomWidth: 1,
+    paddingBottom: 20,
+  },
 
   titleRelated: {
-    fontSize: 20,
-    color: '#2B2B2B',
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingTop: 5,
+    textAlign: 'center',
+    ...appConfig.styles.typography.heading3,
   },
 
   right_btn_box: {
@@ -1261,42 +1283,35 @@ const styles = StyleSheet.create({
 
   item_heading_box: {
     width: '100%',
-    marginVertical: 10,
-    backgroundColor: 'red',
+    marginTop: 10,
     backgroundColor: '#fff',
   },
   boxDiscount: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
   },
   item_heading_title: {
     marginTop: 10,
-    fontSize: 20,
-    color: '#404040',
-    fontWeight: '600',
-    paddingLeft: 15,
+    marginBottom: 15,
+    ...appConfig.styles.typography.heading1,
   },
   item_heading_price_box: {
-    marginTop: 5,
-    flexWrap: 'wrap',
-    paddingLeft: 15,
+    // marginTop: 15,
+    // flexWrap: 'wrap',
   },
   item_heading_safe_off_value: {
+    ...appConfig.styles.typography.secondary,
     fontSize: 16,
-    color: '#cccccc',
+    marginBottom: 10
   },
   item_heading_price: {
-    fontSize: 16,
+    ...appConfig.styles.typography.heading1,
     color: appConfig.colors.primary,
-    fontWeight: '600',
-    paddingVertical: 5,
   },
   item_unit_name: {
-    color: '#999',
-    fontSize: 15,
-    fontWeight: '400',
+    // ...appConfig.styles.typography.secondary,
+    // fontSize: 16,
   },
   item_heading_qnt: {
     color: '#666666',
@@ -1305,10 +1320,9 @@ const styles = StyleSheet.create({
   },
   item_actions_box: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 15,
     overflow: 'hidden',
-    justifyContent: 'center',
-    marginHorizontal: 5,
+    // justifyContent: 'center',
   },
   item_actions_btn: {
     borderWidth: Util.pixel,
@@ -1317,7 +1331,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
-    width: appConfig.device.width / 2 - 20,
+    width: (appConfig.device.width - 45) / 2,
     borderRadius: 5,
   },
   item_actions_btn_icon_container: {
@@ -1331,10 +1345,10 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   item_actions_btn_chat: {
-    marginRight: 8,
+    marginRight: 6,
   },
   item_actions_btn_add_cart: {
-    marginLeft: 8,
+    marginLeft: 6,
     backgroundColor: appConfig.colors.primary,
   },
   item_actions_title: {
@@ -1342,46 +1356,38 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
-  item_content_box: {
-    borderColor: '#ddd',
-    marginHorizontal: 10,
-  },
+  item_content_box: {},
   item_content_item_container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    marginTop: 20,
   },
   item_content_item: {
-    borderColor: '#ddd',
     flexDirection: 'row',
     alignItems: 'center',
     width: '30%',
-    paddingLeft: 10,
+    textAlign: 'left',
   },
   item_content_item_right: {
-    marginLeft: 10,
+    flex: 1,
   },
   item_content_icon_box: {
     width: 24,
     alignItems: 'center',
   },
   item_content_item_title: {
-    fontSize: 12,
-    color: '#999999',
-    paddingLeft: 4,
-    textTransform: 'uppercase',
+    ...appConfig.styles.typography.secondary,
+    color: '#8b8b8b',
   },
   item_content_item_value: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#404040',
-    marginLeft: 4,
+    ...appConfig.styles.typography.text,
+    marginLeft: 15,
     flex: 1,
   },
 
   item_content_text: {
     width: '100%',
-    paddingVertical: 16,
+    paddingTop: 20,
   },
 
   items_box: {
@@ -1408,16 +1414,17 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   discountBadge: {
-    width: null,
-    height: 25,
+    height: undefined,
   },
 
   discountBadgeContent: {
-    backgroundColor: '#FD0D1B',
+    backgroundColor: appConfig.colors.sale,
     borderRadius: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    height: undefined,
   },
 
   paginationContainer: {
@@ -1461,9 +1468,7 @@ const styles = StyleSheet.create({
     left: 2,
   },
   webview: {
-    paddingHorizontal: 6,
     width: appConfig.device.width - 30,
-    marginLeft: 15,
   },
   noImageContainer: {
     justifyContent: 'center',
@@ -1520,8 +1525,16 @@ const styles = StyleSheet.create({
     ...(appConfig.device.isAndroid && {fontWeight: '700'}),
   },
   newsWrapper: {
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 10,
+    paddingTop: 15,
+    marginHorizontal: -15,
+  },
+  newsWrapperExtra: {
+    marginTop: -15,
+  },
+  extraInfo: {
+    paddingBottom: 15,
+    backgroundColor: '#f5f7f8',
+    paddingHorizontal: 15
   },
 });
 

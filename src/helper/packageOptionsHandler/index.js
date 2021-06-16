@@ -1,4 +1,4 @@
 import { PACKAGE_OPTIONS_TYPE } from './types';
-import { isActivePackageOptionConfig } from './packageOptionsHandler';
+import { isActivePackageOptionConfig, getPackageOptionValue } from './packageOptionsHandler';
 
-export { PACKAGE_OPTIONS_TYPE, isActivePackageOptionConfig };
+export { PACKAGE_OPTIONS_TYPE, isActivePackageOptionConfig, getPackageOptionValue };

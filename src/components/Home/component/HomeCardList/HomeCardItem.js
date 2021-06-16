@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     ...appConfig.styles.shadow,
   },
   container: {
-    marginTop: 10,
     marginHorizontal: 7.5,
   },
   image: {
