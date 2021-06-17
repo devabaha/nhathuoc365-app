@@ -52,7 +52,7 @@ class SearchNavBar extends Component {
         <TextInput
           style={styles.searchInput}
           placeholder={this.props.placeholder}
-          placeholderTextColor="#ccc"
+          placeholderTextColor={appConfig.colors.white}
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
           numberOfLines={1}
@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     marginLeft: 10,
-    borderRadius: 15,
+    borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'row',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     ...ifIphoneX(
       {
         marginTop: 4,

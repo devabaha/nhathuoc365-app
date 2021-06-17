@@ -842,7 +842,7 @@ const styles = StyleSheet.create({
 
   enterCodeBtn: {
     position: 'absolute',
-    bottom: 0,
+    bottom: appConfig.device.bottomSpace,
   },
 
   getVoucherBtn: {

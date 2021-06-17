@@ -37,6 +37,7 @@ class ProductItem extends PureComponent {
     price_view: PropTypes.string,
     onPress: PropTypes.func,
     last: PropTypes.bool,
+    horizontal: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -82,9 +83,11 @@ class ProductItem extends PureComponent {
   };
 
   render() {
-    const {containerStyle, item} = this.props;
+    const {containerStyle, item, horizontal} = this.props;
+    const extraContainerStyle = horizontal && styles.containerHorizontal;
+    const extraImageStyle = horizontal && styles.imageHorizontal;
     return (
-      <View style={[styles.container, containerStyle]}>
+      <View style={[styles.container, extraContainerStyle, containerStyle]}>
         <TouchableOpacity
           onPress={this.handlePress}
           activeOpacity={0.8}
@@ -97,7 +100,7 @@ class ProductItem extends PureComponent {
                 source={{
                   uri: this.props.image,
                 }}
-                style={styles.image}
+                style={[styles.image, extraImageStyle]}
                 resizeMode="cover"
               />
 
@@ -164,6 +167,7 @@ class ProductItem extends PureComponent {
 
 const MARGIN_ITEM = 7.5;
 const WIDTH_ITEM = appConfig.device.width / 2 - MARGIN_ITEM * 3;
+const HORIZONTAL_WIDTH_ITEM = appConfig.device.width * 0.4;
 
 let styles = StyleSheet.create({
   container: {
@@ -183,6 +187,9 @@ let styles = StyleSheet.create({
     height: WIDTH_ITEM,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
+  },
+  imageHorizontal: {
+    height: HORIZONTAL_WIDTH_ITEM,
   },
   infoWrapper: {
     flex: 1,

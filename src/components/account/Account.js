@@ -1117,8 +1117,8 @@ class Account extends Component {
                   {
                     flexDirection: 'row',
                     backgroundColor: '#ffffff',
-                    paddingVertical: 10,
-                    paddingBottom: 0,
+                    // paddingVertical: 10,
+                    // paddingBottom: 0,
                   },
                 ]}
                 underlayColor="rgba(255,255,255,.7)"
@@ -1126,8 +1126,9 @@ class Account extends Component {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <IconMaterialCommunity
                     name="account-circle"
-                    size={55}
+                    size={46}
                     color="#c7c7cd"
+                    style={{margin: -5}}
                   />
                   <View
                     style={[
@@ -1143,7 +1144,7 @@ class Account extends Component {
                   <IconMaterialCommunity
                     name="login-variant"
                     size={24}
-                    color="#242424"
+                    color="#999999"
                     style={{
                       position: 'absolute',
                       right: 15,
@@ -1154,187 +1155,6 @@ class Account extends Component {
               </TouchableHighlight>
             )}
           </>
-
-          {/* {user_info.default_wallet && ( //vnd_wallet
-            <View
-              style={{
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd",
-              }}
-            >
-              <TouchableHighlight
-                underlayColor="transparent"
-                onPress={() =>
-                  Actions.push(appConfig.routes.vndWallet, {
-                    title: user_info.default_wallet.name,
-                    wallet: user_info.default_wallet,
-                  })
-                }
-              >
-                <View
-                  style={[
-                    styles.profile_list_opt_btn,
-                    {
-                      marginTop: 0,
-                      borderTopWidth: 0,
-                      borderColor: "#dddddd",
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.profile_list_icon_box,
-                      styles.boxIconStyle,
-                      {
-                        backgroundColor: user_info.default_wallet.color,
-                      },
-                    ]}
-                  >
-                    <Icon
-                      name={user_info.default_wallet.icon}
-                      size={16}
-                      color="#ffffff"
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.profile_list_label}>
-                      {user_info.default_wallet.name}:{" "}
-                      <Text
-                        style={[
-                          styles.profile_list_label_balance,
-                          { color: user_info.default_wallet.color },
-                        ]}
-                      >
-                        {user_info.default_wallet.balance_view}
-                      </Text>
-                    </Text>
-                  </View>
-
-                  {
-                    <View
-                      style={[
-                        styles.profile_list_icon_box,
-                        styles.profile_list_icon_box_angle,
-                      ]}
-                    >
-                      <IconAngleRight />
-                    </View>
-                  }
-                </View>
-              </TouchableHighlight>
-            </View>
-          )} */}
-          {/* {user_info.ext_wallets && (
-            <View
-              style={{
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd",
-              }}
-            >
-              <View style={styles.add_store_actions_box}>
-                {user_info.ext_wallets.map((wallet, index) => (
-                  <TouchableHighlight
-                    key={index}
-                    onPress={
-                      wallet.address
-                        ? () =>
-                            Actions.push(appConfig.routes.vndWallet, {
-                              title: wallet.name,
-                              wallet: wallet,
-                            })
-                        : () => Actions.view_ndt_list()
-                    }
-                    underlayColor="transparent"
-                    style={styles.add_store_action_btn}
-                  >
-                    <View style={styles.add_store_action_btn_box}>
-                      <View style={styles.add_store_action_wallet}>
-                        <Text style={styles.add_store_action_wallet_text}>
-                          <Icon
-                            name={wallet.icon}
-                            size={16}
-                            color={wallet.color}
-                          />{" "}
-                          {wallet.name}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.add_store_action_wallet_content,
-                          { color: wallet.color },
-                        ]}
-                      >
-                        {wallet.balance_view}
-                      </Text>
-                    </View>
-                  </TouchableHighlight>
-                ))}
-              </View>
-            </View>
-          )} */}
-
-          {/* {!!user_info.username && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions.affiliate({
-                  title: t("common:screen.affiliate.mainTitle"),
-                  aff_content: store.store_data
-                    ? store.store_data.aff_content
-                    : t("affiliateMarketingProgram", {
-                        appName: APP_NAME_SHOW,
-                      }),
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 1,
-                    borderTopWidth: 0,
-                    borderColor: "#dddddd",
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: "#51A9FF",
-                    },
-                  ]}
-                >
-                  <Icon name="commenting-o" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {`${t("referralCode")}: `}
-                    <Text style={styles.profile_list_label_invite_id}>
-                      {user_info.username}
-                    </Text>
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {user_info.text_invite}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle,
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )} */}
 
           {this.options && (
             <SelectionList
@@ -1370,7 +1190,6 @@ const styles = StyleSheet.create({
   profile_user_container: {
     width: '100%',
     alignItems: 'center',
-    // marginBottom: 7,
     height: null,
     paddingVertical: 15,
     paddingLeft: 15,
@@ -1413,7 +1232,7 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    // paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
     marginRight: 15,

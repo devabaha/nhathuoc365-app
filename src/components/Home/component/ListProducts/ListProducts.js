@@ -78,6 +78,7 @@ class ListProducts extends Component {
   renderItemHorizontal = ({item: product, index}) => {
     const extraProps = {
       last: this.props.data.length - 1 === index,
+      horizontal: true
     };
     return this.renderProduct(product, extraProps);
   };

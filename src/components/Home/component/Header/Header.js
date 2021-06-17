@@ -54,7 +54,6 @@ class Header extends Component {
                   <TextInput
                     style={styles.searchInput}
                     placeholder={store.store_data ? store.store_data.name : ''}
-                    // placeholderTextColor={appConfig.colors.primary}
                     placeholderTextColor={appConfig.colors.white}
                     numberOfLines={1}
                   />

@@ -8,7 +8,7 @@ import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
 
 class Config {
   constructor() {
-    this._primaryColor = '#f41820';
+    this._primaryColor = '#812384';
   }
 
   get tagVersion() {
@@ -76,8 +76,8 @@ class Config {
     return {
       logo: {
         main: this.primaryColor,
-        sub: '#FFF',
-        addition: '#000',
+        sub: '#f5bb4b',
+        addition: '#f18c21',
       },
       status: {
         danger: '#ef476f',
