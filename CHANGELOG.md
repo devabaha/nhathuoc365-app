@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.0.1] - 2021-06-18
 ### Added
-- Adding download image function by [kienluu612@gmail.com].
+- Adding download image function by [kienluu612@gmail.com] (still bug).
 - @bam.tech/React-native-make for export Android icon API>=26.
 ### Fixed
 - Themes, others UI bugs.
