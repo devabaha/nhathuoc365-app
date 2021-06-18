@@ -50,7 +50,7 @@
     "qrBarCode": {
       "mainTitle": "Mã tài khoản",
       "walletAddressTitle": "Địa chỉ ví",
-      "scanTitle": "Quét mã QR",
+      "scanTitle": "Mã QR",
       "enterCodeProduct": "Nhập mã sản phẩm",
       "enterCode": "Nhập mã",
       "scanCode": "Quét mã"
