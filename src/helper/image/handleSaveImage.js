@@ -6,20 +6,6 @@ import {handleDownloadImage} from './handleDownloadImage';
 import {PhotoLibraryPermission} from '../permissionHelper';
 import showFlashNotification from '../../components/FlashNotification';
 
-async function hasAndroidPermission() {
-  const granted = await (appConfig.device.isIOS
-    ? PhotoLibraryPermission.request()
-    : PhotoLibraryPermission.requestWriteExternalAndroid());
-  if (granted) {
-    return true;
-  } else {
-    setTimeout(() => {
-      PhotoLibraryPermission.openPermissionAskingModal();
-    }, 500);
-    return;
-  }
-}
-
 const handleSaveImage = async (url, message) => {
   const t = i18n.getFixedT(undefined, 'common');
   let base64, imageType;
@@ -37,13 +23,25 @@ const handleSaveImage = async (url, message) => {
   const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
   const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
   try {
-    const data = await (appConfig.device.isIOS
-      ? CameraRoll.save(iOSPath, {type: 'photo'})
-      : hasAndroidPermission()
-      ? RNFetchBlob.fs.writeFile(androidPath, base64, 'base64')
-      : null);
-    if (data) {
-      showFlashNotification(t('saved'));
+    const granted = await (appConfig.device.isIOS
+      ? PhotoLibraryPermission.request()
+      : PhotoLibraryPermission.requestWriteExternalAndroid());
+    if (granted) {
+      const data = await (appConfig.device.isIOS
+        ? CameraRoll.save(iOSPath, {type: 'photo'})
+        : RNFetchBlob.fs.writeFile(androidPath, base64, 'base64'));
+      if (data) {
+        showFlashNotification(t('saved'));
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: t('saveImageFailed'),
+        });
+      }
+    } else {
+      setTimeout(() => {
+        PhotoLibraryPermission.openPermissionAskingModal();
+      }, 500);
     }
   } catch (error) {
     flashShowMessage({
