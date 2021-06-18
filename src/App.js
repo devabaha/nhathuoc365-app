@@ -178,6 +178,9 @@ import SVGHome from './images/home/home.svg';
 import SVGNews from './images/home/news.svg';
 import SVGOrders from './images/home/orders.svg';
 import SVGAccount from './images/home/account.svg';
+import ProgressTracking, {
+  ProgressTrackingDetail,
+} from './containers/ProgressTracking';
 
 /**
  * Not allow font scaling
@@ -774,17 +777,17 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab1.title')}
                     iconName="store"
                     iconSize={24}
-                    
-                    iconSVG={SVGHome}
-                    >
+                    iconSVG={SVGHome}>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
                       title={APP_NAME_SHOW}
                       component={HomeContainer}
                       hideNavBar
                       onEnter={() => {
-                        StatusBar.setTranslucent(false);
-                        StatusBar.setBarStyle('light-content', true);
+                        if (appConfig.device.isAndroid) {
+                          StatusBar.setTranslucent(false);
+                          StatusBar.setBarStyle('light-content', true);
+                        }
                       }}
                     />
                   </Stack>
@@ -799,9 +802,7 @@ class RootRouter extends Component {
                     iconName="bell"
                     iconSize={24}
                     notifyKey="new_totals"
-                    
-                    iconSVG={SVGNews}
-                    >
+                    iconSVG={SVGNews}>
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
@@ -826,9 +827,7 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab4.title')}
                     iconName="cart"
                     notifyKey="notify_cart"
-                    
-                    iconSVG={SVGOrders}
-                    >
+                    iconSVG={SVGOrders}>
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
@@ -857,9 +856,7 @@ class RootRouter extends Component {
                     }}
                     headerLayoutPreset="left"
                     iconSize={24}
-
-                    iconSVG={SVGAccount}
-                    >
+                    iconSVG={SVGAccount}>
                     <Scene
                       titleStyle={{
                         color: '#333',
@@ -873,6 +870,26 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ LIST PROGRESS TRACKING ================ */}
+                <Stack key={appConfig.routes.listProgressTracking}>
+                  <Scene
+                    key={`${appConfig.routes.listProgressTracking}_1`}
+                    component={ProgressTracking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ PROGRESS ITEM ================ */}
+                <Stack key={appConfig.routes.progressTrackingDetail}>
+                  <Scene
+                    key={`${appConfig.routes.progressTrackingDetail}_1`}
+                    component={ProgressTrackingDetail}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ SOCIAL ================ */}
                 <Stack key={appConfig.routes.social}>

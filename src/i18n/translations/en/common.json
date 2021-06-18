@@ -234,5 +234,6 @@
   "addImagesDescription": "Tap to select images",
   "saved": "Saved",
   "saveImageFailed": "Save image unsuccessfully, please try again.",
-  "saveImageLabel": "Save image"
+  "saveImageLabel": "Save image",
+  "noResult": "No data yet"
 }

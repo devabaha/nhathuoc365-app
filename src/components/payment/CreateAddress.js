@@ -524,7 +524,7 @@ console.log(data_edit)
 
       if (response && response.status == STATUS_SUCCESS) {
         this._unMount();
-        store.setCartData(response.data);
+        // store.setCartData(response.data);
         // auto reload address list
         this._reloadParent();
 

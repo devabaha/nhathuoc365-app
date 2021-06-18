@@ -357,12 +357,26 @@ class NotifyItem extends Component {
             onPressTotalComments={() =>
               handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.NEWS,
-                SOCIAL_BUTTON_TYPES.COMMENT,
                 item_data,
-                false,
-              )
-            }
-          />
+              )}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+              onActionBarPress={(type) =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  type,
+                  item_data,
+                )
+              }
+              hasInfoExtraBottom={false}
+              onPressTotalComments={() =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  item_data,
+                  false,
+                )
+              }
+            />
         )}
 
         {/* {item_data != null && item_data.related && (
