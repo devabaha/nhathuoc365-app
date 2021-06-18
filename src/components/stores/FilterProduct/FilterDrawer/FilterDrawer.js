@@ -160,7 +160,17 @@ function FilterDrawer() {
     return false;
   };
 
+  const isResetFilterDisabled = () => {
+    return (
+      !Object.keys(store.selectedFilter)?.length &&
+      !Object.keys(selectedTag)?.length &&
+      !Object.keys(selectedPrice)?.length
+    );
+  };
+
   const handleResetFilter = () => {
+    if (isResetFilterDisabled()) return;
+
     setSelectedTag({});
     setSelectedPrice({});
     setDefaultSelected({});
@@ -220,15 +230,18 @@ function FilterDrawer() {
         {hasData && (
           <Container row style={styles.btnFooterContainer}>
             <Button
+              disabled={isResetFilterDisabled()}
               containerStyle={styles.btnResetContainer}
-              btnContainerStyle={styles.btnResetContent}
+              btnContainerStyle={
+                !isResetFilterDisabled() && styles.btnResetContent
+              }
               onPress={handleResetFilter}>
-              <AntDesignIcon name="sync" style={styles.closeIcon} />
+              <AntDesignIcon name="sync" style={[styles.closeIcon, !isResetFilterDisabled() && styles.resetIcon]} />
             </Button>
 
             <Button
               containerStyle={styles.btnApplyContainer}
-              disabled={disabled}
+              disabled={disabled || isResetFilterDisabled()}
               title="Áp dụng"
               onPress={handleApplyFilter}
             />
@@ -307,6 +320,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingHorizontal: 15,
   },
+  resetIcon: {
+    color: '#333',
+  },
 
   btnResetContainer: {
     width: undefined,
@@ -314,7 +330,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   btnResetContent: {
-    backgroundColor: '#aaa',
+    backgroundColor: appConfig.colors.white,
+    borderWidth: .5
   },
   btnApplyContainer: {
     paddingLeft: 0,

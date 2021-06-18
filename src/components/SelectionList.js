@@ -52,11 +52,13 @@ class SelectionList extends Component {
                 item.containerStyle,
               ]}>
               <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
-                <Icon
-                  name={item.icon}
-                  size={item.iconSize || 16}
-                  color={item.iconColor || '#999999'}
-                />
+                {item.leftIcon || (
+                   <Icon
+                    name={item.icon}
+                    size={item.iconSize || 16}
+                    color={item.iconColor || '#999999'}
+                  />
+                )}
               </View>
 
               <View style={styles.labelContainer}>

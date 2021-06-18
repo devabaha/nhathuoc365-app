@@ -12,6 +12,7 @@ import {isEmpty, isEqual} from 'lodash';
 import {APIRequest} from 'src/network/Entity';
 
 import appConfig from 'app-config';
+import ListStoreProduct from './ListStoreProduct';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -302,7 +303,7 @@ class CategoryScreen extends Component {
           <Animated.ScrollView
             contentContainerStyle={{
               flexGrow: 1,
-              paddingBottom: appConfig.device.bottomSpace,
+              paddingBottom: store.cart_data ?0: appConfig.device.bottomSpace
             }}
             scrollEventThrottle={16}
             refreshControl={
@@ -375,11 +376,12 @@ class CategoryScreen extends Component {
 
             {/* <ListHeader title={header_title} /> */}
 
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                paddingTop: 7,
+                paddingTop: 20,
+                paddingBottom: 5,
               }}>
               {items_data !== null
                 ? items_data.map((item, index) => (
@@ -395,7 +397,8 @@ class CategoryScreen extends Component {
                     />
                   ))
                 : null}
-            </View>
+            </View> */}
+            <ListStoreProduct products={items_data} onPressLoadMore={this._loadMore}/>
             {items_data == null ? (
               <View style={[styles.containerScreen]}>
                 {fetched && (

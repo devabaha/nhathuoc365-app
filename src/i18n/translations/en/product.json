@@ -14,8 +14,9 @@
   "like": "Like",
   "productsLeft": "Stock: {{quantity}}",
   "information": {
-    "brands": "BRANDS",
-    "origin": "ORIGIN"
+    "warehouse": "Warehouse",
+    "brands": "Brands",
+    "origin": "Origin"
   },
   "relatedItems": "PRODUCTS OF THE SAME TYPE",
   "goToStore": "Go to store"

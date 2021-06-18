@@ -124,22 +124,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: config.colors.sceneBackground,
-    marginBottom: config.device.bottomSpace,
   },
   getVoucherWrapper: {
     backgroundColor: config.colors.white,
-    height: 62,
-    paddingHorizontal: 16,
+    // minHeight: 62,
+    paddingHorizontal: 7.5,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: config.device.bottomSpace + 10,
   },
   getVoucherBtn: {
     flex: 1,
     backgroundColor: config.colors.primary,
     borderRadius: 8,
     paddingVertical: 14,
-    marginHorizontal: 7,
+    marginHorizontal: 7.5,
     paddingHorizontal: 12,
   },
   getVoucherTitle: {

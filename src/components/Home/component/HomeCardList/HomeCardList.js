@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 
+import appConfig from 'app-config';
 class HomeCardList extends Component {
   render() {
     const props = this.props;
-    const { t } = props;
+    const {t} = props;
     return (
       <View style={styles.container}>
         <View style={styles.content}>
@@ -16,8 +17,7 @@ class HomeCardList extends Component {
             <Button
               containerStyle={styles.showAllBtn}
               underlayColor="transparent"
-              onPress={props.onShowAll}
-            >
+              onPress={props.onShowAll}>
               <Text style={styles.viewAll}>{t('viewAll')}</Text>
             </Button>
           ) : (
@@ -28,10 +28,11 @@ class HomeCardList extends Component {
         <FlatList
           horizontal
           data={props.data}
-          style={styles.listContainer}
           showsHorizontalScrollIndicator={false}
           renderItem={props.children}
           keyExtractor={(item, index) => index.toString()}
+          style={styles.listContainer}
+          contentContainerStyle={styles.listContentContainer}
         />
       </View>
     );
@@ -40,41 +41,34 @@ class HomeCardList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    marginTop: 10,
-    paddingBottom: 15
+    marginTop: 15,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end'
+    alignItems: 'center',
   },
   showAllBtn: {
-    paddingTop: 12,
-    paddingBottom: 6
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 20,
-    marginTop: 12,
-    marginBottom: 6,
+    ...appConfig.styles.typography.heading1,
     flex: 1,
     marginRight: 20,
   },
   viewAll: {
+    ...appConfig.styles.typography.text,
     color: '#0084ff',
-    fontSize: 15,
-    fontWeight: '500'
   },
-  listContainer:  {
-    paddingTop: 15,
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
-  }
+  listContainer: {
+    overflow: 'visible',
+  },
+  listContentContainer: {
+    paddingHorizontal: 7.5,
+    paddingVertical: 15,
+  },
 });
 
 const defaultListener = () => null;
@@ -82,13 +76,13 @@ const defaultListener = () => null;
 HomeCardList.propTypes = {
   data: PropTypes.array,
   onShowAll: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };
 
 HomeCardList.defaultProps = {
   data: [],
   onShowAll: defaultListener,
-  children: defaultListener
+  children: defaultListener,
 };
 
 export default withTranslation('home')(HomeCardList);

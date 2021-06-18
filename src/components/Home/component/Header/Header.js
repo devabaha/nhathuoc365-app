@@ -1,66 +1,145 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  StatusBar,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import store from 'app-store';
+import RightButtonOrders from '../../../RightButtonOrders';
+import Animated from 'react-native-reanimated';
+import RightButtonChat from '../../../RightButtonChat';
+import RightButtonNavBar from '../../../RightButtonNavBar';
+import {RIGHT_BUTTON_TYPE} from '../../../RightButtonNavBar/constants';
+import Loading from '../../../Loading';
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 class Header extends Component {
+  static defaultProps = {
+    loading: false,
+  };
+
   render() {
-    const {t, ...props} = this.props;
+    const {t} = this.props;
     const {notify} = store;
     return (
-      <View style={styles.container}>
-        <Text style={styles.userNameWrapper}>
-          <Text style={styles.userName}>{t('welcome.message')}</Text>
-          <Text style={[styles.userName, styles.userNameBold]}>
-            {props.name ? `, ${props.name}` : ''}
-          </Text>
-        </Text>
+      <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
+        <Animated.View style={[styles.maskMain, this.props.maskMainStyle]} />
+        <Animated.View style={[styles.maskSub, this.props.maskSubStyle]} />
+        <View style={[styles.container, this.props.containerStyle]}>
+          <View onLayout={this.props.onContentLayout} style={styles.contentContainer}>
+            <View style={styles.userNameWrapper}>
+              <TouchableOpacity
+                disabled={this.props.loading}
+                onPress={this.props.goToSearch}>
+                <Animated.View style={[styles.searchWrapper, styles.maskSub]} />
+                <Animated.View
+                  style={[
+                    styles.searchWrapper,
+                    styles.maskMain,
+                    this.props.maskSearchWrapperStyle,
+                  ]}
+                />
+                <View pointerEvents="none" style={styles.searchWrapper}>
+                  <Ionicons style={styles.searchIcon} name="ios-search" />
+                  <TextInput
+                    style={styles.searchInput}
+                    placeholder={store.store_data ? store.store_data.name : ''}
+                    placeholderTextColor={appConfig.colors.white}
+                    numberOfLines={1}
+                  />
+                  {this.props.loading && (
+                    <Loading wrapperStyle={styles.loading} size="small" />
+                  )}
+                </View>
+              </TouchableOpacity>
+            </View>
 
-        <View style={styles.notificationWrapper}>
-          <Button
-            containerStyle={styles.notificationBtn}
-            onPress={props.onPressNoti}>
-            <AntDesignIcon
-              style={styles.iconNotication}
-              name="message1"
-              size={24}
-              color="#fff"
-              solid
+            <RightButtonNavBar
+              type={RIGHT_BUTTON_TYPE.SHOPPING_CART}
+              icon={
+                <View>
+                  <AnimatedIcon
+                    style={[styles.icon, styles.iconMask]}
+                    name="shoppingcart"
+                    size={25}
+                  />
+                  <AnimatedIcon
+                    style={[styles.icon, this.props.iconStyle]}
+                    name="shoppingcart"
+                    size={25}
+                  />
+                </View>
+              }
             />
-            {notify.notify_chat > 0 && (
-              <View style={styles.notifyWrapper}>
-                <Text style={styles.notify}>{notify.notify_chat}</Text>
-              </View>
-            )}
-          </Button>
+            <RightButtonNavBar
+              onPress={this.props.onPressNoti}
+              type={RIGHT_BUTTON_TYPE.CHAT}
+              style={styles.chatIconStyle}
+              icon={
+                <View>
+                  <AnimatedIcon
+                    style={[styles.icon, styles.iconMask]}
+                    name="message1"
+                    size={23}
+                  />
+                  <AnimatedIcon
+                    style={[styles.icon, this.props.iconStyle]}
+                    name="message1"
+                    size={23}
+                  />
+                </View>
+              }
+            />
+          </View>
         </View>
-
-        {/* DEMO SCHEDULE FUNCTION */}
-        {/* <Button
-        containerStyle={{ position: 'absolute', right: 70, top: 40 }}
-        onPress={() => Actions.push(appConfig.routes.schedule)}
-      >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
-      </Button> */}
-      </View>
+      </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    // position: 'absolute',
+    // top: 0,
+    // width: '100%'
+  },
   container: {
     padding: 15,
+    paddingBottom: 0,
     flexDirection: 'row',
-    paddingTop: appConfig.device.isIphoneX
-      ? 35
-      : appConfig.device.isIOS
-      ? 25
-      : 15,
+    paddingTop: Platform.select({
+      ios: appConfig.device.statusBarHeight * 1.5,
+    }),
+    alignItems: 'center',
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 15
+  },
+  maskMain: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  maskSub: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    // backgroundColor: appConfig.colors.white
   },
   notificationWrapper: {
+    top: -2,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     fontWeight: 'bold',
@@ -70,11 +149,14 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingBottom: 8,
     position: 'relative',
-    ...elevationShadowStyle(5),
   },
-  iconNotication: {},
+  icon: {
+    color: '#fff',
+  },
+  iconMask: {
+    position: 'absolute',
+  },
   userNameWrapper: {
-    marginTop: 16,
     flex: 1,
   },
   userName: {
@@ -90,7 +172,6 @@ const styles = StyleSheet.create({
     minWidth: 16,
     paddingHorizontal: 2,
     height: 16,
-    backgroundColor: 'red',
     top: -8,
     right: -8,
     justifyContent: 'center',
@@ -102,6 +183,29 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600',
+  },
+  searchWrapper: {
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0,0,0,.3)',
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: isAndroid ? 5 : 10,
+    color: appConfig.colors.white,
+  },
+  chatIconStyle: {
+    marginRight: 0,
+  },
+  loading: {
+    position: 'relative',
+  },
+  searchIcon: {
+    fontSize: 20,
+    color: appConfig.colors.white,
   },
 });
 
@@ -115,4 +219,4 @@ Header.defaultProps = {
   notify: {},
 };
 
-export default withTranslation('home')(observer(Header));
+export default withTranslation(['home', 'stores'])(Header);

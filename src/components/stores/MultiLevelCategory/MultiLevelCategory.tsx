@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     mainCategories: {
         backgroundColor: '#fff',
@@ -444,7 +444,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         return (
             <View style={styles.container}>
                 {this.state.loading && <Loading center />}
-                <SafeAreaView style={styles.mainContainer}>
+                <View style={styles.mainContainer}>
                     <View style={styles.mainCategories}>
                         <FlatList
                             ref={this.refMainCategory}
@@ -453,6 +453,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                             extraData={this.state.selectedMainCategory.id}
                             showsVerticalScrollIndicator={false}
                             data={this.state.categories}
+                            contentContainerStyle={{paddingBottom: appConfig.device.bottomSpace}}
                             renderItem={this.renderMainCategory.bind(this)}
                             keyExtractor={(item, index) => index.toString()}
                             onScrollToIndexFailed={() => { }}
@@ -465,7 +466,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     </View>
 
                     <ScrollView
-                        contentContainerStyle={{ flexGrow: 1 }}
+                        contentContainerStyle={{ flexGrow: 1, paddingBottom: appConfig.device.bottomSpace }}
                         ref={this.refSubCategory}
                         scrollEventThrottle={16}
                         onScroll={this.handleSubCategoriesScrolling.bind(this)}
@@ -490,7 +491,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                                 message="Chưa có danh mục"
                             />}
                     </ScrollView>
-                </SafeAreaView>
+                </View>
             </View>
         );
     }

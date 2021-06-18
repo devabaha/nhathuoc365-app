@@ -653,8 +653,8 @@ class CartFooter extends Component {
         />
 
         <View>
-          {this.props.animating &&
-            this.renderQuickOpenCartBtn(isset_cart, cart_data)}
+          {/* {this.props.animating &&
+            this.renderQuickOpenCartBtn(isset_cart, cart_data)} */}
 
           <Animated.View
             onLayout={this.handleContainerLayout}
@@ -950,7 +950,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-
   discountBadgeContainer: {
     position: 'absolute',
     bottom: 0,

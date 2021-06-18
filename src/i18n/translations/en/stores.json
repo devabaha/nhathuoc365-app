@@ -1,4 +1,10 @@
 {
+  "search": {
+    "placeholder": {
+      "prefix": "Search in",
+      "suffix": "shop"
+    }
+  },
   "tabs": {
     "store": {
       "title": "Store"

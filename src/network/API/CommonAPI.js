@@ -20,6 +20,9 @@ class CommonAPI {
   get USER_HOME() {
     return BaseAPI.apiDomain + 'apiUser/home';
   }
+  get USER_SITE_HOME_NEW() {
+    return BaseAPI.apiDomain + 'apiUser/site_home_new';
+  }
   get USER_SITE_HOME() {
     return BaseAPI.apiDomain + 'apiUser/site_home';
   }
@@ -82,6 +85,15 @@ class CommonAPI {
   get USER_UPDATE_PROFILE() {
     return BaseAPI.apiDomain + 'apiUser/update';
   }
+  get USER_LIST_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_store_location';
+  }
+  get USER_LIST_GPS_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_gps_store_location';
+  }
+  get USER_CHOOSE_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/choose_store_location';
+  }
   get SITE_GET_TREE_CATEGORIES() {
     return BaseAPI.apiDomain + 'apiSite/get_tree_categories';
   }
@@ -100,6 +112,9 @@ class CommonAPI {
   }
   get CART_CONFIRMED() {
     return BaseAPI.apiDomain + 'apiCart/confirmed';
+  }
+  get CART_REORDER() {
+    return BaseAPI.apiDomain + 'apiCart/reorder';
   }
   get SITE_CART_PLUS() {
     return BaseAPI.apiDomain + 'apiCart/plus';
@@ -324,6 +339,9 @@ class CommonAPI {
   }
   get USER_GET_INFO_BY_WALLET_ADDRESS() {
     return BaseAPI.apiDomain + 'apiUser/get_info_user_by_wallet_address';
+  }
+  get USER_GET_FAVOR_SITES() {
+    return BaseAPI.apiDomain + 'apiUser/favor_sites';
   }
   get USER_RESET_PASSWORD() {
     return BaseAPI.apiDomain + 'apiUser/reset_pass';

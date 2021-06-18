@@ -57,6 +57,9 @@ import en_social from './en/social.json';
 import vi_salesReport from './vi/salesReport.json';
 import en_salesReport from './en/salesReport.json';
 
+import vi_cardWallet from './vi/cardWallet.json';
+import en_cardWallet from './en/cardWallet.json';
+
 export default {
   [languages.vi.value]: {
     common: vi_common,
@@ -84,6 +87,7 @@ export default {
     opRegister: vi_opRegister,
     resetPassword: vi_resetPassword,
     rateApp: vi_rateApp,
+    cardWallet: vi_cardWallet,
     commissionIncomeStatement: vi_commissionIncomeStatement,
     social: vi_social,
     salesReport: vi_salesReport,
@@ -114,6 +118,7 @@ export default {
     opRegister: en_opRegister,
     resetPassword: en_resetPassword,
     rateApp: en_rateApp,
+    cardWallet: en_cardWallet,
     commissionIncomeStatement: en_commissionIncomeStatement,
     social: en_social,
     salesReport: en_salesReport,

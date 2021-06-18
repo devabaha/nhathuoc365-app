@@ -1,8 +1,16 @@
 {
   "options": {
+    "changeStoreLocation": {
+      "label": "Choose other stores",
+      "desc": ""
+    },
     "myAdress": {
       "label": "My address",
       "desc": "Delivery address management"
+    },
+    "myVoucher": {
+      "label": "My Voucher",
+      "desc": "Use the discount code received"
     },
     "fanpage": {
       "label": "Fanpage {{appName}}",

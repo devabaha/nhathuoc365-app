@@ -418,7 +418,7 @@ class Stores extends Component {
       <View style={styles.container}>
         {this.state.categories_data != null
           ? this.state.categories_data.length > 1 && (
-              <View style={styles.categories_nav}>
+              <View style={styles.categories_nav_container}>
                 <FlatList
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
@@ -459,18 +459,15 @@ class Stores extends Component {
                     );
                   }}
                 />
+                <FilterProduct
+                  selectedFilter={store.selectedFilter}
+                  onValueSort={this.handleValue}
+                  animatedScrollY={this.animatedScrollY}
+                  animatedContentOffsetY={this.animatedContentOffsetY}
+                />
               </View>
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
-
-        {this.state.categories_data != null && (
-          <FilterProduct
-            selectedFilter={store.selectedFilter}
-            onValueSort={this.handleValue}
-            animatedScrollY={this.animatedScrollY}
-            animatedContentOffsetY={this.animatedContentOffsetY}
-          />
-        )}
 
         {this.state.categories_data != null && (
           <FlatList
@@ -554,8 +551,12 @@ const styles = StyleSheet.create({
     width: Util.size.width,
   },
 
-  categories_nav: {
+  categories_nav_container: {
+    zIndex: 1,
     backgroundColor: '#ffffff',
+    ...appConfig.styles.shadow,
+  },
+  categories_nav: {
     height: 40,
     borderBottomWidth: Util.pixel,
     borderBottomColor: '#dddddd',

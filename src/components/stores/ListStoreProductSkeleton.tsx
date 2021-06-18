@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flexGrow: 1,
-        paddingTop: 8
+        paddingTop: 15
     },
     itemContainer: {
         width: ITEM_WIDTH,

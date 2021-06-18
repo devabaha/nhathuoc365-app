@@ -1,0 +1,20 @@
+{
+  "buttons": {
+    "tab1": {
+      "title": "Add shops",
+      "placeholder": "Enter at least 3 characters to search...",
+      "noResult": "Shop not found"
+    },
+    "tab2": {
+      "title": "Search"
+    }
+  },
+  "searchInput": {
+    "placeholder": "Search the shops..."
+  },
+  "header": {
+    "prefix": "",
+    "suffix": "result(s)"
+  },
+  "noCard": "No cards yet? Please add now"
+}

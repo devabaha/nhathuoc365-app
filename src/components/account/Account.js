@@ -24,10 +24,14 @@ import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 import {languages} from '../../i18n/constants';
 import {setAppLanguage} from '../../i18n/i18n';
+import {APIRequest} from '../../network/Entity';
+import {
+  isActivePackageOptionConfig,
+  PACKAGE_OPTIONS_TYPE,
+} from '../../helper/packageOptionsHandler';
 import EventTracker from '../../helper/EventTracker';
 import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
-import {APIRequest} from '../../network/Entity';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
@@ -44,9 +48,9 @@ class Account extends Component {
       logout_loading: false,
       sticker_flag: false,
       avatar_loading: false,
-      scrollTop: 0,
     };
-
+    this.uploadFaceIDRequest = new APIRequest();
+    this.requests = [this.uploadFaceIDRequest];
     reaction(() => store.user_info, this.initial);
     this.eventTracker = new EventTracker();
     this.getWarehouseRequest = new APIRequest();
@@ -214,9 +218,70 @@ class Account extends Component {
         ],
         iconColor: '#fff',
       },
-
       {
-        key: '1',
+        key: 'store',
+        isHidden: !isActivePackageOptionConfig(
+          PACKAGE_OPTIONS_TYPE.CHAIN_STORE,
+        ),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="store"
+              style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
+            />
+            <Icon
+              name="map-marker"
+              style={{
+                fontSize: 16,
+                color: '#fff',
+                position: 'absolute',
+                right: -3,
+                top: 0,
+                backgroundColor: 'transparent',
+              }}
+            />
+          </View>
+        ),
+        label: t('options.changeStoreLocation.label'),
+        desc: store.store_data.name,
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#f66',
+          },
+        ],
+      },
+      {
+        key: 'vouchers',
+        isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
+        label: t('options.myVoucher.label'),
+        desc: t('options.myVoucher.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="sale"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.myVoucher, {
+            title: t('common:screen.myVoucher.mainTitle'),
+            from: 'home',
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#ffc3c0',
+          },
+        ],
+        iconColor: '#ffffff',
+      },
+      {
+        key: 'address',
         icon: 'map-marker',
         label: t('options.myAdress.label'),
         desc: t('options.myAdress.desc'),
@@ -333,6 +398,31 @@ class Account extends Component {
       },
 
       {
+        key: 'reset_pass',
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TRANSACTION_PASS) ||
+          !store.user_info ||
+          !store.user_info.tel,
+        icon: 'lock-reset',
+        label: t('options.resetPassword.label'),
+        desc: t('options.resetPassword.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          Actions.push(appConfig.routes.resetPassword);
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#888',
+          },
+        ],
+        iconColor: '#fff',
+        iconSize: 18,
+        iconType: 'MaterialCommunityIcons',
+        marginTop: true,
+      },
+
+      {
         key: '2',
         icon: 'facebook-square',
         label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
@@ -398,27 +488,6 @@ class Account extends Component {
       },
 
       {
-        key: '6',
-        icon: 'lock-reset',
-        label: t('options.resetPassword.label'),
-        desc: t('options.resetPassword.desc'),
-        rightIcon: <IconAngleRight />,
-        onPress: () => {
-          Actions.push(appConfig.routes.resetPassword);
-        },
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#888',
-          },
-        ],
-        iconColor: '#fff',
-        iconSize: 18,
-        iconType: 'MaterialCommunityIcons',
-        marginTop: true,
-        isHidden: !store.user_info || !store.user_info.tel,
-      },
-      {
         key: '7',
         icon: 'language',
         label: t('options.language.label'),
@@ -433,24 +502,30 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage,
+            onSelect: this.handleConfirmChangeAppLanguage
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189',
-          },
+            backgroundColor: '#175189'
+          }
         ],
         iconColor: '#ffffff',
+        marginTop: true
       },
+
       {
-        key: '4',
+        key: 'app_info',
         icon: 'question-circle',
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + codePushVersion,
+          appVersion:
+            DeviceInfo.getVersion() +
+            codePushVersion +
+            '-' +
+            appConfig.tagVersion,
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {},
@@ -465,7 +540,7 @@ class Account extends Component {
         marginTop: true,
       },
       {
-        key: '5',
+        key: 'app_update',
         isHidden: !isUpdate,
         icon: 'cloud-download',
         label: t('options.appUpdate.label'),
@@ -488,6 +563,10 @@ class Account extends Component {
         iconColor: '#ffffff',
       },
     ];
+  }
+
+  componentWillUnmount() {
+    cancelRequests(this.requests);
   }
 
   initial = (callback) => {
@@ -537,6 +616,8 @@ class Account extends Component {
     const {t} = this.props;
 
     const options = {
+      cameraType: 'front',
+      rotation: 360,
       title: t('avatarPicker.title'),
       cancelButtonTitle: t('avatarPicker.cancelTitle'),
       takePhotoButtonTitle: t('avatarPicker.takePhotoTitle'),
@@ -562,8 +643,36 @@ class Account extends Component {
           }
         }
         this.uploadAvatar(response);
+        // this.uploadFaceID(response);
       }
     });
+  }
+
+  async uploadFaceID(image) {
+    this.setState({avatar_loading: true});
+    const siteId = this.props.siteId || store.store_id;
+    const uploadImageBase64 = 'data:' + image.type + ';base64,' + image.data;
+    const data = {
+      image1: uploadImageBase64,
+      image2: uploadImageBase64,
+      image3: uploadImageBase64,
+    };
+    try {
+      this.uploadFaceIDRequest.data = APIHandler.site_upload_image_faceID(
+        siteId,
+        data,
+      );
+      const response = await this.uploadFaceIDRequest.promise();
+      // console.log(response);
+      flashShowMessage({
+        type: response.status === STATUS_SUCCESS,
+        message: response.message,
+      });
+    } catch (err) {
+      console.log('upload faceid', err);
+    } finally {
+      this.setState({avatar_loading: false});
+    }
   }
 
   uploadAvatar(response) {
@@ -621,7 +730,6 @@ class Account extends Component {
   componentDidMount() {
     this.getListWarehouse();
     this.initial(() => {
-      this.key_add_new = this.options.length;
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
     });
@@ -880,12 +988,6 @@ class Account extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-          scrollEventThrottle={16}
-          onScroll={(event) => {
-            this.setState({
-              scrollTop: event.nativeEvent.contentOffset.y,
-            });
-          }}
           ref={(ref) => (this.refs_account = ref)}
           refreshControl={
             <RefreshControl
@@ -906,23 +1008,50 @@ class Account extends Component {
                 <>
                   <TouchableHighlight
                     onPress={this.onTapAvatar.bind(this)}
-                    style={[styles.profile_avatar_box]}
+                    style={[
+                      styles.profile_avatar_box,
+                      styles.profile_avatar_box_container,
+                    ]}
                     underlayColor="transparent">
-                    {avatar_loading ? (
-                      <View style={{width: '100%', height: '100%'}}>
-                        <Indicator size="small" />
+                    <>
+                      <View style={styles.profile_avatar_box}>
+                        {avatar_loading ? (
+                          <View style={{width: '100%', height: '100%'}}>
+                            <Indicator size="small" />
+                          </View>
+                        ) : (
+                          <CachedImage
+                            mutable
+                            style={styles.profile_avatar}
+                            source={{
+                              uri: store.user_info ? store.user_info.img : '',
+                            }}
+                          />
+                        )}
                       </View>
-                    ) : (
-                      <View>
-                        <CachedImage
-                          mutable
-                          style={styles.profile_avatar}
-                          source={{
-                            uri: store.user_info ? store.user_info.img : '',
-                          }}
+
+                      {/* {!!user_info.is_verified ? (
+                        <IconMaterialCommunity
+                          name="check-decagram"
+                          style={[
+                            styles.verifiedIcon,
+                            {
+                              color: '#499108'
+                            }
+                          ]}
                         />
-                      </View>
-                    )}
+                      ) : (
+                        <Icon
+                          name="exclamation-circle"
+                          style={[
+                            styles.verifiedIcon,
+                            {
+                              color: '#ea8e0c'
+                            }
+                          ]}
+                        />
+                      )} */}
+                    </>
                   </TouchableHighlight>
 
                   <View
@@ -930,6 +1059,7 @@ class Account extends Component {
                       flexDirection: 'row',
                       flex: 1,
                       alignItems: 'center',
+                      paddingRight: 25,
                     }}>
                     <View>
                       <Text
@@ -953,6 +1083,21 @@ class Account extends Component {
                         ]}>
                         {user_info.tel}
                       </Text>
+                      {/* {!!!user_info.is_verified && (
+                        <Text
+                          style={[
+                            styles.profile_list_small_label,
+                            {
+                              fontSize: 10,
+                              marginTop: 5,
+                              fontStyle: 'italic'
+                            }
+                          ]}
+                        >
+                          Tài khoản của bạn chưa được xác thực, vui lòng cập
+                          nhật ảnh đại diện để xác thực!
+                        </Text>
+                      )} */}
                     </View>
                     <View
                       style={[
@@ -972,8 +1117,8 @@ class Account extends Component {
                   {
                     flexDirection: 'row',
                     backgroundColor: '#ffffff',
-                    paddingVertical: 10,
-                    paddingBottom: 0,
+                    // paddingVertical: 10,
+                    // paddingBottom: 0,
                   },
                 ]}
                 underlayColor="rgba(255,255,255,.7)"
@@ -981,8 +1126,9 @@ class Account extends Component {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <IconMaterialCommunity
                     name="account-circle"
-                    size={55}
+                    size={46}
                     color="#c7c7cd"
+                    style={{margin: -5}}
                   />
                   <View
                     style={[
@@ -998,7 +1144,7 @@ class Account extends Component {
                   <IconMaterialCommunity
                     name="login-variant"
                     size={24}
-                    color="#242424"
+                    color="#999999"
                     style={{
                       position: 'absolute',
                       right: 15,
@@ -1010,192 +1156,12 @@ class Account extends Component {
             )}
           </>
 
-          {/* {user_info.default_wallet && ( //vnd_wallet
-            <View
-              style={{
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd",
-              }}
-            >
-              <TouchableHighlight
-                underlayColor="transparent"
-                onPress={() =>
-                  Actions.push(appConfig.routes.vndWallet, {
-                    title: user_info.default_wallet.name,
-                    wallet: user_info.default_wallet,
-                  })
-                }
-              >
-                <View
-                  style={[
-                    styles.profile_list_opt_btn,
-                    {
-                      marginTop: 0,
-                      borderTopWidth: 0,
-                      borderColor: "#dddddd",
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.profile_list_icon_box,
-                      styles.boxIconStyle,
-                      {
-                        backgroundColor: user_info.default_wallet.color,
-                      },
-                    ]}
-                  >
-                    <Icon
-                      name={user_info.default_wallet.icon}
-                      size={16}
-                      color="#ffffff"
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.profile_list_label}>
-                      {user_info.default_wallet.name}:{" "}
-                      <Text
-                        style={[
-                          styles.profile_list_label_balance,
-                          { color: user_info.default_wallet.color },
-                        ]}
-                      >
-                        {user_info.default_wallet.balance_view}
-                      </Text>
-                    </Text>
-                  </View>
-
-                  {
-                    <View
-                      style={[
-                        styles.profile_list_icon_box,
-                        styles.profile_list_icon_box_angle,
-                      ]}
-                    >
-                      <IconAngleRight />
-                    </View>
-                  }
-                </View>
-              </TouchableHighlight>
-            </View>
-          )} */}
-          {/* {user_info.ext_wallets && (
-            <View
-              style={{
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd",
-              }}
-            >
-              <View style={styles.add_store_actions_box}>
-                {user_info.ext_wallets.map((wallet, index) => (
-                  <TouchableHighlight
-                    key={index}
-                    onPress={
-                      wallet.address
-                        ? () =>
-                            Actions.push(appConfig.routes.vndWallet, {
-                              title: wallet.name,
-                              wallet: wallet,
-                            })
-                        : () => Actions.view_ndt_list()
-                    }
-                    underlayColor="transparent"
-                    style={styles.add_store_action_btn}
-                  >
-                    <View style={styles.add_store_action_btn_box}>
-                      <View style={styles.add_store_action_wallet}>
-                        <Text style={styles.add_store_action_wallet_text}>
-                          <Icon
-                            name={wallet.icon}
-                            size={16}
-                            color={wallet.color}
-                          />{" "}
-                          {wallet.name}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.add_store_action_wallet_content,
-                          { color: wallet.color },
-                        ]}
-                      >
-                        {wallet.balance_view}
-                      </Text>
-                    </View>
-                  </TouchableHighlight>
-                ))}
-              </View>
-            </View>
-          )} */}
-
-          {/* {!!user_info.username && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions.affiliate({
-                  title: t("common:screen.affiliate.mainTitle"),
-                  aff_content: store.store_data
-                    ? store.store_data.aff_content
-                    : t("affiliateMarketingProgram", {
-                        appName: APP_NAME_SHOW,
-                      }),
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 1,
-                    borderTopWidth: 0,
-                    borderColor: "#dddddd",
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: "#51A9FF",
-                    },
-                  ]}
-                >
-                  <Icon name="commenting-o" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {`${t("referralCode")}: `}
-                    <Text style={styles.profile_list_label_invite_id}>
-                      {user_info.username}
-                    </Text>
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {user_info.text_invite}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle,
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )} */}
-
           {this.options && (
             <SelectionList
               useList={false}
               containerStyle={{
                 paddingVertical: 8,
+                marginBottom: 10,
               }}
               data={this.options}
             />
@@ -1224,26 +1190,33 @@ const styles = StyleSheet.create({
   profile_user_container: {
     width: '100%',
     alignItems: 'center',
-    // marginBottom: 7,
     height: null,
     paddingVertical: 15,
     paddingLeft: 15,
+  },
+  profile_avatar_box_container: {
+    marginRight: 15,
   },
   profile_avatar_box: {
     width: 60,
     height: 60,
     backgroundColor: '#f0f0f0',
     borderRadius: 30,
-    marginRight: 15,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
   },
   profile_avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 28,
-    // resizeMode: 'cover'
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  verifiedIcon: {
+    fontSize: 15,
+    position: 'absolute',
+    bottom: -2,
+    right: 0,
+    ...elevationShadowStyle(1),
   },
 
   point_icon: {
@@ -1259,7 +1232,7 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    // paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
     marginRight: 15,

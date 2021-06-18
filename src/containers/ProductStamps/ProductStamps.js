@@ -14,18 +14,19 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const styles = StyleSheet.create({
   getVoucherWrapper: {
     backgroundColor: appConfig.colors.white,
-    height: 62,
-    paddingHorizontal: 16,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 7.5,
+    paddingTop: 10,
+    paddingBottom: appConfig.device.bottomSpace + 10,
   },
   getVoucherBtn: {
     flex: 1,
     backgroundColor: appConfig.colors.primary,
     borderRadius: 8,
     paddingVertical: 14,
-    marginHorizontal: 7,
+    marginHorizontal: 7.5,
     paddingHorizontal: 12,
   },
   getVoucherTitle: {

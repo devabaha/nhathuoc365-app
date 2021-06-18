@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import store from '../../store/Store';
 import {Actions} from 'react-native-router-flux';
 import FastImage from 'react-native-fast-image';
@@ -17,6 +18,7 @@ import {DiscountBadge} from '../../components/Badges';
 import {PRODUCT_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
+import {ProductItem} from '../Home/component/ListProducts';
 class Items extends Component {
   constructor(props) {
     super(props);
@@ -146,89 +148,38 @@ class Items extends Component {
     );
   };
 
+  getItemExtraStyle(index) {
+    return (
+      index % 2 !== 0 && {
+        marginHorizontal: 0,
+        // marginLeft: index % 2 == 0 ? 15 : 0,
+      }
+    );
+  }
+
   render() {
-    let {item, index, onPress, isCategories, isLocationItem, t} = this.props;
-    // render item chọn khu vực đặt hàng
-    if (isLocationItem) {
-      return (
-        <TouchableHighlight onPress={onPress} underlayColor="transparent">
-          <View
-            style={[
-              styles.item_box,
-              {
-                marginRight: index % 2 == 0 ? 8 : 0,
-                marginLeft: index % 2 == 0 ? 8 : 0,
-                backgroundColor: 'transparent',
-              },
-            ]}>
-            <View
-              ref={(ref) => (this.ref_item = ref)}
-              style={styles.item_image_box}>
-              {!!item.logo_url && (
-                <FastImage
-                  style={styles.item_image}
-                  source={{uri: item.logo_url}}
-                  resizeMode="cover"
-                />
-              )}
-            </View>
-            <Text style={styles.nameLocation}>{item.name}</Text>
-          </View>
-        </TouchableHighlight>
-      );
-    }
-
-    // render item danh mục sản phẩm màn home
-    if (isCategories) {
-      return (
-        <TouchableHighlight onPress={onPress} underlayColor="transparent">
-          <View
-            style={[
-              styles.item_box,
-              {
-                marginRight: index % 2 == 0 ? 8 : 0,
-                marginLeft: index % 2 == 0 ? 8 : 0,
-                height: ITEM_IMG_HEIGHT,
-              },
-            ]}>
-            <View
-              ref={(ref) => (this.ref_item = ref)}
-              style={styles.item_image_box}>
-              {!!item.image && (
-                <FastImage
-                  style={styles.item_image}
-                  source={{uri: item.image}}
-                  resizeMode="cover"
-                />
-              )}
-            </View>
-          </View>
-        </TouchableHighlight>
-      );
-    }
-
+    let {item, index, onPress, t} = this.props;
+    let renderLoadMore = null;
     // button load more
     if (item.type == 'loadMore') {
-      return (
-        <TouchableHighlight
-          onPress={() => {
-            if (onPress) {
-              onPress();
-            }
+      renderLoadMore = () => {
+        return (
+          <TouchableHighlight
+            onPress={() => {
+              if (onPress) {
+                onPress();
+              }
 
-            this.setState({
-              loadMore: true,
-            });
-          }}
-          underlayColor="transparent">
-          <View
+              this.setState({
+                loadMore: true,
+              });
+            }}
+            underlayColor="transparent"
             style={[
-              styles.item_box,
               {
-                marginRight: index % 2 == 0 ? 8 : 0,
-                marginLeft: index % 2 == 0 ? 8 : 0,
                 justifyContent: 'center',
                 alignItems: 'center',
+                flex: 1,
               },
             ]}>
             {this.state.loadMore ? (
@@ -239,142 +190,36 @@ class Items extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Icon name="th" size={24} color="#404040" />
+                <Icon name="th" size={24} color={appConfig.colors.typography.text} />
                 <Text
                   style={{
                     marginTop: 8,
-                    color: '#404040',
-                    fontSize: 14,
+                    ...appConfig.styles.typography.text
                   }}>
                   {t('item.more')}
                 </Text>
               </View>
             )}
-          </View>
-        </TouchableHighlight>
-      );
+          </TouchableHighlight>
+        );
+      };
     }
 
     var quantity = 0;
 
     return (
-      <TouchableHighlight onPress={onPress} underlayColor="transparent">
-        <View
-          style={[
-            styles.item_box,
-            {
-              marginRight: index % 2 == 0 ? 8 : 0,
-              marginLeft: index % 2 == 0 ? 8 : 0,
-            },
-          ]}>
-          <View
-            ref={(ref) => (this.ref_item = ref)}
-            style={styles.item_image_box}>
-            {!!item.image && (
-              <FastImage
-                style={styles.item_image}
-                source={{uri: item.image}}
-                resizeMode="cover"
-              />
-            )}
-            <TouchableHighlight
-              style={styles.item_add_cart_btn}
-              underlayColor="transparent"
-              onPress={() => this.handlePressActionBtnProduct(item)}>
-              <View
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}>
-                <View style={styles.item_add_cart_box}>
-                  {this.state.buying ? (
-                    <View
-                      style={{
-                        width: 24,
-                        height: 24,
-                      }}>
-                      <Indicator size="small" />
-                    </View>
-                  ) : this.isServiceProduct(item) ? (
-                    <Icon name="calendar-plus-o" size={22} color="#0eac24" />
-                  ) : (
-                    <Icon name="cart-plus" size={22} color={'#0eac24'} />
-                  )}
-                  {this.isServiceProduct(item) ? (
-                    <Text style={styles.item_add_cart_title}>
-                      {t('product:shopTitle.book')}
-                    </Text>
-                  ) : (
-                    <Text style={styles.item_add_cart_title}>
-                      {t('product:shopTitle.buy')}
-                    </Text>
-                  )}
-
-                  {quantity > 0 && (
-                    <View style={styles.quantity_box}>
-                      <Text style={styles.quantity_value}>{quantity}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </TouchableHighlight>
-
-            {item.discount_percent > 0 && (
-              <DiscountBadge
-                containerStyle={styles.item_safe_off}
-                label={saleFormat(item.discount_percent)}
-              />
-            )}
-          </View>
-
-          <View style={styles.item_info_box}>
-            <View>
-              <View style={styles.item_info_made}>
-                <View style={styles.directionRow}>
-                  {item.made_in != '' && (
-                    <>
-                      <Icon name="map-marker" size={12} color="#666666" />
-                      <Text
-                        numberOfLines={2}
-                        style={styles.item_info_made_title}>
-                        {item.made_in}
-                      </Text>
-                    </>
-                  )}
-                </View>
-
-                <View style={styles.item_info_weight}>
-                  <Text style={styles.item_info_made_title}>
-                    {item.unit_name_view}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.item_info_name} numberOfLines={2}>
-                {item.name}
-              </Text>
-            </View>
-            <View style={styles.price_box}>
-              {item.discount_percent > 0 && (
-                <Text style={styles.item_safe_off_price}>
-                  {item.discount_view}
-                </Text>
-              )}
-
-              <Text
-                style={[
-                  styles.item_info_price,
-                  {
-                    color:
-                      // item.discount_percent > 0 ? "#fa7f50" :
-                      DEFAULT_COLOR,
-                  },
-                ]}>
-                {item.price_view}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </TouchableHighlight>
+      <ProductItem
+        containerStyle={[styles.wrapper, this.getItemExtraStyle(index)]}
+        name={item.name}
+        image={item.image}
+        discount_view={item.discount_view}
+        discount_percent={item.discount_percent}
+        price_view={item.price_view}
+        unit_name={item.unit_name}
+        onPress={onPress}
+        item={item}
+        renderContent={renderLoadMore}
+      />
     );
   }
 }
@@ -385,20 +230,32 @@ Items.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
-const ITEM_WIDTH = Util.size.width / 2 - 12;
-const ITEM_HEIGHT = (Util.size.width / 2) * 1.333;
-const ITEM_IMG_HEIGHT = (Util.size.width / 2) * 1.333 * 0.666;
+const ITEM_SPACING = 15;
+const ITEM_WIDTH = (appConfig.device.width - ITEM_SPACING * 3) / 2;
+const ITEM_HEIGHT = (appConfig.device.width / 2) * 1.333;
+const ITEM_IMG_HEIGHT = (appConfig.device.width / 2) * 1.333 * 0.666;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    marginTop: 0,
+    marginBottom: 15,
+    marginHorizontal: 15,
+    width: ITEM_WIDTH,
+  },
+  container: {
+    borderRadius: 8,
+    ...appConfig.styles.shadow,
+  },
   item_box: {
-    flex: 1,
     width: ITEM_WIDTH,
     // height: ITEM_HEIGHT,
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",
     backgroundColor: '#ffffff',
-    marginBottom: 8,
+    marginBottom: 15,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   directionRow: {
     flex: 1,
@@ -414,6 +271,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
   },
   item_info_box: {
     flex: 1,

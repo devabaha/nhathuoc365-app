@@ -17,7 +17,7 @@ import PaymentRow from './PaymentRow';
 import EventTracker from '../../../helper/EventTracker';
 import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
 
-const DEFAULT_OBJECT = {id: -1};
+const DEFAULT_OBJECT = {};
 
 class PaymentMethod extends Component {
   static defaultProps = {
@@ -66,7 +66,16 @@ class PaymentMethod extends Component {
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           if (response.data) {
-            this.setState({paymentMethod: response.data || []});
+            let selectedMethod = null;
+            if (Array.isArray(response.data)) {
+              selectedMethod = response.data.find(
+                item => item.default_flag === 1
+              ) || {};
+            }
+            this.setState({
+              paymentMethod: response.data || [],
+              selectedMethod: this.state.selectedMethod?.id ? this.state.selectedMethod : selectedMethod
+            });
           }
         } else {
           flashShowMessage({

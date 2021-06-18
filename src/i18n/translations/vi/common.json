@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "TickID"
+      "title": "Trang chủ"
     },
     "tab2": {
       "title": "Tin tức"
     },
     "tab3": {
-      "title": ""
+      "title": "Nông trại"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -25,6 +25,12 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "Đặt hàng trực tiếp từ nhà sản xuất"
+    },
+    "storeLocation": {
+      "mainTitle": "Chọn khu vực"
+    },
     "account": {
       "mainTitle": "Tài khoản",
       "myAccountTitle": "Tài khoản của tôi",
@@ -115,6 +121,9 @@
     },
     "allServices": {
       "mainTitle": "Danh sách dịch vụ"
+    },
+    "gpsStoreLocation": {
+      "mainTitle": "Danh sách cửa hàng"
     },
     "qrPaymentInfo": {
       "mainTitle": "Chấp nhận thanh toán"

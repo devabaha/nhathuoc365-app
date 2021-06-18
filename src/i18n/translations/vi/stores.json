@@ -1,4 +1,10 @@
 {
+  "search": {
+    "placeholder": {
+      "prefix": "Tìm kiếm trong",
+      "suffix": "cửa hàng"
+    }
+  },
   "tabs": {
     "store": {
       "title": "Cửa hàng"

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {View, Text, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
 import store from 'app-store';
 
@@ -11,7 +11,7 @@ class TabIcon extends Component {
     label: PropTypes.string,
     iconLabel: PropTypes.string,
     notifyKey: PropTypes.string,
-    iconSize: PropTypes.number
+    iconSize: PropTypes.number,
   };
 
   static defaultProps = {
@@ -19,7 +19,7 @@ class TabIcon extends Component {
     label: '',
     iconLabel: '',
     notifyKey: '',
-    iconSize: 24
+    iconSize: 24,
   };
 
   renderLabel() {
@@ -28,27 +28,37 @@ class TabIcon extends Component {
         numberOfLines={1}
         style={[
           this.props.focused ? styles.labelSelected : styles.label,
-          styles.labelDefault
-        ]}
-      >
+          styles.labelDefault,
+        ]}>
         {this.props.iconLabel}
       </Text>
     );
   }
 
   renderIcon() {
+    const SVGIcon = this.props.iconSVG;
+    const SVGIconSize = this.props.iconSVGSize || 18;
     return (
       <View
         style={[
           styles.iconBox,
-          appConfig.device.isIOS ? { paddingTop: 3 } : null
-        ]}
-      >
-        <Icon
-          style={this.props.focused ? styles.labelSelected : styles.label}
-          name={this.props.iconName}
-          size={this.props.iconSize}
-        />
+          appConfig.device.isIOS ? {paddingTop: 3} : null,
+        ]}>
+        {!!SVGIcon ? (
+          <SVGIcon
+            width={SVGIconSize}
+            height={SVGIconSize}
+            // stroke="#888"
+            // strokeWidth={this.props.strokeWidth || 2}
+            fill={this.props.focused ? appConfig.colors.primary : '#888'}
+          />
+        ) : (
+          <Icon
+            style={this.props.focused ? styles.labelSelected : styles.label}
+            name={this.props.iconName}
+            size={this.props.iconSize}
+          />
+        )}
       </View>
     );
   }
@@ -81,26 +91,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
   },
   labelSelected: {
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
   },
   label: {
-    color: '#7f7f7f'
+    color: '#7f7f7f',
   },
   labelDefault: {
     fontSize: 10,
     marginTop: 2,
     fontWeight: '400',
-    width: '90%'
+    width: '90%',
   },
   iconBox: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 4,
     width: 28,
-    height: 28
+    height: 28,
   },
   notifyWrapper: {
     position: 'absolute',
@@ -113,13 +123,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
   },
   notifyText: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default observer(TabIcon);

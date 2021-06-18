@@ -1,6 +1,7 @@
 import appConfig from 'app-config';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
+import RNFS from 'react-native-fs';
 import CameraRoll from '@react-native-community/cameraroll';
 import {handleDownloadImage} from './handleDownloadImage';
 import {PhotoLibraryPermission} from '../permissionHelper';
@@ -20,7 +21,8 @@ const handleSaveImage = async (url, message) => {
   }
 
   const imageName = new Date().getTime() + '.' + imageType;
-  const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
+  const androidPath = RNFS.DownloadDirectoryPath + '/' + imageName;
+  console.log(androidPath);
   const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
   try {
     const granted = await (appConfig.device.isIOS

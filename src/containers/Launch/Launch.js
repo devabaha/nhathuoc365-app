@@ -19,6 +19,14 @@ class Launch extends Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.refreshData) {
+      this.handleAuthorization();
+    }
+
+    return true;
+  }
+
   componentDidMount() {
     this.handleAuthorization();
     this.animateLoading();
@@ -71,6 +79,7 @@ class Launch extends Component {
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
         Actions.replace(appConfig.routes.primaryTabbar);
+        Actions.replace(appConfig.routes.homeTab);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
@@ -85,6 +94,11 @@ class Launch extends Component {
         Actions.replace(appConfig.routes.phoneAuth, {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE', //FIREBASE / SMS_BRAND_NAME
         });
+        break;
+      case STATUS_SYNC_FLAG:
+        store.setUserInfo(user);
+        EventTracker.setUserId(user.id);
+        Actions.replace(appConfig.routes.gpsStoreLocation);
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);

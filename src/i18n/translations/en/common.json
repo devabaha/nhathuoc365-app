@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "TickID"
+      "title": "Home"
     },
     "tab2": {
       "title": "News"
     },
     "tab3": {
-      "title": ""
+      "title": "Farms"
     },
     "tab4": {
       "title": "Orders"
@@ -25,6 +25,12 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "Farms"
+    },
+    "storeLocation": {
+      "mainTitle": "Choose location"
+    },
     "account": {
       "mainTitle": "Account",
       "myAccountTitle": "My account",
@@ -115,6 +121,9 @@
     },
     "allServices": {
       "mainTitle": "Service list"
+    },
+    "gpsStoreLocation": {
+      "mainTitle": "List of store"
     },
     "qrPaymentInfo": {
       "mainTitle": "Payment acceptance"

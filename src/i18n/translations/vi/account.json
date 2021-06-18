@@ -1,8 +1,16 @@
 {
   "options": {
+    "changeStoreLocation": {
+      "label": "Chọn cửa hàng khác",
+      "desc": ""
+    },
     "myAdress": {
       "label": "Địa chỉ của tôi",
       "desc": "Quản lý địa chỉ nhận hàng"
+    },
+    "myVoucher": {
+      "label": "Voucher của tôi",
+      "desc": "Sử dụng các mã giảm giá đã nhận"
     },
     "fanpage": {
       "label": "Fanpage {{appName}}",

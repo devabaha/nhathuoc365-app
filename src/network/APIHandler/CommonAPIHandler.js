@@ -95,6 +95,23 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Lấy d/s địa điểm cửa hàng
+   */
+  async user_list_store_location() {
+    var api = url_for(API.USER_LIST_STORE_LOCATION);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Chọn địa điểm cửa hàng
+   */
+
+  async user_choose_store_location(site_id) {
+    var api = url_for(API.USER_CHOOSE_STORE_LOCATION + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Tìm cửa hàng theo mã CH
    */
   async user_search_store(store_code) {
@@ -180,12 +197,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  site_category_product_by_filter(
-    store_id,
-    category_id,
-    page_num,
-    params,
-  ) {
+  site_category_product_by_filter(store_id, category_id, page_num, params) {
     const api = url_for(
       API.SITE_CATEGORY_PRODUCT +
         '/' +
@@ -213,6 +225,14 @@ class CommonAPIHandler extends BaseHandler {
   cart_confirmed(store_id, cart_id) {
     var api = url_for(API.CART_CONFIRMED + '/' + store_id + '/' + cart_id);
     return this.postCancelableAPI(api);
+  }
+
+  /**
+   * Re order completed cart.
+   */
+  cart_reorder(store_id, cart_id) {
+    var api = url_for(API.CART_REORDER + '/' + store_id + '/' + cart_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -581,6 +601,42 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Lấy dữ liệu ví thẻ khách hàng
+   */
+  async user_get_favor_sites() {
+    var api = url_for(API.USER_GET_FAVOR_SITES);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Tìm kiếm dữ liệu ví thẻ khách hàng
+   */
+  async user_search_my_favor_sites(data) {
+    var api = url_for(API.USER_GET_FAVOR_SITES);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Tìm kiếm dữ liệu để thêm vào ví thẻ khách hàng
+   */
+  async user_search_favor_sites(data) {
+    var api = url_for(API.USER_SEARCH_FAVOR_SITES);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Cập nhật dữ liệu ví thẻ khách hàng
+   * updateKey: 1 - add, 2 - delete
+   */
+  async user_update_favor_site(store_id, updateKey) {
+    var api = url_for(
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey,
+    );
+    console.log(api);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Load news list
    */
   async user_news_list(type = '', id = '') {
@@ -838,7 +894,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * @todo get multi-level category
+   * @todo Lấy danh sách cửa hàng gần nhất
+   */
+  user_list_gps_store_location(data) {
+    const api = url_for(API.USER_LIST_GPS_STORE_LOCATION);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /* @todo get multi-level category
    *
    * @param site_id
    * @returns {categories: {name: string, id: number, image:string, list: []}[], type: string}

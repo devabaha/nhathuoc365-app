@@ -8,6 +8,7 @@ import {
   servicesHandler,
   SERVICES_TYPE
 } from '../../../../../helper/servicesHandler';
+import SubActionButton from '../SubActionButton';
 
 const styles = StyleSheet.create({
   add_store_action_btn: {
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   icon: {
-    fontSize: 30,
+    fontSize: 28,
     color: appConfig.colors.primary
   }
 });
@@ -31,7 +32,7 @@ const PointRechargeButton = ({
   label,
   wrapperStyle,
   containerStyle,
-  iconName = 'plus-circle',
+  iconName = 'ios-add-circle',
   iconStyle,
   labelStyle,
   onPress = () => {}
@@ -42,26 +43,23 @@ const PointRechargeButton = ({
       showPrice: false,
       showSubmit: false,
       storeId: store.app_id,
-      title: 'Hướng dẫn nạp điểm HomeID'
+      title: 'Hướng dẫn nạp'
     };
     onPress(service);
     servicesHandler(service);
   }
 
   return (
-    <TouchableOpacity
-      onPress={goPaymentMethod}
-      style={[styles.add_store_action_btn, wrapperStyle]}
-    >
-      <View style={[styles.add_store_action_btn_box, containerStyle]}>
-        <Icon name={iconName} style={[styles.icon, iconStyle]} />
-        {!!label && (
-          <Text style={[styles.add_store_action_label, labelStyle]}>
-            {label}
-          </Text>
-        )}
-      </View>
-    </TouchableOpacity>
+    <SubActionButton 
+    iconName={iconName}
+    label={label}
+
+    wrapperStyle={wrapperStyle}
+    containerStyle={containerStyle}
+    iconStyle={iconStyle}
+
+    onPress={goPaymentMethod}
+    />
   );
 };
 
