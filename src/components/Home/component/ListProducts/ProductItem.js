@@ -176,6 +176,9 @@ let styles = StyleSheet.create({
     marginBottom: 0,
     width: WIDTH_ITEM,
   },
+  containerHorizontal: {
+    width: HORIZONTAL_WIDTH_ITEM,
+  },
   wrapper: {
     flex: 1,
     borderRadius: 8,
