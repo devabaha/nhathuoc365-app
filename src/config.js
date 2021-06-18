@@ -337,6 +337,9 @@ class Config {
       socialCreatePost: 'socialCreatePost',
 
       webview: 'webview',
+
+      listProgressTracking: 'listProgressTracking',
+      progressTrackingDetail: 'progressTrackingDetail'
     };
   }
 }

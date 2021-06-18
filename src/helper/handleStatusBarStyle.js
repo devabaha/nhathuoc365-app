@@ -13,8 +13,10 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     }
 
     if (Actions.currentScene === `${appConfig.routes.item}_1`) {
+      if (appConfig.device.isAndroid) {
+        StatusBar.setTranslucent(true);
+      }
       StatusBar.setBackgroundColor('transparent');
-      StatusBar.setTranslucent(true);
       StatusBar.setBarStyle('dark-content', true);
     }
     return;
