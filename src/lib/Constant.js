@@ -3,19 +3,17 @@
 import { Platform, Dimensions, PixelRatio } from 'react-native';
 
 // API URL
-// global.MY_FOOD_API = 'https://abaha.net/';
+// global.MY_FOOD_API = 'https://apiapp.tickid.top/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'http://apiapp.tickid.vn/';
+global.MY_FOOD_API = 'https://apiapp.abaha.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
-global.HOTLINE = '+8490 345 1368';
+global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
+global.HOTLINE = '+84983962301';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  // ios: '_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  // android: '9qJpK0qBZvKbTEzuKBOKKBr4qaRWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  ios: 'zKau4OSqcixQbDDYbGat7wRm2CMCF8k7yt_LmU',
-  android: 'ZOE-wJXeK71IN8yBLILM326oY0PvzAVxRiXC0W'
+  ios: 'U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY',
+  android: '5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr'
 };
 
 // width, height of screen
@@ -46,18 +44,18 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'TickID';
+global.APP_NAME = 'HuongCang'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'Hương Cảng';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
 
-global.GA_ID = 'UA-143334124-2';
+global.GA_ID = 'UA-106153171-1';
 
 // color
-global.DEFAULT_COLOR = '#812384'; //2c6ca3
-global.DEFAULT_COLOR_RED = '#55b947';
-global.DEFAULT_ADMIN_COLOR = '#55b947';
+global.DEFAULT_COLOR = '#f41820';
+global.DEFAULT_COLOR_RED = '#ff9100';
+global.DEFAULT_ADMIN_COLOR = '#3c8dbc';
 global.HEADER_BGR = DEFAULT_COLOR;
 global.HEADER_ADMIN_BGR = DEFAULT_ADMIN_COLOR;
 global.TITLE_HEADER_COLOR = '#ffffff';
@@ -138,9 +136,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'hi@tickid.vn';
-global.APP_FANPAGE = 'http://fanpage.tickid.vn';
-global.APP_INFO = 'http://tickid.vn';
+global.EMAIL_SUPPORT = 'thuc.lehuy@gmail.com';
+global.APP_FANPAGE = '';
+global.APP_INFO = 'https://huongcang.vn';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;

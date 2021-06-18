@@ -8,7 +8,7 @@ import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
 
 class Config {
   constructor() {
-    this._primaryColor = '#812384';
+    this._primaryColor = '#f41820';
   }
 
   get tagVersion() {
@@ -16,7 +16,7 @@ class Config {
   }
 
   get appName() {
-    return 'ABAHAGLOBAL';
+    return 'HuongCang';
   }
 
   get namespace() {
@@ -107,7 +107,7 @@ class Config {
         [CART_STATUS_CANCEL_1]: '#ef476f',
         [CART_STATUS_CANCEL]: '#ef476f',
         [CART_STATUS_ORDERING]: '#6F7C12',
-        [CART_STATUS_READY]: '#812384',
+        [CART_STATUS_READY]: '#f41820',
         [CART_STATUS_ACCEPTED]: '#F46036',
         [CART_STATUS_PROCESSING]: '#986d60',
         [CART_STATUS_DELIVERY]: '#EEAA21',
