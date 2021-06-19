@@ -19,7 +19,6 @@ const handleSaveImage = async (url, message) => {
   } catch (err) {
     console.log(err);
   }
-
   const imageName = new Date().getTime() + '.' + imageType;
   const androidPath = RNFS.DownloadDirectoryPath + '/' + imageName;
   console.log(androidPath);
@@ -31,7 +30,8 @@ const handleSaveImage = async (url, message) => {
     if (granted) {
       const data = await (appConfig.device.isIOS
         ? CameraRoll.save(iOSPath, {type: 'photo'})
-        : RNFetchBlob.fs.writeFile(androidPath, base64, 'base64'));
+        : RNFS.downloadFile({fromUrl: url, toFile: androidPath}));
+      //  RNFetchBlob.fs.writeFile(androidPath, base64, 'base64')
       if (data) {
         showFlashNotification(t('saved'));
       } else {
@@ -53,5 +53,4 @@ const handleSaveImage = async (url, message) => {
     console.log('err_save_single_image', error);
   }
 };
-
 export {handleSaveImage};
