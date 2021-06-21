@@ -783,12 +783,6 @@ class RootRouter extends Component {
                       title={APP_NAME_SHOW}
                       component={HomeContainer}
                       hideNavBar
-                      onEnter={() => {
-                        if (appConfig.device.isAndroid) {
-                          StatusBar.setTranslucent(false);
-                          StatusBar.setBarStyle('light-content', true);
-                        }
-                      }}
                     />
                   </Stack>
 

@@ -9,7 +9,6 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
       StatusBar.setBarStyle(store.homeStatusBar.barStyle, true);
       StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
-      return;
     }
 
     if (Actions.currentScene === `${appConfig.routes.item}_1`) {
@@ -18,6 +17,12 @@ export default function handleStatusBarStyle(prevState, newState, action) {
       }
       StatusBar.setBackgroundColor('transparent');
       StatusBar.setBarStyle('dark-content', true);
+    } else {
+      if (appConfig.device.isAndroid) {
+        StatusBar.setTranslucent(false);
+      }
+      StatusBar.setBackgroundColor(appConfig.colors.primary);
+      StatusBar.setBarStyle('light-content', true);
     }
     return;
   }
