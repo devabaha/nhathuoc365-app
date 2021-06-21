@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r12.0.1] - 2021-06-18
+## [r12.0.1] - 2021-06-21
 ### Added
 - Adding download image function by [kienluu612@gmail.com].
 - @bam.tech/React-native-make for export Android icon API>=26.
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Themes, others UI bugs.
 - Lost data of current cart after deleting address in Confirm.
+- StatusBar after back from Item screen.
 
 ## [r11.6.6] - 2021-06-11
 ### Changed
