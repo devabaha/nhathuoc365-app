@@ -26,6 +26,7 @@ const listServiceStyle = homeThemes('styles.home.listService');
 let styles = StyleSheet.create({
   container: {
     // paddingVertical: 6,
+    marginBottom: -15,
     backgroundColor: '#fff',
   },
   buttonWrapper: {

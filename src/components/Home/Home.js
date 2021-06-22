@@ -12,7 +12,7 @@ import {
   SectionList,
   Text,
 } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, { Easing } from 'react-native-reanimated';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -127,11 +127,12 @@ class Home extends Component {
   };
 
   state = {
-    animatedHeaderValue: new Value(0),
     statusBarStyle: STATUS_BAR_STYLE.LIGHT,
     showShadow: false,
     headerHeight: undefined,
   };
+  animatedHeaderContainerValue = new Value(0);
+  animatedHeaderValue= new Value(0);
 
   homeThemes = Themes.getNameSpace('home');
 
@@ -213,6 +214,11 @@ class Home extends Component {
       this.setState({
         headerHeight: height,
       });
+      Animated.timing(this.animatedHeaderContainerValue, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.quad
+      }).start();
     }
   }
 
@@ -222,18 +228,18 @@ class Home extends Component {
   );
 
   wrapperAnimatedStyle = {
-    opacity: interpolate(this.state.animatedHeaderValue, {
+    opacity: interpolate(this.animatedHeaderValue, {
       inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
       outputRange: [0, 1],
       extrapolate: Extrapolate.CLAMP,
     }),
     ...elevationShadowStyle(3),
-    elevation: interpolate(this.state.animatedHeaderValue, {
+    elevation: interpolate(this.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
       outputRange: [0, 0, 5],
       extrapolate: Extrapolate.CLAMP,
     }),
-    shadowOpacity: interpolate(this.state.animatedHeaderValue, {
+    shadowOpacity: interpolate(this.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
       outputRange: [0, 0, 0.15],
       extrapolate: Extrapolate.CLAMP,
@@ -242,7 +248,7 @@ class Home extends Component {
       255,
       255,
       255,
-      interpolate(this.state.animatedHeaderValue, {
+      interpolate(this.animatedHeaderValue, {
         inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
         outputRange: [0, 0, 1],
         extrapolate: Extrapolate.CLAMP,
@@ -251,7 +257,7 @@ class Home extends Component {
   };
 
   headerAnimatedStyle = {
-    opacity: interpolate(this.state.animatedHeaderValue, {
+    opacity: interpolate(this.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE],
       outputRange: [0, 1],
       extrapolate: Extrapolate.CLAMP,
@@ -259,7 +265,7 @@ class Home extends Component {
   };
 
   headerBackgroundOpacity = {
-    opacity: interpolate(this.state.animatedHeaderValue, {
+    opacity: interpolate(this.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE],
       outputRange: [1, 0],
       extrapolate: Extrapolate.CLAMP,
@@ -270,7 +276,7 @@ class Home extends Component {
     color:
       this.homeThemes('styles.home.header_search_wrapper_active')
         ?.backgroundColor || appConfig.colors.primary,
-    opacity: interpolate(this.state.animatedHeaderValue, {
+    opacity: interpolate(this.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE],
       outputRange: [0, 1],
       extrapolate: Extrapolate.CLAMP,
@@ -285,7 +291,7 @@ class Home extends Component {
           this.homeThemes('styles.home.header_search_wrapper_active')
             ?.backgroundColor || '#f5f5f5',
         ),
-        interpolate(this.state.animatedHeaderValue, {
+        interpolate(this.animatedHeaderValue, {
           inputRange: [0, EXTRAPOLATE_RANGE],
           outputRange: [0, 1],
           extrapolate: Extrapolate.CLAMP,
@@ -293,6 +299,10 @@ class Home extends Component {
       ),
     },
   ];
+
+  headerContainerStyle = {
+    opacity: this.animatedHeaderContainerValue
+  }
 
   render() {
     const {t} = this.props;
@@ -305,8 +315,7 @@ class Home extends Component {
       (this.state.headerHeight || 0) +
       10 +
       (appConfig.device.isIOS
-        ? -5 +
-          (!!appConfig.device.bottomSpace ? -10 : 0)
+        ? -5 + (!!appConfig.device.bottomSpace ? -10 : 0)
         : 0);
 
     return (
@@ -327,7 +336,7 @@ class Home extends Component {
           )}
         </Animated.View>
 
-        <View style={styles.headerContainerStyle}>
+        <Animated.View style={[styles.headerContainerStyle, this.headerContainerStyle]}>
           <Header
             wrapperStyle={this.wrapperAnimatedStyle}
             maskSearchWrapperStyle={this.searchWrapperStyle}
@@ -340,7 +349,7 @@ class Home extends Component {
             loading={this.props.storeFetching}
             onContentLayout={this.handleHeaderLayout.bind(this)}
           />
-        </View>
+        </Animated.View>
 
         <SafeAreaView>
           <ScrollView
@@ -352,7 +361,7 @@ class Home extends Component {
                     contentOffset: {
                       y: (y) =>
                         block([
-                          set(this.state.animatedHeaderValue, y),
+                          set(this.animatedHeaderValue, y),
                           call([y], ([offsetY]) => {
                             this.showBgrStatusIfOffsetTop({
                               nativeEvent: {contentOffset: {y: offsetY}},
@@ -431,7 +440,7 @@ class Home extends Component {
                 itemsPerRow={this.props.listServiceItemsPerRow}
                 onItemPress={this.props.onPressService}
                 containerStyle={
-                  this.isVisibleLoyaltyBox && [styles.promotionBlock]
+                 [styles.servicesBlock]
                 }
               />
             ) : this.props.apiFetching ? (
@@ -630,7 +639,11 @@ let styles = StyleSheet.create({
     zIndex: 9999,
   },
 
+  servicesBlock: {
+    paddingBottom: 10,
+  },
   promotionBlock: {
+    marginTop: 10,
     marginBottom: 10,
   },
   block: {
