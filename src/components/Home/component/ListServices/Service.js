@@ -13,7 +13,7 @@ import appConfig from 'app-config';
 const styles = StyleSheet.create({
   buttonWrapper: {
     marginBottom: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 5,
     alignItems: 'center',
   },
   itemWrapper: {
