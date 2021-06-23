@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
     ...Platform.select({
       ios: {
-        height: 64
+        height: 64 + appConfig.device.bottomSpace
       },
       android: {
         height: 54
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 16,
     zIndex: 1,
-    right: 0
+    right: 0,
   },
   cancelText: {
     fontSize: 16,

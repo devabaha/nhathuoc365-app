@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'b11.6.3';
+    return 'b12.0.1';
   }
 
   get appName() {
@@ -21,6 +21,10 @@ class Config {
 
   get namespace() {
     return 'app';
+  }
+
+  get defaultSiteId() {
+    return 1803;
   }
 
   get reduxLoggerEnable() {
@@ -44,10 +48,6 @@ class Config {
     return {
       appKey: '2647d461-03d1-43f0-a17a-31375254aca1'
     };
-  }
-
-  get aboutUsID(){
-    return 3875;
   }
 
   get device() {
@@ -75,7 +75,6 @@ class Config {
   get colors() {
     return {
       logo: {
-        // main: '#59b2e4',
         main: this.primaryColor,
         sub: '#6559c5',
         addition: '#d37ee9'
@@ -113,13 +112,19 @@ class Config {
         [CART_STATUS_PROCESSING]: '#986d60',
         [CART_STATUS_DELIVERY]: '#EEAA21',
         [CART_STATUS_COMPLETED]: '#06d6a0',
-        [CART_STATUS_CLOSED]: '#06d6a0',
+        [CART_STATUS_CLOSED]: '#aaa',
       },
       paymentStatus: {
         [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
         [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
+      typography: {
+        text: '#2B2B2B',
+        secondary: '#A0A0A0',
+      },
+      border: '#EAECED',
+      icon: '#9F9F9F',
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
       primary: this.primaryColor,
@@ -127,6 +132,51 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
+      sale: '#FD0D1B',
+      highlight: {
+        1: '#51B748',
+      },
+      action: {
+        1: '#126DEA',
+      },
+    };
+  }
+
+  get styles() {
+    return {
+      typography: {
+        heading1: {
+          fontSize: 20,
+          color: this.colors.typography.text,
+        },
+        heading3: {
+          fontSize: 16,
+          color: this.colors.typography.text,
+        },
+        text: {
+          fontSize: 14,
+          color: this.colors.typography.text,
+        },
+        sub: {
+          fontSize: 12,
+          color: this.colors.typography.text,
+        },
+        secondary: {
+          fontSize: 14,
+          color: this.colors.typography.secondary,
+        },
+      },
+      shadow: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2.25,
+        },
+        shadowOpacity: 0.161,
+        shadowRadius: 3,
+
+        elevation: 5,
+      },
     };
   }
 
@@ -166,6 +216,7 @@ class Config {
 
       scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
+      qrBarCodeInputable: 'qrBarCodeInputable',
 
       notifies: 'notifies',
       notifiesVertical: 'notifiesVertical',
@@ -221,17 +272,23 @@ class Config {
       schedule: 'schedule',
       scheduleConfirm: 'scheduleConfirm',
 
+      // Store Location
+      storeLocation: 'storeLocation',
+      gpsStoreLocation: 'gpsStoreLocation',
+
       // Modal
       modalPicker: 'modalPicker',
       modalList: 'modalList',
       modalSearchPlaces: 'modalSearchPlaces',
       modalRateApp: 'modalRateApp',
+      modalCameraView: 'modalCameraView',
       modalPopup: 'modalPopup',
       modalInput: 'modalInput',
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
+      modalEditImages: 'modalEditImages',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -269,6 +326,9 @@ class Config {
       // All serives
       allServices: 'allServices',
 
+      // iView
+      captureFaceID: 'captureFaceID',
+
       // multi-level category
       multiLevelCategory: 'multiLevelCategory',
 
@@ -303,6 +363,13 @@ class Config {
       salesReport: 'saleReport',
       // Social
       social: 'social',
+      socialGroup: 'socialGroup',
+      socialCreatePost: 'socialCreatePost',
+
+      webview: 'webview',
+
+      listProgressTracking: 'listProgressTracking',
+      progressTrackingDetail: 'progressTrackingDetail'
     };
   }
 }

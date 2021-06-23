@@ -359,6 +359,21 @@ global.hexToRgbA = (hex, opacity) => {
   throw new Error('Bad Hex');
 };
 
+global.hexToRgbCode = (hex) => {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length == 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return (
+      [(c >> 16) & 255, (c >> 8) & 255, c & 255]
+    );
+  }
+  throw new Error('Bad Hex');
+};
+
 /**
  * Custommer tags
  * Center tag
@@ -486,6 +501,25 @@ global.cancelRequests = (requests) => {
 };
 
 /**
+ * @todo check if 1-level obj is updated
+ *
+ * @param oldObj old-state object
+ * @param newObj new-state object
+ */
+global.is1LevelObjectUpdated = (oldObj, newObj) => {
+  if (!oldObj || !newObj) return oldObj !== newObj;
+
+  const oldKeys = Object.keys(oldObj);
+  const newKeys = Object.keys(newObj);
+
+  if (oldKeys.length !== newKeys.length) {
+    return true;
+  }
+
+  return oldKeys.some(key => oldObj[key] !== newObj[key]);
+};
+
+/**
  * @todo cancel all timeouts passed in.
  *
  * @param {(typeof setTimeout)[] | typeof setTimeout} timeouts
@@ -546,4 +580,8 @@ const options = {
 
 global.hapticFeedBack = (type = 'impactLight', opt = options) => {
   ReactNativeHapticFeedback.trigger(type, opt);
+};
+
+global.getNumberOnly = (text) => {
+  return text.replace(REGEX_NUMBER_ONLY, '');
 };

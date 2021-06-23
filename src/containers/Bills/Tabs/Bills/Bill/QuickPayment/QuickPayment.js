@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fafafa',
-    marginTop: 15,
-    marginBottom: -16,
+    // marginTop: 15,
+    // marginBottom: -16,
     borderTopColor: '#ddd',
     borderTopWidth: 1
   },

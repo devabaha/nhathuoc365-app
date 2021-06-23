@@ -1,14 +1,11 @@
-import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
 import HomeCardList, {
-  HomeCardItem
+  HomeCardItem,
 } from '../../../components/Home/component/HomeCardList';
-import { Request } from '../../Requests';
-import { Bill, QuickPayment } from '../../Bills';
-import {
-  servicesHandler,
-  SERVICES_TYPE
-} from '../../../helper/servicesHandler';
+import {Request} from '../../Requests';
+import {Bill, QuickPayment} from '../../Bills';
+import {servicesHandler, SERVICES_TYPE} from '../../../helper/servicesHandler';
 
 class Body extends Component {
   state = {};
@@ -17,8 +14,8 @@ class Body extends Component {
     return vndCurrencyFormat(
       this.props.bills.reduce(
         (prev, next) => (prev.price || prev) + next.price,
-        0
-      )
+        0,
+      ),
     );
   }
 
@@ -40,9 +37,9 @@ class Body extends Component {
 
   handleSelfRequestStore(store, callBack) {
     servicesHandler(
-      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      {type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id},
       {},
-      callBack
+      callBack,
     );
   }
 
@@ -54,15 +51,16 @@ class Body extends Component {
             data={this.props.bills}
             onShowAll={this.props.onShowAllBills}
             title={this.props.title_bills}
+            containerStyle={styles.homeCardContainer}
+            contentContainerStyle={styles.homeCardContent}
             extraComponent={
               <QuickPayment
                 prefix={'Tổng tiền:   '}
                 price={this.totalBillPrice}
                 onPress={this.props.onPayBill}
               />
-            }
-          >
-            {({ item, index }) => (
+            }>
+            {({item, index}) => (
               <Bill
                 disabled
                 containerStyle={styles.bill}
@@ -82,8 +80,9 @@ class Body extends Component {
             data={this.props.requests}
             onShowAll={this.props.onShowAllRequests}
             title={this.props.title_requests}
-          >
-            {({ item, index }) => (
+            containerStyle={styles.homeCardContainer}
+            contentContainerStyle={styles.homeCardContent}>
+            {({item, index}) => (
               <Request
                 title={item.title}
                 subTitle={item.content}
@@ -96,14 +95,18 @@ class Body extends Component {
                 noti={item.unread}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
+                wrapperStyle={{marginVertical: 0}}
               />
             )}
           </HomeCardList>
         )}
 
         {this.hasRoom && (
-          <HomeCardList data={this.props.rooms} title={this.props.title_rooms}>
-            {({ item, index }) => (
+          <HomeCardList
+            data={this.props.rooms}
+            title={this.props.title_rooms}
+            containerStyle={styles.homeCardContainer}>
+            {({item, index}) => (
               <HomeCardItem
                 title={item.title}
                 subTitle={item.address}
@@ -118,10 +121,11 @@ class Body extends Component {
           <HomeCardList
             data={this.props.newses}
             title={this.props.title_newses}
+            containerStyle={styles.homeCardContainer}
             onShowAll={null}
             // onShowAll={this.props.onShowAllNewses}
           >
-            {({ item, index }) => (
+            {({item, index}) => (
               <HomeCardItem
                 title={item.title}
                 subTitle={item.address}
@@ -136,12 +140,13 @@ class Body extends Component {
           <HomeCardList
             data={this.props.sites}
             title={this.props.title_sites}
+            containerStyle={styles.homeCardContainer}
             onShowAll={null}
             // onShowAll={this.props.onShowAllStores}
           >
-            {({ item, index }) => (
+            {({item, index}) => (
               <HomeCardItem
-                selfRequest={callBack =>
+                selfRequest={(callBack) =>
                   this.handleSelfRequestStore(item, callBack)
                 }
                 title={item.title}
@@ -159,11 +164,19 @@ class Body extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#eee'
+    backgroundColor: '#eee',
   },
   bill: {
-    width: 205
-  }
+    width: 205,
+  },
+  homeCardContainer: {
+    backgroundColor: '#fff',
+    paddingTop: 15,
+    paddingBottom: 10
+  },
+  homeCardContent: {
+    paddingHorizontal: 0,
+  },
 });
 
 export default Body;

@@ -95,6 +95,23 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Lấy d/s địa điểm cửa hàng
+   */
+  async user_list_store_location() {
+    var api = url_for(API.USER_LIST_STORE_LOCATION);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Chọn địa điểm cửa hàng
+   */
+
+  async user_choose_store_location(site_id) {
+    var api = url_for(API.USER_CHOOSE_STORE_LOCATION + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Tìm cửa hàng theo mã CH
    */
   async user_search_store(store_code) {
@@ -180,12 +197,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  async site_category_product_by_filter(
-    store_id,
-    category_id,
-    page_num,
-    params,
-  ) {
+  site_category_product_by_filter(store_id, category_id, page_num, params) {
     const api = url_for(
       API.SITE_CATEGORY_PRODUCT +
         '/' +
@@ -195,8 +207,8 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         page_num,
     );
-    console.log({hii: params, category_id});
-    return await this.postAPI(api, params);
+
+    return this.postCancelableAPI(api, params);
   }
 
   /**
@@ -213,6 +225,14 @@ class CommonAPIHandler extends BaseHandler {
   cart_confirmed(store_id, cart_id) {
     var api = url_for(API.CART_CONFIRMED + '/' + store_id + '/' + cart_id);
     return this.postCancelableAPI(api);
+  }
+
+  /**
+   * Re order completed cart.
+   */
+  cart_reorder(store_id, cart_id) {
+    var api = url_for(API.CART_REORDER + '/' + store_id + '/' + cart_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -891,7 +911,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * @todo get multi-level category
+   * @todo Lấy danh sách cửa hàng gần nhất
+   */
+  user_list_gps_store_location(data) {
+    const api = url_for(API.USER_LIST_GPS_STORE_LOCATION);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /* @todo get multi-level category
    *
    * @param site_id
    * @returns {categories: {name: string, id: number, image:string, list: []}[], type: string}
@@ -976,9 +1003,9 @@ class CommonAPIHandler extends BaseHandler {
    * @todo get list warehouse
    *
    */
-  user_site_store() {
+  user_site_store(data) {
     const api = url_for(API.USER_SITE_STORE);
-    return this.getCancelableAPI(api, true);
+    return this.postCancelableAPI(api, data, undefined, true);
   }
 
   /**
@@ -1008,8 +1035,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.postCancelableAPI(api, data, true);
   }
 
-  invited_revenue(data) {
-    const api = url_for(API.INVITED_REVENUE);
+  user_invited_revenue(data) {
+    const api = url_for(API.USER_INVITED_REVENUE);
     return this.postCancelableAPI(api, data, true);
   }
 
@@ -1112,8 +1139,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.getCancelableAPI(api);
   }
 
-  getListFilterProduct(siteId) {
-    const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
+  site_get_tags(siteId) {
+    const api = url_for(API.SITE_GET_TAGS + '/' + siteId + '/' + 'product');
     return this.getCancelableAPI(api);
   }
 
@@ -1177,10 +1204,23 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * get group info
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   */
+  social_groups_show(id, data) {
+    const api = url_for(API.SOCIAL_GROUPS_SHOW + '/' + id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    * get list posts
    *
    * @param {object} data
    * @param {number} data.site_id
+   * @param {number} data.limit
+   * @param {number} data.page
    */
   social_posts(data) {
     const api = url_for(API.SOCIAL_POSTS);
@@ -1193,12 +1233,28 @@ class CommonAPIHandler extends BaseHandler {
    * @param {object} data
    * @param {number} data.site_id
    * @param {number} data.group_id
-   * @param {number} data.content
-   * @param {number} data.images
+   * @param {string} data.content
+   * @param {array=} data.images
    */
   social_create_post(data) {
     const api = url_for(API.SOCIAL_CREATE_POST);
     return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get list warranty
+   */
+  user_list_warranty() {
+    const api = url_for(API.USER_LIST_WARRANTY);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get warranty detail
+   */
+  user_warranty_detail(id) {
+    const api = url_for(API.USER_WARRANTY_DETAIL + '/' + id);
+    return this.getCancelableAPI(api);
   }
 }
 

@@ -2,6 +2,7 @@ import BaseHandler from './BaseHandler';
 import CommonAPIHandler from './CommonAPIHandler';
 import HomeIDAPIHandler from './HomeIDAPIHandler';
 import BeeLandAPIHandler from './BeeLandAPIHandler';
+import IViewAPIHandler from './IViewAPIHandler';
 import { aggregation } from '../helper';
 
 /**
@@ -16,13 +17,15 @@ import { aggregation } from '../helper';
  * @mixes CommonAPIHandler
  * @mixes HomeIDAPIHandler
  * @mixes BeeLandAPIHandler
+ * @mixes IViewAPIHandler
  */
 
 const APIHandler = new (aggregation(
   BaseHandler,
   CommonAPIHandler,
   HomeIDAPIHandler,
-  BeeLandAPIHandler
+  BeeLandAPIHandler,
+  IViewAPIHandler
 ))();
 
 export default APIHandler;

@@ -39,6 +39,9 @@ import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
 import NoResult from '../NoResult';
 import Shimmer from 'react-native-shimmer';
+import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
+import {isEmpty} from 'lodash';
+import ListStoreProduct from '../stores/ListStoreProduct';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -86,7 +89,7 @@ class Item extends Component {
       !this.isServiceProduct(this.state.item_data || this.state.item)
       ? appConfig.colors.primary
       : is_like
-      ? appConfig.colors.status.danger
+      ? appConfig.colors.primary
       : appConfig.colors.primary;
   }
 
@@ -695,11 +698,11 @@ class Item extends Component {
             });
           }}
           key={index}>
-          <View>
+          <View style={{height: '100%'}}>
             <FastImage
               style={styles.swiper_image}
               source={{uri: image.image}}
-              resizeMode="contain"
+              resizeMode="cover"
             />
           </View>
         </TouchableHighlight>
@@ -733,12 +736,12 @@ class Item extends Component {
                 this.renderPagination(index, total, context, hasImages)
               }
               buttonWrapperStyle={{
-                alignItems: 'flex-end'
+                alignItems: 'flex-end',
               }}
               nextButton={this.renderNextButton()}
               prevButton={this.renderPrevButton()}
               width={appConfig.device.width}
-              height={appConfig.device.width}
+              height={appConfig.device.height / 2}
               containerStyle={styles.content_swiper}>
               {this.renderProductImages(images)}
             </Swiper>
@@ -774,7 +777,11 @@ class Item extends Component {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
     ) : this.isServiceProduct(product) ? (
-      <Icon name="heart" size={20} color={this.subActionColor} />
+      <Icon
+        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
+        size={20}
+        color={this.subActionColor}
+      />
     ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
       <MaterialCommunityIcons
         name="truck-fast"
@@ -837,6 +844,25 @@ class Item extends Component {
     });
   }
 
+  handleItemNews = (item) => () => {
+    Actions.notify_item({
+      title: item.title,
+      data: item,
+    });
+  };
+
+  renderListNews = ({item, index}) => {
+    return (
+      <View>
+        <HomeCardItem
+          title={item.title}
+          imageUrl={item.image_url}
+          onPress={this.handleItemNews(item)}
+        />
+      </View>
+    );
+  };
+
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
@@ -859,7 +885,7 @@ class Item extends Component {
           onPressWarehouse={this.handlePressWarehouse}
         />
 
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
             style={{
@@ -889,20 +915,41 @@ class Item extends Component {
             }>
             {this.renderProductSwiper(item)}
 
-            <View style={styles.item_heading_box}>
+            <View style={[styles.block, styles.item_heading_box]}>
+              <View style={styles.boxDiscount}>
+                {item.discount_percent > 0 ? (
+                  <DiscountBadge
+                    containerStyle={styles.discountBadge}
+                    label={saleFormat(item.discount_percent)}
+                    contentContainerStyle={styles.discountBadgeContent}
+                  />
+                ) : (
+                  <View />
+                )}
+                {isInventoryVisible && (
+                  <View style={styles.productsLeftContainer}>
+                    {/* <View style={styles.productsLeftBackground} />
+                  <View style={styles.productsLeftBackgroundTagTail} /> */}
+                    <Text style={styles.productsLeftText}>
+                      {t('productsLeft', {quantity: item.inventory})}
+                    </Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
-                    {item.discount}
+                    <Text style={{textDecorationLine: 'line-through'}}>
+                      {item.discount}
+                    </Text>
+                    / {unitName}
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
                   {item.price_view}
-                  {!!unitName && (
-                    <Text style={styles.item_unit_name}>/ {unitName}</Text>
-                  )}
+                  {!!unitName && <Text style={styles.item_unit_name}> </Text>}
                 </Text>
               </View>
 
@@ -970,25 +1017,10 @@ class Item extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
-              {item.discount_percent > 0 && (
-                <DiscountBadge
-                  containerStyle={styles.discountBadge}
-                  label={saleFormat(item.discount_percent)}
-                />
-              )}
-              {isInventoryVisible && (
-                <View style={styles.productsLeftContainer}>
-                  <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} />
-                  <Text style={styles.productsLeftText}>
-                    {t('productsLeft', {quantity: item.inventory})}
-                  </Text>
-                </View>
-              )}
             </View>
 
             {item != null && (
-              <View style={styles.item_content_box}>
+              <View style={[styles.block, styles.item_content_box]}>
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
@@ -999,15 +1031,15 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <MaterialCommunityIcons
                           name="warehouse"
                           size={16}
                           color="#999999"
                         />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
-                        Kho hàng
+                        {t('information.warehouse')}
                       </Text>
                     </View>
 
@@ -1030,18 +1062,14 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <Icon name="user" size={16} color="#999999" />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.brands')}
                       </Text>
                     </View>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
+                    <View style={[styles.item_content_item_right]}>
                       <Text style={styles.item_content_item_value}>
                         {item.brand}
                       </Text>
@@ -1056,18 +1084,14 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      <View style={styles.item_content_icon_box}>
+                      {/* <View style={styles.item_content_icon_box}>
                         <Icon name="map-marker" size={16} color="#999999" />
-                      </View>
+                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.origin')}
                       </Text>
                     </View>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
+                    <View style={[styles.item_content_item_right]}>
                       <Text style={styles.item_content_item_value}>
                         {item.made_in}
                       </Text>
@@ -1077,23 +1101,17 @@ class Item extends Component {
               </View>
             )}
 
-            <View style={styles.item_content_text}>
-              {item != null ? (
+            {!!item?.content && (
+              <View style={[styles.block, styles.item_content_text]}>
                 <AutoHeightWebView
-                  onError={() => console.log('on error')}
-                  onLoad={() => console.log('on load')}
-                  onLoadStart={() => console.log('on load start')}
-                  onLoadEnd={() => console.log('on load end')}
                   onShouldStartLoadWithRequest={(result) => {
-                    // console.log(result);
                     return true;
                   }}
                   style={styles.webview}
                   onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item.content || ''}}
+                  source={{html: item.content}}
                   zoomable={false}
                   scrollEnabled={false}
-                  viewportContent={'width=device-width, user-scalable=no'}
                   customStyle={`
                   * {
                     font-family: 'arial';
@@ -1104,7 +1122,7 @@ class Item extends Component {
                     color: #404040 !important;
                   }
                   p {
-                    font-size: 15px;
+                    font-size: 14px;
                     line-height: 24px
                   }
                   img {
@@ -1112,26 +1130,82 @@ class Item extends Component {
                     height: auto !important;
                   }`}
                 />
-              ) : (
-                <Indicator size="small" />
-              )}
-            </View>
-
-            {item != null && item.related && (
-              <View style={[styles.items_box]}>
-                <ListHeader title={`— ${t('relatedItems')} —`} />
-                {item.related.map((item, index) => {
-                  return (
-                    <Items
-                      key={index}
-                      item={item}
-                      index={index}
-                      onPress={this._itemRefresh.bind(this, item)}
-                    />
-                  );
-                })}
               </View>
             )}
+
+            <View style={styles.extraInfo}>
+              {!!item.related &&
+                item.related !== null &&
+                !isEmpty(item.related) && (
+                  <View style={[styles.newsWrapper]}>
+                    <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
+                    <ListStoreProduct products={item.related} />
+
+                    {/* <FlatList
+                  data={item.related}
+                  keyExtractor={(i, index) => `item-related-${i.id}`}
+                  // horizontal
+                  renderItem={({item: product, index}) => (
+                    <Items
+                      // containerStyle={{
+                      //   width: appConfig.device.width / 2 - 20,
+                      // }}
+                      // imageStyle={{
+                      //   width: appConfig.device.width / 2 - 30,
+                      //   height: appConfig.device.width / 2 - 30,
+                      // }}
+                      item={product}
+                      index={index}
+                      onPress={this._itemRefresh.bind(this, product)}
+                    />
+                  )}
+                  // style={{overflow: 'visible'}}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    paddingRight: 15,
+                    paddingTop: 15,
+                  }}
+                /> */}
+                  </View>
+                )}
+              {item.news_linking !== null &&
+                !isEmpty(item.news_linking) &&
+                typeof item.news_linking === 'object' && (
+                  <View style={[styles.newsWrapper, styles.newsWrapperExtra]}>
+                    {/* <FlatList
+                      data={item.news_linking}
+                      renderItem={this.renderListNews}
+                      keyExtractor={(i, index) => `news__${i.id}`}
+                      showsHorizontalScrollIndicator={false}
+                      horizontal
+                      style={{overflow: 'visible'}}
+                      contentContainerStyle={{
+                        paddingHorizontal: 2.5,
+                      }}
+                    /> */}
+                    <HomeCardList
+                      onShowAll={null}
+                      data={item.news_linking}
+                      title={
+                        <Text style={styles.titleRelated}>
+                          {t('TIN TỨC LIÊN QUAN')}
+                        </Text>
+                      }>
+                      {({item: news, index}) => {
+                        return (
+                          <HomeCardItem
+                            title={news.title}
+                            imageUrl={news.image_url}
+                            onPress={this.handleItemNews(news)}
+                            last={item.news_linking.length - 1 === index}
+                          />
+                        );
+                      }}
+                    </HomeCardList>
+                  </View>
+                )}
+            </View>
+
             <View style={styles.boxButtonActions}>
               <Button
                 onPress={this._goStores.bind(this, this.state.store_data)}
@@ -1141,8 +1215,9 @@ class Item extends Component {
               />
             </View>
           </Animated.ScrollView>
-          {this.renderCartFooter(item)}
-        </SafeAreaView>
+        </View>
+
+        {this.renderCartFooter(item)}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1178,6 +1253,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
+  block: {
+    paddingHorizontal: 15,
+    borderColor: appConfig.colors.border,
+    borderBottomWidth: 1,
+    paddingBottom: 20,
+  },
+
+  titleRelated: {
+    paddingHorizontal: 10,
+    paddingTop: 5,
+    textAlign: 'center',
+    ...appConfig.styles.typography.heading3,
+  },
+
   right_btn_box: {
     flexDirection: 'row',
   },
@@ -1185,50 +1274,46 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   swiper_image: {
+    width: '100%',
     height: '100%',
     resizeMode: 'contain',
   },
   swiper_no_image: {
-    height: appConfig.device.width * .6,
+    height: appConfig.device.height / 2 - 70,
     resizeMode: 'contain',
   },
 
   item_heading_box: {
     width: '100%',
-    marginVertical: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 24,
-    alignItems: 'center',
-    backgroundColor: '#fcfcfc',
+    marginTop: 10,
+    backgroundColor: '#fff',
   },
-  item_heading_title: {
-    fontSize: 20,
-    color: '#404040',
-    fontWeight: '600',
-  },
-  item_heading_price_box: {
+  boxDiscount: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
-    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  item_heading_title: {
+    marginTop: 10,
+    marginBottom: 15,
+    ...appConfig.styles.typography.heading1,
+  },
+  item_heading_price_box: {
+    // marginTop: 15,
+    // flexWrap: 'wrap',
   },
   item_heading_safe_off_value: {
-    fontSize: 20,
-    color: '#cccccc',
-    textDecorationLine: 'line-through',
-    paddingRight: 4,
+    ...appConfig.styles.typography.secondary,
+    fontSize: 16,
+    marginBottom: 10
   },
   item_heading_price: {
-    fontSize: 20,
+    ...appConfig.styles.typography.heading1,
     color: appConfig.colors.primary,
-    fontWeight: '600',
-    paddingLeft: 4,
   },
   item_unit_name: {
-    color: '#999',
-    fontSize: 15,
-    fontWeight: '400',
+    // ...appConfig.styles.typography.secondary,
+    // fontSize: 16,
   },
   item_heading_qnt: {
     color: '#666666',
@@ -1236,11 +1321,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   item_actions_box: {
-    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 15,
+    overflow: 'hidden',
+    // justifyContent: 'center',
   },
   item_actions_btn: {
     borderWidth: Util.pixel,
@@ -1248,8 +1332,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
     height: 40,
+    width: (appConfig.device.width - 45) / 2,
+    borderRadius: 5,
   },
   item_actions_btn_icon_container: {
     height: '100%',
@@ -1258,14 +1343,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   item_actions_btn_icon: {
-    fontSize: 24,
+    fontSize: 20,
     color: '#fff',
   },
   item_actions_btn_chat: {
-    marginRight: 8,
+    marginRight: 6,
   },
   item_actions_btn_add_cart: {
-    marginLeft: 8,
+    marginLeft: 6,
     backgroundColor: appConfig.colors.primary,
   },
   item_actions_title: {
@@ -1273,54 +1358,38 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
-  item_content_box: {
-    // width: '100%',
-    // flexDirection: 'row',
-    borderLeftWidth: Util.pixel,
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd',
-    // flexWrap: 'wrap',
-  },
+  item_content_box: {},
   item_content_item_container: {
     flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
   },
   item_content_item: {
-    // height: 24,
-    borderRightWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
-    flex: 1,
-  },
-  item_content_item_left: {
-    // width: '45%',
+    width: '30%',
+    textAlign: 'left',
   },
   item_content_item_right: {
-    // width: '55%',
+    flex: 1,
   },
   item_content_icon_box: {
     width: 24,
     alignItems: 'center',
   },
   item_content_item_title: {
-    fontSize: 12,
-    color: '#999999',
-    paddingLeft: 4,
-    textTransform: 'uppercase',
+    ...appConfig.styles.typography.secondary,
+    color: '#8b8b8b',
   },
   item_content_item_value: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#404040',
-    marginLeft: 4,
+    ...appConfig.styles.typography.text,
+    marginLeft: 15,
     flex: 1,
   },
 
   item_content_text: {
     width: '100%',
-    paddingTop: 16,
+    paddingTop: 20,
   },
 
   items_box: {
@@ -1329,6 +1398,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: appConfig.device.width,
+    marginLeft: 5,
   },
 
   boxButtonActions: {
@@ -1346,11 +1416,17 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   discountBadge: {
-    left: 20,
-    left: 0,
-    top: -5,
-    position: 'absolute',
-    width: null,
+    height: undefined,
+  },
+
+  discountBadgeContent: {
+    backgroundColor: appConfig.colors.sale,
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: undefined,
   },
 
   paginationContainer: {
@@ -1374,7 +1450,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30
+    marginBottom: 30,
   },
   swipeRightControlBtn: {
     right: 7,
@@ -1394,30 +1470,20 @@ const styles = StyleSheet.create({
     left: 2,
   },
   webview: {
-    paddingHorizontal: 6,
-    marginHorizontal: 15,
     width: appConfig.device.width - 30,
   },
   noImageContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0.4,
     backgroundColor: hexToRgbA(LightenColor(appConfig.colors.primary, 20), 0.5),
   },
 
-  productsLeftContainer: {
-    position: 'absolute',
-    top: -5,
-    right: 0,
-    height: 22,
-    justifyContent: 'center',
-  },
+  productsLeftContainer: {},
   productsLeftBackground: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: '#5f7d95',
   },
   productsLeftBackgroundTagTail: {
     position: 'absolute',
@@ -1434,9 +1500,8 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
   },
   productsLeftText: {
-    color: '#fff',
-    fontStyle: 'italic',
-    fontSize: 12,
+    color: '#9F9F9F',
+    fontSize: 13,
     marginHorizontal: 8,
     elevation: 3,
   },
@@ -1460,6 +1525,18 @@ const styles = StyleSheet.create({
   btnProductStampsTitle: {
     color: appConfig.colors.primary,
     ...(appConfig.device.isAndroid && {fontWeight: '700'}),
+  },
+  newsWrapper: {
+    paddingTop: 15,
+    marginHorizontal: -15,
+  },
+  newsWrapperExtra: {
+    marginTop: -15,
+  },
+  extraInfo: {
+    paddingBottom: 15,
+    backgroundColor: '#f5f7f8',
+    paddingHorizontal: 15
   },
 });
 

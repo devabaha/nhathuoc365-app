@@ -22,6 +22,7 @@ class Notification extends PureComponent {
   }
 
   animating() {
+    if (!this.props.animation) return;
     Animated.parallel([
       Animated.timing(this.animatedShowValue, {
         toValue: this.props.show ? 1 : 0,

@@ -1,19 +1,25 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import Loading from '../../../Loading';
+
+import appConfig from 'app-config';
 
 class HomeCardItem extends Component {
   state = {
-    loading: false
+    loading: false,
   };
   unmounted = false;
-
   handlePress = () => {
     if (!!this.props.selfRequest) {
       this.setState({
-        loading: true
+        loading: true,
       });
       this.handleSelfRequest();
     } else {
@@ -23,29 +29,24 @@ class HomeCardItem extends Component {
 
   handleSelfRequest = () => {
     this.props.selfRequest(() => {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     });
   };
 
   render() {
     const props = this.props;
     return (
-      <Button
-        disabled={this.state.loading}
-        onPress={this.handlePress}
-        containerStyle={[
-          styles.containerBtn,
-          {
-            marginRight: props.last ? 16 : 0
-          }
-        ]}
-      >
-        <View style={[styles.container, props.containerStyle]}>
+      <View style={[styles.container, this.props.containerStyle]}>
+        <TouchableOpacity
+          disabled={this.state.loading}
+          onPress={this.handlePress}
+          style={[styles.containerBtn]}>
           <ImageBackground
             style={[styles.image, props.imageStyle]}
-            source={{ uri: props.imageUrl }}
-          >
-            {this.state.loading && <Loading containerStyle={styles.loading} />}
+            source={{uri: props.imageUrl}}>
+            {this.state.loading && (
+              <Loading color="#fff" containerStyle={styles.loading} />
+            )}
           </ImageBackground>
           <View style={[styles.titleWrapper, props.textWrapperStyle]}>
             <Text numberOfLines={2} style={styles.title}>
@@ -62,62 +63,65 @@ class HomeCardItem extends Component {
               </Text>
             )}
           </View>
-        </View>
-      </Button>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   containerBtn: {
-    marginLeft: 16
+    width: 280,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    flexDirection: 'column',
+    flex: 1,
+    ...appConfig.styles.shadow,
   },
   container: {
-    width: 210
+    marginHorizontal: 7.5,
   },
   image: {
     backgroundColor: '#ebebeb',
     width: '100%',
-    height: 120,
-    borderRadius: 8,
+    height: 280 / 1.91,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     overflow: 'hidden',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   titleWrapper: {
-    marginTop: 10
+    padding: 15,
+    // paddingVertical: 15,
   },
   title: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333'
+    ...appConfig.styles.typography.heading3,
   },
   specialSubTitle: {
-    fontWeight: '600',
-    fontSize: 15,
-    color: '#00b140'
+    ...appConfig.styles.typography.heading1,
+    color: appConfig.colors.highlight[1],
   },
   subTitle: {
-    fontSize: 11,
     marginTop: 5,
-    color: '#666'
+    ...appConfig.styles.typography.text,
   },
   loading: {
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.5)'
-  }
+    backgroundColor: 'rgba(0,0,0,.5)',
+  },
 });
 
 HomeCardItem.propTypes = {
   title: PropTypes.string,
   imageUrl: PropTypes.string,
-  last: PropTypes.bool
+  last: PropTypes.bool,
 };
 
 HomeCardItem.defaultProps = {
   title: '',
   imageUrl: '',
-  last: false
+  last: false,
 };
 
 export default HomeCardItem;

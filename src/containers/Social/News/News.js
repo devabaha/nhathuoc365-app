@@ -49,35 +49,6 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     height: 2,
   },
-
-  separator: {
-    width: '100%',
-    height: 2,
-    backgroundColor: '#cccccc',
-  },
-  headerView: {
-    backgroundColor: 'rgb(255,255,255)',
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerContentView: {
-    width: Util.size.width - 70,
-  },
-  titleHeaderTexxt: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  descHeaderTexxt: {
-    fontSize: 15,
-  },
-  boxIconStyle: {
-    backgroundColor: DEFAULT_COLOR,
-    marginRight: 10,
-    marginLeft: 6,
-    borderRadius: 15,
-  },
 });
 
 class News extends Component {
@@ -103,6 +74,11 @@ class News extends Component {
       () => this.getListNewsCategory(),
     );
 
+    this.updateSelectedTabIndex = reaction(
+      () => store.selectedNewsId,
+      (id) => this.updateSelectedTabIndexById(id),
+    );
+
     this.eventTracker = new EventTracker();
     this.getListNewsCategoryRequest = new APIRequest();
     this.requests = [this.getListNewsCategoryRequest];
@@ -125,9 +101,24 @@ class News extends Component {
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.updateNewsDisposer();
+    this.updateSelectedTabIndex();
     store.resetSocialNews();
     this.eventTracker.clearTracking();
   }
+
+  updateSelectedTabIndexById = (id) => {
+    if (!this.state.routes?.length) return;
+
+    const tabIndex = this.state.routes.findIndex((r) => {
+      return r.id === id;
+    });
+
+    if (tabIndex !== -1) {
+      this.setState({index: tabIndex});
+    }
+
+    store.setSelectedNewsId();
+  };
 
   async getListNewsCategory() {
     const {t} = this.props;
@@ -140,12 +131,15 @@ class News extends Component {
           if (response.data) {
             const routes = this.routesFormatter(response.data);
             let defaultIndex = this.props.indexTab;
-            if (this.props.id) {
+            const selectedId = store.selectedNewsId || this.props.id;
+            if (selectedId) {
               defaultIndex = routes.findIndex((r) => {
-                return r.id === this.props.id;
+                return r.id === selectedId;
               });
             }
             this.setState({routes, index: defaultIndex});
+
+            store.setSelectedNewsId();
           } else {
             flashShowMessage({
               type: 'danger',

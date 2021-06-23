@@ -12,7 +12,7 @@
       "label": "页面 {{appName}}",
       "desc": "Facebook 客户服务页面"
     },
-    "termOfUse": {
+    "termsOfUse": {
       "label": "Về {{appName}} - Điều khoản sử dụng",
       "desc": "关于使用条款",
       "webViewTitle": "Về {{appName}}"

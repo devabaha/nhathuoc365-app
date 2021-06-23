@@ -20,6 +20,9 @@ class CommonAPI {
   get USER_HOME() {
     return BaseAPI.apiDomain + 'apiUser/home';
   }
+  get USER_SITE_HOME_NEW() {
+    return BaseAPI.apiDomain + 'apiUser/site_home_new';
+  }
   get USER_SITE_HOME() {
     return BaseAPI.apiDomain + 'apiUser/site_home';
   }
@@ -82,6 +85,15 @@ class CommonAPI {
   get USER_UPDATE_PROFILE() {
     return BaseAPI.apiDomain + 'apiUser/update';
   }
+  get USER_LIST_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_store_location';
+  }
+  get USER_LIST_GPS_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_gps_store_location';
+  }
+  get USER_CHOOSE_STORE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/choose_store_location';
+  }
   get SITE_GET_TREE_CATEGORIES() {
     return BaseAPI.apiDomain + 'apiSite/get_tree_categories';
   }
@@ -100,6 +112,9 @@ class CommonAPI {
   }
   get CART_CONFIRMED() {
     return BaseAPI.apiDomain + 'apiCart/confirmed';
+  }
+  get CART_REORDER() {
+    return BaseAPI.apiDomain + 'apiCart/reorder';
   }
   get SITE_CART_PLUS() {
     return BaseAPI.apiDomain + 'apiCart/plus';
@@ -442,12 +457,17 @@ class CommonAPI {
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }
-  get FILTER_URL_TAG() {
-    return BaseAPI.apiDomain + 'apiSite/get_tags/';
+
+  get SITE_GET_TAGS() {
+    return BaseAPI.apiDomain + 'apiSite/get_tags';
   }
 
   get USER_LIST_NEWS_CATEGORY() {
     return BaseAPI.apiDomain + 'apiUser/list_news_category';
+  }
+
+  get USER_INVITED_REVENUE() {
+    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
   }
 
   // Social
@@ -462,11 +482,13 @@ class CommonAPI {
   get SOCIAL_LIKES() {
     return BaseAPI.socialDomain + 'likes/store';
   }
-  get INVITED_REVENUE() {
-    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
-  }
+
   get SOCIAL_GROUPS() {
     return BaseAPI.socialDomain + 'groups';
+  }
+
+  get SOCIAL_GROUPS_SHOW() {
+    return BaseAPI.socialDomain + 'groups/show';
   }
 
   get SOCIAL_POSTS() {
@@ -475,6 +497,14 @@ class CommonAPI {
 
   get SOCIAL_CREATE_POST() {
     return BaseAPI.socialDomain + 'posts/store';
+  }
+
+  get USER_LIST_WARRANTY() {
+    return BaseAPI.apiDomain + 'apiUser/warrantys';
+  }
+
+  get USER_WARRANTY_DETAIL() {
+    return BaseAPI.apiDomain + 'apiUser/warranty_detail';
   }
 }
 

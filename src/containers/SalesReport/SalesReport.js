@@ -40,20 +40,34 @@ function SalesReport() {
     if (month) {
       data.month = month;
     }
-    getInvitedRevenueRequest.data = APIHandler.invited_revenue(data);
+    getInvitedRevenueRequest.data = APIHandler.user_invited_revenue(data);
     try {
-      const responseData = await getInvitedRevenueRequest.promise();
-      if (responseData.data) {
-        setMonths(formatMonths(responseData?.data.list_month));
-        setStats(responseData.data.stats);
-        setSelectedMonth(responseData?.data.month || []);
-        setDataReport(formatInviter(responseData.data.revenue_inviter_users));
+      const response = await getInvitedRevenueRequest.promise();
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            setMonths(formatMonths(response?.data.list_month));
+            setStats(response.data.stats);
+            setSelectedMonth(response?.data.month || []);
+            setDataReport(formatInviter(response.data.revenue_inviter_users));
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message'),
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: t('common:api.error.message'),
+        });
       }
     } catch (error) {
       console.log('%cget_commission', 'color:red', error);
       flashShowMessage({
         type: 'danger',
-        message: error.message || t('common:api.error.message'),
+        message: t('common:api.error.message'),
       });
     } finally {
       setLoading(false);

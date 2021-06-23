@@ -27,10 +27,10 @@ import EventTracker from '../../helper/EventTracker';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
 import APIHandler from 'src/network/APIHandler';
-import {APIRequest} from 'src/network/Entity';
 import {reaction} from 'mobx';
-import FilterProduct from './FilterProduct';
+import {FilterProduct} from './FilterProduct';
 import {isEmpty} from 'lodash';
+import {clearDrawerContent} from '../Drawer';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
@@ -44,26 +44,6 @@ const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW =
   BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT - STATUS_BAR_HEIGHT;
-
-const dataSort = [
-  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
-  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'asc'},
-  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'asc'},
-  {
-    id: 4,
-    name: 'Giá từ thấp đến cao',
-    value: 'price',
-    isSelected: false,
-    order: 'asc',
-  },
-  {
-    id: 5,
-    name: 'Giá từ cao đến thấp',
-    value: 'price',
-    isSelected: false,
-    order: 'desc',
-  },
-];
 
 class Stores extends Component {
   static propTypes = {
@@ -82,14 +62,16 @@ class Stores extends Component {
       refreshingCate: false,
       category_nav_index: 0,
       categories_data: null,
-      selected_category: { id: 0, name: '' },
+      selected_category: {id: 0, name: ''},
       // scrollY: new Animated.Value(0),
       moreOptions: [],
       flatListHeight: undefined,
       siteNotify: {
         favor_flag: 0,
-        notify_chat: 0
-      }
+        notify_chat: 0,
+      },
+
+      filterProductHeight: 0,
     };
     this.unmounted = false;
     this.flatListPagesHeight = [];
@@ -105,15 +87,17 @@ class Stores extends Component {
     this.animatedScrollY = new Animated.Value(0);
     this.animatedContentOffsetY = new Animated.Value(0);
     this.scrollY = new Animated.Value(0);
+
+    this.disposer = () => {};
   }
 
   get isGetFullStore() {
     return this.props.categoryId === 0;
   }
 
-  handleEffect = async (value) => {
+  handleEffect = (value) => {
     if (isEmpty(value)) {
-      await this.setState({
+      this.setState({
         filterParams: {
           order: this.state.valueSort?.order ?? '',
           sort_by: this.state.valueSort?.value ?? '',
@@ -138,7 +122,7 @@ class Stores extends Component {
       order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
       sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
     };
-    await this.setState({filterParams: params});
+    this.setState({filterParams: params});
   };
 
   componentDidMount() {
@@ -155,14 +139,14 @@ class Stores extends Component {
     });
 
     setTimeout(() => {
-      const { t } = this.props;
+      const {t} = this.props;
       Actions.refresh({
         title: '',
         // right: this._renderRightButton(),
       });
     });
     this.eventTracker.logCurrentView();
-    reaction(
+    this.disposer = reaction(
       () => store.selectedFilter,
       (data) => this.handleEffect(data),
     );
@@ -172,18 +156,20 @@ class Stores extends Component {
     this.unmounted = true;
     // this.state.scrollY.removeListener(this.scrollListener);
     this.eventTracker.clearTracking();
+    this.disposer();
     store.setSelectedFilter({});
+    clearDrawerContent();
   }
 
-  scrollListener = ({ value }) => {
+  scrollListener = ({value}) => {
     if (value < -70 && this.state.refreshingCate === false) {
       const refCate = this.refCategories[this.state.category_nav_index];
       if (refCate) {
-        this.setState({ refreshingCate: true }, () => refCate._onRefresh());
+        this.setState({refreshingCate: true}, () => refCate._onRefresh());
       }
     }
     if (value === 0 && this.state.refreshingCate) {
-      this.setState({ refreshingCate: false });
+      this.setState({refreshingCate: false});
     }
   };
 
@@ -249,7 +235,7 @@ class Stores extends Component {
       {
         categories_data: response.data.categories,
         promotions: response.data.promotions,
-        moreOptions: response.data.more_options
+        moreOptions: response.data.more_options,
       },
       // () =>
       //   this.state.categories_data.map((item, index) => {
@@ -269,7 +255,7 @@ class Stores extends Component {
       category_name:
         this.state.selected_category.id !== 0
           ? this.state.selected_category.name
-          : ''
+          : '',
     });
   };
 
@@ -281,7 +267,7 @@ class Stores extends Component {
         // setTimeout(
         //   () =>
         willUpdateState(this.unmounted, () =>
-          this.parseDataCategories(response)
+          this.parseDataCategories(response),
         );
         //   ,this._delay()
         // );
@@ -330,7 +316,7 @@ class Stores extends Component {
   }
 
   _changeCategory(item, index, nav_only) {
-    this.setState({ flatListHeight: this.flatListPagesHeight[index] });
+    this.setState({flatListHeight: this.flatListPagesHeight[index]});
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
       const end_of_list = categories_count - index - 1 >= 1;
@@ -443,7 +429,7 @@ class Stores extends Component {
     Actions.store_orders({
       store_id: store.store_id,
       title: store.store_data.name,
-      tel: store.store_data.tel
+      tel: store.store_data.tel,
     });
   };
 
@@ -454,7 +440,7 @@ class Stores extends Component {
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           this.setState({
-            siteNotify: response.data
+            siteNotify: response.data,
           });
         }
       }
@@ -465,21 +451,21 @@ class Stores extends Component {
 
   handlePressChat = () => {
     Actions.amazing_chat({
-      titleStyle: { width: 220 },
+      titleStyle: {width: 220},
       phoneNumber: store.store_data.tel,
       title: store.store_data.name,
       site_id: store.store_id,
-      user_id: store.user_info.id
+      user_id: store.user_info.id,
     });
   };
 
   handleLayoutFlatListContent = (e, index) => {
     if (e.nativeEvent) {
-      const { height } = e.nativeEvent.layout;
+      const {height} = e.nativeEvent.layout;
       this.flatListPagesHeight[index] = height;
 
       this.setState({
-        flatListHeight: height
+        flatListHeight: height,
       });
     }
   };
@@ -509,9 +495,38 @@ class Stores extends Component {
     if (!this.unmounted) {
       appConfig.device.isAndroid &&
         this.setState({
-          refreshingCate: false
+          refreshingCate: false,
         });
     }
+  };
+
+  handleValue = async (value) => {
+    this.setState((prev) => {
+      let order = value.order,
+        sort_by = value.value,
+        valueSort = value;
+
+      if (valueSort.id === prev.valueSort?.id) {
+        order = '';
+        sort_by = '';
+        valueSort = {};
+      }
+
+      return {
+        filterParams: {
+          ...prev.filterParams,
+          sort_by,
+          order,
+        },
+        valueSort,
+      };
+    });
+  };
+
+  handleFilterProductLayout = (e) => {
+    this.setState({
+      filterProductHeight: e.nativeEvent.layout.height,
+    });
   };
 
   render() {
@@ -527,10 +542,10 @@ class Stores extends Component {
           translateY: interpolate(this.scrollY, {
             inputRange: [0, COLLAPSED_HEADER_VIEW],
             outputRange: [0, -COLLAPSED_HEADER_VIEW],
-            extrapolate: 'clamp'
-          })
-        }
-      ]
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
     };
 
     const infoContainerStyle = {
@@ -538,8 +553,8 @@ class Stores extends Component {
       opacity: interpolate(this.scrollY, {
         inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2],
         outputRange: [1, 0],
-        extrapolate: 'clamp'
-      })
+        extrapolate: 'clamp',
+      }),
     };
 
     const imageBgStyle = {
@@ -548,16 +563,15 @@ class Stores extends Component {
           scale: interpolate(this.scrollY, {
             inputRange: [0, COLLAPSED_HEADER_VIEW],
             outputRange: [1, 1.1],
-            extrapolate: 'clamp'
-          })
-        }
-      ]
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
     };
 
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <SafeAreaView style={[styles.container]}>
-
         <StoreNavBarHomeID
           onPressSearch={this.handleSearchInStore}
           placeholder={t('navBar.placeholder')}
@@ -570,7 +584,7 @@ class Stores extends Component {
           bannerUrl={store.store_data.image_url}
           containerStyle={{
             height: BANNER_ABSOLUTE_HEIGHT,
-            ...animated
+            ...animated,
           }}
           infoContainerStyle={infoContainerStyle}
           imageBgStyle={imageBgStyle}
@@ -596,66 +610,74 @@ class Stores extends Component {
                       1,
                       BANNER_ABSOLUTE_HEIGHT -
                         NAV_BAR_HEIGHT -
-                        STATUS_BAR_HEIGHT
+                        STATUS_BAR_HEIGHT,
                     ],
                     outputRange: [
                       BANNER_VIEW_HEIGHT,
                       BANNER_VIEW_HEIGHT,
-                      NAV_BAR_HEIGHT
+                      NAV_BAR_HEIGHT,
                     ],
-                    extrapolate: 'clamp'
-                  })
-                }
-              ]
-            }
-          ]}
-        >
+                    extrapolate: 'clamp',
+                  }),
+                },
+              ],
+            },
+          ]}>
           {this.state.categories_data != null
-          ? this.state.categories_data.length > 1 && (
-              <View style={styles.categories_nav}>
-                <FlatList
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  ref={(ref) => (this.refs_category_nav = ref)}
-                  onScrollToIndexFailed={() => {}}
-                  data={this.state.categories_data}
-                  extraData={this.state.category_nav_index}
-                  keyExtractor={(item) => `${item.id}`}
-                  horizontal={true}
-                  style={styles.categories_nav}
-                  renderItem={({item, index}) => {
-                    let active = this.state.category_nav_index == index;
-                    return (
-                      <TouchableHighlight
-                        onPress={() => this._changeCategory(item, index)}
-                        underlayColor="transparent">
-                        <View
-                          ref={(inst) =>
-                            this.measureCategoriesLayout(inst, item, index)
-                          }
-                          style={styles.categories_nav_items}>
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.categories_nav_items_title,
-                              active
-                                ? styles.categories_nav_items_title_active
-                                : null,
-                            ]}>
-                            {item.name}
-                          </Text>
+            ? this.state.categories_data.length > 1 && (
+                <View style={styles.categories_nav_container}>
+                  <FlatList
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    ref={(ref) => (this.refs_category_nav = ref)}
+                    onScrollToIndexFailed={() => {}}
+                    data={this.state.categories_data}
+                    extraData={this.state.category_nav_index}
+                    keyExtractor={(item) => `${item.id}`}
+                    horizontal={true}
+                    style={styles.categories_nav}
+                    renderItem={({item, index}) => {
+                      let active = this.state.category_nav_index == index;
+                      return (
+                        <TouchableHighlight
+                          onPress={() => this._changeCategory(item, index)}
+                          underlayColor="transparent">
+                          <View
+                            ref={(inst) =>
+                              this.measureCategoriesLayout(inst, item, index)
+                            }
+                            style={styles.categories_nav_items}>
+                            <Text
+                              numberOfLines={2}
+                              style={[
+                                styles.categories_nav_items_title,
+                                active
+                                  ? styles.categories_nav_items_title_active
+                                  : null,
+                              ]}>
+                              {item.name}
+                            </Text>
 
-                          {active && (
-                            <View style={styles.categories_nav_items_active} />
-                          )}
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  }}
-                />
-              </View>
-            )
-          : this.isGetFullStore && <CategoriesSkeleton />}
+                            {active && (
+                              <View
+                                style={styles.categories_nav_items_active}
+                              />
+                            )}
+                          </View>
+                        </TouchableHighlight>
+                      );
+                    }}
+                  />
+                  <FilterProduct
+                    onLayout={this.handleFilterProductLayout}
+                    selectedFilter={store.selectedFilter}
+                    onValueSort={this.handleValue}
+                    animatedScrollY={this.animatedScrollY}
+                    animatedContentOffsetY={this.animatedContentOffsetY}
+                  />
+                </View>
+              )
+            : this.isGetFullStore && <CategoriesSkeleton />}
         </Animated.View>
 
         <Animated.ScrollView
@@ -665,35 +687,37 @@ class Stores extends Component {
               <RefreshControl
                 progressViewOffset={BANNER_ABSOLUTE_HEIGHT}
                 refreshing={this.state.refreshingCate}
-                onRefresh={() => this.scrollListener({ value: -400 })}
+                onRefresh={() => this.scrollListener({value: -400})}
               />
             ) : null
           }
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{flexGrow: 1}}
           style={[styles.container]}
           scrollEventThrottle={16}
           onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: y=>  Animated.block([
-                        Animated.set(this.scrollY, y),
-                        Animated.call([this.scrollY], ([value]) => this.scrollListener({value}))
-                      ])
-                    }
-                  }
-                }
-              ],
+            [
               {
-                useNativeDriver: true
-              }
-            )}
-        >
+                nativeEvent: {
+                  contentOffset: {
+                    y: (y) =>
+                      Animated.block([
+                        Animated.set(this.scrollY, y),
+                        Animated.call([this.scrollY], ([value]) =>
+                          this.scrollListener({value}),
+                        ),
+                      ]),
+                  },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}>
           <Animated.View
             style={{
-              height: BANNER_VIEW_HEIGHT,
-              width: '100%'
+              height: BANNER_VIEW_HEIGHT + this.state.filterProductHeight,
+              width: '100%',
             }}
           />
 
@@ -702,37 +726,37 @@ class Stores extends Component {
               <FlatList
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
-                ref={ref => (this.refs_category_screen = ref)}
+                ref={(ref) => (this.refs_category_screen = ref)}
                 onScrollToIndexFailed={() => {}}
                 data={this.state.categories_data}
                 extraData={this.state.category_nav_index}
-                keyExtractor={item => `${item.id}`}
+                keyExtractor={(item) => `${item.id}`}
                 horizontal={true}
                 pagingEnabled
                 onMomentumScrollEnd={this._onScrollEnd.bind(this)}
                 style={{
-                  width: Util.size.width
+                  width: Util.size.width,
                 }}
-                contentContainerStyle={{ height: this.state.flatListHeight }}
+                contentContainerStyle={{height: this.state.flatListHeight}}
                 getItemLayout={(data, index) => {
                   return {
                     length: Util.size.width,
                     offset: Util.size.width * index,
-                    index
+                    index,
                   };
                 }}
-                renderItem={({ item, index }) => {
+                renderItem={({item, index}) => {
                   const isAutoLoad =
-                (this.state.category_nav_index - 1 >= 0 &&
-                  index === this.state.category_nav_index - 1) ||
-                (this.state.category_nav_index + 1 <=
-                  this.state.categories_data.length - 1 &&
-                  index === this.state.category_nav_index + 1);
+                    (this.state.category_nav_index - 1 >= 0 &&
+                      index === this.state.category_nav_index - 1) ||
+                    (this.state.category_nav_index + 1 <=
+                      this.state.categories_data.length - 1 &&
+                      index === this.state.category_nav_index + 1);
 
                   return (
                     <CategoryScreen
                       containerStyle={{flex: undefined}}
-                      ref={inst => (this.refCategories[index] = inst)}
+                      ref={(inst) => (this.refCategories[index] = inst)}
                       scrollEnabled={false}
                       activeRefreshControl={appConfig.device.isIOS}
                       refreshing={
@@ -744,16 +768,18 @@ class Stores extends Component {
                       cate_index={this.state.category_nav_index}
                       isAutoLoad={isAutoLoad}
                       that={this}
-                      onLayout={e => this.handleLayoutFlatListContent(e, index)}
+                      onLayout={(e) =>
+                        this.handleLayoutFlatListContent(e, index)
+                      }
                       onRefreshEnd={this._onRefreshCateEnd}
                       minHeight={appConfig.device.height / 2}
                     />
                   );
                 }}
               />
-            )  : (null
-          // <ListStoreProductSkeleton />
-        )}
+            ) : null
+            // <ListStoreProductSkeleton />
+            }
           </Animated.View>
         </Animated.ScrollView>
         {/* 
@@ -787,14 +813,13 @@ class Stores extends Component {
               zIndex: 999,
               borderWidth: 1,
               borderColor: DEFAULT_COLOR,
-              overflow: 'hidden'
-            }}
-          >
+              overflow: 'hidden',
+            }}>
             {store.cart_fly_image && (
               <CachedImage
                 style={{
                   width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height
+                  height: store.cart_fly_position.height,
                 }}
                 source={store.cart_fly_image}
               />
@@ -808,21 +833,24 @@ class Stores extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   right_btn_box: {
     flexDirection: 'row',
     marginHorizontal: 15,
-    ...elevationShadowStyle(7)
+    ...elevationShadowStyle(7),
   },
 
   items_box: {
     width: Util.size.width,
   },
 
-  categories_nav: {
-    backgroundColor: '#ffffff',
+  categories_nav_container: {
     zIndex: 1,
+    backgroundColor: '#ffffff',
+    ...appConfig.styles.shadow,
+  },
+  categories_nav: {
     height: 40,
     borderBottomWidth: Util.pixel,
     borderBottomColor: '#dddddd',
@@ -846,8 +874,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 2,
-    backgroundColor: DEFAULT_COLOR
-  }
+    backgroundColor: DEFAULT_COLOR,
+  },
 });
 
 export default withTranslation(['stores', 'cart'])(observer(Stores));

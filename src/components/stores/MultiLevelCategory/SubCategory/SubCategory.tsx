@@ -147,7 +147,7 @@ class SubCategory extends Component<SubCategoryProps> {
         })
     }
 
-    renderSubCategories(category) {
+    renderSubCategories(category, index) {
         const containerStyle = this.state.categorySize ? {
             width: this.state.categorySize.width,
             height: this.state.categorySize.height
@@ -155,7 +155,7 @@ class SubCategory extends Component<SubCategoryProps> {
 
         return (
             Array.isArray(category.list) ?
-                <View style={[styles.subCategoriesContainer, { minWidth: this.state.subCategoriesWidth }]}>
+                <View key={index} style={[styles.subCategoriesContainer, { minWidth: this.state.subCategoriesWidth }]}>
                     {category.list.map((childCate, index) => {
                         const isLast = (index + 1) % this.state.itemsPerRow === 0;
                         let extraStyle = {
@@ -174,9 +174,8 @@ class SubCategory extends Component<SubCategoryProps> {
                         }
 
                         return (
-                            <View key={index} style={[styles.categoryWrapper, containerStyle]}>
+                            <View key={childCate.id} style={[styles.categoryWrapper, containerStyle]}>
                                 <Category
-                                    key={index}
                                     title={childCate.name}
                                     image={childCate.image}
                                     containerStyle={[
@@ -222,7 +221,7 @@ class SubCategory extends Component<SubCategoryProps> {
                     this.state.categorySize.height
                     : 0;
                 if (this.props.type === CATEGORY_TYPE.FIX_2_LEVEL) {
-                    return this.renderSubCategories(category);
+                    return this.renderSubCategories(category, index);
                 }
                 return (
                     <Row
@@ -235,7 +234,7 @@ class SubCategory extends Component<SubCategoryProps> {
                         onPressTitle={() => this.props.onPressTitle(category)}
                         image={category.image}
                     >
-                        {this.renderSubCategories(category)}
+                        {this.renderSubCategories(category, index)}
                     </Row>
                 )
             })

@@ -17,11 +17,16 @@ import {
   TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
 import Service from './Service';
-import { SERVICES_TYPE } from 'src/helper/servicesHandler';
+import {SERVICES_TYPE} from 'src/helper/servicesHandler';
+import Themes from 'src/Themes';
 
-const styles = StyleSheet.create({
+const homeThemes = Themes.getNameSpace('home');
+const listServiceStyle = homeThemes('styles.home.listService');
+
+let styles = StyleSheet.create({
   container: {
-    paddingVertical: 6,
+    // paddingVertical: 6,
+    marginBottom: -15,
     backgroundColor: '#fff',
   },
   buttonWrapper: {
@@ -64,11 +69,12 @@ const styles = StyleSheet.create({
   horizontalIndicator: {
     width: INDICATOR_HORIZONTAL_WIDTH,
     alignSelf: 'center',
-    marginTop: 8,
-    marginBottom: 5,
+    // marginTop: 8,
+    marginBottom: 15,
   },
 });
 
+styles = Themes.mergeStyles(styles, listServiceStyle);
 class ListServices extends Component {
   static propTypes = {
     type: PropTypes.oneOf(Object.values(LIST_SERVICE_TYPE)),
@@ -289,7 +295,7 @@ class ListServices extends Component {
     };
 
     const titleStyle = {marginTop: titleMarginTop};
-    const selfRequest = item.type === SERVICES_TYPE.OPEN_SHOP ? this.props.selfRequest : undefined;
+    const selfRequest = this.props.selfRequest;
 
     return (
       <Service
@@ -318,9 +324,11 @@ class ListServices extends Component {
         },
       ],
     };
+
     return (
-      <Animated.View style={[styles.container, visibleStyle]}>
+      <Animated.View style={[styles.container, visibleStyle, this.props.containerStyle]}>
         <Animated.ScrollView
+          style={[appConfig.device.isIOS && {overflow: 'visible'}]}
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}
           horizontal={this.isHorizontal}

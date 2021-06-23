@@ -14,8 +14,9 @@
   "like": "Yêu thích",
   "productsLeft": "Kho: {{quantity}}",
   "information": {
-    "brands": "NHÃN HIỆU",
-    "origin": "XUẤT XỨ"
+    "warehouse": "Kho hàng",
+    "brands": "Nhãn hiệu",
+    "origin": "Xuất xứ"
   },
   "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
   "goToStore": "Vào cửa hàng"

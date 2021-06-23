@@ -74,10 +74,10 @@
         "telPlaceholder": "Nhập số điện thoại"
       }
     },
-    "confirmOrder": "Xác nhận",
+    "confirmOrder": "Tiếp tục",
     "feedback": "Phản ánh & đánh giá",
     "addMoreItems": "Chọn thêm mặt hàng",
-    "rebuy": "Mua lại",
+    "reorder": "Đặt lại",
     "edit": "Sửa đơn",
     "cancel": "Hủy đơn",
     "unitName": "sản phẩm",

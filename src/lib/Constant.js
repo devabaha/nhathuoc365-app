@@ -168,3 +168,5 @@ global.heightTabbar = global.isIPhoneX ? 83 : 49;
 global.PAYMENT_METHOD_TYPES = {
   EPAY: '5'
 };
+
+global.REGEX_NUMBER_ONLY = /(?!\d+|-)\D*/g;

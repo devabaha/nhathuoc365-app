@@ -26,14 +26,17 @@ export const SERVICES_TYPE = {
 
   /** EXTERNAL LINK */
   EXTERNAL_LINK: 'external_link',
+  WEBVIEW: 'webview',
 
   /** QRBARCODE */
   ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',
   QRCODE_SCAN_TYPE: 'QRCODE_SCAN_TYPE',
   QRCODE_SCAN: 'qrscan',
+  QRCODE_SCAN_TYPE: 'QRCODE_SCAN_TYPE',
 
   /** VOUCHER */
   LIST_VOUCHER: 'list_voucher',
+  MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER: 'my_voucher',
   MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER_DETAIL: 'my_voucher_detail',
@@ -106,5 +109,11 @@ export const SERVICES_TYPE = {
   /** GAMIFICATION */
   LOTTERY_GAME: 'lottery_game',
 
+  /** SOCIAL */
   SOCIAL: 'social',
+  SOCIAL_GROUP: 'social_group',
+
+  /** PROGRESS TRACKING */
+  LIST_PROGRESS_TRACKING: 'list_progress_tracking',
+  PROGRESS_TRACKING_DETAIL: 'progress_tracking_detail',
 };

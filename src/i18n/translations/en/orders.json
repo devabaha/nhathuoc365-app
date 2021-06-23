@@ -74,10 +74,10 @@
         "telPlaceholder": "Your phone number is..."
       }
     },
-    "confirmOrder": "Confirm",
+    "confirmOrder": "Continue",
     "feedback": "Feedback",
     "addMoreItems": "Choose more items",
-    "rebuy": "Repurchase",
+    "reorder": "Reorder",
     "edit": "Edit",
     "cancel": "Cancel",
     "unitName": "product(s)",

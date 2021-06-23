@@ -135,7 +135,7 @@ const BubbleBottom = ({
 export default React.memo(BubbleBottom);
 
 export const ActionBtn = React.memo(
-  ({title, highlight, style, contentStyle, titleStyle, maskStyle, onPress}) => {
+  ({title, highlight, style, contentStyle, titleStyle, maskStyle, onPress = () => {}}) => {
     const [animationValue, setAnimation] = useState(new Animated.Value(0));
     const animatedPressing = useRef(new Animated.Value(0));
 

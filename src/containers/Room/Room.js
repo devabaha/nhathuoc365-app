@@ -35,10 +35,10 @@ const STATUS_BAR_HEIGHT = appConfig.device.isIOS
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
-    ? 60 + appConfig.device.statusBarHeight
+    ? 64 + appConfig.device.bottomSpace
     : 64
   : 54 + STATUS_BAR_HEIGHT;
-const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
+const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT + appConfig.device.bottomSpace;
 
 class Room extends Component {
   state = {
@@ -645,14 +645,14 @@ class Room extends Component {
                 onPressBanner={this.handlePressBanner}
                 onPressAvatar={this.handlePressAvatar}
                 containerStyle={{
-                  height: BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight,
+                  height: BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight + appConfig.device.bottomSpace,
                   ...animated
                 }}
                 wrapperStyle={{
-                  height: BANNER_ABSOLUTE_HEIGHT
+                  height: BANNER_ABSOLUTE_HEIGHT + appConfig.device.bottomSpace,
                 }}
                 infoContainerStyle={infoContainerStyle}
-                imageBgStyle={imageBgStyle}
+                // imageBgStyle={imageBgStyle}
                 title={room.title}
                 subTitle={room.address}
                 extraComponent={
@@ -689,7 +689,7 @@ class Room extends Component {
               appConfig.device.isAndroid ? (
                 <RefreshControl
                   progressViewOffset={
-                    BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight
+                    BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight + appConfig.device.bottomSpace
                   }
                   refreshing={this.state.refreshing}
                   onRefresh={this.onRefresh}
@@ -716,7 +716,7 @@ class Room extends Component {
               style={{
                 height: this.isDataEmpty
                   ? NAV_BAR_HEIGHT
-                  : BANNER_VIEW_HEIGHT + this.state.actionsHeight,
+                  : BANNER_VIEW_HEIGHT + this.state.actionsHeight + appConfig.device.bottomSpace,
                 width: '100%'
               }}
             />
@@ -793,7 +793,8 @@ const styles = StyleSheet.create({
   },
   roomActionsContainer: {
     borderBottomColor: '#eee',
-    borderBottomWidth: 0.5
+    borderBottomWidth: 0.5,
+    paddingVertical: 15,
   }
 });
 

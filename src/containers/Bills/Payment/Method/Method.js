@@ -74,7 +74,7 @@ class Method extends Component {
   componentDidMount() {
     setTimeout(() =>
       Actions.refresh({
-        title: this.props.title || t('common:screen.bills.paymentMethodTitle')
+        title: this.props.title || this.props.t('common:screen.bills.paymentMethodTitle')
       })
     );
     this.getPaymentMethod();

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import appConfig from '../../config';
 import store from '../../store';
 import {RightButtonNavBarProps} from '.';
@@ -181,7 +182,6 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   render() {
-    // this.updateNoti();
     const TouchableComponent = this.props.touchableOpacity
       ? TouchableOpacity
       : TouchableHighlight;

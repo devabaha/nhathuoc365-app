@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 import appConfig from 'app-config';
 
 class Discount extends Component {
@@ -9,12 +9,12 @@ class Discount extends Component {
     right: false,
     tailSpace: 0,
     containerStyle: {},
-    contentContainerStyle: {}
+    contentContainerStyle: {},
   };
   state = {};
   render() {
     const extraStyle = {
-      [this.props.right ? 'right' : 'left']: -this.props.tailSpace
+      [this.props.right ? 'right' : 'left']: -this.props.tailSpace,
     };
     const tailStyle = {
       borderTopWidth: this.props.tailSpace,
@@ -22,15 +22,14 @@ class Discount extends Component {
         .tailSpace,
       borderRightColor: 'transparent',
       bottom: -this.props.tailSpace,
-      [this.props.right ? 'right' : 'left']: 0
+      [this.props.right ? 'right' : 'left']: 0,
     };
 
     return (
       <View style={[styles.container, extraStyle, this.props.containerStyle]}>
         <View
-          style={[styles.content_wrapper, this.props.contentContainerStyle]}
-        >
-          <Text style={styles.content}>{this.props.label}</Text>
+          style={[styles.content_wrapper, this.props.contentContainerStyle]}>
+          <Text style={[styles.content, this.props.contentStyle]}>{this.props.label}</Text>
         </View>
         <View style={[styles.tail, tailStyle]} />
       </View>
@@ -43,27 +42,27 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   content_wrapper: {
-    backgroundColor: appConfig.colors.marigold,
-    paddingHorizontal: 8,
+    backgroundColor: appConfig.colors.sale,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    paddingHorizontal: 5
   },
   content: {
-    color: '#ffffff',
-    fontSize: 12
+    color: '#fff',
+    fontWeight: 'bold',
   },
   tail: {
     position: 'absolute',
     backgroundColor: 'transparent',
     width: 0,
     height: 0,
-    borderTopColor: LightenColor(appConfig.colors.primary, -30),
-    borderLeftColor: 'transparent'
-  }
+    borderTopColor: LightenColor(appConfig.colors.sale, -30),
+    borderLeftColor: 'transparent',
+  },
 });
 
 export default Discount;

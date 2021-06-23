@@ -31,17 +31,27 @@ class ListProducts extends Component {
     const extraProps = {
       wrapperStyle: styles.itemVerticalContainer,
       imageStyle: styles.itemVerticalImage,
+      containerStyle: {flex: 1},
     };
     return (
       <View style={styles.listVertical}>
         {this.props.data.map((product, index) => {
-          const extraStyle = {
-            borderRightWidth: index % 2 === 0 ? 0.5 : 0,
-          };
-
           return (
-            <View style={[styles.itemVerticalWrapper, extraStyle]} key={index}>
-              {this.renderProduct(product, extraProps)}
+            <View style={[styles.itemVerticalWrapper]} key={index}>
+              <ProductItem
+                selfRequest={(callBack) =>
+                  this.props.onPressProduct(product, callBack)
+                }
+                name={product.name}
+                image={product.image}
+                discount_view={product.discount_view}
+                discount_percent={product.discount_percent}
+                price_view={product.price_view}
+                unit_name={product.unit_name}
+                onPress={() => this.props.onPressProduct(product)}
+                item={product}
+                {...extraProps}
+              />
             </View>
           );
         })}
@@ -54,21 +64,24 @@ class ListProducts extends Component {
       <FlatList
         horizontal
         data={this.props.data}
-        style={styles.listHorizontal}
-        contentContainerStyle={styles.contentHorizontal}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => `product_item_${item.id}`}
         showsHorizontalScrollIndicator={false}
-        renderItem={this.renderItemHorizontal.bind(this)}
+        renderItem={this.renderItemHorizontal}
+        contentContainerStyle={styles.listHorizontal}
+        style={{overflow: 'visible'}}
+        directionalLockEnabled
+        nestedScrollEnabled
       />
     );
   }
 
-  renderItemHorizontal({item: product, index}) {
+  renderItemHorizontal = ({item: product, index}) => {
     const extraProps = {
       last: this.props.data.length - 1 === index,
+      horizontal: true
     };
     return this.renderProduct(product, extraProps);
-  }
+  };
 
   renderProduct(product, extraProps) {
     return (
@@ -79,7 +92,9 @@ class ListProducts extends Component {
         discount_view={product.discount_view}
         discount_percent={product.discount_percent}
         price_view={product.price_view}
+        unit_name={product.unit_name}
         onPress={() => this.props.onPressProduct(product)}
+        item={product}
         {...extraProps}
       />
     );
@@ -98,11 +113,11 @@ class ListProducts extends Component {
     return this.hasProducts ? (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.heading}>{this.props.title}</Text>
+          <Text numberOfLines={2} style={styles.heading}>
+            {this.props.title}
+          </Text>
           {!!this.props.onShowAll && (
-            <Button
-              underlayColor="transparent"
-              onPress={this.props.onShowAll}>
+            <Button underlayColor="transparent" onPress={this.props.onShowAll}>
               <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
             </Button>
           )}
@@ -117,59 +132,46 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    marginTop: 10,
-    paddingBottom: 20,
+    paddingVertical: 15,
   },
   headingWrapper: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingTop: 15,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     justifyContent: 'space-between',
+    alignItems: 'center'
   },
   heading: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 20,
     flex: 1,
     marginRight: 20,
+    ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
-    paddingTop: 15,
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
+    paddingHorizontal: 7.5,
+    paddingBottom: appConfig.device.isAndroid ? 15 : 0,
+    marginBottom: appConfig.device.isAndroid ? -15 : 0,
   },
   contentHorizontal: {},
   listVertical: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
+    paddingHorizontal: 7.5,
   },
   itemVerticalWrapper: {
-    width: appConfig.device.width / 2,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
+    // width: appConfig.device.width / 2 - 10,
   },
   itemVerticalContainer: {
     width: undefined,
     marginLeft: 0,
     marginRight: 0,
-    paddingVertical: 15,
-    paddingHorizontal: 12,
     flex: 1,
   },
   itemVerticalImage: {
     height: (appConfig.device.width / 2) * 0.75,
   },
   viewAll: {
+    ...appConfig.styles.typography.title,
     color: '#0084ff',
-    fontSize: 15,
-    fontWeight: '500',
   },
 });
 

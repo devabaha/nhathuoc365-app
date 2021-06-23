@@ -1,17 +1,27 @@
-import appConfig from '../config';
 import {StatusBar} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import {config as bgrStatusBarConfig} from 'app-packages/tickid-bgr-status-bar';
+import appConfig from 'app-config';
+import store from 'app-store';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) {
+    if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
+      StatusBar.setBarStyle(store.homeStatusBar.barStyle, true);
+      StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
+    }
+
     if (Actions.currentScene === `${appConfig.routes.item}_1`) {
+      if (appConfig.device.isAndroid) {
+        StatusBar.setTranslucent(true);
+      }
       StatusBar.setBackgroundColor('transparent');
-      StatusBar.setTranslucent(true);
       StatusBar.setBarStyle('dark-content', true);
     } else {
+      if (appConfig.device.isAndroid) {
+        StatusBar.setTranslucent(false);
+      }
       StatusBar.setBackgroundColor(appConfig.colors.primary);
-      StatusBar.setTranslucent(false);
       StatusBar.setBarStyle('light-content', true);
     }
     return;
@@ -25,6 +35,8 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.modalWebview,
     appConfig.routes.transaction,
     appConfig.routes.modalComment,
+    appConfig.routes.modalEditImages,
+    appConfig.routes.socialCreatePost,
 
     appConfig.routes.myVoucher,
     appConfig.routes.voucherDetail,
@@ -42,11 +54,12 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.scheduleConfirm,
 
     appConfig.routes.resetPassword,
+    appConfig.routes.item,
 
     appConfig.routes.premiumInfo,
 
-    appConfig.routes.item,
     appConfig.routes.itemAttribute,
+    appConfig.routes.accountTab,
   ];
 
   switch (action.type) {

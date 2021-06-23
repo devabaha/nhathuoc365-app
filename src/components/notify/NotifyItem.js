@@ -22,14 +22,16 @@ import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 import Container from '../Layout/Container';
 import ActionContainer from '../Social/ActionContainer';
 import {
-  getSocialNewsLikeCount,
-  getSocialNewsLikeFlag,
-  getSocialNewsCommentsCount,
-  handleSocialNewsActionBarPress,
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  getSocialCommentsCount,
+  handleSocialActionBarPress,
   calculateLikeCountFriendly,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import ListStoreProduct from '../stores/ListStoreProduct';
+import Loading from '../Loading';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -80,54 +82,46 @@ class NotifyItem extends Component {
     }
   }
 
-  _getData(delay) {
-    this.setState(
-      {
-        loading: true,
-      },
-      async () => {
-        try {
-          var response = await APIHandler.user_news(this.state.item.id);
+  async _getData(delay) {
+    try {
+      var response = await APIHandler.user_news(this.state.item.id);
 
-          if (response && response.status == STATUS_SUCCESS) {
-            if (response.data) {
-              store.updateSocialNews(this.state.item.id, {
-                like_count: response.data.like_count || 0,
-                like_flag: response.data.like_flag || 0,
-                share_count: response.data.share_count || 0,
-                comment_count: response.data.comment_count || 0,
-                like_count_friendly:
-                  calculateLikeCountFriendly(response.data) || 0,
-              });
-            }
-            if (!this.state.item_data) {
-              this.eventTracker.logCurrentView({
-                params: {
-                  id: response.data.id,
-                  name: response.data.title,
-                },
-              });
-            }
-
-            setTimeout(() => {
-              this.setState(
-                {
-                  item_data: response.data,
-                  refreshing: false,
-                  loading: false,
-                },
-                () =>
-                  Actions.refresh({
-                    right: this.renderRightButton.bind(this),
-                  }),
-              );
-            }, delay || 0);
-          }
-        } catch (e) {
-          console.log(e + ' user_news');
+      if (response && response.status == STATUS_SUCCESS) {
+        if (response.data) {
+          store.updateSocialNews(this.state.item.id, {
+            like_count: response.data.like_count || 0,
+            like_flag: response.data.like_flag || 0,
+            share_count: response.data.share_count || 0,
+            comment_count: response.data.comment_count || 0,
+            like_count_friendly: calculateLikeCountFriendly(response.data) || 0,
+          });
         }
-      },
-    );
+        if (!this.state.item_data) {
+          this.eventTracker.logCurrentView({
+            params: {
+              id: response.data.id,
+              name: response.data.title,
+            },
+          });
+        }
+
+        setTimeout(() => {
+          this.setState(
+            {
+              item_data: response.data,
+              refreshing: false,
+              loading: false,
+            },
+            () =>
+              Actions.refresh({
+                right: this.renderRightButton.bind(this),
+              }),
+          );
+        }, delay || 0);
+      }
+    } catch (e) {
+      console.log(e + ' user_news');
+    }
   }
 
   getHeaderInfo(infoKey) {
@@ -139,173 +133,8 @@ class NotifyItem extends Component {
   renderRightButton() {
     return (
       <Container row style={styles.rightButtonNavBarContainer}>
-        <RightButtonNavBar
-          type={RIGHT_BUTTON_TYPE.SHARE}
-          shareTitle={this.notify.title}
-          shareURL={this.notify.url}
-        />
+        <RightButtonNavBar type={RIGHT_BUTTON_TYPE.SHOPPING_CART} />
       </Container>
-    );
-  }
-
-  render() {
-    var {item, item_data} = this.state;
-    const {t} = this.props;
-
-    return (
-      <View style={styles.container}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-          style={styles.notify_container}>
-          <View style={styles.notify_image_box}>
-            <CachedImage
-              mutable
-              style={styles.notify_image}
-              source={{uri: this.getHeaderInfo('image_url')}}
-            />
-          </View>
-
-          <View
-            style={{
-              backgroundColor: '#ffffff',
-              paddingBottom: 16,
-            }}>
-            <View style={styles.notify_content}>
-              <Text style={styles.notify_heading}>
-                {this.getHeaderInfo('title')}
-              </Text>
-
-              <View style={styles.notify_time_box}>
-                <Text style={styles.notify_time}>
-                  <Icon name="clock-o" size={11} color="#666666" />
-                  {' ' + this.getHeaderInfo('created') + '    '}
-                  <Icon name="map-marker" size={12} color="#666666" />
-                  {' ' + this.getHeaderInfo('shop_name')}
-                </Text>
-              </View>
-
-              <View style={styles.notify_sort_content_box}>
-                <Text style={styles.notify_sort_content}>
-                  {this.getHeaderInfo('short_content')}
-                </Text>
-              </View>
-            </View>
-
-            {item_data != null ? (
-              <AutoHeightWebView
-                onError={() => console.log('on error')}
-                onLoad={() => console.log('on load')}
-                onLoadStart={() => console.log('on load start')}
-                onLoadEnd={() => console.log('on load end')}
-                onShouldStartLoadWithRequest={(result) => {
-                  console.log(result);
-                  return true;
-                }}
-                style={{
-                  paddingHorizontal: 6,
-                  marginHorizontal: 15,
-                  width: appConfig.device.width - 30,
-                }}
-                onHeightUpdated={(height) => this.setState({height})}
-                source={{html: item_data.content}}
-                zoomable={false}
-                scrollEnabled={false}
-                viewportContent={'width=device-width, user-scalable=no'}
-                customScript={`
-
-                  `}
-                customStyle={`
-                  * {
-                    font-family: 'arial';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
-                    font-size: 15px;
-                    line-height: 24px
-                  }
-                  img {
-                    max-width: 100% !important;
-                  }`}
-              />
-            ) : (
-              <Indicator size="small" />
-            )}
-          </View>
-
-          {item_data != null &&
-            item_data.related &&
-            item_data.related.length !== 0 && (
-              <FlatList
-                onEndReached={(num) => {}}
-                onEndReachedThreshold={0}
-                style={[styles.items_box]}
-                ListHeaderComponent={() => (
-                  <ListHeader title={`—  ${t('relatedItems')}  —`} />
-                )}
-                data={item_data.related}
-                renderItem={({item, index}) => (
-                  <Items
-                    item={item}
-                    index={index}
-                    onPress={this._goItem.bind(this, item)}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                numColumns={2}
-              />
-            )}
-        </ScrollView>
-
-        {!!item_data && (
-          <ActionContainer
-            style={styles.actionContainer}
-            isLiked={getSocialNewsLikeFlag(item)}
-            likeCount={getSocialNewsLikeCount(item)}
-            commentsCount={getSocialNewsCommentsCount(item)}
-            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            onActionBarPress={(type) =>
-              handleSocialNewsActionBarPress(type, item_data)
-            }
-            hasInfoExtraBottom={false}
-            onPressTotalComments={() =>
-              handleSocialNewsActionBarPress(
-                SOCIAL_BUTTON_TYPES.COMMENT,
-                item,
-                false,
-              )
-            }
-          />
-        )}
-
-        {/* {item_data != null && item_data.related && (
-          <CartFooter
-            prefix="item"
-            confirmRemove={this._confirmRemoveCartItem.bind(this)}
-          />
-        )} */}
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
-          title={t('cart:popup.remove.message')}
-          height={110}
-          otherClose={false}
-          noConfirm={() => {
-            if (this.refs_modal_delete_cart_item) {
-              this.refs_modal_delete_cart_item.close();
-            }
-          }}
-          yesConfirm={this._removeCartItem.bind(this)}
-        />
-      </View>
     );
   }
 
@@ -371,24 +200,213 @@ class NotifyItem extends Component {
       console.log(e + ' site_cart_update');
     }
   }
-}
 
-const html_styles = StyleSheet.create({
-  p: {
-    color: '#404040',
-    fontSize: 14,
-    lineHeight: 24,
-  },
-  a: {
-    fontWeight: '300',
-    color: DEFAULT_COLOR,
-  },
-});
+  render() {
+    var {item, item_data} = this.state;
+    const {t} = this.props;
+
+    return (
+      <View style={styles.container}>
+        {this.state.loading && <Loading center />}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          style={styles.notify_container}>
+          <View style={styles.notify_image_box}>
+            <CachedImage
+              mutable
+              style={styles.notify_image}
+              source={{uri: this.getHeaderInfo('image_url')}}
+            />
+          </View>
+
+          <View
+            style={{
+              backgroundColor: '#ffffff',
+              paddingBottom: 15,
+            }}>
+            <View style={styles.notify_content}>
+              <Text style={styles.notify_heading}>
+                {this.getHeaderInfo('title')}
+              </Text>
+
+              <View style={styles.notify_time_box}>
+                <Text style={styles.notify_time}>
+                  <Icon name="map-marker" size={11} color="#8B8B8B" />
+                  {'  ' + this.getHeaderInfo('shop_name') + '    '}
+                  <Icon name="clock-o" size={11} color="#8B8B8B" />
+                  {'  ' + this.getHeaderInfo('created')}
+                </Text>
+              </View>
+
+              {!!this.getHeaderInfo('short_content') && (
+                <View style={styles.notify_sort_content_box}>
+                  <Text style={styles.notify_sort_content}>
+                    {this.getHeaderInfo('short_content')}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {
+              item_data != null ? (
+                <AutoHeightWebView
+                  onShouldStartLoadWithRequest={(result) => {
+                    return true;
+                  }}
+                  style={{
+                    marginTop: 15,
+                    marginHorizontal: 15,
+                    width: appConfig.device.width - 30,
+                  }}
+                  onHeightUpdated={(height) => this.setState({height})}
+                  source={{html: item_data.content}}
+                  zoomable={false}
+                  scrollEnabled={false}
+                  viewportContent={'width=device-width, user-scalable=no'}
+                  customStyle={`
+                  * {
+                    font-family: 'system font';
+                  }
+                  a {
+                    pointer-events:none;
+                    text-decoration: none !important;
+                    color: #404040 !important;
+                  }
+                  p {
+                    font-size: 16px;
+                    line-height: 24px;
+                    color: #404040;
+                  }
+                  img {
+                    max-width: 100% !important;
+                    height: auto !important;
+                  }`}
+                />
+              ) : null
+              // <Indicator size="small" />
+            }
+          </View>
+
+          {item_data != null &&
+            item_data.related &&
+            item_data.related.length !== 0 && (
+              <>
+                <ListHeader title={t('relatedItems')} />
+                <ListStoreProduct
+                  containerStyle={styles.listStoreProductContainer}
+                  products={item_data.related}
+                />
+              </>
+
+              // <FlatList
+              //   onEndReached={(num) => {}}
+              //   onEndReachedThreshold={0}
+              //   style={[styles.items_box]}
+              // ListHeaderComponent={() => (
+              //   <ListHeader title={`—  ${t('relatedItems')}  —`} />
+              // )}
+              //   data={item_data.related}
+              //   renderItem={({item, index}) => (
+              //     <Items
+              //       item={item}
+              //       index={index}
+              //       onPress={this._goItem.bind(this, item)}
+              //       containerStyle={{
+              //         width: appConfig.device.width / 2 - 20,
+              //       }}
+              //       imageStyle={{
+              //         width: appConfig.device.width / 2 - 30,
+              //         height: appConfig.device.width / 2 - 30,
+              //       }}
+              //     />
+              //   )}
+              //   horizontal={true}
+              //   keyExtractor={(item) => item.id}
+              //   style={{overflow: 'visible'}}
+              //   contentContainerStyle={{
+              //     paddingHorizontal: 5,
+              //     paddingVertical: 20,
+              //   }}
+              // />
+            )}
+        </ScrollView>
+
+        {!!item_data && (
+          <ActionContainer
+            style={styles.actionContainer}
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            commentsCount={getSocialCommentsCount(
+              SOCIAL_DATA_TYPES.NEWS,
+              item_data,
+            )}
+            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            onActionBarPress={(type) =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
+                type,
+                item_data,
+              )
+            }
+            hasInfoExtraBottom={false}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
+                item_data,
+              )}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+              onActionBarPress={(type) =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  type,
+                  item_data,
+                )
+              }
+              hasInfoExtraBottom={false}
+              onPressTotalComments={() =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  item_data,
+                  false,
+                )
+              }
+            />
+        )}
+
+        {/* {item_data != null && item_data.related && (
+          <CartFooter
+            prefix="item"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+          />
+        )} */}
+
+        <PopupConfirm
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
+          title={t('cart:popup.remove.message')}
+          height={110}
+          otherClose={false}
+          noConfirm={() => {
+            if (this.refs_modal_delete_cart_item) {
+              this.refs_modal_delete_cart_item.close();
+            }
+          }}
+          yesConfirm={this._removeCartItem.bind(this)}
+        />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
+    backgroundColor: '#fff',
     marginBottom: 0,
   },
   notify_container: {
@@ -400,36 +418,38 @@ const styles = StyleSheet.create({
   },
 
   notify_heading: {
-    fontSize: 16,
-    color: '#000000',
-    fontWeight: '500',
-    lineHeight: 24,
-    marginTop: 20,
+    fontSize: 26,
+    color: appConfig.colors.typography.text,
+    fontWeight: '600',
+    marginTop: 15,
   },
 
   notify_time_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
-  },
-  notify_time: {
-    marginLeft: 4,
-    fontSize: 12,
-    color: '#666666',
-  },
-  notify_sort_content_box: {
     marginTop: 20,
   },
+  notify_time: {
+    color: '#8B8B8B',
+  },
+  notify_sort_content_box: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginHorizontal: -15,
+    marginTop: 15,
+    backgroundColor: '#f5f5f5',
+  },
   notify_sort_content: {
-    color: '#000000',
+    color: '#404040',
     lineHeight: 24,
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    // fontWeight: '500',
+    // fontStyle: 'italic',
   },
   notify_full_content: {
     color: '#404040',
     lineHeight: 24,
-    fontSize: 14,
+    fontSize: 16,
   },
   notify_image_box: {
     height: appConfig.device.width / 1.75,
@@ -442,15 +462,25 @@ const styles = StyleSheet.create({
 
   items_box: {
     // marginBottom: 69,
-    marginTop: 20,
+    // marginTop: 20,
   },
   rightButtonNavBarContainer: {
-    marginRight: 5,
+    marginRight: 10,
   },
-
+  product_related_text: {
+    fontSize: 20,
+    color: '#2B2B2B',
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
   actionContainer: {
     backgroundColor: '#fff',
+    paddingBottom: appConfig.device.bottomSpace,
     ...elevationShadowStyle(7),
+  },
+
+  listStoreProductContainer: {
+    paddingTop: 0,
   },
 });
 

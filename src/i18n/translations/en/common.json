@@ -31,6 +31,9 @@
     "cardWallet": {
       "mainTitle": "Building in HomeID"
     },
+    "storeLocation": {
+      "mainTitle": "Choose location"
+    },
     "account": {
       "mainTitle": "Account",
       "myAccountTitle": "My account",
@@ -50,7 +53,10 @@
     "qrBarCode": {
       "mainTitle": "Account code",
       "walletAddressTitle": "Wallet address",
-      "scanTitle": "Scan QRCode"
+      "scanTitle": "Scan QRCode",
+      "enterCodeProduct": "Enter code product",
+      "enterCode": "Enter code",
+      "scanCode": "Scan code"
     },
     "transfer": {
       "mainTitle": "Transfer"
@@ -157,6 +163,9 @@
       "mainTitle": "Customer information",
       "editTitle": "Edit customer"
     },
+    "gpsStoreLocation": {
+      "mainTitle": "List of store"
+    },
     "qrPaymentInfo": {
       "mainTitle": "Payment acceptance"
     },
@@ -190,6 +199,12 @@
     },
     "salesReport": {
       "mainTitle": "Sales Report"
+    },
+    "social": {
+      "mainTitle": "Social"
+    },
+    "createPost": {
+      "mainTitle": "Create post"
     }
   },
 
@@ -255,5 +270,11 @@
   },
 
   "copy": "Copy",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "addImages": "Add Images",
+  "addImagesDescription": "Tap to select images",
+  "saved": "Saved",
+  "saveImageFailed": "Save image unsuccessfully, please try again.",
+  "saveImageLabel": "Save image",
+  "noResult": "No data yet"
 }

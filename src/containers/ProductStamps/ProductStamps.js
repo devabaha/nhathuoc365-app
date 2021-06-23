@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet} from 'react-native';
+import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
 import APIHandler from '../../network/APIHandler';
 import {APIRequest} from '../../network/Entity';
 import appConfig from 'app-config';
@@ -7,15 +7,42 @@ import Loading from '../../components/Loading';
 import ProductStamp from './ProductStamp';
 import {Actions} from 'react-native-router-flux';
 import NoResult from '../../components/NoResult';
-import Button from '../../components/Button';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Button from 'react-native-button';
+import IonicsIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const styles = StyleSheet.create({
-  btnScanQrProduct: {
+  getVoucherWrapper: {
     backgroundColor: appConfig.colors.white,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 7.5,
+    paddingTop: 10,
+    paddingBottom: appConfig.device.bottomSpace + 10,
   },
-  iconScanQrProduct: {
+  getVoucherBtn: {
+    flex: 1,
+    backgroundColor: appConfig.colors.primary,
+    borderRadius: 8,
+    paddingVertical: 14,
+    marginHorizontal: 7.5,
+    paddingHorizontal: 12,
+  },
+  getVoucherTitle: {
+    color: appConfig.colors.white,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  btnContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    fontSize: 20,
+    color: appConfig.colors.white,
     marginRight: 10,
   },
 });
@@ -30,6 +57,7 @@ const ProductStamps = () => {
 
   useEffect(() => {
     getProductStamps();
+
     return () => {
       cancelRequests(requests);
     };
@@ -93,11 +121,42 @@ const ProductStamps = () => {
   };
 
   const goToScanQR = () => {
-    Actions.push(appConfig.routes.qrBarCode, {
+    Actions.push(appConfig.routes.qrBarCodeInputable, {
       title: t('screen.qrBarCode.scanTitle'),
+      isVisibleBtnEnterCode: true,
       index: 1,
+      refreshMyVoucher: () => {
+        this.getProductStamps();
+      },
+      onCloseEnterCode: () => {
+        if (isEnterCode) {
+          Actions.pop();
+        }
+      },
     });
   };
+
+  const enterCodeProduct = ({onSendCode}) => {
+    Actions.push(appConfig.routes.qrBarCodeInputable, {
+      title: t('screen.qrBarCode.scanTitle'),
+      isVisibleBtnEnterCode: true,
+      index: 1,
+      isEnterCode: true,
+      refreshMyVoucher: () => {
+        this.getProductStamps();
+      },
+      onCloseEnterCode: () => {
+        Actions.pop();
+      },
+      onSendCode: (code) => {
+        setTimeout(() => {
+          Actions.pop();
+          setTimeout(() => onSendCode(code), 0);
+        }, 0);
+      },
+    });
+  };
+
   return (
     <>
       {isLoading && <Loading center />}
@@ -118,19 +177,31 @@ const ProductStamps = () => {
           )
         }
       />
+      <View style={styles.getVoucherWrapper}>
         <Button
-          containerStyle={styles.btnScanQrProduct}
-          onPress={goToScanQR}
-          title="Quét mã sản phẩm"
-          iconLeft={
-            <Icon
-              name="scan"
-              color="white"
-              size={24}
-              style={styles.iconScanQrProduct}
-            />
-          }
-        />
+          containerStyle={styles.getVoucherBtn}
+          style={styles.getVoucherTitle}
+          icon
+          onPress={enterCodeProduct}>
+          <View style={styles.btnContentContainer}>
+            <MaterialIcons name="text-fields" style={styles.icon} />
+            <Text style={styles.getVoucherTitle}>
+              {t('common:screen.qrBarCode.enterCode')}
+            </Text>
+          </View>
+        </Button>
+        <Button
+          containerStyle={styles.getVoucherBtn}
+          style={styles.getVoucherTitle}
+          onPress={goToScanQR}>
+          <View style={styles.btnContentContainer}>
+            <IonicsIcon name="scan" style={styles.icon} />
+            <Text style={styles.getVoucherTitle}>
+              {t('common:screen.qrBarCode.scanCode')}
+            </Text>
+          </View>
+        </Button>
+      </View>
     </>
   );
 };

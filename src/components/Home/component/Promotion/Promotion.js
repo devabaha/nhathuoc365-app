@@ -47,10 +47,6 @@ class Promotion extends Component {
     this.paginationLeft = new Animated.Value(0);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
-  }
-
   renderItem = (promotion, index, dimensionStyle) => {
     return (
       <View
@@ -218,12 +214,15 @@ class Promotion extends Component {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    // shadow for ios
+    ...appConfig.styles.shadow
   },
   slideContainerStyle: {
     position: 'relative',
-    marginTop: 8,
     overflow: 'hidden',
     borderRadius: 8,
+    // shadow for android
+    ...appConfig.styles.shadow
   },
   slideStyle: {},
   bannerImage: {},

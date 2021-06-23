@@ -11,6 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
+import {showDrawer} from 'src/components/Drawer';
 
 class Home extends Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class Home extends Component {
     this.state = {
       refreshing: false,
       apiFetching: false,
+      storeFetching: false,
       isDarkStatusBar: false,
       site: null,
       sites: null,
@@ -39,6 +41,7 @@ class Home extends Component {
       primaryActions: null,
       product_groups: [],
       news_categories: [],
+      product_categories: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -76,9 +79,12 @@ class Home extends Component {
             cart_data: response.data.vote_cart,
           });
         }
-
-        store.setStoreData(response.data.site);
-        store.setAppData(response.data.site);
+        console.log(response.data);
+        action(() => {
+          store.setStoreData(response.data.site);
+          store.setAppData(response.data.app);
+          store.setPackageOptions(response.data.package_options || {});
+        })();
 
         if (
           Array.isArray(response.data.popups) &&
@@ -114,6 +120,7 @@ class Home extends Component {
           showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups,
           news_categories: response.data.news_categories,
+          product_categories: response.data.product_categorys,
         }));
 
         this.executeDeepLink();
@@ -198,19 +205,18 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-    //     servicesHandler({type: SERVICES_TYPE.SOCIAL,});
-    // return;
+
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
       servicesHandler(service, t, callBack);
     }
   }
-
+  
   handleShowAllSites = () => {
     store.setSelectedTab(appConfig.routes.customerCardWallet);
     Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
-  };
+  }
 
   handleShowAllGroupProduct = (group) => {
     const service = {
@@ -288,6 +294,23 @@ class Home extends Component {
     }
   };
 
+  getStore(id, onSuccess = () => {}, onFail = () => {}, onFinally = () => {}) {
+    const { t } = this.props;
+    APIHandler.site_info(id)
+      .then(response => {
+        if (response) {
+          onSuccess(response);
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: t('common:api.error.message')
+          });
+        }
+      })
+      .catch(onFail)
+      .finally(onFinally);
+  }
+
   productOpening;
 
   handlePressProduct = (product, callBack) => {
@@ -297,6 +320,34 @@ class Home extends Component {
       productId: product.id,
     };
     servicesHandler(service, this.props.t, callBack);
+  };
+
+  goToSearch = () => {
+    const { t } = this.props;
+    this.setState({ storeFetching: true });
+
+    this.getStore(
+      store.store_id || appConfig.defaultSiteId,
+      response => {
+        if (response.status == STATUS_SUCCESS && response.data) {
+          store.setStoreData(response.data);
+          Actions.push(appConfig.routes.searchStore, {
+            categories: null,
+            category_id: 0,
+            category_name: ''
+          });
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message')
+          });
+        }
+      },
+      error => {},
+      () => {
+        setTimeout(() => this.setState({ storeFetching: false }), 400);
+      }
+    );
   };
 
   render() {
@@ -325,6 +376,7 @@ class Home extends Component {
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
+        storeFetching={this.state.storeFetching}
         onActionPress={this.handlePressService.bind(this)}
         onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
@@ -346,7 +398,9 @@ class Home extends Component {
         refreshing={this.state.refreshing}
         groups={this.state.product_groups}
         product_groups={this.state.product_groups}
+        goToSearch={this.goToSearch}
         news_categories={this.state.news_categories}
+        product_categories={this.state.product_categories}
       />
     );
   }

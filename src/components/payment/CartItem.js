@@ -17,7 +17,7 @@ import ExtraQuantityInput from '../cart/CartItem/ExtraQuantityInput';
 const styles = StyleSheet.create({
   cart_item_box: {
     width: '100%',
-    paddingTop: 25,
+    paddingTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 7,
     flexDirection: 'row',
@@ -123,8 +123,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-  cart_item_actions_btn_left:  {
-    zIndex: 1
+  cart_item_actions_btn_left: {
+    zIndex: 1,
   },
   cart_item_remove_btn: {
     backgroundColor: 'rgba(255,255,255,.9)',
@@ -156,7 +156,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    height: 20,
+    height: undefined,
+    backgroundColor: '#fff',
+    width: undefined,
+  },
+  discountBadgeContent: {
+    padding: 3,
+    paddingHorizontal: 5,
+    backgroundColor: '#FD0D1C',
   },
 });
 
@@ -448,7 +455,10 @@ class CartItem extends Component {
       <View style={styles.cart_item_actions}>
         <View style={styles.cart_item_calculations}>
           <TouchableHighlight
-            style={[styles.cart_item_actions_btn, styles.cart_item_actions_btn_left]}
+            style={[
+              styles.cart_item_actions_btn,
+              styles.cart_item_actions_btn_left,
+            ]}
             underlayColor="#eee"
             hitSlop={HIT_SLOP}
             onPress={
@@ -456,8 +466,7 @@ class CartItem extends Component {
                 ? null
                 : this._item_qnt_decrement_handler.bind(this, item)
             }>
-            <View
-              style={styles.cart_item_actions_btn_container}>
+            <View style={styles.cart_item_actions_btn_container}>
               {decrement_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -493,8 +502,7 @@ class CartItem extends Component {
             onPress={
               is_processing ? null : this._item_qnt_increment.bind(this, item)
             }>
-            <View
-              style={styles.cart_item_actions_btn_container}>
+            <View style={styles.cart_item_actions_btn_container}>
               {increment_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -525,7 +533,7 @@ class CartItem extends Component {
 
   render() {
     const item = this.props.item;
-    if(this.props.noAction && !item.selected) return null;
+    if (this.props.noAction && !item.selected) return null;
     return (
       <TouchableHighlight underlayColor="#ccc" onPress={this.onPressCartItem}>
         <View style={styles.cart_item_box}>
@@ -574,6 +582,7 @@ class CartItem extends Component {
           {item.discount_percent > 0 && (
             <DiscountBadge
               containerStyle={styles.discountBadge}
+              contentContainerStyle={styles.discountBadgeContent}
               label={saleFormat(item.discount_percent)}
             />
           )}

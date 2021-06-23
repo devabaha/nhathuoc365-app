@@ -38,7 +38,7 @@ class Bill extends Component {
         containerStyle={[
           styles.containerBtn,
           {
-            marginRight: this.props.last ? 16 : 0
+            marginRight: this.props.last ? 15 : 0
           },
           this.extraStyle,
           this.props.wrapperStyle
@@ -100,7 +100,7 @@ class Bill extends Component {
 
 const styles = StyleSheet.create({
   containerBtn: {
-    marginLeft: 16,
+    marginLeft: 15,
     borderRadius: 4,
     backgroundColor: '#deedf7',
     overflow: 'hidden'
@@ -138,7 +138,8 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'flex-end',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginTop: 10
   },
   titleContainer: {
     // backgroundColor: '#deedf7',

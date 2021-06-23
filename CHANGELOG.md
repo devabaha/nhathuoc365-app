@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [b12.0.1] - 2021-06-22
+- [r12.0.1]
+
 ## [b11.6.3] - 2021-05-28
 - [r11.6.3]
 
@@ -30,6 +33,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
+
+## [r12.0.1] - 2021-06-21
+### Added
+- Adding download image function by [kienluu612@gmail.com].
+- @bam.tech/React-native-make for export Android icon API>=26.
+- ProgressTracking list and detail.
+### Fixed
+- Themes, others UI bugs.
+- Lost data of current cart after deleting address in Confirm.
+- StatusBar after back from Item screen.
+
+## [r11.6.6] - 2021-06-11
+### Changed
+- Publish FilterProduct.
+- NewsCategory will be jumped in instead of being pushed in.
+- GPSListStore will re-call api to update data by lat, lng.
+### Fixed
+- Fix UI, finish logic of FilterProduct.
+- CartFooter is not avoid the bottom extra space.
+- Share button social not include url.
+- ListPrice of FilterProduct not scroll correctly to input when it's focused.
+
+## [r11.6.5] - 2021-06-08
+### Added
+- Webview for servicesHandler.
+- DISABLE_PACKAGE_OPTION_LOYALTY_BOX in package options by [lamah.dev@gmail.com].
+### Changed
+- Refactor Payment method in Confirm.
+- Product has only 1 attr will be auto selected.
+### Fixed
+- Status bar light-content in Modal Comment being pushed from NotifyItem (temporary fixing, don't know the exactly cause).
+- NotifyItem request wrong info when press total comments.
+
+## [r11.6.4] - 2021-06-03
+### Added
+- Create Post, Group.
+- qrBarCodeInputable in ProductStamps by [lamah.dev@gmail.com].
+### Changed
+- Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
+- Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
+### Fixed
+- Wrong params for FilterProduct News-est and Best-selling mode.
 
 ## [r11.6.3] - 2021-05-24
 ### Added
@@ -120,10 +165,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SelectProvince for non-dataKey data.
 
 ## [r11.4.5] - 2021-03-26
+
+### Changed
+- Open language selector by default.
 ### Fixed
 - sendMessage while blurring in tickid-chat.
 - UI navbar in ListChat, Search.
 - Force close NetworkInfo when press OK.
+- Crash app if paymentMethod all unchecked default_flag.
 - [Android] Unselected default text color in ModalPicker.
 
 ## [r11.4.4] - 2021-03-24
@@ -139,6 +188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI for swiper in detail product.
 - Hide site in detail Voucher.
 - Payment method selector position and visible logic.
+- [Android] Refresh control offset in Home.
 ### Fixed
 - Dropship  checking.
 - phoneNumber includes countryCode checking.
@@ -187,6 +237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - QRFrame for QRBarCode (not correctly, just for making color, because of rectOfInteract).
 - Btn to go to Product Stamps if product scanned.
+- QRScan for package options key.
+- SubActionButton for QRScan in primary actions.
 ### Fixed
 - Input props auto focus not work in modal input.
 - Regex to validate link, cart code, account code, wallet address.
@@ -261,7 +313,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Query list warehouse only if config activated.
 - Only 1 time query in empty store.
-- Self request in only type OPEN_SHOP.
 - Only get warehouse if config activated.
 
 ## [r11.2.5] - 2021-01-27
@@ -286,6 +337,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Background color for empty image in GPS List Store.
 ### Fixed
 - Product has 1 attribute group will auto detect remaining inventory.
+- Fanpage option in section list in Account. (patch: 2020-01-22)
 
 ## [r11.2.1] - 2021-01-20
 ### Added
@@ -295,7 +347,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - YearMonthModal to pick year/month (on dev).
 ### Fixed
 - Set default value for otherData.site from response of api user_login.
-- UI LabelPrice paymentMethod
+- UI LabelPrice paymentMethod.
+- Payment method in cart will have priority by user selection (not by default_flag from server).
 
 ## [r11.1.3] - 2021-01-15
 ### Added

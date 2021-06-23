@@ -36,7 +36,7 @@ class Notify extends Component {
       // {
       //   key: "0",
       //   label: "Tin tức",
-      //   desc: "Thông tin TickID",
+      //   desc: "Thông tin FoodHub",
       //   icon: "calendar",
       //   notify: "new_calendar_news",
       //   onPress: () => {

@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   LogBox,
+  StatusBar,
 } from 'react-native';
 import {
   Scene,
@@ -22,11 +23,11 @@ import {
   Stack,
   Modal,
   Lightbox,
-  Drawer,
+  Drawer as RNRFDrawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
-// import TickIdScaningButton from '@tickid/tickid-scaning-button';
+import FoodHubCartButton from './components/FoodHubCartButton';
 import {CloseButton} from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
@@ -134,6 +135,7 @@ import * as RNLocalize from 'react-native-localize';
 import {arrayLanguages} from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
+import StoreLocation from './containers/StoreLocation/StoreLocation';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
 import {servicesHandler, SERVICES_TYPE} from './helper/servicesHandler';
 import branch from 'react-native-branch';
@@ -172,6 +174,9 @@ import {
 } from './containers/BeeLand/Booking/';
 import { ProfileBeeLand } from './containers/BeeLand/CustomerProfile';
 
+import CameraView from './components/CameraView/CameraView';
+import {CaptureFaceID} from './containers/IView';
+import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
@@ -192,12 +197,23 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import ModalFilter from './components/stores/ModalFilter';
-import FilterComponent from './components/stores/FilterDrawer';
-import {News} from './containers/Social';
-import {ModalComment} from './components/Social';
+import {ModalComment, SocialCreatePost} from './components/Social';
+import {Social, SocialNews, SocialGroup} from './containers/Social';
+import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
-import Social from './containers/Social/Social';
+import {
+  FilterDrawer,
+  ModalFilterProduct,
+} from './components/stores/FilterProduct';
+import Drawer from './components/Drawer';
+
+import SVGHome from './images/home/home.svg';
+import SVGNews from './images/home/news.svg';
+import SVGOrders from './images/home/orders.svg';
+import SVGAccount from './images/home/account.svg';
+import ProgressTracking, {
+  ProgressTrackingDetail,
+} from './containers/ProgressTracking';
 
 /**
  * Not allow font scaling
@@ -644,6 +660,7 @@ class App extends Component {
           t={this.props.t}
           setHeader={this.setHeader.bind(this)}
         />
+        <Drawer />
         <FlashMessage icon={'auto'} />
         {this.state.isOpenCodePushModal && (
           <AwesomeAlert
@@ -771,19 +788,6 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
-              {/* <Drawer
-                key="drawer-filter"
-                hideNavBar={true}
-                drawerPosition="right"
-                drawerWidth={350}
-                contentComponent={FilterComponent}>
-                <Scene
-                  key={`${appConfig.routes.store}_1`}
-                  component={StoreContainer}
-                  {...navBarConfig}
-                  back
-                />
-              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -831,10 +835,11 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab2.title')}
                     iconName="newspaper"
                     iconSize={24}
-                    notifyKey="new_totals">
+                    notifyKey="new_totals"
+                    iconSVG={SVGNews}>
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={News}
+                      component={SocialNews}
                     />
                   </Stack> */}
                   <Stack
@@ -855,9 +860,8 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   {/* <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={TickIdScaningButton}
-                    primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
-                  >
+                    icon={FoodHubCartButton}
+                    primaryColor={appConfig.colors.primary}>
                     <Scene component={() => null} />
                   </Stack> */}
 
@@ -889,8 +893,20 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
-                    iconSize={24}>
+                    navigationBarStyle={{
+                      backgroundColor: '#fff',
+                      height: 70,
+                    }}
+                    headerLayoutPreset="left"
+                    iconSize={24}
+                    iconSVG={SVGAccount}>
                     <Scene
+                      titleStyle={{
+                        color: '#333',
+                        fontSize: 25,
+                        fontWeight: 'bold',
+                        paddingTop: 20,
+                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
@@ -898,12 +914,64 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ LIST PROGRESS TRACKING ================ */}
+                <Stack key={appConfig.routes.listProgressTracking}>
+                  <Scene
+                    key={`${appConfig.routes.listProgressTracking}_1`}
+                    component={ProgressTracking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ PROGRESS ITEM ================ */}
+                <Stack key={appConfig.routes.progressTrackingDetail}>
+                  <Scene
+                    key={`${appConfig.routes.progressTrackingDetail}_1`}
+                    component={ProgressTrackingDetail}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ SOCIAL ================ */}
                 <Stack key={appConfig.routes.social}>
                   <Scene
                     key={`${appConfig.routes.social}_1`}
                     component={Social}
                     {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL GROUPS ================ */}
+                <Stack
+                  headerLayoutPreset={'left'}
+                  key={appConfig.routes.socialGroup}>
+                  <Scene
+                    key={`${appConfig.routes.socialGroup}_1`}
+                    component={SocialGroup}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL CREATE POST ================ */}
+                <Stack key={appConfig.routes.socialCreatePost}>
+                  <Scene
+                    key={`${appConfig.routes.socialCreatePost}_1`}
+                    component={SocialCreatePost}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL EDIT IMAGES ================ */}
+                <Stack key={appConfig.routes.modalEditImages}>
+                  <Scene
+                    key={`${appConfig.routes.modalEditImages}_1`}
+                    component={ModalEditImages}
+                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
@@ -948,6 +1016,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
                 <Stack key={appConfig.routes.salesReport}>
                   <Scene
                     key={`${appConfig.routes.salesReport}_1`}
@@ -1011,6 +1080,17 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.listBuilding}_1`}
                     title={t('screen.listBuilding.mainTitle')}
                     component={ListBuilding}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+                
+                {/* ================ CAPTURE FACEID ================ */}
+                <Stack key={appConfig.routes.captureFaceID}>
+                  <Scene
+                    key={`${appConfig.routes.captureFaceID}_1`}
+                    // title={t("screen.news.mainTitle")}
+                    component={CaptureFaceID}
                     {...navBarConfig}
                     back
                   />
@@ -1294,6 +1374,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.deepLinkOrdersTab}_1`}
                     title="Đơn hàng"
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1441,7 +1527,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1517,7 +1602,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    component={News}
+                    component={SocialNews}
                     {...navBarConfig}
                     back
                   />
@@ -1615,7 +1700,7 @@ class RootRouter extends Component {
                   <Scene key="chat_1" component={Chat} {...navBarConfig} back />
                 </Stack>
 
-                <Stack key="webview">
+                <Stack key={appConfig.routes.webview}>
                   <Scene
                     key="webview_1"
                     component={WebView}
@@ -1892,6 +1977,26 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.storeLocation}>
+                  <Scene
+                    key={`${appConfig.routes.storeLocation}_1`}
+                    title={t('screen.storeLocation.mainTitle')}
+                    component={StoreLocation}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.gpsStoreLocation}>
+                  <Scene
+                    key={`${appConfig.routes.gpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key={appConfig.routes.serviceFeedback}>
                   <Scene
                     key={`${appConfig.routes.serviceFeedback}_1`}
@@ -1950,6 +2055,16 @@ class RootRouter extends Component {
                     component={AllServices}
                     title={t('screen.allServices.mainTitle')}
                     {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ QR/BAR CODE ================ */}
+                <Stack key={appConfig.routes.qrBarCodeInputable}>
+                  <Scene
+                    key={`${appConfig.routes.qrBarCodeInputable}_1`}
+                    component={QRBarCode}
+                    renderBackButton={CloseButton}
                     back
                   />
                 </Stack>
@@ -2032,7 +2147,7 @@ class RootRouter extends Component {
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
-                component={ModalFilter}
+                component={ModalFilterProduct}
               />
             </Lightbox>
 
@@ -2083,6 +2198,16 @@ class RootRouter extends Component {
                 hideNavBar
               />
             </Stack>
+
+            {/* ================ MODAL CAMERAVIEW ================ */}
+            <Stack key={appConfig.routes.modalCameraView}>
+              <Scene
+                key={`${appConfig.routes.modalCameraView}_1`}
+                component={CameraView}
+                hideNavBar
+              />
+            </Stack>
+
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

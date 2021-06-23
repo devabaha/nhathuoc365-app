@@ -144,6 +144,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         Alert.alert(t('common:link.error.message'));
       });
       break;
+    case SERVICES_TYPE.WEBVIEW:
+      Actions.push(appConfig.routes.webview, {
+        title: service.title,
+        url: service.url,
+      });
+      break;
 
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
@@ -253,12 +259,17 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
-      Actions.push(appConfig.routes.notifies, {
+      store.setSelectedNewsId(service.categoryId || "")
+      // Actions.push(appConfig.routes.notifies, {
+      //   title: service.title,
+      //   id: service.categoryId,
+      // });
+      Actions.jump(appConfig.routes.newsTab, {
         title: service.title,
         id: service.categoryId,
       });
       break;
-      case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
+    case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
       Actions.push(appConfig.routes.notifiesVertical, {
         title: service.title,
         id: service.id,
@@ -287,7 +298,10 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
-            if (response.data.config_menu_categories) {
+            if (
+              response.data.config_menu_categories &&
+              service.categoryId === undefined
+            ) {
               Actions.push(appConfig.routes.multiLevelCategory, {
                 title: response.data.name,
                 siteId: service.siteId,
@@ -446,12 +460,34 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
 
+    /** SOCIAL */
     /** Social */
-    /** social */
     case SERVICES_TYPE.SOCIAL:
       Actions.push(appConfig.routes.social, {
-        // title: service.news?.title || service.title,
+        title: service.title,
         siteId: service.id,
+      });
+      break;
+    /** Social Group */
+    case SERVICES_TYPE.SOCIAL_GROUP:
+      Actions.push(appConfig.routes.socialGroup, {
+        id: service.id,
+        groupName: service.name,
+      });
+      break;
+
+    /** PROGRESS TRACKING */
+    /** LIST */
+    case SERVICES_TYPE.LIST_PROGRESS_TRACKING:
+      Actions.push(appConfig.routes.listProgressTracking, {
+        title: service.title,
+      });
+      break;
+    /** DETAIL */
+    case SERVICES_TYPE.PROGRESS_TRACKING_DETAIL:
+      Actions.push(appConfig.routes.progressTrackingDetail, {
+        title: service.title,
+        id: service.id,
       });
       break;
     default:

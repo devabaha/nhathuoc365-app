@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   RefreshControl,
   Easing,
-  Animated
+  Animated,
 } from 'react-native';
 import Loading from '../../../../components/Loading';
 import NoResult from '../../../../components/NoResult';
 import HomeCardList from '../../../../components/Home/component/HomeCardList';
-import Bill, { QuickPayment } from './Bill';
+import Bill, {QuickPayment} from './Bill';
 
 class Bills extends Component {
   state = {
@@ -50,8 +50,8 @@ class Bills extends Component {
     return vndCurrencyFormat(
       this.state.billsInComplete.reduce(
         (prev, next) => (prev.price || prev) + (next.price || 0),
-        0
-      )
+        0,
+      ),
     );
   }
 
@@ -64,11 +64,11 @@ class Bills extends Component {
   }
 
   getBills = async () => {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_bills_room(
         this.props.siteId,
-        this.props.roomId
+        this.props.roomId,
       );
       console.log(response);
       if (!this.unmounted && response) {
@@ -77,12 +77,12 @@ class Bills extends Component {
             billsComplete: response.data.bills_complete,
             titleBillsComplete: response.data.title_bills_complete,
             billsInComplete: response.data.bills_incomplete,
-            titleBillsInComplete: response.data.title_bills_incomplete
+            titleBillsInComplete: response.data.title_bills_incomplete,
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -90,47 +90,47 @@ class Bills extends Component {
       console.log('get_all_bills', err);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
       !this.unmounted &&
         this.setState({
           loading: false,
-          refreshing: false
+          refreshing: false,
         });
     }
   };
 
   onRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.getBills();
   };
 
-  handleLayoutInCompleteBills = e => {
-    const { y, height } = e.nativeEvent.layout;
+  handleLayoutInCompleteBills = (e) => {
+    const {y, height} = e.nativeEvent.layout;
     this.setState({
-      inCompleteBillsScrollY: height
+      inCompleteBillsScrollY: height,
     });
   };
 
-  handleLayoutScrollView = e => {
+  handleLayoutScrollView = (e) => {
     this.setState({
-      scrollViewHeight: e.nativeEvent.layout.height
+      scrollViewHeight: e.nativeEvent.layout.height,
     });
   };
 
-  handleLayoutQuickPayment = e => {
-    const { height } = e.nativeEvent.layout;
+  handleLayoutQuickPayment = (e) => {
+    const {height} = e.nativeEvent.layout;
     this.setState({
-      quickPaymentHeight: height
+      quickPaymentHeight: height,
     });
-    this.animatedQuickPaymentTranslateY.setValue(height);
+    // this.animatedQuickPaymentTranslateY.setValue(height);
     Animated.timing(this.animatedQuickPaymentTranslateY, {
       toValue: 0,
       duration: 300,
       easing: Easing.quad,
       useNativeDriver: true,
-      delay: 100
+      delay: 100,
     }).start();
   };
 
@@ -164,43 +164,42 @@ class Bills extends Component {
     const extraStyle =
       this.state.inCompleteBillsScrollY &&
       this.state.scrollViewHeight &&
-      positionY > 0
+      positionY > 50
         ? {
             position: 'absolute',
-            bottom: 15,
+            bottom: 0,
             width: '100%',
             zIndex: 1,
             opacity: this.state.scrollY.interpolate({
               inputRange: [0, positionY - 1, positionY],
-              outputRange: [1, 1, 0]
+              outputRange: [1, 1, 0],
             }),
             transform: [
               {
                 translateY: this.state.scrollY.interpolate({
                   inputRange: [positionY, positionY + 1],
                   outputRange: [0, this.state.quickPaymentHeight || 0],
-                  extrapolateLeft: 'clamp'
-                })
-              }
-            ]
+                  extrapolateLeft: 'clamp',
+                }),
+              },
+            ],
           }
         : {
             position: 'absolute',
-            opacity: 0
+            opacity: 0,
           };
 
     const wrapperStyle = {
       transform: [
         {
-          translateY: this.animatedQuickPaymentTranslateY
-        }
-      ]
+          translateY: this.animatedQuickPaymentTranslateY,
+        },
+      ],
     };
     return (
       <Animated.View
         onLayout={this.handleLayoutQuickPayment}
-        style={extraStyle}
-      >
+        style={extraStyle}>
         <Animated.View style={wrapperStyle}>
           {this.renderQuickPayment()}
         </Animated.View>
@@ -221,20 +220,19 @@ class Bills extends Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    y: this.state.scrollY
-                  }
-                }
-              }
+                    y: this.state.scrollY,
+                  },
+                },
+              },
             ],
-            { useNativeDriver: true }
+            {useNativeDriver: true},
           )}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh}
             />
-          }
-        >
+          }>
           {!!this.isBillsEmpty ? (
             <NoResult message="Danh sách hóa đơn đang trống" />
           ) : (
@@ -243,28 +241,28 @@ class Bills extends Component {
                 <HomeCardList
                   onLayout={this.handleLayoutInCompleteBills}
                   flatListProps={{
-                    scrollEnabled: false
+                    scrollEnabled: false,
                   }}
                   title={`${this.state.titleBillsInComplete} (${this.state.billsInComplete.length})`}
-                  headerStyle={styles.billsHeader}
                   onShowAll={false}
                   horizontal={false}
                   data={this.state.billsInComplete}
                   extraComponent={this.renderQuickPayment()}
-                >
-                  {({ item, index }) => this.renderBill(index, item)}
+                  containerStyle={styles.billsContainer}
+                  contentContainerStyle={styles.billsContentContainer}>
+                  {({item, index}) => this.renderBill(index, item)}
                 </HomeCardList>
               )}
               {!!this.hasCompleteBills && (
                 <HomeCardList
-                  flatListProps={{ scrollEnabled: false }}
+                  flatListProps={{scrollEnabled: false}}
                   title={`${this.state.titleBillsComplete} (${this.state.billsComplete.length})`}
-                  headerStyle={styles.billsHeader}
                   onShowAll={false}
                   horizontal={false}
                   data={this.state.billsComplete}
-                >
-                  {({ item, index }) => this.renderBill(index, item)}
+                  containerStyle={styles.billsContainer}
+                  contentContainerStyle={styles.billsContentContainer}>
+                  {({item, index}) => this.renderBill(index, item)}
                 </HomeCardList>
               )}
             </>
@@ -277,24 +275,32 @@ class Bills extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   contentScrollView: {
-    flexGrow: 1
+    flexGrow: 1,
+  },
+  billsContainer: {
+    backgroundColor: '#fff',
+    marginTop: 0,
+    paddingTop: 15,
+  },
+  billsContentContainer: {
+    paddingHorizontal: 0
   },
   billsHeader: {
-    marginBottom: 16
+    marginBottom: 15,
   },
   billItemWrapper: {
     flex: 1,
-    marginRight: 16,
-    marginBottom: 15
+    marginRight: 15,
+    marginBottom: 15,
   },
   billIndex: {
     fontSize: 13,
     marginTop: 15,
-    width: 20
-  }
+    width: 20,
+  },
 });
 
 export default withTranslation()(Bills);

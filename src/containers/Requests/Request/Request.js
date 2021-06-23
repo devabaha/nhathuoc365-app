@@ -56,6 +56,7 @@ class Request extends Component {
               )}
               <DiscountBadge
                 containerStyle={styles.badge}
+                contentStyle={styles.badgeContent}
                 tailSpace={4}
                 right
                 label={this.props.type}
@@ -96,7 +97,7 @@ class Request extends Component {
 
 const styles = StyleSheet.create({
   containerBtn: {
-    marginLeft: 16,
+    marginLeft: 15,
     marginVertical: 5,
     borderRadius: 4,
     width: 280
@@ -181,6 +182,11 @@ const styles = StyleSheet.create({
   },
   notiMess: {
     right: -10
+  },
+
+  badgeContent: {
+    fontSize: 12,
+    fontWeight: '400',
   }
 });
 
