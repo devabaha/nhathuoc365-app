@@ -866,7 +866,7 @@ class Item extends Component {
     const item = this.state.item_data || this.state.item;
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
-    const unitName = item.unit_name;
+    const unitName = item.unit_name && item.unit_name_view;
     const storeName = store?.user_info?.store_name;
     const isInventoryVisible =
       !!item.inventory &&
@@ -886,11 +886,6 @@ class Item extends Component {
         <View style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
-            style={{
-              marginTop: appConfig.device.isIOS
-                ? -appConfig.device.statusBarHeight
-                : 0,
-            }}
             onScroll={Animated.event(
               [
                 {
@@ -916,11 +911,13 @@ class Item extends Component {
             <View style={[styles.block, styles.item_heading_box]}>
               <View style={styles.boxDiscount}>
                 {item.discount_percent > 0 ? (
-                  <DiscountBadge
-                    containerStyle={styles.discountBadge}
-                    label={saleFormat(item.discount_percent)}
-                    contentContainerStyle={styles.discountBadgeContent}
-                  />
+                  <View>
+                    <DiscountBadge
+                      containerStyle={styles.discountBadge}
+                      label={saleFormat(item.discount_percent)}
+                      contentContainerStyle={styles.discountBadgeContent}
+                    />
+                  </View>
                 ) : (
                   <View />
                 )}
@@ -942,12 +939,15 @@ class Item extends Component {
                     <Text style={{textDecorationLine: 'line-through'}}>
                       {item.discount}
                     </Text>
-                    / {unitName}
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
                   {item.price_view}
-                  {!!unitName && <Text style={styles.item_unit_name}> </Text>}
+                  {!!unitName && (
+                    <Text style={styles.item_heading_safe_off_value}>
+                      / {unitName}
+                    </Text>
+                  )}
                 </Text>
               </View>
 
@@ -1303,7 +1303,7 @@ const styles = StyleSheet.create({
   item_heading_safe_off_value: {
     ...appConfig.styles.typography.secondary,
     fontSize: 16,
-    marginBottom: 10
+    marginBottom: 10,
   },
   item_heading_price: {
     ...appConfig.styles.typography.heading1,
@@ -1500,7 +1500,7 @@ const styles = StyleSheet.create({
   productsLeftText: {
     color: '#9F9F9F',
     fontSize: 13,
-    marginHorizontal: 8,
+    marginLeft: 8,
     elevation: 3,
   },
   noticeContainer: {
@@ -1534,7 +1534,7 @@ const styles = StyleSheet.create({
   extraInfo: {
     paddingBottom: 15,
     backgroundColor: '#f5f7f8',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
 });
 

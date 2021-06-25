@@ -119,15 +119,21 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
-                    {this.props.discount_percent > 0 && (
-                      <Text style={styles.discount}>
-                        <Text style={styles.deletedTitle}>
-                          {this.props.discount_view}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      {this.props.discount_percent > 0 && (
+                        <Text style={styles.discount}>
+                          <Text style={styles.deletedTitle}>
+                            {this.props.discount_view}
+                          </Text>
+                          {/* / {this.props.unit_name} */}
                         </Text>
-                        / {this.props.unit_name}
-                      </Text>
-                    )}
-
+                      )}
+                    </View>
                     <View style={[styles.priceBox]}>
                       <Text style={[styles.price]}>
                         {this.props.price_view}
@@ -177,7 +183,7 @@ let styles = StyleSheet.create({
     width: WIDTH_ITEM,
   },
   containerHorizontal: {
-    width: HORIZONTAL_WIDTH_ITEM
+    width: HORIZONTAL_WIDTH_ITEM,
   },
   wrapper: {
     flex: 1,

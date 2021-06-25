@@ -428,6 +428,9 @@ class ItemAttribute extends PureComponent {
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
       this.state.product?.product_type !== PRODUCT_TYPES.SERVICE;
 
+    const unitName =
+      this.state.product?.unit_name && this.state.product?.unit_name_view;
+
     return this.state.loading ? (
       <Loading loading />
     ) : (
@@ -470,7 +473,12 @@ class ItemAttribute extends PureComponent {
                     </Text>
                   </View>
                   <View>
-                    <Text style={styles.highlight}>{price}</Text>
+                    <Text style={styles.highlight}>
+                      {price}
+                      {!!unitName && (
+                        <Text style={styles.description}>/ {unitName}</Text>
+                      )}
+                    </Text>
                     <Text style={styles.note}>
                       {isInventoryVisible && (
                         <>
@@ -644,6 +652,11 @@ const styles = StyleSheet.create({
     color: '#404040',
     fontWeight: 'bold',
     marginBottom: appConfig.device.isIOS ? 2 : -2,
+  },
+  description: {
+    color: '#888',
+    fontSize: 14,
+    fontWeight: '400'
   },
   note: {
     color: '#888',
