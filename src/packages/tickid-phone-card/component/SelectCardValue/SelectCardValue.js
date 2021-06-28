@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e6e6e6',
     borderRadius: 8,
-    overflow: 'scroll',
     marginRight: 8,
     marginTop: 16,
     justifyContent:'center'
