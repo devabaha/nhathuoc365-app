@@ -25,7 +25,7 @@ class Rating extends Component {
     super(props);
 
     this.state = {
-      current: 0,
+      current: 5,
       keyboardHeight: 0,
       cart_data: props.cart_data,
       rating_data: null,
@@ -77,7 +77,7 @@ class Rating extends Component {
       keyboardHeight: 0
     });
   };
-
+  
   getSiteDetailData = async () => {
     const { site_id } = this.state.cart_data;
     try {
@@ -125,6 +125,7 @@ class Rating extends Component {
             name="star"
             size={36}
             color={active ? 'rgb(255, 235, 0)' : 'rgba(0, 0, 0, .2)'}
+            // color={active ? 'rgba(0, 0, 0, .2)' : 'rgb(255, 235, 0)'}
           />
         </TouchableHighlight>
       );
@@ -233,7 +234,6 @@ class Rating extends Component {
 
             <View style={styles.content}>
               <Text style={styles.questText}>{rating_msg}</Text>
-
               {current <= 3 && rating_data && had_action && (
                 <View style={styles.ratingMoreBox}>
                   {rating_data.map((rating, index) => {
