@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Change function open map to common function by [kienluu612@gmail.com].
+
 ## [r12.0.1] - 2021-06-21
 ### Added
 - Adding download image function by [kienluu612@gmail.com].
