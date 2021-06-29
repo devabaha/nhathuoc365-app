@@ -1,2 +1,2 @@
-import {openMap} from './handleOpenMap';
+import {openMap} from './mapOpeningHandler';
 export {openMap};

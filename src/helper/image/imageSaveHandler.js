@@ -1,9 +1,8 @@
 import appConfig from 'app-config';
 import i18n from 'i18next';
-import RNFetchBlob from 'rn-fetch-blob';
 import RNFS from 'react-native-fs';
 import CameraRoll from '@react-native-community/cameraroll';
-import {handleDownloadImage} from './handleDownloadImage';
+import {handleDownloadImage} from './imageDownloadHandler';
 import {PhotoLibraryPermission} from '../permissionHelper';
 import showFlashNotification from '../../components/FlashNotification';
 

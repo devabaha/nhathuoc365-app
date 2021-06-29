@@ -5,7 +5,7 @@ import appConfig from 'app-config';
 import {IMAGE_RATIOS} from 'src/constants/image';
 import RNFetchBlob from 'rn-fetch-blob';
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
-import {handleSaveImage} from './handleSaveImage';
+import {handleSaveImage} from './imageSaveHandler';
 
 export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   return {
