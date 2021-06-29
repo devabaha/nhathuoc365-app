@@ -1,6 +1,6 @@
 import RNFetchBlob from 'rn-fetch-blob';
 
-const handleDownloadImage = (url) => {
+const downloadImage = (url) => {
   return RNFetchBlob.fetch('GET', url)
     .then((res) => {
       if (!!res && res.info().status === STATUS_SUCCESS) {
@@ -22,4 +22,4 @@ const handleDownloadImage = (url) => {
     });
 };
 
-export {handleDownloadImage};
+export {downloadImage};
