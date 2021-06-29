@@ -76,7 +76,7 @@ class Notify extends Component {
     });
     this._getData();
 
-    store.getNoitify();
+    store.getNotify();
     this.eventTracker.logCurrentView();
   }
 

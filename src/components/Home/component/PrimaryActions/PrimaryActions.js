@@ -82,9 +82,9 @@ class PrimaryActions extends Component {
           </View>
           {this.isActivePrimaryActions && props.primaryActions && (
             <View style={styles.walletAction}>
-              {props.primaryActions.map((action) => (
+              {props.primaryActions.map((action, index) => (
                 <Button
-                  key={action.type}
+                  key={index}
                   onPress={() => props.onPressItem(action)}
                   containerStyle={styles.actionButton}>
                   <View style={styles.actionWrapper}>

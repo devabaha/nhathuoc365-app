@@ -171,7 +171,7 @@ class MainNotify extends Component {
 
           store.addApiQueue('user_notice', this._getData.bind(this, delay));
         } finally {
-          store.getNoitify();
+          store.getNotify();
         }
       }
     );

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -6,11 +6,11 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import HTML from 'react-native-render-html';
-import { Tabs, Tab } from '@tickid/react-native-tabs';
-import { Accordion, Panel } from '@tickid/react-native-accordion';
+import {Tabs, Tab} from '@tickid/react-native-tabs';
+import {Accordion, Panel} from '@tickid/react-native-accordion';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
@@ -41,7 +41,7 @@ class VoucherDetail extends Component {
     campaignPoint: PropTypes.number,
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
-    addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+    addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   };
 
   static defaultProps = {
@@ -61,14 +61,14 @@ class VoucherDetail extends Component {
     campaignPoint: 0,
     campaign: undefined,
     addresses: undefined,
-    site: undefined
+    site: undefined,
   };
 
   get totalPlaces() {
     let totalPlaces = 0;
     const addresses = Object.values(this.props.addresses);
     if (addresses.length > 0) {
-      addresses.forEach(places => (totalPlaces += places.length));
+      addresses.forEach((places) => (totalPlaces += places.length));
     }
     return totalPlaces;
   }
@@ -87,16 +87,14 @@ class VoucherDetail extends Component {
       <Accordion
         showChevron
         expandMultiple
-        containerStyle={styles.addressAccordion}
-      >
-        {Object.keys(this.props.addresses).map(provinceName => {
+        containerStyle={styles.addressAccordion}>
+        {Object.keys(this.props.addresses).map((provinceName) => {
           const places = this.props.addresses[provinceName];
           return (
             <Panel
               title={`${provinceName} (${places.length})`}
-              key={provinceName}
-            >
-              {places.map(place => (
+              key={provinceName}>
+              {places.map((place) => (
                 <AddressItem
                   key={place.data.id}
                   title={place.data.name}
@@ -110,7 +108,7 @@ class VoucherDetail extends Component {
                   onPressLocation={() =>
                     this.props.onPressAddressLocation({
                       latitude: place.data.latitude,
-                      longitude: place.data.longitude
+                      longitude: place.data.longitude,
                     })
                   }
                 />
@@ -123,14 +121,13 @@ class VoucherDetail extends Component {
   }
 
   renderSubmitButtons = () => {
-    const { t } = this.props;
+    const {t} = this.props;
     if (this.props.isUseOnlineMode) {
       return (
         <Button
           containerStyle={[styles.getVoucherBtn, styles.removeVoucherBtn]}
           style={styles.getVoucherTitle}
-          onPress={this.props.onRemoveVoucherOnline}
-        >
+          onPress={this.props.onRemoveVoucherOnline}>
           {t('detail.useLater')}
         </Button>
       );
@@ -147,8 +144,7 @@ class VoucherDetail extends Component {
             } else {
               this.props.onGetVoucher(this.props.campaign);
             }
-          }}
-        >
+          }}>
           {this.props.canUseNow
             ? t('detail.useNow')
             : this.canBuyCampaign
@@ -160,21 +156,21 @@ class VoucherDetail extends Component {
   };
 
   render() {
-    const { t } = this.props;
-    const campaign = this.props.campaign || { data: {} };
+    const {t} = this.props;
+    const campaign = this.props.campaign || {data: {}};
+
     const tabs = [
       <Tab
         key={1}
         heading={t('detail.tabs.information.title')}
         containerStyle={{
-          paddingBottom: 12
-        }}
-      >
+          paddingBottom: 12,
+        }}>
         <HTML
           html={campaign.data.content || '<span></span>'}
           computeEmbeddedMaxWidth={(availableWidth) => availableWidth - 32}
         />
-      </Tab>
+      </Tab>,
     ];
 
     if (this.hasAddress) {
@@ -190,7 +186,7 @@ class VoucherDetail extends Component {
           </View>
 
           {this.renderAddresses()}
-        </Tab>
+        </Tab>,
       );
     }
 
@@ -205,18 +201,17 @@ class VoucherDetail extends Component {
               refreshing={this.props.refreshing}
               onRefresh={this.props.onRefresh}
             />
-          }
-        >
+          }>
           <View style={styles.container}>
             <View style={styles.topImageWrapper}>
               <Image
                 style={styles.topImage}
                 resizeMode="cover"
-                source={{ uri: campaign.data.image_url }}
+                source={{uri: campaign.data.image_url}}
               />
               <View style={styles.avatarContainer}>
                 <Image
-                  source={{ uri: campaign.data.shop_logo_url }}
+                  source={{uri: campaign.data.shop_logo_url}}
                   style={styles.avatar}
                 />
               </View>
@@ -228,9 +223,8 @@ class VoucherDetail extends Component {
               <View
                 style={[
                   styles.exprireWrapper,
-                  this.canBuyCampaign && styles.canBuyCampaign
-                ]}
-              >
+                  this.canBuyCampaign && styles.canBuyCampaign,
+                ]}>
                 {this.canBuyCampaign ? (
                   <Fragment>
                     <View style={styles.voucherField}>
