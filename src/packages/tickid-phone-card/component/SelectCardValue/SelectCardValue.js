@@ -98,24 +98,28 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e6e6e6',
     borderRadius: 8,
-    overflow: 'hidden',
     marginRight: 8,
-    marginTop: 16
+    marginTop: 16,
+    justifyContent:'center'
   },
   cardValueBtnActive: {
     borderColor: config.colors.primary
   },
   btnContent: {
-    flex: 1
+    width: config.device.width / 3 - 16,
+    height: 73,
+
   },
   valueWrapper: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   value: {
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16
+    fontSize: 16,
+    color:'#666',
+    
   },
   subValue: {
     textAlign: 'center',
