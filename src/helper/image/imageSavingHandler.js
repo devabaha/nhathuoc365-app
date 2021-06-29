@@ -2,15 +2,15 @@ import appConfig from 'app-config';
 import i18n from 'i18next';
 import RNFS from 'react-native-fs';
 import CameraRoll from '@react-native-community/cameraroll';
-import {handleDownloadImage} from './imageDownloadHandler';
+import {downloadImage} from './imageDownloadingHandler';
 import {PhotoLibraryPermission} from '../permissionHelper';
 import showFlashNotification from '../../components/FlashNotification';
 
-const handleSaveImage = async (url, message) => {
+const saveImage = async (url, message) => {
   const t = i18n.getFixedT(undefined, 'common');
   let base64, imageType;
   try {
-    const res = await handleDownloadImage(url);
+    const res = await downloadImage(url);
     if (res) {
       base64 = res.base64Str;
       imageType = res.imageType;
@@ -52,4 +52,4 @@ const handleSaveImage = async (url, message) => {
     console.log('err_save_single_image', error);
   }
 };
-export {handleSaveImage};
+export {saveImage};
