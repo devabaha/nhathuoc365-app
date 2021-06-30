@@ -125,7 +125,6 @@ class Rating extends Component {
             name="star"
             size={36}
             color={active ? 'rgb(255, 235, 0)' : 'rgba(0, 0, 0, .2)'}
-            // color={active ? 'rgba(0, 0, 0, .2)' : 'rgb(255, 235, 0)'}
           />
         </TouchableHighlight>
       );
