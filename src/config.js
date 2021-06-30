@@ -107,7 +107,7 @@ class Config {
         [CART_STATUS_CANCEL_1]: '#ef476f',
         [CART_STATUS_CANCEL]: '#ef476f',
         [CART_STATUS_ORDERING]: '#6F7C12',
-        [CART_STATUS_READY]: '#f41820',
+        [CART_STATUS_READY]: '#f41821',
         [CART_STATUS_ACCEPTED]: '#F46036',
         [CART_STATUS_PROCESSING]: '#986d60',
         [CART_STATUS_DELIVERY]: '#EEAA21',
