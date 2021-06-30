@@ -1169,8 +1169,7 @@ class Confirm extends Component {
                 </View>
               )}
             </View>
-
-            <View style={styles.tagContainer}>
+            {/* <View style={styles.tagContainer}>
               {!!deliveryCode && (
                 <Tag
                   label={deliveryCode}
@@ -1188,10 +1187,10 @@ class Confirm extends Component {
                   ]}
                 />
               )}
-            </View>
+            </View> */}
           </View>
 
-           <DeliverySection deliveryCode={deliveryCode}/>
+           {!cart_data?.delivery_details || <DeliverySection code={deliveryCode}/>}
           
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
@@ -1303,7 +1302,7 @@ class Confirm extends Component {
                   {`${t('confirm.note.title')} `}
                 </Text>
                 <Text style={styles.input_label_help}>
-                  {t('confirm.note.description')}
+                  ({t('confirm.note.description')})
                 </Text>
               </View>
             </TouchableHighlight>

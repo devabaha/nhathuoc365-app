@@ -2,47 +2,47 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import SectionContainer from '../SectionContainer';
 
 const styles = StyleSheet.create({
-  box_icon_label: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  container: {
+    paddingTop: 0,
+    paddingRight: 0,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    marginTop: 8,
   },
-  icon_label: {
-    width: 15,
-    color: '#999',
+  contentContainer: {
+    marginTop: 0,
+    paddingTop: 0,
+    paddingRight: 0,
   },
-  input_label: {
-    fontSize: 16,
-    color: '#000000',
-    marginLeft: 8,
-  },
-  desc_content: {
+  description: {
     fontSize: 12,
     color: '#666666',
     marginTop: 4,
     marginLeft: 22,
   },
+  icon: {
+    fontSize: 13,
+  },
 });
 
-const DeliverySection = ({deliveryCode}) => {
+const DeliverySection = ({code}) => {
+  const {t} = useTranslation('orders');
+
   return (
-    <View>
-      <SectionContainer>
-        <View>
-          <View style={styles.box_icon_label}>
-            <Material
-              style={styles.icon_label}
-              name="truck-delivery"
-              size={14}
-            />
-            <Text style={styles.input_label}>Thông tin vận đơn</Text>
-          </View>
-          <Text style={styles.desc_content}>
-            {`${t('confirm.information.ordersCode')}:`} {deliveryCode}
-          </Text>
-        </View>
+    <View style={styles.container}>
+      <SectionContainer
+        style={styles.contentContainer}
+        title={t('confirm.information.deliveryTitle')}
+        iconName="shipping-fast"
+        iconStyle={styles.icon}
+        marginTop={0}>
+        <Text style={styles.description}>
+          {code}
+        </Text>
       </SectionContainer>
     </View>
   );
