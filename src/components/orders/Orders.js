@@ -152,7 +152,7 @@ class Orders extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-      store.getNoitify();
+      store.getNotify();
       store.setDeepLinkData(null);
       appConfig.device.isIOS &&
         StatusBar.setNetworkActivityIndicatorVisible(false);

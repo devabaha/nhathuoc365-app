@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Linking, View, StyleSheet } from 'react-native';
+import {Alert, Linking, View, StyleSheet} from 'react-native';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
-import { USE_ONLINE, showMessage } from '../../constants';
+import {USE_ONLINE, showMessage} from '../../constants';
 import VoucherDetailComponent from '../../component/VoucherDetail';
 import ModalConfirm from '../../component/ModalConfirm';
 import CampaignEntity from '../../entity/CampaignEntity';
 import AddressEntity from '../../entity/AddressEntity';
 import SiteEntity from '../../entity/SiteEntity';
-import { internalFetch } from '../../helper/apiFetch';
-import { isLatitude, isLongitude } from '../../helper/validator';
+import {internalFetch} from '../../helper/apiFetch';
+import {isLatitude, isLongitude} from '../../helper/validator';
 import EventTracker from '../../../../helper/EventTracker';
-import {openMap} from '../../../../helper/map'
+import {openMap} from '../../../../helper/map';
 import store from 'app-store';
 
 const defaultFn = () => {};
@@ -29,7 +29,8 @@ class VoucherDetail extends BaseContainer {
     onRemoveVoucherSuccess: PropTypes.func,
     onRemoveVoucherFailure: PropTypes.func,
     onUseVoucherOnlineSuccess: PropTypes.func,
-    onUseVoucherOnlineFailure: PropTypes.func
+    onUseVoucherOnlineFailure: PropTypes.func,
+    forceReload: PropTypes.func,
   };
 
   static defaultProps = {
@@ -40,7 +41,8 @@ class VoucherDetail extends BaseContainer {
     onRemoveVoucherSuccess: defaultFn,
     onRemoveVoucherFailure: defaultFn,
     onUseVoucherOnlineSuccess: defaultFn,
-    onUseVoucherOnlineFailure: defaultFn
+    onUseVoucherOnlineFailure: defaultFn,
+    forceReload: defaultFn,
   };
 
   constructor(props) {
@@ -54,13 +56,14 @@ class VoucherDetail extends BaseContainer {
       buyCampaignVisible: false,
       site: null,
       campaign: null,
-      addresses: {}
+      addresses: {},
     };
 
     if (
       props.campaignId &&
       props.voucherId &&
-      (!props.campaignId && !props.voucherId)
+      !props.campaignId &&
+      !props.voucherId
     ) {
       throw new Error('Need to pass 1 of 2 props campaignId or voucherId');
     }
@@ -112,22 +115,28 @@ class VoucherDetail extends BaseContainer {
     this.eventTracker.clearTracking();
   }
 
-  handlePressCampaignProvider = store => {
+  handlePressCampaignProvider = (store) => {
     config.route.pushToStoreBySiteData(store.data);
   };
 
-  handleOpenScanScreen = voucher => {
-    const { t } = this.props;
+  handleOpenScanScreen = (voucher) => {
+    const {t} = this.props;
     config.route.push(config.routes.voucherScanner, {
       voucher,
       placeholder: t('scan.enterStore'),
       topContentText: t('scan.description'),
-      isFromMyVoucher: false
+      isFromMyVoucher: false,
+      onScanVoucherFail: this.handleGetVoucherFail,
     });
   };
 
-  handleAlreadyThisVoucher = ({ message, onCheckMyVoucher, onClose }) => {
-    const { t } = this.props;
+  handleGetVoucherFail = () => {
+    this.props.forceReload();
+    config.route.pop();
+  };
+
+  handleAlreadyThisVoucher = ({message, onCheckMyVoucher, onClose}) => {
+    const {t} = this.props;
     config.route.push(config.routes.alreadyVoucher, {
       onClose: () => {
         config.route.pop();
@@ -147,27 +156,33 @@ class VoucherDetail extends BaseContainer {
           config.route.push(config.routes.myVoucher);
           onCheckMyVoucher();
         }, 0);
-      }
+      },
     });
   };
 
   getVoucherById = async (id, showLoading = true) => {
     if (showLoading) {
       this.setState({
-        showLoading: true
+        showLoading: true,
       });
     }
     try {
       const response = await internalFetch(config.rest.detailVoucher(id));
       if (response.status === config.httpCode.success) {
         this.handleApiResponseSuccess(response);
+      } else {
+        this.handleGetVoucherFail();
+        showMessage({
+          type: 'danger',
+          message: response.message || this.props.t('api.error.message'),
+        });
       }
     } catch (error) {
       console.log(error);
     } finally {
       this.setState({
         refreshing: false,
-        showLoading: false
+        showLoading: false,
       });
     }
   };
@@ -175,7 +190,7 @@ class VoucherDetail extends BaseContainer {
   getCampaignById = async (id, showLoading = true) => {
     if (showLoading) {
       this.setState({
-        showLoading: true
+        showLoading: true,
       });
     }
 
@@ -183,40 +198,46 @@ class VoucherDetail extends BaseContainer {
       const response = await internalFetch(config.rest.detailCampaign(id));
       if (response.status === config.httpCode.success) {
         this.handleApiResponseSuccess(response);
+      } else {
+        this.handleGetVoucherFail();
+        showMessage({
+          type: 'danger',
+          message: response.message || this.props.t('api.error.message'),
+        });
       }
     } catch (error) {
       console.log(error);
     } finally {
       this.setState({
         refreshing: false,
-        showLoading: false
+        showLoading: false,
       });
     }
   };
 
-  handleApiResponseSuccess = response => {
+  handleApiResponseSuccess = (response) => {
     // @NOTE: mapping places with address entity
-    Object.keys(response.data.addresses).forEach(provinceName => {
+    Object.keys(response.data.addresses).forEach((provinceName) => {
       const province = response.data.addresses[provinceName];
       province.forEach(
-        (place, index) => (province[index] = new AddressEntity(place))
+        (place, index) => (province[index] = new AddressEntity(place)),
       );
     });
 
     this.setState({
       campaign: new CampaignEntity(response.data.campaign),
       addresses: response.data.addresses,
-      site: response.data.site ? new SiteEntity(response.data.site) : null
+      site: response.data.site ? new SiteEntity(response.data.site) : null,
     });
   };
 
   showNotification(title, message) {
-    const { t } = this.props;
-    Alert.alert(title, message, [{ text: t('notification.accept') }]);
+    const {t} = this.props;
+    Alert.alert(title, message, [{text: t('notification.accept')}]);
   }
 
   handleOnRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     setTimeout(() => {
       const showLoading = false;
@@ -231,29 +252,29 @@ class VoucherDetail extends BaseContainer {
 
   getVoucherDisabled;
 
-  handleGetVoucher = async campaign => {
+  handleGetVoucher = async (campaign) => {
     if (this.getVoucherDisabled) return;
 
     this.getVoucherDisabled = true;
 
     this.setState({
-      showLoading: true
+      showLoading: true,
     });
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await internalFetch(
-        config.rest.saveCampaign(campaign.data.id)
+        config.rest.saveCampaign(campaign.data.id),
       );
       if (response.status === config.httpCode.success) {
         this.getVoucherDisabled = false;
 
         showMessage({
           message: t('api.success.taken'),
-          type: 'success'
+          type: 'success',
         });
         this.setState({
           campaign: new CampaignEntity(response.data.campaign),
-          canUseNow: true
+          canUseNow: true,
         });
 
         /**
@@ -270,7 +291,7 @@ class VoucherDetail extends BaseContainer {
           },
           onClose: () => {
             this.getVoucherDisabled = false;
-          }
+          },
         });
       } else {
         setTimeout(() => {
@@ -282,16 +303,16 @@ class VoucherDetail extends BaseContainer {
       console.log(error);
     } finally {
       this.setState({
-        showLoading: false
+        showLoading: false,
       });
     }
   };
 
-  handleUseVoucher = voucher => {
+  handleUseVoucher = (voucher) => {
     // @NOTE: if only use online
     if (this.state.campaign.isOnlyUseOnline) {
       this.setState({
-        useOnlineConfirmVisible: true
+        useOnlineConfirmVisible: true,
       });
     } else {
       // @NOTE: is from my voucher (from orders) screen with user-online mode
@@ -305,23 +326,23 @@ class VoucherDetail extends BaseContainer {
 
   useVoucherFetching;
 
-  handlePressUseOnline = async voucher => {
+  handlePressUseOnline = async (voucher) => {
     if (this.useVoucherFetching) return;
     this.useVoucherFetching = true;
 
     this.setState({
-      showLoading: true
+      showLoading: true,
     });
 
     try {
       const siteId = this.props.siteId || store.store_id;
       const response = await internalFetch(
-        config.rest.useVoucherOnline(siteId, voucher.data.id)
+        config.rest.useVoucherOnline(siteId, voucher.data.id),
       );
       if (response.status === config.httpCode.success) {
         showMessage({
           type: 'success',
-          message: response.message
+          message: response.message,
         });
         this.props.onUseVoucherOnlineSuccess(response.data, true);
         if (this.isFromHome) {
@@ -330,7 +351,7 @@ class VoucherDetail extends BaseContainer {
       } else {
         showMessage({
           type: 'danger',
-          message: response.message
+          message: response.message,
         });
         this.props.onUseVoucherOnlineFailure(response);
       }
@@ -339,18 +360,18 @@ class VoucherDetail extends BaseContainer {
     } finally {
       this.useVoucherFetching = false;
       this.setState({
-        showLoading: false
+        showLoading: false,
       });
     }
   };
 
-  handlePressAddressPhoneNumber = phoneNumber => {
+  handlePressAddressPhoneNumber = (phoneNumber) => {
     Linking.openURL(`tel:${phoneNumber}`);
   };
 
-  handlePressAddressLocation = ({ latitude, longitude }) => {
+  handlePressAddressLocation = ({latitude, longitude}) => {
     if (isLatitude(latitude) && isLongitude(longitude)) {
-      openMap(latitude, longitude)
+      openMap(latitude, longitude);
     }
   };
 
@@ -361,25 +382,25 @@ class VoucherDetail extends BaseContainer {
     this.voucherRemoving = true;
 
     this.setState({
-      showLoading: true
+      showLoading: true,
     });
     try {
       const response = await internalFetch(
         config.rest.removeVoucherOnline(
           this.state.campaign.data.site_id,
-          this.state.campaign.data.id
-        )
+          this.state.campaign.data.id,
+        ),
       );
       if (response.status === config.httpCode.success) {
         showMessage({
           type: 'success',
-          message: response.message
+          message: response.message,
         });
         this.props.onRemoveVoucherSuccess(response.data);
       } else {
         showMessage({
           type: 'danger',
-          message: response.message
+          message: response.message,
         });
         this.props.onRemoveVoucherFailure(response);
       }
@@ -387,20 +408,20 @@ class VoucherDetail extends BaseContainer {
       console.log(error);
     } finally {
       this.setState({
-        showLoading: false
+        showLoading: false,
       });
       this.voucherRemoving = false;
     }
   };
 
   handleUseOnlineConfirm = () => {
-    this.setState({ useOnlineConfirmVisible: false });
+    this.setState({useOnlineConfirmVisible: false});
     this.handlePressUseOnline(this.state.campaign);
   };
 
   handleBuyCampaign = () => {
     this.setState({
-      buyCampaignVisible: true
+      buyCampaignVisible: true,
     });
   };
 
@@ -412,40 +433,40 @@ class VoucherDetail extends BaseContainer {
 
     this.setState({
       showLoading: true,
-      buyCampaignVisible: false
+      buyCampaignVisible: false,
     });
 
     try {
       const response = await internalFetch(
-        config.rest.buyCampaign(this.state.campaign.data.id)
+        config.rest.buyCampaign(this.state.campaign.data.id),
       );
       if (response.status === config.httpCode.success) {
         showMessage({
           type: 'success',
-          message: response.message
+          message: response.message,
         });
         this.setState({
           campaign: new CampaignEntity(response.data.campaign),
-          canUseNow: true
+          canUseNow: true,
         });
       } else {
         showMessage({
           type: 'danger',
-          message: response.message
+          message: response.message,
         });
       }
     } catch (error) {
       console.log(error);
     } finally {
       this.setState({
-        showLoading: false
+        showLoading: false,
       });
       this.campaignBuying = false;
     }
   };
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <View style={styles.container}>
         <VoucherDetailComponent
@@ -475,11 +496,11 @@ class VoucherDetail extends BaseContainer {
           visible={this.state.buyCampaignVisible}
           heading={t('confirm.redeem.title')}
           textMessage={t('confirm.redeem.message', {
-            point: this.campaignPoint
+            point: this.campaignPoint,
           })}
           cancelLabel={t('modal.cancel')}
           confirmLabel={t('modal.accept')}
-          onCancel={() => this.setState({ buyCampaignVisible: false })}
+          onCancel={() => this.setState({buyCampaignVisible: false})}
           onConfirm={this.handleBuyCampaignConfirm}
         />
 
@@ -490,7 +511,7 @@ class VoucherDetail extends BaseContainer {
           textMessage={t('confirm.usePromotion.message')}
           cancelLabel={t('modal.cancel')}
           confirmLabel={t('modal.accept')}
-          onCancel={() => this.setState({ useOnlineConfirmVisible: false })}
+          onCancel={() => this.setState({useOnlineConfirmVisible: false})}
           onConfirm={this.handleUseOnlineConfirm}
         />
       </View>
@@ -500,44 +521,44 @@ class VoucherDetail extends BaseContainer {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   confirmContent: {
-    padding: 16
+    padding: 16,
   },
   confirmText: {
     fontSize: 15,
     fontWeight: '400',
-    color: '#666'
+    color: '#666',
   },
   confirmBtnWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 32
+    marginTop: 32,
   },
   confirmBtnContainer: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#666',
     paddingVertical: 8,
-    borderRadius: 6
+    borderRadius: 6,
   },
   btnContainerCancel: {
-    marginRight: 8
+    marginRight: 8,
   },
   btnContainerOk: {
     marginLeft: 8,
     borderColor: config.colors.primary,
-    backgroundColor: config.colors.primary
+    backgroundColor: config.colors.primary,
   },
   confirmBtn: {},
   btnCancel: {
-    color: '#666'
+    color: '#666',
   },
   btnOk: {
-    color: '#fff'
-  }
+    color: '#fff',
+  },
 });
 
-export default withTranslation('voucher')(observer(VoucherDetail));
+export default withTranslation(['voucher', 'common'])(observer(VoucherDetail));

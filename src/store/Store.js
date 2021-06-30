@@ -65,7 +65,7 @@ class Store {
     clearInterval(this._timeGetNotify);
     this._timeGetNotify = setInterval(() => {
       if (this.getNotifyFlag) {
-        this.getNoitify();
+        this.getNotify();
       }
     }, DELAY_UPDATE_NOTICE);
 
@@ -91,10 +91,11 @@ class Store {
     }
   }
 
-  getNoitify = async () => {
+  getNotify = async () => {
     this.getNotifyFlag = false;
     try {
       const response = await APIHandler.user_notify();
+
       if (response.status === STATUS_LOGIN_FAIL) {
         const isExecuteLogout = !this.logoutExceptionScene.includes(
           Actions.currentScene,
@@ -126,10 +127,14 @@ class Store {
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
-          const {user, ...notifies} = response.data;
+          const {user, account_menu, ...notifies} = response.data;
           this.initConfigRadaModule(user);
           if (!equal(user, this.user_info)) {
             this.setUserInfo(user);
+          }
+
+          if (!equal(account_menu, this.accountMenu)) {
+            this.setAccountMenu(account_menu);
           }
 
           if (!equal(notifies, this.notify)) {
@@ -229,6 +234,11 @@ class Store {
     this.keyboardTop = 0;
 
     Events.trigger(KEY_BOARD_HIDE);
+  }
+
+  @observable accountMenu = [];
+  @action setAccountMenu(accountMenu = []){
+    this.accountMenu = accountMenu;
   }
 
   /*********** notify **********/

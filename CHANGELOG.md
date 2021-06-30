@@ -6,12 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.0.2] - 2021-06-30
 ### Added
 - Adding delivery code in order detail by [kienluu612@gmail.com].
 ### Changed
 - Rating default five stars by [nguyenanhtuan191298@gmail.com]
 ### Fixed
 - Fix phone card in android by [lamah.dev@gmail.com].
+- PrimaryActions duplicate key.
+- Invalid vouchers not reload data.
 
 ## [r12.0.1] - 2021-06-21
 ### Added
