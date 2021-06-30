@@ -130,26 +130,12 @@ const PaymentMethodSection = ({
       <Animated.View style={[styles.mask, maskStyle.current]} />
 
       <View style={styles.container}>
-        <SectionContainer style={styles.contentContainer}>
-          <Container row style={styles.titleWrapper}>
-            <Container row>
-              <FontAwesome5Icon style={styles.icon} name="dollar-sign" />
-              <Text style={styles.title}>
-                {t('confirm.paymentMethod.title')}
-              </Text>
-            </Container>
-            {!!isUnpaid && (
-              <View style={styles.actionTitle}>
-                <TouchableHighlight
-                  style={styles.btnAction}
-                  underlayColor="transparent"
-                  onPress={onPressChange}>
-                  <Text style={styles.changeTitle}>{t('confirm.change')}</Text>
-                </TouchableHighlight>
-              </View>
-            )}
-          </Container>
-
+        <SectionContainer
+          style={styles.contentContainer}
+          title={t('confirm.paymentMethod.title')}
+          iconName="dollar-sign"
+          actionBtnTitle={!!isUnpaid && t('confirm.change')}
+          onPressActionBtn={onPressChange}>
           <View>
             <Container row style={styles.descriptionContainer}>
               {!!cartData ? (
