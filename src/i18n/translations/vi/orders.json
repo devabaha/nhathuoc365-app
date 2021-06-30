@@ -36,7 +36,7 @@
     },
     "note": {
       "title": "Ghi chú",
-      "description": "(Thời gian giao hàng, ghi chú khác)",
+      "description": "Thời gian giao hàng, ghi chú khác",
       "placeholder": "Nhập ghi chú của bạn tại đây",
       "noNote": "Không có ghi chú"
     },
