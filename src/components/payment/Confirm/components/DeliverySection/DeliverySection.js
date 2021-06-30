@@ -1,8 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-import Material from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import SectionContainer from '../SectionContainer';
 
 const styles = StyleSheet.create({
@@ -18,18 +16,23 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingRight: 0,
   },
-  description: {
+  icon: {
+    fontSize: 13,
+  },
+  desc_content: {
     fontSize: 12,
     color: '#666666',
     marginTop: 4,
     marginLeft: 22,
   },
-  icon: {
-    fontSize: 13,
+  orders_status: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 15,
   },
 });
 
-const DeliverySection = ({code}) => {
+const DeliverySection = ({code, statusColor, statusName}) => {
   const {t} = useTranslation('orders');
 
   return (
@@ -40,8 +43,16 @@ const DeliverySection = ({code}) => {
         iconName="shipping-fast"
         iconStyle={styles.icon}
         marginTop={0}>
-        <Text style={styles.description}>
-          {code}
+        <Text style={styles.desc_content}>{code}</Text>
+        <Text
+          style={[
+            styles.desc_content,
+            styles.orders_status,
+            {
+              color: statusColor,
+            },
+          ]}>
+          {statusName}
         </Text>
       </SectionContainer>
     </View>

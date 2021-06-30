@@ -41,7 +41,7 @@ import {
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
 import {PaymentMethodSection} from './components';
-import {DeliverySection} from './components'
+import {DeliverySection} from './components';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1190,8 +1190,17 @@ class Confirm extends Component {
             </View> */}
           </View>
 
-           {!cart_data?.delivery_details || <DeliverySection code={deliveryCode}/>}
-          
+          {!cart_data?.delivery_details || (
+            <DeliverySection
+              statusName={cart_data.delivery_details?.status_name}
+              statusColor={
+                appConfig.colors.delivery[cart_data.delivery_details?.status] ||
+                appConfig.colors.cartType[cart_data.cart_type]
+              }
+              code={deliveryCode}
+            />
+          )}
+
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
           <View
@@ -1456,7 +1465,7 @@ class Confirm extends Component {
                     <TouchableHighlight
                       underlayColor="transparent"
                       onPress={() => 1}>
-                       <Text
+                      <Text
                         style={[
                           styles.address_default_title,
                           styles.title_active,
