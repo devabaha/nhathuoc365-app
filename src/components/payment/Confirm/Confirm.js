@@ -1167,25 +1167,6 @@ class Confirm extends Component {
                 </View>
               )}
             </View>
-            {/* <View style={styles.tagContainer}>
-              {!!deliveryCode && (
-                <Tag
-                  label={deliveryCode}
-                  fill={
-                    appConfig.colors.delivery[
-                      cart_data.delivery_details?.status
-                    ] || appConfig.colors.cartType[cart_data.cart_type]
-                  }
-                  animate={false}
-                  strokeWidth={0}
-                  labelStyle={styles.cartTypeLabel}
-                  labelContainerStyle={[
-                    styles.cartTypeLabelContainer,
-                    styles.tagsLabelContainer,
-                  ]}
-                />
-              )}
-            </View> */}
           </View>
 
           {!!cart_data?.delivery_details && (
