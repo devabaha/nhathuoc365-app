@@ -4,8 +4,6 @@ import {StyleSheet, Text, View} from 'react-native';
 import SectionContainer from '../SectionContainer';
 
 const styles = StyleSheet.create({
-
-
   icon: {
     fontSize: 13,
   },
