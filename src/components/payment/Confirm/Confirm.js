@@ -40,8 +40,7 @@ import {
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
-import {PaymentMethodSection} from './components';
-import {DeliverySection} from './components';
+import {PaymentMethodSection, DeliverySection} from './components';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1062,7 +1061,6 @@ class Confirm extends Component {
         ' - ' +
         (cart_data.delivery_details.ship_unit_id ||
           cart_data.delivery_details.booking_id);
-    console.log(cart_data);
 
     const itemFee = cart_data?.item_fee || {};
     const cashbackView = cart_data?.cashback_view || {};
