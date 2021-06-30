@@ -11,8 +11,8 @@ import AddressEntity from '../../entity/AddressEntity';
 import SiteEntity from '../../entity/SiteEntity';
 import { internalFetch } from '../../helper/apiFetch';
 import { isLatitude, isLongitude } from '../../helper/validator';
-import openMap from 'react-native-open-maps';
 import EventTracker from '../../../../helper/EventTracker';
+import {openMap} from '../../../../helper/map'
 import store from 'app-store';
 
 const defaultFn = () => {};
@@ -350,10 +350,7 @@ class VoucherDetail extends BaseContainer {
 
   handlePressAddressLocation = ({ latitude, longitude }) => {
     if (isLatitude(latitude) && isLongitude(longitude)) {
-      openMap({
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude)
-      });
+      openMap(latitude, longitude)
     }
   };
 

@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
-import {handleSaveImage} from '../../helper/image';
+import {saveImage} from '../../helper/image';
 import ActionSheet from 'react-native-actionsheet';
 
 class ItemImageViewer extends Component {
@@ -52,7 +52,7 @@ class ItemImageViewer extends Component {
 
   handleOptionPress = (index) => {
     if (index !== this.OPTIONS_LIST.length - 1) {
-      handleSaveImage(this.props.images[this.imageIndex].url);
+      saveImage(this.props.images[this.imageIndex].url);
     }
   };
 

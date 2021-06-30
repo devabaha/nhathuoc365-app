@@ -17,11 +17,11 @@ import Container from 'src/components/Layout/Container';
 const styles = StyleSheet.create({
   wrapper: {
     zIndex: 1,
+    backgroundColor: '#fff'
   },
   container: {
     paddingTop: 0,
     paddingRight: 0,
-    backgroundColor: '#fff',
     justifyContent: 'center',
   },
   mask: {
@@ -32,8 +32,6 @@ const styles = StyleSheet.create({
     transform: [{scale: 1.5}],
   },
   contentContainer: {
-    paddingTop: 0,
-    paddingRight: 0,
     backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
     borderColor: appConfig.colors.primary,
     borderTopWidth: 1,
@@ -129,27 +127,12 @@ const PaymentMethodSection = ({
     <Animated.View style={styles.wrapper}>
       <Animated.View style={[styles.mask, maskStyle.current]} />
 
-      <View style={styles.container}>
-        <SectionContainer style={styles.contentContainer}>
-          <Container row style={styles.titleWrapper}>
-            <Container row>
-              <FontAwesome5Icon style={styles.icon} name="dollar-sign" />
-              <Text style={styles.title}>
-                {t('confirm.paymentMethod.title')}
-              </Text>
-            </Container>
-            {!!isUnpaid && (
-              <View style={styles.actionTitle}>
-                <TouchableHighlight
-                  style={styles.btnAction}
-                  underlayColor="transparent"
-                  onPress={onPressChange}>
-                  <Text style={styles.changeTitle}>{t('confirm.change')}</Text>
-                </TouchableHighlight>
-              </View>
-            )}
-          </Container>
-
+        <SectionContainer
+          style={styles.contentContainer}
+          title={t('confirm.paymentMethod.title')}
+          iconName="dollar-sign"
+          actionBtnTitle={!!isUnpaid && t('confirm.change')}
+          onPressActionBtn={onPressChange}>
           <View>
             <Container row style={styles.descriptionContainer}>
               {!!cartData ? (
@@ -194,7 +177,6 @@ const PaymentMethodSection = ({
             </Container>
           </View>
         </SectionContainer>
-      </View>
     </Animated.View>
   );
 };
