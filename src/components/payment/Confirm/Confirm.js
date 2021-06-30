@@ -41,6 +41,7 @@ import {
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
 import {PaymentMethodSection} from './components';
+import {DeliverySection} from './components'
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1061,6 +1062,10 @@ class Confirm extends Component {
         ' - ' +
         (cart_data.delivery_details.ship_unit_id ||
           cart_data.delivery_details.booking_id);
+    console.log(cart_data);
+
+    const itemFee = cart_data?.item_fee || {};
+    const cashbackView = cart_data?.cashback_view || {};
 
     return (
       <>
@@ -1073,10 +1078,8 @@ class Confirm extends Component {
           keyboardShouldPersistTaps="handled"
           resetScrollToCoords={this.resetScrollToCoords}
           onMomentumScrollEnd={this.handleScroll}
-          onScrollEndDrag={this.handleScroll}
-          >
-          <View
-            style={styles.rows}>
+          onScrollEndDrag={this.handleScroll}>
+          <View style={styles.rows}>
             <TouchableHighlight
               underlayColor="transparent"
               // onPress={() =>
@@ -1166,6 +1169,7 @@ class Confirm extends Component {
                 </View>
               )}
             </View>
+
             <View style={styles.tagContainer}>
               {!!deliveryCode && (
                 <Tag
@@ -1187,6 +1191,8 @@ class Confirm extends Component {
             </View>
           </View>
 
+           <DeliverySection deliveryCode={deliveryCode}/>
+          
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
           <View
@@ -1297,7 +1303,7 @@ class Confirm extends Component {
                   {`${t('confirm.note.title')} `}
                 </Text>
                 <Text style={styles.input_label_help}>
-                  ({t('confirm.note.description')})
+                  {t('confirm.note.description')}
                 </Text>
               </View>
             </TouchableHighlight>
@@ -1370,7 +1376,8 @@ class Confirm extends Component {
               isUnpaid={this.isUnpaid}
               cartData={cart_data}
               onPressChange={() => this._goPaymentMethod(cart_data)}
-            />)}
+            />
+          )}
 
           <View
             style={[
@@ -1433,7 +1440,7 @@ class Confirm extends Component {
                 </View>
               )}
 
-            {Object.keys(cart_data.item_fee).map((index) => {
+            {Object.keys(itemFee).map((index) => {
               return (
                 <View
                   key={index}
@@ -1450,7 +1457,7 @@ class Confirm extends Component {
                     <TouchableHighlight
                       underlayColor="transparent"
                       onPress={() => 1}>
-                      <Text
+                       <Text
                         style={[
                           styles.address_default_title,
                           styles.title_active,
@@ -1546,7 +1553,7 @@ class Confirm extends Component {
             </View>
           )}
 
-          {Object.keys(cart_data.cashback_view).map((index) => {
+          {Object.keys(cashbackView).map((index) => {
             return (
               <View
                 key={index}
