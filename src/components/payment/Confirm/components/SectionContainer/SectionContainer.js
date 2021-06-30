@@ -1,5 +1,11 @@
 import React from 'react';
-import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {Container} from 'src/components/Layout';
@@ -20,7 +26,7 @@ const styles = StyleSheet.create({
   },
 
   titleWrapper: {
-    paddingTop: 12,
+    justifyContent: 'space-between',
   },
   titleContainer: {},
   icon: {
@@ -33,18 +39,8 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginLeft: 8,
   },
-  actionTitle: {
-    flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-  btnAction: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
+  actionTitle: {},
+  btnAction: {},
   changeTitle: {
     color: appConfig.colors.primary,
     fontSize: 12,
@@ -63,7 +59,7 @@ const SectionContainer = ({
   actionBtnStyle,
   onPressActionBtn = () => {},
 }) => {
-  const hasHeading = !!title && !!actionBtnTitle;
+  const hasHeading = !!title || !!actionBtnTitle;
 
   return (
     <View style={[styles.container, style, marginTop && styles.topSpacing]}>
@@ -81,14 +77,12 @@ const SectionContainer = ({
             </Container>
           )}
           {!!actionBtnTitle && (
-            <View style={styles.actionTitle}>
-              <TouchableHighlight
-                style={[styles.btnAction, actionBtnStyle]}
-                underlayColor="transparent"
-                onPress={onPressActionBtn}>
-                <Text style={styles.changeTitle}>{actionBtnTitle}</Text>
-              </TouchableHighlight>
-            </View>
+            <TouchableOpacity
+              hitSlop={HIT_SLOP}
+              style={[styles.btnAction, actionBtnStyle]}
+              onPress={onPressActionBtn}>
+              <Text style={styles.changeTitle}>{actionBtnTitle}</Text>
+            </TouchableOpacity>
           )}
         </Container>
       )}
