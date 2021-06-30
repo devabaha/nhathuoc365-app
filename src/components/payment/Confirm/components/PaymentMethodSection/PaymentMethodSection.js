@@ -17,11 +17,11 @@ import Container from 'src/components/Layout/Container';
 const styles = StyleSheet.create({
   wrapper: {
     zIndex: 1,
+    backgroundColor: '#fff'
   },
   container: {
     paddingTop: 0,
     paddingRight: 0,
-    backgroundColor: '#fff',
     justifyContent: 'center',
   },
   mask: {
@@ -32,8 +32,6 @@ const styles = StyleSheet.create({
     transform: [{scale: 1.5}],
   },
   contentContainer: {
-    paddingTop: 0,
-    paddingRight: 0,
     backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
     borderColor: appConfig.colors.primary,
     borderTopWidth: 1,
@@ -129,7 +127,6 @@ const PaymentMethodSection = ({
     <Animated.View style={styles.wrapper}>
       <Animated.View style={[styles.mask, maskStyle.current]} />
 
-      <View style={styles.container}>
         <SectionContainer
           style={styles.contentContainer}
           title={t('confirm.paymentMethod.title')}
@@ -180,7 +177,6 @@ const PaymentMethodSection = ({
             </Container>
           </View>
         </SectionContainer>
-      </View>
     </Animated.View>
   );
 };

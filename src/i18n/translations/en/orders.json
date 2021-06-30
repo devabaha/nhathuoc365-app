@@ -25,7 +25,7 @@
       "title": "Order information",
       "ordersCode": "Order code",
       "status": "Status",
-      "recheck": "Is this information correct??",
+      "recheck": "Is this information correct?",
       "deliveryTitle": "Delivery infomation"
     },
     "address": {

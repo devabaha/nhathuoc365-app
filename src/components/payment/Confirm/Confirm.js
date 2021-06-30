@@ -1188,7 +1188,7 @@ class Confirm extends Component {
             </View> */}
           </View>
 
-          {!cart_data?.delivery_details || (
+          {!!cart_data?.delivery_details && (
             <DeliverySection
               statusName={cart_data.delivery_details?.status_name}
               statusColor={
