@@ -211,6 +211,9 @@ class CommonAPI {
   get USER_DELETE_ADDRESS() {
     return BaseAPI.apiDomain + 'apiUser/delete_address';
   }
+  get SITE_ADDRESS(){
+    return BaseAPI.apiDomain + 'apiSite/address';
+  }
 
   // Orders
   get SITE_CART_INDEX() {

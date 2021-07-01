@@ -27,6 +27,7 @@ class Address extends Component {
       loading: true,
       continue_loading: false,
       single: !props.from_page,
+      isVisiblePickUp: false,
     };
 
     this._getData = this._getData.bind(this);
@@ -70,7 +71,7 @@ class Address extends Component {
     try {
       this.getAddressRequest.data = APIHandler.user_address();
       const response = await this.getAddressRequest.promise();
-
+      console.log(response.data)
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           setTimeout(() => {
@@ -117,7 +118,7 @@ class Address extends Component {
     this._addSiteCart();
   }
 
-  _addSiteCart() {
+  _addSiteCart(addressId = this.state.item_selected) {
     this.setState(
       {
         continue_loading: true,
@@ -127,7 +128,7 @@ class Address extends Component {
         try {
           const response = await APIHandler.site_cart_change_address(
             store.store_id,
-            this.state.item_selected,
+            addressId,
           );
 
           if (!this.unmounted) {
@@ -186,6 +187,11 @@ class Address extends Component {
     this.setState({refreshing: true});
     this._getData();
   };
+
+  onChangeAddress = (addressId) => {
+    this._addSiteCart(addressId);
+    Actions.pop();
+  }
 
   render() {
     const {single} = this.state;
@@ -265,6 +271,18 @@ class Address extends Component {
               onRefresh={this.onRefresh}
             />
           }>
+          {this.props.isVisiblePickUp &&
+            <View style={styles.pickUpStyle}>
+              <TouchableOpacity
+                onPress={() => {
+                  Actions.push(appConfig.routes.listAddressStore, {
+                    onChangeAddress: this.onChangeAddress
+                  })
+                }}
+              >
+                <Text style={styles.textBtn}>{t('pickUpTheStore')}</Text>
+              </TouchableOpacity>
+            </View>}
           {!single && (
             <View
               style={{
@@ -794,6 +812,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
+
+  pickUpStyle: {
+    flexGrow: 1,
+    padding: 15,
+    backgroundColor: '#ffffff',
+    marginTop: 8,
+  },
+
+  textBtn: {
+    color: '#666',
+    letterSpacing: 0.2,
+    fontSize: 16,
+    fontWeight: '400',
+  }
 });
 
 export default withTranslation(['address', 'common'])(observer(Address));

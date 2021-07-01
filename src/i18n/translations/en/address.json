@@ -16,5 +16,7 @@
     "title": "2. Confirmation"
   },
 
-  "nextBtnMessage": "Next"
+  "nextBtnMessage": "Next",
+
+  "pickUpTheStore": "Pick up at the store"
 }

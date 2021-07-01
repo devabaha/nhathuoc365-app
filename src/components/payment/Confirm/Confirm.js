@@ -66,6 +66,7 @@ class Confirm extends Component {
       paymentMethod: {},
       loading: false,
       isConfirming: false,
+      isVisiblePickUp: true,
     };
 
     this.refs_confirm_page = React.createRef();
@@ -502,12 +503,14 @@ class Confirm extends Component {
   _goAddress() {
     const onBack = () => {
       Actions.push(appConfig.routes.paymentConfirm, {
+
         type: ActionConst.REPLACE,
       });
     };
 
     Actions.push(appConfig.routes.myAddress, {
       type: ActionConst.REPLACE,
+      isVisiblePickUp: this.state.isVisiblePickUp
       // onBack
     });
   }
