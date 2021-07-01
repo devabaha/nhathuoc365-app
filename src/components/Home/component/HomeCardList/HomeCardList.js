@@ -8,6 +8,9 @@ class HomeCardList extends Component {
   render() {
     const props = this.props;
     const {t} = props;
+
+    const contentContainerStyle = [styles.listContentContainer, this.props.contentContainerStyle]
+
     return (
       <View style={styles.container}>
         <View style={styles.content}>
@@ -25,15 +28,21 @@ class HomeCardList extends Component {
           )}
         </View>
 
-        <FlatList
-          horizontal
-          data={props.data}
-          showsHorizontalScrollIndicator={false}
-          renderItem={props.children}
-          keyExtractor={(item, index) => index.toString()}
-          style={styles.listContainer}
-          contentContainerStyle={styles.listContentContainer}
-        />
+        {typeof this.props.renderContent === 'function' ? (
+          <View style={contentContainerStyle}>
+            {this.props.renderContent()}
+          </View>
+        ) : (
+          <FlatList
+            horizontal
+            data={props.data}
+            showsHorizontalScrollIndicator={false}
+            renderItem={props.children}
+            keyExtractor={(item, index) => index.toString()}
+            style={styles.listContainer}
+            contentContainerStyle={contentContainerStyle}
+          />
+        )}
       </View>
     );
   }

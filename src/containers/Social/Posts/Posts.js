@@ -19,13 +19,13 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import Loading from 'src/components/Loading';
 
 import appConfig from 'app-config';
-import {reaction, toJS} from 'mobx';
+import {reaction} from 'mobx';
 import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
 import PostsSkeleton from './PostsSkeleton';
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   loadMore: {
     position: 'relative',
@@ -45,8 +45,11 @@ const styles = StyleSheet.create({
 
 const Posts = ({
   groupId,
+  posts: postsProp,
   siteId = store.store_data?.id,
+  disableLoadMore = false,
   refreshControl,
+  limit: limitProp = 10,
   onScroll = () => {},
   onRefresh: onRefreshProp = () => {},
   ListHeaderComponent,
@@ -54,7 +57,7 @@ const Posts = ({
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
 
-  const limit = useRef(10);
+  const limit = useRef(limitProp);
   const page = useRef(1);
   const canLoadMore = useRef(true);
 
@@ -64,10 +67,12 @@ const Posts = ({
 
   const [getPostsRequest] = useState(new APIRequest());
 
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(postsProp || []);
 
   useEffect(() => {
-    getPosts();
+    if (!postsProp) {
+      getPosts();
+    }
 
     return () => {
       cancelRequests([getPostsRequest]);
@@ -184,7 +189,7 @@ const Posts = ({
         }
       }
     },
-    [siteId, groupId, posts],
+    [siteId, groupId, posts, limitProp],
   );
 
   const handlePressGroup = useCallback((group) => {
@@ -202,7 +207,8 @@ const Posts = ({
   };
 
   const handleLoadMore = () => {
-    if (!canLoadMore.current || !posts?.length || isLoadMore) return;
+    if (disableLoadMore || !canLoadMore.current || !posts?.length || isLoadMore)
+      return;
 
     setLoadMore(true);
     page.current++;

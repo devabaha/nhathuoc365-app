@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
+  block: {
+    marginBottom: 5,
+  },
+
   btnPostContainer: {
     padding: 10,
     paddingVertical: 5,
@@ -37,8 +41,8 @@ const styles = StyleSheet.create({
     right: 12,
   },
   btnPost: {
-    color: '#fff', 
-    fontSize: 16
+    color: '#fff',
+    fontSize: 16,
   },
 
   extraListBottom: {
@@ -181,7 +185,7 @@ const CreatePost = ({
   }, [clearRequests, contentText, images]);
 
   const handlePost = () => {
-    if(!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
+    if (!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
     const postData = {
       id: new Date().getTime(),
       group,
@@ -357,8 +361,9 @@ const CreatePost = ({
             value={contentText}
             onChangeText={setContentText}
             onContentLayout={handleInputCloneLayout}
+            style={styles.block}
           />
-          <TouchableOpacity onPress={goToEditImages} style={{marginBottom: 15}}>
+          <TouchableOpacity onPress={goToEditImages} style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
             {renderOveImagesMessage()}
           </TouchableOpacity>
