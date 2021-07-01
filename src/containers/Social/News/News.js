@@ -94,7 +94,7 @@ class News extends Component {
 
     this.getListNewsCategory();
 
-    store.getNoitify();
+    store.getNotify();
     this.eventTracker.logCurrentView();
   }
 

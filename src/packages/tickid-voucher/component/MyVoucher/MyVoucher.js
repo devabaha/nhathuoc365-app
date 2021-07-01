@@ -76,11 +76,7 @@ class MyVoucher extends Component {
     const {t} = this.props;
     return (
       <View style={styles.container}>
-        {this.props.apiFetching && (
-          <View style={{flex: 1}}>
-            <LoadingComponent loading />
-          </View>
-        )}
+        {this.props.apiFetching && <LoadingComponent loading />}
         {this.hasCampaigns && this.renderMyVouchers()}
 
         {!this.props.apiFetching && !this.hasCampaigns && (
@@ -124,6 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: config.colors.sceneBackground,
+    justifyContent: 'flex-end'
   },
   getVoucherWrapper: {
     backgroundColor: config.colors.white,
@@ -152,13 +149,13 @@ const styles = StyleSheet.create({
   btnContentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   icon: {
     fontSize: 20,
     color: config.colors.white,
-    marginRight: 10
-  }
+    marginRight: 10,
+  },
 });
 
 export default MyVoucher;
