@@ -12,7 +12,7 @@ import {
   SectionList,
   Text,
 } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
+import Animated, {Easing} from 'react-native-reanimated';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -31,6 +31,7 @@ import {
   getPackageOptionValue,
   PACKAGE_OPTIONS_TYPE,
 } from '../../helper/packageOptionsHandler';
+import Posts from 'src/containers/Social/Posts';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -132,7 +133,7 @@ class Home extends Component {
     headerHeight: undefined,
   };
   animatedHeaderContainerValue = new Value(0);
-  animatedHeaderValue= new Value(0);
+  animatedHeaderValue = new Value(0);
 
   homeThemes = Themes.getNameSpace('home');
 
@@ -180,6 +181,10 @@ class Home extends Component {
     return Array.isArray(this.props.newses) && this.props.newses.length > 0;
   }
 
+  get hasSocialPosts() {
+    return this.props.social_posts?.length > 0;
+  }
+
   get hasNewsGroups() {
     return this.props.news_categories?.length > 0;
   }
@@ -217,7 +222,7 @@ class Home extends Component {
       Animated.timing(this.animatedHeaderContainerValue, {
         toValue: 1,
         duration: 300,
-        easing: Easing.quad
+        easing: Easing.quad,
       }).start();
     }
   }
@@ -301,8 +306,8 @@ class Home extends Component {
   ];
 
   headerContainerStyle = {
-    opacity: this.animatedHeaderContainerValue
-  }
+    opacity: this.animatedHeaderContainerValue,
+  };
 
   render() {
     const {t} = this.props;
@@ -336,7 +341,8 @@ class Home extends Component {
           )}
         </Animated.View>
 
-        <Animated.View style={[styles.headerContainerStyle, this.headerContainerStyle]}>
+        <Animated.View
+          style={[styles.headerContainerStyle, this.headerContainerStyle]}>
           <Header
             wrapperStyle={this.wrapperAnimatedStyle}
             maskSearchWrapperStyle={this.searchWrapperStyle}
@@ -439,9 +445,7 @@ class Home extends Component {
                 type={this.props.listServiceType}
                 itemsPerRow={this.props.listServiceItemsPerRow}
                 onItemPress={this.props.onPressService}
-                containerStyle={
-                 [styles.servicesBlock]
-                }
+                containerStyle={styles.servicesBlock}
               />
             ) : this.props.apiFetching ? (
               <ListServiceSkeleton />
@@ -541,6 +545,20 @@ class Home extends Component {
               ) : this.props.apiFetching ? (
                 <ListProductSkeleton />
               ) : null}
+
+              {!!this.hasSocialPosts && (
+                <HomeCardList
+                  onShowAll={this.props.goToSocial}
+                  title={t('common:screen.social.mainTitle')}
+                  contentContainerStyle={styles.socialPostContainer}
+                  renderContent={() => (
+                    <Posts
+                      disableLoadMore
+                      posts={this.props.social_posts}
+                    />
+                  )}
+                />
+              )}
 
               {this.hasNewsGroups ? (
                 this.props.news_categories.map((newsGroup, index) => {
@@ -648,6 +666,11 @@ let styles = StyleSheet.create({
   },
   block: {
     marginBottom: 20,
+  },
+
+  socialPostContainer: {
+    paddingHorizontal: 0,
+    marginBottom: -15,
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);

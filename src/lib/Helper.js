@@ -87,7 +87,7 @@ global.isLinkTickID = (s) => {
 };
 
 global.isWalletAddress = (address) => {
-  return /^(0x)[0-9a-fA-F]{40}$/.test(address);
+  return /^(0x|0y|0z)[0-9a-fA-F]{40}$/.test(address);
 };
 
 global.isWalletAddressWithZoneCode = (str) => {

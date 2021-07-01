@@ -40,7 +40,7 @@ import {
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
-import {PaymentMethodSection} from './components';
+import {PaymentMethodSection, DeliverySection} from './components';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1065,6 +1065,9 @@ class Confirm extends Component {
         (cart_data.delivery_details.ship_unit_id ||
           cart_data.delivery_details.booking_id);
 
+    const itemFee = cart_data?.item_fee || {};
+    const cashbackView = cart_data?.cashback_view || {};
+
     return (
       <>
         {this.state.loading && <Loading center />}
@@ -1076,10 +1079,8 @@ class Confirm extends Component {
           keyboardShouldPersistTaps="handled"
           resetScrollToCoords={this.resetScrollToCoords}
           onMomentumScrollEnd={this.handleScroll}
-          onScrollEndDrag={this.handleScroll}
-          >
-          <View
-            style={styles.rows}>
+          onScrollEndDrag={this.handleScroll}>
+          <View style={styles.rows}>
             <TouchableHighlight
               underlayColor="transparent"
               // onPress={() =>
@@ -1169,26 +1170,18 @@ class Confirm extends Component {
                 </View>
               )}
             </View>
-            <View style={styles.tagContainer}>
-              {!!deliveryCode && (
-                <Tag
-                  label={deliveryCode}
-                  fill={
-                    appConfig.colors.delivery[
-                      cart_data.delivery_details?.status
-                    ] || appConfig.colors.cartType[cart_data.cart_type]
-                  }
-                  animate={false}
-                  strokeWidth={0}
-                  labelStyle={styles.cartTypeLabel}
-                  labelContainerStyle={[
-                    styles.cartTypeLabelContainer,
-                    styles.tagsLabelContainer,
-                  ]}
-                />
-              )}
-            </View>
           </View>
+
+          {!!cart_data?.delivery_details && (
+            <DeliverySection
+              statusName={cart_data.delivery_details?.status_name}
+              statusColor={
+                appConfig.colors.delivery[cart_data.delivery_details?.status] ||
+                appConfig.colors.cartType[cart_data.cart_type]
+              }
+              code={deliveryCode}
+            />
+          )}
 
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
@@ -1373,7 +1366,8 @@ class Confirm extends Component {
               isUnpaid={this.isUnpaid}
               cartData={cart_data}
               onPressChange={() => this._goPaymentMethod(cart_data)}
-            />)}
+            />
+          )}
 
           <View
             style={[
@@ -1436,7 +1430,7 @@ class Confirm extends Component {
                 </View>
               )}
 
-            {Object.keys(cart_data.item_fee).map((index) => {
+            {Object.keys(itemFee).map((index) => {
               return (
                 <View
                   key={index}
@@ -1549,7 +1543,7 @@ class Confirm extends Component {
             </View>
           )}
 
-          {Object.keys(cart_data.cashback_view).map((index) => {
+          {Object.keys(cashbackView).map((index) => {
             return (
               <View
                 key={index}
