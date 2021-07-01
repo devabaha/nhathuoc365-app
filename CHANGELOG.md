@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Change function open map to common function by [kienluu612@gmail.com].
 ## [r12.0.2] - 2021-06-30
 ### Added
 - Adding delivery code in order detail by [kienluu612@gmail.com].
