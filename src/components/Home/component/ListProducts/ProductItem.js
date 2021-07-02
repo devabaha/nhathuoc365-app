@@ -237,10 +237,8 @@ let styles = StyleSheet.create({
     color: appConfig.colors.primary,
   },
   loading: {
-    width: '100%',
     height: '100%',
-    borderRadius: 8,
-    backgroundColor: 'rgba(0,0,0,.2)',
+    backgroundColor: 'rgba(0,0,0,.12)',
   },
   discountBadgeContainer: {
     top: 10,
