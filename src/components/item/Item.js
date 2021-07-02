@@ -933,6 +933,24 @@ class Item extends Component {
               </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
+              {!!item.commission_value && 
+                <View style={styles.commission}>
+                    <View style={styles.commissionTitle}>
+                        <Text style={styles.commissionText}>Hoa hồng:</Text>
+                    </View>
+                    <View style={styles.commissionPrice}>
+                        <View style={styles.commissionValue}>
+                            <Text style={styles.commissionText} numberOfLines={1}>
+                              {item.commission_value}
+                              {!!item.commission_value_view && 
+                                <Text style={styles.commissionText}>{item.commission_value_view}</Text>
+                              }
+                            </Text>
+                        </View>
+                    </View>
+                  </View>
+              }
+
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
@@ -1295,6 +1313,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 15,
     ...appConfig.styles.typography.heading1,
+  },
+  commission: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  commissionTitle: {
+    marginRight: 6,
+  },
+  commissionPrice: {
+    flex: 1,
+  },
+  commissionText: {
+    fontSize: 16,
+    color: appConfig.colors.primary,
   },
   item_heading_price_box: {
     // marginTop: 15,

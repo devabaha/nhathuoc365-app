@@ -38,6 +38,8 @@ class ProductItem extends PureComponent {
     onPress: PropTypes.func,
     last: PropTypes.bool,
     horizontal: PropTypes.bool,
+    commission_value: PropTypes.string,
+    commission_value_view: PropTypes.string,
   };
 
   static defaultProps = {
@@ -119,6 +121,25 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
+                    {!!this.props.commission_value && 
+                      <View style={styles.commission}>
+                        <View style={styles.commissionTitle}>
+                            <Text style={styles.commissionText}>Hoa hồng:</Text>
+                        </View>
+                        <View style={styles.commissionPrice}>
+                            <View style={styles.commissionValue}>
+                                <Text style={styles.commissionText} numberOfLines={1}>
+                                  {this.props.commission_value}
+                                  {!!this.props.commission_value_view && 
+                                    <Text style={styles.commissionText}>{this.props.commission_value_view}</Text>
+                                  }
+                                </Text>
+                            </View>
+                            
+                        </View>
+                      </View>
+                    }
+
                     <View
                       style={{
                         flexDirection: 'row',
@@ -218,7 +239,23 @@ let styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
+  commission: {
+    flexDirection: 'row',
+  },
+  commissionTitle: {
+    flex: 1
+  },
+  commissionPrice: {
+    flex: 1,
+  },
+  commissionValue: {
+    flexDirection: 'row',
+  },
+  commissionText: {
+    color: appConfig.colors.primary,
+  },
   discount: {
+    marginTop: 4,
     ...appConfig.styles.typography.secondary,
   },
   priceBox: {
