@@ -941,10 +941,7 @@ class Item extends Component {
                     <View style={styles.commissionPrice}>
                         <View style={styles.commissionValue}>
                             <Text style={styles.commissionText} numberOfLines={1}>
-                              {item.commission_value}
-                              {!!item.commission_value_view && 
-                                <Text style={styles.commissionText}>{item.commission_value_view}</Text>
-                              }
+                              {item.commission_value_view}
                             </Text>
                         </View>
                     </View>

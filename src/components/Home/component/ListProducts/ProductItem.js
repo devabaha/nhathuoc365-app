@@ -129,13 +129,9 @@ class ProductItem extends PureComponent {
                         <View style={styles.commissionPrice}>
                             <View style={styles.commissionValue}>
                                 <Text style={styles.commissionText} numberOfLines={1}>
-                                  {this.props.commission_value}
-                                  {!!this.props.commission_value_view && 
-                                    <Text style={styles.commissionText}>{this.props.commission_value_view}</Text>
-                                  }
+                                  {this.props.commission_value_view}
                                 </Text>
                             </View>
-                            
                         </View>
                       </View>
                     }
