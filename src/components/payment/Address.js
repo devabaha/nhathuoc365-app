@@ -821,7 +821,6 @@ const styles = StyleSheet.create({
   },
 
   textBtn: {
-    color: '#666',
     letterSpacing: 0.2,
     fontSize: 16,
     fontWeight: '400',

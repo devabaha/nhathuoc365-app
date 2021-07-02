@@ -6,7 +6,8 @@ import {
     FlatList,
     StyleSheet,
     RefreshControl,
-    View
+    View,
+    TouchableOpacity
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import appConfig from 'app-config';
@@ -20,8 +21,6 @@ import {
 import Loading from '../../components/Loading';
 import { APIRequest } from '../../network/Entity';
 import Container from '../../components/Layout/Container';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const ListAddressStore = ({ onChangeAddress = () => { } }) => {
+const ListAddressStore = ({ onChangeAddress = () => {} }) => {
 
     const getListAddressStoreRequest = new APIRequest();
     const requests = [getListAddressStoreRequest];
@@ -144,8 +143,6 @@ const ListAddressStore = ({ onChangeAddress = () => { } }) => {
     const [longitude, setLongitude] = useState();
     const [latitude, setLatitude] = useState();
     const [listStore, setListStore] = useState([]);
-    const [checking, setChecking] = useState(false)
-    const [itemSelected, SetItemSelected] = useState()
 
     const title = 'Không truy cập được Vị trí';
     const content =
@@ -179,7 +176,7 @@ const ListAddressStore = ({ onChangeAddress = () => { } }) => {
 
     const getListAddressStore = async (data) => {
         const site_id = store.store_data.id
-        console.log('data',data)
+        console.log('data', data)
         if (latitude !== undefined && longitude !== undefined) {
             data = {
                 lat: latitude,
@@ -187,11 +184,10 @@ const ListAddressStore = ({ onChangeAddress = () => { } }) => {
             };
         }
         getListAddressStoreRequest.data = APIHandler.site_address(data, site_id);
-    
+
         try {
             const responseData = await getListAddressStoreRequest.promise();
-            console.log('responseData', responseData)
-            console.log(responseData.data)
+            console.log(responseData)
             setListStore(responseData?.data || []);
 
         } catch (error) {
@@ -303,7 +299,6 @@ const ListAddressStore = ({ onChangeAddress = () => { } }) => {
 
 
     const renderListAddress = ({ item: item }) => {
-        const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
         return (
 
             <TouchableOpacity row style={styles.storeContainer}
@@ -314,19 +309,6 @@ const ListAddressStore = ({ onChangeAddress = () => { } }) => {
                         <Text style={styles.title}>{item.name}</Text>
                         <Text style={styles.description}>{item.tel}</Text>
                         <Text style={styles.description}>{item.address}</Text>
-
-                        {checking && (
-                            <View style={[styles.address_selected_box]}>
-                                <Icon
-                                    name="check"
-                                    size={24}
-                                    color={DEFAULT_COLOR}
-                                />
-                            </View>
-                        )}
-
-                        
-
                     </Container>
                 </Container>
             </TouchableOpacity>
