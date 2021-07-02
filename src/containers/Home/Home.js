@@ -114,6 +114,7 @@ class Home extends Component {
           product_groups: response.data.product_groups,
           news_categories: response.data.news_categories,
           product_categories: response.data.product_categorys,
+          social_posts: response.data.social_posts
         }));
 
         this.executeDeepLink();
@@ -205,11 +206,11 @@ class Home extends Component {
       servicesHandler(service, t, callBack);
     }
   }
-  
+
   handleShowAllSites = () => {
     store.setSelectedTab(appConfig.routes.customerCardWallet);
     Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
-  }
+  };
 
   handleShowAllGroupProduct = (group) => {
     const service = {
@@ -269,16 +270,23 @@ class Home extends Component {
     }
   };
 
+  goToSocial = () => {
+    servicesHandler({
+      type: SERVICES_TYPE.SOCIAL,
+      siteId: store?.store_data?.id,
+    });
+  };
+
   getStore(id, onSuccess = () => {}, onFail = () => {}, onFinally = () => {}) {
-    const { t } = this.props;
+    const {t} = this.props;
     APIHandler.site_info(id)
-      .then(response => {
+      .then((response) => {
         if (response) {
           onSuccess(response);
         } else {
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         }
       })
@@ -293,30 +301,30 @@ class Home extends Component {
   };
 
   goToSearch = () => {
-    const { t } = this.props;
-    this.setState({ storeFetching: true });
+    const {t} = this.props;
+    this.setState({storeFetching: true});
 
     this.getStore(
       store.store_id || appConfig.defaultSiteId,
-      response => {
+      (response) => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);
           Actions.push(appConfig.routes.searchStore, {
             categories: null,
             category_id: 0,
-            category_name: ''
+            category_name: '',
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message')
+            message: response.message || t('common:api.error.message'),
           });
         }
       },
-      error => {},
+      (error) => {},
       () => {
-        setTimeout(() => this.setState({ storeFetching: false }), 400);
-      }
+        setTimeout(() => this.setState({storeFetching: false}), 400);
+      },
     );
   };
 
@@ -358,11 +366,13 @@ class Home extends Component {
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
         onPressNoti={this.handlePressButtonChat}
+        goToSocial={this.goToSocial}
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
         goToSearch={this.goToSearch}
         news_categories={this.state.news_categories}
         product_categories={this.state.product_categories}
+        social_posts={this.state.social_posts}
       />
     );
   }

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- social_posts in Home.
 ### Fixed
 - Fix UX in HomeScreen: prevent multiple tap at 1 product by [kienluu612@gmail.com].
 
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rating default five stars by [nguyenanhtuan191298@gmail.com].
 - Change function open map to common function by [kienluu612@gmail.com].
+- Update isWalletAddress regex.
 ### Fixed
 - Fix phone card in android by [lamah.dev@gmail.com].
 - PrimaryActions duplicate key.
