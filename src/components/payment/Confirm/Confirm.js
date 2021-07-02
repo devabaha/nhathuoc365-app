@@ -67,6 +67,7 @@ class Confirm extends Component {
       loading: false,
       isConfirming: false,
       isVisiblePickUp: true,
+      addressId: store.cart_data.address.id
     };
 
     this.refs_confirm_page = React.createRef();
@@ -510,7 +511,8 @@ class Confirm extends Component {
 
     Actions.push(appConfig.routes.myAddress, {
       type: ActionConst.REPLACE,
-      isVisiblePickUp: this.state.isVisiblePickUp
+      isVisiblePickUp: this.state.isVisiblePickUp,
+      addressId: this.state.addressId
       // onBack
     });
   }

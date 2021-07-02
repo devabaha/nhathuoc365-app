@@ -361,8 +361,6 @@ class CommonAPIHandler extends BaseHandler {
    */
     site_address(data, site_id) {
     var api = url_for(API.SITE_ADDRESS + '/' + site_id);
-    console.log('api url', api);
-    console.log('api data', data);
     return this.postCancelableAPI(api, data);
   }
 

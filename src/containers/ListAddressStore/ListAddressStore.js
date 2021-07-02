@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#eee',
     },
     infoContainer: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         justifyContent: 'space-between',
     },
     title: {
@@ -47,10 +47,11 @@ const styles = StyleSheet.create({
     },
 
     address_selected_box: {
+        flex: 1,
         justifyContent: 'center',
+        bottom: 45,
         alignItems: 'center',
-        paddingHorizontal: 55,
-        right: -180
+
     },
 
     containerDescription: {
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const ListAddressStore = ({ onChangeAddress = () => {} }) => {
+const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
 
     const getListAddressStoreRequest = new APIRequest();
     const requests = [getListAddressStoreRequest];
@@ -297,19 +298,37 @@ const ListAddressStore = ({ onChangeAddress = () => {} }) => {
         getListAddressStore();
     };
 
+    const addressSelectHandler = (item) => {
+        setLoading(true)
+        onChangeAddress(item.id)
+    }
 
     const renderListAddress = ({ item: item }) => {
+
+        let isSelected = false
+        if (item.id == addressId) {
+            isSelected = true;
+        }
+
         return (
+            <TouchableOpacity style={styles.storeContainer}
+                onPress={() => addressSelectHandler(item)}>
 
-            <TouchableOpacity row style={styles.storeContainer}
-                onPress={() => setLoading(true) || setTimeout(() => { onChangeAddress(item.id) }, 300)}>
-
-                <Container flex centerVertical={false} style={styles.infoContainer}>
-                    <Container centerVertical={false}>
+                <Container flexDirection={'row'} flex={2} centerVertical={false} style={styles.infoContainer}>
+                    <Container flex={1.8} centerVertical={false}>
                         <Text style={styles.title}>{item.name}</Text>
                         <Text style={styles.description}>{item.tel}</Text>
                         <Text style={styles.description}>{item.address}</Text>
                     </Container>
+
+                    {isSelected && <Container alignItems={'flex-end'} marginTop={22} centerVertical={false}  >
+                        <Icon
+                            name="check"
+                            size={24}
+                            color={DEFAULT_COLOR}
+                        />
+                    </Container>}
+
                 </Container>
             </TouchableOpacity>
         );

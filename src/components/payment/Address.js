@@ -28,8 +28,10 @@ class Address extends Component {
       continue_loading: false,
       single: !props.from_page,
       isVisiblePickUp: false,
+      addressIdPopTo: this.props.addressId
+      
     };
-
+     
     this._getData = this._getData.bind(this);
     this.unmounted = false;
     this.getAddressRequest = new APIRequest();
@@ -276,7 +278,8 @@ class Address extends Component {
               <TouchableOpacity
                 onPress={() => {
                   Actions.push(appConfig.routes.listAddressStore, {
-                    onChangeAddress: this.onChangeAddress
+                    onChangeAddress: this.onChangeAddress,
+                    addressId: this.state.addressIdPopTo
                   })
                 }}
               >
