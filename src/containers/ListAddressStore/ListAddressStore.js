@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
+const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
 
     const getListAddressStoreRequest = new APIRequest();
     const requests = [getListAddressStoreRequest];
@@ -145,16 +145,7 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
     const [latitude, setLatitude] = useState();
     const [listStore, setListStore] = useState([]);
 
-    const title = 'Không truy cập được Vị trí';
-    const content =
-        requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
-            ? 'Hết thời gian yêu cầu.'
-            : 'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
-    const okText =
-        requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
-            ? 'Thử lại'
-            : 'Cài đặt';
-    const cancelText = 'Bỏ qua';
+    const errContent = 'Vui lòng cho phép truy cập vị trí để hiển hị cửa hàng theo thứ tự gần nhất!';
 
     useEffect(() => {
         didMount();
@@ -163,7 +154,6 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
     }, []);
 
     const didMount = () => {
-        getListAddressStore();
         AppState.addEventListener('change', handleAppStateChange);
         requestLocationPermission();
     };
@@ -177,7 +167,6 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
 
     const getListAddressStore = async (data) => {
         const site_id = store.store_data.id
-        console.log('data', data)
         if (latitude !== undefined && longitude !== undefined) {
             data = {
                 lat: latitude,
@@ -206,7 +195,7 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
     const handleAppStateChange = (nextAppState) => {
         if (
             appState.current.match(/inactive|background/) &&
-            !modalVisible &&
+            requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED  &&
             nextAppState === 'active'
         ) {
             if (isGoToSetting) {
@@ -229,7 +218,7 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
                     updateLocation();
                 } else {
                     handleErrorLocationPermission({ code: result });
-                    !listStore?.length && getListAddressStore();
+                    !listStore?.length && getListAddressStore({ lat: latitude, lng: longitude });
                 }
             },
         );
@@ -247,7 +236,7 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
             (err) => {
                 console.log('watch_position', watchID.current, err);
                 setConnectGPS(false);
-                !listStore?.length && getListAddressStore();
+                !listStore?.length && getListAddressStore({ lat: latitude, lng: longitude });
             },
             config,
         );
@@ -274,24 +263,20 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
         Geolocation.clearWatch(watchID.current);
         setRequestLocationLoading(false);
         setRequestLocationErrorCode(error.code);
+        handleLocationError(error.code);
         setTimeout(() => setModalVisible(appState.current === 'active'), 500);
     };
 
-    const handleLocationError = () => {
-        closeModal();
+    const handleLocationError = (errorCode) => {
         setGotoSetting(true);
-        LocationPermission.handleAccessSettingWhenRequestLocationError(
-            requestLocationErrorCode,
+        LocationPermission.openPermissionAskingModal(
+            errorCode,
+            undefined,
+            undefined,
+            errContent
         );
     };
 
-    const cancelModal = () => {
-        closeModal();
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
-    };
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -337,18 +322,6 @@ const ListAddressStore = ({ onChangeAddress = () => {}, addressId }) => {
     return (
         <ScreenWrapper>
             {isLoading && <Loading center />}
-
-            <Modal
-                visible={modalVisible}
-                title={title}
-                content={content}
-                okText={okText}
-                cancelText={cancelText}
-                onShow={Keyboard.dismiss}
-                onRequestClose={closeModal}
-                onCancel={cancelModal}
-                onOk={handleLocationError}
-            />
             <FlatList
                 data={listStore}
                 contentContainerStyle={{ flexGrow: 1 }}
