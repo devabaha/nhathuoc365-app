@@ -27,7 +27,6 @@ class Address extends Component {
       loading: true,
       continue_loading: false,
       single: !props.from_page,
-      isVisiblePickUp: false,
     };
      
     this._getData = this._getData.bind(this);
