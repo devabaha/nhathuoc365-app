@@ -985,6 +985,7 @@ class Account extends Component {
       store.user_info != null && store.user_info.username != null;
     const {avatar_loading, logout_loading} = this.state;
     const {t} = this.props;
+    const siteContentValue = getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY);
 
     return (
       <View style={styles.container}>
@@ -1166,9 +1167,9 @@ class Account extends Component {
             />
           )}
 
-          {!!getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY) && (
+          {!!siteContentValue && (
             <CustomAutoHeightWebview
-              content={getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY)}
+              content={siteContentValue}
               containerStyle={styles.certificateSiteContent}
             />
           )}
