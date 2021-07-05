@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Adding function pick up at the store by [lamah.dev@gmail.com]
+- Adding function pick up at the store by [lamah.dev@gmail.com].
 - social_posts in Home.
 
 ## [r12.0.2] - 2021-06-30
