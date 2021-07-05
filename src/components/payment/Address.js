@@ -28,8 +28,6 @@ class Address extends Component {
       continue_loading: false,
       single: !props.from_page,
       isVisiblePickUp: false,
-      addressIdPopTo: this.props.addressId
-      
     };
      
     this._getData = this._getData.bind(this);
@@ -73,7 +71,6 @@ class Address extends Component {
     try {
       this.getAddressRequest.data = APIHandler.user_address();
       const response = await this.getAddressRequest.promise();
-      console.log(response.data)
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           setTimeout(() => {
@@ -279,7 +276,7 @@ class Address extends Component {
                 onPress={() => {
                   Actions.push(appConfig.routes.listAddressStore, {
                     onChangeAddress: this.onChangeAddress,
-                    addressId: this.state.addressIdPopTo
+                    addressId: this.props.addressId
                   })
                 }}
               >

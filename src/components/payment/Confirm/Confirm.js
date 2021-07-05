@@ -67,7 +67,7 @@ class Confirm extends Component {
       loading: false,
       isConfirming: false,
       isVisiblePickUp: true,
-      addressId: store.cart_data.address.id
+      addressId: store.cart_data?.address?.id
     };
 
     this.refs_confirm_page = React.createRef();

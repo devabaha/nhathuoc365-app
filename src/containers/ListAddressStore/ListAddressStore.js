@@ -133,7 +133,6 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
     const appState = useRef('active');
     const watchID = useRef('');
     const isUpdatedListStoreByPosition = useRef(false);
-
     const [modalVisible, setModalVisible] = useState(false);
     const [isLoading, setLoading] = useState(true);
     const [isRefreshing, setRefreshing] = useState(false);
@@ -149,13 +148,13 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
 
     useEffect(() => {
         didMount();
-
         return unMount;
     }, []);
 
     const didMount = () => {
         AppState.addEventListener('change', handleAppStateChange);
         requestLocationPermission();
+        getListAddressStore();
     };
 
     const unMount = () => {
@@ -179,7 +178,6 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
             const responseData = await getListAddressStoreRequest.promise();
             console.log(responseData)
             setListStore(responseData?.data || []);
-
         } catch (error) {
             console.log('get_list_store', 'color:red', error);
             flashShowMessage({
@@ -276,7 +274,6 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
             errContent
         );
     };
-
 
     const onRefresh = () => {
         setRefreshing(true);
