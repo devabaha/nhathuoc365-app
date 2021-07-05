@@ -50,8 +50,6 @@ class ListProducts extends Component {
                 unit_name={product.unit_name}
                 onPress={() => this.props.onPressProduct(product)}
                 item={product}
-                commission_value={product.commission_value}
-                commission_value_view={product.commission_value_view}
                 {...extraProps}
               />
             </View>
