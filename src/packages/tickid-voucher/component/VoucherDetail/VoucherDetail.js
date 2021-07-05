@@ -18,10 +18,13 @@ import SiteEntity from '../../entity/SiteEntity';
 import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
 import styles from './styles';
+import Barcode from 'react-native-barcode-builder';
 
 const screenWidth = Dimensions.get('screen').width;
 
 const defaultListener = () => {};
+
+const BARCODE_FORMAT = 'CODE128';
 
 class VoucherDetail extends Component {
   static propTypes = {
@@ -63,7 +66,7 @@ class VoucherDetail extends Component {
     addresses: undefined,
     site: undefined,
   };
-
+  
   get totalPlaces() {
     let totalPlaces = 0;
     const addresses = Object.values(this.props.addresses);
@@ -217,7 +220,7 @@ class VoucherDetail extends Component {
               </View>
             </View>
 
-            <View style={[styles.row, styles.headerWrapper]}>
+            <View style={[styles.row, styles.headerWrapper, styles.contentWrapper]}>
               <Text style={styles.heading}>{campaign.data.title}</Text>
 
               <View
@@ -256,6 +259,15 @@ class VoucherDetail extends Component {
                 )}
               </View>
             </View>
+
+            {!!campaign?.data?.code && <View style={styles.contentWrapper}>
+            <Barcode
+              width={2}
+              height={60}
+              value = {campaign.data.code}
+              format={BARCODE_FORMAT}
+            />
+          </View>}
 
             <View style={styles.contentWrapper}>
               <Tabs>{tabs}</Tabs>

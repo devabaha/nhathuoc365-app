@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com]
 - Adding function pick up at the store by [lamah.dev@gmail.com].
 - social_posts in Home.
 
