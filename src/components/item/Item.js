@@ -935,17 +935,10 @@ class Item extends Component {
 
               {!!item.commission_value && 
                 <View style={styles.commission}>
-                    <View style={styles.commissionTitle}>
-                        <Text style={styles.commissionText}>Hoa hồng:</Text>
-                    </View>
-                    <View style={styles.commissionPrice}>
-                        <View style={styles.commissionValue}>
-                            <Text style={styles.commissionText} numberOfLines={1}>
-                              {item.commission_value_view}
-                            </Text>
-                        </View>
-                    </View>
-                  </View>
+                    <Text style={styles.commissionText}>
+                      {item.commission_value_view}
+                    </Text>
+                </View>
               }
 
               <View style={styles.item_heading_price_box}>
@@ -1314,12 +1307,6 @@ const styles = StyleSheet.create({
   commission: {
     flexDirection: 'row',
     marginBottom: 10,
-  },
-  commissionTitle: {
-    marginRight: 6,
-  },
-  commissionPrice: {
-    flex: 1,
   },
   commissionText: {
     fontSize: 16,

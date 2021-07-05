@@ -122,16 +122,9 @@ class ProductItem extends PureComponent {
                   <View style={styles.priceContainer}>
                     {!!this.props.item.commission_value && 
                       <View style={styles.commission}>
-                        <View style={styles.commissionTitle}>
-                            <Text style={styles.commissionText}>Hoa hồng:</Text>
-                        </View>
-                        <View style={styles.commissionPrice}>
-                            <View style={styles.commissionValue}>
-                                <Text style={styles.commissionText} numberOfLines={1}>
-                                  {this.props.item.commission_value_view}
-                                </Text>
-                            </View>
-                        </View>
+                          <Text style={styles.commissionText} numberOfLines={1}>
+                            {this.props.item.commission_value_view}
+                          </Text>
                       </View>
                     }
 
@@ -235,15 +228,6 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   commission: {
-    flexDirection: 'row',
-  },
-  commissionTitle: {
-    flex: 1
-  },
-  commissionPrice: {
-    flex: 1,
-  },
-  commissionValue: {
     flexDirection: 'row',
   },
   commissionText: {
