@@ -279,7 +279,7 @@ class Address extends Component {
                   })
                 }}
               >
-                <Text style={styles.textBtn}>{t('pickUpTheStore')}</Text>
+                <Text style={styles.textBtn}>{t('pickUpAtTheStore')}</Text>
               </TouchableOpacity>
             </View>}
           {!single && (
