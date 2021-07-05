@@ -20,6 +20,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PRODUCT_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
+import {debounce} from 'lodash';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -60,16 +61,20 @@ class ProductItem extends PureComponent {
     return product.product_type === PRODUCT_TYPES.SERVICE;
   }
 
-  handlePress = () => {
-    if (!!this.props.selfRequest) {
-      this.setState({
-        loading: true,
-      });
-      this.handleSelfRequest();
-    } else {
-      this.props.onPress();
-    }
-  };
+  handlePress = debounce(
+    () => {
+      if (!!this.props.selfRequest) {
+        this.setState({
+          loading: true,
+        });
+        this.handleSelfRequest();
+      } else {
+        this.props.onPress();
+      }
+    },
+    500,
+    {leading: true, trailing: false},
+  );
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
