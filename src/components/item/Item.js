@@ -934,11 +934,9 @@ class Item extends Component {
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
               {!!item.commission_value && 
-                <View style={styles.commission}>
-                    <Text style={styles.commissionText}>
-                      {item.commission_value_view}
-                    </Text>
-                </View>
+                  <Text style={styles.commissionText}>
+                    {item.commission_value_view}
+                  </Text>
               }
 
               <View style={styles.item_heading_price_box}>
@@ -1304,12 +1302,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     ...appConfig.styles.typography.heading1,
   },
-  commission: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
   commissionText: {
     fontSize: 16,
+    marginBottom: 10,
     color: appConfig.colors.primary,
   },
   item_heading_price_box: {

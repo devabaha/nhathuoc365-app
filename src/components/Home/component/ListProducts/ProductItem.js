@@ -121,11 +121,9 @@ class ProductItem extends PureComponent {
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
                     {!!this.props.item.commission_value && 
-                      <View style={styles.commission}>
-                          <Text style={styles.commissionText} numberOfLines={1}>
-                            {this.props.item.commission_value_view}
-                          </Text>
-                      </View>
+                        <Text style={styles.commissionText} numberOfLines={1}>
+                          {this.props.item.commission_value_view}
+                        </Text>
                     }
 
                     <View
@@ -226,9 +224,6 @@ let styles = StyleSheet.create({
   },
   priceContainer: {
     flex: 1,
-  },
-  commission: {
-    flexDirection: 'row',
   },
   commissionText: {
     color: appConfig.colors.primary,
