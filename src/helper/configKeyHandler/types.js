@@ -23,4 +23,6 @@ export const CONFIG_KEY = {
   ABOUT_US_ID: 'about_us_id',
 
   TERMS_OF_USE_ID: 'terms_of_use_id',
+
+  SITE_CONTENT_KEY: 'site_content_key',
 };

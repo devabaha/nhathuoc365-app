@@ -36,6 +36,7 @@ import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 class Account extends Component {
   constructor(props) {
@@ -988,6 +989,7 @@ class Account extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
+          contentContainerStyle={styles.contentContainer}
           ref={(ref) => (this.refs_account = ref)}
           refreshControl={
             <RefreshControl
@@ -1159,12 +1161,17 @@ class Account extends Component {
           {this.options && (
             <SelectionList
               useList={false}
-              containerStyle={{
-                paddingVertical: 8,
-                marginBottom: 10,
-              }}
+              containerStyle={styles.listOptionsContainer}
               data={this.options}
             />
+          )}
+
+          {!!getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY) && (
+            <View style={styles.site_certificate_content}>
+              <CustomAutoHeightWebview
+                content={getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY)}
+              />
+            </View>
           )}
         </ScrollView>
 
@@ -1180,6 +1187,9 @@ class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    marginBottom: 10,
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
@@ -1443,6 +1453,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     elevation: 4,
+  },
+  site_certificate_content: {
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  listOptionsContainer: {
+    paddingVertical: 8,
   },
 });
 
