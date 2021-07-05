@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import appConfig from 'app-config';
 
@@ -8,22 +8,29 @@ import AutoHeightWebView from 'react-native-autoheight-webview';
 const styles = StyleSheet.create({
   webview: {
     width: appConfig.device.width - 30,
+    paddingTop: 30,
   },
 });
 
 class CustomAutoHeightWebview extends Component {
+  static defaultProps = {
+    zoomable: false,
+    scrollEnabled: false,
+  };
+
   render() {
     return (
-      <AutoHeightWebView
-        onShouldStartLoadWithRequest={(result) => {
-          return true;
-        }}
-        style={styles.webview}
-        // onHeightUpdated={(height) => this.setState({height})}
-        source={{html: this.props.content}}
-        zoomable={false}
-        scrollEnabled={false}
-        customStyle={`
+      <View style={this.props.containerStyle}>
+        <AutoHeightWebView
+          onShouldStartLoadWithRequest={(result) => {
+            return true;
+          }}
+          style={styles.webview}
+          // onHeightUpdated={(height) => this.setState({height})}
+          source={{html: this.props.content}}
+          zoomable={this.props.zoomable}
+          scrollEnabled={this.props.scrollEnabled}
+          customStyle={`
                   * {
                     font-family: 'arial';
                   }
@@ -40,7 +47,8 @@ class CustomAutoHeightWebview extends Component {
                     max-width: 100% !important;
                     height: auto !important;
                   }`}
-      />
+        />
+      </View>
     );
   }
 }

@@ -1167,11 +1167,10 @@ class Account extends Component {
           )}
 
           {!!getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY) && (
-            <View style={styles.site_certificate_content}>
-              <CustomAutoHeightWebview
-                content={getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY)}
-              />
-            </View>
+            <CustomAutoHeightWebview
+              content={getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY)}
+              containerStyle={styles.certificateSiteContent}
+            />
           )}
         </ScrollView>
 
@@ -1454,9 +1453,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     elevation: 4,
   },
-  site_certificate_content: {
+  certificateSiteContent: {
     padding: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
   listOptionsContainer: {
     paddingVertical: 8,
