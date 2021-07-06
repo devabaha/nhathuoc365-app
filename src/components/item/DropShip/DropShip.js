@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, TextInput} from 'react-native';
 import NumberSelection from 'src/components/stores/NumberSelection';
 import Container from '../../Layout/Container';
 import appConfig from 'app-config';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 
 const styles = StyleSheet.create({
   disabled: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   quantityLabel: {
-    flex: undefined
+    flex: undefined,
   },
   quantityWrapper: {
     flex: 1,
@@ -53,12 +54,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   newPriceContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#d9d9d9',
     paddingVertical: 5,
     paddingLeft: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  newPriceTypingContainer: {
+    borderBottomWidth: 0.5,
+    borderColor: '#d9d9d9',
   },
   newPriceInput: {
     minWidth: 113,
@@ -86,6 +89,7 @@ const DropShip = ({
   priceView,
   currency = 'đ',
   quantity,
+  listPrice,
   onChangeQuantity = () => {},
   onChangeNewPrice = () => {},
   onMinus = () => {},
@@ -97,11 +101,19 @@ const DropShip = ({
     return numberFormat(originPrice);
   };
 
+  const isFixDropShipPrice = () =>
+    isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY);
+
+  const getNewPrice = () => {
+    return isFixDropShipPrice() ? listPrice : newPrice;
+  };
+
   const calculateOriginGrossProfit = () => {
     let grossProfit = 0;
 
     try {
-      grossProfit = Number(quantity) * (Number(newPrice) - Number(price)) || 0;
+      grossProfit =
+        Number(quantity) * (Number(getNewPrice()) - Number(price)) || 0;
     } catch (err) {
       console.log('calculate_gross_profit', err);
     }
@@ -127,9 +139,26 @@ const DropShip = ({
 
   const totalProfitValidateStyle = {
     color:
-      newPrice < price
+      getNewPrice() < price
         ? appConfig.colors.status.danger
         : appConfig.colors.status.success,
+  };
+
+  const renderNewPrice = () => {
+    return isFixDropShipPrice() ? (
+      <Text
+        style={[styles.price, styles.newPriceInput, totalProfitValidateStyle]}>
+        {priceFormatter(listPrice)}
+      </Text>
+    ) : (
+      <TextInput
+        style={[styles.price, styles.newPriceInput, totalProfitValidateStyle]}
+        keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
+        onChangeText={handleChangePrice}
+        value={priceFormatter(newPriceView)}
+        editable={!disabled}
+      />
+    );
   };
 
   return (
@@ -164,18 +193,13 @@ const DropShip = ({
           <Text style={styles.note}>* Phải cao hơn hoặc bằng giá bán</Text>
         </View>
 
-        <View style={[styles.value, styles.newPriceContainer]}>
-          <TextInput
-            style={[
-              styles.price,
-              styles.newPriceInput,
-              totalProfitValidateStyle,
-            ]}
-            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-            onChangeText={handleChangePrice}
-            value={priceFormatter(newPriceView)}
-            editable={!disabled}
-          />
+        <View
+          style={[
+            styles.value,
+            styles.newPriceContainer,
+            !isFixDropShipPrice() && styles.newPriceTypingContainer,
+          ]}>
+          {renderNewPrice()}
           <Text
             style={[
               styles.price,

@@ -64,6 +64,18 @@ class ItemAttribute extends PureComponent {
     return Array.isArray(this.state.models) && this.state.models.length > 0;
   }
 
+  get listPrice() {
+    return this.state.models?.length
+      ? this.state.selectedModel?.price_before_discount || 0
+      : this.state?.product?.discount;
+  }
+
+  get dropShipPrice() {
+    return this.props.isDropShip && isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
+      ? this.listPrice
+      : this.state.dropShipPrice;
+  }
+
   componentDidMount() {
     this.getAttrs();
     this.eventTracker.logCurrentView();
@@ -82,7 +94,7 @@ class ItemAttribute extends PureComponent {
         store.store_data.id,
         this.props.itemId,
       );
-
+      console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           if (response.data) {
@@ -332,7 +344,7 @@ class ItemAttribute extends PureComponent {
     this.props.onSubmit(
       this.state.quantity,
       this.state.selectedModelKey,
-      this.state.dropShipPrice,
+      this.dropShipPrice,
     );
     this.handleClose();
   };
@@ -364,10 +376,11 @@ class ItemAttribute extends PureComponent {
     const numberSelectedAttrs = this.getNumberSelectedAttrs(
       this.state.selectedAttrs,
     );
+
     const disabled =
       (this.isDropShip &&
         this.state.selectedModel &&
-        this.state.selectedModel.price_in_number > this.state.dropShipPrice) ||
+        this.state.selectedModel.price_in_number > this.dropShipPrice) ||
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
@@ -516,6 +529,7 @@ class ItemAttribute extends PureComponent {
                   quantity={this.state.quantity}
                   min={MIN_QUANTITY}
                   max={maxQuantity}
+                  listPrice={this.listPrice}
                   onChangeNewPrice={(dropShipPrice) => {
                     this.setState({dropShipPrice});
                   }}
@@ -656,7 +670,7 @@ const styles = StyleSheet.create({
   description: {
     color: '#888',
     fontSize: 14,
-    fontWeight: '400'
+    fontWeight: '400',
   },
   note: {
     color: '#888',
