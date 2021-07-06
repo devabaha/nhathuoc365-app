@@ -446,6 +446,7 @@ class Home extends Component {
                 itemsPerRow={this.props.listServiceItemsPerRow}
                 onItemPress={this.props.onPressService}
                 containerStyle={styles.servicesBlock}
+                contentContainerStyle={styles.servicesContent}
               />
             ) : this.props.apiFetching ? (
               <ListServiceSkeleton />
@@ -659,6 +660,10 @@ let styles = StyleSheet.create({
 
   servicesBlock: {
     paddingBottom: 10,
+    marginTop: -20
+  },
+  servicesContent: {
+    paddingTop: 20,
   },
   promotionBlock: {
     marginTop: 10,

@@ -933,6 +933,12 @@ class Item extends Component {
               </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
+              {!!item.commission_value && 
+                  <Text style={styles.commissionText}>
+                    {item.commission_value_view}
+                  </Text>
+              }
+
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
@@ -1270,6 +1276,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 15,
     ...appConfig.styles.typography.heading1,
+  },
+  commissionText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: appConfig.colors.primary,
   },
   item_heading_price_box: {
     // marginTop: 15,

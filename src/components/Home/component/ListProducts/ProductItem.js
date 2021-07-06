@@ -39,6 +39,7 @@ class ProductItem extends PureComponent {
     onPress: PropTypes.func,
     last: PropTypes.bool,
     horizontal: PropTypes.bool,
+    item: PropTypes.object,
   };
 
   static defaultProps = {
@@ -124,6 +125,12 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
+                    {!!this.props.item.commission_value && 
+                        <Text style={styles.commissionText} numberOfLines={1}>
+                          {this.props.item.commission_value_view}
+                        </Text>
+                    }
+
                     <View
                       style={{
                         flexDirection: 'row',
@@ -147,22 +154,24 @@ class ProductItem extends PureComponent {
                       <TouchableOpacity
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}>
-                        {this.state.buying ? (
-                          <View
-                            style={{
-                              width: 20,
-                              height: 20,
-                            }}>
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          {this.state.buying ? (
                             <Indicator size="small" />
-                          </View>
-                        ) : this.isServiceProduct(item) ? (
-                          <Icon name="calendar-plus-o" style={styles.icon} />
-                        ) : (
-                          <MaterialIcons
-                            name="add-shopping-cart"
-                            style={styles.icon}
-                          />
-                        )}
+                          ) : this.isServiceProduct(item) ? (
+                            <Icon name="calendar-plus-o" style={styles.icon} />
+                          ) : (
+                            <MaterialIcons
+                              name="add-shopping-cart"
+                              style={styles.icon}
+                            />
+                          )}
+                        </View>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -223,7 +232,11 @@ let styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
+  commissionText: {
+    color: appConfig.colors.primary,
+  },
   discount: {
+    marginTop: 4,
     ...appConfig.styles.typography.secondary,
   },
   priceBox: {
