@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - social_posts in Home.
-- Add Site Certificate Content in Account screen by [kienluu612@gmail.com].
+- site_content_key in Account screen by [kienluu612@gmail.com].
 ### Fixed
 - Fix UX for ProductItem: prevent multiple taps at a product by [kienluu612@gmail.com].
 
