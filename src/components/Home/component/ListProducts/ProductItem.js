@@ -39,6 +39,7 @@ class ProductItem extends PureComponent {
     onPress: PropTypes.func,
     last: PropTypes.bool,
     horizontal: PropTypes.bool,
+    item: PropTypes.object,
   };
 
   static defaultProps = {
@@ -124,6 +125,12 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
+                    {!!this.props.item.commission_value && 
+                        <Text style={styles.commissionText} numberOfLines={1}>
+                          {this.props.item.commission_value_view}
+                        </Text>
+                    }
+
                     <View
                       style={{
                         flexDirection: 'row',
@@ -225,7 +232,11 @@ let styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
+  commissionText: {
+    color: appConfig.colors.primary,
+  },
   discount: {
+    marginTop: 4,
     ...appConfig.styles.typography.secondary,
   },
   priceBox: {

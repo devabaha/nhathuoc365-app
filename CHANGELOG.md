@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - social_posts in Home.
+- Add commission value for ProductItem and Item by [nguyenanhtuan191298@gmail.com].
 ### Changed
 - Logic of dropShipPrice will be depended on fix_dropship_price_key.
 ### Fixed
