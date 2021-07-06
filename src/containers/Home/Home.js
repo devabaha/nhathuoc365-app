@@ -297,12 +297,16 @@ class Home extends Component {
   productOpening;
 
   handlePressProduct = (product, callBack) => {
-    const service = {
-      type: SERVICES_TYPE.PRODUCT_DETAIL,
-      siteId: product.site_id,
-      productId: product.id,
-    };
-    servicesHandler(service, this.props.t, callBack);
+    // const service = {
+    //   type: SERVICES_TYPE.PRODUCT_DETAIL,
+    //   siteId: product.site_id,
+    //   productId: product.id,
+    // };
+    // servicesHandler(service, this.props.t, callBack);
+    Actions.push(appConfig.routes.item, {
+      title: product.name,
+      item: product,
+    });
   };
 
   goToSearch = () => {
