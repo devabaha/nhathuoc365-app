@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - social_posts in Home.
+### Changed
+- Logic of dropShipPrice will be depended on fix_dropship_price_key.
 ### Fixed
 - Fix UX for ProductItem: prevent multiple taps at a product by [kienluu612@gmail.com].
+- Clip NotiBadge in ListService.
 
 ## [r12.0.2] - 2021-06-30
 ### Added
