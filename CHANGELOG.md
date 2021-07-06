@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.0.3] - 2021-07-06
 ### Added
 - social_posts in Home.
 - site_content_key in Account screen by [kienluu612@gmail.com].
