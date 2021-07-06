@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5
   },
   contentWrapper: {
-    marginTop: 8,
     marginBottom: 8
   },
   getVoucherWrapper: {
