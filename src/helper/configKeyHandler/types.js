@@ -24,5 +24,7 @@ export const CONFIG_KEY = {
 
   TERMS_OF_USE_ID: 'terms_of_use_id',
 
+  SITE_CONTENT_KEY: 'site_content_key',
+  
   FIX_DROPSHIP_PRICE_KEY:  'fix_dropship_price_key'
 };
