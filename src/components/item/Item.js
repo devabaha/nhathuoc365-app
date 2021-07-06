@@ -774,12 +774,6 @@ class Item extends Component {
   renderSubActionBtnIcon(product) {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : this.isServiceProduct(product) ? (
-      <Icon
-        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
-        size={20}
-        color={this.subActionColor}
-      />
     ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
       <MaterialCommunityIcons
         name="truck-fast"
@@ -787,7 +781,11 @@ class Item extends Component {
         color={this.subActionColor}
       />
     ) : (
-      <Icon name="heart" size={20} color={this.subActionColor} />
+      <Icon
+        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
+        size={20}
+        color={this.subActionColor}
+      />
     );
   }
 
@@ -933,11 +931,11 @@ class Item extends Component {
               </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
-              {!!item.commission_value && 
-                  <Text style={styles.commissionText}>
-                    {item.commission_value_view}
-                  </Text>
-              }
+              {!!item.commission_value && (
+                <Text style={styles.commissionText}>
+                  {item.commission_value_view}
+                </Text>
+              )}
 
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
