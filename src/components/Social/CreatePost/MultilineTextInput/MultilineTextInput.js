@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 15,
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
   },
   inputClone: {
     position: 'absolute',
@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
 const MultilineTextInput = ({
   editable,
   value,
+  style,
   autoFocus = true,
   onChangeText = () => {},
   onContentLayout = () => {},
@@ -86,7 +87,7 @@ const MultilineTextInput = ({
   return (
     <>
       <TextInput
-        style={styles.input}
+        style={[styles.input, style]}
         placeholder={t('pleasePost')}
         multiline
         scrollEnabled={false}

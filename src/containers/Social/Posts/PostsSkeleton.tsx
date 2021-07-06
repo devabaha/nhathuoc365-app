@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import Shimmer from 'react-native-shimmer';
 import {SKELETON_COLOR} from 'src/components/SkeletonLoading/constants';
 import appConfig from 'app-config';
@@ -9,8 +9,7 @@ const styles = StyleSheet.create({
   container: {
     width: appConfig.device.width,
   },
-  contentContainer: {
-  },
+  contentContainer: {},
 
   itemContainer: {
     backgroundColor: SKELETON_COLOR,
@@ -86,11 +85,9 @@ const PostsSkeleton = () => {
   return (
     <Shimmer>
       <Text>
-        <ScrollView
-          contentContainerStyle={styles.contentContainer}
-          style={styles.container}>
+        <View style={styles.container}>
           {Array.from({length: ITEM_LENGTH}).map(renderItem)}
-        </ScrollView>
+        </View>
       </Text>
     </Shimmer>
   );

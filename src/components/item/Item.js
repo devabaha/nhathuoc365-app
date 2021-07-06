@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
-import AutoHeightWebView from 'react-native-autoheight-webview';
 import store from '../../store/Store';
 import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
@@ -40,6 +39,7 @@ import Shimmer from 'react-native-shimmer';
 import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -933,6 +933,12 @@ class Item extends Component {
               </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
+              {!!item.commission_value && 
+                  <Text style={styles.commissionText}>
+                    {item.commission_value_view}
+                  </Text>
+              }
+
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
@@ -1100,35 +1106,10 @@ class Item extends Component {
             )}
 
             {!!item?.content && (
-              <View style={[styles.block, styles.item_content_text]}>
-                <AutoHeightWebView
-                  onShouldStartLoadWithRequest={(result) => {
-                    return true;
-                  }}
-                  style={styles.webview}
-                  onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item.content}}
-                  zoomable={false}
-                  scrollEnabled={false}
-                  customStyle={`
-                  * {
-                    font-family: 'arial';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
-                    font-size: 14px;
-                    line-height: 24px
-                  }
-                  img {
-                    max-width: 100% !important;
-                    height: auto !important;
-                  }`}
-                />
-              </View>
+              <CustomAutoHeightWebview
+                containerStyle={[styles.block, styles.item_content_text]}
+                content={item.content}
+              />
             )}
 
             <View style={styles.extraInfo}>
@@ -1295,6 +1276,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 15,
     ...appConfig.styles.typography.heading1,
+  },
+  commissionText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: appConfig.colors.primary,
   },
   item_heading_price_box: {
     // marginTop: 15,
@@ -1466,9 +1452,6 @@ const styles = StyleSheet.create({
   },
   iconSwipeControlRight: {
     left: 2,
-  },
-  webview: {
-    width: appConfig.device.width - 30,
   },
   noImageContainer: {
     justifyContent: 'center',

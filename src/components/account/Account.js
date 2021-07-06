@@ -36,6 +36,7 @@ import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 class Account extends Component {
   constructor(props) {
@@ -984,10 +985,12 @@ class Account extends Component {
       store.user_info != null && store.user_info.username != null;
     const {avatar_loading, logout_loading} = this.state;
     const {t} = this.props;
+    const siteContentValue = getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY);
 
     return (
       <View style={styles.container}>
         <ScrollView
+          contentContainerStyle={styles.contentContainer}
           ref={(ref) => (this.refs_account = ref)}
           refreshControl={
             <RefreshControl
@@ -1159,11 +1162,15 @@ class Account extends Component {
           {this.options && (
             <SelectionList
               useList={false}
-              containerStyle={{
-                paddingVertical: 8,
-                marginBottom: 10,
-              }}
+              containerStyle={styles.listOptionsContainer}
               data={this.options}
+            />
+          )}
+
+          {!!siteContentValue && (
+            <CustomAutoHeightWebview
+              content={siteContentValue}
+              containerStyle={styles.footerSiteContainer}
             />
           )}
         </ScrollView>
@@ -1180,6 +1187,9 @@ class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    marginBottom: 10,
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
@@ -1443,6 +1453,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     elevation: 4,
+  },
+  footerSiteContainer: {
+    padding: 12,
+    marginBottom: 10,
+    borderColor: appConfig.colors.primary,
+    borderTopWidth: 3,
+    backgroundColor: '#ffffff',
+  },
+  listOptionsContainer: {
+    paddingVertical: 8,
   },
 });
 
