@@ -8,7 +8,6 @@ import AutoHeightWebView from 'react-native-autoheight-webview';
 const styles = StyleSheet.create({
   webview: {
     width: appConfig.device.width - 30,
-    paddingTop: 30,
   },
 });
 
@@ -25,28 +24,29 @@ class CustomAutoHeightWebview extends Component {
           onShouldStartLoadWithRequest={(result) => {
             return true;
           }}
-          style={styles.webview}
+          style={[styles.webview, this.props.contentStyle]}
           // onHeightUpdated={(height) => this.setState({height})}
           source={{html: this.props.content}}
           zoomable={this.props.zoomable}
           scrollEnabled={this.props.scrollEnabled}
+          viewportContent={'width=device-width, user-scalable=no'}
           customStyle={`
-                  * {
-                    font-family: 'arial';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
-                    font-size: 14px;
-                    line-height: 24px
-                  }
-                  img {
-                    max-width: 100% !important;
-                    height: auto !important;
-                  }`}
+          * {
+            font-family: 'arial';
+          }
+          a {
+            pointer-events:none;
+            text-decoration: none !important;
+            color: #404040 !important;
+          }
+          p {
+            font-size: 14px;
+            line-height: 24px
+          }
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+          }`+ this.props.customStyle}
         />
       </View>
     );
