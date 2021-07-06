@@ -990,7 +990,6 @@ class Account extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-          contentContainerStyle={styles.contentContainer}
           ref={(ref) => (this.refs_account = ref)}
           refreshControl={
             <RefreshControl
@@ -1187,9 +1186,6 @@ class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    marginBottom: 10,
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
@@ -1456,7 +1452,6 @@ const styles = StyleSheet.create({
   },
   footerSiteContainer: {
     padding: 12,
-    marginBottom: 10,
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
