@@ -1170,6 +1170,7 @@ class Account extends Component {
             <CustomAutoHeightWebview
               content={siteContentValue}
               containerStyle={styles.footerSiteContainer}
+              contentStyle={styles.footerSiteContent}
             />
           )}
         </ScrollView>
@@ -1451,10 +1452,14 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   footerSiteContainer: {
-    padding: 12,
+    paddingVertical: 12,
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
+    alignItems:'center',
+  },
+  footerSiteContent:{
+    width: appConfig.device.width - 24,
   },
   listOptionsContainer: {
     paddingVertical: 8,
