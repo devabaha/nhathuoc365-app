@@ -64,6 +64,13 @@ class ItemAttribute extends PureComponent {
     return Array.isArray(this.state.models) && this.state.models.length > 0;
   }
 
+  get isDiscount() {
+    return this.state.models?.length
+      ? this.state.selectedModel?.price_before_discount !==
+          this.state.selectedModel?.price
+      : this.state.product?.discount_percent;
+  }
+
   get listPrice() {
     return this.state.models?.length
       ? this.state.selectedModel?.price_before_discount || 0
@@ -71,7 +78,8 @@ class ItemAttribute extends PureComponent {
   }
 
   get dropShipPrice() {
-    return this.props.isDropShip && isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
+    return this.props.isDropShip &&
+      isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
       ? this.listPrice
       : this.state.dropShipPrice;
   }
@@ -398,6 +406,10 @@ class ItemAttribute extends PureComponent {
       this.state.models.length !== 0 &&
       !Object.keys(this.state.selectedModel).length;
 
+    const originPrice = this.state.models?.length
+      ? this.state.selectedModel?.price_before_discount_view
+      : this.state.product?.discount_view;
+
     const priceDropShip =
       this.state.models.length !== 0
         ? this.state.selectedModel.price_in_number
@@ -486,6 +498,11 @@ class ItemAttribute extends PureComponent {
                     </Text>
                   </View>
                   <View>
+                    {this.isDiscount && !!originPrice && (
+                      <Text style={[styles.note, styles.deleteText]}>
+                        {originPrice}
+                      </Text>
+                    )}
                     <Text style={styles.highlight}>
                       {price}
                       {!!unitName && (
@@ -675,6 +692,11 @@ const styles = StyleSheet.create({
   note: {
     color: '#888',
     fontSize: 14,
+  },
+  deleteText: {
+    textDecorationLine: 'line-through',
+    marginTop: 4,
+    marginBottom: appConfig.device.isIOS ? 2 : 0,
   },
   separate: {
     height: 0.5,
