@@ -144,7 +144,7 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
     const [latitude, setLatitude] = useState();
     const [listStore, setListStore] = useState([]);
 
-    const errContent = 'Vui lòng cho phép truy cập vị trí để hiển hị cửa hàng theo thứ tự gần nhất!';
+    const errContent = 'Vui lòng cho phép truy cập vị trí để hiển thị cửa hàng theo thứ tự gần nhất!';
 
     useEffect(() => {
         didMount();
@@ -154,7 +154,6 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
     const didMount = () => {
         AppState.addEventListener('change', handleAppStateChange);
         requestLocationPermission();
-        getListAddressStore();
     };
 
     const unMount = () => {
@@ -226,7 +225,7 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
         const config = {
             timeout,
             enableHighAccuracy: appConfig.device.isIOS,
-            distanceFilter: 1,
+            distanceFilter: 10,
         };
         Geolocation.clearWatch(watchID.current);
         watchID.current = Geolocation.watchPosition(
@@ -285,25 +284,25 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
         onChangeAddress(item.id)
     }
 
-    const renderListAddress = ({ item: item }) => {
+    const renderListAddress = ({ item: store, index }) => {
 
         let isSelected = false
-        if (item.id == addressId) {
+        if (store.id == addressId) {
             isSelected = true;
         }
 
         return (
-            <TouchableOpacity style={styles.storeContainer}
-                onPress={() => addressSelectHandler(item)}>
+            <TouchableOpacity key={index} style={styles.storeContainer}
+                onPress={() => addressSelectHandler(store)}>
 
                 <Container flexDirection={'row'} flex={2} centerVertical={false} style={styles.infoContainer}>
                     <Container flex={1.8} centerVertical={false}>
-                        <Text style={styles.title}>{item.name}</Text>
-                        <Text style={styles.description}>{item.tel}</Text>
-                        <Text style={styles.description}>{item.address}</Text>
+                        <Text style={styles.title}>{store.name}</Text>
+                        <Text style={styles.description}>{store.tel}</Text>
+                        <Text style={styles.description}>{store.address}</Text>
                     </Container>
 
-                    {isSelected && <Container alignItems={'flex-end'} marginTop={22} centerVertical={false}  >
+                    {isSelected && <Container alignItems={'flex-end'} marginTop={22} centerVertical={false}>
                         <Icon
                             name="check"
                             size={24}
@@ -317,23 +316,7 @@ const ListAddressStore = ({ onChangeAddress = () => { }, addressId }) => {
     };
 
     return (
-        <ScreenWrapper>
-            {isLoading && <Loading center />}
-            <FlatList
-                data={listStore}
-                contentContainerStyle={{ flexGrow: 1 }}
-                renderItem={renderListAddress}
-                keyExtractor={(item, index) => index.toString()}
-                ListEmptyComponent={!isLoading &&
-                    <View style={styles.containerEmptyText}>
-                        <Text style={styles.emptyText}>Không có cửa hàng</Text>
-                    </View>
-                }
-                refreshControl={
-                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-                }
-            />
-        </ScreenWrapper>
+        listStore.map((store, index) => renderListAddress({item: store, index}))
     );
 };
 

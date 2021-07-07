@@ -8,6 +8,8 @@ import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
 import {CART_TYPES} from 'src/constants/cart';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -101,6 +103,13 @@ class OrdersItemComponent extends Component {
         data: item,
         from_page: 'orders_item',
       });
+    } else if (!!getValueFromConfigKey(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+      Actions.push(appConfig.routes.myAddress, {
+        goConfirm: true,
+        data: item,
+        from_page: 'orders_item',
+        take_orders_at_the_store_key: true,
+      })
     } else {
       Actions.create_address({
         redirect: 'confirm',

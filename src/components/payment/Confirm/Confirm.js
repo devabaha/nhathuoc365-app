@@ -508,7 +508,7 @@ class Confirm extends Component {
 
     Actions.push(appConfig.routes.myAddress, {
       type: ActionConst.REPLACE,
-      isVisiblePickUp: true,
+      take_orders_at_the_store_key: true,
       addressId: store.cart_data?.address?.id
       // onBack
     });

@@ -33,6 +33,8 @@ import {
   CART_ITEM_WHITE_SPACE,
   CART_ITEM_WIDTH,
 } from './constants';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 
 class CartFooter extends Component {
   static defaultProps = {
@@ -449,6 +451,13 @@ class CartFooter extends Component {
         Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true,
         });
+      } else if (!!getValueFromConfigKey(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+        Actions.push(appConfig.routes.myAddress, {
+          goConfirm: true,
+          data: store.cart_data,
+          from_page: 'orders_item',
+          take_orders_at_the_store_key: true,
+        })
       } else {
         Actions.create_address({
           redirect: 'confirm',
