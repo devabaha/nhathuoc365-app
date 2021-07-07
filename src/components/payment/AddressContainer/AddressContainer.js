@@ -1,28 +1,43 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
-  wrapperStyle: {
-    flex: 1,
+  container: {
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
   },
-  containerStyle: {
-    flex: 1,
+  titleContainer: {
+    padding: 15,
+    backgroundColor: appConfig.colors.primary,
+    backgroundColor: "#FFF",
+    borderBottomWidth: 2,
+    borderColor: appConfig.colors.primary,
+    borderColor: '#eee'
   },
-  content:{
-      margin: 8,
-      color: '#404040',
-      fontSize: 16,
-      fontWeight: '400',
-  }
+  title: {
+    color: appConfig.colors.primary,
+    fontWeight: 'bold',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    textAlign: 'right',
+    fontStyle: 'italic',
+  },
 });
 
-const AddressContainer = (props) => {
+const AddressContainer = ({
+  title,
+  containerStyle,
+  titleContainerStyle,
+  children,
+}) => {
   return (
-    <View style={[styles.wrapperStyle, props.containerStyle]}>
-          <View style={[styles.containerStyle,props.styleContainerTitle]}>
-              <Text style={styles.content}>{props.title}</Text>
-          </View>
-        {props.children}
+    <View style={[styles.container, containerStyle]}>
+      <View style={[styles.titleContainer, titleContainerStyle]}>
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      {children}
     </View>
   );
 };

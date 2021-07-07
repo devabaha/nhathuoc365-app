@@ -359,7 +359,7 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Danh sách địa chỉ cửa hàng 
    */
-    site_address(data, site_id) {
+    site_address(site_id, data) {
     var api = url_for(API.SITE_ADDRESS + '/' + site_id);
     return this.postCancelableAPI(api, data);
   }
