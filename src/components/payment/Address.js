@@ -15,6 +15,8 @@ import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from 'src/network/Entity';
+import ListAddressStore from 'src/containers/ListAddressStore';
+import AddressItem from './AddressItem';
 
 class Address extends Component {
   constructor(props) {
@@ -23,17 +25,23 @@ class Address extends Component {
     this.state = {
       refreshing: false,
       data: null,
-      item_selected: null,
+      item_selected: this.defaultSelectedAddressId,
       loading: true,
       continue_loading: false,
       single: !props.from_page,
     };
-     
+
     this._getData = this._getData.bind(this);
     this.unmounted = false;
     this.getAddressRequest = new APIRequest();
     this.requests = [this.getAddressRequest];
     this.eventTracker = new EventTracker();
+  }
+
+  get defaultSelectedAddressId() {
+    return store.cart_data && store.cart_data.address_id != 0
+      ? store.cart_data.address_id
+      : null;
   }
 
   componentDidMount() {
@@ -58,7 +66,7 @@ class Address extends Component {
     return (
       <TouchableOpacity
         style={styles.right_btn_add_store}
-        activeOpacity={.7}
+        activeOpacity={0.7}
         onPress={this._createNew.bind(this)}>
         <Icon name="plus" size={20} color="#ffffff" />
       </TouchableOpacity>
@@ -76,7 +84,7 @@ class Address extends Component {
             this.setState({
               data: [...response.data, {id: 0, type: 'address_add'}],
               loading: false,
-              item_selected: null,
+              item_selected: this.defaultSelectedAddressId,
             });
           }, delay || 0);
         } else {
@@ -132,7 +140,6 @@ class Address extends Component {
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-
               flashShowMessage({
                 type: 'success',
                 message: response.message,
@@ -168,11 +175,23 @@ class Address extends Component {
   }
 
   // chọn địa chỉ cho đơn hàng
-  _addressSelectHanlder(item) {
+  _addressSelectHandler(item) {
     this.setState({
       item_selected: item.id,
     });
   }
+
+  handleEditAddress = (address) => {
+    const {t} = this.props;
+    Actions.create_address({
+      edit_data: address,
+      title: t('common:screen.address.editTitle'),
+      addressReload: this._getData,
+      from_page: this.props.from_page,
+    });
+  };
+
+  checkAddressSelected = (address) => {};
 
   _createNew() {
     Actions.create_address({
@@ -186,10 +205,12 @@ class Address extends Component {
     this._getData();
   };
 
-  onChangeAddress = (addressId) => {
-    this._addSiteCart(addressId);
-    Actions.pop();
-  }
+  // onChangeAddress = (addressId) => {
+  //   // this._addSiteCart(addressId);
+  //   // Actions.pop();
+  //   this.state.item_selected = addressId;
+  //   // this._goConfirmPage()
+  // };
 
   render() {
     const {single} = this.state;
@@ -199,7 +220,7 @@ class Address extends Component {
       <View style={styles.container}>
         {single && (
           <View style={styles.payments_nav}>
-            <TouchableOpacity onPress={() => {}} activeOpacity={.7}>
+            <TouchableOpacity onPress={() => {}} activeOpacity={0.7}>
               <View style={styles.payments_nav_items}>
                 <View
                   style={[
@@ -236,7 +257,7 @@ class Address extends Component {
                   this._goConfirm();
                 }
               }}
-              activeOpacity={.7}>
+              activeOpacity={0.7}>
               <View style={styles.payments_nav_items}>
                 <View style={[styles.payments_nav_icon_box]}>
                   <Icon
@@ -269,19 +290,19 @@ class Address extends Component {
               onRefresh={this.onRefresh}
             />
           }>
-          {this.props.isVisiblePickUp &&
+          {/* {this.props.isVisiblePickUp && (
             <View style={styles.pickUpStyle}>
               <TouchableOpacity
                 onPress={() => {
                   Actions.push(appConfig.routes.listAddressStore, {
                     onChangeAddress: this.onChangeAddress,
-                    addressId: this.props.addressId
-                  })
-                }}
-              >
+                    addressId: this.props.addressId,
+                  });
+                }}>
                 <Text style={styles.textBtn}>{t('pickUpAtTheStore')}</Text>
               </TouchableOpacity>
-            </View>}
+            </View>
+          )} */}
           {!single && (
             <View
               style={{
@@ -316,7 +337,7 @@ class Address extends Component {
                   return (
                     <TouchableOpacity
                       key={index}
-                      activeOpacity={.7}
+                      activeOpacity={0.7}
                       onPress={this._createNew.bind(this)}
                       style={styles.address_add_box}>
                       <View style={styles.address_add_content}>
@@ -331,8 +352,7 @@ class Address extends Component {
                   );
                 }
 
-                var is_selected = false;
-
+                let is_selected = false;
                 if (this.state.item_selected) {
                   if (this.state.item_selected == item.id) {
                     is_selected = true;
@@ -347,137 +367,149 @@ class Address extends Component {
                   is_selected = true;
                 }
 
-                const comboAddress =
-                  (item.province_name || '') +
-                  (item.district_name ? ' • ' + item.district_name : '') +
-                  (item.ward_name ? ' • ' + item.ward_name : '');
-
                 return (
-                  <TouchableOpacity
-                    key={index}
-                    activeOpacity={.7}
-                    onPress={this._addressSelectHanlder.bind(this, item)}
-                    style={{backgroundColor: '#fff'}}>
-                    <View
-                      style={[
-                        styles.address_box,
-                        !is_selected && single && styles.uncheckOverlay,
-                      ]}>
-                      <View style={styles.address_name_box}>
-                        <Text style={styles.address_name}>
-                          {item.name}{' '}
-                          {item.default_flag == 1 && (
-                            <Icon
-                              name="map-marker"
-                              style={styles.address_edit_btn}
-                            />
-                          )}
-                        </Text>
-                        <TouchableOpacity
-                          activeOpacity={.7}
-                          onPress={() => {
-                            Actions.create_address({
-                              edit_data: item,
-                              title: t('common:screen.address.editTitle'),
-                              addressReload: this._getData,
-                              from_page: this.props.from_page,
-                            });
-                          }}>
-                          <View style={styles.address_edit_box}>
-                            <Icon
-                              name="pencil-square-o"
-                              size={12}
-                              color="#999999"
-                            />
-                            <Text style={styles.address_edit_label}>
-                              {t('address.edit')}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                      <View style={styles.address_name_box}>
-                        <View style={styles.address_content}>
-                          <Text style={styles.address_content_phone}>
-                            {item.tel}
-                          </Text>
-                          <Text style={styles.address_content_address_detail}>
-                            {item.address}
-                          </Text>
-                          {!!item.map_address && (
-                            <Text style={styles.address_content_map_address}>
-                              {item.map_address}
-                            </Text>
-                          )}
-                          {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                          <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
-                        </View>
-
-                        {single && (
-                          <View style={[styles.address_selected_box, {opacity: is_selected ?1:0}]}>
-                            <Icon
-                              name="check"
-                              size={24}
-                              color={DEFAULT_COLOR}
-                            />
-                            {/* <Text style={styles.address_label}>
-                                {t('address.delivery')}
-                              </Text> */}
-                          </View>
-                        )}
-                      </View>
-                      {/* {item.default_flag == 1 && (
-                          <View style={styles.address_edit_btn}>
-                            <Text style={styles.address_default_title}>
-                              {t('address.default')}
-                            </Text>
-                          </View>
-                        )} */}
-
-                      {/* <View style={styles.address_default_box}>
-                          <TouchableOpacity
-                            activeOpacity={.7}
-                            onPress={() => {
-                              Actions.create_address({
-                                edit_data: item,
-                                title: t('common:screen.address.editTitle'),
-                                addressReload: this._getData,
-                                from_page: this.props.from_page
-                              });
-                            }}
-                          >
-                            <View style={styles.address_edit_box}>
-                              <Icon
-                                name="pencil-square-o"
-                                size={12}
-                                color="#999999"
-                              />
-                              <Text style={styles.address_edit_label}>
-                                {t('address.edit')}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View> */}
-
-                      {/* {
-                          !is_selected && single && (
-                            <TouchableOpacity
-                              activeOpacity={.7}
-                              onPress={this._addressSelectHanlder.bind(
-                                this,
-                                item
-                              )}
-                              style={styles.uncheckOverlay}
-                            >
-                              <View></View>
-                            </TouchableOpacity>
-                          )
-                        } */}
-                      {!!comboAddress && (
-                        <Text style={styles.comboAddress}>{comboAddress}</Text>
-                      )}
-                    </View>
-                  </TouchableOpacity>
+                  <AddressItem
+                    address={item}
+                    editable
+                    onSelectAddress={() => this._addressSelectHandler(item)}
+                    onEditPress={() => this.handleEditAddress(item)}
+                    single={this.state.single}
+                    selectable={this.state.single}
+                    selected={is_selected}
+                  />
                 );
+
+                // const comboAddress =
+                //   (item.province_name || '') +
+                //   (item.district_name ? ' • ' + item.district_name : '') +
+                //   (item.ward_name ? ' • ' + item.ward_name : '');
+
+                // return (
+                //   <TouchableOpacity
+                //     key={index}
+                //     activeOpacity={.7}
+                //     onPress={this._addressSelectHandler.bind(this, item)}
+                //     style={{backgroundColor: '#fff'}}>
+                //     <View
+                //       style={[
+                //         styles.address_box,
+                //         !is_selected && single && styles.uncheckOverlay,
+                //       ]}>
+                //       <View style={styles.address_name_box}>
+                //         <Text style={styles.address_name}>
+                //           {item.name}{' '}
+                //           {item.default_flag == 1 && (
+                //             <Icon
+                //               name="map-marker"
+                //               style={styles.address_edit_btn}
+                //             />
+                //           )}
+                //         </Text>
+                //         <TouchableOpacity
+                //           activeOpacity={.7}
+                //           onPress={() => {
+                //             Actions.create_address({
+                //               edit_data: item,
+                //               title: t('common:screen.address.editTitle'),
+                //               addressReload: this._getData,
+                //               from_page: this.props.from_page,
+                //             });
+                //           }}>
+                //           <View style={styles.address_edit_box}>
+                //             <Icon
+                //               name="pencil-square-o"
+                //               size={12}
+                //               // color="#999999"
+                //             />
+                //             <Text style={styles.address_edit_label}>
+                //               {t('address.edit')}
+                //             </Text>
+                //           </View>
+                //         </TouchableOpacity>
+                //       </View>
+                //       <View style={styles.address_name_box}>
+                //         <View style={styles.address_content}>
+                //           <Text style={styles.address_content_phone}>
+                //             {item.tel}
+                //           </Text>
+                //           <Text style={styles.address_content_address_detail}>
+                //             {item.address}
+                //           </Text>
+                //           {!!item.map_address && (
+                //             <Text style={styles.address_content_map_address}>
+                //               {item.map_address}
+                //             </Text>
+                //           )}
+                //           {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                //           <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
+                //         </View>
+
+                //         {single && (
+                //           <View style={[styles.address_selected_box, {opacity: is_selected ?1:0}]}>
+                //             <Icon
+                //               name="check"
+                //               size={24}
+                //               color={DEFAULT_COLOR}
+                //             />
+                //             {/* <Text style={styles.address_label}>
+                //                 {t('address.delivery')}
+                //               </Text> */}
+                //           </View>
+                //         )}
+                //       </View>
+                //       {/* {item.default_flag == 1 && (
+                //           <View style={styles.address_edit_btn}>
+                //             <Text style={styles.address_default_title}>
+                //               {t('address.default')}
+                //             </Text>
+                //           </View>
+                //         )} */}
+
+                //       {/* <View style={styles.address_default_box}>
+                //           <TouchableOpacity
+                //             activeOpacity={.7}
+                //             onPress={() => {
+                //               Actions.create_address({
+                //                 edit_data: item,
+                //                 title: t('common:screen.address.editTitle'),
+                //                 addressReload: this._getData,
+                //                 from_page: this.props.from_page
+                //               });
+                //             }}
+                //           >
+                //             <View style={styles.address_edit_box}>
+                //               <Icon
+                //                 name="pencil-square-o"
+                //                 size={12}
+                //                 color="#999999"
+                //               />
+                //               <Text style={styles.address_edit_label}>
+                //                 {t('address.edit')}
+                //               </Text>
+                //             </View>
+                //           </TouchableOpacity>
+                //         </View> */}
+
+                //       {/* {
+                //           !is_selected && single && (
+                //             <TouchableOpacity
+                //               activeOpacity={.7}
+                //               onPress={this._addressSelectHandler.bind(
+                //                 this,
+                //                 item
+                //               )}
+                //               style={styles.uncheckOverlay}
+                //             >
+                //               <View></View>
+                //             </TouchableOpacity>
+                //           )
+                //         } */}
+                //       {!!comboAddress && (
+                //         <Text style={styles.comboAddress}>{comboAddress}</Text>
+                //       )}
+                //     </View>
+                //   </TouchableOpacity>
+                // );
               })
             ) : (
               // }
@@ -493,7 +525,7 @@ class Address extends Component {
                 )}
 
                 <TouchableOpacity
-                  activeOpacity={.7}
+                  activeOpacity={0.7}
                   onPress={this._createNew.bind(this)}
                   style={[
                     styles.address_add_box,
@@ -514,11 +546,16 @@ class Address extends Component {
               </View>
             )}
           </View>
+          <ListAddressStore
+            selectedAddressId={this.state.item_selected}
+            selected={this.checkAddressSelected}
+            onChangeAddress={this._addressSelectHandler.bind(this)}
+          />
         </ScrollView>
 
         {single && (
           <TouchableOpacity
-            activeOpacity={.7}
+            activeOpacity={0.7}
             onPress={this._goConfirmPage.bind(this)}
             style={styles.address_continue}>
             <View style={styles.address_continue_content}>
@@ -823,7 +860,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     fontSize: 16,
     fontWeight: '400',
-  }
+  },
 });
 
 export default withTranslation(['address', 'common'])(observer(Address));
