@@ -260,13 +260,17 @@ class VoucherDetail extends Component {
               </View>
             </View>
 
-            {!!campaign?.data?.code && <View style={styles.contentWrapper}>
+            {!!campaign?.data?.code && 
+            <View style={styles.contentWrapper}>
             <Barcode
               width={2}
               height={60}
               value = {campaign.data.code}
               format={BARCODE_FORMAT}
             />
+            <View style={styles.containerCodeNumber}>
+            <Text style={styles.codeNumber}>{campaign.data.code}</Text> 
+            </View>
           </View>}
 
             <View style={styles.contentWrapper}>

@@ -44,11 +44,11 @@ function MyVoucherItem(props) {
                 Sử dụng bây giờ
               </Button>
             )}
-            <View style={styles.containerNumberCode}>
-            <Text style={styles.textNumberCode}>x{props.quantity}</Text>
-          </View>
           </View>
         </View>
+      </View>
+      <View style={styles.containerNumberOfCode}>
+        <Text style={styles.remaining}>x{props.quantity}</Text>
       </View>
     </Button>
   );
@@ -133,14 +133,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     color: '#00a5cf'
   },
-  containerNumberCode:{
-    alignItems:'flex-end',
-    paddingTop: 10
-  },
-  textNumberCode:{
-    fontSize: 13,
-    fontWeight: '400',
-    color: '#666'
+  containerNumberOfCode: {
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRadius:5,
+    borderColor:'#d6d6d6',
+    position: 'absolute',
+    marginRight: 16,
+    padding: 10,
+    right: 0,
+    bottom: 0,
+    elevation: 2,
   },
   dotLeftWrapper: {
     position: 'absolute',

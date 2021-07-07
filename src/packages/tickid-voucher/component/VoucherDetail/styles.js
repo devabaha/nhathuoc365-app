@@ -91,6 +91,15 @@ const styles = StyleSheet.create({
   contentWrapper: {
     marginBottom: 8
   },
+  containerCodeNumber:{
+    backgroundColor:'#fff',
+    paddingBottom:8,
+    alignItems:'center'
+  },
+  codeNumber:{
+    fontSize: 15,
+    fontWeight: '400',
+  },
   getVoucherWrapper: {
     backgroundColor: config.colors.white,
     height: 62,
