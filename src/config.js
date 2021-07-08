@@ -339,7 +339,9 @@ class Config {
       webview: 'webview',
 
       listProgressTracking: 'listProgressTracking',
-      progressTrackingDetail: 'progressTrackingDetail'
+      progressTrackingDetail: 'progressTrackingDetail',
+
+      listAddressStore: 'listAddressStore'
     };
   }
 }

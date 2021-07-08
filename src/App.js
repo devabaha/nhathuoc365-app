@@ -182,6 +182,7 @@ import ProgressTracking, {
   ProgressTrackingDetail,
 } from './containers/ProgressTracking';
 
+import ListAddressStore from './containers/ListAddressStore';
 /**
  * Not allow font scaling
  */
@@ -864,6 +865,17 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ LIST ADDRESS STORE ================ */}
+                <Stack key={appConfig.routes.listAddressStore}>
+                  <Scene
+                    key={`${appConfig.routes.listAddressStore}_1`}
+                    {...navBarConfig}
+                    title={t('screen.gpsListStore.mainTitle')}
+                    component={ListAddressStore}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ LIST PROGRESS TRACKING ================ */}
                 <Stack key={appConfig.routes.listProgressTracking}>
