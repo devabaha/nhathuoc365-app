@@ -247,7 +247,7 @@ const ListAddressStore = ({
         console.log('watch_position', watchID.current, err);
         setConnectGPS(false);
         !listStore?.length &&
-          getListAddressStore({lat: latitude, lng: longitude});
+          getListAddressStore();
       },
       config,
     );
@@ -265,6 +265,7 @@ const ListAddressStore = ({
 
       if (!isUpdatedListStoreByPosition.current) {
         isUpdatedListStoreByPosition.current = true;
+        setLoading(true);
         getListAddressStore({lat: latitude, lng: longitude});
       }
     }
@@ -339,7 +340,7 @@ const ListAddressStore = ({
             <NoResult iconName={'storefront'} message={t('address.noStore')} />
           )}
 
-      {requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED &&
+      {!isLoading && requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED &&
         !!listStore?.length && (
           <NoResult
             iconName={'map-marker-off'}
@@ -350,7 +351,7 @@ const ListAddressStore = ({
           />
         )}
 
-      {(isLoading || isPermissionRequesting) && (
+      {isLoading && (
         <NoResult
           renderTitle={() => (
             <Text style={styles.textData}>{t('common:loading')}</Text>

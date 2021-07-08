@@ -114,7 +114,7 @@ class Home extends Component {
           product_groups: response.data.product_groups,
           news_categories: response.data.news_categories,
           product_categories: response.data.product_categorys,
-          // social_posts: response.data.social_posts
+          social_posts: response.data.social_posts
         }));
 
         this.executeDeepLink();
@@ -297,12 +297,16 @@ class Home extends Component {
   productOpening;
 
   handlePressProduct = (product, callBack) => {
-    const service = {
-      type: SERVICES_TYPE.PRODUCT_DETAIL,
-      siteId: product.site_id,
-      productId: product.id,
-    };
-    servicesHandler(service, this.props.t, callBack);
+    // const service = {
+    //   type: SERVICES_TYPE.PRODUCT_DETAIL,
+    //   siteId: product.site_id,
+    //   productId: product.id,
+    // };
+    // servicesHandler(service, this.props.t, callBack);
+    Actions.push(appConfig.routes.item, {
+      title: product.name,
+      item: product,
+    });
   };
 
   goToSearch = () => {
