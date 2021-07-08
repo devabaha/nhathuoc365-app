@@ -20,6 +20,11 @@ import ListAddressStore from 'src/containers/ListAddressStore';
 import AddressItem from './AddressItem';
 import Loading from '../Loading';
 
+const ADDRESS_TYPE = {
+  USER: 'user_address',
+  STORE: 'store_address',
+};
+
 class Address extends Component {
   constructor(props) {
     super(props);
@@ -38,6 +43,18 @@ class Address extends Component {
     this.getAddressRequest = new APIRequest();
     this.requests = [this.getAddressRequest];
     this.eventTracker = new EventTracker();
+
+    this.refScrollView = React.createRef();
+
+    this.isScrollToSelectedAddress = false;
+    this.listAddressStoreOffsetY = 0;
+    this.selectedStoreAddressOffsetY = undefined;
+    this.selectedUserAddressOffsetY = undefined;
+
+    this.addressTypeLoadedData = {
+      [ADDRESS_TYPE.USER]: false,
+      [ADDRESS_TYPE.STORE]: false,
+    };
   }
 
   get defaultSelectedAddressId() {
@@ -99,6 +116,7 @@ class Address extends Component {
     } catch (e) {
       console.log(e + ' user_address');
     } finally {
+      this.scrollToSelectedAddress(ADDRESS_TYPE.USER);
       this.setState({
         loading: false,
         refreshing: false,
@@ -207,6 +225,39 @@ class Address extends Component {
     this._getData();
   };
 
+  handleListAddressStoreLayout = (e) => {
+    this.listAddressStoreOffsetY = e.nativeEvent.layout.y;
+  };
+
+  handleSelectedStoreAddressLayout = (e) => {
+    this.selectedStoreAddressOffsetY = e.nativeEvent.layout.y;
+  };
+
+  handleSelectedUserAddressLayout = (e) => {
+    this.selectedUserAddressOffsetY = e.nativeEvent.layout.y;
+  };
+
+  scrollToSelectedAddress = (type) => {
+    if (this.isScrollToSelectedAddress) return;
+
+    this.addressTypeLoadedData[type] = true;
+    if (
+      Object.values(this.addressTypeLoadedData).every(
+        (addressTypeData) => !!addressTypeData,
+      )
+    ) {
+      if (this.refScrollView.current) {
+        setTimeout(() => {
+          const selectedAddressOffsetY = !!this.selectedStoreAddressOffsetY
+            ? this.listAddressStoreOffsetY + this.selectedStoreAddressOffsetY
+            : this.selectedUserAddressOffsetY;
+          this.refScrollView.current.scrollTo({y: selectedAddressOffsetY});
+          this.isScrollToSelectedAddress = true;
+        }, 300);
+      }
+    }
+  };
+
   render() {
     const {single} = this.state;
     const {t} = this.props;
@@ -274,6 +325,7 @@ class Address extends Component {
         )}
 
         <ScrollView
+          ref={this.refScrollView}
           style={[
             styles.content,
             {
@@ -294,20 +346,26 @@ class Address extends Component {
               this.state.data.map((item, index) => {
                 if (item.type == 'address_add') {
                   return (
-                    <TouchableOpacity
-                      key={index}
-                      activeOpacity={0.7}
-                      onPress={this._createNew.bind(this)}
-                      style={styles.address_add_box}>
-                      <View style={styles.address_add_content}>
-                        <Text style={styles.address_add_title}>
-                          {t('address.new')}
-                        </Text>
-                        <View style={styles.address_add_icon_box}>
-                          <Icon name="plus" size={18} color="#999999" />
+                    <View style={styles.address_add}>
+                      <TouchableOpacity
+                        key={index}
+                        activeOpacity={0.7}
+                        onPress={this._createNew.bind(this)}
+                        style={styles.address_add_box}>
+                        <View style={styles.address_add_content}>
+                          <View style={styles.address_add_icon_box}>
+                            <Icon
+                              name="plus"
+                              size={15}
+                              color={appConfig.colors.primary}
+                            />
+                          </View>
+                          <Text style={styles.address_add_title}>
+                            {t('address.new')}
+                          </Text>
                         </View>
-                      </View>
-                    </TouchableOpacity>
+                      </TouchableOpacity>
+                    </View>
                   );
                 }
 
@@ -338,11 +396,16 @@ class Address extends Component {
                       item,
                     )}
                     onEditPress={this.handleEditAddress.bind(this, item)}
+                    onLayout={
+                      is_selected
+                        ? this.handleSelectedUserAddressLayout
+                        : undefined
+                    }
                   />
                 );
               })
             ) : (
-              <View>
+              <View style={styles.address_add}>
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={this._createNew.bind(this)}
@@ -354,26 +417,34 @@ class Address extends Component {
                     },
                   ]}>
                   <View style={styles.address_add_content}>
+                    <View style={styles.address_add_icon_box}>
+                      <Icon
+                        name="plus"
+                        size={15}
+                        color={appConfig.colors.primary}
+                      />
+                    </View>
                     <Text style={styles.address_add_title}>
                       {t('address.new')}
                     </Text>
-                    <View style={styles.address_add_icon_box}>
-                      <Icon name="plus" size={18} color="#999999" />
-                    </View>
                   </View>
                 </TouchableOpacity>
               </View>
             )}
           </AddressContainer>
 
-          {this.props.take_orders_at_the_store_key && (
-            <AddressContainer 
+          {!!this.props.take_orders_at_the_store_key && (
+            <AddressContainer
               title={t('pickUpAtTheStore')}
-            >
+              onLayout={this.handleListAddressStoreLayout}>
               <ListAddressStore
                 refreshing={this.state.refreshing}
                 selectedAddressId={this.state.item_selected}
                 onChangeAddress={this._addressSelectHandler.bind(this)}
+                onLoadedData={() =>
+                  this.scrollToSelectedAddress(ADDRESS_TYPE.STORE)
+                }
+                onSelectedAddressLayout={this.handleSelectedStoreAddressLayout}
               />
             </AddressContainer>
           )}
@@ -500,49 +571,39 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   address_selected_box: {
-    // position: 'absolute',
-    // width: 100,
-    // height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
-    // top: 20,
-    // right: 10
   },
   address_label: {
     fontSize: 10,
     color: '#666666',
     marginTop: 4,
   },
-
-  address_add_box: {
+  address_add: {
     marginTop: 8,
-    backgroundColor: '#ffffff',
-    borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd',
+    backgroundColor: '#fff',
+    paddingVertical: 17,
+    paddingHorizontal: 34,
+  },
+  address_add_box: {
+    backgroundColor: '#fff',
   },
   address_add_content: {
-    width: '100%',
-    height: 52,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
+    justifyContent: 'center',
+    borderRadius: 4,
+    borderColor: appConfig.colors.primary,
+    borderWidth: 1,
   },
   address_add_title: {
-    color: '#242424',
+    color: appConfig.colors.primary,
     fontSize: 14,
   },
   address_add_icon_box: {
-    width: 60,
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
+    marginRight: 6,
   },
 
   address_continue: {

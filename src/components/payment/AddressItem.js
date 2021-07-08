@@ -1,8 +1,10 @@
 import React from 'react';
 import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import appConfig from 'app-config';
+import {Container} from '../Layout';
 
 const styles = StyleSheet.create({
   address_box: {
@@ -76,6 +78,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
+
+  distanceContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 15,
+    borderColor: '#ccc',
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+  },
+  distanceIcon: {
+    fontSize: 11,
+    color: appConfig.colors.primary,
+  },
+  distanceTxt: {
+    marginLeft: 7,
+    fontSize: 11,
+    color: appConfig.colors.primary,
+  },
 });
 
 function AddressItem({
@@ -83,6 +102,8 @@ function AddressItem({
   selectable = true,
   editable = false,
   selected = false,
+  gpsDistance,
+  onLayout,
   onSelectAddress = () => {},
   onEditPress = () => {},
 }) {
@@ -97,6 +118,7 @@ function AddressItem({
 
   return (
     <TouchableOpacity
+      onLayout={onLayout}
       disabled={!selectable}
       activeOpacity={0.7}
       onPress={onSelectAddress}
@@ -114,7 +136,7 @@ function AddressItem({
               <Icon name="map-marker" style={styles.address_edit_btn} />
             )}
           </Text>
-          {!!editable && (
+          {!!editable ? (
             <TouchableOpacity activeOpacity={0.7} onPress={onEditPress}>
               <View style={styles.address_edit_box}>
                 <Icon name="pencil-square-o" size={12} />
@@ -123,8 +145,16 @@ function AddressItem({
                 </Text>
               </View>
             </TouchableOpacity>
+          ) : (
+            !!gpsDistance && (
+              <Container row style={[styles.distanceContainer]}>
+                <Ionicons name="ios-navigate" style={[styles.distanceIcon]} />
+                <Text style={[styles.distanceTxt]}>{gpsDistance}</Text>
+              </Container>
+            )
           )}
         </View>
+
         <View style={styles.address_name_box}>
           <View style={styles.address_content}>
             <Text style={styles.address_content_phone}>{address.tel}</Text>

@@ -11,10 +11,10 @@ const styles = StyleSheet.create({
   titleContainer: {
     padding: 15,
     backgroundColor: appConfig.colors.primary,
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
     borderBottomWidth: 2,
     borderColor: appConfig.colors.primary,
-    borderColor: '#eee'
+    borderColor: '#eee',
   },
   title: {
     color: appConfig.colors.primary,
@@ -31,9 +31,11 @@ const AddressContainer = ({
   containerStyle,
   titleContainerStyle,
   children,
+
+  onLayout,
 }) => {
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View onLayout={onLayout} style={[styles.container, containerStyle]}>
       <View style={[styles.titleContainer, titleContainerStyle]}>
         <Text style={styles.title}>{title}</Text>
       </View>

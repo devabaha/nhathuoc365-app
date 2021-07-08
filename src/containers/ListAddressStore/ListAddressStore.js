@@ -1,18 +1,7 @@
-import React, {Component, useEffect, useRef, useState} from 'react';
-import {
-  Keyboard,
-  AppState,
-  Text,
-  FlatList,
-  StyleSheet,
-  RefreshControl,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {AppState, Text, StyleSheet, View} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import appConfig from 'app-config';
-import ScreenWrapper from '../../components/ScreenWrapper';
-import Modal from '../../components/account/Transfer/Payment/Modal';
 import {
   LocationPermission,
   LOCATION_PERMISSION_TYPE,
@@ -20,12 +9,10 @@ import {
 } from '../../helper/permissionHelper';
 import Loading from '../../components/Loading';
 import {APIRequest} from '../../network/Entity';
-import Container from '../../components/Layout/Container';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 import AddressItem from '../../components/payment/AddressItem';
-import NoResult from './NoResult'
-
+import NoResult from './NoResult';
+import {getPreciseDistance} from 'geolib';
 
 const styles = StyleSheet.create({
   storeContainer: {
@@ -93,9 +80,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: appConfig.colors.primary,
   },
-  distanceUnitTxt: {
-    fontSize: 9,
-  },
   openMapWrapper: {
     overflow: 'hidden',
     borderRadius: 15,
@@ -126,23 +110,29 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#666',
   },
-  
+  textData: {
+    ...appConfig.styles.typography.secondary
+  }
 });
 
 const ListAddressStore = ({
   refreshing,
   selectedAddressId,
   onChangeAddress = () => {},
+  onLoadedData = () => {},
+  onSelectedAddressLayout = () => {}
 }) => {
   const getListAddressStoreRequest = new APIRequest();
   const requests = [getListAddressStoreRequest];
   const appState = useRef('active');
   const watchID = useRef('');
+  const isGoToSetting = useRef(false);
   const isUpdatedListStoreByPosition = useRef(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(true);
+  const [isPermissionRequesting, setPermissionRequesting] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
-  const [isGoToSetting, setGotoSetting] = useState(false);
+  // const [isGoToSetting, setGotoSetting] = useState(false);
   const [requestLocationLoading, setRequestLocationLoading] = useState(true);
   const [isConnectGPS, setConnectGPS] = useState(false);
   const [requestLocationErrorCode, setRequestLocationErrorCode] = useState(-1);
@@ -153,7 +143,7 @@ const ListAddressStore = ({
   const errContent =
     'Vui lòng cho phép truy cập vị trí để hiển hị cửa hàng theo thứ tự gần nhất!';
 
-  const {t} = useTranslation('address');
+  const {t} = useTranslation(['address', 'common']);
 
   useEffect(() => {
     didMount();
@@ -194,9 +184,7 @@ const ListAddressStore = ({
 
     try {
       const responseData = await getListAddressStoreRequest.promise();
-      console.log(responseData);
       setListStore(responseData?.data || []);
-      console.log('list store', listStore);
     } catch (error) {
       console.log('get_list_store', 'color:red', error);
       flashShowMessage({
@@ -204,6 +192,7 @@ const ListAddressStore = ({
         message: error.message,
       });
     } finally {
+      onLoadedData();
       setLoading(false);
       setRefreshing(false);
     }
@@ -212,10 +201,10 @@ const ListAddressStore = ({
   const handleAppStateChange = (nextAppState) => {
     if (
       appState.current.match(/inactive|background/) &&
-      requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED &&
+      // requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED &&
       nextAppState === 'active'
     ) {
-      if (isGoToSetting) {
+      if (isGoToSetting.current) {
         requestLocationPermission();
       } else if (requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED) {
         updateLocation();
@@ -225,25 +214,26 @@ const ListAddressStore = ({
   };
 
   const requestLocationPermission = (callbackSuccess = () => {}) => {
-    setLoading(true);
+    setPermissionRequesting(true);
     LocationPermission.callPermission(
       LOCATION_PERMISSION_TYPE.REQUEST,
       (result) => {
-        setLoading(false);
+        setPermissionRequesting(false);
         console.log(result);
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setRequestLocationErrorCode(result);
-          setGotoSetting(false);
+          // setGotoSetting(false);
+          isGoToSetting.current = false;
           callbackSuccess();
           updateLocation();
         } else {
           handleErrorLocationPermission({code: result});
-          !listStore?.length &&
-            getListAddressStore({lat: latitude, lng: longitude});
+          !listStore?.length && getListAddressStore();
         }
       },
     );
   };
+ 
 
   const updateLocation = (timeout = 5000) => {
     const config = {
@@ -289,9 +279,9 @@ const ListAddressStore = ({
     setTimeout(() => setModalVisible(appState.current === 'active'), 500);
   };
 
-
   const handleLocationError = (errorCode) => {
-    setGotoSetting(true);
+    // setGotoSetting(true);
+    isGoToSetting.current = true;
     LocationPermission.openPermissionAskingModal(
       errorCode,
       undefined,
@@ -304,42 +294,68 @@ const ListAddressStore = ({
     onChangeAddress(storeAddress);
   };
 
+  const calculateDiffDistance = (lng, lat) => {
+    if (latitude && longitude) {
+      return (
+        <Text>
+          {getPreciseDistance(
+            {latitude, longitude},
+            {latitude: Number(lat), longitude: Number(lng)},
+            100,
+          ) / 1000}{' '}
+          <Text style={styles.distanceUnitTxt}>km</Text>
+        </Text>
+      );
+    }
+    return '';
+  };
+
   const renderListAddress = ({item: storeAddress}) => {
+    const disabledDistanceStyle = !isConnectGPS;
     let isSelected = storeAddress.id == selectedAddressId;
 
     return (
       <AddressItem
         key={storeAddress.id}
         address={storeAddress}
+        gpsDistance={calculateDiffDistance(
+          storeAddress.longitude,
+          storeAddress.latitude,
+        )}
+        disabledDistanceStyle={disabledDistanceStyle}
         selectable
         selected={isSelected}
         onSelectAddress={() => handleSelectAddress(storeAddress)}
+        onLayout={isSelected ? onSelectedAddressLayout : undefined}
       />
     );
   };
-  if (isLoading) {
-    <Loading/>
-  } else if (requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED) {
-        return (
-            <NoResult 
-                iconName={'map-marker-off'}
-                message={t('address.permissionNotGranted')}
-                btnTitle={t('address.confirmPermission')}
-                btnIconName={'setting'}
-                onPress={() => requestLocationPermission()}
-            />
-        )
-    } else if (listStore?.length === 0) {
-        return (
-            <NoResult
-                iconName={'storefront'}
-                message={t('address.noStore')}
-            />
-        )
-    }
+  return (
+    <View>
+      {listStore?.length
+        ? listStore?.map((store, index) =>
+            renderListAddress({item: store, index}),
+          )
+        : !isLoading && (
+            <NoResult iconName={'storefront'} message={t('address.noStore')} />
+          )}
 
-  return listStore.map((store, index) =>
-    renderListAddress({item: store, index}),
+      {requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED && (
+        <NoResult
+          iconName={'map-marker-off'}
+          message={t('address.permissionNotGranted')}
+          btnTitle={t('address.confirmPermission')}
+          btnIconName={'setting'}
+          onPress={() => requestLocationPermission()}
+        />
+      )}
+
+      {(isLoading || isPermissionRequesting) && (
+        <NoResult
+          renderTitle={() => <Text style={styles.textData}>{t('common:loading')}</Text>}
+        />
+      )}
+    </View>
   );
 };
 
