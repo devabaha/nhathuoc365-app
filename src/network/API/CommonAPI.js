@@ -202,14 +202,17 @@ class CommonAPI {
   get USER_ADD_ADDRESS() {
     return BaseAPI.apiDomain + 'apiUser/add_address';
   }
+  get USER_DELETE_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/delete_address';
+  }
   get SITE_ADD_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/add_address';
   }
   get SITE_CART_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/cartaddress';
   }
-  get USER_DELETE_ADDRESS() {
-    return BaseAPI.apiDomain + 'apiUser/delete_address';
+  get SITE_ADDRESS(){
+    return BaseAPI.apiDomain + 'apiSite/address';
   }
 
   // Orders
