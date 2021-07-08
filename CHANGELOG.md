@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.0.4] - 2021-07-08
+### Fixed
+- discount_percent in isDiscount of ItemAttribute screen is not convert to boolean.
+
 ## [r12.0.3] - 2021-07-06
 ### Added
 - social_posts in Home.
