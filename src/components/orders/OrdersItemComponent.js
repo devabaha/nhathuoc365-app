@@ -1,15 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
-import {CART_TYPES} from 'src/constants/cart';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
+import { CART_TYPES } from 'src/constants/cart';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -103,12 +102,11 @@ class OrdersItemComponent extends Component {
         data: item,
         from_page: 'orders_item',
       });
-    } else if (!!getValueFromConfigKey(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+    } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
       Actions.push(appConfig.routes.myAddress, {
-        goConfirm: true,
-        data: item,
-        from_page: 'orders_item',
-        take_orders_at_the_store_key: true,
+        redirect: 'confirm',
+        goBack: true,
+        isVisibleStoreAddress: true,
       })
     } else {
       Actions.create_address({
@@ -154,15 +152,15 @@ class OrdersItemComponent extends Component {
   }
 
   render() {
-    var {item, t, index} = this.props;
+    var { item, t, index } = this.props;
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     const cartType = item.cart_type_name;
     const deliveryCode =
       item.delivery_details &&
       (item.delivery_details.ship_unit || item.delivery_details.unit) +
-        ' - ' +
-        (item.delivery_details.ship_unit_id ||
-          item.delivery_details.booking_id);
+      ' - ' +
+      (item.delivery_details.ship_unit_id ||
+        item.delivery_details.booking_id);
 
     return (
       <TouchableHighlight
@@ -176,7 +174,7 @@ class OrdersItemComponent extends Component {
               <CachedImage
                 mutable
                 style={styles.cart_section_image}
-                source={{uri: item.shop_logo_url}}
+                source={{ uri: item.shop_logo_url }}
               />
               <Text style={styles.cart_section_title}>{item.shop_name}</Text>
               {!!(index + 1) && (
@@ -265,7 +263,7 @@ class OrdersItemComponent extends Component {
                     label={deliveryCode}
                     fill={
                       appConfig.colors.delivery[
-                        item.delivery_details?.status
+                      item.delivery_details?.status
                       ] || appConfig.colors.cartType[item.cart_type]
                     }
                     animate={false}
@@ -333,7 +331,7 @@ class OrdersItemComponent extends Component {
             <View style={[styles.orders_item_row, styles.row_payment]}>
               {!!item.count_selected && (
                 <Text style={styles.orders_item_content_label}>
-                  {t('item.totalSelected', {total: item.count_selected})}
+                  {t('item.totalSelected', { total: item.count_selected })}
                 </Text>
               )}
               <View style={styles.orders_status_box}>
@@ -350,7 +348,7 @@ class OrdersItemComponent extends Component {
           {this.state.goToStoreLoading && (
             <Loading
               center
-              wrapperStyle={{backgroundColor: 'rgba(0,0,0, .06)'}}
+              wrapperStyle={{ backgroundColor: 'rgba(0,0,0, .06)' }}
             />
           )}
         </View>
@@ -543,7 +541,7 @@ const actionBtnStyles = StyleSheet.create({
   },
 });
 
-const ActionButton = React.memo(({title, onGoToStore}) => {
+const ActionButton = React.memo(({ title, onGoToStore }) => {
   return (
     <View style={actionBtnStyles.container}>
       <TouchableHighlight
