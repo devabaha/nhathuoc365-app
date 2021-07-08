@@ -130,8 +130,6 @@ class Orders extends Component {
         setTimeout(() => {
           this.setState({
             data: response.data,
-            refreshing: false,
-            loading: false,
             empty: false,
             finish: true,
           });
@@ -143,9 +141,7 @@ class Orders extends Component {
       } else {
         setTimeout(() => {
           this.setState({
-            loading: false,
             data: null,
-            refreshing: false,
           });
         }, delay || 0);
       }
@@ -156,6 +152,10 @@ class Orders extends Component {
       store.setDeepLinkData(null);
       appConfig.device.isIOS &&
         StatusBar.setNetworkActivityIndicatorVisible(false);
+      this.setState({
+        loading: false,
+        refreshing: false,
+      });
     }
   }
 
@@ -305,11 +305,14 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
-    this.autoUpdateDisposer = autorun(() => {
-      if (store.isUpdateOrders && !this.state.refreshing) {
-        setTimeout(() => this._getData(0, true));
-      }
-    });
+    this.autoUpdateDisposer = reaction(
+      () => store.isUpdateOrders,
+      (isUpdateOrders) => {
+        if (isUpdateOrders && !this.state.refreshing) {
+          setTimeout(() => this._getData(0, true));
+        }
+      },
+    );
   }
 
   render() {

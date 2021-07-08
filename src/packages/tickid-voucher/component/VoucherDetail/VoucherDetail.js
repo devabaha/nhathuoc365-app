@@ -5,13 +5,11 @@ import {
   Text,
   Image,
   ScrollView,
-  Dimensions,
   RefreshControl,
 } from 'react-native';
 import HTML from 'react-native-render-html';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
 import SiteEntity from '../../entity/SiteEntity';
@@ -19,9 +17,6 @@ import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
 import styles from './styles';
 import Barcode from 'react-native-barcode-builder';
-import config from '../../config';
-
-const screenWidth = Dimensions.get('screen').width;
 
 const defaultListener = () => { };
 
@@ -67,7 +62,7 @@ class VoucherDetail extends Component {
     addresses: undefined,
     site: undefined,
   };
-
+  
   get totalPlaces() {
     let totalPlaces = 0;
     const addresses = Object.values(this.props.addresses);
@@ -274,7 +269,6 @@ class VoucherDetail extends Component {
                   <Text style={styles.codeNumber}>{campaign.data.code}</Text>
                 </View>
               </View>}
-
             <View style={styles.contentWrapper}>
               <Tabs>{tabs}</Tabs>
             </View>

@@ -10,11 +10,16 @@
     "new": "Add new address",
     "delivery": "Deliver to this address",
     "default": "[Default]",
-    "edit": "Edit"
+    "edit": "Edit",
+    "permissionNotGranted": "Your location could not be determined",
+    "confirmPermission": "Allow access Location",
+    "noStore": "There are no stores"
   },
   "confirm": {
     "title": "2. Confirmation"
   },
 
-  "nextBtnMessage": "Next"
+  "nextBtnMessage": "Next",
+
+  "pickUpAtTheStore": "Pick up at the store"
 }

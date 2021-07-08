@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     bottom: 2,
     backgroundColor: config.colors.primary,
     borderTopLeftRadius: 8,
-    // borderBottomLeftRadius: 4,
     borderBottomRightRadius: 8,
   },
   quantity: {
