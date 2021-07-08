@@ -33,8 +33,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'skvkey',
+      secretKey: 'sfsfdskvkey121332324',
     };
   }
 
@@ -118,6 +118,12 @@ class Config {
         [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
         [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
+      },
+      membership: {
+        standard: ['#333', '#ccc'],
+        gold: ['#d99b2d', '#FFCF40'],
+        platinum: ['#a1a3a6', '#d8dadb'],
+        diamond: ['#723dc6', '#d1a0f6']
       },
       typography: {
         text: '#2B2B2B',
@@ -339,7 +345,9 @@ class Config {
       webview: 'webview',
 
       listProgressTracking: 'listProgressTracking',
-      progressTrackingDetail: 'progressTrackingDetail'
+      progressTrackingDetail: 'progressTrackingDetail',
+
+      personalProfile: 'personalProfile'
     };
   }
 }

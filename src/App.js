@@ -181,6 +181,8 @@ import SVGAccount from './images/home/account.svg';
 import ProgressTracking, {
   ProgressTrackingDetail,
 } from './containers/ProgressTracking';
+import Profile from './containers/Profile';
+import {ListUserChat} from './components/amazingUserChat'
 
 /**
  * Not allow font scaling
@@ -799,7 +801,7 @@ class RootRouter extends Component {
                     iconSVG={SVGNews}>
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={SocialNews}
+                      component={ListUserChat}
                     />
                   </Stack>
 
@@ -860,10 +862,20 @@ class RootRouter extends Component {
                       }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
-                      component={Account}
+                      component={Profile}
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ LIST PROGRESS TRACKING ================ */}
+                <Stack key={appConfig.routes.personalProfile}>
+                  <Scene
+                    key={`${appConfig.routes.personalProfile}_1`}
+                    component={Profile}
+                    hideNavBar
+                    back
+                  />
+                </Stack>
 
                 {/* ================ LIST PROGRESS TRACKING ================ */}
                 <Stack key={appConfig.routes.listProgressTracking}>

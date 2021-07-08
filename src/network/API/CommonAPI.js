@@ -500,6 +500,38 @@ class CommonAPI {
   get USER_WARRANTY_DETAIL() {
     return BaseAPI.apiDomain + 'apiUser/warranty_detail';
   }
+
+  get USER_CREATE_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/create_conversation';
+  }
+
+  get USER_LIST_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_conversation';
+  }
+
+  get USER_LIST_CHAT_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_chat_conversation';
+  }
+
+  get USER_SEND_MESSAGE() {
+    return BaseAPI.apiDomain + 'apiUser/send';
+  }
+
+  get SITE_USER_PROFILE() {
+    return BaseAPI.apiDomain + 'apiSite/user_profile';
+  }
+
+  get USER_UPLOAD_IMAGE() {
+    return BaseAPI.apiDomain + 'apiUser/upload_image';
+  }
+
+  get USER_DELETE_IMAGE() {
+    return BaseAPI.apiDomain + 'apiUser/delete_user_image';
+  }
+  
+  get USER_UPLOAD_IMAGE_COVER() {
+    return BaseAPI.apiDomain + 'apiUser/upload_image_cover';
+  }
 }
 
 export default new CommonAPI();
