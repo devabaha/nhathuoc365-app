@@ -1065,6 +1065,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.ordersTab}_1`}
                     title={t('screen.orders.mainTitle')}
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
