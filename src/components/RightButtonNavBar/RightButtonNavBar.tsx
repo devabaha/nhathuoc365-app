@@ -16,7 +16,6 @@ import {RIGHT_BUTTON_TYPE} from './constants';
 import {NotiBadge} from '../Badges';
 import {autorun} from 'mobx';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -104,12 +103,11 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true,
         });
-      } else if (!!getValueFromConfigKey(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
         Actions.push(appConfig.routes.myAddress, {
-          goConfirm: true,
-          data: store.cart_data,
-          from_page: 'orders_item',
-          take_orders_at_the_store_key: true,
+          redirect: 'confirm',
+          goBack: true,
+          isVisibleStoreAddress: true,
   
         })
       } else {

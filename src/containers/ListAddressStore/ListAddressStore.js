@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   textData: {
-    ...appConfig.styles.typography.secondary
-  }
+    ...appConfig.styles.typography.secondary,
+  },
 });
 
 const ListAddressStore = ({
@@ -120,7 +120,7 @@ const ListAddressStore = ({
   selectedAddressId,
   onChangeAddress = () => {},
   onLoadedData = () => {},
-  onSelectedAddressLayout = () => {}
+  onSelectedAddressLayout = () => {},
 }) => {
   const getListAddressStoreRequest = new APIRequest();
   const requests = [getListAddressStoreRequest];
@@ -233,7 +233,6 @@ const ListAddressStore = ({
       },
     );
   };
- 
 
   const updateLocation = (timeout = 5000) => {
     const config = {
@@ -340,19 +339,22 @@ const ListAddressStore = ({
             <NoResult iconName={'storefront'} message={t('address.noStore')} />
           )}
 
-      {requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED && (
-        <NoResult
-          iconName={'map-marker-off'}
-          message={t('address.permissionNotGranted')}
-          btnTitle={t('address.confirmPermission')}
-          btnIconName={'setting'}
-          onPress={() => requestLocationPermission()}
-        />
-      )}
+      {requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED &&
+        !!listStore?.length && (
+          <NoResult
+            iconName={'map-marker-off'}
+            message={t('address.permissionNotGranted')}
+            btnTitle={t('address.confirmPermission')}
+            btnIconName={'setting'}
+            onPress={() => requestLocationPermission()}
+          />
+        )}
 
       {(isLoading || isPermissionRequesting) && (
         <NoResult
-          renderTitle={() => <Text style={styles.textData}>{t('common:loading')}</Text>}
+          renderTitle={() => (
+            <Text style={styles.textData}>{t('common:loading')}</Text>
+          )}
         />
       )}
     </View>

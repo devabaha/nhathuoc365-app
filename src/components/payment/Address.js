@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -10,15 +10,16 @@ import {
   RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions, ActionConst} from 'react-native-router-flux';
+import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
-import {APIRequest} from 'src/network/Entity';
+import { APIRequest } from 'src/network/Entity';
 import AddressContainer from 'src/components/payment/AddressContainer';
 import ListAddressStore from 'src/containers/ListAddressStore';
 import AddressItem from './AddressItem';
 import Loading from '../Loading';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 const ADDRESS_TYPE = {
   USER: 'user_address',
@@ -63,6 +64,10 @@ class Address extends Component {
       : null;
   }
 
+  get isVisibleStoreAddress() {
+    return isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY) && this.props.isVisibleStoreAddress
+  }
+
   componentDidMount() {
     setTimeout(() =>
       Actions.refresh({
@@ -101,7 +106,7 @@ class Address extends Component {
         if (response.data) {
           setTimeout(() => {
             this.setState({
-              data: [...response.data, {id: 0, type: 'address_add'}],
+              data: [...response.data, { id: 0, type: 'address_add' }],
               loading: false,
               item_selected: this.defaultSelectedAddressId,
             });
@@ -126,7 +131,7 @@ class Address extends Component {
 
   _goConfirmPage() {
     if (this.state.item_selected == null) {
-      const {t} = this.props;
+      const { t } = this.props;
 
       return Alert.alert(
         t('confirmNotification.title'),
@@ -137,7 +142,7 @@ class Address extends Component {
             onPress: this._createNew.bind(this),
           },
         ],
-        {cancelable: false},
+        { cancelable: false },
       );
     }
 
@@ -150,7 +155,7 @@ class Address extends Component {
         continue_loading: true,
       },
       async () => {
-        const {t} = this.props;
+        const { t } = this.props;
         try {
           const response = await APIHandler.site_cart_change_address(
             store.store_id,
@@ -201,27 +206,34 @@ class Address extends Component {
     });
   }
 
+  reloadAddress = () => {
+    this.setState({ loading: true });
+    this._getData(300)
+  }
+
   handleEditAddress = (address) => {
-    const {t} = this.props;
+    const { t } = this.props;
     Actions.create_address({
       edit_data: address,
       title: t('common:screen.address.editTitle'),
-      addressReload: this._getData,
+      addressReload: this.reloadAddress,
       from_page: this.props.from_page,
     });
   };
 
-  checkAddressSelected = (address) => {};
+  checkAddressSelected = (address) => { };
 
   _createNew() {
     Actions.create_address({
-      addressReload: this._getData,
+      redirect: this.props.redirect,
+      goBack: this.props.goBack,
+      addressReload: this.reloadAddress,
       from_page: this.props.from_page,
     });
   }
 
   onRefresh = () => {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
     this._getData();
   };
 
@@ -259,15 +271,15 @@ class Address extends Component {
   };
 
   render() {
-    const {single} = this.state;
-    const {t} = this.props;
+    const { single } = this.state;
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
         {this.state.loading && <Loading center />}
         {single && (
           <View style={styles.payments_nav}>
-            <TouchableOpacity onPress={() => {}} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => { }} activeOpacity={0.7}>
               <View style={styles.payments_nav_items}>
                 <View
                   style={[
@@ -433,7 +445,7 @@ class Address extends Component {
             )}
           </AddressContainer>
 
-          {!!this.props.take_orders_at_the_store_key && (
+          {this.isVisibleStoreAddress && (
             <AddressContainer
               title={t('pickUpAtTheStore')}
               onLayout={this.handleListAddressStoreLayout}>

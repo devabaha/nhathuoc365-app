@@ -24,5 +24,5 @@ export const CONFIG_KEY = {
 
   TERMS_OF_USE_ID: 'terms_of_use_id',
 
-  PICK_UP_AT_THE_STORE_KEY: 'pick_up_at_the_store_key'
+  PICK_UP_AT_THE_STORE_KEY: 'pick_up_at_the_store_key',
 };
