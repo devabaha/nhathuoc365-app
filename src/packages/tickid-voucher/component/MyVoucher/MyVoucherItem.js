@@ -44,10 +44,12 @@ function MyVoucherItem(props) {
                 Sử dụng bây giờ
               </Button>
             )}
-            <View style={styles.containerNumberCode}>
-            <Text style={styles.textNumberCode}>x{props.quantity}</Text>
           </View>
-          </View>
+        </View>
+
+
+        <View style={styles.quantityContainer}>
+          <Text style={styles.quantity}>x{props.quantity}</Text>
         </View>
       </View>
     </Button>
@@ -133,14 +135,20 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     color: '#00a5cf'
   },
-  containerNumberCode:{
-    alignItems:'flex-end',
-    paddingTop: 10
+  quantityContainer: {
+    position: 'absolute',
+    paddingHorizontal: 12,
+    paddingVertical: 2,
+    right: 2,
+    bottom: 2,
+    backgroundColor: config.colors.primary,
+    borderTopLeftRadius: 8,
+    borderBottomRightRadius: 8,
   },
-  textNumberCode:{
-    fontSize: 13,
-    fontWeight: '400',
-    color: '#666'
+  quantity: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: config.colors.white
   },
   dotLeftWrapper: {
     position: 'absolute',
@@ -159,7 +167,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const defaultListener = () => {};
+const defaultListener = () => { };
 
 MyVoucherItem.propTypes = {
   avatar: PropTypes.string,

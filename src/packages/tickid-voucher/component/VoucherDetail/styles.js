@@ -89,7 +89,21 @@ const styles = StyleSheet.create({
     paddingVertical: 5
   },
   contentWrapper: {
-    marginBottom: 8
+    marginBottom: 8,
+  },
+  barCodeContainer: {
+    paddingVertical: 7,
+    backgroundColor: '#fff'
+  },
+  containerCodeNumber: {
+    backgroundColor: '#fff',
+    paddingBottom: 8,
+    alignItems: 'center',
+  },
+  codeNumber: {
+    color: '#333',
+    fontWeight: '500',
+    letterSpacing: 2
   },
   getVoucherWrapper: {
     backgroundColor: config.colors.white,

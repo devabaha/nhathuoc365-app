@@ -1,17 +1,15 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
   Text,
   Image,
   ScrollView,
-  Dimensions,
   RefreshControl,
 } from 'react-native';
 import HTML from 'react-native-render-html';
-import {Tabs, Tab} from '@tickid/react-native-tabs';
-import {Accordion, Panel} from '@tickid/react-native-accordion';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Tabs, Tab } from '@tickid/react-native-tabs';
+import { Accordion, Panel } from '@tickid/react-native-accordion';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
 import SiteEntity from '../../entity/SiteEntity';
@@ -20,9 +18,7 @@ import AddressItem from '../AddressItem';
 import styles from './styles';
 import Barcode from 'react-native-barcode-builder';
 
-const screenWidth = Dimensions.get('screen').width;
-
-const defaultListener = () => {};
+const defaultListener = () => { };
 
 const BARCODE_FORMAT = 'CODE128';
 
@@ -124,7 +120,7 @@ class VoucherDetail extends Component {
   }
 
   renderSubmitButtons = () => {
-    const {t} = this.props;
+    const { t } = this.props;
     if (this.props.isUseOnlineMode) {
       return (
         <Button
@@ -151,16 +147,16 @@ class VoucherDetail extends Component {
           {this.props.canUseNow
             ? t('detail.useNow')
             : this.canBuyCampaign
-            ? t('detail.redeem')
-            : t('detail.getVoucher')}
+              ? t('detail.redeem')
+              : t('detail.getVoucher')}
         </Button>
       );
     }
   };
 
   render() {
-    const {t} = this.props;
-    const campaign = this.props.campaign || {data: {}};
+    const { t } = this.props;
+    const campaign = this.props.campaign || { data: {} };
 
     const tabs = [
       <Tab
@@ -210,11 +206,11 @@ class VoucherDetail extends Component {
               <Image
                 style={styles.topImage}
                 resizeMode="cover"
-                source={{uri: campaign.data.image_url}}
+                source={{ uri: campaign.data.image_url }}
               />
               <View style={styles.avatarContainer}>
                 <Image
-                  source={{uri: campaign.data.shop_logo_url}}
+                  source={{ uri: campaign.data.shop_logo_url }}
                   style={styles.avatar}
                 />
               </View>
@@ -260,15 +256,19 @@ class VoucherDetail extends Component {
               </View>
             </View>
 
-            {!!campaign?.data?.code && <View style={styles.contentWrapper}>
-            <Barcode
-              width={2}
-              height={60}
-              value = {campaign.data.code}
-              format={BARCODE_FORMAT}
-            />
-          </View>}
-
+            {!!campaign?.data?.code &&
+              <View style={[styles.contentWrapper, styles.barcodeContainer]}>
+                <Barcode
+                  width={2}
+                  height={60}
+                  value={campaign.data.code}
+                  format={BARCODE_FORMAT}
+                  lineColor={'#333'}
+                />
+                <View style={styles.containerCodeNumber}>
+                  <Text style={styles.codeNumber}>{campaign.data.code}</Text>
+                </View>
+              </View>}
             <View style={styles.contentWrapper}>
               <Tabs>{tabs}</Tabs>
             </View>
