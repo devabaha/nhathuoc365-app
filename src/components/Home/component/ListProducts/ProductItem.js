@@ -233,7 +233,7 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   commissionText: {
-    color: appConfig.colors.cartType.commission,
+    color: appConfig.colors.cherry,
   },
   discount: {
     marginTop: 4,

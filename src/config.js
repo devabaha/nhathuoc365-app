@@ -89,7 +89,6 @@ class Config {
       cartType: {
         cart: '#B0C0F0',
         dropship: '#FF9F1C',
-        commission: '#da3560',
       },
       delivery: {
         [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
@@ -132,6 +131,7 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
+      cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
       highlight: {
