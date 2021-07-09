@@ -20,6 +20,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PRODUCT_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
+import {debounce} from 'lodash';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -61,16 +62,20 @@ class ProductItem extends PureComponent {
     return product.product_type === PRODUCT_TYPES.SERVICE;
   }
 
-  handlePress = () => {
-    if (!!this.props.selfRequest) {
-      this.setState({
-        loading: true,
-      });
-      this.handleSelfRequest();
-    } else {
-      this.props.onPress();
-    }
-  };
+  handlePress = debounce(
+    () => {
+      if (!!this.props.selfRequest) {
+        this.setState({
+          loading: true,
+        });
+        this.handleSelfRequest();
+      } else {
+        this.props.onPress();
+      }
+    },
+    500,
+    {leading: true, trailing: false},
+  );
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
@@ -149,22 +154,24 @@ class ProductItem extends PureComponent {
                       <TouchableOpacity
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}>
-                        {this.state.buying ? (
-                          <View
-                            style={{
-                              width: 20,
-                              height: 20,
-                            }}>
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          {this.state.buying ? (
                             <Indicator size="small" />
-                          </View>
-                        ) : this.isServiceProduct(item) ? (
-                          <Icon name="calendar-plus-o" style={styles.icon} />
-                        ) : (
-                          <MaterialIcons
-                            name="add-shopping-cart"
-                            style={styles.icon}
-                          />
-                        )}
+                          ) : this.isServiceProduct(item) ? (
+                            <Icon name="calendar-plus-o" style={styles.icon} />
+                          ) : (
+                            <MaterialIcons
+                              name="add-shopping-cart"
+                              style={styles.icon}
+                            />
+                          )}
+                        </View>
                       </TouchableOpacity>
                     </View>
                   </View>

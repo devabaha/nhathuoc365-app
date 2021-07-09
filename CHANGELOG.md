@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - social_posts in Home.
 - Add commission value for ProductItem and Item by [nguyenanhtuan191298@gmail.com].
+### Changed
+- Logic of dropShipPrice will be depended on fix_dropship_price_key.
+### Fixed
+- Fix UX for ProductItem: prevent multiple taps at a product by [kienluu612@gmail.com].
+- Clip NotiBadge in ListService.
 
 ## [r12.0.2] - 2021-06-30
 ### Added
