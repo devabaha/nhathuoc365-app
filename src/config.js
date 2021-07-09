@@ -89,6 +89,7 @@ class Config {
       cartType: {
         cart: '#B0C0F0',
         dropship: '#FF9F1C',
+        commission: '#da3560',
       },
       delivery: {
         [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',

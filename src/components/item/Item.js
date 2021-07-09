@@ -1278,7 +1278,7 @@ const styles = StyleSheet.create({
   commissionText: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#da3560',
+    color: appConfig.colors.cartType.commission,
   },
   item_heading_price_box: {
     // marginTop: 15,
