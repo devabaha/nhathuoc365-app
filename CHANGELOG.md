@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Adding config color commission value by [nguyenanhtuan191298@gmail.com].
+- Cherry color to config by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.4] - 2021-07-08
 ### Added
