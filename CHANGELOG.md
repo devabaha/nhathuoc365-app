@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r12.0.3] - 2021-07-06
 ### Added
-- Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com].
 - social_posts in Home.
 - site_content_key in Account screen by [kienluu612@gmail.com].
 - Add commission value for ProductItem and Item by [nguyenanhtuan191298@gmail.com].
