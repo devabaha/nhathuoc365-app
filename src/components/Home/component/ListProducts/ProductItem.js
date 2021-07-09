@@ -226,7 +226,7 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   commissionText: {
-    color: appConfig.colors.primary,
+    color: '#da3560',
   },
   discount: {
     marginTop: 4,
