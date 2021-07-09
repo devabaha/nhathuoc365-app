@@ -2,11 +2,8 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
-  FlatList,
-  ScrollView,
   TextInput,
   Clipboard,
   Keyboard,
@@ -22,7 +19,6 @@ import ListHeader from '../../stores/ListHeader';
 import PopupConfirm from '../../PopupConfirm';
 import Sticker from '../../Sticker';
 import RightButtonChat from '../../RightButtonChat';
-import RightButtonCall from '../../RightButtonCall';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import {USE_ONLINE} from 'app-packages/tickid-voucher';
@@ -31,7 +27,10 @@ import {ANALYTICS_EVENTS_NAME} from '../../../constants';
 import CartItem from '../CartItem';
 import Tag from '../../Tag';
 import Loading from '../../Loading';
-import {CONFIG_KEY, isConfigActive} from '../../../helper/configKeyHandler';
+import {
+  CONFIG_KEY,
+  getValueFromConfigKey,
+} from '../../../helper/configKeyHandler';
 import APIHandler from '../../../network/APIHandler';
 import {APIRequest} from '../../../network/Entity';
 import Container from '../../Layout/Container/Container';
@@ -40,7 +39,7 @@ import {
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
-import {PaymentMethodSection, DeliverySection} from './components';
+import {PaymentMethodSection, DeliverySection, StoreInfo} from './components';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -79,7 +78,8 @@ class Confirm extends Component {
 
   get isSiteUseShipNotConfirming() {
     return (
-      store?.store_data?.[CONFIG_KEY.SITE_USE_SHIP] && !this.state.isConfirming
+      !!getValueFromConfigKey(CONFIG_KEY.SITE_USE_SHIP) &&
+      !this.state.isConfirming
     );
   }
 
@@ -506,11 +506,9 @@ class Confirm extends Component {
       });
     };
 
-    Actions.push(appConfig.routes.myAddress, {
-      type: ActionConst.REPLACE,
+    Actions.replace(appConfig.routes.myAddress, {
       isVisibleStoreAddress: true,
-      addressId: store.cart_data?.address?.id
-      // onBack
+      addressId: store.cart_data?.address?.id,
     });
   }
 
@@ -1067,6 +1065,8 @@ class Confirm extends Component {
     const itemFee = cart_data?.item_fee || {};
     const cashbackView = cart_data?.cashback_view || {};
 
+    const storeInfo = cart_data?.store;
+
     return (
       <>
         {this.state.loading && <Loading center />}
@@ -1339,6 +1339,21 @@ class Confirm extends Component {
             )}
           </View>
 
+          {!!storeInfo && (
+            <StoreInfo
+              title={t('confirm.store.title')}
+              name={storeInfo.name}
+              address={storeInfo.full_address}
+              image={storeInfo.img}
+              tel={storeInfo.phone}
+              originLatitude={Number(cart_data?.address?.latitude)}
+              originLongitude={Number(cart_data?.address?.longitude)}
+              destinationLatitude={Number(storeInfo.lat)}
+              destinationLongitude={Number(storeInfo.lng)}
+              isReverseDirection={storeInfo.is_reverse_direction}
+            />
+          )}
+
           <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.address_name_box}>
               <View style={styles.box_icon_label}>
@@ -1359,7 +1374,7 @@ class Confirm extends Component {
           {this.renderCartProducts(cart_products_confirm, single)}
 
           {(!single ||
-            !store?.store_data[CONFIG_KEY.SITE_USE_SHIP] ||
+            !getValueFromConfigKey(CONFIG_KEY.SITE_USE_SHIP) ||
             this.state.isConfirming) && (
             <PaymentMethodSection
               isUnpaid={this.isUnpaid}

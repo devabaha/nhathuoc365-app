@@ -131,6 +131,7 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
+      cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
       highlight: {

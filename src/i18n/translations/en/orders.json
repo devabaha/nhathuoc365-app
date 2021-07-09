@@ -41,6 +41,9 @@
       "placeholder": "Enter your note here",
       "noNote": "There are no notes"
     },
+    "store": {
+      "title": "Store"
+    },
     "items": {
       "selected": "Selected item(s)",
       "shopped": "Purchased item(s)"
