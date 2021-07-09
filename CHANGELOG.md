@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r12.0.4] - 2021-07-08
+## [r12.0.4] - 2021-07-09
 ### Added
 - Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com].
 - Adding function pick up at the store by [lamah.dev@gmail.com] [nguyenanhtuan191298@gmail.com].
+- StoreInfo section in Confirm.
+### Changed
+- update openMap to take origin location to make direction.
 ### Fixed
 - discount_percent in isDiscount of ItemAttribute screen is not convert to boolean.
 

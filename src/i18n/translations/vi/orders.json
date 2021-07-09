@@ -41,6 +41,9 @@
       "placeholder": "Nhập ghi chú của bạn tại đây",
       "noNote": "Không có ghi chú"
     },
+    "store": {
+      "title": "Cửa hàng"
+    },
     "items": {
       "selected": "Mặt hàng đã chọn",
       "shopped": "Mặt hàng đã mua"
