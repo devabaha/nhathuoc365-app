@@ -506,7 +506,7 @@ class Confirm extends Component {
       });
     };
 
-    Actions.replace(appConfig.routes.myAddress, {
+    Actions.push(appConfig.routes.myAddress, {
       isVisibleStoreAddress: true,
       addressId: store.cart_data?.address?.id,
     });

@@ -61,7 +61,7 @@ const Posts = ({
   const page = useRef(1);
   const canLoadMore = useRef(true);
 
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(!postsProp);
   const [isLoadMore, setLoadMore] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
 
