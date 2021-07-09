@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,16 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions, ActionConst} from 'react-native-router-flux';
+import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
-import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import { CONFIG_KEY } from 'src/helper/configKeyHandler';
 import HorizontalInfoItem from '../account/HorizontalInfoItem';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import {INPUT_ADDRESS_TYPE} from 'src/helper/configKeyHandler/configKeyHandler';
-import {COMBO_LOCATION_TYPE} from '../ModalComboLocation/constants';
+import { INPUT_ADDRESS_TYPE } from 'src/helper/configKeyHandler/configKeyHandler';
+import { COMBO_LOCATION_TYPE } from '../ModalComboLocation/constants';
 class CreateAddress extends Component {
   constructor(props) {
     super(props);
@@ -107,7 +107,7 @@ class CreateAddress extends Component {
   }
 
   get metadata() {
-    const {t} = this.props;
+    const { t } = this.props;
     const inputAddressConfig =
       Number(store.store_data[CONFIG_KEY.INPUT_ADDRESS_CONFIG_KEY]) || undefined;
 
@@ -117,7 +117,7 @@ class CreateAddress extends Component {
         defaultValue: t('formData.name.placeholder'),
         value: this.state.name,
         onChangeInputValue: (data, name) => {
-          this.setState({name});
+          this.setState({ name });
         },
         input: true,
         inputProps: {
@@ -136,7 +136,7 @@ class CreateAddress extends Component {
         defaultValue: t('formData.tel.placeholder'),
         value: this.state.tel,
         onChangeInputValue: (data, tel) => {
-          this.setState({tel: tel.replace(' ', '')});
+          this.setState({ tel: tel.replace(' ', '') });
         },
         input: true,
         inputProps: {
@@ -221,7 +221,7 @@ class CreateAddress extends Component {
         defaultValue: t('formData.address.placeholder'),
         value: this.state.address,
         onChangeInputValue: (data, address) => {
-          this.setState({address});
+          this.setState({ address });
         },
         input: true,
         columnView: true,
@@ -267,7 +267,7 @@ class CreateAddress extends Component {
 
   _reloadParent() {
     if (this.props.addressReload) {
-      this.props.addressReload(450);
+      this.props.addressReload();
     }
   }
 
@@ -322,7 +322,7 @@ class CreateAddress extends Component {
       district_id,
       ward_id,
     } = this.state;
-    const {t} = this.props;
+    const { t } = this.props;
 
     name = name.trim();
     tel = tel.trim();
@@ -421,8 +421,8 @@ class CreateAddress extends Component {
             district_id,
             ward_id,
           };
-          var {is_user_address} = this.state;
-console.log(data_edit)
+          var { is_user_address } = this.state;
+          console.log(data_edit)
           if (is_user_address) {
             var response = await APIHandler.user_add_address(
               this.state.address_id,
@@ -456,6 +456,9 @@ console.log(data_edit)
 
             this._reloadParent();
 
+            if (this.props.goBack) {
+              Actions.pop();
+            }
             if (this.props.redirect == 'confirm') {
               Actions.replace(appConfig.routes.paymentConfirm, {
                 type: ActionConst.REPLACE,
@@ -523,15 +526,28 @@ console.log(data_edit)
       );
 
       if (response && response.status == STATUS_SUCCESS) {
+        flashShowMessage({
+          type: 'success',
+          message: response.message
+        })
         this._unMount();
         // store.setCartData(response.data);
         // auto reload address list
         this._reloadParent();
 
         Actions.pop();
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || this.props.t('api.error.message')
+        })
       }
     } catch (e) {
       console.log(e + ' user_delete_address');
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('api.error.message')
+      })
     }
   }
 
@@ -542,7 +558,7 @@ console.log(data_edit)
     }
   }
 
-  handlePressAddress({detail_address, map_address}) {
+  handlePressAddress({ detail_address, map_address }) {
     this.setState({
       address: detail_address.description,
       map_address: map_address.description,
@@ -569,9 +585,9 @@ console.log(data_edit)
   }
 
   render() {
-    var {edit_mode} = this.state;
+    var { edit_mode } = this.state;
     var is_go_confirm = this.props.redirect == 'confirm';
-    const {t} = this.props;
+    const { t } = this.props;
 
     const disabled = this.disabled;
 
@@ -620,7 +636,7 @@ console.log(data_edit)
                     borderColor: '#dddddd',
                   },
                 ]}>
-                <Text style={[styles.input_label, {color: 'red'}]}>
+                <Text style={[styles.input_label, { color: 'red' }]}>
                   {t('delete')}
                 </Text>
               </TouchableHighlight>
@@ -636,7 +652,7 @@ console.log(data_edit)
               style={[
                 styles.address_continue_content,
                 disabled && styles.disabled,
-                {flexDirection: is_go_confirm ? 'row-reverse' : 'row'},
+                { flexDirection: is_go_confirm ? 'row-reverse' : 'row' },
               ]}>
               <View
                 style={{
@@ -653,8 +669,8 @@ console.log(data_edit)
                       this.state.edit_mode
                         ? 'save'
                         : is_go_confirm
-                        ? 'chevron-right'
-                        : 'check'
+                          ? 'chevron-right'
+                          : 'check'
                     }
                     style={[
                       styles.address_continue_title,
@@ -675,8 +691,8 @@ console.log(data_edit)
                 {this.state.edit_mode
                   ? t('btn.save')
                   : is_go_confirm
-                  ? t('btn.next')
-                  : t('btn.finish')}
+                    ? t('btn.next')
+                    : t('btn.finish')}
               </Text>
             </View>
           </TouchableHighlight>

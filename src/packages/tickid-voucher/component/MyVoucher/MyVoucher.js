@@ -62,6 +62,7 @@ class MyVoucher extends Component {
     return (
       <MyVoucherItem
         title={voucher.data.title}
+        quantity={voucher.data.quantity}
         remaining={voucher.data.remain_time}
         isUseOnlineMode={this.props.isUseOnlineMode}
         avatar={voucher.data.shop_logo_url}

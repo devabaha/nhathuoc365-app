@@ -36,6 +36,7 @@ import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 class Account extends Component {
   constructor(props) {
@@ -502,17 +503,17 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage
+            onSelect: this.handleConfirmChangeAppLanguage,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189'
-          }
+            backgroundColor: '#175189',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: true
+        marginTop: true,
       },
 
       {
@@ -984,6 +985,7 @@ class Account extends Component {
       store.user_info != null && store.user_info.username != null;
     const {avatar_loading, logout_loading} = this.state;
     const {t} = this.props;
+    const siteContentValue = getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY);
 
     return (
       <View style={styles.container}>
@@ -1159,11 +1161,19 @@ class Account extends Component {
           {this.options && (
             <SelectionList
               useList={false}
-              containerStyle={{
-                paddingVertical: 8,
-                marginBottom: 10,
-              }}
+              containerStyle={styles.listOptionsContainer}
               data={this.options}
+            />
+          )}
+
+          {!!siteContentValue && (
+            <CustomAutoHeightWebview
+              content={siteContentValue}
+              containerStyle={styles.footerSiteContainer}
+              contentStyle={styles.footerSiteContent}
+              customStyle={`body {
+                overflow-x: hidden;
+              }`}
             />
           )}
         </ScrollView>
@@ -1443,6 +1453,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     elevation: 4,
+  },
+  footerSiteContainer: {
+    paddingVertical: 12,
+    borderColor: appConfig.colors.primary,
+    borderTopWidth: 3,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+  },
+  footerSiteContent: {
+    width: appConfig.device.width - 24,
+  },
+  listOptionsContainer: {
+    paddingVertical: 8,
   },
 });
 

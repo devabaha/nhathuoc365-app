@@ -6,14 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.0.4] - 2021-07-08
+### Added
+- Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com].
+- Adding function pick up at the store by [lamah.dev@gmail.com] [nguyenanhtuan191298@gmail.com].
+### Fixed
+- discount_percent in isDiscount of ItemAttribute screen is not convert to boolean.
+
+## [r12.0.3] - 2021-07-06
 ### Added
 - social_posts in Home.
+- site_content_key in Account screen by [kienluu612@gmail.com].
 - Add commission value for ProductItem and Item by [nguyenanhtuan191298@gmail.com].
 ### Changed
 - Logic of dropShipPrice will be depended on fix_dropship_price_key.
 ### Fixed
 - Fix UX for ProductItem: prevent multiple taps at a product by [kienluu612@gmail.com].
 - Clip NotiBadge in ListService.
+- Like icon is the same even status changed.
 
 ## [r12.0.2] - 2021-06-30
 ### Added

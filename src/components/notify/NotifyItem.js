@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import AutoHeightWebView from 'react-native-autoheight-webview';
 import ListHeader from '../stores/ListHeader';
 import Items from '../stores/Items';
 import CartFooter from '../cart/CartFooter';
@@ -32,6 +31,7 @@ import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import Loading from '../Loading';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -235,12 +235,21 @@ class NotifyItem extends Component {
               </Text>
 
               <View style={styles.notify_time_box}>
-                <Text style={styles.notify_time}>
-                  <Icon name="map-marker" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('shop_name') + '    '}
-                  <Icon name="clock-o" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('created')}
-                </Text>
+                <Container row>
+                  <Container row style={styles.notifyBlock}>
+                    <Icon name="map-marker" style={styles.icon} />
+                    <Text style={styles.notify_time}>
+                      {this.getHeaderInfo('shop_name')}
+                    </Text>
+                  </Container>
+
+                  <Container row style={styles.notifyBlock}>
+                    <Icon name="clock-o" style={styles.icon} />
+                    <Text style={styles.notify_time}>
+                      {this.getHeaderInfo('created')}
+                    </Text>
+                  </Container>
+                </Container>
               </View>
 
               {!!this.getHeaderInfo('short_content') && (
@@ -254,37 +263,11 @@ class NotifyItem extends Component {
 
             {
               item_data != null ? (
-                <AutoHeightWebView
-                  onShouldStartLoadWithRequest={(result) => {
-                    return true;
-                  }}
-                  style={{
-                    marginTop: 15,
-                    marginHorizontal: 15,
-                    width: appConfig.device.width - 30,
-                  }}
-                  onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item_data.content}}
-                  zoomable={false}
-                  scrollEnabled={false}
-                  viewportContent={'width=device-width, user-scalable=no'}
-                  customStyle={`
-                  * {
-                    font-family: 'system font';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
+                <CustomAutoHeightWebview
+                  contentStyle={styles.webview}
+                  content={item_data.content}
+                  customStyle={`p {
                     font-size: 16px;
-                    line-height: 24px;
-                    color: #404040;
-                  }
-                  img {
-                    max-width: 100% !important;
-                    height: auto !important;
                   }`}
                 />
               ) : null
@@ -355,28 +338,26 @@ class NotifyItem extends Component {
             }
             hasInfoExtraBottom={false}
             onPressTotalComments={() =>
+              handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, item_data)
+            }
+            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            onActionBarPress={(type) =>
               handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.NEWS,
+                type,
                 item_data,
-              )}
-              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-              onActionBarPress={(type) =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  type,
-                  item_data,
-                )
-              }
-              hasInfoExtraBottom={false}
-              onPressTotalComments={() =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  SOCIAL_BUTTON_TYPES.COMMENT,
-                  item_data,
-                  false,
-                )
-              }
-            />
+              )
+            }
+            hasInfoExtraBottom={false}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
+                SOCIAL_BUTTON_TYPES.COMMENT,
+                item_data,
+                false,
+              )
+            }
+          />
         )}
 
         {/* {item_data != null && item_data.related && (
@@ -481,6 +462,19 @@ const styles = StyleSheet.create({
 
   listStoreProductContainer: {
     paddingTop: 0,
+  },
+  webview: {
+    marginTop: 15,
+    marginHorizontal: 15,
+  },
+
+  notifyBlock: {
+    marginRight: 15,
+  },
+  icon: {
+    marginRight: 5,
+    color: '#8B8B8B',
+    fontSize: 11,
   },
 });
 
