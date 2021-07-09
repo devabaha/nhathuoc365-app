@@ -235,12 +235,21 @@ class NotifyItem extends Component {
               </Text>
 
               <View style={styles.notify_time_box}>
-                <Text style={styles.notify_time}>
-                  <Icon name="map-marker" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('shop_name') + '    '}
-                  <Icon name="clock-o" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('created')}
-                </Text>
+                <Container row>
+                  <Container row style={styles.notifyBlock}>
+                    <Icon name="map-marker" style={styles.icon} />
+                    <Text style={styles.notify_time}>
+                      {this.getHeaderInfo('shop_name')}
+                    </Text>
+                  </Container>
+
+                  <Container row style={styles.notifyBlock}>
+                    <Icon name="clock-o" style={styles.icon} />
+                    <Text style={styles.notify_time}>
+                      {this.getHeaderInfo('created')}
+                    </Text>
+                  </Container>
+                </Container>
               </View>
 
               {!!this.getHeaderInfo('short_content') && (
@@ -457,6 +466,15 @@ const styles = StyleSheet.create({
   webview: {
     marginTop: 15,
     marginHorizontal: 15,
+  },
+
+  notifyBlock: {
+    marginRight: 15,
+  },
+  icon: {
+    marginRight: 5,
+    color: '#8B8B8B',
+    fontSize: 11,
   },
 });
 
