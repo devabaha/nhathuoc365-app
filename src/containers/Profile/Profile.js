@@ -120,7 +120,7 @@ class Profile extends Component {
   };
 
   handleEdit = () => {
-    Actions.push(appConfig.routes.skv_editProfile, {
+    Actions.push(appConfig.routes.editPersonalProfile, {
       user_info: this.state.userInfo,
       refresh: this.getProfile
     });

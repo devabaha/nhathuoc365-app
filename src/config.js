@@ -33,8 +33,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'skvkey',
-      secretKey: 'sfsfdskvkey121332324',
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
     };
   }
 
@@ -347,7 +347,10 @@ class Config {
       listProgressTracking: 'listProgressTracking',
       progressTrackingDetail: 'progressTrackingDetail',
 
-      personalProfile: 'personalProfile'
+      personalProfile: 'personalProfile',
+      editPersonalProfile: 'editPersonalProfile',
+      listUserChat: 'listUserChat',
+      amazingUserChat: 'amazingUserChat',
     };
   }
 }

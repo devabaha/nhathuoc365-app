@@ -328,19 +328,21 @@ class Chat extends Component {
         setHeader={this.props.setHeader}
         defaultStatusBarColor={appConfig.colors.primary}
         // Refs
-        ref={inst => (this.refTickidChat = inst)}
-        refGiftedChat={inst => (this.refGiftedChat = inst)}
-        refListMessages={inst => (this.refListMessages = inst)}
+        ref={(inst) => (this.refTickidChat = inst)}
+        refGiftedChat={(inst) => (this.refGiftedChat = inst)}
+        refListMessages={(inst) => (this.refListMessages = inst)}
         // GiftedChat props
         giftedChatProps={this.giftedChatProps}
         messages={this.state.messages}
         onSendText={this.handleSendText}
         // Gallery props
-        galleryVisible={appConfig.device.isIOS}
-        uploadURL={UPLOAD_URL}
+        // galleryVisible={appConfig.device.isIOS}
+        galleryVisible={false}
+        useModalGallery
+        uploadURL={APIHandler.url_user_upload_image()}
         onSendImage={this.handleSendImage}
-        onUploadedImage={response =>
-          this._onSend({ image: response.data.name })
+        onUploadedImage={(response) =>
+          this._onSend({image: response.data.name})
         }
         // Pin props
         pinListVisible={false}

@@ -182,7 +182,13 @@ import ProgressTracking, {
   ProgressTrackingDetail,
 } from './containers/ProgressTracking';
 import Profile from './containers/Profile';
-import {ListUserChat} from './components/amazingUserChat'
+import {
+  ListUserChat,
+  ListUserChatNavBar,
+  SearchUserChat,
+  SearchUserChatNavBar,
+  UserChat as AmazingUserChat,
+} from './components/amazingUserChat';
 
 /**
  * Not allow font scaling
@@ -801,7 +807,7 @@ class RootRouter extends Component {
                     iconSVG={SVGNews}>
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={ListUserChat}
+                      component={SocialNews}
                     />
                   </Stack>
 
@@ -862,17 +868,61 @@ class RootRouter extends Component {
                       }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
-                      component={Profile}
+                      component={Account}
+                      isMainUser
+                      hideNavBar
                     />
                   </Stack>
                 </Tabs>
 
-                {/* ================ LIST PROGRESS TRACKING ================ */}
+                {/* ================ PROFILE ================ */}
                 <Stack key={appConfig.routes.personalProfile}>
                   <Scene
                     key={`${appConfig.routes.personalProfile}_1`}
                     component={Profile}
                     hideNavBar
+                    back
+                  />
+                </Stack>
+
+                {/* ================ EDIT PROFILE ================ */}
+                <Stack key={appConfig.routes.editPersonalProfile}>
+                  <Scene
+                    key={`${appConfig.routes.editPersonalProfile}_1`}
+                    component={EditProfile}
+                    title={t('screen.account.editAccountTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+
+                {/* ================ LIST USER CHAT ================ */}
+                <Stack key={appConfig.routes.listUserChat}>
+                  <Scene
+                    key={`${appConfig.routes.listUserChat}_1`}
+                    title="Danh sách Chat"
+                    component={ListUserChat}
+                    navBar={ListUserChatNavBar}
+                    {...navBarConfig}
+                    back
+                  />
+                  <Scene
+                    key={appConfig.routes.searchUserChat}
+                    component={SearchUserChat}
+                    navBar={SearchUserChatNavBar}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AMAZING USER CHAT ================ */}
+                <Stack key={appConfig.routes.amazingUserChat}>
+                  <Scene
+                    key={`${appConfig.routes.amazingUserChat}_1`}
+                    component={AmazingUserChat}
+                    setHeader={this.setHeader.bind(this)}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>
