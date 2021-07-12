@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - PersonalProfile and UserChat from skv.
+### Changed
+- Only use has_attr for checking product's attributes.
 ### Fixed
 - Delay setState OrderCart data.
 
