@@ -191,6 +191,7 @@ import {
   UserChat as AmazingUserChat,
 } from './components/amazingUserChat';
 
+import ListAddressStore from './containers/ListAddressStore';
 /**
  * Not allow font scaling
  */
@@ -925,6 +926,17 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+                
+                {/* ================ LIST ADDRESS STORE ================ */}
+                <Stack key={appConfig.routes.listAddressStore}>
+                  <Scene
+                    key={`${appConfig.routes.listAddressStore}_1`}
+                    {...navBarConfig}
+                    title={t('screen.gpsListStore.mainTitle')}
+                    component={ListAddressStore}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ LIST PROGRESS TRACKING ================ */}
                 <Stack key={appConfig.routes.listProgressTracking}>
@@ -1114,6 +1126,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.ordersTab}_1`}
                     title={t('screen.orders.mainTitle')}
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />

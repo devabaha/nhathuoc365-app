@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.0.3';
+    return 'r12.0.4';
   }
 
   get appName() {
@@ -137,6 +137,7 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
+      cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
       highlight: {
@@ -351,6 +352,8 @@ class Config {
       editPersonalProfile: 'editPersonalProfile',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
+      
+      listAddressStore: 'listAddressStore'
     };
   }
 }

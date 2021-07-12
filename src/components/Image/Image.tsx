@@ -61,6 +61,7 @@ const Image = (props: ImageProps) => {
       onError={handleError}
       {...props}
       style={[
+        styles.image,
         props.style,
         isError && {backgroundColor: props.errorColor || '#eee'},
       ]}

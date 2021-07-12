@@ -503,17 +503,17 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage
+            onSelect: this.handleConfirmChangeAppLanguage,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189'
-          }
+            backgroundColor: '#175189',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: true
+        marginTop: true,
       },
 
       {
@@ -1174,6 +1174,9 @@ class Account extends Component {
               content={siteContentValue}
               containerStyle={styles.footerSiteContainer}
               contentStyle={styles.footerSiteContent}
+              customStyle={`body {
+                overflow-x: hidden;
+              }`}
             />
           )}
         </ScrollView>
@@ -1459,9 +1462,9 @@ const styles = StyleSheet.create({
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
-    alignItems:'center',
+    alignItems: 'center',
   },
-  footerSiteContent:{
+  footerSiteContent: {
     width: appConfig.device.width - 24,
   },
   listOptionsContainer: {

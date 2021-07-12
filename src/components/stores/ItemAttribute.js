@@ -68,13 +68,13 @@ class ItemAttribute extends PureComponent {
     return this.state.models?.length
       ? this.state.selectedModel?.price_before_discount !==
           this.state.selectedModel?.price
-      : this.state.product?.discount_percent;
+      : !!this.state.product?.discount_percent;
   }
 
   get listPrice() {
     return this.state.models?.length
-      ? this.state.selectedModel?.price_before_discount || 0
-      : this.state?.product?.discount;
+      ? this.state.selectedModel?.origin_price || 0
+      : this.state?.product?.origin_price;
   }
 
   get dropShipPrice() {
@@ -406,7 +406,7 @@ class ItemAttribute extends PureComponent {
       this.state.models.length !== 0 &&
       !Object.keys(this.state.selectedModel).length;
 
-    const originPrice = this.state.models?.length
+    const discountPrice = this.state.models?.length
       ? this.state.selectedModel?.price_before_discount_view
       : this.state.product?.discount_view;
 
@@ -498,9 +498,9 @@ class ItemAttribute extends PureComponent {
                     </Text>
                   </View>
                   <View>
-                    {this.isDiscount && !!originPrice && (
+                    {this.isDiscount && !!discountPrice && (
                       <Text style={[styles.note, styles.deleteText]}>
-                        {originPrice}
+                        {discountPrice}
                       </Text>
                     )}
                     <Text style={styles.highlight}>

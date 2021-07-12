@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - PersonalProfile and UserChat from skv.
+### Fixed
+- Delay setState OrderCart data.
+
+## [r12.0.4] - 2021-07-09
+### Added
+- Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com].
+- Adding function pick up at the store by [lamah.dev@gmail.com] [nguyenanhtuan191298@gmail.com].
+- StoreInfo section in Confirm.
+- Cherry color to config by [nguyenanhtuan191298@gmail.com].
+### Changed
+- update openMap to take origin location to make direction.
+### Fixed
+- discount_percent in isDiscount of ItemAttribute screen is not convert to boolean.
 
 ## [r12.0.3] - 2021-07-06
 ### Added

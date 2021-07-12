@@ -238,5 +238,7 @@
   "saved": "Saved",
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",
-  "noResult": "No data yet"
+  "noResult": "No data yet",
+
+  "loading": "Retrieving data..."
 }
