@@ -117,6 +117,7 @@ const Post = ({
   description,
   onPress = () => {},
   onPressGroup = () => {},
+  onPressUserName = () => {},
 }) => {
   const initIsShowFullMessage = () => {
     if (content) {
@@ -175,7 +176,10 @@ const Post = ({
           </Container>
           <Container centerVertical={false} style={styles.userNameContainer}>
             <Text style={styles.userName}>
-              {userName}
+              <TextPressable onPress={onPressUserName}>
+                {userName}
+              </TextPressable>
+
               {renderGroupName()}
             </Text>
             {!!description && (

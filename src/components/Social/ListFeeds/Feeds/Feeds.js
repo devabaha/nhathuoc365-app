@@ -71,6 +71,7 @@ const Feeds = ({
   disableShare,
   onPressPost,
   onPressGroup,
+  onPressUserName,
   renderActionBar,
   onActionBarPress,
   onPressTotalComments,
@@ -156,6 +157,7 @@ const Feeds = ({
           thumbnailUrl={thumbnailUrl}
           onPress={onPressPost}
           onPressGroup={onPressGroup}
+          onPressUserName={onPressUserName}
         />
 
         <ActionContainer

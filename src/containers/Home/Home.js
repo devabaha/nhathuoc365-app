@@ -199,7 +199,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-
+    
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {

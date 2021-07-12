@@ -55,6 +55,7 @@ export const SERVICES_TYPE = {
   /** CHAT */
   CHAT_NOTI: 'chat_noti',
   LIST_CHAT: 'list_chat',
+  LIST_USER_CHAT: 'list_user_chat',
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
@@ -102,4 +103,7 @@ export const SERVICES_TYPE = {
   /** PROGRESS TRACKING */
   LIST_PROGRESS_TRACKING: 'list_progress_tracking',
   PROGRESS_TRACKING_DETAIL: 'progress_tracking_detail',
+
+  /** PROFILE */
+  PERSONAL_PROFILE: 'personal_profile'
 };

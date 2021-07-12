@@ -127,7 +127,7 @@ class Orders extends Component {
           }
         }
 
-        setTimeout(() => {
+        // setTimeout(() => {
           this.setState({
             data: response.data,
             empty: false,
@@ -137,7 +137,7 @@ class Orders extends Component {
           if (!noScroll) {
             this._scrollToTop(0);
           }
-        }, delay || 0);
+        // }, delay || 0);
       } else {
         setTimeout(() => {
           this.setState({
