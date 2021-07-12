@@ -90,7 +90,7 @@ class Gallery extends Component {
       onPressItem: this.onPressChoosePhotoType,
       data: CHOOSE_PHOTO_DATA,
       onCloseModal: Actions.pop,
-      style: { height: undefined },
+      modalStyle: { height: undefined },
       heading: 'Chọn ảnh'
     });
   };

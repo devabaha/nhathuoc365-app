@@ -182,6 +182,7 @@ import ProgressTracking, {
   ProgressTrackingDetail,
 } from './containers/ProgressTracking';
 import Profile from './containers/Profile';
+import EditPersonalProfile from './containers/EditProfile';
 import {
   ListUserChat,
   ListUserChatNavBar,
@@ -869,8 +870,6 @@ class RootRouter extends Component {
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
-                      isMainUser
-                      hideNavBar
                     />
                   </Stack>
                 </Tabs>
@@ -889,7 +888,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.editPersonalProfile}>
                   <Scene
                     key={`${appConfig.routes.editPersonalProfile}_1`}
-                    component={EditProfile}
+                    component={EditPersonalProfile}
                     title={t('screen.account.editAccountTitle')}
                     {...navBarConfig}
                     back
@@ -901,7 +900,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.listUserChat}>
                   <Scene
                     key={`${appConfig.routes.listUserChat}_1`}
-                    title="Danh sách Chat"
+                    title={t('screen.listUserChat.mainTitle')}
                     component={ListUserChat}
                     navBar={ListUserChatNavBar}
                     {...navBarConfig}

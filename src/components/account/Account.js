@@ -825,12 +825,12 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    // Actions.push(appConfig.routes.profileDetail, {
-    //   userInfo: store.user_info,
-    // });
-    Actions.push(appConfig.routes.personalProfile, {
-      isMainUser: true
+    Actions.push(appConfig.routes.profileDetail, {
+      userInfo: store.user_info,
     });
+    // Actions.push(appConfig.routes.personalProfile, {
+    //   isMainUser: true
+    // });
   };
 
   handleLogin = () => {

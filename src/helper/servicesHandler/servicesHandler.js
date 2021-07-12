@@ -186,7 +186,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
-      store.setSelectedNewsId(service.categoryId || "")
+      store.setSelectedNewsId(service.categoryId || '');
       // Actions.push(appConfig.routes.notifies, {
       //   title: service.title,
       //   id: service.categoryId,
@@ -215,6 +215,11 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.LIST_CHAT:
       Actions.list_amazing_chat({
+        titleStyle: {width: 220},
+      });
+      break;
+    case SERVICES_TYPE.LIST_USER_CHAT:
+      Actions.push(appConfig.routes.listUserChat, {
         titleStyle: {width: 220},
       });
       break;
@@ -415,6 +420,14 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.progressTrackingDetail, {
         title: service.title,
         id: service.id,
+      });
+      break;
+
+    /** PERSONAL PROFILE */
+    case SERVICES_TYPE.PERSONAL_PROFILE:
+      Actions.push(appConfig.routes.personalProfile, {
+        isMainUser: service.isMainUser,
+        userInfo: service.userInfo,
       });
       break;
     default:

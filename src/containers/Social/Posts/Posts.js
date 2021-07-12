@@ -200,6 +200,16 @@ const Posts = ({
     });
   }, []);
 
+  const handlePressUserName = useCallback((user) => {
+    // user.id = user.user_id;
+
+    // servicesHandler({
+    //   type: SERVICES_TYPE.PERSONAL_PROFILE,
+    //   isMainUser: user.user_id == store.user_info?.id,
+    //   userInfo: user
+    // });
+  }, []);
+
   const onRefresh = () => {
     onRefreshProp();
     setRefreshing(true);
@@ -256,6 +266,7 @@ const Posts = ({
 
   const renderPost = ({item: feeds, index}) => {
     const group = feeds.group_id != groupId ? feeds.group : undefined;
+    const user = feeds?.user;
 
     return (
       <Observer>
@@ -286,6 +297,7 @@ const Posts = ({
               disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
               disableShare
               onPressGroup={() => handlePressGroup(group)}
+              onPressUserName={() => handlePressUserName(user)}
               renderActionBar={
                 !!feeds.accept_status || progress !== undefined
                   ? () => renderStatusText(feeds)

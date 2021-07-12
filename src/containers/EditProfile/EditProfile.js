@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import HorizontalInfoItem from '../../../components/account/HorizontalInfoItem';
+import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 import {isEmpty} from 'lodash';
-import Loading from '../../../components/Loading';
-import Button from '../../../components/Button';
+import Loading from 'src/components/Loading';
+import Button from 'src/components/Button';
 import appConfig from 'app-config';
 import EventTracker from 'app-helper/EventTracker';
 
@@ -38,12 +38,14 @@ class EditProfile extends Component {
               title: props.t('sections.fullName.title'),
               value: this.props.user_info.name,
               input: true,
+              defaultValue: '..........'
             },
             {
               id: 'quote',
               title: props.t('sections.quote.title'),
               value: this.props.user_info.quote,
               input: true,
+              defaultValue: '..........'
             },
             {
               id: 'so_dien_thoai',
@@ -62,6 +64,7 @@ class EditProfile extends Component {
               value: this.props.user_info.birth,
               defaultValue: props.t('sections.birthdate.defaultValue'),
               select: true,
+              defaultValue: '-'
             },
             {
               id: 'gioi_tinh',
@@ -69,24 +72,28 @@ class EditProfile extends Component {
               value: this.props.user_info.gender,
               defaultValue: props.t('sections.gender.defaultValue'),
               select: true,
+              defaultValue: '-'
             },
             {
               id: 'email',
               title: props.t('sections.email.title'),
               value: this.props.user_info.email,
               input: true,
+              defaultValue: '..........'
             },
             {
               id: 'facebook',
               title: props.t('sections.facebook.title'),
               value: this.props.user_info.facebook,
               input: true,
+              defaultValue: '..........'
             },
             {
               id: 'youtube',
               title: props.t('sections.youtube.title'),
               value: this.props.user_info.youtube,
               input: true,
+              defaultValue: '..........'
             },
           ],
         },
@@ -98,11 +105,12 @@ class EditProfile extends Component {
               title: props.t('sections.address.title'),
               value: this.props.user_info.address_view,
               input: true,
-              mapField: true,
-              map_address: true,
+              // mapField: true,
+              // map_address: true,
               columnView: true,
               multiline: true,
-              param: 'map_address',
+              param: 'address',
+              defaultValue: '..........'
             },
           ],
         },
@@ -116,6 +124,7 @@ class EditProfile extends Component {
               input: true,
               columnView: true,
               multiline: true,
+              defaultValue: '..........'
             },
           ],
         },
@@ -157,7 +166,8 @@ class EditProfile extends Component {
     let name = '';
     let email = '';
     let birth = '';
-    let map_address = '';
+    // let map_address = '';
+    let address = '';
     let gender = '';
     let quote = '';
     let intro = '';
@@ -178,7 +188,8 @@ class EditProfile extends Component {
         } else if (item.id === 'email') {
           email = item.value || '';
         } else if (item.id === 'dia_chi') {
-          map_address = item.value;
+          // map_address = item.value;
+          address = item.value;
         } else if (item.id === 'quote') {
           quote = item.value;
         } else if (item.id === 'intro') {
@@ -204,7 +215,8 @@ class EditProfile extends Component {
     if (
       name === userInfo.name &&
       email === userInfo.email &&
-      map_address === userInfo.address_view &&
+      // map_address === userInfo.address_view &&
+      address === userInfo.address_view &&
       gender === userInfo.gender &&
       birth === userInfo.birth &&
       quote === userInfo.quote &&
@@ -236,7 +248,8 @@ class EditProfile extends Component {
       name,
       email,
       birth,
-      map_address,
+      // map_address,
+      address,
       gender,
       quote,
       intro,
@@ -253,7 +266,7 @@ class EditProfile extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this.props.refresh();
-          Actions._account({type: ActionConst.REFRESH});
+          Actions.pop();
         }
 
         if (response) {
@@ -376,7 +389,7 @@ class EditProfile extends Component {
             }}
           />
           {this.state.loading == true && <Loading center />}
-          {appConfig.device.isIOS && <KeyboardSpacer />}
+          {/* {appConfig.device.isIOS && <KeyboardSpacer />} */}
         </KeyboardAwareScrollView>
         <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
       </SafeAreaView>

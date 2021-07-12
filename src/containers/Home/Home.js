@@ -198,14 +198,13 @@ class Home extends Component {
   handleShowAllVouchers = () => {};
 
   handlePressService(service, callBack) {
-    Actions.push(appConfig.routes.listUserChat);
-    // const {t} = this.props;
+    const {t} = this.props;
     
-    // if (service.type === 'chat') {
-    //   this.handlePressButtonChat(this.state.site);
-    // } else {
-    //   servicesHandler(service, t, callBack);
-    // }
+    if (service.type === 'chat') {
+      this.handlePressButtonChat(this.state.site);
+    } else {
+      servicesHandler(service, t, callBack);
+    }
   }
 
   handleShowAllSites = () => {
