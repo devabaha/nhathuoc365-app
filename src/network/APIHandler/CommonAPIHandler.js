@@ -1247,6 +1247,116 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_WARRANTY_DETAIL + '/' + id);
     return this.getCancelableAPI(api);
   }
+
+  /**
+   * Upload ảnh profile cho user
+   */
+   async user_upload_image(data) {
+    var api = url_for(API.USER_UPLOAD_IMAGE);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Xóa ảnh profile cho user
+   */
+  async user_delete_image(data) {
+    var api = url_for(API.USER_DELETE_IMAGE);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Upload ảnh cover cho user
+   */
+  async user_upload_image_cover(data) {
+    var api = url_for(API.USER_UPLOAD_IMAGE_COVER);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách các lĩnh vực
+   */
+  async get_professions() {
+    var api = url_for(API.USER_PROFESSIONS);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Lấy danh sách các Gold Member theo lĩnh vực
+   */
+  async search_experts(data) {
+    var api = url_for(API.USER_SEARCH_EXPERTS);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Tạo cuộc hội thoại
+   */
+  async user_create_conversation(data) {
+    var api = url_for(API.USER_CREATE_CONVERSATION);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách hội thoại user chat
+   */
+  user_list_conversation(data = {}) {
+    const cancelInstance = this.getCancelInstance();
+
+    var api = url_for(API.USER_LIST_CONVERSATION);
+    return [
+      cancelInstance,
+      () =>
+        this.postAPI(api, data, {
+          cancelToken: cancelInstance.token
+        })
+    ];
+  }
+
+  /**
+   * Lấy nội dung tin nhắn user chat
+   */
+  user_list_chat_conversation(conversation_id, last_message_id) {
+    const cancelInstance = this.getCancelInstance();
+
+    const api = url_for(
+      API.USER_LIST_CHAT_CONVERSATION +
+        '/' +
+        conversation_id +
+        '/' +
+        last_message_id
+    );
+    return [
+      cancelInstance,
+      () =>
+        this.getAPI(api, {
+          cancelToken: cancelInstance.token
+        })
+    ];
+  }
+
+  /**
+   * Gửi user chat
+   */
+  async user_send_message(conversation_id, data) {
+    var api = url_for(API.USER_SEND_MESSAGE + '/' + conversation_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách thành viên được giới thiệu
+   */
+  async site_list_invite(store_id, user_id) {
+    var api = url_for(API.SITE_LIST_INVITE + '/' + store_id + '/' + user_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Lấy profile
+   */
+  async site_user_profile(store_id, user_id) {
+    var api = url_for(API.SITE_USER_PROFILE + '/' + store_id + '/' + user_id);
+    return await this.getAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

@@ -164,6 +164,9 @@
     },
     "createPost": {
       "mainTitle": "Create post"
+    },
+    "listUserChat": {
+      "mainTitle": "Messages"
     }
   },
 

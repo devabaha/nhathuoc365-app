@@ -119,6 +119,12 @@ class Config {
         [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
+      membership: {
+        standard: ['#333', '#ccc'],
+        gold: ['#d99b2d', '#FFCF40'],
+        platinum: ['#a1a3a6', '#d8dadb'],
+        diamond: ['#723dc6', '#d1a0f6']
+      },
       typography: {
         text: '#2B2B2B',
         secondary: '#A0A0A0',
@@ -342,6 +348,11 @@ class Config {
       listProgressTracking: 'listProgressTracking',
       progressTrackingDetail: 'progressTrackingDetail',
 
+      personalProfile: 'personalProfile',
+      editPersonalProfile: 'editPersonalProfile',
+      listUserChat: 'listUserChat',
+      amazingUserChat: 'amazingUserChat',
+      
       listAddressStore: 'listAddressStore'
     };
   }
