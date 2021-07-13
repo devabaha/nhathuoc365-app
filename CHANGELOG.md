@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - PersonalProfile and UserChat from skv.
+### Changed
+- Handle onclick of <a> tag and window.open event of react-native-auto-height-webview.
 ### Fixed
 - Delay setState OrderCart data.
 
