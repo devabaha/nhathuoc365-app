@@ -181,7 +181,11 @@ class CTAProduct {
           );
 
           if (response && response.status == STATUS_SUCCESS) {
-            if (!this.context.unmounted && response.data.attrs) {
+            if (
+              !this.context.unmounted
+              //  && response.data.attrs
+               && response.data.has_attr
+            ) {
               Actions.push(appConfig.routes.itemAttribute, {
                 itemId: item.id,
                 onSubmit: (quantity, modal_key) =>
