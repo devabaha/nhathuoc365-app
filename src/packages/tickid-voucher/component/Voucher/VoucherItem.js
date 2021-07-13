@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Button from 'react-native-button';
+import { formatMoney } from '../../../../components/account/Transfer/Payment/helper'
 import appConfig from 'app-config';
 
 function VoucherItem(props) {
@@ -21,7 +22,7 @@ function VoucherItem(props) {
 
           {!!props.point && props.point !== '0' && (
             <Text style={styles.pointWrapper}>
-              <Text style={styles.point}>{props.point}</Text>
+              <Text style={styles.point}>{formatMoney(props.point)}</Text>
               {` ${props.pointCurrency}`}
             </Text>
           )}
