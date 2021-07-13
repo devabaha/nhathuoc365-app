@@ -14,7 +14,6 @@ import {isLatitude, isLongitude} from '../../helper/validator';
 import EventTracker from '../../../../helper/EventTracker';
 import {openMap} from '../../../../helper/map';
 import store from 'app-store';
-import { formatMoney } from '../../../../components/account/Transfer/Payment/helper'
 
 const defaultFn = () => {};
 
@@ -90,7 +89,7 @@ class VoucherDetail extends BaseContainer {
 
   get campaignPoint() {
     if (!this.state.campaign) return 0;
-    return formatMoney(this.state.campaign.point);
+    return numberFormat(this.state.campaign.point);
   }
 
   get campaignCurrency() {
