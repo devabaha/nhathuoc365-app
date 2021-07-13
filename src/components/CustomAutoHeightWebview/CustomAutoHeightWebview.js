@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet, View} from 'react-native';
 
 import appConfig from 'app-config';
 
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   webview: {
@@ -15,6 +16,19 @@ class CustomAutoHeightWebview extends Component {
   static defaultProps = {
     zoomable: false,
     scrollEnabled: false,
+  };
+
+  handleMessage = (e) => {
+    const data = e?.nativeEvent?.data;
+    if (data) {
+      Linking.canOpenURL(data)
+        .then(() => {
+          Actions.push(appConfig.routes.modalWebview, {
+            url: data,
+          });
+        })
+        .catch((err) => {});
+    }
   };
 
   render() {
@@ -30,14 +44,33 @@ class CustomAutoHeightWebview extends Component {
           zoomable={this.props.zoomable}
           scrollEnabled={this.props.scrollEnabled}
           viewportContent={'width=device-width, user-scalable=no'}
-          customStyle={`
+          javaScriptEnabled
+          onMessage={this.handleMessage}
+          customScript="
+          window.open = function (url, windowName, windowFeatures) {
+              if(url){
+                window.ReactNativeWebView.postMessage(url);
+              }
+          };
+          document.onclick = function (e) {
+            e = e ||  window.event;
+            let element = e.target || e.srcElement;
+          
+            if (element.tagName == 'A') {
+              window.ReactNativeWebView.postMessage(element.href);
+              return false;
+            }
+          };
+          "
+          customStyle={
+            `
           * {
             font-family: 'arial';
           }
           a {
-            pointer-events:none;
-            text-decoration: none !important;
-            color: #404040 !important;
+            // pointer-events:none;
+            // text-decoration: none !important;
+            // color: #404040 !important;
           }
           p {
             font-size: 14px;
@@ -46,7 +79,8 @@ class CustomAutoHeightWebview extends Component {
           img {
             max-width: 100% !important;
             height: auto !important;
-          }`+ this.props.customStyle}
+          }` + this.props.customStyle
+          }
         />
       </View>
     );
