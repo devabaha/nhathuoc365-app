@@ -29,8 +29,8 @@ const TextPressable = ({children, ...textProps}: TextPressableProps) => {
       onPressOut={handlePressOut}>
       <Text
         suppressHighlighting
-        style={isHighlight && styles.highlight}
-        {...textProps}>
+        {...textProps}
+        style={[isHighlight && styles.highlight, textProps.style]}>
         {children}
       </Text>
     </TouchableWithoutFeedback>

@@ -828,6 +828,9 @@ class Account extends Component {
     Actions.push(appConfig.routes.profileDetail, {
       userInfo: store.user_info,
     });
+    // Actions.push(appConfig.routes.personalProfile, {
+    //   isMainUser: true
+    // });
   };
 
   handleLogin = () => {

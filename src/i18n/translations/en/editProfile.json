@@ -1,5 +1,8 @@
 {
   "sections": {
+    "quote": {
+      "title": "Quote"
+    },
     "fullName": {
       "title": "Full name"
     },
@@ -26,6 +29,15 @@
     },
     "city": {
       "title": "Province/City"
+    },
+    "facebook": {
+      "title": "My Facebook"
+    },
+    "youtube": {
+      "title": "My Youtube"
+    },
+    "intro": {
+      "title": "Introduction"
     }
   },
 
@@ -34,5 +46,12 @@
   "noChangeMessage": "No information has been changed",
   "invalidEmailMessage": "Your email is malformed",
 
-  "saveChanges": "Save changes"
+  "saveChanges": "Save changes",
+  "coverPicker": {
+    "title": "Update your cover",
+    "cancelTitle": "Cancel",
+    "takePhotoTitle": "Take a photo",
+    "chooseFromLibraryTitle": "Choose from library",
+    "messageUpdateSuccessfully": "Your cover updated successfully."
+  }
 }
