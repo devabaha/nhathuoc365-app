@@ -1357,6 +1357,13 @@ class CommonAPIHandler extends BaseHandler {
     var api = url_for(API.SITE_USER_PROFILE + '/' + store_id + '/' + user_id);
     return await this.getAPI(api);
   }
+
+  // tìm vé máy may
+  async search_airport(data) {
+    var api = url_for(API.SITE_SEARCH_AIRPORT);
+    return await this.postAPI(api, data);
+  }
+
 }
 
 export default CommonAPIHandler;

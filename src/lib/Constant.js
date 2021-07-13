@@ -3,6 +3,7 @@
 import { Platform, Dimensions, PixelRatio } from 'react-native';
 
 // API URL
+global.API_URL = 'https://webbanve.net/';
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
 global.MY_FOOD_API = 'http://apiapp.tickid.vn/';

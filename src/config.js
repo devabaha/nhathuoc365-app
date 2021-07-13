@@ -353,7 +353,10 @@ class Config {
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
       
-      listAddressStore: 'listAddressStore'
+      listAddressStore: 'listAddressStore',
+
+      airlineTicket: 'airlineTicket',
+      datePicker: 'datePicker'
     };
   }
 }

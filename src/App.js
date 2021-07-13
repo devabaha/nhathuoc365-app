@@ -192,6 +192,10 @@ import {
 } from './components/amazingUserChat';
 
 import ListAddressStore from './containers/ListAddressStore';
+import AirlineTicket from './containers/AirlineTicket';
+import DatePicker from './containers/AirlineTicket/DatePicker';
+import DatePickerNavBar from './containers/AirlineTicket/DatePickerNavBar';
+
 /**
  * Not allow font scaling
  */
@@ -870,10 +874,35 @@ class RootRouter extends Component {
                       }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
-                      component={Account}
+                      component={AirlineTicket}
                     />
                   </Stack>
                 </Tabs>
+
+                 {/* ================ AirlineTicket ================ */}
+                 <Stack key={appConfig.routes.airlineTicket}>
+                  <Scene
+                    key={`${appConfig.routes.airlineTicket}_1`}
+                    component={AirlineTicket}
+                    hideNavBar
+                    back
+                  />
+                </Stack>
+
+                 {/* ================ DatePicker ================ */}
+                 <Stack key={appConfig.routes.datePicker}
+                 >
+                   
+                  <Scene
+                   modal={true} panHandlers={null} title="Chọn ngày"
+                   navBar={DatePickerNavBar} 
+                    key={`${appConfig.routes.datePicker}_1`}
+                    component={DatePicker}
+                    hideNavBar
+                    back
+                  />
+                </Stack>
+
 
                 {/* ================ PROFILE ================ */}
                 <Stack key={appConfig.routes.personalProfile}>
