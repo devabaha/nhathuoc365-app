@@ -1,19 +1,26 @@
 /* @flow */
 
 import React, {Component} from 'react';
-import {View, StyleSheet, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  StatusBar,
+  Animated,
+  Text,
+} from 'react-native';
 
 //library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
-import {saveImage} from '../../helper/image';
 import ActionSheet from 'react-native-actionsheet';
 import appConfig from 'app-config';
-import { HIT_SLOP } from 'app-packages/tickid-chat/constants';
+import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
+import RightButtonNavBar from '../RightButtonNavBar';
+import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 
 class ItemImageViewer extends Component {
   static defaultProps = {
@@ -23,6 +30,11 @@ class ItemImageViewer extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      toggleHeaderVisible: true,
+    };
+
+    this.opacity = new Animated.Value(0.65);
     this.imageIndex = this.props.index;
     this.OPTIONS_LIST = [
       props.t('common:saveImageLabel'),
@@ -42,75 +54,100 @@ class ItemImageViewer extends Component {
     this.eventTracker.clearTracking();
   }
 
-  handleCloseImageView = () => Actions.pop();
-
   handleOnSwipeDownImage = () => Actions.pop();
 
   handleOnLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
   };
 
+  // handleOptionPress = (index) => {
+  //   if (index !== this.OPTIONS_LIST.length - 1) {
+  //     saveImage(this.props.images[this.imageIndex].url);
+  //   }
+  // };
+
+  handleHeaderLeftButton = () => {
+    Actions.pop();
+  };
+
+  handleOnClick = () => {
+    this.setState({
+      toggleHeaderVisible: !this.state.toggleHeaderVisible,
+    });
+    this.state.toggleHeaderVisible
+      ? Animated.timing(this.opacity, {
+          toValue: 0.65,
+          duration: 400,
+          useNativeDriver: true,
+        }).start()
+      : Animated.timing(this.opacity, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }).start();
+  };
+
   onChangeImageIndex = (index) => {
     this.imageIndex = index;
   };
 
-  handleOptionPress = (index) => {
-    if (index !== this.OPTIONS_LIST.length - 1) {
-      saveImage(this.props.images[this.imageIndex].url);
-    }
-  };
-  renderHeader = () => {
+  renderHeader = (currentIndex) => {
     return (
-      <View
-        style={{
-          top: appConfig.device.statusBarHeight,
-          flexDirection: 'row',
-          position:'absolute',
-          zIndex:1
-
-        }}>
-        <TouchableOpacity hitSlop={HIT_SLOP} style={{ padding: 12, flex: 1}}>
-          <EntypoIcon size={20} name="chevron-thin-left" color="#fff"/>
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {opacity: this.opacity, top: appConfig.device.isIphoneX ? 30 : 0},
+        ]}>
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          style={styles.headerLeftButton}
+          onPress={this.handleHeaderLeftButton}>
+          <EntypoIcon size={26} name="chevron-thin-left" color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={{ padding: 12}}>
-          <AntDesignIcon size={20} name="download" color="#fff"/>
-        </TouchableOpacity>
-        <View style={{ padding: 12}}>
-          <EntypoIcon size={20} name="dots-three-vertical" color="#fff"/>
+        <View style={styles.headerMiddleContainer}>
+          <Text style={styles.headerMiddleTitle}>
+            {currentIndex + 1}/{this.props.images.length}
+          </Text>
         </View>
-      </View>
+        <RightButtonNavBar
+          touchableOpacity
+          type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
+          containerStyle={styles.headerRightBtnContainer}
+          imageUrl={this.props.images[this.imageIndex].url}
+        />
+      </Animated.View>
     );
   };
+
+  renderIndicator = () => null;
+
   render() {
     var {images} = this.props;
 
     return (
       <View style={styles.container}>
+        <StatusBar hidden={true} />
         <ImageViewer
+          index={this.props.index}
+          imageUrls={images}
+          saveToLocalByLongPress={false}
+          renderHeader={this.renderHeader}
+          renderIndicator={this.renderIndicator}
           enableSwipeDown={true}
           swipeDownThreshold={100}
           onSwipeDown={this.handleOnSwipeDownImage}
-          saveToLocalByLongPress={false}
-          onLongPress={this.handleOnLongPressImage}
-          imageUrls={images}
-          index={this.props.index}
           onChange={this.onChangeImageIndex}
-          renderHeader={this.renderHeader}
+          onClick={this.handleOnClick}
+          onLongPress={this.handleOnLongPressImage}
         />
 
-        <TouchableHighlight
-          onPress={this.handleCloseImageView}
-          style={styles.btnCloseImageView}>
-          <Icon name="times-circle" size={32} color="#ffffff" />
-        </TouchableHighlight>
-
-        <ActionSheet
+        {/* <ActionSheet
           ref={this.refActionSheet}
           options={this.OPTIONS_LIST}
           cancelButtonIndex={1}
           destructiveButtonIndex={1}
           onPress={this.handleOptionPress}
-        />
+        /> */}
       </View>
     );
   }
@@ -127,6 +164,28 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    zIndex: 999,
+    backgroundColor: '#000',
+  },
+  headerLeftButton: {padding: 20},
+  headerMiddleContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerMiddleTitle: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  headerRightBtnContainer: {
+    paddingRight: 20,
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingBottom: 20,
   },
 });
 

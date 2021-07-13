@@ -17,4 +17,7 @@ export interface RightButtonNavBarProps {
   /** Share props */
   shareTitle?: string;
   shareURL?: string;
+
+  /** Download props */
+  imageUrl?: string;
 }
