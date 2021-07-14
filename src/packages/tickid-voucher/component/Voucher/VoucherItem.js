@@ -5,6 +5,7 @@ import Button from 'react-native-button';
 import appConfig from 'app-config';
 
 function VoucherItem(props) {
+  const point = Number(props.point);
   return (
     <Button onPress={props.onPress} containerStyle={styles.containerBtn}>
       <View
@@ -21,7 +22,9 @@ function VoucherItem(props) {
 
           {!!props.point && props.point !== '0' && (
             <Text style={styles.pointWrapper}>
-              <Text style={styles.point}>{numberFormat(props.point)}</Text>
+              <Text style={styles.point}>
+                {numberFormat(point)}
+              </Text>
               {` ${props.pointCurrency}`}
             </Text>
           )}
