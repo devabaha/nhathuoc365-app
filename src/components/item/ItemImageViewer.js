@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 //library
-import EntypoIcon from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
@@ -30,11 +30,8 @@ class ItemImageViewer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      toggleHeaderVisible: true,
-    };
-
-    this.opacity = new Animated.Value(0.65);
+    this.isHeaderVisible = true;
+    this.opacity = new Animated.Value(1);
     this.imageIndex = this.props.index;
     this.OPTIONS_LIST = [
       props.t('common:saveImageLabel'),
@@ -54,9 +51,9 @@ class ItemImageViewer extends Component {
     this.eventTracker.clearTracking();
   }
 
-  handleOnSwipeDownImage = () => Actions.pop();
+  handleSwipeDownImage = () => Actions.pop();
 
-  handleOnLongPressImage = () => {
+  handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
   };
 
@@ -66,28 +63,20 @@ class ItemImageViewer extends Component {
   //   }
   // };
 
-  handleHeaderLeftButton = () => {
+  handlePressLeftButton = () => {
     Actions.pop();
   };
 
-  handleOnClick = () => {
-    this.setState({
-      toggleHeaderVisible: !this.state.toggleHeaderVisible,
-    });
-    this.state.toggleHeaderVisible
-      ? Animated.timing(this.opacity, {
-          toValue: 0.65,
-          duration: 400,
-          useNativeDriver: true,
-        }).start()
-      : Animated.timing(this.opacity, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: true,
-        }).start();
+  handlePressImage = () => {
+    this.isHeaderVisible = !this.isHeaderVisible;
+    Animated.timing(this.opacity, {
+      toValue: this.isHeaderVisible ? 1 : 0,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
   };
 
-  onChangeImageIndex = (index) => {
+  handleChangeImageIndex = (index) => {
     this.imageIndex = index;
   };
 
@@ -101,8 +90,8 @@ class ItemImageViewer extends Component {
         <TouchableOpacity
           hitSlop={HIT_SLOP}
           style={styles.headerLeftButton}
-          onPress={this.handleHeaderLeftButton}>
-          <EntypoIcon size={26} name="chevron-thin-left" color="#fff" />
+          onPress={this.handlePressLeftButton}>
+          <Ionicons size={26} name="ios-chevron-back" color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerMiddleContainer}>
           <Text style={styles.headerMiddleTitle}>
@@ -135,10 +124,10 @@ class ItemImageViewer extends Component {
           renderIndicator={this.renderIndicator}
           enableSwipeDown={true}
           swipeDownThreshold={100}
-          onSwipeDown={this.handleOnSwipeDownImage}
-          onChange={this.onChangeImageIndex}
-          onClick={this.handleOnClick}
-          onLongPress={this.handleOnLongPressImage}
+          onSwipeDown={this.handleSwipeDownImage}
+          onChange={this.handleChangeImageIndex}
+          onClick={this.handlePressImage}
+          onLongPress={this.handleLongPressImage}
         />
 
         {/* <ActionSheet
@@ -169,7 +158,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     zIndex: 999,
-    backgroundColor: '#000',
+    backgroundColor: 'rgba(0,0,0,0.65)',
   },
   headerLeftButton: {padding: 20},
   headerMiddleContainer: {
