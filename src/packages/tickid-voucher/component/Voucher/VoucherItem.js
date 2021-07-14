@@ -23,7 +23,7 @@ function VoucherItem(props) {
           {!!props.point && props.point !== '0' && (
             <Text style={styles.pointWrapper}>
               <Text style={styles.point}>
-                {numberFormat(point)}
+                {typeof point === 'number' && !isNaN(point) ? numberFormat(point) : props.point}
               </Text>
               {` ${props.pointCurrency}`}
             </Text>
