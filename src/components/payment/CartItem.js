@@ -106,6 +106,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  cart_item_quantity: {
+    flex: 1, 
+    alignItems: 'flex-start',
+  },
+  cart_item_quantity_content: {
+    justifyContent: 'center',
+  },
   cart_item_calculations: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -145,6 +152,10 @@ const styles = StyleSheet.create({
   store_cart_item_qnt_container: {
     paddingHorizontal: 18,
     minWidth: 50,
+  },
+  store_cart_item_qnt_wrapper_text: {
+    flexDirection: 'row', 
+    alignItems: 'center',
   },
   cart_item_actions_quantity: {
     textAlign: 'center',
@@ -480,8 +491,8 @@ class CartItem extends Component {
               )}
             </View>
           </TouchableHighlight> */}
-        <View style={{ flex: 1, alignItems: 'flex-start',}}>
-          <View style={{ justifyContent: 'center'}}>
+        <View style={styles.cart_item_quantity}>
+          <View style={styles.cart_item_quantity_content}>
             <TouchableOpacity
               hitSlop={HIT_SLOP} 
               onPress={
@@ -494,7 +505,7 @@ class CartItem extends Component {
               <View
                 style={[
                   styles.store_cart_item_qnt_container,
-                  {flexDirection: 'row', alignItems: 'center',},
+                  styles.store_cart_item_qnt_wrapper_text,
                 ]}>
                 {this.state.isUpdateQuantityLoading ? (
                   <Indicator size="small" />
