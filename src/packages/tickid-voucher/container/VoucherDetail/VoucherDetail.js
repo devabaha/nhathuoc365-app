@@ -90,7 +90,7 @@ class VoucherDetail extends BaseContainer {
   get campaignPoint() {
     if (!this.state.campaign) return 0;
     const point = Number(this.state.campaign.point);
-    if (typeof point === 'number' && !isNaN(point)) {
+    if (!isNaN(point)) {
       return numberFormat(point);
     }
     return this.state.campaign.point;
