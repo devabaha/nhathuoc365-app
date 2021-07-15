@@ -23,8 +23,8 @@ import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
 import RightButtonNavBar from '../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 
-const HIDDEN_BUTTON_TYPE = {
-  LEFT_BUTTON: 'left_button',
+const HEADER_BUTTON_TYPE = {
+  BACK_BUTTON: 'back_button',
   DOWNLOAD_IMAGE_BUTTON: 'download_image_button',
 };
 
@@ -57,37 +57,7 @@ class ItemImageViewer extends Component {
     this.eventTracker.clearTracking();
   }
 
-  handlePressHiddenBtn = (type) => {
-    if (!this.isHeaderVisible) return;
-    switch (type) {
-      case HIDDEN_BUTTON_TYPE.LEFT_BUTTON:
-        this.handlePressLeftButton();
-        break;
-      case HIDDEN_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON:
-        this.handlePressDownloadImage();
-      default:
-        break;
-    }
-  };
-
-  handleSwipeDownImage = () => Actions.pop();
-
-  handleLongPressImage = () => {
-    if (this.refActionSheet.current) this.refActionSheet.current.show();
-    console.log(this.refButtonDownloadImage);
-  };
-
-  // handleOptionPress = (index) => {
-  //   if (index !== this.OPTIONS_LIST.length - 1) {
-  //     saveImage(this.props.images[this.imageIndex].url);
-  //   }
-  // };
-
-  handlePressLeftButton = () => {
-    Actions.pop();
-  };
-
-  handlePressImage = () => {
+  toggleHeaderVisibility = () => {
     this.isHeaderVisible = !this.isHeaderVisible;
     Animated.timing(this.opacity, {
       toValue: this.isHeaderVisible ? 1 : 0,
@@ -95,16 +65,43 @@ class ItemImageViewer extends Component {
       useNativeDriver: true,
     }).start();
   };
+  handlePressHeaderBtn = (type) => {
+    if (!this.isHeaderVisible) {
+      this.handlePressImage();
+      return;
+    }
+    switch (type) {
+      case HEADER_BUTTON_TYPE.BACK_BUTTON:
+        this.handleBack();
+        break;
+      case HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON:
+        this.handleDownloadImage();
+      default:
+        break;
+    }
+  };
 
-  handlePressDownloadImage = () => {
+  handleDownloadImage = () => {
     if (this.refButtonDownloadImage.current) {
       this.refButtonDownloadImage.current.handlePressDownloadImage();
     }
   };
 
+  handleBack = () => {
+    Actions.pop();
+  };
+
+  handleSwipeDownImage = () => Actions.pop();
+
+  handleLongPressImage = () => {
+    if (this.refActionSheet.current) this.refActionSheet.current.show();
+  };
+
+  renderIndicator = () => null;
+
   renderHeader = (currentIndex) => {
     return (
-      <TouchableWithoutFeedback onPress={this.handlePressImage}>
+      <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
         <Animated.View
           style={[styles.headerContainer, {opacity: this.opacity}]}>
           <SafeAreaView style={styles.headerContentContainter}>
@@ -113,7 +110,7 @@ class ItemImageViewer extends Component {
                 hitSlop={HIT_SLOP}
                 style={styles.headerLeftButton}
                 onPress={() =>
-                  this.handlePressHiddenBtn(HIDDEN_BUTTON_TYPE.LEFT_BUTTON)
+                  this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.BACK_BUTTON)
                 }>
                 <Ionicons size={26} name="ios-chevron-back" color="#fff" />
               </TouchableOpacity>
@@ -125,8 +122,8 @@ class ItemImageViewer extends Component {
 
               <TouchableOpacity
                 onPress={() =>
-                  this.handlePressHiddenBtn(
-                    HIDDEN_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON,
+                  this.handlePressHeaderBtn(
+                    HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON,
                   )
                 }>
                 <View pointerEvents="none">
@@ -146,8 +143,6 @@ class ItemImageViewer extends Component {
     );
   };
 
-  renderIndicator = () => null;
-
   render() {
     var {images} = this.props;
 
@@ -155,7 +150,7 @@ class ItemImageViewer extends Component {
       <View style={styles.container}>
         <StatusBar hidden />
         <ImageViewer
-          style={styles.imageContainer}
+          style={styles.imageViewerContainer}
           index={this.props.index}
           imageUrls={images}
           saveToLocalByLongPress={false}
@@ -164,8 +159,9 @@ class ItemImageViewer extends Component {
           enableSwipeDown={true}
           swipeDownThreshold={100}
           onSwipeDown={this.handleSwipeDownImage}
-          onClick={this.handlePressImage}
+          onClick={this.toggleHeaderVisibility}
           onLongPress={this.handleLongPressImage}
+          onDoubleClick={() => console.log('ds')}
         />
 
         {/* <ActionSheet
@@ -183,7 +179,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageContainer: {
+  imageViewerContainer: {
     position: 'absolute',
     width: appConfig.device.width,
     height: appConfig.device.height,
@@ -204,7 +200,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.65)',
     alignItems: 'center',
   },
-  headerContentContainter: {flex: 1},
+  headerContentContainter: {
+    flex: 1,
+  },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
