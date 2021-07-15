@@ -172,7 +172,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   handlePressDownloadImage() {
-    saveImage(this.props?.imageUrl || '')
+    saveImage(this.props?.imageUrl)
   }
 
   updateNoti() {

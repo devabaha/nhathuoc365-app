@@ -4,11 +4,12 @@ import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
-  TouchableHighlight,
   TouchableOpacity,
   StatusBar,
   Animated,
   Text,
+  SafeAreaView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 //library
@@ -16,11 +17,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
-import ActionSheet from 'react-native-actionsheet';
+// import ActionSheet from 'react-native-actionsheet';
 import appConfig from 'app-config';
 import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
 import RightButtonNavBar from '../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
+
+const HIDDEN_BUTTON_TYPE = {
+  LEFT_BUTTON: 'left_button',
+  DOWNLOAD_IMAGE_BUTTON: 'download_image_button',
+};
 
 class ItemImageViewer extends Component {
   static defaultProps = {
@@ -32,13 +38,13 @@ class ItemImageViewer extends Component {
 
     this.isHeaderVisible = true;
     this.opacity = new Animated.Value(1);
-    this.imageIndex = this.props.index;
     this.OPTIONS_LIST = [
       props.t('common:saveImageLabel'),
       props.t('common:cancel'),
     ];
 
     this.refActionSheet = React.createRef();
+    this.refButtonDownloadImage = React.createRef();
   }
 
   eventTracker = new EventTracker();
@@ -51,10 +57,24 @@ class ItemImageViewer extends Component {
     this.eventTracker.clearTracking();
   }
 
+  handlePressHiddenBtn = (type) => {
+    if (!this.isHeaderVisible) return;
+    switch (type) {
+      case HIDDEN_BUTTON_TYPE.LEFT_BUTTON:
+        this.handlePressLeftButton();
+        break;
+      case HIDDEN_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON:
+        this.handlePressDownloadImage();
+      default:
+        break;
+    }
+  };
+
   handleSwipeDownImage = () => Actions.pop();
 
   handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
+    console.log(this.refButtonDownloadImage);
   };
 
   // handleOptionPress = (index) => {
@@ -76,35 +96,53 @@ class ItemImageViewer extends Component {
     }).start();
   };
 
-  handleChangeImageIndex = (index) => {
-    this.imageIndex = index;
+  handlePressDownloadImage = () => {
+    if (this.refButtonDownloadImage.current) {
+      this.refButtonDownloadImage.current.handlePressDownloadImage();
+    }
   };
 
   renderHeader = (currentIndex) => {
     return (
-      <Animated.View
-        style={[
-          styles.headerContainer,
-          {opacity: this.opacity, top: appConfig.device.isIphoneX ? 30 : 0},
-        ]}>
-        <TouchableOpacity
-          hitSlop={HIT_SLOP}
-          style={styles.headerLeftButton}
-          onPress={this.handlePressLeftButton}>
-          <Ionicons size={26} name="ios-chevron-back" color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.headerMiddleContainer}>
-          <Text style={styles.headerMiddleTitle}>
-            {currentIndex + 1}/{this.props.images.length}
-          </Text>
-        </View>
-        <RightButtonNavBar
-          touchableOpacity
-          type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
-          containerStyle={styles.headerRightBtnContainer}
-          imageUrl={this.props.images[this.imageIndex].url}
-        />
-      </Animated.View>
+      <TouchableWithoutFeedback onPress={this.handlePressImage}>
+        <Animated.View
+          style={[styles.headerContainer, {opacity: this.opacity}]}>
+          <SafeAreaView style={styles.headerContentContainter}>
+            <View style={styles.headerContent}>
+              <TouchableOpacity
+                hitSlop={HIT_SLOP}
+                style={styles.headerLeftButton}
+                onPress={() =>
+                  this.handlePressHiddenBtn(HIDDEN_BUTTON_TYPE.LEFT_BUTTON)
+                }>
+                <Ionicons size={26} name="ios-chevron-back" color="#fff" />
+              </TouchableOpacity>
+              <View style={styles.headerMiddleContainer}>
+                <Text style={styles.headerMiddleTitle}>
+                  {currentIndex + 1}/{this.props.images.length}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  this.handlePressHiddenBtn(
+                    HIDDEN_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON,
+                  )
+                }>
+                <View pointerEvents="none">
+                  <RightButtonNavBar
+                    ref={this.refButtonDownloadImage}
+                    touchableOpacity
+                    type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
+                    containerStyle={styles.headerRightBtnContainer}
+                    imageUrl={this.props.images[currentIndex].url}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </Animated.View>
+      </TouchableWithoutFeedback>
     );
   };
 
@@ -115,8 +153,9 @@ class ItemImageViewer extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar hidden={true} />
+        <StatusBar hidden />
         <ImageViewer
+          style={styles.imageContainer}
           index={this.props.index}
           imageUrls={images}
           saveToLocalByLongPress={false}
@@ -125,7 +164,6 @@ class ItemImageViewer extends Component {
           enableSwipeDown={true}
           swipeDownThreshold={100}
           onSwipeDown={this.handleSwipeDownImage}
-          onChange={this.handleChangeImageIndex}
           onClick={this.handlePressImage}
           onLongPress={this.handleLongPressImage}
         />
@@ -145,6 +183,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  imageContainer: {
+    position: 'absolute',
+    width: appConfig.device.width,
+    height: appConfig.device.height,
+  },
   btnCloseImageView: {
     position: 'absolute',
     bottom: 88,
@@ -159,8 +202,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 999,
     backgroundColor: 'rgba(0,0,0,0.65)',
+    alignItems: 'center',
   },
-  headerLeftButton: {padding: 20},
+  headerContentContainter: {flex: 1},
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLeftButton: {
+    padding: 20,
+  },
   headerMiddleContainer: {
     flex: 1,
     justifyContent: 'center',
