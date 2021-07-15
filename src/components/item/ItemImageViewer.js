@@ -161,7 +161,6 @@ class ItemImageViewer extends Component {
           onSwipeDown={this.handleSwipeDownImage}
           onClick={this.toggleHeaderVisibility}
           onLongPress={this.handleLongPressImage}
-          onDoubleClick={() => console.log('ds')}
         />
 
         {/* <ActionSheet
