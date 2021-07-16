@@ -352,8 +352,10 @@ class Config {
       editPersonalProfile: 'editPersonalProfile',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
-      
-      listAddressStore: 'listAddressStore'
+
+      listAddressStore: 'listAddressStore',
+
+      itemImageViewer: 'item_image_viewer',
     };
   }
 }

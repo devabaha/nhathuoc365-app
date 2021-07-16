@@ -6,7 +6,7 @@ import {downloadImage} from './imageDownloadingHandler';
 import {PhotoLibraryPermission} from '../permissionHelper';
 import showFlashNotification from '../../components/FlashNotification';
 
-const saveImage = async (url, message) => {
+const saveImage = async (url = '') => {
   const t = i18n.getFixedT(undefined, 'common');
   let base64, imageType;
   try {

@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - PersonalProfile and UserChat from skv.
 ### Changed
+- Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].
 - Only use has_attr for checking product's attributes.
 - Handle onclick of <a> tag and window.open event of react-native-auto-height-webview.
 ### Fixed
+- Fix layout renderFooterActionBtn() in CartItem when text content too long by [nguyenanhtuan191298@gmail.com].
 - Delay setState OrderCart data.
+### Changed
+- Format voucher point in VoucherItem and VoucherDetail by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.4] - 2021-07-09
 ### Added
