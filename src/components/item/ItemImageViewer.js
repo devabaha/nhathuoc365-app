@@ -68,7 +68,7 @@ class ItemImageViewer extends Component {
   
   handlePressHeaderBtn = (type) => {
     if (!this.isHeaderVisible) {
-      this.handlePressImage();
+      this.toggleHeaderVisibility();
       return;
     }
     switch (type) {
