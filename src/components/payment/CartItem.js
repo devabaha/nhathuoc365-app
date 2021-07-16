@@ -27,10 +27,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cart_item_check_box: {
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    right: 5,
+    marginRight: 5,
+    marginLeft: 30,
   },
   cart_item_check_icon: {
     color: appConfig.colors.primary,
@@ -106,6 +106,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  cart_item_quantity: {
+    flex: 1, 
+    alignItems: 'flex-start',
+  },
+  cart_item_quantity_content: {
+    justifyContent: 'center',
+  },
   cart_item_calculations: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -116,6 +123,8 @@ const styles = StyleSheet.create({
     borderWidth: Util.pixel,
     borderColor: '#666666',
     borderRadius: 3,
+    position: 'absolute',
+    right: 0,
   },
   cart_item_actions_btn_container: {
     justifyContent: 'center',
@@ -125,6 +134,8 @@ const styles = StyleSheet.create({
   },
   cart_item_actions_btn_left: {
     zIndex: 1,
+    left: 0,
+    right: undefined,
   },
   cart_item_remove_btn: {
     backgroundColor: 'rgba(255,255,255,.9)',
@@ -139,8 +150,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   store_cart_item_qnt_container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     minWidth: 50,
+  },
+  store_cart_item_qnt_wrapper_text: {
+    flexDirection: 'row', 
+    alignItems: 'center',
   },
   cart_item_actions_quantity: {
     textAlign: 'center',
@@ -453,8 +468,10 @@ class CartItem extends Component {
 
     return (
       <View style={styles.cart_item_actions}>
-        <View style={styles.cart_item_calculations}>
-          <TouchableHighlight
+        {/* <View
+          // style={[styles.cart_item_calculations]}
+          style={{marginRight: 39}}> */}
+        {/* <TouchableHighlight
             style={[
               styles.cart_item_actions_btn,
               styles.cart_item_actions_btn_left,
@@ -473,44 +490,76 @@ class CartItem extends Component {
                 <Text style={styles.cart_item_btn_label}>-</Text>
               )}
             </View>
-          </TouchableHighlight>
+          </TouchableHighlight> */}
+        <View style={styles.cart_item_quantity}>
+          <View style={styles.cart_item_quantity_content}>
+            <TouchableOpacity
+              hitSlop={HIT_SLOP} 
+              onPress={
+                this.state.isUpdateQuantityLoading ||
+                this.state.decrement_loading ||
+                this.state.increment_loading
+                  ? () => {}
+                  : this.onShowModalChangeQuantity
+              }>
+              <View
+                style={[
+                  styles.store_cart_item_qnt_container,
+                  styles.store_cart_item_qnt_wrapper_text,
+                ]}>
+                {this.state.isUpdateQuantityLoading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <Text
+                    style={[
+                      styles.cart_item_actions_quantity,
+                      styles.store_cart_item_qnt_container,
+                    ]}>
+                    {item.quantity_view}
+                  </Text>
+                )}
+              </View>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            hitSlop={HIT_SLOP}
-            onPress={
-              this.state.isUpdateQuantityLoading ||
-              this.state.decrement_loading ||
-              this.state.increment_loading
-                ? () => {}
-                : this.onShowModalChangeQuantity
-            }>
-            <View style={styles.store_cart_item_qnt_container}>
-              {this.state.isUpdateQuantityLoading ? (
-                <Indicator size="small" />
-              ) : (
-                <Text style={styles.cart_item_actions_quantity}>
-                  {item.quantity_view}
-                </Text>
-              )}
-            </View>
-          </TouchableOpacity>
+            <TouchableHighlight
+              style={[
+                styles.cart_item_actions_btn,
+                styles.cart_item_actions_btn_left,
+              ]}
+              underlayColor="#eee"
+              hitSlop={HIT_SLOP}
+              onPress={
+                is_processing
+                  ? null
+                  : this._item_qnt_decrement_handler.bind(this, item)
+              }>
+              <View style={styles.cart_item_actions_btn_container}>
+                {decrement_loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <Text style={styles.cart_item_btn_label}>-</Text>
+                )}
+              </View>
+            </TouchableHighlight>
 
-          <TouchableHighlight
-            style={styles.cart_item_actions_btn}
-            underlayColor="#eee"
-            hitSlop={HIT_SLOP}
-            onPress={
-              is_processing ? null : this._item_qnt_increment.bind(this, item)
-            }>
-            <View style={styles.cart_item_actions_btn_container}>
-              {increment_loading ? (
-                <Indicator size="small" />
-              ) : (
-                <Text style={styles.cart_item_btn_label}>+</Text>
-              )}
-            </View>
-          </TouchableHighlight>
+            <TouchableHighlight
+              style={styles.cart_item_actions_btn}
+              underlayColor="#eee"
+              hitSlop={HIT_SLOP}
+              onPress={
+                is_processing ? null : this._item_qnt_increment.bind(this, item)
+              }>
+              <View style={styles.cart_item_actions_btn_container}>
+                {increment_loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <Text style={styles.cart_item_btn_label}>+</Text>
+                )}
+              </View>
+            </TouchableHighlight>
+          </View>
         </View>
+
         <View style={styles.cart_item_check_box}>
           {check_loading ? (
             <Indicator size="small" />
@@ -527,6 +576,38 @@ class CartItem extends Component {
             </TouchableOpacity>
           )}
         </View>
+        {/* <TouchableHighlight
+            style={styles.cart_item_actions_btn}
+            underlayColor="#eee"
+            hitSlop={HIT_SLOP}
+            onPress={
+              is_processing ? null : this._item_qnt_increment.bind(this, item)
+            }>
+            <View style={styles.cart_item_actions_btn_container}>
+              {increment_loading ? (
+                <Indicator size="small" />
+              ) : (
+                <Text style={styles.cart_item_btn_label}>+</Text>
+              )}
+            </View>
+          </TouchableHighlight> */}
+        {/* </View> */}
+        {/* <View style={styles.cart_item_check_box}>
+          {check_loading ? (
+            <Indicator size="small" />
+          ) : (
+            <TouchableOpacity
+              hitSlop={HIT_SLOP}
+              onPress={
+                is_processing ? null : this._checkBoxHandler.bind(this, item)
+              }>
+              <FeatherIcon
+                name={item.selected == 1 ? 'check-circle' : 'circle'}
+                style={styles.cart_item_check_icon}
+              />
+            </TouchableOpacity>
+          )}
+        </View> */}
       </View>
     );
   }
