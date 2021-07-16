@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 5,
     marginLeft: 30,
+    width: 24,
+    height: 24,
   },
   cart_item_check_icon: {
     color: appConfig.colors.primary,
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cart_item_quantity: {
-    flex: 1, 
+    flex: 1,
     alignItems: 'flex-start',
   },
   cart_item_quantity_content: {
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     minWidth: 50,
   },
   store_cart_item_qnt_wrapper_text: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
   },
   cart_item_actions_quantity: {
@@ -494,7 +496,7 @@ class CartItem extends Component {
         <View style={styles.cart_item_quantity}>
           <View style={styles.cart_item_quantity_content}>
             <TouchableOpacity
-              hitSlop={HIT_SLOP} 
+              hitSlop={HIT_SLOP}
               onPress={
                 this.state.isUpdateQuantityLoading ||
                 this.state.decrement_loading ||

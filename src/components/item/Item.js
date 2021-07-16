@@ -700,7 +700,7 @@ class Item extends Component {
             <FastImage
               style={styles.swiper_image}
               source={{uri: image.image}}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </View>
         </TouchableHighlight>

@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## Fixed
-- Fix layout renderFooterActionBtn() in CartItem when text content too long by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.5] - 2021-07-13
 ### Added
@@ -17,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Only use has_attr for checking product's attributes.
 - Handle onclick of <a> tag and window.open event of react-native-auto-height-webview.
 ### Fixed
+- Fix layout renderFooterActionBtn() in CartItem when text content too long by [nguyenanhtuan191298@gmail.com].
 - Delay setState OrderCart data.
 ### Changed
 - Format voucher point in VoucherItem and VoucherDetail by [nguyenanhtuan191298@gmail.com].
