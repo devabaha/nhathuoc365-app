@@ -19,14 +19,15 @@ class CustomAutoHeightWebview extends Component {
   };
 
   handleMessage = (e) => {
-    const data = e?.nativeEvent?.data;
-    if (data) {
-      Linking.canOpenURL(data)
+    const url = e?.nativeEvent?.data;
+    if (url) {
+      Linking.canOpenURL(url)
         .then((supported) => {
           if (supported) {
-            Actions.push(appConfig.routes.modalWebview, {
-              url: data,
-            });
+            Linking.openURL(url);
+            // Actions.push(appConfig.routes.modalWebview, {
+            //   url,
+            // });
           }
         })
         .catch((err) => {

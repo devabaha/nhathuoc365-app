@@ -570,7 +570,7 @@ class CartItem extends Component {
                 </Text>
                 {item.discount_percent > 0 && (
                   <Text style={styles.cart_item_price_price_safe_off}>
-                    {item.discount}
+                    {item.discount_view}
                   </Text>
                 )}
               </View>
