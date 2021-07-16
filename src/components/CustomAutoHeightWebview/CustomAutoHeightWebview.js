@@ -19,20 +19,25 @@ class CustomAutoHeightWebview extends Component {
   };
 
   handleMessage = (e) => {
-    const url = e?.nativeEvent?.data;
-    if (url) {
-      Linking.canOpenURL(url)
-        .then((supported) => {
-          if (supported) {
-            Linking.openURL(url);
-            // Actions.push(appConfig.routes.modalWebview, {
-            //   url,
-            // });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    let message = e?.nativeEvent?.data;
+    if (message) {
+      message = JSON.parse(message);
+      const url = message?.nativeEvent?.data;
+
+      if (url) {
+        Linking.canOpenURL(url)
+          .then((supported) => {
+            if (supported) {
+              Linking.openURL(url);
+              // Actions.push(appConfig.routes.modalWebview, {
+              //   url,
+              // });
+            }
+          })
+          .catch((err) => {
+            // console.log(err);
+          });
+      }
     }
   };
 
@@ -54,15 +59,16 @@ class CustomAutoHeightWebview extends Component {
           customScript="
           window.open = function (url, windowName, windowFeatures) {
               if(url){
-                window.ReactNativeWebView.postMessage(url);
+                window.ReactNativeWebView.postMessage(JSON.stringify({nativeEvent: {data:url}}));
               }
           };
           document.onclick = function (e) {
             e = e ||  window.event;
             let element = e.target || e.srcElement;
-          
-            if (element.tagName == 'A') {
-              window.ReactNativeWebView.postMessage(element.href);
+            element = element.closest('a');
+
+            if (element) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({nativeEvent: {data:element.href}}));
               return false;
             }
           };
@@ -75,7 +81,7 @@ class CustomAutoHeightWebview extends Component {
           a {
             // pointer-events:none;
             // text-decoration: none !important;
-            // color: #404040 !important;
+            // color: ${appConfig.colors.primary} !important;
           }
           p {
             font-size: 14px;
