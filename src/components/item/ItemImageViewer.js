@@ -65,6 +65,7 @@ class ItemImageViewer extends Component {
       useNativeDriver: true,
     }).start();
   };
+  
   handlePressHeaderBtn = (type) => {
     if (!this.isHeaderVisible) {
       this.handlePressImage();
