@@ -51,10 +51,12 @@ class ItemImageViewer extends Component {
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
+    StatusBar.setHidden(true);
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+    StatusBar.setHidden(false);
   }
 
   toggleHeaderVisibility = () => {
@@ -65,7 +67,7 @@ class ItemImageViewer extends Component {
       useNativeDriver: true,
     }).start();
   };
-  
+
   handlePressHeaderBtn = (type) => {
     if (!this.isHeaderVisible) {
       this.toggleHeaderVisibility();
@@ -89,6 +91,7 @@ class ItemImageViewer extends Component {
   };
 
   handleBack = () => {
+    StatusBar.setHidden(false);
     Actions.pop();
   };
 
@@ -149,7 +152,6 @@ class ItemImageViewer extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar hidden />
         <ImageViewer
           style={styles.imageViewerContainer}
           index={this.props.index}
