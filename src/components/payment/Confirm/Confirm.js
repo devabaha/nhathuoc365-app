@@ -1938,6 +1938,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
+    paddingRight: 15
   },
   address_content_phuong: {
     color: '#404040',

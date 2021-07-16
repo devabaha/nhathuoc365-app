@@ -700,7 +700,7 @@ class Item extends Component {
             <FastImage
               style={styles.swiper_image}
               source={{uri: image.image}}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </View>
         </TouchableHighlight>
@@ -941,7 +941,7 @@ class Item extends Component {
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
                     <Text style={{textDecorationLine: 'line-through'}}>
-                      {item.discount}
+                      {item.discount_view}
                     </Text>
                   </Text>
                 )}

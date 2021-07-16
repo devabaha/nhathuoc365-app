@@ -1445,9 +1445,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="item_image_viewer">
+                <Stack key={appConfig.routes.itemImageViewer}>
                   <Scene
-                    key="item_image_viewer_1"
+                    key={`${appConfig.routes.itemImageViewer}_1`}
                     direction="vertical"
                     hideNavBar
                     component={ItemImageViewer}

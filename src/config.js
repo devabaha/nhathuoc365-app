@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.0.4';
+    return 'r12.0.5';
   }
 
   get appName() {
@@ -354,6 +354,8 @@ class Config {
       amazingUserChat: 'amazingUserChat',
       
       listAddressStore: 'listAddressStore',
+
+      itemImageViewer: 'item_image_viewer',
 
       airlineTicket: 'airlineTicket',
       datePicker: 'datePicker',
