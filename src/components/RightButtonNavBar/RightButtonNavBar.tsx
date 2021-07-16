@@ -16,6 +16,7 @@ import {RIGHT_BUTTON_TYPE} from './constants';
 import {NotiBadge} from '../Badges';
 import {autorun} from 'mobx';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import {saveImage} from '../../helper/image';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -69,6 +70,8 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
       case RIGHT_BUTTON_TYPE.SHARE:
         name = 'ios-share-social';
         break;
+      case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
+        name = 'ios-download-outline';
     }
 
     return (
@@ -94,6 +97,8 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
       case RIGHT_BUTTON_TYPE.SHARE:
         this.handlePressShare();
         break;
+      case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
+        this.handlePressDownloadImage();
     }
   }
 
@@ -164,6 +169,10 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         message: 'Chia sẻ không thành công! Bạn vui lòng thử lại sau!',
       });
     }
+  }
+
+  handlePressDownloadImage() {
+    saveImage(this.props?.imageUrl)
   }
 
   updateNoti() {
