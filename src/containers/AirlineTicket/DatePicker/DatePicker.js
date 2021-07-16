@@ -7,15 +7,15 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-// librarys
-import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
+import {Actions} from 'react-native-router-flux';
+import config from 'app-config';
 
 LocaleConfig.locales['vi'] = {
-  monthNames: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
-  monthNamesShort: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
-  dayNames: ['CN','TH 2','TH 3','TH 4','TH 5','TH 6','TH 7'],
-  dayNamesShort: ['CN','TH 2','TH 3','TH 4','TH 5','TH 6','TH 7']
+  monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+  monthNamesShort: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+  dayNames: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+  dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
 };
 
 LocaleConfig.defaultLocale = 'vi';
@@ -46,6 +46,24 @@ class CalendarsScreen extends Component {
     return (
       <ScrollView style={styles.container}>
         <Calendar
+          theme={{
+            backgroundColor: '#ffffff',
+            calendarBackground: '#ffffff',
+            textSectionTitleColor: '#2d4150',
+            selectedDayBackgroundColor: config._primaryColor,
+            selectedDayTextColor: '#ffffff',
+            todayTextColor: config._primaryColor,
+            selectedDayTextColor: '#fff',
+            dayTextColor: '#2d4150',
+            textDisabledColor: '#ccc',
+            dotColor: config._primaryColor,
+            selectedDotColor: '#ffffff',
+            arrowColor: config._primaryColor,
+            textDayFontWeight: '300',
+            textMonthFontWeight: 'bold',
+            textDayFontSize: 16,
+            textDayHeaderFontSize: 16,
+          }}
           current={current}
           onDayPress={this._onDayPress.bind(this)}
           style={styles.calendar}

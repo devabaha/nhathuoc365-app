@@ -174,3 +174,9 @@ global.MEMBERSHIP_TYPE = {
   PLATINUM: 2,
   DIAMOND: 3
 };
+
+global.CUSTOMER_VALID = {
+  nguoi_lon: {min: 1, max: 9},
+  tre_em: {min: 0, max: 9},
+  tre_so_sinh: {min: 0, max: 2}
+}

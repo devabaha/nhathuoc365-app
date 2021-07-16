@@ -10,14 +10,10 @@ import {
   Switch
 } from 'react-native';
 
-// librarys
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Store from '../../store';
-// components
-import FindTickets from './FindTickets';
+import FindTickets from './FindTicket/FindTickets';
 import config from 'app-config';
-
 
 class AirlineTicket extends Component {
   constructor(props) {
@@ -29,12 +25,35 @@ class AirlineTicket extends Component {
   }
 
   componentDidMount() {
-
-    // get place data
-    // Store.getAirportData();
+    this._getData();
+    Store.getAirportData();
   }
 
+
+  _getData = async () => {
+    try {
+      var response = await APIHandler.site_info();
+      console.log('responseS',response);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Store.setSiteData(response.data);
+        })();
+      }
+    } catch (e) {
+      console.log('responseS');
+      console.warn(e);
+    } finally {
+      console.log('responseS');
+      this.setState({
+        finish: true,
+      });
+
+      layoutAnimation();
+    }
+  };
+
   render() {
+    console.log('Store',Store.getAirportData())
     return (
       <View style={styles.container}>
         <ScrollView>
@@ -58,6 +77,7 @@ class AirlineTicket extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+     backgroundColor: '#fff'
   },
   boxBtnSearch: {
     width: Util.size.width,

@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -9,11 +7,10 @@ import {
   Switch
 } from 'react-native';
 
-// library
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Store from '../../store';
-
+import {Actions} from 'react-native-router-flux';
+import Store from '../../../store';
+import config from 'app-config';
 class FindTickets extends Component {
 
   constructor(props) {
@@ -43,10 +40,6 @@ class FindTickets extends Component {
       tre_em: 0,
       tre_so_sinh: 0
     }
-  }
-
-  componentDidMount() {
-
   }
 
   _khuHoiChange(value) {
@@ -100,8 +93,8 @@ class FindTickets extends Component {
       params = `${from}-${to}-${from_date.date}-${nguoi_lon}-${tre_em}-${tre_so_sinh}`;
     }
 
-    var url = Store.site_data.result_url + '?Request=' + params;
-
+    var url = Store.site_data?.result_url + '?Request=' + params;
+    console.log('url',url)
     Actions.result({
       title: `${from_view} - ${to_view}`,
       url
@@ -153,13 +146,11 @@ class FindTickets extends Component {
 
   _toDateSelected() {
     var { to_date, from_date } = this.state;
-
     Actions.datePicker({
       current: to_date.current,
       minDate: from_date.current,
       onSelected: value => {
         var date = dateHandler(value);
-
         this.setState({
           to_date: {
             date: date.date,
@@ -172,6 +163,7 @@ class FindTickets extends Component {
   }
 
   render() {
+    console.log('Store fin',Store)
     var {
       khu_hoi,
       from_view,
@@ -335,7 +327,8 @@ const BOX_ICON_WIDTH = 42;
 
 const styles = StyleSheet.create({
   container: {
-    width: Util.size.width
+    width: Util.size.width,
+    zIndex:999,
   },
   groupInput: {
     width: '100%',
@@ -343,7 +336,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     height: ROW_HEIGHT,
     overflow: 'hidden',
-    backgroundColor: '#F5FCFF'
   },
   boxIcon: {
     width: BOX_ICON_WIDTH,
@@ -381,7 +373,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#0071ce',
+    backgroundColor: config._primaryColor,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden'

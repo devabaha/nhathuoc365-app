@@ -356,7 +356,10 @@ class Config {
       listAddressStore: 'listAddressStore',
 
       airlineTicket: 'airlineTicket',
-      datePicker: 'datePicker'
+      datePicker: 'datePicker',
+      place: 'place',
+      customer: 'customer',
+      result: 'result',
     };
   }
 }

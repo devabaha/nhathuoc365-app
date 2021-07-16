@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
 - PersonalProfile and UserChat from skv.
 ### Fixed
 - Delay setState OrderCart data.

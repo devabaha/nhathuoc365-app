@@ -194,7 +194,10 @@ import {
 import ListAddressStore from './containers/ListAddressStore';
 import AirlineTicket from './containers/AirlineTicket';
 import DatePicker from './containers/AirlineTicket/DatePicker';
-import DatePickerNavBar from './containers/AirlineTicket/DatePickerNavBar';
+import Place from './containers/AirlineTicket/Place';
+import Customer from './containers/AirlineTicket/Customer';
+import Result from './containers/AirlineTicket/Result';
+import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
 
 /**
  * Not allow font scaling
@@ -812,6 +815,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals"
                     iconSVG={SVGNews}>
                     <Scene
+                      title={t('appTab.tab2.title')}
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
                     />
@@ -874,35 +878,52 @@ class RootRouter extends Component {
                       }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
-                      component={AirlineTicket}
+                      component={Account}
                     />
                   </Stack>
                 </Tabs>
 
-                 {/* ================ AirlineTicket ================ */}
-                 <Stack key={appConfig.routes.airlineTicket}>
+                {/* ================ AirlineTicket Result ================ */}
+                <Stack key={appConfig.routes.result}>
                   <Scene
-                    key={`${appConfig.routes.airlineTicket}_1`}
-                    component={AirlineTicket}
-                    hideNavBar
+                    key={`${appConfig.routes.result}_1`}
+                    component={Result}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>
 
-                 {/* ================ DatePicker ================ */}
-                 <Stack key={appConfig.routes.datePicker}
-                 >
-                   
+                {/* ================ AirlineTicket Place ================ */}
+                <Stack key={appConfig.routes.place}>
                   <Scene
-                   modal={true} panHandlers={null} title="Chọn ngày"
-                   navBar={DatePickerNavBar} 
+                    key={`${appConfig.routes.place}_1`}
+                    component={Place}
+                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                  />
+                </Stack>
+
+                {/* ================ AirlineTicket DatePicker ================ */}
+                <Stack key={appConfig.routes.datePicker}
+                >
+                  <Scene
+                    modal={true} panHandlers={null} title="Chọn ngày"
+                    {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
-                    hideNavBar
                     back
                   />
                 </Stack>
 
+                {/* ================ AirlineTicket ================ */}
+                <Stack key={appConfig.routes.airlineTicket}>
+                  <Scene
+                    title='Tìm chuyến bay'
+                    key={`${appConfig.routes.airlineTicket}_1`}
+                    component={AirlineTicket}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ PROFILE ================ */}
                 <Stack key={appConfig.routes.personalProfile}>
@@ -955,7 +976,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                
+
                 {/* ================ LIST ADDRESS STORE ================ */}
                 <Stack key={appConfig.routes.listAddressStore}>
                   <Scene
@@ -2006,6 +2027,10 @@ class RootRouter extends Component {
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
+              {/* ================ AirlineTicket Customer ================ */}
+               <Stack key={appConfig.routes.customer} 
+               component={Customer}  hideNavBar/>
+
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}

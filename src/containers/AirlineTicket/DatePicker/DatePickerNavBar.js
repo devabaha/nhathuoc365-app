@@ -4,11 +4,9 @@ import {
   Text,
   TouchableHighlight,
   View,
-  TextInput
 } from 'react-native';
-import PropTypes from 'prop-types';
 
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class DatePickerNavBar extends Component {
