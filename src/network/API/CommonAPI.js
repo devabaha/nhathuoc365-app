@@ -535,9 +535,6 @@ class CommonAPI {
   get USER_UPLOAD_IMAGE_COVER() {
     return BaseAPI.apiDomain + 'apiUser/upload_image_cover';
   }
-  get  SITE_SEARCH_AIRPORT() {
-    return  BaseAPI.apiDomain +'/apiSite/search_airport';
-  }
 }
 
 export default new CommonAPI();

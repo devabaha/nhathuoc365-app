@@ -54,7 +54,6 @@ export default class Result extends Component {
   }
 
   render() {
-    console.log('url',url)
     var {url, jsCode} = this.state;
 
     return (

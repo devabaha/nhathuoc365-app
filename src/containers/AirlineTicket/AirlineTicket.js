@@ -12,7 +12,7 @@ import {
 
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Store from '../../store';
-import FindTickets from './FindTicket/FindTickets';
+import FindTickets from '../AirlineTicket/component/FindTicket';
 import config from 'app-config';
 
 class AirlineTicket extends Component {
@@ -33,17 +33,14 @@ class AirlineTicket extends Component {
   _getData = async () => {
     try {
       var response = await APIHandler.site_info();
-      console.log('responseS',response);
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           Store.setSiteData(response.data);
         })();
       }
     } catch (e) {
-      console.log('responseS');
       console.warn(e);
     } finally {
-      console.log('responseS');
       this.setState({
         finish: true,
       });
@@ -53,7 +50,6 @@ class AirlineTicket extends Component {
   };
 
   render() {
-    console.log('Store',Store.getAirportData())
     return (
       <View style={styles.container}>
         <ScrollView>

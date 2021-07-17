@@ -815,7 +815,6 @@ class RootRouter extends Component {
                     notifyKey="new_totals"
                     iconSVG={SVGNews}>
                     <Scene
-                      title={t('appTab.tab2.title')}
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
                     />

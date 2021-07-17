@@ -9,7 +9,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Actions} from 'react-native-router-flux';
-import Store from '../../../store';
+import Store from '../../../../store';
 import config from 'app-config';
 class FindTickets extends Component {
 
@@ -94,7 +94,6 @@ class FindTickets extends Component {
     }
 
     var url = Store.site_data?.result_url + '?Request=' + params;
-    console.log('url',url)
     Actions.result({
       title: `${from_view} - ${to_view}`,
       url
