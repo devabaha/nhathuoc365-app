@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
 class Category extends Component<CategoryProps> {
   static defaultProps = {
     isActive: false,
+    numberOfLines: 2,
     onPress: () => {},
   };
 
@@ -146,7 +147,7 @@ class Category extends Component<CategoryProps> {
               {!!this.props.title && (
                 <View>
                   <Text
-                    numberOfLines={2}
+                    numberOfLines={this.props.numberOfLines}
                     style={[
                       styles.title,
                       // activeTitleStyle,
@@ -155,7 +156,7 @@ class Category extends Component<CategoryProps> {
                     {this.props.title}
                   </Text>
                   <Animated.Text
-                    numberOfLines={2}
+                    numberOfLines={this.props.numberOfLines}
                     style={[
                       styles.maskTitle,
                       styles.title,
