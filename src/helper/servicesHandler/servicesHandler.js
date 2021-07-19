@@ -327,9 +327,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       const selectedMethod =
         service.default_payment_method_id !== undefined
           ? {
-              id: service.default_payment_method_id,
-              type: service.default_payment_method_type,
-            }
+            id: service.default_payment_method_id,
+            type: service.default_payment_method_type,
+          }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
         onConfirm: (method, extraData) => callBack(true, method, extraData),
@@ -435,5 +435,11 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       //   { text: 'Đồng ý' }
       // ]);
       break;
+
+    /** Airline Ticket */
+    case SERVICES_TYPE.AIRLINE_TICKET:
+      Actions.push(appConfig.routes.airlineTicket);
+      break;
+
   }
 };

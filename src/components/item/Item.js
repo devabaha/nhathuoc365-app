@@ -1026,20 +1026,13 @@ class Item extends Component {
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
-                {storeName && (
+                {/* {storeName && (
                   <View style={styles.item_content_item_container}>
                     <View
                       style={[
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <MaterialCommunityIcons
-                          name="warehouse"
-                          size={16}
-                          color="#999999"
-                        />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.warehouse')}
                       </Text>
@@ -1064,9 +1057,6 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <Icon name="user" size={16} color="#999999" />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.brands')}
                       </Text>
@@ -1086,9 +1076,6 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <Icon name="map-marker" size={16} color="#999999" />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.origin')}
                       </Text>
@@ -1099,7 +1086,7 @@ class Item extends Component {
                       </Text>
                     </View>
                   </View>
-                )}
+                )} */}
               </View>
             )}
 
