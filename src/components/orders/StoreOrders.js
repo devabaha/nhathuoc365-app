@@ -78,24 +78,19 @@ class StoreOrders extends Component {
       const response = await APIHandler.site_cart_index(this.state.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
           setStater(this, this.unmounted, {
             data: response.data,
-            refreshing: false,
-            loading: false
           });
-        }, delay || this._delay());
       } else {
-        setStater(this, this.unmounted, {
-          loading: false
-        });
+        setStater(this, this.unmounted);
       }
     } catch (e) {
       console.log(e + ' site_cart_index');
       // store.addApiQueue('site_cart_index', this._getData.bind(this, delay));
     } finally {
       setStater(this, this.unmounted, {
-        loading: false
+        loading: false,
+        refreshing: false
       });
     }
   }
