@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Menu multi category performance.
-
+### Changed
+- Update premium-level display logic by [kienluu612@gmail.com].
 ## [r12.0.5] - 2021-07-13
 ### Added
 - Integrated air ticket search by [lamah.dev@gmail.com].
