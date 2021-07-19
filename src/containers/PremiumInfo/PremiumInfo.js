@@ -230,6 +230,7 @@ class PremiumInfo extends Component {
   static defaultProps = {
     indexTab: 0,
     siteId: '',
+    currentPremiumId: store.user_info ? store.user_info.premium : 0,
   };
 
   state = {
@@ -259,7 +260,11 @@ class PremiumInfo extends Component {
       const response = await this.getPremiumsRequest.promise();
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          const routes = this.routesFormatter(response.data.premiums);
+          const routes = this.routesFormatter(response.data.premiums).filter(
+            (premium) =>
+              premium.view_flag == 1 ||
+              premium.id === this.props.currentPremiumId,
+          );
           const currentPremium = routes.find((route) => !!route.active) || {
             id: this.state.index,
           };
@@ -338,9 +343,11 @@ class PremiumInfo extends Component {
   }
 
   renderTabBarLabel(props) {
-    const {route: {title, key}} = props;
+    const {
+      route: {title, key},
+    } = props;
     const focused = key === this.state.index;
-    
+
     return (
       <Text
         numberOfLines={2}
