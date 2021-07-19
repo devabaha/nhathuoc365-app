@@ -8,5 +8,7 @@ export const PACKAGE_OPTIONS_TYPE = {
 
   PRIMARY_ACTIONS: 'package_option_primary_actions',
 
-  DISABLE_PACKAGE_OPTION_LOYALTY_BOX: 'disable_package_option_loyalty_box'
+  DISABLE_PACKAGE_OPTION_LOYALTY_BOX: 'disable_package_option_loyalty_box',
+
+  VIEW_COMMISSIONS_AT_HOMEPAGE :'view_commissions_at_homepage',
 };

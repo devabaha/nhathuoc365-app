@@ -71,7 +71,9 @@ class Account extends Component {
         `-${store.codePushMetaData.label.replace(/\D+/, '')}`
       : '';
     const user_info = store.user_info || {};
+    console.log('user_info',user_info)
     const default_wallet = user_info.default_wallet || {};
+    const revenue_commissions = user_info.revenue_commissions || {}
     const {
       premium,
       premium_name,
@@ -157,7 +159,7 @@ class Account extends Component {
             </Text>
           </Text>
         ),
-        isHidden: !user_info.default_wallet,
+        isHidden: !user_info.default_wallet && !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VIEW_COMMISSIONS_AT_HOMEPAGE),
         rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.push(appConfig.routes.vndWallet, {
@@ -174,6 +176,34 @@ class Account extends Component {
         iconColor: '#fff',
         iconType: default_wallet.iconType,
         marginTop: isShowPremium,
+      },
+
+      {
+        key: 'revenue_commissions',
+        icon: 'clipboard',
+        iconColor: '#FFFFFF',
+        size: 22,
+        iconSize: 14,
+        marginTop: 10,
+        label: (
+            Object.keys(revenue_commissions).map(key =>{
+              return(
+              <View style={{flexDirection:'row'}}>
+                <Text style={styles.profile_list_label}>{key}:</Text>
+                <Text style={styles.revenue_commissions}>{revenue_commissions[key]}</Text>
+              </View>
+            )
+            })
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#FD6D61',
+          },
+        ],
+        isHidden: !user_info.revenue_commissions && isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VIEW_COMMISSIONS_AT_HOMEPAGE)
       },
 
       {
@@ -1296,6 +1326,12 @@ const styles = StyleSheet.create({
   profile_list_label: {
     fontSize: 16,
     color: '#000000',
+    fontWeight: '400',
+  },
+  revenue_commissions : {
+    marginLeft:10,
+    fontSize: 16,
+    color: appConfig._primaryColor,
     fontWeight: '400',
   },
   profile_list_label_balance: {
