@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Key show commission instead of points wallet in Account by [lamah.dev@gmail.com].
+### Fixed
+- Menu multi category performance.
+### Changed
+- Update premium-level display logic by [kienluu612@gmail.com].
 ## [r12.0.5] - 2021-07-13
 ### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
 - PersonalProfile and UserChat from skv.
 ### Changed
 - Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].
