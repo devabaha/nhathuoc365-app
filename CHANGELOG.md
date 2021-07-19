@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r12.0.5] - 2021-07-13
 ### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
 - PersonalProfile and UserChat from skv.
 ### Changed
 - Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].

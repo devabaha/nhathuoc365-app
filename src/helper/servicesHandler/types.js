@@ -105,5 +105,8 @@ export const SERVICES_TYPE = {
   PROGRESS_TRACKING_DETAIL: 'progress_tracking_detail',
 
   /** PROFILE */
-  PERSONAL_PROFILE: 'personal_profile'
+  PERSONAL_PROFILE: 'personal_profile',
+
+   /** AIRLINE TICKET */
+   AIRLINE_TICKET: 'airline_ticket',
 };

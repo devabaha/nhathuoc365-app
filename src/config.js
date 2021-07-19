@@ -352,10 +352,16 @@ class Config {
       editPersonalProfile: 'editPersonalProfile',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
-
+      
       listAddressStore: 'listAddressStore',
 
       itemImageViewer: 'item_image_viewer',
+
+      airlineTicket: 'airlineTicket',
+      datePicker: 'datePicker',
+      place: 'place',
+      customer: 'customer',
+      result: 'result',
     };
   }
 }

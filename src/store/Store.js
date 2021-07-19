@@ -774,6 +774,46 @@ class Store {
   @action setSelectedNewsId(selectedNewsId = ""){
     this.selectedNewsId = selectedNewsId;
   }
+
+  @observable place_data = null;
+  @observable place_data_static = null;
+
+  @action setPlaceData(data) {
+    this.place_data = data;
+  }
+
+  @action setPlaceDataStatic(data) {
+    this.place_data_static = data;
+  }
+
+  @observable site_data = null;
+
+  @action setSiteData(data) {
+    this.site_data = data;
+  }
+
+  async getAirportData(data) {
+    try {
+      var response = await APIHandler.search_airport(data);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          if (this.place_data == null) {
+            this.setPlaceDataStatic(response.data);
+          }
+          this.setPlaceData(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+    }
+  }
+
+  @computed get formattedList(){
+    return this.place_data?.map(v => {
+      return {title: v.title, data: v.data.slice()};
+    }).slice();
+  }
 }
 
 export default new Store();
