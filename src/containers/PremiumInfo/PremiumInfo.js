@@ -264,10 +264,11 @@ class PremiumInfo extends Component {
       const response = await this.getPremiumsRequest.promise();
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          const routes = this.routesFormatter(response.data.premiums).filter(
-            (premium) =>
-              premium.view_flag == 1 ||
-              premium.id === this.currentPremiumId,
+          const routes = this.routesFormatter(
+            response.data.premiums.filter(
+              (premium) =>
+                premium.view_flag == 1 || premium.id === this.currentPremiumId,
+            ),
           );
           const currentPremium = routes.find((route) => !!route.active) || {
             id: this.state.index,
