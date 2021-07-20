@@ -6,6 +6,7 @@ import {
   View,
   Share,
 } from 'react-native';
+import RNShare from 'react-native-share';
 import {Actions} from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -108,13 +109,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true,
         });
-      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
         Actions.push(appConfig.routes.myAddress, {
           redirect: 'confirm',
           goBack: true,
           isVisibleStoreAddress: true,
-  
-        })
+        });
       } else {
         Actions.create_address({
           redirect: 'confirm',
@@ -172,7 +172,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   handlePressDownloadImage() {
-    saveImage(this.props?.imageUrl)
+    saveImage(this.props?.imageUrl);
   }
 
   updateNoti() {
