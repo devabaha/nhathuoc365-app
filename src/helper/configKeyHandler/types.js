@@ -19,6 +19,7 @@ export const CONFIG_KEY = {
   FILTER_PRICES_KEY: 'filter_prices_key',
 
   DISABLE_SOCIAL_COMMENT: 'disable_social_comment',
+  DISABLE_GOOGLE_FIREBASE_OTP_KEY: 'disable_google_firebase_otp_key',
 
   ABOUT_US_ID: 'about_us_id',
 
