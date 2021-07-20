@@ -10,5 +10,4 @@ export const PACKAGE_OPTIONS_TYPE = {
 
   DISABLE_PACKAGE_OPTION_LOYALTY_BOX: 'disable_package_option_loyalty_box',
 
-  VIEW_COMMISSIONS_AT_HOMEPAGE :'view_commissions_at_homepage',
 };

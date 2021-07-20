@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Key show commission instead of points wallet in Account by [lamah.dev@gmail.com].
+- Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
 ### Fixed
 - Menu multi category performance.
 ### Changed
