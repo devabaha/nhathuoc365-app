@@ -8,6 +8,7 @@ import {
 export { default } from "./Category";
 
 export interface CategoryProps {
+  numberOfLines?: number;
   disabled?: boolean;
   isActive?: boolean;
   image?: string;

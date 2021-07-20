@@ -251,10 +251,12 @@ class SubCategory extends Component<SubCategoryProps> {
         }
       : {};
     if (index === 0) {
+      // @ts-ignore
       extraWrapperStyle.paddingTop = 20;
     }
 
     if (index === totalItem - 1) {
+      // @ts-ignore
       extraWrapperStyle.paddingBottom = 20;
     }
 
@@ -366,6 +368,7 @@ class SubCategory extends Component<SubCategoryProps> {
     return (
       <View key={index} style={[styles.categoryWrapper, containerStyle]}>
         <Category
+          numberOfLines={3}
           disabled={!category}
           title={category?.name}
           image={category?.image}

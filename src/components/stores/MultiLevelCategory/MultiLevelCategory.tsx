@@ -204,11 +204,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             (prevState: any) => ({
               type: response.data.type || prevState.type,
               categories,
-              selectedMainCategory,
+              // selectedMainCategory,
             }),
             () => {
               setTimeout(() =>
-                this.onPressMainCategory(selectedMainCategory, false),
+                this.onPressMainCategory(selectedMainCategory), 300
               );
             },
           );

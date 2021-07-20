@@ -230,7 +230,7 @@ class PremiumInfo extends Component {
   static defaultProps = {
     indexTab: 0,
     siteId: '',
-    currentPremiumId: store.user_info ? store.user_info.premium : 0,
+    currentPremiumId: undefined,
   };
 
   state = {
@@ -242,6 +242,10 @@ class PremiumInfo extends Component {
   };
   getPremiumsRequest = new APIRequest();
   requests = [];
+
+  get currentPremiumId() {
+    return this.props.currentPremiumId || store.user_info?.premium || 0;
+  }
 
   componentDidMount() {
     this.getPremiums();
@@ -260,12 +264,10 @@ class PremiumInfo extends Component {
       const response = await this.getPremiumsRequest.promise();
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          const routes = this.routesFormatter(
-            response.data.premiums.filter(
-              (premium) =>
-                premium.view_flag == 1 ||
-                premium.id === this.props.currentPremiumId,
-            ),
+          const routes = this.routesFormatter(response.data.premiums).filter(
+            (premium) =>
+              premium.view_flag == 1 ||
+              premium.id === this.currentPremiumId,
           );
           const currentPremium = routes.find((route) => !!route.active) || {
             id: this.state.index,
