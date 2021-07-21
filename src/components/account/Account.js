@@ -1508,13 +1508,13 @@ const styles = StyleSheet.create({
     marginBottom:-6,
   },
   titleRevenueCommissions: {
-    marginVertical: Platform.OS === 'ios' ? 4 : 1,
-    fontSize: 14,
+    marginVertical: Platform.OS === 'ios' ? 4 : 2,
+    fontSize: 12,
     color: '#000000',
     fontWeight: '400',
   },
   valueRevenueCommissions : {
-    marginVertical: Platform.OS === 'ios' ? 3 : 0,
+    marginVertical: Platform.OS === 'ios' ? 2 : 0,
     marginLeft:5,
     fontSize: 16,
     color: appConfig.colors.primary,
