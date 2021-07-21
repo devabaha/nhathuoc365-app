@@ -206,7 +206,7 @@ class Account extends Component {
             backgroundColor: '#FD6D61',
           },
         ],
-        isHidden: !user_info.revenue_commissions || isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
+        isHidden: !user_info.revenue_commissions || !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
       },
 
       {
@@ -1508,8 +1508,8 @@ const styles = StyleSheet.create({
     marginBottom:-6,
   },
   titleRevenueCommissions: {
-    marginVertical: Platform.OS === 'ios' ? 3 : 0,
-    fontSize: 16,
+    marginVertical: Platform.OS === 'ios' ? 4 : 1,
+    fontSize: 14,
     color: '#000000',
     fontWeight: '400',
   },
