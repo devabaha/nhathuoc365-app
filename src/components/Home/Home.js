@@ -71,6 +71,7 @@ class Home extends Component {
     apiFetching: PropTypes.bool,
     onActionPress: PropTypes.func,
     onSurplusNext: PropTypes.func,
+    onPressCommission: PropTypes.func,
     onPromotionPressed: PropTypes.func,
     onVoucherPressed: PropTypes.func,
     onShowAllVouchers: PropTypes.func,
@@ -108,6 +109,7 @@ class Home extends Component {
     apiFetching: false,
     onActionPress: defaultListener,
     onSurplusNext: defaultListener,
+    onPressCommission: defaultListener,
     onPromotionPressed: defaultListener,
     onVoucherPressed: defaultListener,
     onShowAllVouchers: defaultListener,
@@ -425,6 +427,7 @@ class Home extends Component {
                   }
                   onPressItem={this.props.onActionPress}
                   onSurplusNext={this.props.onSurplusNext}
+                  onPressCommission={this.props.onPressCommission}
                 />
               ) : (
                 this.hasPromotion && (
