@@ -10,7 +10,6 @@ import {
   Alert,
   Picker,
   Easing,
-  Platform
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
@@ -1508,13 +1507,13 @@ const styles = StyleSheet.create({
     marginBottom:-6,
   },
   titleRevenueCommissions: {
-    marginVertical: Platform.OS === 'ios' ? 4 : 2,
+    marginVertical: appConfig.device.isIOS ? 4 : 3,
     fontSize: 12,
     color: '#000000',
     fontWeight: '400',
   },
   valueRevenueCommissions : {
-    marginVertical: Platform.OS === 'ios' ? 2 : 0,
+    marginVertical: appConfig.device.isIOS ? 2 : 0,
     marginLeft:5,
     fontSize: 16,
     color: appConfig.colors.primary,
