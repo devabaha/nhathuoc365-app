@@ -229,7 +229,7 @@ class ProductSchedule extends Component {
       image: this.state.site.logo_url,
       cover: this.state.site.banner_url,
       description: this.state.confirmNote,
-      type: PRODUCT_TYPES.SERVICE
+      type: PRODUCT_TYPES.BOOKING
     });
   }
 

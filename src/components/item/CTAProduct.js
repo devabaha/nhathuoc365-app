@@ -23,7 +23,7 @@ class CTAProduct {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.product_type === PRODUCT_TYPES.BOOKING;
   }
 
   goToSchedule = (product) => {
@@ -72,7 +72,7 @@ class CTAProduct {
       case PRODUCT_TYPES.NORMAL:
         this.handleBuy(product, cartType, this._addCart);
         break;
-      case PRODUCT_TYPES.SERVICE:
+      case PRODUCT_TYPES.BOOKING:
         this.goToSchedule(product);
         break;
       default:

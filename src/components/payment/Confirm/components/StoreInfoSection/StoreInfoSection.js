@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
 
   rightContainer: {
     alignItems: 'flex-end',
-    marginTop: 5,
     marginLeft: 10,
   },
   callContainer: {
@@ -98,7 +97,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const StoreInfo = ({
+const StoreInfoSection = ({
   title,
   image,
   name,
@@ -170,14 +169,16 @@ const StoreInfo = ({
         </Container>
 
         <Container style={styles.rightContainer}>
-          <TouchableOpacity
-            hitSlop={HIT_SLOP}
-            style={styles.callContainer}
-            onPress={handleCall}>
-            <Container row>
-              <Ionicons name="ios-call" style={styles.icon} />
-            </Container>
-          </TouchableOpacity>
+          {!!tel && (
+            <TouchableOpacity
+              hitSlop={HIT_SLOP}
+              style={styles.callContainer}
+              onPress={handleCall}>
+              <Container row>
+                <Ionicons name="ios-call" style={styles.icon} />
+              </Container>
+            </TouchableOpacity>
+          )}
           {!!showMapBtn && (
             <TouchableOpacity
               hitSlop={HIT_SLOP}
@@ -194,4 +195,4 @@ const StoreInfo = ({
   );
 };
 
-export default React.memo(StoreInfo);
+export default React.memo(StoreInfoSection);

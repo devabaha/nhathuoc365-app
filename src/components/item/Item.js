@@ -92,7 +92,7 @@ class Item extends Component {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.product_type === PRODUCT_TYPES.BOOKING;
   }
 
   componentDidMount() {
@@ -869,7 +869,7 @@ class Item extends Component {
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.SERVICE;
+      item.product_type !== PRODUCT_TYPES.BOOKING;
 
     return (
       <View style={styles.container}>

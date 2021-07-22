@@ -59,7 +59,7 @@ class ProductItem extends PureComponent {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.product_type === PRODUCT_TYPES.BOOKING;
   }
 
   handlePress = debounce(

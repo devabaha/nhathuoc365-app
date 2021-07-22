@@ -46,6 +46,8 @@ class Home extends Component {
   homeDataLoaded = false;
 
   componentDidMount() {
+    setTimeout(() => Actions.push(appConfig.routes.booking));
+    return;
     this.getHomeDataFromApi();
     this.eventTracker.logCurrentView();
   }

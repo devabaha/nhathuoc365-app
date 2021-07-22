@@ -107,7 +107,7 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking,
+  Booking as RadaBooking,
   OrderHistory,
 } from '@tickid/tickid-rada';
 import {
@@ -198,6 +198,7 @@ import Place from './containers/AirlineTicket/Place';
 import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import Booking from './containers/Booking';
 
 /**
  * Not allow font scaling
@@ -881,6 +882,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ Booking ================ */}
+                <Stack key={appConfig.routes.booking}>
+                  <Scene
+                    key={`${appConfig.routes.booking}_1`}
+                    component={Booking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ AirlineTicket Result ================ */}
                 <Stack key={appConfig.routes.result}>
@@ -1834,7 +1845,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.tickidRadaBooking}>
                   <Scene
                     key="tickidRadaBooking1"
-                    component={Booking}
+                    component={RadaBooking}
                     {...whiteNavBarConfig}
                     back
                   />

@@ -362,6 +362,8 @@ class Config {
       place: 'place',
       customer: 'customer',
       result: 'result',
+
+      booking: 'booking',
     };
   }
 }

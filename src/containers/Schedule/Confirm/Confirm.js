@@ -65,7 +65,7 @@ class Confirm extends Component {
     switch (this.props.type) {
       case PRODUCT_TYPES.NORMAL:
         return APIHandler.service_book(this.props.siteId, data);
-      case PRODUCT_TYPES.SERVICE:
+      case PRODUCT_TYPES.BOOKING:
         return APIHandler.cart_service_book(
           this.props.siteId,
           this.props.serviceId,

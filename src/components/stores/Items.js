@@ -32,7 +32,7 @@ class Items extends Component {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.product_type === PRODUCT_TYPES.BOOKING;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -54,7 +54,7 @@ class Items extends Component {
     //   case PRODUCT_TYPES.NORMAL:
     //     this._addCart(product, quantity, model);
     //     break;
-    //   case PRODUCT_TYPES.SERVICE:
+    //   case PRODUCT_TYPES.BOOKING:
     //     this.goToSchedule(product);
     //     break;
     //   default:

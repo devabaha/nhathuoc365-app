@@ -1,0 +1,63 @@
+import React from 'react';
+import {StyleSheet, Text, View, TextInput} from 'react-native';
+import SectionContainer from '../SectionContainer';
+
+const MIN_ADDRESS_HEIGHT = 50;
+const MAX_ADDRESS_HEIGHT = MIN_ADDRESS_HEIGHT * 4;
+const MAX_LENGTH = 250;
+
+const styles = StyleSheet.create({
+  input_label_help: {
+    fontSize: 12,
+    marginTop: 2,
+    color: '#666666',
+  },
+  input_address_text: {
+    width: '100%',
+    color: '#333',
+    fontSize: 14,
+    marginTop: 4,
+    minHeight: MIN_ADDRESS_HEIGHT,
+    maxHeight: MAX_ADDRESS_HEIGHT,
+    paddingLeft: 22
+  },
+});
+
+const NoteSection = ({
+  value = '',
+  editable = true,
+
+  onChangeText = () => {},
+  onContentSizeChange = () => {},
+}) => {
+  const {t} = useTranslation(['orders', 'confirm']);
+
+  return (
+    <SectionContainer
+      marginTop
+      iconName="pen-square"
+      title={
+        <>
+          <Text>{`${t('confirm.note.title')} `}</Text>
+          <Text style={styles.input_label_help}>
+            ({t('confirm.note.description')})
+          </Text>
+        </>
+      }>
+      <View pointerEvents={editable ? 'auto' : 'none'}>
+        <TextInput
+          editable={editable}
+          style={styles.input_address_text}
+          maxLength={MAX_LENGTH}
+          placeholder={t('confirm.note.placeholder')}
+          multiline
+          onChangeText={onChangeText}
+          value={value}
+          onContentSizeChange={onContentSizeChange}
+        />
+      </View>
+    </SectionContainer>
+  );
+};
+
+export default React.memo(NoteSection);

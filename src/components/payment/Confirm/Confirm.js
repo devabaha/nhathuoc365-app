@@ -39,7 +39,8 @@ import {
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
-import {PaymentMethodSection, DeliverySection, StoreInfo} from './components';
+import {PaymentMethodSection, DeliverySection, StoreInfoSection} from './components';
+import NoteSection from './components/NoteSection';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1276,6 +1277,17 @@ class Confirm extends Component {
             </View>
           </View>
 
+          <NoteSection
+            onChangeText={store.setUserCartNote}
+            editable={single}
+            value={
+              single
+                ? store.user_cart_note ||
+                  (store.cart_data ? store.cart_data.user_note : '')
+                : cart_data.user_note || t('confirm.note.noNote')
+            }
+          />
+
           <View
             onLayout={this._onLayout.bind(this)}
             style={[styles.rows, styles.borderBottom, styles.mt8]}>
@@ -1340,7 +1352,7 @@ class Confirm extends Component {
           </View>
 
           {!!storeInfo && (
-            <StoreInfo
+            <StoreInfoSection
               title={t('confirm.store.title')}
               name={storeInfo.name}
               address={storeInfo.full_address}
@@ -1413,36 +1425,6 @@ class Confirm extends Component {
                 </TouchableHighlight>
               </View>
             </View>
-
-            {Object.keys(cart_data.promotions).length > 0 &&
-              cart_data.promotions != null && (
-                <View style={[styles.address_name_box, styles.feeBox]}>
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      {color: 'brown'},
-                    ]}>
-                    {cart_data.promotions.title}
-                  </Text>
-                  <View style={styles.address_default_box}>
-                    <TouchableHighlight
-                      underlayColor="transparent"
-                      onPress={() => 1}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                          styles.feeValue,
-                          {color: 'brown'},
-                        ]}>
-                        {t('confirm.payment.discount.prefix')}{' '}
-                        {cart_data.promotions.discount_text}
-                      </Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              )}
 
             {Object.keys(itemFee).map((index) => {
               return (
@@ -1938,7 +1920,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     lineHeight: 20,
-    paddingRight: 15
+    paddingRight: 15,
   },
   address_content_phuong: {
     color: '#404040',

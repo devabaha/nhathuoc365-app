@@ -1,5 +1,5 @@
 import PaymentMethodSection from './PaymentMethodSection';
 import DeliverySection from './DeliverySection';
-import StoreInfo from './StoreInfo';
+import StoreInfoSection from './StoreInfoSection';
 
-export {PaymentMethodSection, DeliverySection, StoreInfo};
+export {PaymentMethodSection, DeliverySection, StoreInfoSection};
