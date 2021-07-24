@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
-import PropTypes from 'prop-types';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableHighlight,
+  FlatList,
+} from 'react-native';
 
 class GridView extends Component {
   static propTypes = {};
 
   static defaultProps = {
     numColumn: 3,
+    horizontal: false,
   };
 
   state = {
@@ -50,7 +56,11 @@ class GridView extends Component {
           const extraRowStyle = {
             marginBottom: isLastRow ? 0 : 5,
           };
-          slots.push(<View key={index} style={[styles.row, extraRowStyle]}>{temp}</View>);
+          slots.push(
+            <View key={index} style={[styles.row, extraRowStyle]}>
+              {temp}
+            </View>,
+          );
           temp = [];
         }
       });
@@ -59,12 +69,67 @@ class GridView extends Component {
     return slots;
   }
 
+  getHorizontalSlotsData = () => {
+    let maxItemsPerRow = Math.ceil(
+      (this.props.slots?.length || 0) / this.props.numColumn,
+    );
+    let data = [];
+
+    for (let i = 0; i < maxItemsPerRow; i++) {
+      let tempData = [];
+      for (let j = 0; j < this.props.numColumn; j++) {
+        let blockSlot = this.props.slots[i + j * maxItemsPerRow];
+        if (blockSlot) {
+          tempData.push(blockSlot);
+        }
+      }
+      data.push(tempData);
+    }
+
+    return data;
+  };
+
+  renderBlockSlot = ({item: blockSlot}) => {
+    return (
+      <View style={styles.blockSlotContainer}>
+        {blockSlot.map((slot, index) => {
+          return (
+            <TouchableHighlight
+              key={index}
+              onPress={() => this.props.onPress(slot)}
+              underlayColor="rgba(0,0,0,.1)"
+              style={[styles.itemContainer, styles.blockSlot]}>
+              <Text>{slot}</Text>
+            </TouchableHighlight>
+          );
+        })}
+      </View>
+    );
+  };
+
+  renderHorizontalSlots = () => {
+    const horizontalSlots = this.getHorizontalSlotsData();
+
+    return (
+      <FlatList
+        horizontal
+        data={horizontalSlots}
+        renderItem={this.renderBlockSlot}
+        keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={this.props.contentContainerStyle}
+      />
+    );
+  };
+
   render() {
     return (
       <View
         onLayout={this.handleLayout}
         style={[styles.container, this.props.containerStyle]}>
-        {this.renderSlots()}
+        {this.props.horizontal
+          ? this.renderHorizontalSlots()
+          : this.renderSlots()}
       </View>
     );
   }
@@ -87,6 +152,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     flex: 1,
+  },
+
+  blockSlotContainer: {
+    marginRight: 10,
+  },
+  blockSlot: {
+    marginBottom: 10,
   },
 });
 

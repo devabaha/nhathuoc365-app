@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
@@ -9,8 +9,15 @@ import ScreenWrapper from 'src/components/ScreenWrapper';
 import ProductInfo from 'src/components/stores/ItemAttribute/ProductInfo';
 import AttributeSelection from 'src/components/stores/ItemAttribute/AttributeSelection';
 import NumberSelection from 'src/components/stores/NumberSelection';
-import {StoreInfoSection} from 'src/components/payment/Confirm/components';
-import NoteSection from 'src/components/payment/Confirm/components/NoteSection';
+import {
+  PricingAndPromotionSection,
+  StoreInfoSection,
+  NoteSection,
+} from 'src/components/payment/Confirm/components';
+import store from 'app-store';
+import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
+import { Container } from 'src/components/Layout';
+import ScheduleSection from './ScheduleSection';
 
 const MIN_QUANTITY = 1;
 
@@ -57,12 +64,21 @@ export class Booking extends Component {
     note: '',
   };
   refScrollView = React.createRef();
+  scrollContentSizeY = 0;
   scrollOffsetY = 0;
+  resetScrollToCoords = {x: 0, y: 0};
   noteHeight = 0;
 
   handleScrollEnd = (e) => {
-    this.scrollOffsetY = e.nativeEvent.contentOffset.y;
-    console.log(this.scrollOffsetY);
+    const {contentOffset, contentSize, layoutMeasurement} = e.nativeEvent;
+    this.scrollOffsetY = contentOffset.y;
+    this.scrollContentSizeY = layoutMeasurement.height;
+    if (appConfig.device.isAndroid) return;
+
+    this.resetScrollToCoords.y =
+      contentOffset.y >= contentSize.height - layoutMeasurement.height
+        ? contentSize.height - layoutMeasurement.height
+        : contentOffset.y;
   };
 
   handleSelectAttr = (selectedAttr, selectedAttrViewData) => {
@@ -102,16 +118,26 @@ export class Booking extends Component {
 
   handleNoteSizeChange = (e) => {
     const noteHeight = e.nativeEvent.layout.height;
-    if (this.refScrollView.current && this.noteHeight) {
+    const noteAreaBoundary = e.nativeEvent.layout.y + noteHeight;
+
+    if (
+      this.refScrollView.current &&
+      this.noteHeight &&
+      this.scrollOffsetY <
+        noteAreaBoundary + store.keyboardTop - this.scrollContentSizeY
+    ) {
       this.scrollOffsetY = this.scrollOffsetY + (noteHeight - this.noteHeight);
-      console.log(this.scrollOffsetY)
       this.refScrollView.current.scrollTo({
         y: this.scrollOffsetY,
-        animated: false
+        animated: false,
       });
     }
 
     this.noteHeight = noteHeight;
+  };
+
+  handleScrollViewLayout = (e) => {
+    this.scrollContentSizeY = e.nativeEvent.layout.height;
   };
 
   render() {
@@ -121,10 +147,11 @@ export class Booking extends Component {
       <ScreenWrapper>
         <KeyboardAwareScrollView
           innerRef={(inst) => (this.refScrollView.current = inst)}
+          resetScrollToCoords={this.resetScrollToCoords}
+          enableResetScrollToCoords
           scrollEventThrottle={16}
           onScrollEndDrag={this.handleScrollEnd}
-          onMomentumScrollEnd={this.handleScrollEnd}
-        >
+          onMomentumScrollEnd={this.handleScrollEnd}>
           <ProductInfo
             imageUri="https://imgd.aeplcdn.com/476x268/bw/models/honda-activa-6g-standard20200115132249.jpg?q=80"
             title="Xe máy Honda"
@@ -161,7 +188,13 @@ export class Booking extends Component {
             </View>
           </View>
 
-          <StoreInfoSection title="Cửa hàng" name="Test" address="115, Láng Hạ" />
+          <ScheduleSection />
+
+          <StoreInfoSection
+            title="Cửa hàng"
+            name="Test"
+            address="115, Láng Hạ"
+          />
 
           <View onLayout={this.handleNoteSizeChange}>
             <NoteSection
@@ -170,6 +203,26 @@ export class Booking extends Component {
               //   onContentSizeChange={this.handleNoteSizeChange}
             />
           </View>
+
+          <PricingAndPromotionSection
+            isPromotionSelectable
+            tempPrice="200.000đ"
+            totalItem="6"
+            totalPrice="1.000.000đ"
+            promotionName="Test"
+            itemFee={{
+              'Phí 1': '1.000đ',
+              'Phí 2': '10.000đ',
+              'Phí 3': '100.000đ',
+            }}
+            cashbackView={{
+              'Hoàn tiền 1': '1.000đ',
+              'Hoàn tiền 2': '10.000đ',
+              'Hoàn tiền 3': '100.000đ',
+            }}
+
+            // onPressVoucher=() => {}
+          />
         </KeyboardAwareScrollView>
       </ScreenWrapper>
     );

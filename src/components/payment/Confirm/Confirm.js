@@ -39,7 +39,12 @@ import {
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
 import RoundButton from '../../RoundButton';
-import {PaymentMethodSection, DeliverySection, StoreInfoSection} from './components';
+import {
+  PaymentMethodSection,
+  DeliverySection,
+  StoreInfoSection,
+  PricingAndPromotionSection,
+} from './components';
 import NoteSection from './components/NoteSection';
 
 class Confirm extends Component {
@@ -1288,69 +1293,6 @@ class Confirm extends Component {
             }
           />
 
-          <View
-            onLayout={this._onLayout.bind(this)}
-            style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <TouchableHighlight
-              underlayColor="#ffffff"
-              onPress={() => {
-                if (this.refs_cart_note) {
-                  this.refs_cart_note.focus();
-                }
-              }}>
-              <View style={styles.box_icon_label}>
-                <Icon5 style={styles.icon_label} name="pen-square" size={15} />
-                <Text style={styles.input_label}>
-                  {`${t('confirm.note.title')} `}
-                </Text>
-                <Text style={styles.input_label_help}>
-                  ({t('confirm.note.description')})
-                </Text>
-              </View>
-            </TouchableHighlight>
-            {single ? (
-              <View>
-                <TextInput
-                  ref={(ref) => (this.refs_cart_note = ref)}
-                  style={[
-                    styles.input_address_text,
-                    {
-                      height:
-                        this.state.address_height > 50
-                          ? this.state.address_height
-                          : 50,
-                    },
-                  ]}
-                  keyboardType="default"
-                  maxLength={250}
-                  placeholder={t('confirm.note.placeholder')}
-                  placeholderTextColor="#999999"
-                  multiline={true}
-                  underlineColorAndroid="transparent"
-                  onContentSizeChange={(e) => {
-                    this.setState({
-                      address_height: e.nativeEvent.contentSize.height,
-                    });
-                  }}
-                  onChangeText={(value) => {
-                    action(() => {
-                      store.setUserCartNote(value);
-                    })();
-                  }}
-                  // onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
-                  value={
-                    store.user_cart_note ||
-                    (store.cart_data ? store.cart_data.user_note : '')
-                  }
-                />
-              </View>
-            ) : (
-              <Text style={styles.input_note_value}>
-                {cart_data.user_note || t('confirm.note.noNote')}
-              </Text>
-            )}
-          </View>
-
           {!!storeInfo && (
             <StoreInfoSection
               title={t('confirm.store.title')}
@@ -1395,188 +1337,23 @@ class Confirm extends Component {
             />
           )}
 
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              styles.mt8,
-              {
-                borderTopWidth: 0,
-                backgroundColor: '#fafafa',
-              },
-            ]}>
-            <View style={[styles.address_name_box]}>
-              <Text style={[styles.text_total_items, styles.feeLabel]}>
-                {t('confirm.payment.price.temp')}
-              </Text>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
-                  <Text
-                    style={[
-                      styles.address_default_title,
-                      styles.title_active,
-                      styles.feeValue,
-                      {color: '#333333'},
-                    ]}>
-                    {cart_data.total_before_view}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-
-            {Object.keys(itemFee).map((index) => {
-              return (
-                <View
-                  key={index}
-                  style={[styles.address_name_box, styles.feeBox]}>
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      {color: DEFAULT_COLOR},
-                    ]}>
-                    {index}
-                  </Text>
-                  <View style={styles.address_default_box}>
-                    <TouchableHighlight
-                      underlayColor="transparent"
-                      onPress={() => 1}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                          styles.feeValue,
-                        ]}>
-                        {cart_data.item_fee[index]}
-                      </Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              {
-                borderTopWidth: 0,
-              },
-            ]}>
-            <View style={styles.address_name_box}>
-              <Text
-                style={[styles.text_total_items, styles.feeLabel, styles.both]}>
-                {`${t('confirm.payment.price.total')} `}
-                <Text style={{fontWeight: '400', fontSize: 14}}>
-                  ({cart_data.count_selected} {t('confirm.unitName')})
-                </Text>
-              </Text>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
-                  <Text
-                    style={[
-                      styles.address_default_title,
-                      styles.title_active,
-                      styles.feeValue,
-                      styles.both,
-                    ]}>
-                    {cart_data.total_selected}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-          </View>
-
-          {single && (
-            <View
-              style={[styles.rows, styles.borderBottom, {marginVertical: 8}]}>
-              <View style={styles.address_name_box}>
-                <View style={styles.useVoucherLabelWrapper}>
-                  <Material name="ticket-percent" size={20} color="#05b051" />
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      styles.both,
-                      styles.useVoucherLabel,
-                    ]}>
-                    {t('confirm.payment.discount.title')}
-                  </Text>
-                </View>
-                <Button
-                  containerStyle={[
-                    styles.address_default_box,
-                    styles.addVoucherWrapper,
-                  ]}
-                  onPress={
-                    cart_data.user_voucher
-                      ? this.openCurrentVoucher.bind(
-                          this,
-                          cart_data.user_voucher,
-                        )
-                      : this.openMyVoucher
-                  }>
-                  {cart_data.user_voucher ? (
-                    <Text
-                      ellipsizeMode="tail"
-                      numberOfLines={1}
-                      style={[styles.addVoucherLabel, {marginLeft: 10}]}>
-                      <Material name="check-circle" size={16} color="#05b051" />
-                      {` ${cart_data.user_voucher.voucher_name}`}
-                    </Text>
-                  ) : (
-                    <Text style={styles.addVoucherLabel}>
-                      {t('confirm.payment.discount.add')}
-                    </Text>
-                  )}
-                </Button>
-              </View>
-            </View>
-          )}
-
-          {Object.keys(cashbackView).map((index) => {
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.rows,
-                  styles.borderBottom,
-                  {
-                    borderTopWidth: 0,
-                  },
-                ]}>
-                <View style={styles.address_name_box}>
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      styles.both,
-                    ]}>
-                    {index}
-                  </Text>
-                  <View style={styles.address_default_box}>
-                    <Text
-                      style={[
-                        styles.address_default_title,
-                        styles.title_active,
-                        styles.feeValue,
-                        styles.both,
-                      ]}>
-                      {cart_data.cashback_view[index]}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
+          <PricingAndPromotionSection
+            tempPrice={cart_data.total_before_view}
+            itemFee={itemFee}
+            cashbackView={cashbackView}
+            totalItem={cart_data.count_selected}
+            totalPrice={cart_data.total_selected}
+            promotionName={cart_data.user_voucher?.voucher_name}
+            isPromotionSelectable={single}
+            onPressVoucher={
+              cart_data.user_voucher
+                ? this.openCurrentVoucher.bind(this, cart_data.user_voucher)
+                : this.openMyVoucher
+            }
+          />
 
           {this.renderCommissions(cart_data)}
-          <View style={styles.boxButtonActions}>
+          <View style={[styles.boxButtonActions, styles.mt8]}>
             {is_ready && !this.isPaid && (
               <RoundButton
                 onPress={this.confirmEditCart.bind(this, cart_data)}
