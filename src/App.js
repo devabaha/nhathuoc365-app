@@ -2032,7 +2032,7 @@ class RootRouter extends Component {
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
-              {/* ================ AirlineTicket Customer ================ */}
+              {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
                <Stack key={appConfig.routes.customer} 
                component={Customer}  hideNavBar/>
 
