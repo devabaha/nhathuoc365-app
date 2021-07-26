@@ -173,17 +173,17 @@ class CategoryScreen extends Component {
             setTimeout(() => {
               layoutAnimation();
               this.page = 1;
-
-              this.setState({
-                items_data:
-                  data.length > STORES_LOAD_MORE
-                    ? [...data, {id: -1, type: 'loadMore'}]
-                    : data,
-                items_data_bak: data,
-                loading: false,
-                fetched: true,
-                refreshing: false,
-              });
+           
+                this.setState({
+                  items_data:
+                    data.length > STORES_LOAD_MORE
+                      ? [...data, {id: -1, type: 'loadMore'}]
+                      : data,
+                  items_data_bak: data,
+                  loading: false,
+                  fetched: true,
+                  refreshing: false,
+                });
 
               action(() => {
                 store.setStoresFinish(true);
@@ -236,16 +236,29 @@ class CategoryScreen extends Component {
             var items_data = loadMore
               ? [...this.state.items_data_bak, ...response.data]
               : response.data;
-            this.setState({
-              items_data:
-                response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, {id: -1, type: 'loadMore'}]
-                  : items_data,
-              items_data_bak: items_data,
-              loading: false,
-              fetched: true,
-              refreshing: false,
-            });
+              if(this.page == 0){
+                this.setState({
+                  items_data:
+                    response.data.length >= 31
+                      ? [...items_data, {id: -1, type: 'loadMore'}]
+                      : items_data,
+                  items_data_bak: items_data,
+                  loading: false,
+                  fetched: true,
+                  refreshing: false,
+                });
+              }else{
+                this.setState({
+                  items_data:
+                    response.data.length >= STORES_LOAD_MORE
+                      ? [...items_data, {id: -1, type: 'loadMore'}]
+                      : items_data,
+                  items_data_bak: items_data,
+                  loading: false,
+                  fetched: true,
+                  refreshing: false,
+                });
+              }
 
             action(() => {
               store.setStoresFinish(true);

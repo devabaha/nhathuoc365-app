@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Showing load more button in CategoryScreen by [lamah.dev@gmail.com].
 ### Added
 - Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
 ### Changed
