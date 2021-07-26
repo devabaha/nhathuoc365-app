@@ -3,6 +3,7 @@ export { default } from "./MultiLevelCategory";
 export type Category = {
   name?: string;
   image?: string;
+  list?: Array<any>;
 };
 
 export type CategoryType = "fix" | "scroll";

@@ -1577,6 +1577,12 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.storeOrders}_1`}
                     component={StoreOrders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
