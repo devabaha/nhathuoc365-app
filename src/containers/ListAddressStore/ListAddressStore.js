@@ -219,7 +219,6 @@ const ListAddressStore = ({
       LOCATION_PERMISSION_TYPE.REQUEST,
       (result) => {
         setPermissionRequesting(false);
-        console.log(result);
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setRequestLocationErrorCode(result);
           // setGotoSetting(false);

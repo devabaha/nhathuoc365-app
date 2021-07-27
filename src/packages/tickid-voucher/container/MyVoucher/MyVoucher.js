@@ -69,6 +69,8 @@ class MyVoucher extends BaseContainer {
       voucherId: voucher.data.id,
       from: this.props.from,
       title: voucher.data.title,
+      orderId: this.props.orderId,
+      orderType: this.props.orderType,
       isUseOnlineMode: this.isUseOnlineMode,
       onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
       onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure,
@@ -160,7 +162,7 @@ class MyVoucher extends BaseContainer {
 
     try {
       const response = await internalFetch(
-        config.rest.useVoucherOnline(this.props.siteId, voucher.data.id),
+        config.rest.useVoucherOnline(this.props.siteId, voucher.data.id, this.props.orderId, this.props.orderType),
       );
       if (response.status === config.httpCode.success) {
         showMessage({

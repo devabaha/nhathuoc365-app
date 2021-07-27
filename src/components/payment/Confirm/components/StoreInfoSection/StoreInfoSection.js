@@ -17,34 +17,10 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
   },
-  titleWrapper: {
-    paddingBottom: 12,
+  contentContainer: {
+    marginTop: 12,
   },
-  titleContainer: {},
   iconHeading: {
-    width: 15,
-    color: '#999',
-    fontSize: 15,
-  },
-  titleHeading: {
-    fontSize: 16,
-    color: '#000000',
-    marginLeft: 8,
-  },
-  actionTitle: {
-    flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-  btnAction: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  changeTitle: {
-    color: appConfig.colors.primary,
     fontSize: 12,
   },
 
@@ -109,7 +85,11 @@ const StoreInfoSection = ({
   originLongitude,
   isReverseDirection,
   showMapBtn = true,
+  onPressActionBtn,
+  customContent,
 }) => {
+  const {t} = useTranslation('orders');
+
   const handleCall = useCallback(() => {
     Communications.phonecall(tel, true);
   }, [tel]);
@@ -138,58 +118,57 @@ const StoreInfoSection = ({
   ]);
 
   return (
-    <SectionContainer style={[!!title && styles.container]}>
-      {!!title && (
-        <Container row style={styles.titleWrapper}>
-          <Container row>
-            <MaterialCommunityIcons
-              style={styles.iconHeading}
-              name="warehouse"
-            />
-            <Text style={styles.titleHeading}>{title}</Text>
-          </Container>
-        </Container>
-      )}
+    <SectionContainer
+      marginTop
+      style={[!!title && styles.container]}
+      actionBtnTitle={!!onPressActionBtn && t('confirm.change')}
+      title={title || t('confirm.store.title')}
+      iconStyle={styles.iconHeading}
+      iconName="warehouse"
+      onPressActionBtn={onPressActionBtn}>
+      <Container row style={styles.contentContainer}>
+        {customContent || (
+          <>
+            <View style={styles.imageContainer}>
+              <Image source={{uri: image}} />
+            </View>
 
-      <Container row>
-        <View style={styles.imageContainer}>
-          <Image source={{uri: image}} />
-        </View>
+            <Container
+              flex
+              centerVertical={false}
+              style={styles.mainContentContainer}>
+              <Text numberOfLines={2} style={styles.title}>
+                {name}
+              </Text>
+              <Text numberOfLines={2} style={styles.description}>
+                {address}
+              </Text>
+            </Container>
 
-        <Container
-          flex
-          centerVertical={false}
-          style={styles.mainContentContainer}>
-          <Text numberOfLines={2} style={styles.title}>
-            {name}
-          </Text>
-          <Text numberOfLines={2} style={styles.description}>
-            {address}
-          </Text>
-        </Container>
-
-        <Container style={styles.rightContainer}>
-          {!!tel && (
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              style={styles.callContainer}
-              onPress={handleCall}>
-              <Container row>
-                <Ionicons name="ios-call" style={styles.icon} />
-              </Container>
-            </TouchableOpacity>
-          )}
-          {!!showMapBtn && (
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              style={styles.mapContainer}
-              onPress={goToMapView}>
-              <Container row>
-                <SVGMap width={20} height={20} />
-              </Container>
-            </TouchableOpacity>
-          )}
-        </Container>
+            <Container style={styles.rightContainer}>
+              {!!tel && (
+                <TouchableOpacity
+                  hitSlop={HIT_SLOP}
+                  style={styles.callContainer}
+                  onPress={handleCall}>
+                  <Container row>
+                    <Ionicons name="ios-call" style={styles.icon} />
+                  </Container>
+                </TouchableOpacity>
+              )}
+              {!!showMapBtn && (
+                <TouchableOpacity
+                  hitSlop={HIT_SLOP}
+                  style={styles.mapContainer}
+                  onPress={goToMapView}>
+                  <Container row>
+                    <SVGMap width={20} height={20} />
+                  </Container>
+                </TouchableOpacity>
+              )}
+            </Container>
+          </>
+        )}
       </Container>
     </SectionContainer>
   );

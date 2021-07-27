@@ -46,6 +46,7 @@ import {
   PricingAndPromotionSection,
 } from './components';
 import NoteSection from './components/NoteSection';
+import { toJS } from 'mobx';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -209,6 +210,7 @@ class Confirm extends Component {
   async _getOrdersItem(site_id, page_id, is_paymenting = true) {
     try {
       const response = await APIHandler.site_cart_show(site_id, page_id);
+      console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           this.setState(
@@ -1295,7 +1297,6 @@ class Confirm extends Component {
 
           {!!storeInfo && (
             <StoreInfoSection
-              title={t('confirm.store.title')}
               name={storeInfo.name}
               address={storeInfo.full_address}
               image={storeInfo.img}
@@ -1345,10 +1346,11 @@ class Confirm extends Component {
             totalPrice={cart_data.total_selected}
             promotionName={cart_data.user_voucher?.voucher_name}
             isPromotionSelectable={single}
-            onPressVoucher={
-              cart_data.user_voucher
-                ? this.openCurrentVoucher.bind(this, cart_data.user_voucher)
-                : this.openMyVoucher
+            selectedVoucher={cart_data.user_voucher}
+            siteId={
+              this.props.store
+                ? this.props.store.cart_store_id
+                : store.cart_store_id
             }
           />
 

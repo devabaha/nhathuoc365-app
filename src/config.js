@@ -33,8 +33,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'testtaoch3keyfe4BV',
+      secretKey: 'wvk1testtaoch3keyfe4BVltdumK',
     };
   }
 
@@ -296,6 +296,7 @@ class Config {
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
       modalEditImages: 'modalEditImages',
+      modalCalendar: 'modalCalendar',
 
       //  Reset password
       resetPassword: 'resetPassword',

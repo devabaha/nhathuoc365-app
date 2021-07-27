@@ -33,7 +33,6 @@ import {
  * @callback callBack - a trigger when needed for specific case.
  */
 export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
-  Actions.push(appConfig.routes.booking);return;
   if (!service || !service.type) return;
   switch (service.type) {
     /** RADA */

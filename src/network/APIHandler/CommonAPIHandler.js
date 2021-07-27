@@ -1364,6 +1364,53 @@ class CommonAPIHandler extends BaseHandler {
     return await this.postAPI(api, data);
   }
 
+  // Booking
+  /**
+   * @todo Lấy block thời gian booking theo ngày đã chọn
+   * 
+   * @param {Object=} data
+   * @param {string=} data.date
+   */
+  booking_get_booking_times(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_GET_BOOKING_TIMES, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo Lấy dữ liệu mặc định booking
+   * 
+   * @param {Object} data
+   * @param {string} data.id productId
+   */
+  booking_store(site_id, data) {
+    const api = url_for(API.BOOKING_STORE, site_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo Cập nhật dữ liệu booking
+   * 
+   * @param {Object} data
+   * @param {string} data.model
+   * @param {number} data.quantity
+   * @param {string} data.address_id
+   * @param {string} data.time datetime (yyyy-mm-dd hh:mm)
+   */
+   booking_update(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_UPDATE, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo booking
+   * 
+   * @param {Object} data
+   * @param {string} data.user_note
+   */
+   booking_order(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_ORDER, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;

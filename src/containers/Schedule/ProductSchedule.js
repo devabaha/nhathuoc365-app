@@ -18,7 +18,7 @@ import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import EventTracker from '../../helper/EventTracker';
 import store from 'app-store';
-import { PRODUCT_TYPES } from '../../constants';
+import { ORDER_TYPES } from '../../constants';
 
 const SLOTS = [
   '9:00',
@@ -229,7 +229,7 @@ class ProductSchedule extends Component {
       image: this.state.site.logo_url,
       cover: this.state.site.banner_url,
       description: this.state.confirmNote,
-      type: PRODUCT_TYPES.BOOKING
+      type: ORDER_TYPES.BOOKING
     });
   }
 

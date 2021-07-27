@@ -15,7 +15,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {APIRequest} from '../../../network/Entity';
 import EventTracker from '../../../helper/EventTracker';
 import {Actions} from 'react-native-router-flux';
-import {PRODUCT_TYPES} from '../../../constants';
+import {ORDER_TYPES} from '../../../constants';
 import Loading from '../../../components/Loading';
 
 class Confirm extends Component {
@@ -27,7 +27,7 @@ class Confirm extends Component {
     appointmentName: '',
     description: '',
     btnMessage: '',
-    type: PRODUCT_TYPES.NORMAL,
+    type: ORDER_TYPES.NORMAL,
   };
 
   state = {
@@ -63,9 +63,9 @@ class Confirm extends Component {
     };
 
     switch (this.props.type) {
-      case PRODUCT_TYPES.NORMAL:
+      case ORDER_TYPES.NORMAL:
         return APIHandler.service_book(this.props.siteId, data);
-      case PRODUCT_TYPES.BOOKING:
+      case ORDER_TYPES.BOOKING:
         return APIHandler.cart_service_book(
           this.props.siteId,
           this.props.serviceId,

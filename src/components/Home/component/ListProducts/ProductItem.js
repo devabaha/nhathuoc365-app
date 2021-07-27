@@ -17,7 +17,7 @@ import Themes from 'src/Themes';
 import Indicator from 'src/components/Indicator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
@@ -59,7 +59,7 @@ class ProductItem extends PureComponent {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.BOOKING;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   handlePress = debounce(

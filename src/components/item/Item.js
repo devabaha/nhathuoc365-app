@@ -26,7 +26,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -92,7 +92,7 @@ class Item extends Component {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.BOOKING;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   componentDidMount() {
@@ -869,7 +869,7 @@ class Item extends Component {
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.BOOKING;
+      item.order_type !== ORDER_TYPES.BOOKING;
 
     return (
       <View style={styles.container}>

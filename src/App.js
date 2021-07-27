@@ -199,6 +199,7 @@ import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
 import Booking from './containers/Booking';
+import ModalCalendar from './components/ModalCalendar';
 
 /**
  * Not allow font scaling
@@ -883,10 +884,11 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
-                {/* ================ Booking ================ */}
+                {/* ================ BOOKING ================ */}
                 <Stack key={appConfig.routes.booking}>
                   <Scene
                     key={`${appConfig.routes.booking}_1`}
+                    title={t('screen.booking.mainTitle')}
                     component={Booking}
                     {...navBarConfig}
                     back
@@ -908,15 +910,18 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.place}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
                   />
                 </Stack>
 
                 {/* ================ AirlineTicket DatePicker ================ */}
-                <Stack key={appConfig.routes.datePicker}
-                >
+                <Stack key={appConfig.routes.datePicker}>
                   <Scene
-                    modal={true} panHandlers={null} title="Chọn ngày"
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
                     {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
@@ -927,7 +932,7 @@ class RootRouter extends Component {
                 {/* ================ AirlineTicket ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title='Tìm chuyến bay'
+                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -955,7 +960,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
 
                 {/* ================ LIST USER CHAT ================ */}
                 <Stack key={appConfig.routes.listUserChat}>
@@ -1997,6 +2001,12 @@ class RootRouter extends Component {
                 component={ItemAttribute}
               />
 
+              {/* ================ MODAL CALENDAR ================ */}
+              <Stack
+                key={appConfig.routes.modalCalendar}
+                component={ModalCalendar}
+              />
+
               {/* ================ MODAL PICKER ================ */}
               <Stack
                 key={appConfig.routes.modalPicker}
@@ -2044,9 +2054,11 @@ class RootRouter extends Component {
                 component={ModalFilterProduct}
               />
               {/* ================ AirlineTicket Customer ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -2058,6 +2070,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -2067,6 +2080,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -2077,6 +2091,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -2088,6 +2103,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene

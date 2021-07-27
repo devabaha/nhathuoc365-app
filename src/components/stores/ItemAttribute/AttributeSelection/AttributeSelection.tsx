@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -15,6 +15,7 @@ const VALUE_KEY = 'value';
 const ACTIVE_KEY = 'active';
 const DISABLE_KEY = 'disabled';
 const MIN_QUANTITY = 1;
+const MODEL_SEPARATOR = '-';
 
 const styles = StyleSheet.create({
   label: {
@@ -45,9 +46,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
+export class AttributeSelection extends Component<AttributeSelectionProps> {
   static propTypes = {
     onSelectAttr: PropTypes.func,
+    models: PropTypes.object,
     viewData: PropTypes.arrayOf(
       PropTypes.shape({
         [LABEL_KEY]: PropTypes.string,
@@ -63,145 +65,125 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
     ),
   };
   static defaultProps = {
+    defaultSelectedModel: '',
     onSelectAttr: () => {},
-    models: {
-      '0-0': {
-        name: 'S,Ô xám trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 0,
-        sold: 4,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-      '1-0': {
-        name: 'M,Ô xám trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 98,
-        sold: 2,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-      '2-0': {
-        name: 'L,Ô xám trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 94,
-        sold: 6,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-      '0-1': {
-        name: 'S,Ô hồng trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 100,
-        sold: 0,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-      '1-1': {
-        name: 'M,Ô hồng trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 99,
-        sold: 1,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-      '2-1': {
-        name: 'L,Ô hồng trắng',
-        product_code: '',
-        barcode: '',
-        price_before_discount: '625.000đ',
-        price: '312.500đ',
-        inventory: 95,
-        sold: 5,
-        origin_price: 312500,
-        price_view: '312.500đ',
-        price_before_discount_view: '625.000đ',
-        price_in_number: 312500,
-      },
-    },
-    viewData: [
-      {
-        label: 'Kích thước ',
-        data: [
-          {
-            value: 'S',
-            active: false,
-            disabled: true,
-            label: 'Kích thước ',
-            attrKey: 0,
-            attrLabelKey: 0,
-          },
-          {
-            value: 'M',
-            active: false,
-            disabled: false,
-            label: 'Kích thước ',
-            attrKey: 1,
-            attrLabelKey: 0,
-          },
-          {
-            value: 'L',
-            active: false,
-            disabled: false,
-            label: 'Kích thước ',
-            attrKey: 2,
-            attrLabelKey: 0,
-          },
-        ],
-      },
-      {
-        label: 'Nhóm màu ',
-        data: [
-          {
-            value: 'Ô xám trắng',
-            active: false,
-            disabled: false,
-            label: 'Nhóm màu ',
-            attrKey: 0,
-            attrLabelKey: 1,
-          },
-          {
-            value: 'Ô hồng trắng',
-            active: false,
-            disabled: false,
-            label: 'Nhóm màu ',
-            attrKey: 1,
-            attrLabelKey: 1,
-          },
-        ],
-      },
-    ],
+    attrs: {},
+    models: {},
   };
 
   state = {
-    viewData: this.props.viewData,
+    viewData: [],
     models: this.props.models,
     selectedAttrs: [],
+    selectedModel: {},
+    selectedModelKey: '',
+  };
+
+  componentDidMount() {
+    this.updateData(this.props.attrs, this.props.models, () => {
+      if (this.props.defaultSelectedModel) {
+        const modelKeys = this.props.defaultSelectedModel.split(
+          MODEL_SEPARATOR,
+        );
+
+        this.setDefaultAttrs(modelKeys);
+      }
+    });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.attrs !== this.props.attrs ||
+      nextProps.models !== this.props.models
+    ) {
+      this.updateData(nextProps.attrs, nextProps.models);
+    }
+
+    return true;
+  }
+
+  async setDefaultAttrs(modelKeys) {
+    for (let index = 0; index < this.state.viewData.length; index++) {
+      const keyViewData = this.state.viewData[index];
+      const attrViewData = keyViewData.data[modelKeys[index]];
+
+      if (attrViewData) {
+        await new Promise((resolve) => {
+          this.handlePressProductAttr(attrViewData, () => {
+            resolve('');
+          });
+        });
+      }
+    }
+  }
+
+  updateData = (attrs, models, callback = () => {}) => {
+    const {viewData, selectedAttrs} = this.getBaseData(attrs, models);
+
+    this.setState(
+      {
+        viewData,
+        selectedAttrs,
+      },
+      () => {
+        const hasOnlyOneOption =
+          Object.keys(attrs)?.length === 1 &&
+          //@ts-ignore
+          Object.values(attrs)[0]?.length === 1;
+
+        if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+          this.handlePressProductAttr(this.state.viewData[0].data[0]);
+        }
+
+        callback();
+      },
+    );
+  };
+
+  getBaseData = (attrs, models) => {
+    const viewData = [];
+    const selectedAttrs = this.state.selectedAttrs;
+    attrs = Object.entries(attrs);
+
+    attrs.forEach((attr, index) => {
+      selectedAttrs.push({
+        [ATTR_KEY]: '',
+      });
+
+      const attrKey = attr[0];
+      const attrValue = attr[1];
+      const label = attrKey || '';
+      let data = attrValue || [];
+
+      data = data.map((attr, i) => {
+        let disabled = false;
+
+        if (attrs.length === 1) {
+          // disable if empty inventory ONLY IF product has only 1 attr.
+          disabled = !!!Object.values(models).find(
+            //@ts-ignore
+            (model) => model.name === attr,
+            //@ts-ignore
+          )?.inventory;
+        }
+
+        return {
+          [VALUE_KEY]: attr,
+          [ACTIVE_KEY]: false,
+          [DISABLE_KEY]: disabled,
+          [LABEL_KEY]: label,
+          [ATTR_KEY]: i,
+          [ATTR_LABEL_KEY]: index,
+        };
+      });
+
+      viewData.push({
+        label,
+        data,
+      });
+    });
+
+    return {viewData, selectedAttrs};
   };
 
   getSelectedAttrsViewData(numberSelectedAttrs) {
@@ -216,7 +198,7 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
     return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '').length;
   }
 
-  handlePressProductAttr = (attr) => {
+  handlePressProductAttr = (attr, callback = () => {}) => {
     const viewData = [...this.state.viewData];
 
     viewData.forEach((vData) => {
@@ -250,15 +232,24 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
       });
     }
 
-    this.setState({
-      viewData,
-      selectedAttrs,
-      quantity: MIN_QUANTITY,
-    });
-
-    this.props.onSelectAttr(
-      selectedAttrs,
-      this.getSelectedAttrsViewData(numberSelectedAttrs),
+    this.setState(
+      {
+        viewData,
+        selectedAttrs,
+        quantity: MIN_QUANTITY,
+      },
+      () => {
+        callback();
+        this.props.onSelectAttr(
+          selectedAttrs,
+          this.getSelectedAttrsViewData(
+            this.getNumberSelectedAttrs(selectedAttrs),
+          ),
+          numberSelectedAttrs === selectedAttrs.length
+            ? this.getModelKey(selectedAttrs)
+            : '',
+        );
+      },
     );
   };
 
@@ -272,7 +263,6 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
             selectedAttrs[index] = {
               [ATTR_KEY]: '',
             };
-
             if (selectedAttr[VALUE_KEY] !== attr[VALUE_KEY]) {
               selectedAttrs[index] = attr;
             }
@@ -288,10 +278,10 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
 
   checkModel = (models, selectedAttrs, isFullChecked) => {
     const modelKey = this.getModelKey(selectedAttrs);
-    const splitModelKey = modelKey.split('-');
+    const splitModelKey = modelKey.split(MODEL_SEPARATOR);
 
     Object.keys(models).forEach((key) => {
-      let splitKey = key.split('-');
+      let splitKey = key.split(MODEL_SEPARATOR);
       let possible = true;
       let willDisabledAttrIndex = '-1';
       let willDisabledAttrGroupIndex = '-1';
@@ -344,7 +334,7 @@ export class AttributeSelection extends PureComponent<AttributeSelectionProps> {
 
   getModelKey = (selectedAttrs) => {
     const modelKeyMap = selectedAttrs.map((attr) => attr[ATTR_KEY]);
-    return modelKeyMap.join('-');
+    return modelKeyMap.join(MODEL_SEPARATOR);
   };
 
   render() {

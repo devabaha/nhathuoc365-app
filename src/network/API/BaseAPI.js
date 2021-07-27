@@ -21,9 +21,9 @@ export const AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
 
 class BaseAPI {
   constructor(
-    apiDomain = LIVE_API_DOMAIN,
-    socialDomain = LIVE_SOCIAL_DOMAIN,
-    imageDomain = LIVE_IMAGE_DOMAIN,
+    apiDomain = DEV_API_DOMAIN,
+    socialDomain = DEV_SOCIAL_DOMAIN,
+    imageDomain = DEV_IMAGE_DOMAIN,
     airlineTicketDomain = AIRLINE_TICKET_DOMAIN,
   ) {
     this._apiDomain = apiDomain;

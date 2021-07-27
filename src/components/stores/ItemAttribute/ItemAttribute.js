@@ -24,8 +24,9 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from 'src/helper/EventTracker';
 import DropShip from '../../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
 import ProductInfo from './ProductInfo';
+import AttributeSelection from './AttributeSelection';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -51,6 +52,9 @@ class ItemAttribute extends PureComponent {
     selectedModelKey: '',
     quantity: MIN_QUANTITY,
     dropShipPrice: 0,
+
+    rawAttrs: {},
+    rawModels: []
   };
   refModal = React.createRef();
   unmounted = false;
@@ -119,15 +123,24 @@ class ItemAttribute extends PureComponent {
                 response.data.attrs,
                 response.data.models,
               );
-              this.setState({viewData, selectedAttrs}, () => {
-                const hasOnlyOneOption =
-                  Object.keys(response.data.attrs)?.length === 1 &&
-                  Object.values(response.data.attrs)[0]?.length === 1;
 
-                if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
-                  this.handlePressProductAttr(this.state.viewData[0].data[0]);
-                }
-              });
+              this.setState(
+                {
+                  viewData,
+                  selectedAttrs,
+                  rawAttrs: response.data.attrs,
+                  rawModels: response.data.models,
+                },
+                () => {
+                  const hasOnlyOneOption =
+                    Object.keys(response.data.attrs)?.length === 1 &&
+                    Object.values(response.data.attrs)[0]?.length === 1;
+
+                  if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+                    this.handlePressProductAttr(this.state.viewData[0].data[0]);
+                  }
+                },
+              );
             }
           } else {
             if (this.isDropShip) {
@@ -358,7 +371,6 @@ class ItemAttribute extends PureComponent {
   };
 
   renderOptions() {
-    console.log(this.state)
     return this.state.viewData.map((attr, indx) => {
       return (
         <View key={indx}>
@@ -452,7 +464,7 @@ class ItemAttribute extends PureComponent {
 
     const isInventoryVisible =
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      this.state.product?.product_type !== PRODUCT_TYPES.BOOKING;
+      this.state.product?.order_type !== ORDER_TYPES.BOOKING;
 
     const unitName =
       this.state.product?.unit_name && this.state.product?.unit_name_view;
@@ -505,6 +517,11 @@ class ItemAttribute extends PureComponent {
               onStartShouldSetResponder={() => true}>
               {/* <View onStartShouldSetResponder={() => true}> */}
               {this.renderOptions()}
+              {/* <AttributeSelection
+                attrs={this.state.rawAttrs}
+                models={this.state.rawModels}
+                onSelectAttr={this.handlePressProductAttr}
+              /> */}
               {this.isDropShip && (
                 <DropShip
                   disabled={isDropShipDisabled}

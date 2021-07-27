@@ -1,9 +1,10 @@
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Actions} from 'react-native-router-flux';
 
-import {Container} from 'src/components/Layout';
+import appConfig from 'app-config';
+
 import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
 import {SlotGridView} from 'src/components/Schedule/SlotPicker/GridView';
 
@@ -36,6 +37,30 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
+  dateContainer: {
+    borderRadius: 4,
+    backgroundColor: appConfig.colors.primary,
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    marginTop: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  date: {
+    color: appConfig.colors.white,
+  },
+  unselectedDateContainer: {
+    borderWidth: 1,
+    borderColor: appConfig.colors.primary,
+    backgroundColor: undefined,
+  },
+  unselectedDate: {
+    fontStyle: 'italic',
+    color: appConfig.colors.text,
+  },
+
   slotGridViewContainer: {
     marginHorizontal: -15,
     marginTop: 15,
@@ -47,28 +72,59 @@ const styles = StyleSheet.create({
   },
 });
 
-const ScheduleSection = () => {
+const ScheduleSection = ({
+  date,
+  timeSlots,
+  selectedTimeSlot,
+  onChangeDate = () => {},
+  onChangeTime = () => {},
+}) => {
+  const {t} = useTranslation('orders');
+
+  const hasDate = !!date;
+  const dateValue = hasDate ? date : t('confirm.date.unselected');
+
+  const handlePressDatePicker = () => {
+    Actions.push(appConfig.routes.modalCalendar, {
+      title: "Chọn ngày",
+      current: date,
+      onPressDate: (date, closeCallback) => {
+        onChangeDate(date);
+        closeCallback();
+      },
+    });
+  };
+
   return (
     <>
       <SectionContainer
         marginTop
         iconName="calendar-alt"
-        title="Chọn ngày"
-        actionBtnTitle="Thay đổi">
-        <Text style={{marginTop: 12, paddingLeft: 22, paddingRight: 15}}>
-          23/07/2021
-        </Text>
+        title={t('confirm.date.title')}
+        actionBtnTitle={t('confirm.change')}
+        onPressActionBtn={handlePressDatePicker}>
+        <TouchableOpacity
+          onPress={handlePressDatePicker}
+          style={[
+            styles.dateContainer,
+            !hasDate && styles.unselectedDateContainer,
+          ]}>
+          <Text style={[styles.date, !hasDate && styles.unselectedDate]}>
+            {dateValue}
+          </Text>
+        </TouchableOpacity>
       </SectionContainer>
-      <SectionContainer
-        marginTop
-        iconName="clock"
-        title="Chọn giờ">
-        <SlotGridView
-          horizontal
-          slots={SLOTS}
-          containerStyle={styles.slotGridViewContainer}
-          contentContainerStyle={styles.slotGridViewContentContainer}
-        />
+      <SectionContainer iconName="clock" title={t('confirm.time.title')}>
+        {!!timeSlots && (
+          <SlotGridView
+            horizontal
+            slots={timeSlots}
+            selectedSlot={selectedTimeSlot}
+            containerStyle={styles.slotGridViewContainer}
+            contentContainerStyle={styles.slotGridViewContentContainer}
+            onPress={onChangeTime}
+          />
+        )}
       </SectionContainer>
     </>
   );

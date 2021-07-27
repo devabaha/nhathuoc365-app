@@ -1,7 +1,8 @@
 export {default} from './AttributeSelection';
 
 export interface AttributeSelectionProps {
-  viewData: Array<any>;
+  defaultSelectedModel: string;
+  attrs: Array<any>;
   models: Object;
-  onSelectAttr: (selectedAttr: Object, selectedAttrViewData: string[]) => void;
+  onSelectAttr: (selectedAttr: Object, selectedAttrViewData: string[], model: string) => void;
 }
