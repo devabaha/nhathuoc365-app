@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
+- Show brand and unit name production in ProductItem by [nguyenanhtuan191298@gmail.com].
 ### Changed
 - Update premium-level display logic by [kienluu612@gmail.com].
 - Login firebase mode can be disabled from server by disable_google_firebase_otp_key.

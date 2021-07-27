@@ -102,13 +102,22 @@ class ProductItem extends PureComponent {
             this.props.renderContent()
           ) : (
             <>
-              <FastImage
-                source={{
-                  uri: this.props.image,
-                }}
-                style={[styles.image, extraImageStyle]}
-                resizeMode="cover"
-              />
+              <View>
+                <FastImage
+                  source={{
+                    uri: this.props.image,
+                  }}
+                  style={[styles.image, extraImageStyle]}
+                  resizeMode="cover"
+                />
+                {!!item.brand && (
+                  <View style={styles.brandTagContainer}>
+                    <Text numberOfLines={1} style={styles.brandTag}>
+                      {item.brand}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
               {this.props.discount_percent > 0 && (
                 <DiscountBadge
@@ -149,6 +158,13 @@ class ProductItem extends PureComponent {
                     <View style={[styles.priceBox]}>
                       <Text style={[styles.price]}>
                         {this.props.price_view}
+                        {!!item.unit_name && (
+                          <View>
+                            <Text style={styles.unitName}>
+                              {'/ ' + item.unit_name_view}
+                            </Text>
+                          </View>
+                        )}
                       </Text>
 
                       <TouchableOpacity
@@ -246,6 +262,8 @@ let styles = StyleSheet.create({
   },
   price: {
     flex: 1,
+    flexWrap: 'wrap',
+    paddingRight: 5,
     ...appConfig.styles.typography.heading3,
     color: appConfig.colors.primary,
   },
@@ -279,10 +297,37 @@ let styles = StyleSheet.create({
   deletedTitle: {
     textDecorationLine: 'line-through',
   },
-
   icon: {
     fontSize: 20,
     color: appConfig.colors.highlight[1],
+  },
+  brandTagContainer: {
+    position: 'absolute',
+    bottom: -5,
+    right: 0,
+    backgroundColor: '#fff',
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
+    maxWidth: WIDTH_ITEM * 0.8,
+    borderWidth: appConfig.device.pixel,
+    borderRightWidth: 0,
+    borderBottomWidth: 1.2,
+    borderColor: '#ddd',
+    borderBottomColor: '#ddd',
+  },
+ brandTag: {
+    color: appConfig.colors.primary,
+    fontWeight: '500',
+    fontSize: 12,
+  },
+  unitName: {
+    fontSize: 11,
+    color: '#888',
+    marginTop: appConfig.device.isIOS ? 2 : 0,
+    top: appConfig.device.isAndroid ? 2 : undefined,
+    lineHeight: appConfig.device.isAndroid ? 11 : undefined,
   },
 });
 
