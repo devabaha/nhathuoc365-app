@@ -882,7 +882,7 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
-                {/* ================ AirlineTicket Result ================ */}
+                {/* ================ AIRLINE TICKET RESULT ================ */}
                 <Stack key={appConfig.routes.result}>
                   <Scene
                     key={`${appConfig.routes.result}_1`}
@@ -892,7 +892,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ AirlineTicket Place ================ */}
+                {/* ================ AIRLINE TICKET PLACE ================ */}
                 <Stack key={appConfig.routes.place}>
                   <Scene
                     key={`${appConfig.routes.place}_1`}
@@ -901,7 +901,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ AirlineTicket DatePicker ================ */}
+                {/* ================ AIRLINE TICKET DATEPICKER ================ */}
                 <Stack key={appConfig.routes.datePicker}
                 >
                   <Scene
@@ -913,7 +913,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ AirlineTicket ================ */}
+                {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
                     title='Tìm chuyến bay'
