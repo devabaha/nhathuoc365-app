@@ -173,17 +173,16 @@ class CategoryScreen extends Component {
             setTimeout(() => {
               layoutAnimation();
               this.page = 1;
-           
-                this.setState({
-                  items_data:
-                    data.length > STORES_LOAD_MORE
-                      ? [...data, {id: -1, type: 'loadMore'}]
-                      : data,
-                  items_data_bak: data,
-                  loading: false,
-                  fetched: true,
-                  refreshing: false,
-                });
+              this.setState({
+                items_data:
+                  data.length > STORES_LOAD_MORE
+                    ? [...data, {id: -1, type: 'loadMore'}]
+                    : data,
+                items_data_bak: data,
+                loading: false,
+                fetched: true,
+                refreshing: false,
+              });
 
               action(() => {
                 store.setStoresFinish(true);
