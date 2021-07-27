@@ -173,6 +173,7 @@ class CategoryScreen extends Component {
             setTimeout(() => {
               layoutAnimation();
               this.page = 1;
+              
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
