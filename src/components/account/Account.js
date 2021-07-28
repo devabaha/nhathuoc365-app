@@ -189,7 +189,7 @@ class Account extends Component {
           <>
             <View style={styles.viewRevenueCommissions}>
               <Text style={styles.titleRevenueCommissions}>{revenue_commissions?.last_month_commissions?.title}:</Text>
-              <Text style={styles.valueRevenueCommissions}>{revenue_commissions?.this_month_commissions?.value}</Text>
+              <Text style={styles.valueRevenueCommissions}>{revenue_commissions?.last_month_commissions?.value}</Text>
             </View>
             <View style={styles.viewRevenueCommissions}>
               <Text style={styles.titleRevenueCommissions}>{revenue_commissions?.this_month_commissions?.title}:</Text>
