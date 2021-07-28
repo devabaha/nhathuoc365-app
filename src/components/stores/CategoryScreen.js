@@ -295,6 +295,7 @@ class CategoryScreen extends Component {
   render() {
     const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
+    
     return (
       <>
         <View style={styles.containerScreen}>
