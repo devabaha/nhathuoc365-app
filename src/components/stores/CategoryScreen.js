@@ -173,7 +173,6 @@ class CategoryScreen extends Component {
             setTimeout(() => {
               layoutAnimation();
               this.page = 1;
-              
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
@@ -296,7 +295,6 @@ class CategoryScreen extends Component {
   render() {
     const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-    
     return (
       <>
         <View style={styles.containerScreen}>
