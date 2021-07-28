@@ -173,7 +173,6 @@ class CategoryScreen extends Component {
             setTimeout(() => {
               layoutAnimation();
               this.page = 1;
-
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
@@ -238,7 +237,7 @@ class CategoryScreen extends Component {
               : response.data;
             this.setState({
               items_data:
-                response.data.length >= STORES_LOAD_MORE
+                response.data.length >= (this.page == 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
                   ? [...items_data, {id: -1, type: 'loadMore'}]
                   : items_data,
               items_data_bak: items_data,
@@ -296,7 +295,7 @@ class CategoryScreen extends Component {
   render() {
     const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-
+    
     return (
       <>
         <View style={styles.containerScreen}>

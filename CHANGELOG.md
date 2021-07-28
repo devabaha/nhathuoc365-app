@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Showing load more button in CategoryScreen by [lamah.dev@gmail.com].
 ## [r12.0.6] - 2021-07-28
 ### Added
 - Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
