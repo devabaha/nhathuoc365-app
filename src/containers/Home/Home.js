@@ -198,9 +198,6 @@ class Home extends Component {
   handleShowAllVouchers = () => {};
 
   handlePressService(service, callBack) {
-    Actions.push(appConfig.routes.booking);
-    return;
-
     const {t} = this.props;
 
     if (service.type === 'chat') {

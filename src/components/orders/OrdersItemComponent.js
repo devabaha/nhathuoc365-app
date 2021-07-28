@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
-import { CART_TYPES } from 'src/constants/cart';
-import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
+import {CART_TYPES} from 'src/constants/cart';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -88,8 +88,27 @@ class OrdersItemComponent extends Component {
     //     }
     //   })();
     // } else {
-    this._goOrdersItem(item);
+    switch (item.cart_type) {
+      case CART_TYPES.BOOKING:
+        this.goToBooking(item);
+        break;
+      default:
+        this._goOrdersItem(item);
+    }
     // }
+  }
+
+  goToBooking(order) {
+    const product =
+      order.primary_product || (order.products && Object.values(order.products)[0]);
+    if (!product) return;
+
+    Actions.push(appConfig.routes.booking, {
+      bookingId: order.id,
+      siteId: order.site_id,
+      attrs: product.attrs,
+      models: product.models,
+    });
   }
 
   _goOrdersItem(item) {
@@ -107,7 +126,7 @@ class OrdersItemComponent extends Component {
         redirect: 'confirm',
         goBack: true,
         isVisibleStoreAddress: true,
-      })
+      });
     } else {
       Actions.create_address({
         redirect: 'confirm',
@@ -140,9 +159,12 @@ class OrdersItemComponent extends Component {
       case CART_TYPES.DROP_SHIP:
         iconName = 'truck';
         break;
+      case CART_TYPES.BOOKING:
+        iconName = 'calendar';
+        break;
     }
     return (
-      <Icon
+      <FontAwesomeIcon
         style={styles.orders_item_icon}
         name={iconName}
         size={16}
@@ -152,15 +174,15 @@ class OrdersItemComponent extends Component {
   }
 
   render() {
-    var { item, t, index } = this.props;
+    var {item, t, index} = this.props;
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     const cartType = item.cart_type_name;
     const deliveryCode =
       item.delivery_details &&
       (item.delivery_details.ship_unit || item.delivery_details.unit) +
-      ' - ' +
-      (item.delivery_details.ship_unit_id ||
-        item.delivery_details.booking_id);
+        ' - ' +
+        (item.delivery_details.ship_unit_id ||
+          item.delivery_details.booking_id);
 
     return (
       <TouchableHighlight
@@ -174,7 +196,7 @@ class OrdersItemComponent extends Component {
               <CachedImage
                 mutable
                 style={styles.cart_section_image}
-                source={{ uri: item.shop_logo_url }}
+                source={{uri: item.shop_logo_url}}
               />
               <Text style={styles.cart_section_title}>{item.shop_name}</Text>
               {!!(index + 1) && (
@@ -225,7 +247,7 @@ class OrdersItemComponent extends Component {
             <View style={styles.orders_item_content}>
               {item.orders_time != null && item.orders_time != '' && (
                 <View style={styles.orders_item_time_box}>
-                  <Icon
+                  <FontAwesomeIcon
                     style={styles.orders_item_icon}
                     name="clock-o"
                     size={12}
@@ -263,7 +285,7 @@ class OrdersItemComponent extends Component {
                     label={deliveryCode}
                     fill={
                       appConfig.colors.delivery[
-                      item.delivery_details?.status
+                        item.delivery_details?.status
                       ] || appConfig.colors.cartType[item.cart_type]
                     }
                     animate={false}
@@ -331,7 +353,7 @@ class OrdersItemComponent extends Component {
             <View style={[styles.orders_item_row, styles.row_payment]}>
               {!!item.count_selected && (
                 <Text style={styles.orders_item_content_label}>
-                  {t('item.totalSelected', { total: item.count_selected })}
+                  {t('item.totalSelected', {total: item.count_selected})}
                 </Text>
               )}
               <View style={styles.orders_status_box}>
@@ -348,7 +370,7 @@ class OrdersItemComponent extends Component {
           {this.state.goToStoreLoading && (
             <Loading
               center
-              wrapperStyle={{ backgroundColor: 'rgba(0,0,0, .06)' }}
+              wrapperStyle={{backgroundColor: 'rgba(0,0,0, .06)'}}
             />
           )}
         </View>
@@ -541,7 +563,7 @@ const actionBtnStyles = StyleSheet.create({
   },
 });
 
-const ActionButton = React.memo(({ title, onGoToStore }) => {
+const ActionButton = React.memo(({title, onGoToStore}) => {
   return (
     <View style={actionBtnStyles.container}>
       <TouchableHighlight
@@ -550,7 +572,11 @@ const ActionButton = React.memo(({ title, onGoToStore }) => {
         onPress={onGoToStore}
         style={actionBtnStyles.btnContainer}>
         <Text style={actionBtnStyles.btnTitle}>
-          {title} <Icon name="angle-right" style={actionBtnStyles.btnTitle} />
+          {title}{' '}
+          <FontAwesomeIcon
+            name="angle-right"
+            style={actionBtnStyles.btnTitle}
+          />
         </Text>
       </TouchableHighlight>
     </View>

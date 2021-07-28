@@ -1,44 +1,45 @@
 import React, {Component} from 'react';
 import {
   RefreshControl,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import appConfig from 'app-config';
 
 import ScreenWrapper from 'src/components/ScreenWrapper';
-import ProductInfo from 'src/components/stores/ItemAttribute/ProductInfo';
-import AttributeSelection from 'src/components/stores/ItemAttribute/AttributeSelection';
-import NumberSelection from 'src/components/stores/NumberSelection';
 import {
   PricingAndPromotionSection,
   StoreInfoSection,
   NoteSection,
 } from 'src/components/payment/Confirm/components';
-import store from 'app-store';
-import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
-import {Container} from 'src/components/Layout';
-import ScheduleSection from './ScheduleSection';
-import Button from 'src/components/Button';
-import {APIRequest} from 'src/network/Entity';
-import EventTracker from 'app-helper/EventTracker';
-import Loading from 'src/components/Loading';
 import {Actions} from 'react-native-router-flux';
+import {debounce} from 'lodash';
 
+import store from 'app-store';
+import EventTracker from 'app-helper/EventTracker';
+import {APIRequest} from 'src/network/Entity';
+
+import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
+import ScheduleSection from './ScheduleSection';
+import BookingProductInfo from './BookingProductInfo';
+import Button from 'src/components/Button';
+import Loading from 'src/components/Loading';
+import RoundButton from 'src/components/RoundButton';
+import PopupConfirm from 'src/components/PopupConfirm';
+import BookingSkeleton from './BookingSkeleton';
+import {Container} from 'src/components/Layout';
+
+const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
 
 const styles = StyleSheet.create({
-  value: {
-    maxWidth: '50%',
-  },
-  quantityLabel: {
-    flex: undefined,
+  listContentContainer: {
+    paddingBottom: 10,
   },
   quantityWrapper: {
     flex: 1,
@@ -87,6 +88,31 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: appConfig.colors.text,
   },
+
+  updateLoadingWrapper: {
+    top: 15,
+    right: 15,
+    left: undefined,
+    bottom: undefined,
+  },
+
+  boxButtonActions: {
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    // alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingBottom: 9,
+    paddingHorizontal: 30,
+  },
+  buttonActionWrapper: {
+    flex: 1,
+    marginHorizontal: 10,
+    justifyContent: 'flex-start',
+  },
+  btnActionTitle: {
+    fontWeight: '500',
+  },
 });
 
 export class Booking extends Component {
@@ -97,24 +123,27 @@ export class Booking extends Component {
 
   state = {
     booking: {},
+    bookingTimes: [],
     addressId: '',
     model: '',
-    selectedAttr: [],
     selectedAttrViewData: [],
-    bookingTimes: [],
 
     loading: true,
+    updateLoading: false,
     refreshing: false,
 
     quantity: MIN_QUANTITY,
     max: undefined,
 
+    tempNote: '',
     note: '',
     date: '',
     time: {},
     timeValue: '',
   };
   refScrollView = React.createRef();
+  refPopupCancelBooking = React.createRef();
+
   scrollContentSizeY = 0;
   scrollOffsetY = 0;
   resetScrollToCoords = {x: 0, y: 0};
@@ -124,14 +153,29 @@ export class Booking extends Component {
   getBookingTimesRequest = new APIRequest();
   updateBookingRequest = new APIRequest();
   orderBookingRequest = new APIRequest();
+  cancelBookingRequest = new APIRequest();
   requests = [
     this.getBookingRequest,
     this.getBookingTimesRequest,
     this.updateBookingRequest,
     this.orderBookingRequest,
+    this.cancelBookingRequest,
   ];
   eventTracker = new EventTracker();
   unmounted = false;
+  isInitData = false;
+  isInitModel = false;
+
+  get editable() {
+    return this.state.booking?.status == CART_STATUS_ORDERING;
+  }
+
+  get cancelable() {
+    return (
+      this.state.booking?.status >= CART_STATUS_READY &&
+      this.state.booking?.status < CART_STATUS_COMPLETED
+    );
+  }
 
   get isDisabled() {
     return (
@@ -139,41 +183,49 @@ export class Booking extends Component {
       !this.state.model ||
       !this.state.quantity ||
       !this.state.addressId ||
-      !this.getDateTimeValue(this.state)
+      !this.state.date ||
+      !this.state.timeValue
     );
   }
 
   get storeInfo() {
-    return this.state.booking?.site;
+    return this.state.booking?.store || {};
+  }
+
+  get voucher() {
+    return this.state.booking?.user_voucher || {};
+  }
+
+  get mainProduct() {
+    return Object.values(this.state.booking?.products || {})[0] || {};
+  }
+
+  getMainProduct(products = {}) {
+    return Object.values(products)[0] || {};
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      !!this.isInitData &&
+      ((this.isInitModel &&
+        !!nextState.model &&
+        nextState.model !== this.state.model) ||
+        nextState.quantity !== this.state.quantity ||
+        nextState.addressId !== this.state.addressId ||
+        nextState.note !== this.state.note ||
+        (nextState.date &&
+          (nextState.date !== this.state.date ||
+            nextState.timeValue !== this.state.timeValue)))
+    ) {
+      this.updateBooking(nextState);
+    }
+
+    return true;
   }
 
   componentDidMount() {
     this.getBooking();
     this.eventTracker.logCurrentView();
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (
-      (!!nextState.model && nextState.model !== this.state.model) ||
-      nextState.quantity !== this.state.quantity ||
-      nextState.addressId !== this.state.addressId ||
-      (nextState.date &&
-        nextState.time &&
-        (nextState.date !== this.state.date ||
-          nextState.time !== this.state.time))
-    ) {
-      console.log(
-        !!nextState.model && nextState.model !== this.state.model,
-        nextState.quantity !== this.state.quantity,
-        nextState.addressId !== this.state.addressId,
-        nextState.date &&
-          nextState.time &&
-          (nextState.date !== this.state.date ||
-            nextState.time !== this.state.time),
-      );
-      this.updateBooking(nextState);
-    }
-    return true;
   }
 
   componentWillUnmount() {
@@ -186,10 +238,11 @@ export class Booking extends Component {
     const data = {
       product_id: this.props.productId,
     };
-    this.getBookingRequest.data = APIHandler.booking_store(
-      this.props.siteId,
-      data,
-    );
+    const apiHandler = this.props.bookingId
+      ? APIHandler.booking_show(this.props.siteId, this.props.bookingId)
+      : APIHandler.booking_store(this.props.siteId, data);
+
+    this.getBookingRequest.data = apiHandler;
 
     try {
       const response = await this.getBookingRequest.promise();
@@ -198,12 +251,7 @@ export class Booking extends Component {
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
-            this.setState({
-              booking: response.data,
-              bookingTimes: this.formatBookingTimes(
-                response.data.booking_times,
-              ),
-            });
+            this.updateStateBooking(response.data);
           }
         } else {
           flashShowMessage({
@@ -234,6 +282,8 @@ export class Booking extends Component {
   };
 
   getBookingTimes = async (date = this.state.date) => {
+    if (!this.state.booking) return;
+
     const data = {
       date,
     };
@@ -283,12 +333,18 @@ export class Booking extends Component {
     }
   };
 
-  updateBooking = async (state = this.state) => {
+  updateBooking = debounce(async (state = this.state) => {
+    if (!this.editable || !this.state.booking) return;
+    this.setState({
+      updateLoading: true,
+    });
+
     const data = {
       model: state.model,
       quantity: state.quantity,
       time: this.getDateTimeValue(state),
       address_id: state.addressId,
+      user_note: state.note || state.tempNote,
     };
     this.updateBookingRequest.data = APIHandler.booking_update(
       this.props.siteId,
@@ -300,15 +356,11 @@ export class Booking extends Component {
       const response = await this.updateBookingRequest.promise();
       if (this.unmounted) return;
       console.log('update', response, data);
+
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
-            this.setState({
-              booking: response.data,
-              bookingTimes: this.formatBookingTimes(
-                response.data.booking_times,
-              ),
-            });
+            this.updateStateBooking(response.data);
           }
         }
       }
@@ -316,26 +368,27 @@ export class Booking extends Component {
       console.log('update_booking', error);
     } finally {
       if (this.unmounted) return;
+      this.setState({
+        updateLoading: false,
+        loading: false,
+      });
     }
-  };
+  }, DEBOUNCE_UPDATE_BOOKING_TIME);
 
   orderBooking = async () => {
-    this.setState({loading: true});
+    if (!this.state.booking) return;
 
-    const data = {
-      user_note: this.state.note,
-    };
+    this.setState({loading: true});
 
     this.orderBookingRequest.data = APIHandler.booking_order(
       this.props.siteId,
       this.state.booking?.id,
-      data,
     );
 
     try {
       const response = await this.orderBookingRequest.promise();
       if (this.unmounted) return;
-      console.log('order_booking', response, data);
+      console.log('order_booking', response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           flashShowMessage({
@@ -370,53 +423,107 @@ export class Booking extends Component {
     }
   };
 
-  formatBookingTimes = (bookingTimes = []) => {
-    const formattedBookingTimes = bookingTimes.map((bookingTime) => ({
-      ...bookingTime,
-      disabled: !bookingTime.available,
-    }));
-    return formattedBookingTimes;
+  cancelBooking = async () => {
+    if (!this.state.booking) return;
+
+    this.setState({loading: true});
+
+    this.cancelBookingRequest.data = APIHandler.booking_cancel(
+      this.props.siteId,
+      this.state.booking?.id,
+    );
+
+    try {
+      const response = await this.cancelBookingRequest.promise();
+      console.log('cancel', response);
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          flashShowMessage({
+            type: 'success',
+            message: response.message,
+          });
+          Actions.pop();
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message:
+              response.message || this.props.t('common:api.error.message'),
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: this.props.t('common:api.error.message'),
+        });
+      }
+    } catch (error) {
+      console.log('cancel_booking', error);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
+    } finally {
+      if (this.unmounted) return;
+      this.setState({
+        loading: false,
+      });
+    }
   };
 
-  getDateTimeValue = (state) => {
-    return state.date && state.timeValue
-      ? state.date + ' ' + state.timeValue
-      : '';
-  };
+  updateStateBooking = (booking) => {
+    if (!booking) return;
+    let state = {
+      booking,
+    };
 
-  handleSelectAttr = (selectedAttr, selectedAttrViewData, model) => {
-    this.setState({
-      selectedAttr,
-      selectedAttrViewData,
-      model,
+    if (!this.state.booking?.id) {
+      if (!this.state.time?.value) {
+        state.time = this.formatBookingTime(booking.booking_hour_selected);
+        state.timeValue = booking.booking_hour;
+      }
+
+      state = {
+        bookingTimes: this.formatBookingTimes(booking.booking_times),
+        addressId: booking.address_id,
+        date: booking.booking_date,
+        tempNote: booking.user_note || '',
+        note: booking.user_note,
+        model: this.getMainProduct(booking.products).model,
+        ...state,
+      };
+    }
+
+    this.setState(state, () => {
+      this.isInitData = true;
     });
   };
 
-  handleChangeQuantity = (quantity, min, max) => {
-    const hasMax = max !== null && max !== undefined;
-
-    if (
-      (Number(quantity) >= Number(min) && hasMax
-        ? Number(quantity) <= Number(max)
-        : true) ||
-      !quantity
-    ) {
-      this.setState({quantity: !quantity ? '' : Number(quantity)});
-    }
+  formatBookingTimes = (bookingTimes = []) => {
+    const formattedBookingTimes = bookingTimes.map(this.formatBookingTime);
+    return formattedBookingTimes;
   };
 
-  handleMinus = () => {
-    this.setState((prevState) => ({quantity: prevState.quantity - 1}));
+  formatBookingTime = (bookingTime) => {
+    return {
+      ...bookingTime,
+      disabled: !bookingTime?.available,
+    };
   };
 
-  handlePlus = () => {
-    this.setState((prevState) => ({quantity: prevState.quantity + 1}));
+  getDateTimeValue = (state) => {
+    return (state.date || '') + (state.timeValue ? ' ' + state.timeValue : '');
   };
 
-  handleQuantityBlur = () => {
-    if (!this.state.quantity) {
-      this.setState({quantity: MIN_QUANTITY});
-    }
+  handleSelectAttr = (selectedAttr, model) => {
+    this.setState({model}, () => {
+      if (!this.isInitModel && model) {
+        this.isInitModel = true;
+      }
+    });
+  };
+
+  handleChangeQuantity = (quantity) => {
+    this.setState({quantity});
   };
 
   handleChangeStore = () => {
@@ -426,7 +533,7 @@ export class Booking extends Component {
       isVisibleUserAddress: false,
       selectedAddressId: this.state.addressId,
       onSelectAddress: (addressId) => {
-        this.setState({addressId});
+        this.setState({addressId, loading: true});
       },
     });
   };
@@ -442,13 +549,33 @@ export class Booking extends Component {
     this.setState({time, timeValue: time.value});
   };
 
-  handleChangeNote = (note) => {
-    this.setState({note});
+  handleChangeNote = (tempNote) => {
+    this.setState({tempNote});
   };
 
-  handleChangeVoucher = () => {};
+  handleUpdateNote = () => {
+    this.setState({note: this.state.tempNote || ''});
+  };
+
+  handleChangeVoucher = (booking) => {
+    this.setState({booking});
+  };
+
+  handleOpenPopupCancelBooking = () => {
+    if (this.refPopupCancelBooking.current) {
+      this.refPopupCancelBooking.current.open();
+    }
+  };
+
+  handleClosePopupCancelBooking = () => {
+    if (this.refPopupCancelBooking.current) {
+      this.refPopupCancelBooking.current.close();
+    }
+  };
 
   handleNoteSizeChange = (e) => {
+    if (appConfig.device.isAndroid) return;
+
     const noteHeight = e.nativeEvent.layout.height;
     const noteAreaBoundary = e.nativeEvent.layout.y + noteHeight;
 
@@ -491,67 +618,48 @@ export class Booking extends Component {
   };
 
   renderProductInfo = () => {
-    const {t} = this.props;
+    if (!this.mainProduct) return null;
 
-    return Object.keys(this.state.booking?.products || {}).map((key, index) => {
-      const product = this.state.booking.products[key];
-
-      return (
-        <View key={index}>
-          <ProductInfo
-            imageUri={product.image}
-            title={product.name}
-            subTitle={this.state.selectedAttrViewData}
-            discountPrice={product.discount}
-            price={product.price_view}
-            unitName={product.unit_name}
-            inventory={product.inventory}
-          />
-
-          <AttributeSelection
-            attrs={this.props.attrs}
-            models={this.props.models}
-            defaultSelectedModel={product?.model}
-            onSelectAttr={this.handleSelectAttr}
-          />
-
-          <View style={styles.quantity}>
-            <Text style={styles.label}>{t('attr.quantity')}</Text>
-            <View style={styles.quantityWrapper}>
-              <NumberSelection
-                containerStyle={[styles.quantityContainer]}
-                textContainer={styles.quantityTxtContainer}
-                value={this.state.quantity}
-                min={MIN_QUANTITY}
-                max={this.state.max}
-                onChangeText={(quantity) =>
-                  this.handleChangeQuantity(
-                    quantity,
-                    MIN_QUANTITY,
-                    this.state.max,
-                  )
-                }
-                onMinus={this.handleMinus}
-                onPlus={this.handlePlus}
-                onBlur={this.handleQuantityBlur}
-                // disabled={disabled}
-              />
-            </View>
-          </View>
-        </View>
-      );
-    });
+    return (
+      <BookingProductInfo
+        editable={this.editable}
+        product={this.mainProduct}
+        attrs={this.props.attrs}
+        models={this.props.models}
+        defaultSelectedModel={this.mainProduct.model}
+        onSelectAttr={this.handleSelectAttr}
+        onChangeQuantity={this.handleChangeQuantity}
+      />
+    );
   };
 
   render() {
     const itemFee = this.state.booking?.item_fee || {};
     const cashbackView = this.state.booking?.cashback_view || {};
+    const isInitLoading = !this.state.booking?.id && this.state.loading;
+
+    if (isInitLoading) {
+      return <BookingSkeleton />;
+    }
 
     return (
-      <ScreenWrapper>
+      <Container flex centerVertical={false}>
+        {this.state.updateLoading && (
+          <Loading
+            pointerEvents="none"
+            size="small"
+            wrapperStyle={styles.updateLoadingWrapper}
+          />
+        )}
         {this.state.loading && <Loading center />}
         <KeyboardAwareScrollView
           innerRef={(inst) => (this.refScrollView.current = inst)}
+          contentContainerStyle={[
+            styles.listContentContainer,
+            !this.editable && {
+              paddingBottom: appConfig.device.bottomSpace,
+            },
+          ]}
           resetScrollToCoords={this.resetScrollToCoords}
           enableResetScrollToCoords
           scrollEventThrottle={16}
@@ -565,26 +673,32 @@ export class Booking extends Component {
           }>
           {this.renderProductInfo()}
 
-          {!!this.storeInfo && (
-            <StoreInfoSection
-              image={this.storeInfo.logo_url}
-              name={this.storeInfo.name}
-              address={this.storeInfo.address}
-              tel={this.storeInfo.tel}
-              onPressActionBtn={this.handleChangeStore}
-              customContent={
+          <StoreInfoSection
+            image={this.storeInfo.img}
+            name={this.storeInfo.name}
+            address={this.storeInfo.address}
+            tel={this.storeInfo.phone}
+            originLatitude={this.storeInfo.lat}
+            originLongitude={this.storeInfo.lng}
+            onPressActionBtn={
+              this.editable ? this.handleChangeStore : undefined
+            }
+            customContent={
+              !this.storeInfo?.id && (
                 <TouchableOpacity
+                  disabled={!this.editable}
                   onPress={this.handleChangeStore}
                   style={styles.unselectedContainer}>
                   <Text style={styles.unselected}>
                     {this.props.t('orders:confirm.store.unselected')}
                   </Text>
                 </TouchableOpacity>
-              }
-            />
-          )}
+              )
+            }
+          />
 
           <ScheduleSection
+            editable={this.editable}
             date={this.state.date}
             timeSlots={this.state.bookingTimes}
             selectedTimeSlot={this.state.time}
@@ -594,38 +708,70 @@ export class Booking extends Component {
 
           <View onLayout={this.handleNoteSizeChange}>
             <NoteSection
-              value={this.state.note}
+              editable={this.editable}
+              title={this.props.t('orders:confirm.note.title')}
+              value={this.state.tempNote}
               onChangeText={this.handleChangeNote}
+              onBlur={this.handleUpdateNote}
             />
           </View>
 
           <PricingAndPromotionSection
-            isPromotionSelectable
+            isPromotionSelectable={this.editable}
             siteId={this.props.siteId}
             orderId={this.state.booking?.id}
             orderType={this.state.booking?.cart_type}
             tempPrice={this.state.booking?.total_before_view}
             totalItem={this.state.booking?.count_selected}
             totalPrice={this.state.booking?.total_selected}
-            promotionName={this.state.booking?.user_voucher}
+            promotionName={this.state.booking?.user_voucher?.name}
+            selectedVoucher={this.state.booking?.user_voucher}
             itemFee={itemFee}
             cashbackView={cashbackView}
-            onPressVoucher={this.handleChangeVoucher}
+            onUseVoucherOnlineSuccess={this.handleChangeVoucher}
+            onRemoveVoucherOnlineSuccess={this.handleChangeVoucher}
           />
+
+          {this.cancelable && (
+            <SectionContainer marginTop>
+              <View style={[styles.boxButtonActions]}>
+                <RoundButton
+                  onPress={this.handleOpenPopupCancelBooking}
+                  wrapperStyle={styles.buttonActionWrapper}
+                  bgrColor={appConfig.colors.status.danger}
+                  width={30}
+                  title={this.props.t('orders:confirm.cancel')}
+                  titleStyle={styles.btnActionTitle}>
+                  <FontAwesomeIcon name="times" size={16} color="#fff" />
+                </RoundButton>
+              </View>
+            </SectionContainer>
+          )}
         </KeyboardAwareScrollView>
 
-        <Button
-          disabled={this.isDisabled}
-          title={this.props.t('orders:confirm.confirmTitle')}
-          containerStyle={styles.btnContainer}
-          btnContainerStyle={[styles.btnContentContainer]}
-          onPress={this.orderBooking}
+        {this.editable && this.state.booking?.id && (
+          <Button
+            disabled={this.isDisabled}
+            title={this.props.t('orders:confirm.confirmTitle')}
+            containerStyle={styles.btnContainer}
+            btnContainerStyle={[styles.btnContentContainer]}
+            onPress={this.orderBooking}
+          />
+        )}
+
+        <PopupConfirm
+          ref_popup={this.refPopupCancelBooking}
+          title={this.props.t('cart:popup.cancelBooking.message')}
+          height={110}
+          noConfirm={this.handleClosePopupCancelBooking}
+          yesConfirm={this.cancelBooking}
+          otherClose={false}
         />
-      </ScreenWrapper>
+      </Container>
     );
   }
 }
 
-export default withTranslation(['product', 'orders', 'common'])(
+export default withTranslation(['product', 'orders', 'cart', 'common'])(
   observer(Booking),
 );

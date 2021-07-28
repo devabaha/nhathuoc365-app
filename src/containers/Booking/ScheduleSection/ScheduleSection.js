@@ -76,6 +76,7 @@ const ScheduleSection = ({
   date,
   timeSlots,
   selectedTimeSlot,
+  editable = true,
   onChangeDate = () => {},
   onChangeTime = () => {},
 }) => {
@@ -83,10 +84,12 @@ const ScheduleSection = ({
 
   const hasDate = !!date;
   const dateValue = hasDate ? date : t('confirm.date.unselected');
+  const selectedTimeSlotValue =
+    selectedTimeSlot?.value || t('confirm.date.unselected');
 
   const handlePressDatePicker = () => {
     Actions.push(appConfig.routes.modalCalendar, {
-      title: "Chọn ngày",
+      title: 'Chọn ngày',
       current: date,
       onPressDate: (date, closeCallback) => {
         onChangeDate(date);
@@ -95,36 +98,45 @@ const ScheduleSection = ({
     });
   };
 
+  const renderButtonSelection = (value, onPress = () => {}) => {
+    return (
+      <TouchableOpacity
+        disabled={!editable}
+        onPress={onPress}
+        style={[
+          styles.dateContainer,
+          !hasDate && styles.unselectedDateContainer,
+        ]}>
+        <Text style={[styles.date, !hasDate && styles.unselectedDate]}>
+          {value}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <>
       <SectionContainer
         marginTop
         iconName="calendar-alt"
         title={t('confirm.date.title')}
-        actionBtnTitle={t('confirm.change')}
+        actionBtnTitle={editable && t('confirm.change')}
         onPressActionBtn={handlePressDatePicker}>
-        <TouchableOpacity
-          onPress={handlePressDatePicker}
-          style={[
-            styles.dateContainer,
-            !hasDate && styles.unselectedDateContainer,
-          ]}>
-          <Text style={[styles.date, !hasDate && styles.unselectedDate]}>
-            {dateValue}
-          </Text>
-        </TouchableOpacity>
+        {renderButtonSelection(dateValue, handlePressDatePicker)}
       </SectionContainer>
       <SectionContainer iconName="clock" title={t('confirm.time.title')}>
-        {!!timeSlots && (
-          <SlotGridView
-            horizontal
-            slots={timeSlots}
-            selectedSlot={selectedTimeSlot}
-            containerStyle={styles.slotGridViewContainer}
-            contentContainerStyle={styles.slotGridViewContentContainer}
-            onPress={onChangeTime}
-          />
-        )}
+        {editable
+          ? !!timeSlots?.length && (
+              <SlotGridView
+                horizontal
+                slots={timeSlots}
+                selectedSlot={selectedTimeSlot}
+                containerStyle={styles.slotGridViewContainer}
+                contentContainerStyle={styles.slotGridViewContentContainer}
+                onPress={onChangeTime}
+              />
+            )
+          : renderButtonSelection(selectedTimeSlotValue)}
       </SectionContainer>
     </>
   );

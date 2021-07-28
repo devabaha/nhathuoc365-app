@@ -10,7 +10,7 @@ import appConfig from 'app-config';
 const styles = StyleSheet.create({
   modal: {
     height: null,
-    paddingBottom: 5,
+    paddingBottom: 5 + appConfig.device.bottomSpace,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
   },

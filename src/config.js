@@ -4,7 +4,11 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
-import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
+import {
+  CART_PAYMENT_STATUS,
+  CART_TYPES,
+  DELIVERY_STATUS_CODE,
+} from './constants/cart';
 
 class Config {
   constructor() {
@@ -33,8 +37,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'testtaoch3keyfe4BV',
-      secretKey: 'wvk1testtaoch3keyfe4BVltdumK',
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
     };
   }
 
@@ -87,8 +91,9 @@ class Config {
         other: '#073b4c',
       },
       cartType: {
-        cart: '#B0C0F0',
-        dropship: '#FF9F1C',
+        [CART_TYPES.NORMAL]: '#B0C0F0',
+        [CART_TYPES.DROP_SHIP]: '#FF9F1C',
+        [CART_TYPES.BOOKING]: '#53917E',
       },
       delivery: {
         [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
@@ -123,7 +128,7 @@ class Config {
         standard: ['#333', '#ccc'],
         gold: ['#d99b2d', '#FFCF40'],
         platinum: ['#a1a3a6', '#d8dadb'],
-        diamond: ['#723dc6', '#d1a0f6']
+        diamond: ['#723dc6', '#d1a0f6'],
       },
       typography: {
         text: '#2B2B2B',
@@ -353,7 +358,7 @@ class Config {
       editPersonalProfile: 'editPersonalProfile',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
-      
+
       listAddressStore: 'listAddressStore',
 
       itemImageViewer: 'item_image_viewer',

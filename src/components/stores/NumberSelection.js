@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, View, TextInput, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
+import appConfig from 'app-config';
+
 const NumberSelection = (props) => {
   const extraStyle = props.disabled ? styles.disabled : {};
   const isValueAsNumber = !isNaN(props.value);
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   text: {
-    color: DEFAULT_COLOR,
+    color: appConfig.colors.primary,
     textAlign: 'center',
     height: '100%',
     padding: 0,

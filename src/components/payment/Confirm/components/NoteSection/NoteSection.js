@@ -19,16 +19,24 @@ const styles = StyleSheet.create({
     marginTop: 4,
     minHeight: MIN_ADDRESS_HEIGHT,
     maxHeight: MAX_ADDRESS_HEIGHT,
-    paddingLeft: 22
+    paddingLeft: 22,
+  },
+  noNote: {
+    fontStyle: 'italic',
+    minHeight: undefined,
   },
 });
 
 const NoteSection = ({
+  refInput,
+
+  title,
   value = '',
   editable = true,
 
   onChangeText = () => {},
   onContentSizeChange = () => {},
+  onBlur = () => {},
 }) => {
   const {t} = useTranslation(['orders', 'confirm']);
 
@@ -37,23 +45,29 @@ const NoteSection = ({
       marginTop
       iconName="pen-square"
       title={
-        <>
-          <Text>{`${t('confirm.note.title')} `}</Text>
-          <Text style={styles.input_label_help}>
-            ({t('confirm.note.description')})
-          </Text>
-        </>
+        title || (
+          <>
+            <Text>{`${t('confirm.note.title')} `}</Text>
+            <Text style={styles.input_label_help}>
+              ({t('confirm.note.description')})
+            </Text>
+          </>
+        )
       }>
       <View pointerEvents={editable ? 'auto' : 'none'}>
         <TextInput
-          editable={editable}
-          style={styles.input_address_text}
+          ref={refInput}
+          style={[
+            styles.input_address_text,
+            !editable && !value && styles.noNote,
+          ]}
           maxLength={MAX_LENGTH}
           placeholder={t('confirm.note.placeholder')}
           multiline
           onChangeText={onChangeText}
-          value={value}
+          value={editable ? value : value || t('confirm.note.noNote')}
           onContentSizeChange={onContentSizeChange}
+          onBlur={onBlur}
         />
       </View>
     </SectionContainer>

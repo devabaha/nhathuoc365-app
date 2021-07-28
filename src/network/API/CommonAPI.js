@@ -537,6 +537,10 @@ class CommonAPI {
   }
 
   // Booking
+  get BOOKING_SHOW() {
+    return BaseAPI.apiDomain + 'apiBooking/show';
+  }
+
   get BOOKING_GET_BOOKING_TIMES() {
     return BaseAPI.apiDomain + 'apiBooking/get_booking_times';
   }
@@ -551,6 +555,10 @@ class CommonAPI {
 
   get BOOKING_ORDER() {
     return BaseAPI.apiDomain + 'apiBooking/order';
+  }
+
+  get BOOKING_CANCEL() {
+    return BaseAPI.apiDomain + 'apiBooking/cancel';
   }
 }
 

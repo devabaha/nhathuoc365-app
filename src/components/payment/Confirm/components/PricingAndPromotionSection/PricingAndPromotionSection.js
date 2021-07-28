@@ -109,7 +109,6 @@ const PricingAndPromotionSection = ({
   itemFee = {},
   cashbackView = {},
 
-  onPressVoucher = () => {},
   onUseVoucherOnlineSuccess = () => {},
   onRemoveVoucherOnlineSuccess = () => {},
 }) => {
@@ -155,10 +154,11 @@ const PricingAndPromotionSection = ({
       setTimeout(Actions.pop, 0);
     }
 
-    if (cartData) {
+    if (onUseVoucherOnlineSuccess) {
+      onUseVoucherOnlineSuccess(cartData);
+    } else if (cartData) {
       store.setCartData(cartData);
     }
-    onUseVoucherOnlineSuccess(cartData);
   };
 
   const handleUseOnlineFailure = (response) => {};
@@ -166,10 +166,11 @@ const PricingAndPromotionSection = ({
   const handleRemoveVoucherSuccess = (cartData) => {
     Actions.pop();
 
-    if (cartData) {
+    if (onRemoveVoucherOnlineSuccess) {
+      onRemoveVoucherOnlineSuccess(cartData);
+    } else if (cartData) {
       store.setCartData(cartData);
     }
-    onRemoveVoucherOnlineSuccess(cartData);
   };
 
   const handleRemoveVoucherFailure = (response) => {};

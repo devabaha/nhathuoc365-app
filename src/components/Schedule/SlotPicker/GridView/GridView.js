@@ -10,6 +10,7 @@ import {
 import appConfig from 'app-config';
 
 const MIN_ITEMS_PER_ROW = 5;
+const MIN_WIDTH_HORIZONTAL_SLOT = 100;
 
 class GridView extends Component {
   static propTypes = {};
@@ -76,9 +77,12 @@ class GridView extends Component {
           return isSelected;
         }),
       );
-
-      if (index !== -1) {
-        this.listHorizontal.current.scrollToIndex({index});
+      if (index > 0) {
+        setTimeout(() => {
+          if (this.listHorizontal.current) {
+            this.listHorizontal.current.scrollToIndex({index: index - 1});
+          }
+        }, 500);
       }
     }
   };
@@ -157,7 +161,7 @@ class GridView extends Component {
       width: isMinItemsPerRow
         ? (this.state.componentWidth - 10 * (MIN_ITEMS_PER_ROW - 1)) /
           MIN_ITEMS_PER_ROW
-        : this.state.componentWidth / 5.5,
+        : Math.max(this.state.componentWidth / 5.5, MIN_WIDTH_HORIZONTAL_SLOT),
     };
 
     return (
@@ -172,7 +176,6 @@ class GridView extends Component {
   renderSlot = (slot, index, style = {}) => {
     const isDisabled = slot?.disabled;
     const isSelected =
-      slot?.selected ||
       this.getSlotValue(slot) === this.getSlotValue(this.props.selectedSlot);
 
     return (

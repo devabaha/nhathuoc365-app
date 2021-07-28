@@ -12,7 +12,6 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
-import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../../store/Store';
 import ListHeader from '../../stores/ListHeader';
@@ -20,7 +19,6 @@ import PopupConfirm from '../../PopupConfirm';
 import Sticker from '../../Sticker';
 import RightButtonChat from '../../RightButtonChat';
 import appConfig from 'app-config';
-import Button from 'react-native-button';
 import {USE_ONLINE} from 'app-packages/tickid-voucher';
 import EventTracker from '../../../helper/EventTracker';
 import {ANALYTICS_EVENTS_NAME} from '../../../constants';
@@ -46,7 +44,6 @@ import {
   PricingAndPromotionSection,
 } from './components';
 import NoteSection from './components/NoteSection';
-import { toJS } from 'mobx';
 
 class Confirm extends Component {
   static defaultProps = {

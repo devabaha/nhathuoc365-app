@@ -27,7 +27,6 @@ class CTAProduct {
   }
 
   goToBooking = (product) => {
-    console.log(product);
     Actions.push(appConfig.routes.booking, {
       productId: product.id,
       siteId: product.site_id,

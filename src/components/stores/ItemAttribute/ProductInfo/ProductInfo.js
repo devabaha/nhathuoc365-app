@@ -69,53 +69,63 @@ const ProductInfo = ({
   imageUri,
   title,
   subTitle,
+  subTitleNumberOfLines = 1,
   discountPrice,
   price,
   unitName,
   inventory,
+  extraInfoComponent,
+  imageContainerStyle,
 }) => {
   const {t} = useTranslation('product');
 
   return (
-    <View style={styles.header}>
-      <View
-        style={[
-          styles.imgContainer,
-          imageUri || {
-            backgroundColor: '#eee',
-          },
-        ]}>
-        <CachedImage mutable source={{uri: imageUri}} style={styles.image} />
-      </View>
-      <View style={styles.info}>
-        <View>
-          <Text numberOfLines={2} style={styles.title}>
-            {title}
-          </Text>
-          <Text numberOfLines={1} style={styles.note}>
-            {subTitle}
-          </Text>
+    <>
+      <View style={styles.header}>
+        <View
+          style={[
+            styles.imgContainer,
+            imageUri || {
+              backgroundColor: '#eee',
+            },
+            imageContainerStyle
+          ]}>
+          <CachedImage mutable source={{uri: imageUri}} style={styles.image} />
         </View>
-        <View>
-          {!!discountPrice && (
-            <Text style={[styles.note, styles.deleteText]}>
-              {discountPrice}
+
+        <View style={styles.info}>
+          <View style={{marginBottom: 10}}>
+            <Text numberOfLines={2} style={styles.title}>
+              {title}
             </Text>
-          )}
-          <Text style={styles.highlight}>
-            {price}
-            {!!unitName && <Text style={styles.description}>/ {unitName}</Text>}
-          </Text>
-          <Text style={styles.note}>
-            {!!inventory && (
-              <>
-                {`${t('attr.stock')}:`} <Text>{inventory}</Text>
-              </>
+            <Text numberOfLines={subTitleNumberOfLines} style={styles.note}>
+              {subTitle}
+            </Text>
+          </View>
+          <View>
+            {!!discountPrice && (
+              <Text style={[styles.note, styles.deleteText]}>
+                {discountPrice}
+              </Text>
             )}
-          </Text>
+            {!!price && (
+              <Text style={styles.highlight}>
+                {price}
+                {!!unitName && (
+                  <Text style={styles.description}>/ {unitName}</Text>
+                )}
+              </Text>
+            )}
+            {!!inventory && (
+              <Text style={styles.note}>
+                {`${t('attr.stock')}:`} <Text>{inventory}</Text>
+              </Text>
+            )}
+            {extraInfoComponent}
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

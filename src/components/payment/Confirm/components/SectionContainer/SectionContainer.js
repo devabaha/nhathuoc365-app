@@ -11,6 +11,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Container} from 'src/components/Layout';
 
 import appConfig from 'app-config';
+import SectionContainerSkeleton from './SectionContainerSkeleton';
 
 const styles = StyleSheet.create({
   container: {
@@ -55,13 +56,16 @@ const SectionContainer = ({
   iconStyle,
   iconName,
   children,
+  loading,
   actionBtnTitle,
   actionBtnStyle,
   onPressActionBtn = () => {},
 }) => {
   const hasHeading = !!title || !!actionBtnTitle;
 
-  return (
+  return loading ? (
+    <SectionContainerSkeleton />
+  ) : (
     <View style={[styles.container, style, marginTop && styles.topSpacing]}>
       {!!hasHeading && (
         <Container row style={styles.titleWrapper}>
