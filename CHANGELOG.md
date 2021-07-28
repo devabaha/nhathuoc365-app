@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.0.6] - 2021-07-28
+### Added
+- Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
+- Show brand and unit name production in ProductItem by [nguyenanhtuan191298@gmail.com].
+### Changed
+- Update premium-level display logic by [kienluu612@gmail.com].
+- Login firebase mode can be disabled from server by disable_google_firebase_otp_key.
+### Fixed
+- Menu multi category performance.
+- [Trying] Sometime, at some android devices, crash app because of rn-fetch-blob
+
 ## [r12.0.5] - 2021-07-13
 ### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
 - PersonalProfile and UserChat from skv.
 ### Changed
 - Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].

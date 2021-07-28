@@ -17,15 +17,19 @@ export const DEV_IMAGE_DOMAIN = 'https://img.tickid.top/';
 export const LIVE_SOCIAL_DOMAIN = 'https://social.abaha.vn/';
 export const DEV_SOCIAL_DOMAIN = 'https://social.tickid.top/';
 
+export const LIVE_AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
+
 class BaseAPI {
   constructor(
     apiDomain = LIVE_API_DOMAIN,
     socialDomain = LIVE_SOCIAL_DOMAIN,
     imageDomain = LIVE_IMAGE_DOMAIN,
+    airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,
   ) {
     this._apiDomain = apiDomain;
     this._socialDomain = socialDomain;
     this._imageDomain = imageDomain;
+    this._airlineTicketDomain = airlineTicketDomain;
     store.setBaseAPIDomain(apiDomain);
   }
 
@@ -39,6 +43,10 @@ class BaseAPI {
 
   get imageDomain() {
     return this._imageDomain;
+  }
+
+  get airlineTicketDomain() {
+    return this._airlineTicketDomain;
   }
 
   set updateAPIDomain(apiDomain) {
@@ -60,6 +68,10 @@ class BaseAPI {
 
   set updateImageDomain(imageDomain) {
     this._imageDomain = imageDomain;
+  }
+
+  set updateAirlineTicketDomain(airlineTicketDomain) {
+    this._airlineTicketDomain = airlineTicketDomain;
   }
 }
 
