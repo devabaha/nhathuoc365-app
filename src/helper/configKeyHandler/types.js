@@ -29,5 +29,7 @@ export const CONFIG_KEY = {
   
   SITE_CONTENT_KEY: 'site_content_key',
   
-  FIX_DROPSHIP_PRICE_KEY:  'fix_dropship_price_key'
+  FIX_DROPSHIP_PRICE_KEY:  'fix_dropship_price_key',
+
+  VIEW_COMMISSIONS_AT_HOMEPAGE :'view_commissions_at_homepage',
 };

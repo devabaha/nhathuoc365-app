@@ -184,6 +184,10 @@ class Home extends Component {
     });
   };
 
+  handlePressCommission = () => {
+    Actions.push(appConfig.routes.commissionIncomeStatement)
+  };
+
   handlePromotionPressed = (item) => {
     servicesHandler(item, this.props.t);
   };
@@ -375,6 +379,7 @@ class Home extends Component {
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
         onPressNoti={this.handlePressButtonChat}
+        onPressCommission={this.handlePressCommission}
         goToSocial={this.goToSocial}
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
