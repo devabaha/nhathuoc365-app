@@ -120,6 +120,7 @@ global.STORAGE_INTRO_KEY = 'KeyStoreIntro';
 global.STORAGE_REF_KEY = 'KeyRefIntro';
 
 // stores
+global.FIRST_PAGE_STORES_LOAD_MORE = 31;
 global.STORES_LOAD_MORE = 30;
 global.STORE_DEMO_CODE = 'FH';
 global.KEY_EVENTS_STORE = 'KeyEventStore';

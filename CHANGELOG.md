@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update premium-level display logic by [kienluu612@gmail.com].
 - Login firebase mode can be disabled from server by disable_google_firebase_otp_key.
 ### Fixed
+- Showing load more button in CategoryScreen by [lamah.dev@gmail.com].
 - Menu multi category performance.
 - [Trying] Sometime, at some android devices, crash app because of rn-fetch-blob
 
