@@ -236,16 +236,16 @@ class CategoryScreen extends Component {
             var items_data = loadMore
               ? [...this.state.items_data_bak, ...response.data]
               : response.data;
-                this.setState({
-                  items_data:
-                    response.data.length >= (this.page == 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
-                      ? [...items_data, {id: -1, type: 'loadMore'}]
-                      : items_data,
-                  items_data_bak: items_data,
-                  loading: false,
-                  fetched: true,
-                  refreshing: false,
-                });
+              this.setState({
+                items_data:
+                  response.data.length >= (this.page == 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+                    ? [...items_data, {id: -1, type: 'loadMore'}]
+                    : items_data,
+                items_data_bak: items_data,
+                loading: false,
+                fetched: true,
+                refreshing: false,
+              });
 
             action(() => {
               store.setStoresFinish(true);
@@ -296,6 +296,7 @@ class CategoryScreen extends Component {
   render() {
     const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
+    
     return (
       <>
         <View style={styles.containerScreen}>
