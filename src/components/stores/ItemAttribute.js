@@ -36,17 +36,65 @@ const DISABLE_KEY = 'disabled';
 const MIN_QUANTITY = 1;
 
 class ItemAttribute extends PureComponent {
-  static propTypes = {};
+  static defaultProps = {
+    product: {},
+  };
 
-  static defaultProps = {};
+  getBaseData = (attrs = {}, models = {}) => {
+    const viewData = [];
+    const selectedAttrs = [];
+    attrs = Object.entries(attrs);
+
+    attrs.forEach((attr, index) => {
+      selectedAttrs.push({
+        [ATTR_KEY]: '',
+      });
+      const attrKey = attr[0];
+      const attrValue = attr[1];
+      const label = attrKey || '';
+      let data = attrValue || [];
+
+      data = data.map((attr, i) => {
+        let disabled = false;
+
+        if (attrs.length === 1) {
+          // disable if empty inventory ONLY IF product has only 1 attr.
+          disabled = !!!Object.values(models).find(
+            (model) => model.name === attr,
+          )?.inventory;
+        }
+
+        return {
+          [VALUE_KEY]: attr,
+          [ACTIVE_KEY]: false,
+          [DISABLE_KEY]: disabled,
+          [LABEL_KEY]: label,
+          [ATTR_KEY]: i,
+          [ATTR_LABEL_KEY]: index,
+        };
+      });
+
+      viewData.push({
+        label,
+        data,
+      });
+    });
+
+    return {viewData, selectedAttrs};
+  };
+
+  initAttrData = this.getBaseData(
+    this.props.product?.attrs,
+    this.props.product?.models,
+  );
 
   state = {
-    product: {},
+    product: this.props.product,
     loading: false,
     animateAvoidKeyboard: new Animated.Value(0),
-    viewData: [],
-    models: [],
-    selectedAttrs: [],
+    viewData: this.initAttrData.viewData,
+    models: this.props.product?.models || {},
+    selectedAttrs: this.initAttrData.selectedAttrs,
     selectedModel: {},
     selectedModelKey: '',
     quantity: MIN_QUANTITY,
@@ -85,7 +133,7 @@ class ItemAttribute extends PureComponent {
   }
 
   componentDidMount() {
-    this.getAttrs();
+    this.state.viewData?.length || this.getAttrs();
     this.eventTracker.logCurrentView();
   }
 
@@ -144,49 +192,6 @@ class ItemAttribute extends PureComponent {
     } finally {
       !this.unmounted && this.setState({loading: false});
     }
-  };
-
-  getBaseData = (attrs, models) => {
-    const viewData = [];
-    const selectedAttrs = [];
-    attrs = Object.entries(attrs);
-
-    attrs.forEach((attr, index) => {
-      selectedAttrs.push({
-        [ATTR_KEY]: '',
-      });
-      const attrKey = attr[0];
-      const attrValue = attr[1];
-      const label = attrKey || '';
-      let data = attrValue || [];
-
-      data = data.map((attr, i) => {
-        let disabled = false;
-
-        if (attrs.length === 1) {
-          // disable if empty inventory ONLY IF product has only 1 attr.
-          disabled = !!!Object.values(models).find(
-            (model) => model.name === attr,
-          )?.inventory;
-        }
-
-        return {
-          [VALUE_KEY]: attr,
-          [ACTIVE_KEY]: false,
-          [DISABLE_KEY]: disabled,
-          [LABEL_KEY]: label,
-          [ATTR_KEY]: i,
-          [ATTR_LABEL_KEY]: index,
-        };
-      });
-
-      viewData.push({
-        label,
-        data,
-      });
-    });
-
-    return {viewData, selectedAttrs};
   };
 
   getSelectedAttrsViewData(numberSelectedAttrs) {
@@ -463,7 +468,7 @@ class ItemAttribute extends PureComponent {
         ref={this.refModal}
         isOpen
         position="top"
-        onClosed={() => Actions.pop()}
+        onClosed={Actions.pop}
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>

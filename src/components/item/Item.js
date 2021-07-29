@@ -66,13 +66,11 @@ class Item extends Component {
       isSubActionLoading: false,
       like_flag: 0,
       scrollY: 0,
-      cartTypeConfirmMessage: '',
     };
 
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
-    this.refPopupConfirmCartType = React.createRef();
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -394,94 +392,6 @@ class Item extends Component {
     this.updateWarehouse(warehouse);
   };
 
-  // add item vào giỏ hàng
-  _addCart = (
-    item,
-    quantity = 1,
-    model = '',
-    newPrice = null,
-    buying = true,
-  ) => {
-    this.setState(
-      {
-        buying,
-      },
-      async () => {
-        const data = {
-          quantity,
-          model,
-        };
-        if (newPrice) {
-          data.new_price = newPrice;
-        }
-        const {t} = this.props;
-        try {
-          const response = await APIHandler.site_cart_plus(
-            store.store_id,
-            item.id,
-            data,
-          );
-
-          if (response && response.status == STATUS_SUCCESS) {
-            if (!this.unmounted && response.data.attrs) {
-              Actions.push(appConfig.routes.itemAttribute, {
-                itemId: item.id,
-                onSubmit: (quantity, modal_key) =>
-                  this._addCart(item, quantity, modal_key),
-              });
-            } else {
-              flashShowMessage({
-                message: response.message,
-                type: 'success',
-              });
-            }
-            store.setCartData(response.data);
-
-            var index = null,
-              length = 0;
-            if (response.data.products) {
-              length = Object.keys(response.data.products).length;
-
-              Object.keys(response.data.products)
-                .reverse()
-                .some((key, key_index) => {
-                  let value = response.data.products[key];
-                  if (value.id == item.id) {
-                    index = key_index;
-                    return true;
-                  }
-                });
-            }
-
-            if (index !== null && index < length) {
-              store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, {index});
-            }
-
-            flashShowMessage({
-              message: response.message,
-              type: 'success',
-            });
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_plus');
-          flashShowMessage({
-            type: 'danger',
-            message: t('common:api.error.message'),
-          });
-        } finally {
-          if (!this.unmounted) {
-            this.productTempData = [];
-            this.setState({
-              buying: false,
-              isSubActionLoading: false,
-            });
-          }
-        }
-      },
-    );
-  };
-
   _likeHandler(item) {
     this.setState(
       {
@@ -631,27 +541,6 @@ class Item extends Component {
         });
     }
   }
-
-  confirmCartType = () => {
-    this.setState({actionLoading: true});
-    this.closeConfirmCartTypePopUp();
-    this._cancelCart(() => {
-      if (this.productTempData.length > 0) {
-        this._addCart(...this.productTempData);
-      }
-    });
-  };
-
-  closeConfirmCartTypePopUp = () => {
-    if (this.refPopupConfirmCartType.current) {
-      this.refPopupConfirmCartType.current.close();
-    }
-  };
-
-  cancelConfirmCartType = () => {
-    this.productTempData = [];
-    this.closeConfirmCartTypePopUp();
-  };
 
   renderPagination = (index, total, context, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
@@ -1194,18 +1083,6 @@ class Item extends Component {
             }
           }}
           yesConfirm={this._removeCartItem.bind(this)}
-        />
-
-        <PopupConfirm
-          ref_popup={this.refPopupConfirmCartType}
-          title={this.state.cartTypeConfirmMessage}
-          otherClose={false}
-          type="warning"
-          isConfirm
-          yesTitle={CONTINUE_ORDER_CONFIRM}
-          titleStyle={{textAlign: 'left'}}
-          noConfirm={this.cancelConfirmCartType}
-          yesConfirm={this.confirmCartType}
         />
       </View>
     );

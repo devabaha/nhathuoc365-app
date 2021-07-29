@@ -169,7 +169,8 @@ class ProductItem extends PureComponent {
 
                       <TouchableOpacity
                         style={styles.item_add_cart_box}
-                        onPress={this.handlePressActionBtnProduct}>
+                        onPress={this.handlePressActionBtnProduct}
+                        hitSlop={HIT_SLOP}>
                         <View
                           style={{
                             width: 20,

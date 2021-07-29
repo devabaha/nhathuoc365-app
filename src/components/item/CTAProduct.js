@@ -135,7 +135,7 @@ class CTAProduct {
         itemId: product.id,
         product,
         onSubmit: (...args) => {
-          Actions.pop();
+          // Actions.pop();
 
           callBack(product, ...args);
         },
