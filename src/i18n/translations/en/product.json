@@ -2,7 +2,8 @@
   "shopTitle": {
     "preOrder": "Pre-order",
     "buy": "Add to cart",
-    "book": "Book"
+    "book": "Book",
+    "outOfStock": "Out of stock"
   },
   "attr": {
     "notChooseAttrYet": "No attribute selected",
