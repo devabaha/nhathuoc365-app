@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-adx916] Module booking by [minhnguyenit14@gmail.com].
+### Changed
+- Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added

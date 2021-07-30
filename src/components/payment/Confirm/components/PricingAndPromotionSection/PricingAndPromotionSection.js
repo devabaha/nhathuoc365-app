@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   feeContainer: {
-    borderTopWidth: 0,
     backgroundColor: '#fafafa',
   },
   feeBox: {

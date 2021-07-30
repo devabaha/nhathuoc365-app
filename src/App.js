@@ -2053,19 +2053,12 @@ class RootRouter extends Component {
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
-<<<<<<< HEAD
-              {/* ================ AirlineTicket Customer ================ */}
+              {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
               <Stack
                 key={appConfig.routes.customer}
                 component={Customer}
                 hideNavBar
               />
-=======
-              {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
->>>>>>> abaha/core
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}

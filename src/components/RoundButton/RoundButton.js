@@ -30,6 +30,7 @@ function RoundButton({
   height,
   radius,
   wrapperStyle,
+  contentContainerStyle,
   style,
   titleStyle,
   children,
@@ -46,7 +47,7 @@ function RoundButton({
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.wrapper, wrapperStyle]}>
-      <Container row={row}>
+      <Container row={row} style={contentContainerStyle}>
         <View style={[styles.container, containerStyle, style]}>
           {children}
         </View>

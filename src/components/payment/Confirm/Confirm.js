@@ -36,14 +36,15 @@ import {
   CART_PAYMENT_STATUS,
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
-import RoundButton from '../../RoundButton';
 import {
   PaymentMethodSection,
   DeliverySection,
   StoreInfoSection,
   PricingAndPromotionSection,
+  NoteSection,
+  CommissionsSection,
+  ActionButtonSection,
 } from './components';
-import NoteSection from './components/NoteSection';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -924,6 +925,12 @@ class Confirm extends Component {
     }
   }
 
+  confirmFeedback(cart_data) {
+    Actions.rating({
+      cart_data,
+    });
+  }
+
   handleScroll = (e) => {
     if (appConfig.device.isAndroid) return;
     const {contentOffset, contentSize, layoutMeasurement} = e.nativeEvent;
@@ -1351,8 +1358,21 @@ class Confirm extends Component {
             }
           />
 
-          {this.renderCommissions(cart_data)}
-          <View style={[styles.boxButtonActions, styles.mt8]}>
+          <CommissionsSection commissions={cart_data?.commissions} />
+
+          <ActionButtonSection
+            editable={is_ready && !this.isPaid}
+            onEdit={this.confirmEditCart.bind(this, cart_data)}
+            cancelable={is_ready}
+            onCancel={this.confirmCancelCart.bind(this, cart_data)}
+            canReorder={can_reorder}
+            onReorder={this.confirmCoppyCart.bind(this, cart_data)}
+            canAddMore={is_paymenting}
+            onAddMore={this.goBackStores.bind(this, cart_data)}
+            canFeedback={is_completed && cart_data.status > 1}
+            onFeedback={this.confirmFeedback.bind(this, cart_data)}
+          />
+          {/* <View style={[styles.boxButtonActions, styles.mt8]}>
             {is_ready && !this.isPaid && (
               <RoundButton
                 onPress={this.confirmEditCart.bind(this, cart_data)}
@@ -1431,7 +1451,7 @@ class Confirm extends Component {
                 <Icon name="star" size={16} color="#fff" />
               </RoundButton>
             )}
-          </View>
+          </View> */}
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (

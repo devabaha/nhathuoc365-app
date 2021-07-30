@@ -6,33 +6,30 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
-import appConfig from 'app-config';
-
-import ScreenWrapper from 'src/components/ScreenWrapper';
-import {
-  PricingAndPromotionSection,
-  StoreInfoSection,
-  NoteSection,
-} from 'src/components/payment/Confirm/components';
 import {Actions} from 'react-native-router-flux';
 import {debounce} from 'lodash';
+
+import appConfig from 'app-config';
 
 import store from 'app-store';
 import EventTracker from 'app-helper/EventTracker';
 import {APIRequest} from 'src/network/Entity';
 
-import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
 import ScheduleSection from './ScheduleSection';
 import BookingProductInfo from './BookingProductInfo';
 import Button from 'src/components/Button';
 import Loading from 'src/components/Loading';
-import RoundButton from 'src/components/RoundButton';
 import PopupConfirm from 'src/components/PopupConfirm';
 import BookingSkeleton from './BookingSkeleton';
 import {Container} from 'src/components/Layout';
+import {
+  PricingAndPromotionSection,
+  StoreInfoSection,
+  NoteSection,
+  CommissionsSection,
+  ActionButtonSection,
+} from 'src/components/payment/Confirm/components';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -116,11 +113,6 @@ const styles = StyleSheet.create({
 });
 
 export class Booking extends Component {
-  static defaultProps = {
-    attrs: {},
-    models: {},
-  };
-
   state = {
     booking: {},
     bookingTimes: [],
@@ -180,7 +172,7 @@ export class Booking extends Component {
   get isDisabled() {
     return (
       this.state.loading ||
-      !this.state.model ||
+      (!!this.props.models && !this.state.model) ||
       !this.state.quantity ||
       !this.state.addressId ||
       !this.state.date ||
@@ -624,8 +616,8 @@ export class Booking extends Component {
       <BookingProductInfo
         editable={this.editable}
         product={this.mainProduct}
-        attrs={this.props.attrs}
-        models={this.props.models}
+        attrs={this.props.attrs || {}}
+        models={this.props.models || {}}
         defaultSelectedModel={this.mainProduct.model}
         onSelectAttr={this.handleSelectAttr}
         onChangeQuantity={this.handleChangeQuantity}
@@ -654,6 +646,7 @@ export class Booking extends Component {
         {this.state.loading && <Loading center />}
         <KeyboardAwareScrollView
           innerRef={(inst) => (this.refScrollView.current = inst)}
+          scrollIndicatorInsets={{right: 0.01}}
           contentContainerStyle={[
             styles.listContentContainer,
             !this.editable && {
@@ -732,21 +725,12 @@ export class Booking extends Component {
             onRemoveVoucherOnlineSuccess={this.handleChangeVoucher}
           />
 
-          {this.cancelable && (
-            <SectionContainer marginTop>
-              <View style={[styles.boxButtonActions]}>
-                <RoundButton
-                  onPress={this.handleOpenPopupCancelBooking}
-                  wrapperStyle={styles.buttonActionWrapper}
-                  bgrColor={appConfig.colors.status.danger}
-                  width={30}
-                  title={this.props.t('orders:confirm.cancel')}
-                  titleStyle={styles.btnActionTitle}>
-                  <FontAwesomeIcon name="times" size={16} color="#fff" />
-                </RoundButton>
-              </View>
-            </SectionContainer>
-          )}
+          <CommissionsSection commissions={this.state.booking?.commissions} />
+
+          <ActionButtonSection
+            cancelable={this.cancelable}
+            onCancel={this.handleOpenPopupCancelBooking}
+          />
         </KeyboardAwareScrollView>
 
         {this.editable && this.state.booking?.id && (
