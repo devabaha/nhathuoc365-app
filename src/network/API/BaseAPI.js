@@ -21,7 +21,7 @@ export const LIVE_AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
 
 class BaseAPI {
   constructor(
-    apiDomain = SPRINT_DEV_API_DOMAIN,
+    apiDomain = LIVE_API_DOMAIN,
     socialDomain = LIVE_SOCIAL_DOMAIN,
     imageDomain = LIVE_IMAGE_DOMAIN,
     airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,
