@@ -834,8 +834,7 @@ class Item extends Component {
     const {t} = this.props;
 
     return (
-      !images.length &&
-      !product.content || (
+      (!images.length && !product.content) || (
         <TouchableHighlight
           onPress={() =>
             this.handlePostForSaleBtn(product.img, product.name, product.name)
@@ -1395,7 +1394,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f6abb6',
+    backgroundColor: appConfig.colors.logo.addition,
     height: 40,
     width: appConfig.device.width - 30,
     borderRadius: 5,
