@@ -8,15 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com].
+### Changed
+- Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+
+## [r12.0.6] - 2021-07-28
+### Added
+- Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
+- Show brand and unit name production in ProductItem by [nguyenanhtuan191298@gmail.com].
+### Changed
+- Update premium-level display logic by [kienluu612@gmail.com].
+- Login firebase mode can be disabled from server by disable_google_firebase_otp_key.
+### Fixed
+- Showing load more button in CategoryScreen by [lamah.dev@gmail.com].
+- Menu multi category performance.
+- [Trying] Sometime, at some android devices, crash app because of rn-fetch-blob
 
 ## [r12.0.5] - 2021-07-13
 ### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
 - PersonalProfile and UserChat from skv.
 ### Changed
+- Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].
 - Only use has_attr for checking product's attributes.
 - Handle onclick of <a> tag and window.open event of react-native-auto-height-webview.
 ### Fixed
+- Fix layout renderFooterActionBtn() in CartItem when text content too long by [nguyenanhtuan191298@gmail.com].
 - Delay setState OrderCart data.
+### Changed
+- Format voucher point in VoucherItem and VoucherDetail by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.4] - 2021-07-09
 ### Added

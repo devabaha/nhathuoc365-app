@@ -266,9 +266,9 @@ class NotifyItem extends Component {
                 <CustomAutoHeightWebview
                   contentStyle={styles.webview}
                   content={item_data.content}
-                  customStyle={`p {
-                    font-size: 16px;
-                  }`}
+                  // customStyle={`p {
+                  //   font-size: 16px;
+                  // }`}
                 />
               ) : null
               // <Indicator size="small" />

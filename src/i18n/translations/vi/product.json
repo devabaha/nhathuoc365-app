@@ -3,7 +3,8 @@
     "preOrder": "Đặt trước",
     "buy": "Mua ngay",
     "book": "Đặt ngay",
-    "postForSale": "Đăng bán"
+    "postForSale": "Đăng bán",
+    "outOfStock": "Tạm hết hàng"
   },
   "attr": {
     "notChooseAttrYet": "Chưa chọn thuộc tính",

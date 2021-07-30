@@ -6,17 +6,12 @@ import {
   StyleSheet,
   Animated,
   RefreshControl,
-  StatusBar,
-  SafeAreaView,
-  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import store from '../../store/Store';
-import Items from '../stores/Items';
-import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
@@ -41,6 +36,7 @@ import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import {shareImages} from '../../helper/share';
+import {isOutOfStock} from 'app-helper/product';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -744,7 +740,7 @@ class Item extends Component {
             <FastImage
               style={styles.swiper_image}
               source={{uri: image.image}}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </View>
         </TouchableHighlight>
@@ -949,6 +945,8 @@ class Item extends Component {
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
       item.product_type !== PRODUCT_TYPES.SERVICE;
 
+    const isDisabledMainButton = isOutOfStock(item);
+
     return (
       <View style={styles.container}>
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
@@ -1074,6 +1072,7 @@ class Item extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
+                  disabled={isDisabledMainButton}
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
                       item,
@@ -1085,6 +1084,8 @@ class Item extends Component {
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_add_cart,
+                      isDisabledMainButton &&
+                        styles.item_actions_btn_add_cart_disabled,
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
                       {this.renderMainActionBtnIcon(item)}
@@ -1092,6 +1093,8 @@ class Item extends Component {
                     <Text style={styles.item_actions_title}>
                       {this.isServiceProduct(item)
                         ? t('shopTitle.book')
+                        : isDisabledMainButton
+                        ? t('shopTitle.outOfStock')
                         : t('shopTitle.buy')}
                     </Text>
                   </View>
@@ -1105,20 +1108,13 @@ class Item extends Component {
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
-                {storeName && (
+                {/* {storeName && (
                   <View style={styles.item_content_item_container}>
                     <View
                       style={[
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <MaterialCommunityIcons
-                          name="warehouse"
-                          size={16}
-                          color="#999999"
-                        />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.warehouse')}
                       </Text>
@@ -1143,9 +1139,6 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <Icon name="user" size={16} color="#999999" />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.brands')}
                       </Text>
@@ -1165,9 +1158,6 @@ class Item extends Component {
                         styles.item_content_item,
                         styles.item_content_item_left,
                       ]}>
-                      {/* <View style={styles.item_content_icon_box}>
-                        <Icon name="map-marker" size={16} color="#999999" />
-                      </View> */}
                       <Text style={styles.item_content_item_title}>
                         {t('information.origin')}
                       </Text>
@@ -1178,7 +1168,7 @@ class Item extends Component {
                       </Text>
                     </View>
                   </View>
-                )}
+                )} */}
               </View>
             )}
 
@@ -1428,6 +1418,10 @@ const styles = StyleSheet.create({
   item_actions_btn_add_cart: {
     marginLeft: 6,
     backgroundColor: appConfig.colors.primary,
+  },
+  item_actions_btn_add_cart_disabled: {
+    backgroundColor: '#ccc',
+    borderColor: '#ccc',
   },
   item_actions_title: {
     marginLeft: 8,

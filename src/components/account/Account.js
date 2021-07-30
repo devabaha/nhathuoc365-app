@@ -68,10 +68,11 @@ class Account extends Component {
     const isUpdate = notify.updating_version == 1;
     const codePushVersion = store.codePushMetaData
       ? // replace non-digit character in codePush label (format of codePush label is `v[number]`)
-        `-${store.codePushMetaData.label.replace(/\D+/, '')}`
+      `-${store.codePushMetaData.label.replace(/\D+/, '')}`
       : '';
     const user_info = store.user_info || {};
     const default_wallet = user_info.default_wallet || {};
+    const revenue_commissions = user_info.revenue_commissions || {}
     const {
       premium,
       premium_name,
@@ -157,7 +158,8 @@ class Account extends Component {
             </Text>
           </Text>
         ),
-        isHidden: !user_info.default_wallet,
+        isHidden: !user_info.default_wallet || isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+
         rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.push(appConfig.routes.vndWallet, {
@@ -174,6 +176,41 @@ class Account extends Component {
         iconColor: '#fff',
         iconType: default_wallet.iconType,
         marginTop: isShowPremium,
+      },
+
+      {
+        key: 'revenue_commissions',
+        icon: 'clipboard',
+        iconColor: '#FFFFFF',
+        size: 22,
+        iconSize: 14,
+        marginTop: 10,
+        label: (
+          <>
+            {
+              this.renderRevenueCommission(
+                revenue_commissions?.this_month_commissions?.title,
+                revenue_commissions?.this_month_commissions?.value
+              )
+            }
+
+            {
+              this.renderRevenueCommission(
+                revenue_commissions?.last_month_commissions?.title,
+                revenue_commissions?.last_month_commissions?.value
+              )
+            }
+          </>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#FD6D61',
+          },
+        ],
+        isHidden: !user_info.revenue_commissions || !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
       },
 
       {
@@ -207,8 +244,8 @@ class Account extends Component {
             aff_content: store.store_data
               ? store.store_data.aff_content
               : t('affiliateMarketingProgram', {
-                  appName: APP_NAME_SHOW,
-                }),
+                appName: APP_NAME_SHOW,
+              }),
           });
         },
         boxIconStyle: [
@@ -863,10 +900,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
-                      })
+                    Actions.push(appConfig.routes.vndWallet, {
+                      title: wallet.name,
+                      wallet: wallet,
+                    })
                   : () => {}
               }
               underlayColor="transparent"
@@ -904,10 +941,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
-                      })
+                    Actions.push(appConfig.routes.vndWallet, {
+                      title: wallet.name,
+                      wallet: wallet,
+                    })
                   : () => Actions.view_ndt_list()
               }
               underlayColor="transparent"
@@ -961,9 +998,9 @@ class Account extends Component {
     const extraStyle = isMax
       ? {}
       : {
-          borderTopRightRadius: 3,
-          borderBottomRightRadius: 3,
-        };
+        borderTopRightRadius: 3,
+        borderBottomRightRadius: 3,
+      };
 
     return (
       <View style={styles.premiumProgressContainer}>
@@ -980,6 +1017,15 @@ class Account extends Component {
         />
       </View>
     );
+  }
+
+  renderRevenueCommission(label, value) {
+    return (
+        <View style={styles.viewRevenueCommissions}>
+          <Text style={styles.titleRevenueCommissions}>{label}:</Text>
+          <Text style={styles.valueRevenueCommissions}>{value}</Text>
+        </View>
+    )
   }
 
   render() {
@@ -1469,6 +1515,23 @@ const styles = StyleSheet.create({
   },
   listOptionsContainer: {
     paddingVertical: 8,
+  },
+  viewRevenueCommissions: {
+    flexDirection: 'row',
+    marginBottom: -6,
+  },
+  titleRevenueCommissions: {
+    marginVertical: appConfig.device.isIOS ? 4 : 3,
+    fontSize: 12,
+    color: '#000000',
+    fontWeight: '400',
+  },
+  valueRevenueCommissions: {
+    marginVertical: appConfig.device.isIOS ? 2 : 0,
+    marginHorizontal: 5,
+    fontSize: 16,
+    color: appConfig.colors.primary,
+    fontWeight: '600',
   },
 });
 

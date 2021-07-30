@@ -21,6 +21,7 @@ import {PRODUCT_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
+import {isOutOfStock} from 'app-helper/product';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -102,13 +103,22 @@ class ProductItem extends PureComponent {
             this.props.renderContent()
           ) : (
             <>
-              <FastImage
-                source={{
-                  uri: this.props.image,
-                }}
-                style={[styles.image, extraImageStyle]}
-                resizeMode="cover"
-              />
+              <View>
+                <FastImage
+                  source={{
+                    uri: this.props.image,
+                  }}
+                  style={[styles.image, extraImageStyle]}
+                  resizeMode="cover"
+                />
+                {!!item.brand && (
+                  <View style={styles.brandTagContainer}>
+                    <Text numberOfLines={1} style={styles.brandTag}>
+                      {item.brand}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
               {this.props.discount_percent > 0 && (
                 <DiscountBadge
@@ -125,11 +135,11 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
-                    {!!this.props.item.commission_value && 
-                        <Text style={styles.commissionText} numberOfLines={1}>
-                          {this.props.item.commission_value_view}
-                        </Text>
-                    }
+                    {!!this.props.item.commission_value && (
+                      <Text style={styles.commissionText} numberOfLines={1}>
+                        {this.props.item.commission_value_view}
+                      </Text>
+                    )}
 
                     <View
                       style={{
@@ -149,9 +159,17 @@ class ProductItem extends PureComponent {
                     <View style={[styles.priceBox]}>
                       <Text style={[styles.price]}>
                         {this.props.price_view}
+                        {!!item.unit_name && (
+                          <View>
+                            <Text style={styles.unitName}>
+                              {'/ ' + item.unit_name_view}
+                            </Text>
+                          </View>
+                        )}
                       </Text>
 
                       <TouchableOpacity
+                        disabled={isOutOfStock(item)}
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}>
                         <View
@@ -168,7 +186,10 @@ class ProductItem extends PureComponent {
                           ) : (
                             <MaterialIcons
                               name="add-shopping-cart"
-                              style={styles.icon}
+                              style={[
+                                styles.icon,
+                                isOutOfStock(item) && styles.iconDisabled,
+                              ]}
                             />
                           )}
                         </View>
@@ -246,6 +267,8 @@ let styles = StyleSheet.create({
   },
   price: {
     flex: 1,
+    flexWrap: 'wrap',
+    paddingRight: 5,
     ...appConfig.styles.typography.heading3,
     color: appConfig.colors.primary,
   },
@@ -279,13 +302,43 @@ let styles = StyleSheet.create({
   deletedTitle: {
     textDecorationLine: 'line-through',
   },
-
   icon: {
     fontSize: 20,
     color: appConfig.colors.highlight[1],
+  },
+  iconDisabled: {
+    color: '#ddd',
+  },
+  brandTagContainer: {
+    position: 'absolute',
+    bottom: -5,
+    right: 0,
+    backgroundColor: '#fff',
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
+    maxWidth: WIDTH_ITEM * 0.8,
+    borderWidth: appConfig.device.pixel,
+    borderRightWidth: 0,
+    borderBottomWidth: 1.2,
+    borderColor: '#ddd',
+    borderBottomColor: '#ddd',
+  },
+  brandTag: {
+    color: appConfig.colors.primary,
+    fontWeight: '500',
+    fontSize: 12,
+  },
+  unitName: {
+    fontSize: 11,
+    color: '#888',
+    marginTop: appConfig.device.isIOS ? 2 : 0,
+    top: appConfig.device.isAndroid ? 2 : undefined,
+    lineHeight: appConfig.device.isAndroid ? 11 : undefined,
   },
 });
 
 styles = Themes.mergeStyles(styles, productItemStyle);
 
-export default ProductItem;
+export default withTranslation('product')(ProductItem);

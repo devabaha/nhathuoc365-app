@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.0.5';
+    return 'r12.0.6';
   }
 
   get appName() {
@@ -353,7 +353,15 @@ class Config {
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
       
-      listAddressStore: 'listAddressStore'
+      listAddressStore: 'listAddressStore',
+
+      itemImageViewer: 'item_image_viewer',
+
+      airlineTicket: 'airlineTicket',
+      datePicker: 'datePicker',
+      place: 'place',
+      customer: 'customer',
+      result: 'result',
     };
   }
 }

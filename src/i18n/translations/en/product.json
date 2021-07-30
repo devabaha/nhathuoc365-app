@@ -3,7 +3,8 @@
     "preOrder": "Pre-order",
     "buy": "Add to cart",
     "book": "Book",
-    "postForSale": "Post for sale"
+    "postForSale": "Post for sale",
+    "outOfStock": "Out of stock"
   },
   "attr": {
     "notChooseAttrYet": "No attribute selected",

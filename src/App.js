@@ -192,6 +192,13 @@ import {
 } from './components/amazingUserChat';
 
 import ListAddressStore from './containers/ListAddressStore';
+import AirlineTicket from './containers/AirlineTicket';
+import DatePicker from './containers/AirlineTicket/DatePicker';
+import Place from './containers/AirlineTicket/Place';
+import Customer from './containers/AirlineTicket/Customer';
+import Result from './containers/AirlineTicket/Result';
+import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+
 /**
  * Not allow font scaling
  */
@@ -875,6 +882,48 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ AIRLINE TICKET RESULT ================ */}
+                <Stack key={appConfig.routes.result}>
+                  <Scene
+                    key={`${appConfig.routes.result}_1`}
+                    component={Result}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET PLACE ================ */}
+                <Stack key={appConfig.routes.place}>
+                  <Scene
+                    key={`${appConfig.routes.place}_1`}
+                    component={Place}
+                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET DATEPICKER ================ */}
+                <Stack key={appConfig.routes.datePicker}
+                >
+                  <Scene
+                    modal={true} panHandlers={null} title="Chọn ngày"
+                    {...navBarConfig}
+                    key={`${appConfig.routes.datePicker}_1`}
+                    component={DatePicker}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET ================ */}
+                <Stack key={appConfig.routes.airlineTicket}>
+                  <Scene
+                    title='Tìm chuyến bay'
+                    key={`${appConfig.routes.airlineTicket}_1`}
+                    component={AirlineTicket}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ PROFILE ================ */}
                 <Stack key={appConfig.routes.personalProfile}>
                   <Scene
@@ -926,7 +975,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                
+
                 {/* ================ LIST ADDRESS STORE ================ */}
                 <Stack key={appConfig.routes.listAddressStore}>
                   <Scene
@@ -1395,9 +1444,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="item_image_viewer">
+                <Stack key={appConfig.routes.itemImageViewer}>
                   <Scene
-                    key="item_image_viewer_1"
+                    key={`${appConfig.routes.itemImageViewer}_1`}
                     direction="vertical"
                     hideNavBar
                     component={ItemImageViewer}
@@ -1528,6 +1577,12 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.storeOrders}_1`}
                     component={StoreOrders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1977,6 +2032,10 @@ class RootRouter extends Component {
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
+              {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
+               <Stack key={appConfig.routes.customer} 
+               component={Customer}  hideNavBar/>
+
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}

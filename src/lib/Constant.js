@@ -122,6 +122,7 @@ global.STORAGE_INTRO_KEY = 'KeyStoreIntro';
 global.STORAGE_REF_KEY = 'KeyRefIntro';
 
 // stores
+global.FIRST_PAGE_STORES_LOAD_MORE = 31;
 global.STORES_LOAD_MORE = 30;
 global.STORE_DEMO_CODE = 'FH';
 global.KEY_EVENTS_STORE = 'KeyEventStore';
@@ -173,3 +174,9 @@ global.MEMBERSHIP_TYPE = {
   PLATINUM: 2,
   DIAMOND: 3
 };
+
+global.CUSTOMER_VALID = {
+  nguoi_lon: {min: 1, max: 9},
+  tre_em: {min: 0, max: 9},
+  tre_so_sinh: {min: 0, max: 2}
+}
