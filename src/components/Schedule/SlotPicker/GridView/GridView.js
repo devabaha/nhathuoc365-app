@@ -158,10 +158,10 @@ class GridView extends Component {
       this.state.horizontalSlots?.length === MIN_ITEMS_PER_ROW;
     const extraContainerStyle = {
       marginRight: (index + 1) % this.maxItemsPerRow === 0 ? 0 : 10,
-      width: isMinItemsPerRow
+      minWidth: isMinItemsPerRow
         ? (this.state.componentWidth - 10 * (MIN_ITEMS_PER_ROW - 1)) /
           MIN_ITEMS_PER_ROW
-        : Math.max(this.state.componentWidth / 5.5, MIN_WIDTH_HORIZONTAL_SLOT),
+        : Math.min(this.state.componentWidth / 5.5, MIN_WIDTH_HORIZONTAL_SLOT),
     };
 
     return (
