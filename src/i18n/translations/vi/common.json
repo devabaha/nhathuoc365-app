@@ -239,6 +239,8 @@
   "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
   "saveImageLabel": "Lưu ảnh",
   "noResult": "Chưa có dữ liệu",
+  "call": "Gọi điện",
+  "message": "Nhắn tin",
 
   "loading": "Đang lấy dữ liệu..."
 }

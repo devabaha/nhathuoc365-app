@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Text,
   Dimensions,
+  Clipboard,
 } from 'react-native';
 import {
   GiftedChat,
@@ -20,6 +21,7 @@ import {
   Time,
   Avatar,
   InputToolbar,
+  MessageText,
 } from 'react-native-gifted-chat';
 import {ImageMessageChat, CustomComposer} from '../../component';
 import PropTypes from 'prop-types';
@@ -28,6 +30,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
+import ActionSheet from 'react-native-actionsheet';
+import Communications from 'react-native-communications';
 import {setStater} from '../../helper';
 import {
   WIDTH,
@@ -99,6 +103,7 @@ class TickidChat extends Component {
     renderTime: PropTypes.func,
     renderBubble: PropTypes.func,
     renderMessageImage: PropTypes.func,
+    renderMessageText: PropTypes.func,
     renderMessage: PropTypes.func,
     renderActions: PropTypes.func,
     renderSend: PropTypes.func,
@@ -154,7 +159,7 @@ class TickidChat extends Component {
     isMultipleImagePicker: true,
     alwaysShowInput: false,
   };
-
+  
   state = {
     showToolBar: false,
     editable: false,
@@ -184,6 +189,7 @@ class TickidChat extends Component {
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
   refInput = React.createRef();
+  refMessageTextActionSheet = React.createRef();
   unmounted = false;
   animatedShowUpValue = 0;
   pinListProps = {
@@ -194,6 +200,13 @@ class TickidChat extends Component {
     onPinPress: this.props.onPinPress,
   };
   getLayoutDidMount = false;
+  NUMBER_PRESS_OPTIONS = [
+    this.props.t('call'),
+    this.props.t('message'),
+    this.props.t('copy'),
+    this.props.t('cancel'),
+  ];
+  currentPhoneNumber = 0;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -733,6 +746,22 @@ class TickidChat extends Component {
     }
   };
 
+  handleNumbersPressOptions = (index) => {
+    switch (index) {
+      case 0:
+        Communications.phonecall(this.currentPhoneNumber, true);
+        break;
+      case 1:
+        Communications.text(this.currentPhoneNumber);
+        break;
+      case 2:
+        Clipboard.setString(this.currentPhoneNumber);
+        break;
+      default:
+        break;
+    }
+  };
+
   renderLeftComposer = (props) => {
     if (typeof this.props.renderActions === 'function') {
       return this.props.renderActions(props);
@@ -1131,6 +1160,27 @@ class TickidChat extends Component {
     );
   };
 
+  renderMessageText = (props) => {
+    if (typeof this.props.renderMessageText === 'function') {
+      return this.props.renderMessageText(props);
+    }
+    return (
+      <MessageText
+        {...props}
+        parsePatterns={(linkStyle) => [
+          {
+            type: 'phone',
+            style: linkStyle,
+            onPress: (phoneNumb) => {
+              this.refMessageTextActionSheet.current.show();
+              this.currentPhoneNumber = phoneNumb;
+            },
+          },
+        ]}
+      />
+    );
+  };
+
   renderTime = (props) => {
     if (typeof this.props.renderTime === 'function') {
       return this.props.renderTime(props);
@@ -1268,6 +1318,7 @@ class TickidChat extends Component {
                 renderDay={this.renderDay}
                 renderMessage={this.renderMessage}
                 renderMessageImage={this.renderMessageImage}
+                renderMessageText={this.renderMessageText}
                 renderActions={this.renderLeftComposer}
                 renderComposer={this.renderComposer}
                 renderSend={this.renderSend}
@@ -1336,6 +1387,13 @@ class TickidChat extends Component {
             extraData={this.props.extraData}
           />
         </View>
+        <ActionSheet
+          ref={this.refMessageTextActionSheet}
+          options={this.NUMBER_PRESS_OPTIONS}
+          cancelButtonIndex={this.NUMBER_PRESS_OPTIONS.length - 1}
+          destructiveButtonIndex={this.NUMBER_PRESS_OPTIONS.length - 1}
+          onPress={this.handleNumbersPressOptions}
+        />
       </SafeAreaView>
     );
   }
@@ -1467,7 +1525,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TickidChat;
+export default withTranslation('common')(observer(TickidChat));
 
 export const EmptyChat = ({
   onPress,
