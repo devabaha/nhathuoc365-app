@@ -2,7 +2,8 @@
   "shopTitle": {
     "preOrder": "Đặt trước",
     "buy": "Mua ngay",
-    "book": "Đặt ngay"
+    "book": "Đặt ngay",
+    "postForSale": "Đăng bán"
   },
   "attr": {
     "notChooseAttrYet": "Chưa chọn thuộc tính",

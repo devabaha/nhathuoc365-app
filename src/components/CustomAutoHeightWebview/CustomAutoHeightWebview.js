@@ -39,12 +39,15 @@ class CustomAutoHeightWebview extends Component {
     return (
       <View style={this.props.containerStyle}>
         <AutoHeightWebView
+          ref={this.props.refWebview}
           onShouldStartLoadWithRequest={(result) => {
             return true;
           }}
           style={[styles.webview, this.props.contentStyle]}
           // onHeightUpdated={(height) => this.setState({height})}
-          source={{html: this.props.content}}
+          source={{
+            html: `<div id="webview"> ${this.props.content} </div>`,
+          }}
           zoomable={this.props.zoomable}
           scrollEnabled={this.props.scrollEnabled}
           viewportContent={'width=device-width, user-scalable=no'}

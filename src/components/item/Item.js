@@ -40,11 +40,20 @@ import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {shareImages} from '../../helper/share';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
 const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const COPY_SCRIPT = `
+      var range = document.createRange();
+      range.selectNode(document.getElementById("webview"));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+      window.getSelection().removeAllRanges();
+    `;
 class Item extends Component {
   static defaultProps = {
     showBtnProductStamps: false,
@@ -64,6 +73,7 @@ class Item extends Component {
       buying: false,
       like_loading: !this.props.preventUpdate,
       isSubActionLoading: false,
+      shareImgLoading: false,
       like_flag: 0,
       scrollY: 0,
       cartTypeConfirmMessage: '',
@@ -73,6 +83,7 @@ class Item extends Component {
     this.unmounted = false;
     this.eventTracker = new EventTracker();
     this.refPopupConfirmCartType = React.createRef();
+    this.refWebview = React.createRef();
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -386,6 +397,39 @@ class Item extends Component {
         <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
       ),
     });
+  };
+
+  handlePostForSaleBtn = (imgURLs = [], title = '', message = '') => {
+    this.setState({
+      shareImgLoading: true,
+      actionLoading: true,
+      refreshing: false,
+    });
+
+    const imageUrls = imgURLs.map((item) => {
+      return item.image;
+    });
+
+    shareImages(
+      imageUrls,
+      //callback
+      () =>
+        this.setState(
+          {
+            shareImgLoading: false,
+            actionLoading: false,
+            refreshing: false,
+          },
+          flashShowMessage({
+            message: 'Đã sao chép thông tin sản phẩm',
+            type: 'success',
+          }),
+        ),
+      title,
+      message,
+    ).catch((err) => console.log(err));
+
+    this.refWebview.current?.injectJavaScript(COPY_SCRIPT);
   };
 
   onSelectWarehouse = (warehouse, closeModal) => {
@@ -789,6 +833,40 @@ class Item extends Component {
     );
   }
 
+  renderPostForSaleBtn(product) {
+    const images = product?.img || [];
+    const {t} = this.props;
+
+    return (
+      !images.length &&
+      !product.content || (
+        <TouchableHighlight
+          onPress={() =>
+            this.handlePostForSaleBtn(product.img, product.name, product.name)
+          }
+          underlayColor="transparent"
+          style={styles.postForSaleBtnContainer}>
+          <View style={styles.postForSaleBtn}>
+            <View style={styles.item_actions_btn_icon_container}>
+              {this.renderPostForSaleBtnIcon(product)}
+            </View>
+            <Text style={styles.item_actions_title}>
+              {t('product:shopTitle.postForSale')}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      )
+    );
+  }
+
+  renderPostForSaleBtnIcon(product) {
+    return this.state.shareImgLoading ? (
+      <Indicator size="small" />
+    ) : (
+      <Icon name="send" style={styles.item_actions_btn_icon} />
+    );
+  }
+
   renderBtnProductStamps = () => {
     return (
       !!this.props.showBtnProductStamps && (
@@ -1019,6 +1097,7 @@ class Item extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
+              {this.renderPostForSaleBtn(item)}
             </View>
 
             {item != null && (
@@ -1107,6 +1186,7 @@ class Item extends Component {
               <CustomAutoHeightWebview
                 containerStyle={[styles.block, styles.item_content_text]}
                 content={item.content}
+                refWebview={this.refWebview}
               />
             )}
 
@@ -1317,6 +1397,20 @@ const styles = StyleSheet.create({
     height: 40,
     width: (appConfig.device.width - 45) / 2,
     borderRadius: 5,
+  },
+  postForSaleBtnContainer: {
+    alignItems: 'center',
+  },
+  postForSaleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f6abb6',
+    height: 40,
+    width: appConfig.device.width - 30,
+    borderRadius: 5,
+    marginTop: 15,
+    marginRight: 2,
   },
   item_actions_btn_icon_container: {
     height: '100%',
