@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Copy button when press long array numbers in GiftedChat view  by [kienluu612@gmail.com].
+- [CU-anxf53] Copy button when press long array numbers in GiftedChat view  by [kienluu612@gmail.com].
 ### Changed
 - Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 

@@ -103,7 +103,6 @@ class TickidChat extends Component {
     renderTime: PropTypes.func,
     renderBubble: PropTypes.func,
     renderMessageImage: PropTypes.func,
-    renderMessageText: PropTypes.func,
     renderMessage: PropTypes.func,
     renderActions: PropTypes.func,
     renderSend: PropTypes.func,
@@ -159,7 +158,7 @@ class TickidChat extends Component {
     isMultipleImagePicker: true,
     alwaysShowInput: false,
   };
-  
+
   state = {
     showToolBar: false,
     editable: false,
@@ -189,7 +188,7 @@ class TickidChat extends Component {
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
   refInput = React.createRef();
-  refMessageTextActionSheet = React.createRef();
+  refActionSheet = React.createRef();
   unmounted = false;
   animatedShowUpValue = 0;
   pinListProps = {
@@ -200,7 +199,7 @@ class TickidChat extends Component {
     onPinPress: this.props.onPinPress,
   };
   getLayoutDidMount = false;
-  NUMBER_PRESS_OPTIONS = [
+  PHONE_NUMBER_PRESSED_OPTIONS = [
     this.props.t('call'),
     this.props.t('message'),
     this.props.t('copy'),
@@ -746,7 +745,7 @@ class TickidChat extends Component {
     }
   };
 
-  handleNumbersPressOptions = (index) => {
+  handlePhoneNumbersPressOptions = (index) => {
     switch (index) {
       case 0:
         Communications.phonecall(this.currentPhoneNumber, true);
@@ -1160,27 +1159,6 @@ class TickidChat extends Component {
     );
   };
 
-  renderMessageText = (props) => {
-    if (typeof this.props.renderMessageText === 'function') {
-      return this.props.renderMessageText(props);
-    }
-    return (
-      <MessageText
-        {...props}
-        parsePatterns={(linkStyle) => [
-          {
-            type: 'phone',
-            style: linkStyle,
-            onPress: (phoneNumb) => {
-              this.refMessageTextActionSheet.current.show();
-              this.currentPhoneNumber = phoneNumb;
-            },
-          },
-        ]}
-      />
-    );
-  };
-
   renderTime = (props) => {
     if (typeof this.props.renderTime === 'function') {
       return this.props.renderTime(props);
@@ -1318,7 +1296,6 @@ class TickidChat extends Component {
                 renderDay={this.renderDay}
                 renderMessage={this.renderMessage}
                 renderMessageImage={this.renderMessageImage}
-                renderMessageText={this.renderMessageText}
                 renderActions={this.renderLeftComposer}
                 renderComposer={this.renderComposer}
                 renderSend={this.renderSend}
@@ -1361,6 +1338,16 @@ class TickidChat extends Component {
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
+                parsePatterns={(linkStyle) => [
+                  {
+                    type: 'phone',
+                    style: linkStyle,
+                    onPress: (phoneNumb) => {
+                      this.refActionSheet.current.show();
+                      this.currentPhoneNumber = phoneNumb;
+                    },
+                  },
+                ]}
                 {...this.props.giftedChatProps}
               />
             </Animated.View>
@@ -1388,11 +1375,11 @@ class TickidChat extends Component {
           />
         </View>
         <ActionSheet
-          ref={this.refMessageTextActionSheet}
-          options={this.NUMBER_PRESS_OPTIONS}
-          cancelButtonIndex={this.NUMBER_PRESS_OPTIONS.length - 1}
-          destructiveButtonIndex={this.NUMBER_PRESS_OPTIONS.length - 1}
-          onPress={this.handleNumbersPressOptions}
+          ref={this.refActionSheet}
+          options={this.PHONE_NUMBER_PRESSED_OPTIONS}
+          cancelButtonIndex={this.PHONE_NUMBER_PRESSED_OPTIONS.length - 1}
+          destructiveButtonIndex={this.PHONE_NUMBER_PRESSED_OPTIONS.length - 1}
+          onPress={this.handlePhoneNumbersPressOptions}
         />
       </SafeAreaView>
     );
