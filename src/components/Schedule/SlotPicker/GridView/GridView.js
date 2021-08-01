@@ -178,7 +178,7 @@ class GridView extends Component {
     const isSelected =
       this.getSlotValue(slot) === this.getSlotValue(this.props.selectedSlot);
 
-    return (
+      return (
       <TouchableHighlight
         key={index}
         disabled={isDisabled}
@@ -260,6 +260,9 @@ const styles = StyleSheet.create({
   slotDisabledContainer: {
     backgroundColor: appConfig.colors.border,
     borderColor: appConfig.colors.border,
+  },
+  slot: {
+    color: appConfig.colors.text,
   },
   slotSelected: {
     color: appConfig.colors.white,

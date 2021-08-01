@@ -25,7 +25,7 @@ class PaymentMethod extends Component {
     showPrice: true,
     showSubmit: true,
     store_id: store.store_data?.id,
-    cart_id: store.cart_data?.id
+    cart_id: store.cart_data?.id,
   };
 
   state = {
@@ -62,19 +62,20 @@ class PaymentMethod extends Component {
     const {t} = this.props;
     try {
       const response = await APIHandler.payment_method(this.props.store_id);
-      
+
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           if (response.data) {
             let selectedMethod = null;
             if (Array.isArray(response.data)) {
-              selectedMethod = response.data.find(
-                item => item.default_flag === 1
-              ) || {};
+              selectedMethod =
+                response.data.find((item) => item.default_flag === 1) || {};
             }
             this.setState({
               paymentMethod: response.data || [],
-              selectedMethod: this.state.selectedMethod?.id ? this.state.selectedMethod : selectedMethod
+              selectedMethod: this.state.selectedMethod?.id
+                ? this.state.selectedMethod
+                : selectedMethod,
             });
           }
         } else {
@@ -96,18 +97,16 @@ class PaymentMethod extends Component {
   };
 
   handleConfirm = async () => {
-    // const selectedMethod =
-    //   this.state.selectedMethod === DEFAULT_OBJECT
-    //     ? null
-    //     : this.state.selectedMethod;
-    // const selectedPaymentMethodDetail =
-    //   this.state.selectedPaymentMethodDetail === DEFAULT_OBJECT
-    //     ? null
-    //     : this.state.selectedPaymentMethodDetail;
-    // this.props.onConfirm(selectedMethod, selectedPaymentMethodDetail);
-    // Actions.pop();
     if (this.state.selectedMethod === DEFAULT_OBJECT) {
       Actions.pop();
+      return;
+    }
+
+    if (typeof this.props.onConfirm === 'function') {
+      this.props.onConfirm({
+        paymentType: this.state.selectedMethod.type,
+        paymentMethodId: this.state.selectedPaymentMethodDetail?.id || '',
+      });
       return;
     }
 
@@ -180,8 +179,8 @@ class PaymentMethod extends Component {
 
     switch (item.type) {
       case PAYMENT_METHOD_TYPES.MOBILE_BANKING:
-      // case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
-      // case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
+        // case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
+        // case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
         // if (!isSelected) {
         Actions.push(appConfig.routes.internetBanking, {
           title: item.title,

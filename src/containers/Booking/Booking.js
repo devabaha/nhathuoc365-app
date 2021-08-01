@@ -29,7 +29,9 @@ import {
   NoteSection,
   CommissionsSection,
   ActionButtonSection,
+  PaymentMethodSection,
 } from 'src/components/payment/Confirm/components';
+import {isUnpaid} from 'app-helper/product/product';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -541,6 +543,22 @@ export class Booking extends Component {
     this.setState({time, timeValue: time.value});
   };
 
+  handleChangePaymentMethod = () => {
+    Actions.push(appConfig.routes.paymentMethod, {
+      onConfirm: this.onConfirmPaymentMethod,
+      selectedMethod: this.state.booking.payment_method,
+      selectedPaymentMethodDetail: this.state.booking.payment_method_detail,
+      price: this.state.booking.total_before_view,
+      totalPrice: this.state.booking.total_selected,
+      extraFee: this.state.booking.item_fee,
+      store_id: this.state.booking.site_id,
+      cart_id: this.state.booking.id,
+      onConfirm: ({paymentType, paymentMethodId}) => {
+        this.setState({paymentType, paymentMethodId});
+      },
+    });
+  };
+
   handleChangeNote = (tempNote) => {
     this.setState({tempNote});
   };
@@ -708,6 +726,13 @@ export class Booking extends Component {
               onBlur={this.handleUpdateNote}
             />
           </View>
+
+          <PaymentMethodSection
+            marginTop
+            isUnpaid={isUnpaid(this.state.booking)}
+            cartData={this.state.booking}
+            onPressChange={this.handleChangePaymentMethod}
+          />
 
           <PricingAndPromotionSection
             isPromotionSelectable={this.editable}

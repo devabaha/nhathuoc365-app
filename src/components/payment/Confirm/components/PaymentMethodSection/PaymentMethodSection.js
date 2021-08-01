@@ -15,27 +15,30 @@ import appConfig from 'app-config';
 import Container from 'src/components/Layout/Container';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    zIndex: 1,
-    backgroundColor: '#fff'
-  },
   container: {
-    paddingTop: 0,
-    paddingRight: 0,
-    justifyContent: 'center',
+    zIndex: 1,
+    backgroundColor: '#fff',
+  },
+  maskContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   mask: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    transform: [{scale: 1.5}],
-  },
-  contentContainer: {
+    flex: 1,
     backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
     borderColor: appConfig.colors.primary,
     borderTopWidth: 1,
     borderBottomWidth: 1,
+  },
+  maskHighlight: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    transform: [{scale: 1.5}],
   },
   titleWrapper: {
     paddingTop: 12,
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
   },
   descriptionTitle: {
     fontSize: 14,
-    color: '#000000',
+    color: '#333',
     fontWeight: '600',
     flex: 1,
   },
@@ -92,6 +95,7 @@ const styles = StyleSheet.create({
 });
 
 const PaymentMethodSection = ({
+  marginTop,
   isUnpaid,
   cartData,
   onPressChange = () => {},
@@ -124,39 +128,42 @@ const PaymentMethodSection = ({
   }, []);
 
   return (
-    <Animated.View style={styles.wrapper}>
-      <Animated.View style={[styles.mask, maskStyle.current]} />
+    <SectionContainer
+      marginTop={marginTop}
+      style={styles.container}
+      title={t('confirm.paymentMethod.title')}
+      iconName="dollar-sign"
+      actionBtnTitle={!!isUnpaid && t('confirm.change')}
+      onPressActionBtn={onPressChange}>
+      <View pointerEvents="none" style={styles.maskContainer}>
+        <View style={styles.mask} />
+        <Animated.View style={[styles.maskHighlight, maskStyle.current]} />
+      </View>
 
-        <SectionContainer
-          style={styles.contentContainer}
-          title={t('confirm.paymentMethod.title')}
-          iconName="dollar-sign"
-          actionBtnTitle={!!isUnpaid && t('confirm.change')}
-          onPressActionBtn={onPressChange}>
-          <View>
-            <Container row style={styles.descriptionContainer}>
-              {!!cartData ? (
-                <View style={styles.paymentMethodContainer}>
-                  {!!cartData?.payment_method_detail?.image && (
-                    // <CachedImage
-                    //   mutable
-                    //   source={{uri: cart_data.payment_method.image}}
-                    //   style={styles.imagePaymentMethod}
-                    // />
-                    <CachedImage
-                      mutable
-                      source={{
-                        uri: cartData.payment_method_detail.image,
-                      }}
-                      style={styles.imagePaymentMethod}
-                    />
-                  )}
-                  {!!cartData?.payment_method?.name && (
-                    <Text style={[styles.descriptionTitle]}>
-                      {cartData.payment_method.name}
-                    </Text>
-                  )}
-                  {/* {!!cartData?.payment_method_detail?.image && (
+      <View>
+        <Container row style={styles.descriptionContainer}>
+          {!!cartData ? (
+            <View style={styles.paymentMethodContainer}>
+              {!!cartData?.payment_method_detail?.image && (
+                // <CachedImage
+                //   mutable
+                //   source={{uri: cart_data.payment_method.image}}
+                //   style={styles.imagePaymentMethod}
+                // />
+                <CachedImage
+                  mutable
+                  source={{
+                    uri: cartData.payment_method_detail.image,
+                  }}
+                  style={styles.imagePaymentMethod}
+                />
+              )}
+              {!!cartData?.payment_method?.name && (
+                <Text style={[styles.descriptionTitle]}>
+                  {cartData.payment_method.name}
+                </Text>
+              )}
+              {/* {!!cartData?.payment_method_detail?.image && (
                         <CachedImage
                           mutable
                           source={{
@@ -168,16 +175,15 @@ const PaymentMethodSection = ({
                           ]}
                         />
                       )} */}
-                </View>
-              ) : (
-                <Text style={styles.placeholder}>
-                  {t('confirm.paymentMethod.unselected')}
-                </Text>
-              )}
-            </Container>
-          </View>
-        </SectionContainer>
-    </Animated.View>
+            </View>
+          ) : (
+            <Text style={styles.placeholder}>
+              {t('confirm.paymentMethod.unselected')}
+            </Text>
+          )}
+        </Container>
+      </View>
+    </SectionContainer>
   );
 };
 
