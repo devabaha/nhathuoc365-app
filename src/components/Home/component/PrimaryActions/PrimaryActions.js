@@ -93,7 +93,7 @@ class PrimaryActions extends Component {
                 containerStyle={styles.surplusContainer}
                 onPress={() => props.onPressCommission()}>
                 <View style={styles.walletInfoWrapper}>
-                  <Text style={styles.walletNameLabel}>{revenue_commissions?.this_month_commissions.title}</Text>
+                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
                   <View style={styles.walletLabelRight}>
                     <Text style={styles.surplus}>{revenue_commissions?.this_month_commissions.value}</Text>
                   </View>

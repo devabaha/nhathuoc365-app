@@ -1527,6 +1527,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   valueRevenueCommissions: {
+    width: '100%',
     marginVertical: appConfig.device.isIOS ? 2 : 0,
     marginHorizontal: 5,
     fontSize: 16,
