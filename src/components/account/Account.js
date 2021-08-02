@@ -186,21 +186,16 @@ class Account extends Component {
         iconSize: 14,
         marginTop: 10,
         label: (
-          <>
-            {
-              this.renderRevenueCommission(
-                revenue_commissions?.this_month_commissions?.title,
-                revenue_commissions?.this_month_commissions?.value
-              )
-            }
-
-            {
-              this.renderRevenueCommission(
-                revenue_commissions?.last_month_commissions?.title,
-                revenue_commissions?.last_month_commissions?.value
-              )
-            }
-          </>
+            <View style={styles.viewRevenueCommissions}>
+              <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.this_month_commissions?.title}:</Text>
+              <Text style={styles.valueThisMonthCommission}>{revenue_commissions?.this_month_commissions?.value}1.000.000 VND</Text>
+            </View>
+        ),
+        desc: (
+            <View style={styles.viewRevenueCommissions}>
+              <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title}:</Text>
+              <Text style={styles.valueLastMonthCommission}>{revenue_commissions?.last_month_commissions?.value}1.000.000 VND</Text>
+            </View>
         ),
         rightIcon: <IconAngleRight />,
         onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
@@ -1019,15 +1014,6 @@ class Account extends Component {
     );
   }
 
-  renderRevenueCommission(label, value) {
-    return (
-        <View style={styles.viewRevenueCommissions}>
-          <Text style={styles.titleRevenueCommissions}>{label}:</Text>
-          <Text style={styles.valueRevenueCommissions}>{value}</Text>
-        </View>
-    )
-  }
-
   render() {
     const {user_info = {}} = store;
     const is_login =
@@ -1518,21 +1504,34 @@ const styles = StyleSheet.create({
   },
   viewRevenueCommissions: {
     flexDirection: 'row',
-    marginBottom: -6,
+    marginBottom: appConfig.device.isIOS ? -7 : 0,
   },
-  titleRevenueCommissions: {
-    marginVertical: appConfig.device.isIOS ? 4 : 3,
-    fontSize: 12,
+  titleThisMonthCommission: {
+    fontSize: 16,
     color: '#000000',
     fontWeight: '400',
-  },
-  valueRevenueCommissions: {
-    width: '100%',
     marginVertical: appConfig.device.isIOS ? 2 : 0,
+  },
+  valueThisMonthCommission: {
+    width: '100%',
+    marginVertical: appConfig.device.isIOS ? 3 : 0,
     marginHorizontal: 5,
     fontSize: 16,
     color: appConfig.colors.primary,
     fontWeight: '600',
+  },
+  titleLastMonthCommission: {
+    fontSize: 12,
+    color: '#404040',
+    marginTop: appConfig.device.isIOS ? 4 : 0,
+  },
+  valueLastMonthCommission: {
+    width: '100%',
+    marginVertical: appConfig.device.isIOS ? 4 : 0,
+    marginHorizontal: 5,
+    fontSize: 12,
+    color: appConfig.colors.primary,
+    fontWeight: '300',
   },
 });
 
