@@ -214,7 +214,11 @@ export class Booking extends Component {
         nextState.paymentType !== this.state.paymentType ||
         nextState.paymentMethodId !== this.state.paymentMethodId)
     ) {
-      this.updateBooking(nextState);
+      this.updateBooking(
+        nextState,
+        nextState.paymentType !== this.state.paymentType ||
+          nextState.paymentMethodId !== this.state.paymentMethodId,
+      );
     }
 
     return true;
@@ -336,11 +340,12 @@ export class Booking extends Component {
     }
   };
 
-  updateBooking = debounce(async (state = this.state) => {
-    if (!this.editable || !this.state.booking) return;
-    this.setState({
-      updateLoading: true,
-    });
+  updateBooking = debounce(async (state = this.state, forceUpdate = false) => {
+    if ((!this.editable || !this.state.booking) && !forceUpdate) return;
+    !this.state.loading &&
+      this.setState({
+        updateLoading: true,
+      });
 
     const data = {
       model: state.model,
@@ -368,10 +373,25 @@ export class Booking extends Component {
           if (response.data) {
             this.updateStateBooking(response.data);
           }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message:
+              response.message || this.props.t('common:api.error.message'),
+          });
         }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: this.props.t('common:api.error.message'),
+        });
       }
     } catch (error) {
       console.log('update_booking', error);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
     } finally {
       if (this.unmounted) return;
       this.setState({
@@ -401,15 +421,11 @@ export class Booking extends Component {
             type: 'success',
             message: response.message,
           });
-          // if (
-          //   response.data.cart_payment_type === CART_PAYMENT_TYPES.PAY &&
-          //   (!response.data.payment_status ||
-          //     response.data.payment_status === CART_PAYMENT_STATUS.UNPAID)
-          // ) {
-          this.goToTransaction(response.data.site_id, response.data.id);
-          // } else {
-          //   Actions.pop();
-          // }
+          if (canTransaction(response.data)) {
+            this.goToTransaction(response.data.site_id, response.data.id);
+          } else {
+            Actions.pop();
+          }
         } else {
           flashShowMessage({
             type: 'danger',
@@ -587,7 +603,12 @@ export class Booking extends Component {
       cart_id: this.state.booking.id,
       onConfirm: ({paymentType, paymentMethodId}) => {
         Actions.pop();
-        this.setState({paymentType, paymentMethodId, loading: true});
+        if (
+          paymentType !== this.state.paymentType ||
+          paymentMethodId !== this.state.paymentMethodId
+        ) {
+          this.setState({paymentType, paymentMethodId, loading: true});
+        }
       },
     });
   };
