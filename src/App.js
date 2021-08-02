@@ -198,6 +198,7 @@ import Place from './containers/AirlineTicket/Place';
 import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import MainNotify from './components/notify/MainNotify';
 
 /**
  * Not allow font scaling
@@ -823,8 +824,7 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    icon={FoodHubCartButton}>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -832,6 +832,23 @@ class RootRouter extends Component {
                    ************************ Tab 3 ************************
                    */}
                   <Stack
+                    key={appConfig.routes.mainNotify}
+                    icon={TabIcon}
+                    iconSize={20}
+                    iconLabel={t('appTab.tab3.title')}
+                    iconName="bell"
+                    notifyKey="notify_list_notice">
+                    <Scene
+                      key={`${appConfig.routes.mainNotify}_1`}
+                      title={t('appTab.tab3.title')}
+                      component={MainNotify}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 4 ************************
+                   */}
+                  {/* <Stack
                     key={appConfig.routes.ordersTab}
                     icon={TabIcon}
                     iconSize={24}
@@ -850,10 +867,10 @@ class RootRouter extends Component {
                         store.setUpdateOrders(false);
                       }}
                     />
-                  </Stack>
+                  </Stack> */}
 
                   {/**
-                   ************************ Tab 4 ************************
+                   ************************ Tab 5 ************************
                    */}
                   <Stack
                     key={appConfig.routes.accountTab}
@@ -897,15 +914,18 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.place}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}
-                >
+                <Stack key={appConfig.routes.datePicker}>
                   <Scene
-                    modal={true} panHandlers={null} title="Chọn ngày"
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
                     {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
@@ -916,7 +936,7 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title='Tìm chuyến bay'
+                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -944,7 +964,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
 
                 {/* ================ LIST USER CHAT ================ */}
                 <Stack key={appConfig.routes.listUserChat}>
@@ -2033,9 +2052,11 @@ class RootRouter extends Component {
                 component={ModalFilterProduct}
               />
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}

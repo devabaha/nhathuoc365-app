@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Notifications in tab bar by [minhnguyenit14@gmail.com].
 ### Changed
 - Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 ### Fixed

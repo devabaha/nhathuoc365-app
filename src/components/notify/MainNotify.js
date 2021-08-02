@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,13 @@ import {
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  ScrollView
+  ScrollView,
 } from 'react-native';
-import { reaction } from 'mobx';
+import {reaction} from 'mobx';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 import SelectionList from '../SelectionList';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import NotifyItemComponent from './NotifyItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
@@ -27,14 +27,14 @@ class MainNotify extends Component {
       notice_data: null,
       refreshing: false,
       finish: false,
-      scrollTop: 0
+      scrollTop: 0,
     };
 
     reaction(
       () => store.notify,
       () => {
         this._setOptionList();
-      }
+      },
     );
     this.eventTracker = new EventTracker();
   }
@@ -50,16 +50,16 @@ class MainNotify extends Component {
           notify: 'new_site_news',
           onPress: () => {
             Actions.notifies({
-              news_type: '/1'
+              news_type: '/1',
             });
           },
           boxIconStyle: [
             styles.boxIconStyle,
             {
-              backgroundColor: '#fa7f50'
-            }
+              backgroundColor: '#fa7f50',
+            },
           ],
-          iconColor: '#ffffff'
+          iconColor: '#ffffff',
         },
         {
           key: 1,
@@ -70,13 +70,13 @@ class MainNotify extends Component {
           onPress: () => {
             Actions.notifies({
               title: 'Từ ' + APP_NAME_SHOW,
-              news_type: '/2'
+              news_type: '/2',
             });
           },
           boxIconStyle: [styles.boxIconStyle],
-          iconColor: '#ffffff'
-        }
-      ]
+          iconColor: '#ffffff',
+        },
+      ],
     });
   }
 
@@ -116,12 +116,12 @@ class MainNotify extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_main_notify) {
-      this.refs_main_notify.scrollTo({ x: 0, y: top, animated: true });
+      this.refs_main_notify.scrollTo({x: 0, y: top, animated: true});
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
         this.setState({
-          scrollTop: top
+          scrollTop: top,
         });
       }, 500);
     }
@@ -130,68 +130,61 @@ class MainNotify extends Component {
   _scrollOverTopAndReload() {
     this.setState(
       {
-        refreshing: true
+        refreshing: true,
       },
       () => {
         this._scrollToTop(-60);
 
         this._getData(1000);
-      }
+      },
     );
   }
 
-  _getData(delay) {
-    this.setState(
-      {
-        loading: true
-      },
-      async () => {
-        try {
-          var response = await APIHandler.user_notice();
+  async _getData(delay) {
+    try {
+      var response = await APIHandler.user_notice();
 
-          if (response && response.status == STATUS_SUCCESS) {
-            setTimeout(() => {
-              this.setState({
-                loading: false,
-                user_notice: response.data,
-                refreshing: false,
-                finish: true
-              });
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          loading: false,
+          user_notice: response.data,
+          refreshing: false,
+          finish: true,
+        });
 
-              this._scrollToTop(0);
-            }, delay || 0);
-          } else {
-            this.setState({
-              loading: false,
-              refreshing: false
-            });
-          }
-        } catch (e) {
-          console.log(e + ' user_notice');
-
-          store.addApiQueue('user_notice', this._getData.bind(this, delay));
-        } finally {
-          store.getNotify();
-        }
+        this._scrollToTop(0);
       }
-    );
+    } catch (e) {
+      console.log(e + ' user_notice');
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('api.error.message'),
+      });
+    } finally {
+      store.getNotify();
+      this.setState({
+        loading: false,
+        refreshing: false,
+      });
+    }
   }
 
   _onRefresh() {
     this.setState(
       {
-        refreshing: true
+        refreshing: true,
       },
-      this._getData.bind(this, 1000)
+      this._getData.bind(this, 1000),
     );
   }
 
   render() {
-    var { user_notice, loading } = this.state;
+    var {user_notice, loading} = this.state;
 
     return (
       <View style={styles.container}>
-        <ScrollView
+        {loading && <Indicator />}
+        {/* <ScrollView
           onScroll={event => {
             this.setState({
               scrollTop: event.nativeEvent.contentOffset.y
@@ -204,35 +197,27 @@ class MainNotify extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-        >
-          {this.state.navigators != null && (
+        > */}
+        {/* {this.state.navigators != null && (
             <SelectionList data={this.state.navigators} />
-          )}
+          )} */}
 
-          <View style={styles.boxTop} />
+        {/* <View style={styles.boxTop} />
 
           <View style={styles.headding_box}>
             <Text style={styles.headding_title}>THÔNG BÁO ĐƠN HÀNG</Text>
-          </View>
+          </View> */}
 
-          <View style={styles.notice_box}>
-            {loading && user_notice == null ? (
-              <View style={[styles.defaultBox]}>
-                <Indicator size="small" />
-              </View>
-            ) : user_notice != null ? (
-              <FlatList
-                ItemSeparatorComponent={() => (
-                  <View style={styles.separator}></View>
-                )}
-                data={user_notice}
-                style={[styles.profile_list_opt]}
-                renderItem={({ item, index }) => {
-                  return <NotifyItemComponent item={item} />;
-                }}
-                keyExtractor={item => item.id}
-              />
-            ) : (
+        <FlatList
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          data={user_notice || []}
+          style={[styles.profile_list_opt]}
+          contentContainerStyle={styles.contentContainer}
+          renderItem={({item, index}) => {
+            return <NotifyItemComponent item={item} t={this.props.t} />;
+          }}
+          ListEmptyComponent={
+            !loading && (
               <View style={styles.empty_box}>
                 <Icon
                   name="shopping-basket"
@@ -245,16 +230,23 @@ class MainNotify extends Component {
                   onPress={() => {
                     Actions.jump(appConfig.routes.homeTab);
                   }}
-                  underlayColor="transparent"
-                >
+                  underlayColor="transparent">
                   <View style={styles.empty_box_btn}>
                     <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
                   </View>
                 </TouchableHighlight>
               </View>
-            )}
-          </View>
-        </ScrollView>
+            )
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          keyExtractor={(item) => item.id}
+        />
+        {/* </ScrollView> */}
       </View>
     );
   }
@@ -265,49 +257,50 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 120,
     backgroundColor: '#ffffff',
-    marginBottom: 8
+    marginBottom: 8,
   },
 
   container: {
-    flex: 1
+    flex: 1,
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
     marginLeft: 6,
-    borderRadius: 15
+    borderRadius: 15,
   },
 
   boxTop: {
     width: '100%',
-    height: 4
+    height: 4,
   },
 
   headding_box: {
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   headding_title: {
     color: '#404040',
     fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20
+    lineHeight: 20,
   },
 
   notice_box: {
-    width: '100%'
+    width: '100%',
   },
 
   empty_box: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 32
   },
   empty_box_title: {
     fontSize: 12,
     marginTop: 8,
-    color: '#404040'
+    color: '#404040',
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
@@ -318,22 +311,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 12,
     borderRadius: 5,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   empty_box_btn_title: {
-    color: '#ffffff'
+    color: '#ffffff',
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
 
   profile_list_opt: {
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
-  }
+    borderColor: '#dddddd',
+  },
+
+  contentContainer: {
+    flexGrow: 1,
+  },
 });
 
-export default observer(MainNotify);
+export default withTranslation('common')(observer(MainNotify));
