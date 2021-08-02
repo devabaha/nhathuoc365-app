@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+- [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+- [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
 ### Fixed
 - Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
 
