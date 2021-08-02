@@ -21,6 +21,7 @@ import {PRODUCT_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
+import {isOutOfStock} from 'app-helper/product';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -134,11 +135,11 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
-                    {!!this.props.item.commission_value && 
-                        <Text style={styles.commissionText} numberOfLines={1}>
-                          {this.props.item.commission_value_view}
-                        </Text>
-                    }
+                    {!!this.props.item.commission_value && (
+                      <Text style={styles.commissionText} numberOfLines={1}>
+                        {this.props.item.commission_value_view}
+                      </Text>
+                    )}
 
                     <View
                       style={{
@@ -168,6 +169,7 @@ class ProductItem extends PureComponent {
                       </Text>
 
                       <TouchableOpacity
+                        disabled={isOutOfStock(item)}
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}>
                         <View
@@ -184,7 +186,10 @@ class ProductItem extends PureComponent {
                           ) : (
                             <MaterialIcons
                               name="add-shopping-cart"
-                              style={styles.icon}
+                              style={[
+                                styles.icon,
+                                isOutOfStock(item) && styles.iconDisabled,
+                              ]}
                             />
                           )}
                         </View>
@@ -301,6 +306,9 @@ let styles = StyleSheet.create({
     fontSize: 20,
     color: appConfig.colors.highlight[1],
   },
+  iconDisabled: {
+    color: '#ddd',
+  },
   brandTagContainer: {
     position: 'absolute',
     bottom: -5,
@@ -317,7 +325,7 @@ let styles = StyleSheet.create({
     borderColor: '#ddd',
     borderBottomColor: '#ddd',
   },
- brandTag: {
+  brandTag: {
     color: appConfig.colors.primary,
     fontWeight: '500',
     fontSize: 12,
@@ -333,4 +341,4 @@ let styles = StyleSheet.create({
 
 styles = Themes.mergeStyles(styles, productItemStyle);
 
-export default ProductItem;
+export default withTranslation('product')(ProductItem);
