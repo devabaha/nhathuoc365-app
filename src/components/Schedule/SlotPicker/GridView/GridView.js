@@ -178,7 +178,7 @@ class GridView extends Component {
     const isSelected =
       this.getSlotValue(slot) === this.getSlotValue(this.props.selectedSlot);
 
-      return (
+    return (
       <TouchableHighlight
         key={index}
         disabled={isDisabled}
@@ -190,7 +190,12 @@ class GridView extends Component {
           isSelected && styles.slotSelectedContainer,
           isDisabled && styles.slotDisabledContainer,
         ]}>
-        <Text style={[styles.slot, isSelected && styles.slotSelected]}>
+        <Text
+          style={[
+            styles.slot,
+            isSelected && styles.slotSelected,
+            isDisabled && styles.slotDisabled,
+          ]}>
           {this.getSlotValue(slot)}
         </Text>
       </TouchableHighlight>
@@ -266,6 +271,9 @@ const styles = StyleSheet.create({
   },
   slotSelected: {
     color: appConfig.colors.white,
+  },
+  slotDisabled: {
+    color: '#ccc',
   },
 });
 

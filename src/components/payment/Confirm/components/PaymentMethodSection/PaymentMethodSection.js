@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
 });
 
 const PaymentMethodSection = ({
-  marginTop,
   isUnpaid,
   cartData,
   onPressChange = () => {},
@@ -129,7 +128,7 @@ const PaymentMethodSection = ({
 
   return (
     <SectionContainer
-      marginTop={marginTop}
+      marginTop
       style={styles.container}
       title={t('confirm.paymentMethod.title')}
       iconName="dollar-sign"

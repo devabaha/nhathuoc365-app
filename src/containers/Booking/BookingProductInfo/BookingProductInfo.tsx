@@ -149,6 +149,7 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
 
         {this.props.editable && (
           <AttributeSelection
+            ignoreInventory
             attrs={this.props.attrs}
             models={this.props.models}
             defaultSelectedModel={this.props.defaultSelectedModel}

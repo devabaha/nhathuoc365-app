@@ -31,7 +31,7 @@ import {
   ActionButtonSection,
   PaymentMethodSection,
 } from 'src/components/payment/Confirm/components';
-import {isUnpaid} from 'app-helper/product/product';
+import {isUnpaid, canTransaction} from 'app-helper/product';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -127,13 +127,14 @@ export class Booking extends Component {
     refreshing: false,
 
     quantity: MIN_QUANTITY,
-    max: undefined,
 
     tempNote: '',
     note: '',
     date: '',
     time: {},
     timeValue: '',
+    paymentType: '',
+    paymentMethodId: '',
   };
   refScrollView = React.createRef();
   refPopupCancelBooking = React.createRef();
@@ -209,7 +210,9 @@ export class Booking extends Component {
         nextState.note !== this.state.note ||
         (nextState.date &&
           (nextState.date !== this.state.date ||
-            nextState.timeValue !== this.state.timeValue)))
+            nextState.timeValue !== this.state.timeValue)) ||
+        nextState.paymentType !== this.state.paymentType ||
+        nextState.paymentMethodId !== this.state.paymentMethodId)
     ) {
       this.updateBooking(nextState);
     }
@@ -246,6 +249,12 @@ export class Booking extends Component {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             this.updateStateBooking(response.data);
+
+            if (response.data.cart_code) {
+              Actions.refresh({
+                title: `#${response.data.cart_code}`,
+              });
+            }
           }
         } else {
           flashShowMessage({
@@ -339,7 +348,10 @@ export class Booking extends Component {
       time: this.getDateTimeValue(state),
       address_id: state.addressId,
       user_note: state.note || state.tempNote,
+      payment_type: state.paymentType,
+      payment_method_id: state.paymentMethodId,
     };
+
     this.updateBookingRequest.data = APIHandler.booking_update(
       this.props.siteId,
       this.state.booking?.id,
@@ -389,7 +401,15 @@ export class Booking extends Component {
             type: 'success',
             message: response.message,
           });
-          Actions.pop();
+          // if (
+          //   response.data.cart_payment_type === CART_PAYMENT_TYPES.PAY &&
+          //   (!response.data.payment_status ||
+          //     response.data.payment_status === CART_PAYMENT_STATUS.UNPAID)
+          // ) {
+          this.goToTransaction(response.data.site_id, response.data.id);
+          // } else {
+          //   Actions.pop();
+          // }
         } else {
           flashShowMessage({
             type: 'danger',
@@ -483,6 +503,8 @@ export class Booking extends Component {
         tempNote: booking.user_note || '',
         note: booking.user_note,
         model: this.getMainProduct(booking.products).model,
+        paymentType: booking.payment_type,
+        paymentMethodId: booking.payment_method?.id,
         ...state,
       };
     }
@@ -506,6 +528,17 @@ export class Booking extends Component {
 
   getDateTimeValue = (state) => {
     return (state.date || '') + (state.timeValue ? ' ' + state.timeValue : '');
+  };
+
+  goToTransaction = (siteId, cartId) => {
+    Actions.push(appConfig.routes.transaction, {
+      siteId,
+      cartId,
+      onPop: () => {
+        this.setState({loading: true});
+        this.getBooking();
+      },
+    });
   };
 
   handleSelectAttr = (selectedAttr, model) => {
@@ -545,7 +578,6 @@ export class Booking extends Component {
 
   handleChangePaymentMethod = () => {
     Actions.push(appConfig.routes.paymentMethod, {
-      onConfirm: this.onConfirmPaymentMethod,
       selectedMethod: this.state.booking.payment_method,
       selectedPaymentMethodDetail: this.state.booking.payment_method_detail,
       price: this.state.booking.total_before_view,
@@ -554,7 +586,8 @@ export class Booking extends Component {
       store_id: this.state.booking.site_id,
       cart_id: this.state.booking.id,
       onConfirm: ({paymentType, paymentMethodId}) => {
-        this.setState({paymentType, paymentMethodId});
+        Actions.pop();
+        this.setState({paymentType, paymentMethodId, loading: true});
       },
     });
   };
@@ -627,22 +660,6 @@ export class Booking extends Component {
     this.scrollContentSizeY = e.nativeEvent.layout.height;
   };
 
-  renderProductInfo = () => {
-    if (!this.mainProduct) return null;
-
-    return (
-      <BookingProductInfo
-        editable={this.editable}
-        product={this.mainProduct}
-        attrs={this.props.attrs || {}}
-        models={this.props.models || {}}
-        defaultSelectedModel={this.mainProduct.model}
-        onSelectAttr={this.handleSelectAttr}
-        onChangeQuantity={this.handleChangeQuantity}
-      />
-    );
-  };
-
   render() {
     const itemFee = this.state.booking?.item_fee || {};
     const cashbackView = this.state.booking?.cashback_view || {};
@@ -682,7 +699,17 @@ export class Booking extends Component {
               onRefresh={this.handleRefresh}
             />
           }>
-          {this.renderProductInfo()}
+          {!!this.mainProduct && (
+            <BookingProductInfo
+              editable={this.editable}
+              product={this.mainProduct}
+              attrs={this.props.attrs || {}}
+              models={this.props.models || {}}
+              defaultSelectedModel={this.mainProduct.model}
+              onSelectAttr={this.handleSelectAttr}
+              onChangeQuantity={this.handleChangeQuantity}
+            />
+          )}
 
           <StoreInfoSection
             image={this.storeInfo.img}
@@ -728,7 +755,6 @@ export class Booking extends Component {
           </View>
 
           <PaymentMethodSection
-            marginTop
             isUnpaid={isUnpaid(this.state.booking)}
             cartData={this.state.booking}
             onPressChange={this.handleChangePaymentMethod}
@@ -758,15 +784,26 @@ export class Booking extends Component {
           />
         </KeyboardAwareScrollView>
 
-        {this.editable && this.state.booking?.id && (
-          <Button
-            disabled={this.isDisabled}
-            title={this.props.t('orders:confirm.confirmTitle')}
-            containerStyle={styles.btnContainer}
-            btnContainerStyle={[styles.btnContentContainer]}
-            onPress={this.orderBooking}
-          />
-        )}
+        {this.state.booking?.id &&
+          (this.editable ? (
+            <Button
+              disabled={this.isDisabled}
+              title={this.props.t('orders:confirm.confirmTitle')}
+              containerStyle={styles.btnContainer}
+              btnContainerStyle={[styles.btnContentContainer]}
+              onPress={this.orderBooking}
+            />
+          ) : (
+            canTransaction(this.state.booking) && (
+              <Button
+                disabled={this.isDisabled}
+                title={this.props.t('orders:confirm.payTitle')}
+                containerStyle={styles.btnContainer}
+                btnContainerStyle={[styles.btnContentContainer]}
+                onPress={this.goToTransaction}
+              />
+            )
+          ))}
 
         <PopupConfirm
           ref_popup={this.refPopupCancelBooking}

@@ -268,7 +268,8 @@ class Config {
       // end routes of Voucher module **
 
       // Routes of Order
-      orders: 'Orders',
+      orders: 'orders',
+      ordersDetail: 'orders_item',
       paymentConfirm: 'paymentConfirm',
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',

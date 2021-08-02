@@ -1,6 +1,6 @@
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {ORDER_TYPES} from 'src/constants';
-import { CART_PAYMENT_STATUS } from 'src/constants/cart';
+import {CART_PAYMENT_STATUS, CART_PAYMENT_TYPES} from 'src/constants/cart';
 
 export const isOutOfStock = (product = {}) => {
   return (
@@ -15,5 +15,15 @@ export const isUnpaid = (cartData = {}) => {
     cartData.payment_status === null ||
     cartData.payment_status === undefined ||
     cartData.payment_status === CART_PAYMENT_STATUS.UNPAID
+  );
+};
+
+export const isPaid = (cartData = {}) => {
+  return cartData.payment_status === CART_PAYMENT_STATUS.PAID;
+};
+
+export const canTransaction = (cartData = {}) => {
+  return (
+    cartData.cart_payment_type === CART_PAYMENT_TYPES.PAY && isUnpaid(cartData)
   );
 };

@@ -132,8 +132,8 @@ class Confirm extends Component {
     if (is_paymenting) {
       this.setState({loading: true});
       this._getOrdersItem(this.state.data.site_id, this.state.data.id);
-    } else if (this.props.item) {
-      this._getOrdersItem(this.props.item.site_id, this.props.item.id, false);
+    } else if (this.props.data) {
+      this._getOrdersItem(this.props.data.site_id, this.props.data.id, false);
     }
     setTimeout(() =>
       Actions.refresh({
@@ -520,7 +520,6 @@ class Confirm extends Component {
 
   _goPaymentMethod = (cart_data) => {
     Actions.push(appConfig.routes.paymentMethod, {
-      onConfirm: this.onConfirmPaymentMethod,
       selectedMethod: cart_data.payment_method,
       selectedPaymentMethodDetail: cart_data.payment_method_detail,
       price: cart_data.total_before_view,
@@ -959,56 +958,6 @@ class Confirm extends Component {
               onRemoveCartItem={() => this._removeItemCartConfirm(product)}
               noAction={!single || this.state.isConfirming}
             />
-          );
-        })}
-      </View>
-    );
-  }
-
-  renderCommissions(cart_data) {
-    const commissions = cart_data?.commissions || [];
-    if (typeof commissions === 'string' || commissions.length === 0)
-      return null;
-
-    return (
-      <View
-        style={[styles.rows, styles.borderBottom, styles.commissionContainer]}>
-        {commissions.map((commission, index) => {
-          const isLast = index === commissions.length - 1;
-          return (
-            <View
-              key={index}
-              style={[
-                styles.address_name_box,
-                styles.feeBox,
-                isLast && styles.lastCommission,
-              ]}>
-              <Text
-                style={[
-                  styles.text_total_items,
-                  styles.feeLabel,
-                  isLast && styles.both,
-                  !isLast && {color: appConfig.colors.primary},
-                  styles.commissionTitle,
-                ]}>
-                {commission.name}
-              </Text>
-              <View>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
-                  <Text
-                    style={[
-                      styles.address_default_title,
-                      styles.title_active,
-                      styles.feeValue,
-                      isLast && styles.both,
-                    ]}>
-                    {commission.value_view}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
           );
         })}
       </View>

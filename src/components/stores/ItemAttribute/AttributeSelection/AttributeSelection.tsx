@@ -158,7 +158,7 @@ export class AttributeSelection extends Component<AttributeSelectionProps> {
       data = data.map((attr, i) => {
         let disabled = false;
 
-        if (attrs.length === 1) {
+        if (!this.props.ignoreInventory && attrs.length === 1) {
           // disable if empty inventory ONLY IF product has only 1 attr.
           disabled = !!!Object.values(models).find(
             //@ts-ignore
@@ -299,7 +299,7 @@ export class AttributeSelection extends Component<AttributeSelectionProps> {
       });
 
       if (possible) {
-        if (!models[key].inventory) {
+        if (!this.props.ignoreInventory && !models[key].inventory) {
           let viewData = [...this.state.viewData];
           viewData.forEach((vData, index) => {
             if (index.toString() === willDisabledAttrGroupIndex) {
