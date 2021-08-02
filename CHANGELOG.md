@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+### Fixed
+- Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added
