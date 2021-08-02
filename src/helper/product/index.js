@@ -1,0 +1,1 @@
+export {isOutOfStock} from './product';

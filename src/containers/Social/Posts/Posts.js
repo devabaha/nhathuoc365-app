@@ -48,6 +48,7 @@ const Posts = ({
   posts: postsProp,
   siteId = store.store_data?.id,
   disableLoadMore = false,
+  disablePostUpdating = false,
   refreshControl,
   limit: limitProp = 10,
   onScroll = () => {},
@@ -97,7 +98,12 @@ const Posts = ({
   );
 
   useEffect(() => {
-    const disposer = reaction(
+    let disposer = () => {};
+    if (disablePostUpdating) {
+      disposer();
+      return;
+    }
+    disposer = reaction(
       () => store.socialPostingData,
       (postingData) => {
         if (postingData?.id) {
@@ -116,7 +122,7 @@ const Posts = ({
     return () => {
       disposer();
     };
-  }, [addPostingData]);
+  }, [addPostingData, disablePostUpdating]);
 
   const setStoreSocialPosts = (posts) => {
     const storePosts = {};
@@ -202,7 +208,6 @@ const Posts = ({
 
   const handlePressUserName = useCallback((user) => {
     // user.id = user.user_id;
-
     // servicesHandler({
     //   type: SERVICES_TYPE.PERSONAL_PROFILE,
     //   isMainUser: user.user_id == store.user_info?.id,

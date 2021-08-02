@@ -557,6 +557,7 @@ class Home extends Component {
                   contentContainerStyle={styles.socialPostContainer}
                   renderContent={() => (
                     <Posts
+                      disablePostUpdating
                       disableLoadMore
                       posts={this.props.social_posts}
                     />
@@ -663,7 +664,7 @@ let styles = StyleSheet.create({
 
   servicesBlock: {
     paddingBottom: 10,
-    marginTop: -20
+    marginTop: -20,
   },
   servicesContent: {
     paddingTop: 20,
