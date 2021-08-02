@@ -71,6 +71,10 @@ const Posts = ({
   const [posts, setPosts] = useState(postsProp || []);
 
   useEffect(() => {
+    setPosts(postsProp);
+  }, [postsProp])
+
+  useEffect(() => {
     if (!postsProp) {
       getPosts();
     }
