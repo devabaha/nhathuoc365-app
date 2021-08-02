@@ -16,6 +16,8 @@ import {Actions} from 'react-native-router-flux';
 import NotifyItemComponent from './NotifyItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
+import NoResult from '../NoResult';
+import {BUNDLE_ICON_SETS_NAME} from 'src/constants';
 
 class MainNotify extends Component {
   constructor(props) {
@@ -218,24 +220,29 @@ class MainNotify extends Component {
           }}
           ListEmptyComponent={
             !loading && (
-              <View style={styles.empty_box}>
-                <Icon
-                  name="shopping-basket"
-                  size={32}
-                  color={hexToRgbA(DEFAULT_COLOR, 0.6)}
-                />
-                <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
+              <NoResult
+                iconBundle={BUNDLE_ICON_SETS_NAME.Ionicons}
+                iconName="notifications-off"
+                message="Chưa có thông báo"
+              />
+              // <View style={styles.empty_box}>
+              //   <Icon
+              //     name="shopping-basket"
+              //     size={32}
+              //     color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+              //   />
+              //   <Text style={styles.empty_box_title}>Chưa có thông báo</Text>
 
-                <TouchableHighlight
-                  onPress={() => {
-                    Actions.jump(appConfig.routes.homeTab);
-                  }}
-                  underlayColor="transparent">
-                  <View style={styles.empty_box_btn}>
-                    <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
+              //   <TouchableHighlight
+              //     onPress={() => {
+              //       Actions.jump(appConfig.routes.homeTab);
+              //     }}
+              //     underlayColor="transparent">
+              //     <View style={styles.empty_box_btn}>
+              //       <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
+              //     </View>
+              //   </TouchableHighlight>
+              // </View>
             )
           }
           refreshControl={
