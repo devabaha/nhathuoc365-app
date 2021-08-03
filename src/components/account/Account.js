@@ -187,14 +187,14 @@ class Account extends Component {
         marginTop: 10,
         label: (
             <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.this_month_commissions?.title}:</Text>
-              <Text style={styles.valueThisMonthCommission}>{revenue_commissions?.this_month_commissions?.value}1.000.000 VND</Text>
+              <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.last_month_commissions?.title? + ':' : ''}</Text>
+              <Text style={styles.valueThisMonthCommission}>{revenue_commissions?.this_month_commissions?.value}</Text>
             </View>
         ),
         desc: (
             <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title}:</Text>
-              <Text style={styles.valueLastMonthCommission}>{revenue_commissions?.last_month_commissions?.value}1.000.000 VND</Text>
+              <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title? + ':' : ''}</Text>
+              <Text style={styles.valueLastMonthCommission}>{revenue_commissions?.last_month_commissions?.value}</Text>
             </View>
         ),
         rightIcon: <IconAngleRight />,
@@ -1513,7 +1513,7 @@ const styles = StyleSheet.create({
     marginVertical: appConfig.device.isIOS ? 2 : 0,
   },
   valueThisMonthCommission: {
-    width: '100%',
+    flex: 1,
     marginVertical: appConfig.device.isIOS ? 3 : 0,
     marginHorizontal: 5,
     fontSize: 16,
@@ -1526,7 +1526,7 @@ const styles = StyleSheet.create({
     marginTop: appConfig.device.isIOS ? 4 : 0,
   },
   valueLastMonthCommission: {
-    width: '100%',
+    flex: 1,
     marginVertical: appConfig.device.isIOS ? 4 : 0,
     marginHorizontal: 5,
     fontSize: 12,
