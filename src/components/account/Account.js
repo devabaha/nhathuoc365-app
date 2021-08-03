@@ -117,7 +117,7 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        desc: premium_info,
+        // desc: premium_info,
         descStyle: {
           color: '#ccc',
         },
@@ -187,13 +187,15 @@ class Account extends Component {
         marginTop: 10,
         label: (
             <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.last_month_commissions?.title? + ':' : ''}</Text>
+              {!!revenue_commissions?.this_month_commissions?.title && 
+                <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.this_month_commissions?.title}:</Text>}
               <Text style={styles.valueThisMonthCommission}>{revenue_commissions?.this_month_commissions?.value}</Text>
             </View>
         ),
         desc: (
             <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title? + ':' : ''}</Text>
+              {!!revenue_commissions?.last_month_commissions?.title && 
+                <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title}:</Text>}
               <Text style={styles.valueLastMonthCommission}>{revenue_commissions?.last_month_commissions?.value}</Text>
             </View>
         ),
@@ -971,14 +973,14 @@ class Account extends Component {
 
     return (
       <View style={styles.rightPremiumContainer}>
-        {isShowPoint && (
+        {/* {isShowPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}
             </Text>{' '}
             {unit}
           </Text>
-        )}
+        )} */}
         <View style={styles.rightPremiumIconContainer}>
           <IconAngleRight />
         </View>
@@ -1513,7 +1515,7 @@ const styles = StyleSheet.create({
     marginVertical: appConfig.device.isIOS ? 2 : 0,
   },
   valueThisMonthCommission: {
-    flex: 1,
+    width: '100%',
     marginVertical: appConfig.device.isIOS ? 3 : 0,
     marginHorizontal: 5,
     fontSize: 16,
@@ -1526,7 +1528,7 @@ const styles = StyleSheet.create({
     marginTop: appConfig.device.isIOS ? 4 : 0,
   },
   valueLastMonthCommission: {
-    flex: 1,
+    width: '100%',
     marginVertical: appConfig.device.isIOS ? 4 : 0,
     marginHorizontal: 5,
     fontSize: 12,
