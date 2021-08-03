@@ -44,6 +44,7 @@ import {
   NoteSection,
   CommissionsSection,
   ActionButtonSection,
+  OrderInfoSection,
 } from './components';
 
 class Confirm extends Component {
@@ -1040,97 +1041,15 @@ class Confirm extends Component {
           resetScrollToCoords={this.resetScrollToCoords}
           onMomentumScrollEnd={this.handleScroll}
           onScrollEndDrag={this.handleScroll}>
-          <View style={styles.rows}>
-            <TouchableHighlight
-              underlayColor="transparent"
-              // onPress={() =>
-              //   Actions.push(appConfig.routes.qrBarCode, {
-              //     title: 'Mã đơn hàng',
-              //     address: cart_data.cart_code,
-              //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
-              //   })
-              // }
-            >
-              <View style={styles.address_name_box}>
-                <View>
-                  <View style={styles.box_icon_label}>
-                    <Icon5
-                      style={styles.icon_label}
-                      name="info-circle"
-                      size={14}
-                    />
-                    <Text style={styles.input_label}>
-                      {t('confirm.information.title')}
-                    </Text>
-                  </View>
-                  <Text style={styles.desc_content}>
-                    {`${t('confirm.information.ordersCode')}:`}{' '}
-                    {cart_data.cart_code}
-                  </Text>
-                </View>
-                <View style={styles.address_default_box}>
-                  <View style={styles.orders_status_box}>
-                    <Text style={styles.address_default_title}>
-                      {t('confirm.information.status')}
-                    </Text>
-                    <Text
-                      style={[
-                        [
-                          styles.orders_status,
-                          {
-                            color:
-                              appConfig.colors.orderStatus[cart_data.status] ||
-                              appConfig.colors.primary,
-                          },
-                        ],
-                      ]}>
-                      {cart_data.status_view}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </TouchableHighlight>
-            <View style={styles.tagContainer}>
-              <View style={styles.cartTypeMainContainer}>
-                {!!cartType && (
-                  <View style={styles.cartTypeContainer}>
-                    <Tag
-                      label={cartType}
-                      fill={appConfig.colors.cartType[cart_data.cart_type]}
-                      animate={false}
-                      strokeWidth={0}
-                      labelStyle={styles.cartTypeLabel}
-                      labelContainerStyle={styles.cartTypeLabelContainer}
-                    />
-                  </View>
-                )}
-              </View>
-
-              {!!cart_data.payment_status_name && (
-                <View style={styles.cartTypeContainer}>
-                  <Tag
-                    label={cart_data.payment_status_name}
-                    fill={hexToRgbA(
-                      appConfig.colors.paymentStatus[cart_data.payment_status],
-                      0.1,
-                    )}
-                    animate={false}
-                    strokeWidth={0}
-                    labelStyle={[
-                      styles.cartTypeLabel,
-                      {
-                        color:
-                          appConfig.colors.paymentStatus[
-                            cart_data.payment_status
-                          ],
-                      },
-                    ]}
-                    labelContainerStyle={styles.cartTypeLabelContainer}
-                  />
-                </View>
-              )}
-            </View>
-          </View>
+          <OrderInfoSection
+            code={cart_data.cart_code}
+            typeCode={cart_data.cart_type}
+            typeView={cartType}
+            statusCode={cart_data.status}
+            statusView={cart_data.status_view}
+            paymentStatusCode={cart_data.payment_status}
+            paymentStatusView={cart_data.payment_status_name}
+          />
 
           {!!cart_data?.delivery_details && (
             <DeliverySection
@@ -1321,86 +1240,6 @@ class Confirm extends Component {
             canFeedback={is_completed && cart_data.status > 1}
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
           />
-          {/* <View style={[styles.boxButtonActions, styles.mt8]}>
-            {is_ready && !this.isPaid && (
-              <RoundButton
-                onPress={this.confirmEditCart.bind(this, cart_data)}
-                wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.info}
-                width={30}
-                title={t('confirm.edit')}
-                titleStyle={styles.btnActionTitle}>
-                <Icon name="pencil" size={16} color="#fff" />
-              </RoundButton>
-            )}
-
-            {is_ready && (
-              <RoundButton
-                onPress={this.confirmCancelCart.bind(this, cart_data)}
-                wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.danger}
-                width={30}
-                title={t('confirm.cancel')}
-                titleStyle={styles.btnActionTitle}>
-                <Icon name="times" size={16} color="#fff" />
-              </RoundButton>
-            )}
-
-            {can_reorder && (
-              <RoundButton
-                onPress={this.confirmCoppyCart.bind(this, cart_data)}
-                wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.success}
-                width={30}
-                title={t('confirm.reorder')}
-                titleStyle={styles.btnActionTitle}>
-                <Icon name="refresh" size={16} color="#fff" />
-              </RoundButton>
-            )}
-
-            {is_paymenting && (
-              <TouchableHighlight
-                style={styles.buttonAction}
-                onPress={this.goBackStores.bind(this, cart_data)}
-                underlayColor="transparent">
-                <View
-                  style={[
-                    styles.boxButtonAction,
-                    {
-                      backgroundColor: appConfig.colors.marigold,
-                      borderColor: '#999999',
-                    },
-                  ]}>
-                  <Icon name="plus" size={16} color="#ffffff" />
-                  <Text
-                    style={[
-                      styles.buttonActionTitle,
-                      {
-                        color: '#ffffff',
-                      },
-                    ]}>
-                    {t('confirm.addMoreItems')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            )}
-
-            {is_completed && cart_data.status > 1 && (
-              <RoundButton
-                onPress={() =>
-                  Actions.rating({
-                    cart_data,
-                  })
-                }
-                wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.marigold}
-                width={30}
-                title={t('confirm.feedback')}
-                titleStyle={styles.btnActionTitle}>
-                <Icon name="star" size={16} color="#fff" />
-              </RoundButton>
-            )}
-          </View> */}
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (

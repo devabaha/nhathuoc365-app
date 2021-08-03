@@ -30,6 +30,7 @@ import {
   CommissionsSection,
   ActionButtonSection,
   PaymentMethodSection,
+  OrderInfoSection,
 } from 'src/components/payment/Confirm/components';
 import {isUnpaid, canTransaction} from 'app-helper/product';
 
@@ -720,6 +721,18 @@ export class Booking extends Component {
               onRefresh={this.handleRefresh}
             />
           }>
+          {!this.editable && (
+            <OrderInfoSection
+              code={this.state.booking?.cart_code}
+              typeCode={this.state.booking?.cart_type}
+              typeView={this.state.booking?.cart_type_name}
+              statusCode={this.state.booking?.status}
+              statusView={this.state.booking?.status_view}
+              paymentStatusCode={this.state.booking?.payment_status}
+              paymentStatusView={this.state.booking?.payment_status_name}
+            />
+          )}
+
           {!!this.mainProduct && (
             <BookingProductInfo
               editable={this.editable}

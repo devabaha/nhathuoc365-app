@@ -59,7 +59,9 @@ const SectionContainer = ({
   loading,
   actionBtnTitle,
   actionBtnStyle,
-  onPressActionBtn = () => {},
+  actionBtnTitleStyle,
+
+  onPressActionBtn,
 }) => {
   const hasHeading = !!title || !!actionBtnTitle;
 
@@ -82,10 +84,13 @@ const SectionContainer = ({
           )}
           {!!actionBtnTitle && (
             <TouchableOpacity
+              disabled={!onPressActionBtn}
               hitSlop={HIT_SLOP}
               style={[styles.btnAction, actionBtnStyle]}
               onPress={onPressActionBtn}>
-              <Text style={styles.changeTitle}>{actionBtnTitle}</Text>
+              <Text style={[styles.changeTitle, actionBtnTitleStyle]}>
+                {actionBtnTitle}
+              </Text>
             </TouchableOpacity>
           )}
         </Container>

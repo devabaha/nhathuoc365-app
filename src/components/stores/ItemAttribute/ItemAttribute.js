@@ -497,6 +497,7 @@ class ItemAttribute extends PureComponent {
                 price={price}
                 unitName={unitName}
                 inventory={isInventoryVisible && inventory}
+                headerStyle={{paddingTop: 35}}
               />
             </TouchableWithoutFeedback>
 

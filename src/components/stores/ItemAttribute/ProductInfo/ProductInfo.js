@@ -5,8 +5,7 @@ import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 30,
-    paddingBottom: 20,
+    paddingVertical: 20,
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderColor: '#eee',
@@ -17,7 +16,7 @@ const styles = StyleSheet.create({
     height: 110,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -28,8 +27,7 @@ const styles = StyleSheet.create({
   },
   info: {
     justifyContent: 'space-between',
-    marginLeft: 5,
-    marginRight: 35,
+    marginRight: 15,
     flex: 1,
   },
   title: {
@@ -74,14 +72,15 @@ const ProductInfo = ({
   price,
   unitName,
   inventory,
-  extraInfoComponent,
-  imageContainerStyle,
+  extraInfoComponent = null,
+  imageContainerStyle = {},
+  headerStyle = {},
 }) => {
   const {t} = useTranslation('product');
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header, headerStyle]}>
         <View
           style={[
             styles.imgContainer,

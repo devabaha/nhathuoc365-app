@@ -11,6 +11,10 @@ import {BookingProductInfoProps} from '.';
 const MIN_QUANTITY = 1;
 
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 8,
+  },
+
   quantityWrapper: {
     flex: 1,
     alignItems: 'flex-end',
@@ -45,7 +49,7 @@ const styles = StyleSheet.create({
   quantityViewOnlyWrapper: {
     position: 'absolute',
     bottom: -20,
-    right: -22,
+    right: 0,
   },
   quantityViewOnlyContainer: {
     // borderRadius: 15,
@@ -119,7 +123,9 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
     const selectedAttrViewData = this.state.selectedAttrViewData;
 
     return (
-      <View pointerEvents={this.props.editable ? 'auto' : 'none'}>
+      <View
+        pointerEvents={this.props.editable ? 'auto' : 'none'}
+        style={!this.props.editable && styles.container}>
         <ProductInfo
           imageUri={product.image}
           title={product.name}
