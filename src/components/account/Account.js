@@ -185,20 +185,33 @@ class Account extends Component {
         size: 22,
         iconSize: 14,
         marginTop: 10,
+        labelProps: {
+          numberOfLines: 1
+        },
+        desProps: {
+          numberOfLines: 1
+        },
         label: (
-            <View style={styles.viewRevenueCommissions}>
-              {!!revenue_commissions?.this_month_commissions?.title && 
-                <Text style={styles.titleThisMonthCommission}>{revenue_commissions?.this_month_commissions?.title}:</Text>}
-              <Text style={styles.valueThisMonthCommission}>{revenue_commissions?.this_month_commissions?.value}</Text>
-            </View>
+          <>
+            {!!revenue_commissions?.this_month_commissions?.title &&
+              `${revenue_commissions.this_month_commissions.title}: `
+            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.this_month_commissions?.value}
+            </Text>
+          </>
         ),
         desc: (
-            <View style={styles.viewRevenueCommissions}>
-              {!!revenue_commissions?.last_month_commissions?.title && 
-                <Text style={styles.titleLastMonthCommission}>{revenue_commissions?.last_month_commissions?.title}:</Text>}
-              <Text style={styles.valueLastMonthCommission}>{revenue_commissions?.last_month_commissions?.value}</Text>
-            </View>
+          <>
+            {!!revenue_commissions?.last_month_commissions?.title &&
+              `${revenue_commissions.last_month_commissions.title}: `
+            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.last_month_commissions?.value}
+            </Text>
+          </>
         ),
+
         rightIcon: <IconAngleRight />,
         onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
         boxIconStyle: [
@@ -1508,33 +1521,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: appConfig.device.isIOS ? -7 : 0,
   },
-  titleThisMonthCommission: {
-    fontSize: 16,
-    color: '#000000',
-    fontWeight: '400',
-    marginVertical: appConfig.device.isIOS ? 2 : 0,
-  },
-  valueThisMonthCommission: {
-    width: '100%',
-    marginVertical: appConfig.device.isIOS ? 3 : 0,
-    marginHorizontal: 5,
-    fontSize: 16,
-    color: appConfig.colors.primary,
-    fontWeight: '600',
-  },
-  titleLastMonthCommission: {
-    fontSize: 12,
-    color: '#404040',
-    marginTop: appConfig.device.isIOS ? 4 : 0,
-  },
-  valueLastMonthCommission: {
-    width: '100%',
-    marginVertical: appConfig.device.isIOS ? 4 : 0,
-    marginHorizontal: 5,
-    fontSize: 12,
-    color: appConfig.colors.primary,
-    fontWeight: '300',
-  },
+  commissionValue: {
+    color: appConfig.colors.primary
+  }
 });
 
 export default withTranslation(['account', 'common', 'opRegister'])(
