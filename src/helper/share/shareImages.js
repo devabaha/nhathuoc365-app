@@ -1,51 +1,71 @@
-import RNFetchBlob from 'rn-fetch-blob';
 import Share from 'react-native-share';
+import pLimit from 'p-limit';
+
+import {downloadImage} from 'app-helper/image/imageDownloadingHandler';
+
+const limit = pLimit(6);
 
 export const shareImages = async (
   imageURLs = [],
-  loadingCallback = () => {},
-  message = '',
+  callbackSuccess = () => {},
   title = '',
+  message = '',
+  metadataUrl = '',
+  maxLength = 20,
 ) => {
-  const imagesData = imageURLs.map(async (url) => {
-    try {
-      const response = await RNFetchBlob.fetch('GET', url);
-      if (!!response && response.info().status === STATUS_SUCCESS) {
-        return `data:image/png;base64,${response.data}`;
-      } else {
-        flashShowMessage({
-          type: 'danger',
-          message: t('api.error.message'),
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const imagesData = imageURLs.slice(0, maxLength).map((url) => {
+    return limit(() =>
+      downloadImage(url).then((response) => response?.imageBase64),
+    );
   });
+
   try {
     const urls = await Promise.all(imagesData);
-    loadingCallback();
+    callbackSuccess();
 
-    if (urls) {
-      let result = await Share.open({
-        title: title,
-        urls: urls,
-        message: message,
-      });
-      if (!!result && result.success) {
-        console.log('share successfully', result.message);
-        //share successfully
-      } else if (result.dismissedAction) {
-        console.log('dismissed', result.message);
-        //dissmiss
-      }
+    const extraOptions = {
+      activityItemSources: [
+        {
+          // For using custom icon instead of default text icon at share preview when sharing with message.
+          placeholderItem: {
+            type: 'url',
+            content: metadataUrl || urls[0],
+          },
+          linkMetadata: {
+            title: title,
+            ...(metadataUrl ? {originalUrl: metadataUrl} : {icon: urls[0]}),
+          },
+          // item: {
+          //   default: {
+          //     type: 'text',
+          //     content: title,
+          //   },
+          // },
+        },
+      ],
+    };
+
+    let result = await Share.open({
+      title: title,
+      urls: urls || [],
+      message: message,
+      failOnCancel: false,
+      ...extraOptions,
+    });
+    if (!!result && result.success) {
+      console.log('share_successfully', result.message);
+      //share successfully
+    } else if (result.dismissedAction) {
+      console.log('dismissed', result.message);
+      //dissmiss
+      // }
     } else {
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
       });
     }
-  } catch (err) {
+  } catch (error) {
     console.log('%cerror_sharing', 'color: red', error);
     //@ts-ignore
     flashShowMessage({

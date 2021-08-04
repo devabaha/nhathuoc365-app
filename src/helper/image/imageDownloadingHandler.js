@@ -1,15 +1,25 @@
 import RNFetchBlob from 'rn-fetch-blob';
 
+const IMAGE_BASE64_PREFIX = 'data:image/png;base64,';
+
 const downloadImage = (url) => {
   return RNFetchBlob.fetch('GET', url)
     .then((res) => {
       if (!!res && res.info().status === STATUS_SUCCESS) {
         let imageType;
-        let base64Str = res.data;
-        if (res.respInfo.headers['content-type'] === undefined) {
-          imageType = res.respInfo.headers['Content-Type'].slice(6);
-        } else imageType = res.respInfo.headers['content-type'].slice(6);
-        return {base64Str: base64Str, imageType: imageType};
+        let base64 = res.data;
+
+        const contentType =
+          res.respInfo.headers['content-type'] ||
+          res.respInfo.headers['Content-Type'];
+
+        imageType = contentType.slice(6);
+
+        return {
+          base64,
+          imageType: imageType,
+          imageBase64: IMAGE_BASE64_PREFIX + base64,
+        };
       } else {
         flashShowMessage({
           type: 'danger',

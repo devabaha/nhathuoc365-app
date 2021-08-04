@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com].
+- [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
 - Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 
