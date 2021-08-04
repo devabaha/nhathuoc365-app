@@ -236,12 +236,12 @@ export class Booking extends Component {
     this.eventTracker.clearTracking();
   }
 
-  getBooking = async () => {
+  getBooking = async (bookingId = this.props.bookingId) => {
     const data = {
       product_id: this.props.productId,
     };
-    const apiHandler = this.props.bookingId
-      ? APIHandler.booking_show(this.props.siteId, this.props.bookingId)
+    const apiHandler = bookingId
+      ? APIHandler.booking_show(this.props.siteId, bookingId)
       : APIHandler.booking_store(this.props.siteId, data);
 
     this.getBookingRequest.data = apiHandler;
@@ -553,7 +553,7 @@ export class Booking extends Component {
       cartId,
       onPop: () => {
         this.setState({loading: true});
-        this.getBooking();
+        this.getBooking(this.state.booking.id);
       },
     });
   };
@@ -675,7 +675,7 @@ export class Booking extends Component {
   handleRefresh = () => {
     if (this.unmounted) return;
     this.setState({refreshing: true});
-    this.getBooking();
+    this.getBooking(this.state.booking.id);
   };
 
   handleScrollViewLayout = (e) => {
@@ -831,7 +831,7 @@ export class Booking extends Component {
             canTransaction(this.state.booking) && (
               <Button
                 disabled={this.isDisabled}
-                title={this.props.t('orders:confirm.payTitle')}
+                title={this.props.t('orders:confirm.order.payTitle')}
                 containerStyle={styles.btnContainer}
                 btnContainerStyle={[styles.btnContentContainer]}
                 onPress={this.goToTransaction}

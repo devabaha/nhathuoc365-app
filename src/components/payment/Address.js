@@ -81,11 +81,13 @@ class Address extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() =>
-      Actions.refresh({
-        right: this._renderRightButton.bind(this),
-      }),
-    );
+    if (this.props.isVisibleUserAddress) {
+      setTimeout(() =>
+        Actions.refresh({
+          right: this._renderRightButton.bind(this),
+        }),
+      );
+    }
     // this.props.i18n.changeLanguage('en')
     this._getData();
     this.eventTracker.logCurrentView();
@@ -377,9 +379,13 @@ class Address extends Component {
                 this.state.data.map((item, index) => {
                   if (item.type == 'address_add') {
                     return (
-                      <View style={styles.address_add}>
+                      <View
+                        key={index}
+                        style={[
+                          styles.address_add,
+                          !!index && styles.addressAddContainer,
+                        ]}>
                         <TouchableOpacity
-                          key={index}
                           activeOpacity={0.7}
                           onPress={this._createNew.bind(this)}
                           style={styles.address_add_box}>
@@ -615,8 +621,10 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
-  address_add: {
+  addressAddContainer: {
     marginTop: 8,
+  },
+  address_add: {
     backgroundColor: '#fff',
     paddingVertical: 17,
     paddingHorizontal: 34,
