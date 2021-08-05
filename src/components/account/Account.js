@@ -986,14 +986,14 @@ class Account extends Component {
 
     return (
       <View style={styles.rightPremiumContainer}>
-        {/* {isShowPoint && (
+        {isShowPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}
             </Text>{' '}
             {unit}
           </Text>
-        )} */}
+        )}
         <View style={styles.rightPremiumIconContainer}>
           <IconAngleRight />
         </View>
