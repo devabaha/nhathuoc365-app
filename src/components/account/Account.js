@@ -185,23 +185,33 @@ class Account extends Component {
         size: 22,
         iconSize: 14,
         marginTop: 10,
+        labelProps: {
+          numberOfLines: 1
+        },
+        desProps: {
+          numberOfLines: 1
+        },
         label: (
           <>
-            {
-              this.renderRevenueCommission(
-                revenue_commissions?.this_month_commissions?.title,
-                revenue_commissions?.this_month_commissions?.value
-              )
+            {!!revenue_commissions?.this_month_commissions?.title &&
+              `${revenue_commissions.this_month_commissions.title}: `
             }
-
-            {
-              this.renderRevenueCommission(
-                revenue_commissions?.last_month_commissions?.title,
-                revenue_commissions?.last_month_commissions?.value
-              )
-            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.this_month_commissions?.value}
+            </Text>
           </>
         ),
+        desc: (
+          <>
+            {!!revenue_commissions?.last_month_commissions?.title &&
+              `${revenue_commissions.last_month_commissions.title}: `
+            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.last_month_commissions?.value}
+            </Text>
+          </>
+        ),
+
         rightIcon: <IconAngleRight />,
         onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
         boxIconStyle: [
@@ -1019,15 +1029,6 @@ class Account extends Component {
     );
   }
 
-  renderRevenueCommission(label, value) {
-    return (
-        <View style={styles.viewRevenueCommissions}>
-          <Text style={styles.titleRevenueCommissions}>{label}:</Text>
-          <Text style={styles.valueRevenueCommissions}>{value}</Text>
-        </View>
-    )
-  }
-
   render() {
     const {user_info = {}} = store;
     const is_login =
@@ -1518,22 +1519,11 @@ const styles = StyleSheet.create({
   },
   viewRevenueCommissions: {
     flexDirection: 'row',
-    marginBottom: -6,
+    marginBottom: appConfig.device.isIOS ? -7 : 0,
   },
-  titleRevenueCommissions: {
-    marginVertical: appConfig.device.isIOS ? 4 : 3,
-    fontSize: 12,
-    color: '#000000',
-    fontWeight: '400',
-  },
-  valueRevenueCommissions: {
-    width: '100%',
-    marginVertical: appConfig.device.isIOS ? 2 : 0,
-    marginHorizontal: 5,
-    fontSize: 16,
-    color: appConfig.colors.primary,
-    fontWeight: '600',
-  },
+  commissionValue: {
+    color: appConfig.colors.primary
+  }
 });
 
 export default withTranslation(['account', 'common', 'opRegister'])(
