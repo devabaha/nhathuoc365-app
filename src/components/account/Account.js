@@ -117,7 +117,7 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        // desc: premium_info,
+        desc: premium_info,
         descStyle: {
           color: '#ccc',
         },
