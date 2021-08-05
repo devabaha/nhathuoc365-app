@@ -842,6 +842,12 @@ class RootRouter extends Component {
                       key={`${appConfig.routes.mainNotify}_1`}
                       title={t('appTab.tab3.title')}
                       component={MainNotify}
+                      onEnter={() => {
+                        store.setUpdateNotify(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateNotify(false);
+                      }}
                     />
                   </Stack>
 

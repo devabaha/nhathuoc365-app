@@ -9,7 +9,7 @@ import {
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
+import {initialize as initializeRadaModule} from '@tickid/tickid-rada';
 import firebaseAnalytics from '@react-native-firebase/analytics';
 import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
@@ -237,13 +237,14 @@ class Store {
   }
 
   @observable accountMenu = [];
-  @action setAccountMenu(accountMenu = []){
+  @action setAccountMenu(accountMenu = []) {
     this.accountMenu = accountMenu;
   }
 
   /*********** notify **********/
   @observable notify = {
     // new_notice: 0,
+    // notify_list_notice: 0,
     // new_site_news: 0,
     // new_sys_news: 0,
     // new_totals: 0,
@@ -270,12 +271,21 @@ class Store {
 
   @action setNotify(data) {
     if (!!data && typeof data === 'object') {
-      const isNotifyUpdated = is1LevelObjectUpdated(this.notify, data);
+      const isNotifyUpdated = !equal(this.notify, data);
+
       if (isNotifyUpdated) {
         this.notify = {
           ...this.notify,
-          ...data
+          ...data,
+          notify_list_notice: this.isUpdateNotify
+            ? 0
+            : data.notify_list_notice
+            ? data.notify_list_notice == 1
+              ? (this.notify.notify_list_notice || 0) + 1
+              : data.notify_list_notice
+            : this.notify.notify_list_notice,
         };
+
         Events.trigger(CALLBACK_APP_UPDATING, data);
       }
     }
@@ -570,7 +580,7 @@ class Store {
 
   @observable homeStatusBar = {
     barStyle: 'light-content',
-    backgroundColor: appConfig.colors.primary
+    backgroundColor: appConfig.colors.primary,
   };
 
   @action setHomeBarStyle(barStyle) {
@@ -607,6 +617,17 @@ class Store {
   @observable isUpdateOrders = false;
   @action setUpdateOrders(isUpdateOrders) {
     this.isUpdateOrders = isUpdateOrders;
+  }
+
+  @observable isUpdateNotify = false;
+  @action setUpdateNotify(isUpdateNotify) {
+    if (isUpdateNotify) {
+      this.notify = {
+        ...this.notify,
+        notify_list_notice: 0,
+      };
+    }
+    this.isUpdateNotify = isUpdateNotify;
   }
 
   @action logOut(userInfo) {
@@ -770,8 +791,8 @@ class Store {
     }
   }
 
-  @observable selectedNewsId = "";
-  @action setSelectedNewsId(selectedNewsId = ""){
+  @observable selectedNewsId = '';
+  @action setSelectedNewsId(selectedNewsId = '') {
     this.selectedNewsId = selectedNewsId;
   }
 
@@ -809,10 +830,12 @@ class Store {
     }
   }
 
-  @computed get formattedList(){
-    return this.place_data?.map(v => {
-      return {title: v.title, data: v.data.slice()};
-    }).slice();
+  @computed get formattedList() {
+    return this.place_data
+      ?.map((v) => {
+        return {title: v.title, data: v.data.slice()};
+      })
+      .slice();
   }
 }
 

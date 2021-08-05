@@ -357,9 +357,9 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * Danh sách địa chỉ cửa hàng 
+   * Danh sách địa chỉ cửa hàng
    */
-    site_address(site_id, data) {
+  site_address(site_id, data) {
     var api = url_for(API.SITE_ADDRESS + '/' + site_id);
     return this.postCancelableAPI(api, data);
   }
@@ -670,10 +670,21 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * Lấy danh sách thông báo
+   *
+   * @param {Object} data
+   * @param {number} data.page
    */
-  async user_notice() {
-    var api = url_for(API.USER_NOTICE);
-    return await this.getAPI(api);
+  user_notice(data) {
+    const api = url_for(API.USER_NOTICE);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * Đánh dấu đã đọc 1 thông báo
+   */
+  user_read_notice(notice_id) {
+    const api = url_for(API.USER_READ_NOTICE, notice_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -1251,7 +1262,7 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Upload ảnh profile cho user
    */
-   async user_upload_image(data) {
+  async user_upload_image(data) {
     var api = url_for(API.USER_UPLOAD_IMAGE);
     return await this.postAPI(api, data);
   }
@@ -1307,8 +1318,8 @@ class CommonAPIHandler extends BaseHandler {
       cancelInstance,
       () =>
         this.postAPI(api, data, {
-          cancelToken: cancelInstance.token
-        })
+          cancelToken: cancelInstance.token,
+        }),
     ];
   }
 
@@ -1323,14 +1334,14 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         conversation_id +
         '/' +
-        last_message_id
+        last_message_id,
     );
     return [
       cancelInstance,
       () =>
         this.getAPI(api, {
-          cancelToken: cancelInstance.token
-        })
+          cancelToken: cancelInstance.token,
+        }),
     ];
   }
 
@@ -1363,7 +1374,6 @@ class CommonAPIHandler extends BaseHandler {
     var api = url_for(API.SITE_SEARCH_AIRPORT);
     return await this.postAPI(api, data);
   }
-
 }
 
 export default CommonAPIHandler;

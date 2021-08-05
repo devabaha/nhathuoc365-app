@@ -78,7 +78,6 @@ class TabIcon extends Component {
         labelStyle={styles.notifyLabel}
         label={notifyCount}
         show={notifyCount}
-        alert
         animation
       />
         // <View style={styles.notifyWrapper}>

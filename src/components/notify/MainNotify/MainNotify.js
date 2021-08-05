@@ -7,17 +7,23 @@ import {
   FlatList,
   RefreshControl,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import {reaction} from 'mobx';
-import appConfig from 'app-config';
-import store from '../../store/Store';
-import SelectionList from '../SelectionList';
 import {Actions} from 'react-native-router-flux';
-import NotifyItemComponent from './NotifyItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import EventTracker from '../../helper/EventTracker';
-import NoResult from '../NoResult';
+
+import appConfig from 'app-config';
+import store from 'app-store';
+import EventTracker from 'app-helper/EventTracker';
+import {APIRequest} from 'src/network/Entity';
+
 import {BUNDLE_ICON_SETS_NAME} from 'src/constants';
+
+import SelectionList from 'src/components/SelectionList';
+import NotifyItemComponent from '../NotifyItemComponent';
+import NoResult from 'src/components/NoResult';
+import MainNotifySkeleton from './MainNotifySkeleton';
 
 class MainNotify extends Component {
   constructor(props) {
@@ -25,19 +31,30 @@ class MainNotify extends Component {
 
     this.state = {
       navigators: null,
+      listNotice: [],
       loading: true,
-      notice_data: null,
       refreshing: false,
-      finish: false,
-      scrollTop: 0,
+      isLoadingMore: false,
     };
 
-    reaction(
-      () => store.notify,
-      () => {
-        this._setOptionList();
-      },
-    );
+    // reaction(
+    //   () => store.notify,
+    //   () => {
+    //     this._setOptionList();
+    //   },
+    // );
+    this.page = 1;
+    this.limit = 30;
+    this.canLoadMore = 1;
+
+    this.totalNotify = store.notify?.notify_list_notice;
+
+    this.autoUpdateDisposer = null;
+
+    this.updateReadFlagNotifyRequest = new APIRequest();
+    this.getNotifyRequest = new APIRequest();
+    this.requests = [this.updateReadFlagNotifyRequest, this.getNotifyRequest];
+
     this.eventTracker = new EventTracker();
   }
 
@@ -87,74 +104,42 @@ class MainNotify extends Component {
   }
 
   componentDidMount() {
-    this._getData();
-
-    store.is_stay_main_notify = true;
-
-    store.parentTab = '_main_notify';
+    this.getListNotice();
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
+    cancelRequests(this.requests);
+    !!this.autoUpdateDisposer && this.autoUpdateDisposer();
     this.eventTracker.clearTracking();
   }
 
-  componentWillReceiveProps() {
-    store.parentTab = '_main_notify';
+  async getListNotice(page = this.page, limit = this.limit) {
+    appConfig.device.isIOS &&
+      StatusBar.setNetworkActivityIndicatorVisible(true);
 
-    if (this.state.finish && store.is_stay_main_notify) {
-      if (this.state.scrollTop == 0) {
-        this._scrollOverTopAndReload();
-      } else {
-        this._scrollToTop(0);
-      }
-    }
-    if (!store.is_stay_main_notify) {
-      this._getData();
-    }
+    const data = {page, limit};
+    this.getNotifyRequest.cancel();
+    this.getNotifyRequest.data = APIHandler.user_notice(data);
 
-    store.is_stay_main_notify = true;
-  }
-
-  _scrollToTop(top = 0) {
-    if (this.refs_main_notify) {
-      this.refs_main_notify.scrollTo({x: 0, y: top, animated: true});
-
-      clearTimeout(this._scrollTimer);
-      this._scrollTimer = setTimeout(() => {
-        this.setState({
-          scrollTop: top,
-        });
-      }, 500);
-    }
-  }
-
-  _scrollOverTopAndReload() {
-    this.setState(
-      {
-        refreshing: true,
-      },
-      () => {
-        this._scrollToTop(-60);
-
-        this._getData(1000);
-      },
-    );
-  }
-
-  async _getData(delay) {
     try {
-      var response = await APIHandler.user_notice();
+      const response = await this.getNotifyRequest.promise();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          loading: false,
-          user_notice: response.data,
-          refreshing: false,
-          finish: true,
-        });
-
-        this._scrollToTop(0);
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          this.canLoadMore = response.data.load_more;
+          this.setState((prevState) => ({
+            listNotice:
+              page > 1
+                ? prevState.listNotice.concat(response.data.list || [])
+                : response.data.list || [],
+          }));
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || this.props.t('api.error.message'),
+          });
+        }
       }
     } catch (e) {
       console.log(e + ' user_notice');
@@ -163,29 +148,82 @@ class MainNotify extends Component {
         message: this.props.t('api.error.message'),
       });
     } finally {
-      store.getNotify();
+      this.forceUpdateNotify();
+
+      store.setUpdateNotify(false);
+      appConfig.device.isIOS &&
+        StatusBar.setNetworkActivityIndicatorVisible(false);
+
       this.setState({
         loading: false,
         refreshing: false,
+        isLoadingMore: false,
       });
     }
   }
 
-  _onRefresh() {
-    this.setState(
-      {
-        refreshing: true,
+  updateNotifyReadFlag = async (notify) => {
+    this.updateReadFlagNotifyRequest.data = APIHandler.user_read_notice(
+      notify.id,
+    );
+    try {
+      const response = await this.updateReadFlagNotifyRequest.promise();
+    } catch (error) {
+      console.log('user_read_notice' + error);
+    }
+  };
+
+  forceUpdateNotify() {
+    if (this.autoUpdateDisposer) return;
+
+    this.autoUpdateDisposer = reaction(
+      () => [store.isUpdateNotify, store.notify?.notify_list_notice],
+      ([isUpdateNotify, totalNotify]) => {
+        if (isUpdateNotify) {
+          store.setUpdateNotify(false);
+        }
+        if (this.totalNotify !== totalNotify && !this.state.refreshing) {
+          this.totalNotify = totalNotify;
+          this.getListNotice(1, this.limit * this.page);
+        }
       },
-      this._getData.bind(this, 1000),
     );
   }
 
-  render() {
-    var {user_notice, loading} = this.state;
+  handlePressNotify = (notify) => {
+    if (!notify.open_flag) {
+      this.updateNotifyReadFlag(notify);
+    }
+  };
 
+  handleLoadMore = () => {
+    if (this.canLoadMore && !this.state.isLoadingMore) {
+      this.setState({isLoadingMore: true});
+      this.page++;
+      this.getListNotice();
+    }
+  };
+
+  handleRefresh = () => {
+    this.page = 1;
+    this.setState({refreshing: true});
+    this.getListNotice();
+  };
+
+  renderFooter = () => {
     return (
+      this.state.isLoadingMore && (
+        <MainNotifySkeleton useList={false} length={2} />
+      )
+    );
+  };
+
+  render() {
+    return this.state.loading ? (
+      <MainNotifySkeleton />
+    ) : (
       <View style={styles.container}>
-        {loading && <Indicator />}
+        {this.state.loading && <Indicator />}
         {/* <ScrollView
           onScroll={event => {
             this.setState({
@@ -211,47 +249,39 @@ class MainNotify extends Component {
           </View> */}
 
         <FlatList
+          ref={(ref) => (this.refs_main_notify = ref)}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          data={user_notice || []}
+          data={this.state.listNotice || []}
           style={[styles.profile_list_opt]}
           contentContainerStyle={styles.contentContainer}
-          renderItem={({item, index}) => {
-            return <NotifyItemComponent item={item} t={this.props.t} />;
+          renderItem={({item: notify}) => {
+            return (
+              <NotifyItemComponent
+                notify={notify}
+                onPress={() => this.handlePressNotify(notify)}
+                t={this.props.t}
+              />
+            );
           }}
           ListEmptyComponent={
-            !loading && (
+            !this.state.loading && (
               <NoResult
                 iconBundle={BUNDLE_ICON_SETS_NAME.Ionicons}
                 iconName="notifications-off"
                 message="Chưa có thông báo"
               />
-              // <View style={styles.empty_box}>
-              //   <Icon
-              //     name="shopping-basket"
-              //     size={32}
-              //     color={hexToRgbA(DEFAULT_COLOR, 0.6)}
-              //   />
-              //   <Text style={styles.empty_box_title}>Chưa có thông báo</Text>
-
-              //   <TouchableHighlight
-              //     onPress={() => {
-              //       Actions.jump(appConfig.routes.homeTab);
-              //     }}
-              //     underlayColor="transparent">
-              //     <View style={styles.empty_box_btn}>
-              //       <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
-              //     </View>
-              //   </TouchableHighlight>
-              // </View>
             )
           }
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
+              onRefresh={this.handleRefresh}
             />
           }
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.notice_id)}
+          onEndReached={this.handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={this.renderFooter}
         />
         {/* </ScrollView> */}
       </View>
@@ -269,9 +299,10 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+    backgroundColor: appConfig.colors.white,
   },
   boxIconStyle: {
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: appConfig.colors.primary,
     marginRight: 10,
     marginLeft: 6,
     borderRadius: 15,
@@ -311,23 +342,24 @@ const styles = StyleSheet.create({
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
-    borderColor: DEFAULT_COLOR,
+    borderColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 12,
     borderRadius: 5,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: appConfig.colors.primary,
   },
   empty_box_btn_title: {
     color: '#ffffff',
   },
 
   separator: {
-    width: '100%',
-    height: Util.pixel,
-    backgroundColor: '#dddddd',
+    width: appConfig.device.width,
+    height: appConfig.device.pixel,
+    backgroundColor: appConfig.colors.border,
+    left: 15,
   },
 
   profile_list_opt: {
@@ -340,4 +372,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('common')(observer(MainNotify));
+export default withTranslation()(observer(MainNotify));
