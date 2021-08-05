@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
-- Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+- [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+- [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
+- [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
+### Fixed
+- Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added
