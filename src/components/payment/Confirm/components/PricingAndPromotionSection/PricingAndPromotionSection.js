@@ -63,14 +63,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingRight: 30,
     alignSelf: 'center',
+
+    borderColor: '#ebebeb',
+    borderRightWidth: 1,
   },
   addVoucherWrapper: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 20,
-    borderColor: '#ebebeb',
-    borderLeftWidth: 1,
   },
   addVoucherLabel: {
     fontSize: 14,
@@ -108,8 +109,8 @@ const PricingAndPromotionSection = ({
   itemFee = {},
   cashbackView = {},
 
-  onUseVoucherOnlineSuccess = () => {},
-  onRemoveVoucherOnlineSuccess = () => {},
+  onUseVoucherOnlineSuccess,
+  onRemoveVoucherOnlineSuccess,
 }) => {
   const {t} = useTranslation('orders');
 

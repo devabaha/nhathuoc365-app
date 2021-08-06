@@ -547,7 +547,10 @@ export class Booking extends Component {
     return (state.date || '') + (state.timeValue ? ' ' + state.timeValue : '');
   };
 
-  goToTransaction = (siteId, cartId) => {
+  goToTransaction = (
+    siteId = this.state.booking?.site_id,
+    cartId = this.state.booking?.id,
+  ) => {
     Actions.push(appConfig.routes.transaction, {
       siteId,
       cartId,
@@ -834,7 +837,7 @@ export class Booking extends Component {
                 title={this.props.t('orders:confirm.order.payTitle')}
                 containerStyle={styles.btnContainer}
                 btnContainerStyle={[styles.btnContentContainer]}
-                onPress={this.goToTransaction}
+                onPress={() => this.goToTransaction()}
               />
             )
           ))}

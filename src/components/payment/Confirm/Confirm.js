@@ -1219,11 +1219,7 @@ class Confirm extends Component {
             promotionName={cart_data.user_voucher?.voucher_name}
             isPromotionSelectable={single}
             selectedVoucher={cart_data.user_voucher}
-            siteId={
-              this.props.store
-                ? this.props.store.cart_store_id
-                : store.cart_store_id
-            }
+            siteId={cart_data.site_id}
           />
 
           <CommissionsSection commissions={cart_data?.commissions} />
