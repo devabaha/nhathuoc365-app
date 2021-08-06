@@ -96,7 +96,7 @@ class OrdersItemComponent extends Component {
     if (this.props.disableGoDetail) return;
     store.setStoreData(item.site);
     // store.setCartData(item);
-    if (item.address_id != 0) {
+    if (item.address_id != 0 || item.status != 1) {
       Actions.push(appConfig.routes.paymentConfirm, {
         goConfirm: true,
         data: item,
