@@ -6,9 +6,7 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image,
   Animated,
-  Easing,
 } from 'react-native';
 
 import appConfig from 'app-config';
@@ -17,27 +15,41 @@ import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Container} from '../Layout';
 import Loading from '../Loading';
-import {servicesHandler} from 'app-helper/servicesHandler';
 
-export default class NotifyItemComponent extends Component {
+class NotifyItemComponent extends Component {
   static defaultProps = {
     onPress: () => {},
   };
 
   state = {
-    isRead: this.props.notify.open_flag,
+    isRead: this.props.isRead,
     loading: false,
   };
 
-  handlePressNotify = () => {
-    this.props.onPress();
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) {
+      return true;
+    }
 
+    if (
+      nextProps.image !== this.props.image ||
+      nextProps.title !== this.props.title ||
+      nextProps.shopName !== this.props.shopName ||
+      nextProps.created !== this.props.created ||
+      nextProps.content !== this.props.content
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  handlePressNotify = () => {
     const service = {
-      ...this.props.notify,
       callback: () => this.setState({loading: true}),
     };
 
-    servicesHandler(service, this.props.t, () => {
+    this.props.onPress(service, () => {
       this.setState({loading: false});
     });
 
@@ -68,33 +80,33 @@ export default class NotifyItemComponent extends Component {
               <CachedImage
                 mutable
                 style={styles.store_result_item_image}
-                source={{uri: this.props.notify.image_url}}
+                source={{uri: this.props.image}}
               />
             </View>
 
             <View style={styles.store_result_item_content}>
               <View style={styles.store_result_item_content_box}>
                 <Text numberOfLines={2} style={styles.store_result_item_title}>
-                  {this.props.notify.title}
+                  {this.props.title}
                 </Text>
                 <Container row style={styles.subTitleContainer}>
                   <Text
                     numberOfLines={1}
                     style={styles.store_result_item_create}>
                     <Icon name="map-marker" size={10} color="#666666" />
-                    {' ' + this.props.notify.shop_name + '    '}
+                    {' ' + this.props.shopName + '    '}
                   </Text>
 
                   <Text
                     numberOfLines={1}
                     style={styles.store_result_item_create}>
                     <Icon name="clock-o" size={10} color="#666666" />
-                    {' ' + this.props.notify.created}
+                    {' ' + this.props.created}
                   </Text>
                 </Container>
-                {!!this.props.notify.content && (
+                {!!this.props.content && (
                   <Text numberOfLines={2} style={styles.store_result_item_desc}>
-                    {this.props.notify.content}
+                    {this.props.content}
                   </Text>
                 )}
               </View>
@@ -167,10 +179,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   loadingWrapper: {
-    backgroundColor: hexToRgbA('#f5f5f5', 0.4),
+    backgroundColor: hexToRgbA('#ddd', 0.3),
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     paddingTop: 10,
     paddingRight: 10,
   },
 });
+
+export default NotifyItemComponent;

@@ -24,6 +24,7 @@ import SelectionList from 'src/components/SelectionList';
 import NotifyItemComponent from '../NotifyItemComponent';
 import NoResult from 'src/components/NoResult';
 import MainNotifySkeleton from './MainNotifySkeleton';
+import {servicesHandler} from 'app-helper/servicesHandler';
 
 class MainNotify extends Component {
   constructor(props) {
@@ -47,9 +48,8 @@ class MainNotify extends Component {
     this.limit = 30;
     this.canLoadMore = 1;
 
-    this.totalNotify = store.notify?.notify_list_notice;
-
-    this.autoUpdateDisposer = null;
+    this.autoUpdateNotifyDisposer = null;
+    this.autoUpdateNotifyCountDisposer = null;
 
     this.updateReadFlagNotifyRequest = new APIRequest();
     this.getNotifyRequest = new APIRequest();
@@ -104,27 +104,32 @@ class MainNotify extends Component {
   }
 
   componentDidMount() {
-    this.getListNotice();
+    this.getListNotice(this.page, this.limit, 1);
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
-    !!this.autoUpdateDisposer && this.autoUpdateDisposer();
+    !!this.autoUpdateNotifyDisposer && this.autoUpdateNotifyDisposer();
+    !!this.autoUpdateNotifyCountDisposer &&
+      this.autoUpdateNotifyCountDisposer();
     this.eventTracker.clearTracking();
   }
 
-  async getListNotice(page = this.page, limit = this.limit) {
+  async getListNotice(
+    page = this.page,
+    limit = this.limit,
+    isUpdateNotifyCount = 0,
+  ) {
     appConfig.device.isIOS &&
       StatusBar.setNetworkActivityIndicatorVisible(true);
 
-    const data = {page, limit};
-    this.getNotifyRequest.cancel();
+    const data = {page, limit, open_tab: isUpdateNotifyCount};
+
     this.getNotifyRequest.data = APIHandler.user_notice(data);
 
     try {
       const response = await this.getNotifyRequest.promise();
-
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           this.canLoadMore = response.data.load_more;
@@ -148,6 +153,10 @@ class MainNotify extends Component {
         message: this.props.t('api.error.message'),
       });
     } finally {
+      if (isUpdateNotifyCount) {
+        store.notify.notify_list_notice = 0;
+      }
+
       this.forceUpdateNotify();
 
       store.setUpdateNotify(false);
@@ -164,7 +173,7 @@ class MainNotify extends Component {
 
   updateNotifyReadFlag = async (notify) => {
     this.updateReadFlagNotifyRequest.data = APIHandler.user_read_notice(
-      notify.id,
+      notify.notice_id,
     );
     try {
       const response = await this.updateReadFlagNotifyRequest.promise();
@@ -174,26 +183,40 @@ class MainNotify extends Component {
   };
 
   forceUpdateNotify() {
-    if (this.autoUpdateDisposer) return;
+    if (!this.autoUpdateNotifyDisposer) {
+      this.autoUpdateNotifyDisposer = reaction(
+        () => store.notify?.notify_list_notice,
+        (totalNotify) => {
+          if (!!totalNotify && !this.state.refreshing) {
+            this.getListNotice(1, this.limit * this.page);
+          }
+        },
+      );
+    }
 
-    this.autoUpdateDisposer = reaction(
-      () => [store.isUpdateNotify, store.notify?.notify_list_notice],
-      ([isUpdateNotify, totalNotify]) => {
-        if (isUpdateNotify) {
-          store.setUpdateNotify(false);
-        }
-        if (this.totalNotify !== totalNotify && !this.state.refreshing) {
-          this.totalNotify = totalNotify;
-          this.getListNotice(1, this.limit * this.page);
-        }
-      },
-    );
+    if (!this.autoUpdateNotifyCountDisposer) {
+      this.autoUpdateNotifyCountDisposer = reaction(
+        () => store.isUpdateNotify,
+        (isUpdateNotify) => {
+          if (
+            isUpdateNotify &&
+            !!store.notify?.notify_list_notice &&
+            !this.state.refreshing
+          ) {
+            this.page = 1;
+            this.getListNotice(this.page, this.limit, 1);
+          }
+        },
+      );
+    }
   }
 
-  handlePressNotify = (notify) => {
+  handlePressNotify = (notify, service, callback) => {
     if (!notify.open_flag) {
       this.updateNotifyReadFlag(notify);
     }
+
+    servicesHandler({...notify, ...service}, this.props.t, callback);
   };
 
   handleLoadMore = () => {
@@ -205,9 +228,43 @@ class MainNotify extends Component {
   };
 
   handleRefresh = () => {
+    this.getNotifyRequest.cancel();
+
     this.page = 1;
     this.setState({refreshing: true});
     this.getListNotice();
+  };
+
+  renderListEmpty = () => {
+    return (
+      !this.state.loading && (
+        <NoResult
+          iconBundle={BUNDLE_ICON_SETS_NAME.Ionicons}
+          iconName="notifications-off"
+          message="Chưa có thông báo"
+        />
+      )
+    );
+  };
+
+  renderNotify = ({item: notify}) => {
+    return (
+      <NotifyItemComponent
+        isRead={!!notify.open_flag}
+        image={notify.image_url}
+        title={notify.title}
+        shopName={notify.shop_name}
+        created={notify.created}
+        content={notify.content}
+        onPress={(service, callback) =>
+          this.handlePressNotify(notify, service, callback)
+        }
+      />
+    );
+  };
+
+  renderNotifySeparator = () => {
+    return <View style={styles.separator} />;
   };
 
   renderFooter = () => {
@@ -250,28 +307,13 @@ class MainNotify extends Component {
 
         <FlatList
           ref={(ref) => (this.refs_main_notify = ref)}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
           data={this.state.listNotice || []}
           style={[styles.profile_list_opt]}
           contentContainerStyle={styles.contentContainer}
-          renderItem={({item: notify}) => {
-            return (
-              <NotifyItemComponent
-                notify={notify}
-                onPress={() => this.handlePressNotify(notify)}
-                t={this.props.t}
-              />
-            );
-          }}
-          ListEmptyComponent={
-            !this.state.loading && (
-              <NoResult
-                iconBundle={BUNDLE_ICON_SETS_NAME.Ionicons}
-                iconName="notifications-off"
-                message="Chưa có thông báo"
-              />
-            )
-          }
+          initialNumToRender={20}
+          renderItem={this.renderNotify}
+          ListEmptyComponent={this.renderListEmpty}
+          ItemSeparatorComponent={this.renderNotifySeparator}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}

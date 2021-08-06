@@ -4,8 +4,8 @@ import {View, Text, StyleSheet} from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
 import store from 'app-store';
-import { NotiBadge } from '../Badges';
-import { BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME } from 'src/constants';
+import {NotiBadge} from '../Badges';
+import {BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME} from 'src/constants';
 
 class TabIcon extends Component {
   static propTypes = {
@@ -71,21 +71,15 @@ class TabIcon extends Component {
 
   renderNotifyCount() {
     const notifyCount = store.notify[this.props.notifyKey];
-    // if (notifyCount) {
-      return (
-        <NotiBadge
+    return (
+      <NotiBadge
         containerStyle={styles.notifyWrapper}
         labelStyle={styles.notifyLabel}
         label={notifyCount}
-        show={notifyCount}
-        animation
+        show={!!notifyCount}
+        animation={!!notifyCount}
       />
-        // <View style={styles.notifyWrapper}>
-        //   <Text style={styles.notifyText}>{notifyCount}</Text>
-        // </View>
-      );
-    // }
-    // return null;
+    );
   }
 
   render() {

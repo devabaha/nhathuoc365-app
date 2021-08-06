@@ -277,13 +277,6 @@ class Store {
         this.notify = {
           ...this.notify,
           ...data,
-          notify_list_notice: this.isUpdateNotify
-            ? 0
-            : data.notify_list_notice
-            ? data.notify_list_notice == 1
-              ? (this.notify.notify_list_notice || 0) + 1
-              : data.notify_list_notice
-            : this.notify.notify_list_notice,
         };
 
         Events.trigger(CALLBACK_APP_UPDATING, data);
@@ -621,12 +614,6 @@ class Store {
 
   @observable isUpdateNotify = false;
   @action setUpdateNotify(isUpdateNotify) {
-    if (isUpdateNotify) {
-      this.notify = {
-        ...this.notify,
-        notify_list_notice: 0,
-      };
-    }
     this.isUpdateNotify = isUpdateNotify;
   }
 
