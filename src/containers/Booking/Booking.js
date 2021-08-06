@@ -526,6 +526,16 @@ export class Booking extends Component {
       };
     }
 
+    if (
+      booking.booking_date === this.state.date &&
+      booking.booking_hour_selected?.value === this.state.time.value &&
+      !booking.booking_hour_selected?.available
+    ) {
+      state.time = {};
+      state.timeValue = '';
+      state.bookingTimes = this.formatBookingTimes(booking.booking_times);
+    }
+
     this.setState(state, () => {
       this.isInitData = true;
     });
@@ -580,7 +590,9 @@ export class Booking extends Component {
       isVisibleUserAddress: false,
       selectedAddressId: this.state.addressId,
       onSelectAddress: (addressId) => {
-        this.setState({addressId, loading: true});
+        if (addressId !== this.state.addressId) {
+          this.setState({addressId, loading: true});
+        }
       },
     });
   };

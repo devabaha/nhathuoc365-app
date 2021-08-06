@@ -476,7 +476,7 @@ class Address extends Component {
 
           {this.isVisibleStoreAddress && (
             <AddressContainer
-              title={t('pickUpAtTheStore')}
+              title={t('address.store')}
               onLayout={this.handleListAddressStoreLayout}>
               <ListAddressStore
                 refreshing={this.state.refreshing}

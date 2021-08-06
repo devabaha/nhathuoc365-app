@@ -26,7 +26,6 @@ import DropShip from '../../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import {ORDER_TYPES} from 'src/constants';
 import ProductInfo from './ProductInfo';
-import AttributeSelection from './AttributeSelection';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -517,12 +516,9 @@ class ItemAttribute extends PureComponent {
               // keyboardDismissMode="on-drag"
               onStartShouldSetResponder={() => true}>
               {/* <View onStartShouldSetResponder={() => true}> */}
+              
               {this.renderOptions()}
-              {/* <AttributeSelection
-                attrs={this.state.rawAttrs}
-                models={this.state.rawModels}
-                onSelectAttr={this.handlePressProductAttr}
-              /> */}
+
               {this.isDropShip && (
                 <DropShip
                   disabled={isDropShipDisabled}

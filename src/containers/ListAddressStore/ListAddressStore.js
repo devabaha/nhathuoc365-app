@@ -316,6 +316,7 @@ const ListAddressStore = ({
     return (
       <AddressItem
         key={storeAddress.id}
+        image={storeAddress.img}
         address={storeAddress}
         gpsDistance={calculateDiffDistance(
           storeAddress.longitude,
