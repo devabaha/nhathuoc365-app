@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
 ### Fixed
 - Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
+- [CU-aty6rq] Show missing products in groups on app by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added

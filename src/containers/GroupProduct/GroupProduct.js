@@ -21,6 +21,10 @@ const styles = StyleSheet.create({
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
+const STORE_CATEGORY_KEY = 'KeyStoreCategory';
+
+let page = 0
+
 const GroupProduct = ({
   siteId = store?.store_data?.id,
   title,
@@ -28,10 +32,13 @@ const GroupProduct = ({
   ...props
 }) => {
   const [products, setProducts] = useState([]);
+  const [productsOrigin, setProductsOrigin] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
 
   const getProductsRequest = new APIRequest();
+
+  const startTime = 0
 
   const animatedScrollY = useValue(0);
   const animatedContentOffsetY = useValue(0);
@@ -55,11 +62,67 @@ const GroupProduct = ({
     return <RightButtonChat />;
   };
 
-  const getProducts = async () => {
+  const delayTime = () => {
+    const delay = 400 - Math.abs(time() - startTime)
+    return delay
+  }
+
+  const getProducts = async (
+    categoryId,
+    delay = 0,
+    loadMore = false,
+    forceUpdate = false,
+  ) => {
+    const storeCategoryKey = STORE_CATEGORY_KEY + store.store_id + categoryId + store.user_info.id
+    
+    if(loadMore && !forceUpdate ){
+      page++
+    } else {
+      page = 0
+    }
     try {
-      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId);
+      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, page);
       const response = await getProductsRequest.promise();
-      setProducts(response);
+      
+      if (response.length > 0) {
+        setTimeout(() => {
+          layoutAnimation()
+
+          const productsOriginal = loadMore 
+            ? [...productsOrigin, ...response]
+            : response
+          setProducts(
+            response.length >= (page === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+            ? [...productsOriginal, {id: -1, type: 'loadMore'}]
+            : productsOriginal
+          )
+          setProductsOrigin(productsOriginal)
+          setLoading(false)
+          setRefreshing(false)
+          
+          action(() => {
+            store.setStoresFinish(true);
+          })();
+
+          if(response.length > 0 && !loadMore) {
+            storage.save({
+              key: storeCategoryKey,
+              data: productsOriginal,
+              expires: STORE_CATEGORY_CACHE,
+            });
+          }
+          
+        }, delay || delayTime())
+      } else {
+        setLoading(false)
+        setRefreshing(false)
+        setProducts((prevState) => {
+          forceUpdate ? null : prevState.productsOrigin
+        })
+        setProductsOrigin((prevState) => {
+          forceUpdate ? null : prevState.productsOrigin
+        })
+      }
     } catch (error) {
       console.log('%cget_group_product', 'color:red', error);
       flashShowMessage({
@@ -77,6 +140,10 @@ const GroupProduct = ({
     getProducts();
   };
 
+  const onPressLoadMore = () => {
+    getProducts(siteId, 0, true)
+  }
+
   const onPressProduct = (product) => {
     Actions.item({
       title: product.name,
@@ -89,7 +156,11 @@ const GroupProduct = ({
       <Items
         item={product}
         index={index}
-        onPress={() => onPressProduct(product)}
+        onPress={
+          product.type != 'loadMore'
+          ? () => onPressProduct(product)
+          : onPressLoadMore
+        }
       />
     );
   };
