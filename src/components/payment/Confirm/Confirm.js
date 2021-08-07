@@ -1031,9 +1031,9 @@ class Confirm extends Component {
     // show loading
     if (
       cart_data == null ||
-      cart_products_confirm == null
-      // cart_products_confirm == null ||
-      // address_data == null
+      cart_products_confirm == null ||
+      cart_data.status == CART_STATUS_ORDERING && 
+      address_data == null
     ) {
       return (
         <View style={styles.container}>
