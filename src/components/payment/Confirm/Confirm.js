@@ -309,8 +309,8 @@ class Confirm extends Component {
               // first orders
               this.setState({
                 suggest_register: response.data.total_orders == 1,
-                name_register: response.data.address.name,
-                tel_register: response.data.address.tel,
+                name_register: response.data.address?.name,
+                tel_register: response.data.address?.tel,
               });
 
               // hide back button
@@ -641,7 +641,7 @@ class Confirm extends Component {
     const {t} = this.props;
     var address_string = `${t('confirm.address.title')}: ${address.name}, ${
       address.tel
-    }, ${address.address}`;
+      }, ${address.address}`;
 
     Clipboard.setString(address_string);
 
@@ -1032,6 +1032,7 @@ class Confirm extends Component {
     if (
       cart_data == null ||
       cart_products_confirm == null ||
+      cart_data.status == CART_STATUS_ORDERING && 
       address_data == null
     ) {
       return (
@@ -1050,17 +1051,17 @@ class Confirm extends Component {
     const cartType = cart_data.cart_type_name;
 
     const comboAddress =
-      (address_data.province_name || '') +
-      (address_data.district_name ? ' • ' + address_data.district_name : '') +
-      (address_data.ward_name ? ' • ' + address_data.ward_name : '');
+      (address_data?.province_name || '') +
+      (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
+      (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
     const deliveryCode =
       cart_data.delivery_details &&
       (cart_data.delivery_details.ship_unit ||
         cart_data.delivery_details.unit) +
-        ' - ' +
-        (cart_data.delivery_details.ship_unit_id ||
-          cart_data.delivery_details.booking_id);
+      ' - ' +
+      (cart_data.delivery_details.ship_unit_id ||
+        cart_data.delivery_details.booking_id);
 
     const itemFee = cart_data?.item_fee || {};
     const cashbackView = cart_data?.cashback_view || {};
@@ -1082,13 +1083,13 @@ class Confirm extends Component {
           <View style={styles.rows}>
             <TouchableHighlight
               underlayColor="transparent"
-              // onPress={() =>
-              //   Actions.push(appConfig.routes.qrBarCode, {
-              //     title: 'Mã đơn hàng',
-              //     address: cart_data.cart_code,
-              //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
-              //   })
-              // }
+            // onPress={() =>
+            //   Actions.push(appConfig.routes.qrBarCode, {
+            //     title: 'Mã đơn hàng',
+            //     address: cart_data.cart_code,
+            //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
+            //   })
+            // }
             >
               <View style={styles.address_name_box}>
                 <View>
@@ -1160,7 +1161,7 @@ class Confirm extends Component {
                       {
                         color:
                           appConfig.colors.paymentStatus[
-                            cart_data.payment_status
+                          cart_data.payment_status
                           ],
                       },
                     ]}
@@ -1184,160 +1185,164 @@ class Confirm extends Component {
 
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              single ? null : styles.mt8,
-              {
-                paddingTop: 0,
-                paddingRight: 0,
-              },
-            ]}>
-            <View
-              style={[
-                styles.address_name_box,
-                {
-                  paddingTop: 12,
-                },
-              ]}>
-              <View style={styles.box_icon_label}>
-                <Icon5 style={styles.icon_label} name="truck" size={12} />
-                <Text style={styles.input_label}>
-                  {t('confirm.address.title')}
-                </Text>
-              </View>
+          {cart_data.address_id != 0 && (
+            <>
               <View
                 style={[
-                  styles.address_default_box,
+                  styles.rows,
+                  styles.borderBottom,
+                  single ? null : styles.mt8,
                   {
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
+                    paddingTop: 0,
+                    paddingRight: 0,
                   },
                 ]}>
-                {!this.state.isConfirming &&
-                  (single ? (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._goAddress.bind(this)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.change')}
-                      </Text>
-                    </TouchableHighlight>
-                  ) : (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._coppyAddress.bind(this, address_data)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.copy.title')}
-                      </Text>
-                    </TouchableHighlight>
-                  ))}
-              </View>
-            </View>
-
-            <View style={styles.address_content}>
-              <Text style={styles.address_name}>{address_data.name}</Text>
-              <Text style={styles.address_content_phone}>
-                {address_data.tel}
-              </Text>
-              {single ? (
-                <View>
-                  <Text style={styles.address_content_address_detail}>
-                    {address_data.address}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.address_content_address_detail}>
-                  {address_data.address}
-                </Text>
-              )}
-
-              {!!comboAddress && (
-                <Text style={styles.comboAddress}>{comboAddress}</Text>
-              )}
-            </View>
-          </View>
-
-          <View
-            onLayout={this._onLayout.bind(this)}
-            style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <TouchableHighlight
-              underlayColor="#ffffff"
-              onPress={() => {
-                if (this.refs_cart_note) {
-                  this.refs_cart_note.focus();
-                }
-              }}>
-              <View style={styles.box_icon_label}>
-                <Icon5 style={styles.icon_label} name="pen-square" size={15} />
-                <Text style={styles.input_label}>
-                  {`${t('confirm.note.title')} `}
-                </Text>
-                <Text style={styles.input_label_help}>
-                  ({t('confirm.note.description')})
-                </Text>
-              </View>
-            </TouchableHighlight>
-            {single ? (
-              <View>
-                <TextInput
-                  ref={(ref) => (this.refs_cart_note = ref)}
+                <View
                   style={[
-                    styles.input_address_text,
+                    styles.address_name_box,
                     {
-                      height:
-                        this.state.address_height > 50
-                          ? this.state.address_height
-                          : 50,
+                      paddingTop: 12,
                     },
-                  ]}
-                  keyboardType="default"
-                  maxLength={250}
-                  placeholder={t('confirm.note.placeholder')}
-                  placeholderTextColor="#999999"
-                  multiline={true}
-                  underlineColorAndroid="transparent"
-                  onContentSizeChange={(e) => {
-                    this.setState({
-                      address_height: e.nativeEvent.contentSize.height,
-                    });
-                  }}
-                  onChangeText={(value) => {
-                    action(() => {
-                      store.setUserCartNote(value);
-                    })();
-                  }}
-                  // onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
-                  value={
-                    store.user_cart_note ||
-                    (store.cart_data ? store.cart_data.user_note : '')
-                  }
-                />
+                  ]}>
+                  <View style={styles.box_icon_label}>
+                    <Icon5 style={styles.icon_label} name="truck" size={12} />
+                    <Text style={styles.input_label}>
+                      {t('confirm.address.title')}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.address_default_box,
+                      {
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                      },
+                    ]}>
+                    {!this.state.isConfirming &&
+                      (single ? (
+                        <TouchableHighlight
+                          style={{
+                            paddingVertical: 12,
+                            paddingHorizontal: 15,
+                          }}
+                          underlayColor="transparent"
+                          onPress={this._goAddress.bind(this)}>
+                          <Text
+                            style={[
+                              styles.address_default_title,
+                              styles.title_active,
+                            ]}>
+                            {t('confirm.change')}
+                          </Text>
+                        </TouchableHighlight>
+                      ) : (
+                        <TouchableHighlight
+                          style={{
+                            paddingVertical: 12,
+                            paddingHorizontal: 15,
+                          }}
+                          underlayColor="transparent"
+                          onPress={this._coppyAddress.bind(this, address_data)}>
+                          <Text
+                            style={[
+                              styles.address_default_title,
+                              styles.title_active,
+                            ]}>
+                            {t('confirm.copy.title')}
+                          </Text>
+                        </TouchableHighlight>
+                      ))}
+                  </View>
+                </View>
+
+                <View style={styles.address_content}>
+                  <Text style={styles.address_name}>{address_data?.name}</Text>
+                  <Text style={styles.address_content_phone}>
+                    {address_data?.tel}
+                  </Text>
+                  {single ? (
+                    <View>
+                      <Text style={styles.address_content_address_detail}>
+                        {address_data?.address}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.address_content_address_detail}>
+                      {address_data?.address}
+                    </Text>
+                  )}
+
+                  {!!comboAddress && (
+                    <Text style={styles.comboAddress}>{comboAddress}</Text>
+                  )}
+                </View>
               </View>
-            ) : (
-              <Text style={styles.input_note_value}>
-                {cart_data.user_note || t('confirm.note.noNote')}
-              </Text>
-            )}
-          </View>
+
+              <View
+                onLayout={this._onLayout.bind(this)}
+                style={[styles.rows, styles.borderBottom, styles.mt8]}>
+                <TouchableHighlight
+                  underlayColor="#ffffff"
+                  onPress={() => {
+                    if (this.refs_cart_note) {
+                      this.refs_cart_note.focus();
+                    }
+                  }}>
+                  <View style={styles.box_icon_label}>
+                    <Icon5 style={styles.icon_label} name="pen-square" size={15} />
+                    <Text style={styles.input_label}>
+                      {`${t('confirm.note.title')} `}
+                    </Text>
+                    <Text style={styles.input_label_help}>
+                      ({t('confirm.note.description')})
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+                {single ? (
+                  <View>
+                    <TextInput
+                      ref={(ref) => (this.refs_cart_note = ref)}
+                      style={[
+                        styles.input_address_text,
+                        {
+                          height:
+                            this.state.address_height > 50
+                              ? this.state.address_height
+                              : 50,
+                        },
+                      ]}
+                      keyboardType="default"
+                      maxLength={250}
+                      placeholder={t('confirm.note.placeholder')}
+                      placeholderTextColor="#999999"
+                      multiline={true}
+                      underlineColorAndroid="transparent"
+                      onContentSizeChange={(e) => {
+                        this.setState({
+                          address_height: e.nativeEvent.contentSize.height,
+                        });
+                      }}
+                      onChangeText={(value) => {
+                        action(() => {
+                          store.setUserCartNote(value);
+                        })();
+                      }}
+                      // onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
+                      value={
+                        store.user_cart_note ||
+                        (store.cart_data ? store.cart_data.user_note : '')
+                      }
+                    />
+                  </View>
+                ) : (
+                  <Text style={styles.input_note_value}>
+                    {cart_data.user_note || t('confirm.note.noNote')}
+                  </Text>
+                )}
+              </View>
+            </>
+          )}
 
           {!!storeInfo && (
             <StoreInfo
@@ -1376,12 +1381,12 @@ class Confirm extends Component {
           {(!single ||
             !getValueFromConfigKey(CONFIG_KEY.SITE_USE_SHIP) ||
             this.state.isConfirming) && (
-            <PaymentMethodSection
-              isUnpaid={this.isUnpaid}
-              cartData={cart_data}
-              onPressChange={() => this._goPaymentMethod(cart_data)}
-            />
-          )}
+              <PaymentMethodSection
+                isUnpaid={this.isUnpaid}
+                cartData={cart_data}
+                onPressChange={() => this._goPaymentMethod(cart_data)}
+              />
+            )}
 
           <View
             style={[
@@ -1534,9 +1539,9 @@ class Confirm extends Component {
                   onPress={
                     cart_data.user_voucher
                       ? this.openCurrentVoucher.bind(
-                          this,
-                          cart_data.user_voucher,
-                        )
+                        this,
+                        cart_data.user_voucher,
+                      )
                       : this.openMyVoucher
                   }>
                   {cart_data.user_voucher ? (
@@ -1849,8 +1854,8 @@ class Confirm extends Component {
                   {this.isSiteUseShipNotConfirming
                     ? t('confirm.confirmOrder')
                     : this.canTransaction
-                    ? t('confirm.order.payTitle')
-                    : t('confirm.order.title')}
+                      ? t('confirm.order.payTitle')
+                      : t('confirm.order.title')}
                 </Text>
               </View>
             </TouchableHighlight>
