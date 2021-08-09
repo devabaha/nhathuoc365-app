@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {StyleSheet, RefreshControl, FlatList} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Items from '../../components/stores/Items';
@@ -30,6 +30,8 @@ const GroupProduct = ({
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
+  const productsOriginal = useRef([])
+  const pageIndex = useRef(0)
 
   const getProductsRequest = new APIRequest();
 
@@ -55,11 +57,33 @@ const GroupProduct = ({
     return <RightButtonChat />;
   };
 
-  const getProducts = async () => {
+  const getProducts = async (
+    loadMore = false,
+  ) => {
+
+    if(loadMore){
+      pageIndex.current++
+    } else {
+      pageIndex.current = 0
+    }
     try {
-      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId);
+      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, pageIndex.current);
       const response = await getProductsRequest.promise();
-      setProducts(response);
+      
+      if (response.length > 0) {
+          layoutAnimation()
+
+          productsOriginal.current = loadMore 
+            ? [...productsOriginal.current, ...response]
+            : response
+
+          setProducts(
+            response.length >= (pageIndex.current === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+            ? [...productsOriginal.current, {id: -1, type: 'loadMore'}]
+            : productsOriginal.current
+          )
+          
+      }
     } catch (error) {
       console.log('%cget_group_product', 'color:red', error);
       flashShowMessage({
@@ -77,6 +101,10 @@ const GroupProduct = ({
     getProducts();
   };
 
+  const onPressLoadMore = () => {
+    getProducts(true)
+  }
+
   const onPressProduct = (product) => {
     Actions.item({
       title: product.name,
@@ -89,7 +117,11 @@ const GroupProduct = ({
       <Items
         item={product}
         index={index}
-        onPress={() => onPressProduct(product)}
+        onPress={
+          product.type != 'loadMore'
+          ? () => onPressProduct(product)
+          : onPressLoadMore
+        }
       />
     );
   };
