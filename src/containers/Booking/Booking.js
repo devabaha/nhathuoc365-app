@@ -178,7 +178,7 @@ export class Booking extends Component {
       this.state.loading ||
       (!!this.props.models && !this.state.model) ||
       !this.state.quantity ||
-      !this.state.addressId ||
+      // !this.state.addressId ||
       !this.state.date ||
       !this.state.timeValue
     );
