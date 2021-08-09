@@ -33,6 +33,7 @@ import {
   OrderInfoSection,
 } from 'src/components/payment/Confirm/components';
 import {isUnpaid, canTransaction} from 'app-helper/product';
+import RightButtonChat from 'src/components/RightButtonChat';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -236,6 +237,26 @@ export class Booking extends Component {
     this.eventTracker.clearTracking();
   }
 
+  updateNavBar = (booking = this.state.booking) => {
+    if (!booking) return;
+    console.log(booking);
+    const navbarConfig = {
+      right: () => (
+        <RightButtonChat
+          store_id={booking?.site?.id}
+          title={booking?.site?.name}
+          tel={booking?.site?.tel}
+        />
+      ),
+    };
+
+    if (booking.cart_code) {
+      navbarConfig.title = '#' + booking.cart_code;
+    }
+
+    Actions.refresh(navbarConfig);
+  };
+
   getBooking = async (bookingId = this.props.bookingId) => {
     const data = {
       product_id: this.props.productId,
@@ -254,12 +275,7 @@ export class Booking extends Component {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             this.updateStateBooking(response.data);
-
-            if (response.data.cart_code) {
-              Actions.refresh({
-                title: `#${response.data.cart_code}`,
-              });
-            }
+            this.updateNavBar(response.data);
           }
         } else {
           flashShowMessage({

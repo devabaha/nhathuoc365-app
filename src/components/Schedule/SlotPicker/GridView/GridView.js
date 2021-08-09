@@ -147,7 +147,9 @@ class GridView extends Component {
           tempData.push(blockSlot);
         }
       }
-      data.push(tempData);
+      if (tempData.length) {
+        data.push(tempData);
+      }
     }
 
     return data;

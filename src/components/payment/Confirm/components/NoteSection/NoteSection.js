@@ -21,9 +21,11 @@ const styles = StyleSheet.create({
     maxHeight: MAX_ADDRESS_HEIGHT,
     paddingLeft: 22,
   },
+  notEditable: {
+    minHeight: undefined,
+  },
   noNote: {
     fontStyle: 'italic',
-    minHeight: undefined,
   },
 });
 
@@ -59,6 +61,7 @@ const NoteSection = ({
           ref={refInput}
           style={[
             styles.input_address_text,
+            !editable && styles.notEditable,
             !editable && !value && styles.noNote,
           ]}
           maxLength={MAX_LENGTH}

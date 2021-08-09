@@ -46,6 +46,7 @@ import {
   ActionButtonSection,
   OrderInfoSection,
 } from './components';
+import AddressSection from './components/AddressSection';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -316,8 +317,8 @@ class Confirm extends Component {
               // first orders
               this.setState({
                 suggest_register: response.data.total_orders == 1,
-                name_register: response.data.address.name,
-                tel_register: response.data.address.tel,
+                name_register: response.data.address?.name,
+                tel_register: response.data.address?.tel,
               });
 
               // hide back button
@@ -506,7 +507,7 @@ class Confirm extends Component {
     }
   }
 
-  _goAddress() {
+  _goAddress = () => {
     const onBack = () => {
       Actions.push(appConfig.routes.paymentConfirm, {
         type: ActionConst.REPLACE,
@@ -517,7 +518,7 @@ class Confirm extends Component {
       isVisibleStoreAddress: true,
       addressId: store.cart_data?.address?.id,
     });
-  }
+  };
 
   _goPaymentMethod = (cart_data) => {
     Actions.push(appConfig.routes.paymentMethod, {
@@ -994,7 +995,7 @@ class Confirm extends Component {
     if (
       cart_data == null ||
       cart_products_confirm == null ||
-      address_data == null
+      (cart_data.status == CART_STATUS_ORDERING && address_data == null)
     ) {
       return (
         <View style={styles.container}>
@@ -1012,9 +1013,9 @@ class Confirm extends Component {
     const cartType = cart_data.cart_type_name;
 
     const comboAddress =
-      (address_data.province_name || '') +
-      (address_data.district_name ? ' • ' + address_data.district_name : '') +
-      (address_data.ward_name ? ' • ' + address_data.ward_name : '');
+      (address_data?.province_name || '') +
+      (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
+      (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
     const deliveryCode =
       cart_data.delivery_details &&
@@ -1064,97 +1065,21 @@ class Confirm extends Component {
 
           {single && <ListHeader title={t('confirm.information.recheck')} />}
 
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              single ? null : styles.mt8,
-              {
-                paddingTop: 0,
-                paddingRight: 0,
-              },
-            ]}>
-            <View
-              style={[
-                styles.address_name_box,
-                {
-                  paddingTop: 12,
-                },
-              ]}>
-              <View style={styles.box_icon_label}>
-                <Icon5 style={styles.icon_label} name="truck" size={12} />
-                <Text style={styles.input_label}>
-                  {t('confirm.address.title')}
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.address_default_box,
-                  {
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                  },
-                ]}>
-                {!this.state.isConfirming &&
-                  (single ? (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._goAddress.bind(this)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.change')}
-                      </Text>
-                    </TouchableHighlight>
-                  ) : (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._coppyAddress.bind(this, address_data)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.copy.title')}
-                      </Text>
-                    </TouchableHighlight>
-                  ))}
-              </View>
-            </View>
-
-            <View style={styles.address_content}>
-              <Text style={styles.address_name}>{address_data.name}</Text>
-              <Text style={styles.address_content_phone}>
-                {address_data.tel}
-              </Text>
-              {single ? (
-                <View>
-                  <Text style={styles.address_content_address_detail}>
-                    {address_data.address}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.address_content_address_detail}>
-                  {address_data.address}
-                </Text>
-              )}
-
-              {!!comboAddress && (
-                <Text style={styles.comboAddress}>{comboAddress}</Text>
-              )}
-            </View>
-          </View>
+          {cart_data?.address_id != 0 && (
+            <AddressSection
+              marginTop={!single}
+              name={address_data?.name}
+              tel={address_data?.tel}
+              address={address_data?.address}
+              comboAddress={comboAddress}
+              editable={single && !this.state.isConfirming}
+              onPressActionBtn={
+                single && !this.state.isConfirming
+                  ? this._goAddress
+                  : () => this._coppyAddress(address_data)
+              }
+            />
+          )}
 
           <NoteSection
             onChangeText={store.setUserCartNote}

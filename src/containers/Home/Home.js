@@ -185,7 +185,7 @@ class Home extends Component {
   };
 
   handlePressCommission = () => {
-    Actions.push(appConfig.routes.commissionIncomeStatement)
+    Actions.push(appConfig.routes.commissionIncomeStatement);
   };
 
   handlePromotionPressed = (item) => {

@@ -34,7 +34,7 @@ class Orders extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
-    this.autoUpdateDisposer = () => {};
+    this.autoUpdateDisposer = null;
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
@@ -52,7 +52,7 @@ class Orders extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
-    this.autoUpdateDisposer();
+    this.autoUpdateDisposer && this.autoUpdateDisposer();
   }
 
   UNSAFE_componentWillReceiveProps() {
@@ -158,7 +158,7 @@ class Orders extends Component {
         refreshing: false,
       });
 
-      this.forceUpdateOrders();
+     !this.autoUpdateDisposer && this.forceUpdateOrders();
     }
   }
 
@@ -308,6 +308,8 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
+    if(this.autoUpdateDisposer) return;
+
     this.autoUpdateDisposer = reaction(
       () => store.isUpdateOrders,
       (isUpdateOrders) => {
