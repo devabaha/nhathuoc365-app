@@ -6,13 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [CU-aty6rq] LoadMore to show missing products in GroupProduct by [nguyenanhtuan191298@gmail.com].
 ### Changed
 - [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 - [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
 - [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
 ### Fixed
 - Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
-- [CU-aty6rq] Show missing products in groups on app by [nguyenanhtuan191298@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added

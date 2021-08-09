@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {StyleSheet, RefreshControl, FlatList} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Items from '../../components/stores/Items';
@@ -21,10 +21,6 @@ const styles = StyleSheet.create({
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
-const STORE_CATEGORY_KEY = 'KeyStoreCategory';
-
-let page = 0
-
 const GroupProduct = ({
   siteId = store?.store_data?.id,
   title,
@@ -32,13 +28,12 @@ const GroupProduct = ({
   ...props
 }) => {
   const [products, setProducts] = useState([]);
-  const [productsOrigin, setProductsOrigin] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
+  const productsOriginal = useRef([])
+  const pageIndex = useRef(0)
 
   const getProductsRequest = new APIRequest();
-
-  const startTime = 0
 
   const animatedScrollY = useValue(0);
   const animatedContentOffsetY = useValue(0);
@@ -62,66 +57,32 @@ const GroupProduct = ({
     return <RightButtonChat />;
   };
 
-  const delayTime = () => {
-    const delay = 400 - Math.abs(time() - startTime)
-    return delay
-  }
-
   const getProducts = async (
-    categoryId,
-    delay = 0,
     loadMore = false,
-    forceUpdate = false,
   ) => {
-    const storeCategoryKey = STORE_CATEGORY_KEY + store.store_id + categoryId + store.user_info.id
-    
-    if(loadMore && !forceUpdate ){
-      page++
+
+    if(loadMore){
+      pageIndex.current++
     } else {
-      page = 0
+      pageIndex.current = 0
     }
     try {
-      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, page);
+      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, pageIndex.current);
       const response = await getProductsRequest.promise();
       
       if (response.length > 0) {
-        setTimeout(() => {
           layoutAnimation()
 
-          const productsOriginal = loadMore 
-            ? [...productsOrigin, ...response]
+          productsOriginal.current = loadMore 
+            ? [...productsOriginal.current, ...response]
             : response
-          setProducts(
-            response.length >= (page === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
-            ? [...productsOriginal, {id: -1, type: 'loadMore'}]
-            : productsOriginal
-          )
-          setProductsOrigin(productsOriginal)
-          setLoading(false)
-          setRefreshing(false)
-          
-          action(() => {
-            store.setStoresFinish(true);
-          })();
 
-          if(response.length > 0 && !loadMore) {
-            storage.save({
-              key: storeCategoryKey,
-              data: productsOriginal,
-              expires: STORE_CATEGORY_CACHE,
-            });
-          }
+          setProducts(
+            response.length >= (pageIndex.current === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+            ? [...productsOriginal.current, {id: -1, type: 'loadMore'}]
+            : productsOriginal.current
+          )
           
-        }, delay || delayTime())
-      } else {
-        setLoading(false)
-        setRefreshing(false)
-        setProducts((prevState) => {
-          forceUpdate ? null : prevState.productsOrigin
-        })
-        setProductsOrigin((prevState) => {
-          forceUpdate ? null : prevState.productsOrigin
-        })
       }
     } catch (error) {
       console.log('%cget_group_product', 'color:red', error);
@@ -141,7 +102,7 @@ const GroupProduct = ({
   };
 
   const onPressLoadMore = () => {
-    getProducts(siteId, 0, true)
+    getProducts(true)
   }
 
   const onPressProduct = (product) => {

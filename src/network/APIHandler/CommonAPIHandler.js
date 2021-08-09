@@ -985,8 +985,8 @@ class CommonAPIHandler extends BaseHandler {
    * @todo get products by group
    *
    */
-  site_group_product(siteId, groupId, pageId) {
-    const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId, pageId);
+  site_group_product(siteId, groupId, pageIndex) {
+    const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId, pageIndex);
     return this.getCancelableAPI(api, true);
   }
 
