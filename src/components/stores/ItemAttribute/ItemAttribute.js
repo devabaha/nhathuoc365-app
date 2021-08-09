@@ -11,21 +11,21 @@ import {
   Easing,
   SafeAreaView,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import store from 'app-store';
 import appConfig from 'app-config';
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import ModernList, {LIST_TYPE} from 'app-packages/tickid-modern-list';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NumberSelection from './NumberSelection';
-import Button from '../Button';
+import NumberSelection from '../NumberSelection';
+import Button from 'src/components/Button';
 import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import EventTracker from '../../helper/EventTracker';
-import DropShip from '../item/DropShip';
+import EventTracker from 'src/helper/EventTracker';
+import DropShip from '../../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
+import ProductInfo from './ProductInfo';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -103,6 +103,9 @@ class ItemAttribute extends PureComponent {
     selectedModelKey: '',
     quantity: MIN_QUANTITY,
     dropShipPrice: 0,
+
+    rawAttrs: {},
+    rawModels: []
   };
   refModal = React.createRef();
   unmounted = false;
@@ -171,15 +174,24 @@ class ItemAttribute extends PureComponent {
                 response.data.attrs,
                 response.data.models,
               );
-              this.setState({viewData, selectedAttrs}, () => {
-                const hasOnlyOneOption =
-                  Object.keys(response.data.attrs)?.length === 1 &&
-                  Object.values(response.data.attrs)[0]?.length === 1;
 
-                if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
-                  this.handlePressProductAttr(this.state.viewData[0].data[0]);
-                }
-              });
+              this.setState(
+                {
+                  viewData,
+                  selectedAttrs,
+                  rawAttrs: response.data.attrs,
+                  rawModels: response.data.models,
+                },
+                () => {
+                  const hasOnlyOneOption =
+                    Object.keys(response.data.attrs)?.length === 1 &&
+                    Object.values(response.data.attrs)[0]?.length === 1;
+
+                  if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+                    this.handlePressProductAttr(this.state.viewData[0].data[0]);
+                  }
+                },
+              );
             }
           } else {
             if (this.isDropShip) {
@@ -460,7 +472,7 @@ class ItemAttribute extends PureComponent {
 
     const isInventoryVisible =
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      this.state.product?.product_type !== PRODUCT_TYPES.SERVICE;
+      this.state.product?.order_type !== ORDER_TYPES.BOOKING;
 
     const unitName =
       this.state.product?.unit_name && this.state.product?.unit_name_view;
@@ -483,51 +495,18 @@ class ItemAttribute extends PureComponent {
 
           <Animated.View style={[styles.optionListContainer]}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <View style={styles.header}>
-                <View
-                  style={[
-                    styles.imgContainer,
-                    imageUri || {
-                      backgroundColor: '#eee',
-                    },
-                  ]}>
-                  <CachedImage
-                    mutable
-                    source={{uri: imageUri}}
-                    style={styles.image}
-                  />
-                </View>
-                <View style={styles.info}>
-                  <View>
-                    <Text numberOfLines={2} style={styles.title}>
-                      {title}
-                    </Text>
-                    <Text numberOfLines={1} style={styles.note}>
-                      {subTitle}
-                    </Text>
-                  </View>
-                  <View>
-                    {this.isDiscount && !!discountPrice && (
-                      <Text style={[styles.note, styles.deleteText]}>
-                        {discountPrice}
-                      </Text>
-                    )}
-                    <Text style={styles.highlight}>
-                      {price}
-                      {!!unitName && (
-                        <Text style={styles.description}>/ {unitName}</Text>
-                      )}
-                    </Text>
-                    <Text style={styles.note}>
-                      {isInventoryVisible && (
-                        <>
-                          {`${t('attr.stock')}:`} <Text>{inventory}</Text>
-                        </>
-                      )}
-                    </Text>
-                  </View>
-                </View>
-              </View>
+              <ProductInfo
+                imageUri={imageUri}
+                title={title}
+                subTitle={subTitle}
+                discountPrice={
+                  this.isDiscount && !!discountPrice && discountPrice
+                }
+                price={price}
+                unitName={unitName}
+                inventory={isInventoryVisible && inventory}
+                headerStyle={{paddingTop: 35}}
+              />
             </TouchableWithoutFeedback>
 
             <TouchableOpacity
@@ -546,7 +525,9 @@ class ItemAttribute extends PureComponent {
               // keyboardDismissMode="on-drag"
               onStartShouldSetResponder={() => true}>
               {/* <View onStartShouldSetResponder={() => true}> */}
+              
               {this.renderOptions()}
+
               {this.isDropShip && (
                 <DropShip
                   disabled={isDropShipDisabled}

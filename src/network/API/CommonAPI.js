@@ -211,7 +211,7 @@ class CommonAPI {
   get SITE_CART_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/cartaddress';
   }
-  get SITE_ADDRESS(){
+  get SITE_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/address';
   }
 
@@ -531,9 +531,34 @@ class CommonAPI {
   get USER_DELETE_IMAGE() {
     return BaseAPI.apiDomain + 'apiUser/delete_user_image';
   }
-  
+
   get USER_UPLOAD_IMAGE_COVER() {
     return BaseAPI.apiDomain + 'apiUser/upload_image_cover';
+  }
+
+  // Booking
+  get BOOKING_SHOW() {
+    return BaseAPI.apiDomain + 'apiBooking/show';
+  }
+
+  get BOOKING_GET_BOOKING_TIMES() {
+    return BaseAPI.apiDomain + 'apiBooking/get_booking_times';
+  }
+
+  get BOOKING_STORE() {
+    return BaseAPI.apiDomain + 'apiBooking/store';
+  }
+
+  get BOOKING_UPDATE() {
+    return BaseAPI.apiDomain + 'apiBooking/update';
+  }
+
+  get BOOKING_ORDER() {
+    return BaseAPI.apiDomain + 'apiBooking/order';
+  }
+
+  get BOOKING_CANCEL() {
+    return BaseAPI.apiDomain + 'apiBooking/cancel';
   }
 }
 

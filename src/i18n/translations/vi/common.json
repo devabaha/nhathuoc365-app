@@ -167,6 +167,9 @@
     },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
+    },
+    "booking": {
+      "mainTitle": "Đặt lịch"
     }
   },
 

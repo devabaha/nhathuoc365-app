@@ -15,7 +15,7 @@ import FastImage from 'react-native-fast-image';
 
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
 import {ProductItem} from '../Home/component/ListProducts';
@@ -32,7 +32,7 @@ class Items extends Component {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -50,17 +50,6 @@ class Items extends Component {
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, CART_TYPES.NORMAL);
-    // switch (product.product_type) {
-    //   case PRODUCT_TYPES.NORMAL:
-    //     this._addCart(product, quantity, model);
-    //     break;
-    //   case PRODUCT_TYPES.SERVICE:
-    //     this.goToSchedule(product);
-    //     break;
-    //   default:
-    //     this._addCart(product, quantity, model);
-    //     break;
-    // }
   };
 
   goToSchedule = (product) => {

@@ -34,7 +34,7 @@ class Orders extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
-    this.autoUpdateDisposer = () => {};
+    this.autoUpdateDisposer = null;
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
@@ -42,8 +42,7 @@ class Orders extends Component {
   }
 
   componentDidMount() {
-    // this._getData();
-    this.forceUpdateOrders();
+    this._getData();
 
     store.is_stay_orders = true;
     store.parentTab = `${appConfig.routes.newsTab}_1`;
@@ -53,7 +52,7 @@ class Orders extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
-    this.autoUpdateDisposer();
+    this.autoUpdateDisposer && this.autoUpdateDisposer();
   }
 
   UNSAFE_componentWillReceiveProps() {
@@ -102,7 +101,6 @@ class Orders extends Component {
   async _getData(delay, noScroll = false) {
     const {t} = this.props;
 
-    store.setUpdateOrders(false);
     appConfig.device.isIOS &&
       StatusBar.setNetworkActivityIndicatorVisible(true);
     try {
@@ -148,14 +146,19 @@ class Orders extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-      store.getNotify();
+    store.setUpdateOrders(false);
+    store.getNotify();
       store.setDeepLinkData(null);
+
       appConfig.device.isIOS &&
         StatusBar.setNetworkActivityIndicatorVisible(false);
+
       this.setState({
         loading: false,
         refreshing: false,
       });
+
+     !this.autoUpdateDisposer && this.forceUpdateOrders();
     }
   }
 
@@ -305,6 +308,8 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
+    if(this.autoUpdateDisposer) return;
+
     this.autoUpdateDisposer = reaction(
       () => store.isUpdateOrders,
       (isUpdateOrders) => {

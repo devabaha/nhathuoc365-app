@@ -107,7 +107,7 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking,
+  Booking as RadaBooking,
   OrderHistory,
 } from '@tickid/tickid-rada';
 import {
@@ -198,6 +198,8 @@ import Place from './containers/AirlineTicket/Place';
 import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import Booking from './containers/Booking';
+import ModalCalendar from './components/ModalCalendar';
 
 /**
  * Not allow font scaling
@@ -882,6 +884,17 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ BOOKING ================ */}
+                <Stack key={appConfig.routes.booking}>
+                  <Scene
+                    key={`${appConfig.routes.booking}_1`}
+                    title={t('screen.booking.mainTitle')}
+                    component={Booking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ AIRLINE TICKET RESULT ================ */}
                 <Stack key={appConfig.routes.result}>
                   <Scene
@@ -897,15 +910,18 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.place}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}
-                >
+                <Stack key={appConfig.routes.datePicker}>
                   <Scene
-                    modal={true} panHandlers={null} title="Chọn ngày"
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
                     {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
@@ -916,7 +932,7 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title='Tìm chuyến bay'
+                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -944,7 +960,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
 
                 {/* ================ LIST USER CHAT ================ */}
                 <Stack key={appConfig.routes.listUserChat}>
@@ -1834,7 +1849,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.tickidRadaBooking}>
                   <Scene
                     key="tickidRadaBooking1"
-                    component={Booking}
+                    component={RadaBooking}
                     {...whiteNavBarConfig}
                     back
                   />
@@ -1986,6 +2001,12 @@ class RootRouter extends Component {
                 component={ItemAttribute}
               />
 
+              {/* ================ MODAL CALENDAR ================ */}
+              <Stack
+                key={appConfig.routes.modalCalendar}
+                component={ModalCalendar}
+              />
+
               {/* ================ MODAL PICKER ================ */}
               <Stack
                 key={appConfig.routes.modalPicker}
@@ -2033,9 +2054,11 @@ class RootRouter extends Component {
                 component={ModalFilterProduct}
               />
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -2047,6 +2070,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -2056,6 +2080,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -2066,6 +2091,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -2077,6 +2103,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene

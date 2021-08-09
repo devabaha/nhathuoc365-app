@@ -167,6 +167,9 @@
     },
     "listUserChat": {
       "mainTitle": "Messages"
+    },
+    "booking": {
+      "mainTitle": "Booking"
     }
   },
 

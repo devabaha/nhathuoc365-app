@@ -332,7 +332,6 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
           }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
-        onConfirm: (method, extraData) => callBack(true, method, extraData),
         selectedMethod: selectedMethod,
         price: service.total_before_view,
         totalPrice: service.total_selected,

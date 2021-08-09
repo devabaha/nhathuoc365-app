@@ -21,7 +21,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -87,7 +87,7 @@ class Item extends Component {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   componentDidMount() {
@@ -769,7 +769,8 @@ class Item extends Component {
   renderSubActionBtnIcon(product) {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+      !this.isServiceProduct(product) ? (
       <MaterialCommunityIcons
         name="truck-fast"
         size={24}
@@ -864,7 +865,7 @@ class Item extends Component {
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.SERVICE;
+      item.order_type !== ORDER_TYPES.BOOKING;
 
     const isDisabledMainButton = isOutOfStock(item);
 
