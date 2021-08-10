@@ -47,9 +47,9 @@ class ImageMessageChat extends Component {
     progress: new Animated.Value(0),
     hide: new Animated.Value(0),
     uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT,
-    images: [],
   };
   unmounted = false;
+  images = [{url: this.props.lowQualityUri}]
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -72,7 +72,6 @@ class ImageMessageChat extends Component {
     if (this.props.isUploadData && this.props.image) {
       this.uploadImage();
     }
-    this.pushImageUrl();
   }
 
   componentWillUnmount() {
@@ -155,19 +154,10 @@ class ImageMessageChat extends Component {
     this.setState({isOpenLightBox: false});
   }
 
-  pushImageUrl() {
-    this.setState({
-      image: this.state.images.push({ url: this.props.lowQualityUri })
-    })
-  }
-
   handleOnPress() {
-    this.state.images.map((image, index) => {
       Actions.item_image_viewer({
-        images: this.state.images,
-        index
+        images: this.images,
       })
-    })
   }
 
   render() {
