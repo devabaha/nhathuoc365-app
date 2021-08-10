@@ -206,6 +206,7 @@ class TickidChat extends Component {
     this.props.t('cancel'),
   ];
   currentPhoneNumber = 0;
+  numberPattern = /^\d{6,}$/;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -763,7 +764,7 @@ class TickidChat extends Component {
 
   handleParsePatterns = (linkStyle) => [
     {
-      pattern: /^\d{6,}$/,
+      pattern: this.numberPattern,
       style: linkStyle,
       onPress: this.handlePressNumber,
     },
