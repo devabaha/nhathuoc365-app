@@ -761,6 +761,19 @@ class TickidChat extends Component {
     }
   };
 
+  handleParsePatterns = (linkStyle) => [
+    {
+      pattern: /^\d{6,}$/,
+      style: linkStyle,
+      onPress: this.handlePressNumber,
+    },
+  ];
+
+  handlePressNumber = (number) => {
+    this.refActionSheet.current.show();
+    this.currentPhoneNumber = number;
+  };
+
   renderLeftComposer = (props) => {
     if (typeof this.props.renderActions === 'function') {
       return this.props.renderActions(props);
@@ -1338,16 +1351,7 @@ class TickidChat extends Component {
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
-                parsePatterns={(linkStyle) => [
-                  {
-                    type: 'phone',
-                    style: linkStyle,
-                    onPress: (phoneNumb) => {
-                      this.refActionSheet.current.show();
-                      this.currentPhoneNumber = phoneNumb;
-                    },
-                  },
-                ]}
+                parsePatterns={this.handleParsePatterns}
                 {...this.props.giftedChatProps}
               />
             </Animated.View>
