@@ -341,7 +341,12 @@ class VoucherDetail extends BaseContainer {
     try {
       const siteId = this.props.siteId || store.store_id;
       const response = await internalFetch(
-        config.rest.useVoucherOnline(siteId, voucher.data.id),
+        config.rest.useVoucherOnline(
+          siteId,
+          voucher.data.id,
+          this.props.orderId,
+          this.props.orderType,
+        ),
       );
       if (response.status === config.httpCode.success) {
         showMessage({
@@ -393,6 +398,8 @@ class VoucherDetail extends BaseContainer {
         config.rest.removeVoucherOnline(
           this.state.campaign.data.site_id,
           this.state.campaign.data.id,
+          this.props.orderId,
+          this.props.orderType,
         ),
       );
       if (response.status === config.httpCode.success) {

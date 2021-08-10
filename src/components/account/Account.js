@@ -72,7 +72,7 @@ class Account extends Component {
       : '';
     const user_info = store.user_info || {};
     const default_wallet = user_info.default_wallet || {};
-    const revenue_commissions = user_info.revenue_commissions || {}
+    const revenue_commissions = user_info.revenue_commissions || {};
     const {
       premium,
       premium_name,
@@ -158,7 +158,9 @@ class Account extends Component {
             </Text>
           </Text>
         ),
-        isHidden: !user_info.default_wallet || isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+        isHidden:
+          !user_info.default_wallet ||
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -185,18 +187,33 @@ class Account extends Component {
         size: 22,
         iconSize: 14,
         marginTop: 10,
+        labelProps: {
+          numberOfLines: 1
+        },
+        desProps: {
+          numberOfLines: 1
+        },
         label: (
           <>
-            <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleRevenueCommissions}>{revenue_commissions?.last_month_commissions?.title}:</Text>
-              <Text style={styles.valueRevenueCommissions}>{revenue_commissions?.last_month_commissions?.value}</Text>
-            </View>
-            <View style={styles.viewRevenueCommissions}>
-              <Text style={styles.titleRevenueCommissions}>{revenue_commissions?.this_month_commissions?.title}:</Text>
-              <Text style={styles.valueRevenueCommissions}>{revenue_commissions?.this_month_commissions?.value}</Text>
-            </View>
+            {!!revenue_commissions?.this_month_commissions?.title &&
+              `${revenue_commissions.this_month_commissions.title}: `
+            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.this_month_commissions?.value}
+            </Text>
           </>
         ),
+        desc: (
+          <>
+            {!!revenue_commissions?.last_month_commissions?.title &&
+              `${revenue_commissions.last_month_commissions.title}: `
+            }
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.last_month_commissions?.value}
+            </Text>
+          </>
+        ),
+
         rightIcon: <IconAngleRight />,
         onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
         boxIconStyle: [
@@ -205,7 +222,9 @@ class Account extends Component {
             backgroundColor: '#FD6D61',
           },
         ],
-        isHidden: !user_info.revenue_commissions || !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
+        isHidden:
+          !user_info.revenue_commissions ||
+          !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
       },
 
       {
@@ -285,6 +304,28 @@ class Account extends Component {
             backgroundColor: '#f66',
           },
         ],
+      },
+      {
+        key: 'orders',
+        label: t('options.orders.label'),
+        desc: t('options.orders.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="cart"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: appConfig.colors.status.success,
+          },
+        ],
+        iconColor: '#ffffff',
       },
       {
         key: 'vouchers',
@@ -1503,22 +1544,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   viewRevenueCommissions: {
-    flexDirection:'row', 
-    marginBottom:-6,
+    flexDirection: 'row',
+    marginBottom: appConfig.device.isIOS ? -7 : 0,
   },
-  titleRevenueCommissions: {
-    marginVertical: appConfig.device.isIOS ? 4 : 3,
-    fontSize: 12,
-    color: '#000000',
-    fontWeight: '400',
-  },
-  valueRevenueCommissions : {
-    marginVertical: appConfig.device.isIOS ? 2 : 0,
-    marginLeft:5,
-    fontSize: 16,
-    color: appConfig.colors.primary,
-    fontWeight: '600',
-  },
+  commissionValue: {
+    color: appConfig.colors.primary
+  }
 });
 
 export default withTranslation(['account', 'common', 'opRegister'])(

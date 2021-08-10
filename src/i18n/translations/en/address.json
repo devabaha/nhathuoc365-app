@@ -13,13 +13,12 @@
     "edit": "Edit",
     "permissionNotGranted": "Your location could not be determined",
     "confirmPermission": "Allow access Location",
-    "noStore": "There are no stores"
+    "noStore": "There are no stores",
+    "store": "Store address"
   },
   "confirm": {
     "title": "2. Confirmation"
   },
 
-  "nextBtnMessage": "Next",
-
-  "pickUpAtTheStore": "Pick up at the store"
+  "nextBtnMessage": "Next"
 }

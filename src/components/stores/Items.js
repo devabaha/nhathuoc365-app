@@ -15,7 +15,7 @@ import FastImage from 'react-native-fast-image';
 
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
 import {ProductItem} from '../Home/component/ListProducts';
@@ -32,7 +32,7 @@ class Items extends Component {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   shouldComponentUpdate(nextProps, nextState) {

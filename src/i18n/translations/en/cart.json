@@ -8,6 +8,9 @@
     },
     "cancel": {
       "message": "Are you sure to cancel this order?"
+    },
+    "cancelBooking": {
+      "message": "Are you sure to cancel this booking?"
     }
   },
   "notification": {

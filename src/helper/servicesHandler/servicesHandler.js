@@ -226,6 +226,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** STORE */
     case SERVICES_TYPE.OPEN_SHOP:
+      if (service.callback) {
+        service.callback();
+      }
       APIHandler.site_info(service.siteId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
@@ -271,6 +274,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
+      if (service.callback) {
+        service.callback();
+      }
       APIHandler.site_product(service.siteId, service.productId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
@@ -327,12 +333,11 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       const selectedMethod =
         service.default_payment_method_id !== undefined
           ? {
-            id: service.default_payment_method_id,
-            type: service.default_payment_method_type,
-          }
+              id: service.default_payment_method_id,
+              type: service.default_payment_method_type,
+            }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
-        onConfirm: (method, extraData) => callBack(true, method, extraData),
         selectedMethod: selectedMethod,
         price: service.total_before_view,
         totalPrice: service.total_selected,
@@ -440,6 +445,5 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.AIRLINE_TICKET:
       Actions.push(appConfig.routes.airlineTicket);
       break;
-
   }
 };

@@ -6,17 +6,12 @@ import {
   StyleSheet,
   Animated,
   RefreshControl,
-  StatusBar,
-  SafeAreaView,
-  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import store from '../../store/Store';
-import Items from '../stores/Items';
-import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
@@ -26,7 +21,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -40,11 +35,11 @@ import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {isOutOfStock} from 'app-helper/product';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
-const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
-const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+
 class Item extends Component {
   static defaultProps = {
     showBtnProductStamps: false,
@@ -90,7 +85,7 @@ class Item extends Component {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   componentDidMount() {
@@ -663,7 +658,8 @@ class Item extends Component {
   renderSubActionBtnIcon(product) {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+      !this.isServiceProduct(product) ? (
       <MaterialCommunityIcons
         name="truck-fast"
         size={24}
@@ -758,7 +754,9 @@ class Item extends Component {
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.SERVICE;
+      item.order_type !== ORDER_TYPES.BOOKING;
+
+    const isDisabledMainButton = isOutOfStock(item);
 
     return (
       <View style={styles.container}>
@@ -885,6 +883,7 @@ class Item extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
+                  disabled={isDisabledMainButton}
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
                       item,
@@ -896,6 +895,8 @@ class Item extends Component {
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_add_cart,
+                      isDisabledMainButton &&
+                        styles.item_actions_btn_add_cart_disabled,
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
                       {this.renderMainActionBtnIcon(item)}
@@ -903,6 +904,8 @@ class Item extends Component {
                     <Text style={styles.item_actions_title}>
                       {this.isServiceProduct(item)
                         ? t('shopTitle.book')
+                        : isDisabledMainButton
+                        ? t('shopTitle.outOfStock')
                         : t('shopTitle.buy')}
                     </Text>
                   </View>
@@ -1198,6 +1201,10 @@ const styles = StyleSheet.create({
   item_actions_btn_add_cart: {
     marginLeft: 6,
     backgroundColor: appConfig.colors.primary,
+  },
+  item_actions_btn_add_cart_disabled: {
+    backgroundColor: '#ccc',
+    borderColor: '#ccc',
   },
   item_actions_title: {
     marginLeft: 8,
