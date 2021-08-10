@@ -7,6 +7,7 @@ import {
   Keyboard,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -291,6 +292,19 @@ class OpRegister extends Component {
     })
   }
 
+  onPressScanInvitationCode = () => {
+    Actions.push(appConfig.routes.qrBarCode, {
+      index: 1,
+      getCode: (result) => {
+        console.log('onOpRes', result);
+        this.setState({
+          refer: result,
+        });
+      },
+      isInvitationCode: true,
+    });
+  };
+
   renderDOB() {
     if (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY)) {
       const dobData = {
@@ -431,6 +445,36 @@ class OpRegister extends Component {
                   {t('data.referCode.title')}
                 </Text>
 
+                <TouchableOpacity
+                  onPress={this.onPressScanInvitationCode}
+                  style={styles.inputIcon}>
+                  <View
+                    style={{
+                      borderWidth: 1,
+                      borderColor: appConfig._primaryColor,
+                      // justifyContent: 'center',
+                      alignItems: 'center',
+
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 4,
+                        color: '#fff',
+                        backgroundColor: appConfig._primaryColor,
+                        paddingHorizontal: 2,
+                      }}>
+                      Scan QR
+                    </Text>
+                    <View style={{paddingTop: 1}}>
+                      <Icon
+                        color={appConfig._primaryColor}
+                        size={18}
+                        name="qrcode"
+                      />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
                 <View style={styles.input_text_box}>
                   <TextInput
                     editable={this.state.referCodeEditable}
@@ -482,11 +526,11 @@ class OpRegister extends Component {
               {/* {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : ( */}
-                <Icon
-                  name={this.state.edit_mode ? 'save' : 'user-plus'}
-                  size={20}
-                  color="#ffffff"
-                />
+              <Icon
+                name={this.state.edit_mode ? 'save' : 'user-plus'}
+                size={20}
+                color="#ffffff"
+              />
               {/* )} */}
             </View>
 
@@ -580,7 +624,9 @@ const styles = StyleSheet.create({
   input_text_disabled: {
     color: '#777',
   },
-
+  inputIcon: {
+    marginLeft: 10,
+  },
   input_address_box: {
     width: '100%',
     minHeight: 100,

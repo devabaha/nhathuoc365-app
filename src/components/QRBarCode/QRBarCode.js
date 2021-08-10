@@ -598,6 +598,9 @@ class QRBarCode extends Component {
           }, 450);
         } else if (isWalletAddressWithZoneCode(text_result)) {
           this._getWalletByAddressAndZoneCode(text_result);
+        } else if (this.props.isInvitationCode) {
+          this.props.getQRCode(text_result);
+          Actions.pop();
         } else {
           // this._search_store(text_result);
           this.checkProductCode(text_result);
