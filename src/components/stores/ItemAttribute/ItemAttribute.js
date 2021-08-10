@@ -40,7 +40,10 @@ class ItemAttribute extends PureComponent {
     product: {},
   };
 
-  getBaseData = (attrs, models) => {
+  getBaseData = (attrs = {}, models = {}) => {
+    attrs || (attrs = {});
+    models || (models = {});
+
     const viewData = [];
     const selectedAttrs = [];
     attrs = Object.entries(attrs);
@@ -79,7 +82,7 @@ class ItemAttribute extends PureComponent {
         data,
       });
     });
-    console.log(this.props.product, viewData, selectedAttrs);
+
     return {viewData, selectedAttrs};
   };
 
@@ -103,7 +106,7 @@ class ItemAttribute extends PureComponent {
     dropShipPrice: 0,
 
     rawAttrs: {},
-    rawModels: []
+    rawModels: [],
   };
   refModal = React.createRef();
   unmounted = false;
@@ -131,8 +134,7 @@ class ItemAttribute extends PureComponent {
   }
 
   get dropShipPrice() {
-    return this.props.isDropShip &&
-      isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
+    return this.isDropShip && isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
       ? this.listPrice
       : this.state.dropShipPrice;
   }
@@ -406,8 +408,7 @@ class ItemAttribute extends PureComponent {
 
     const disabled =
       (this.isDropShip &&
-        this.state.selectedModel &&
-        this.state.selectedModel.price_in_number > this.dropShipPrice) ||
+        this.state.selectedModel?.price_in_number > this.dropShipPrice) ||
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
@@ -523,7 +524,7 @@ class ItemAttribute extends PureComponent {
               // keyboardDismissMode="on-drag"
               onStartShouldSetResponder={() => true}>
               {/* <View onStartShouldSetResponder={() => true}> */}
-              
+
               {this.renderOptions()}
 
               {this.isDropShip && (

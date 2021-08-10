@@ -74,14 +74,31 @@ class Item extends Component {
     this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
   }
 
+  get product() {
+    return this.state.item_data || this.state.item;
+  }
+
   get subActionColor() {
     const is_like = this.state.like_flag == 1;
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-      !this.isServiceProduct(this.state.item_data || this.state.item)
+    return this.isDisabledSubBtnAction
+      ? '#ccc'
+      : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+        !this.isServiceProduct(this.product)
       ? appConfig.colors.primary
       : is_like
       ? appConfig.colors.primary
       : appConfig.colors.primary;
+  }
+
+  get isDisabledSubBtnAction() {
+    return (
+      this.isDisabledBuyingProduct &&
+      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+    );
+  }
+
+  get isDisabledBuyingProduct() {
+    return isOutOfStock(this.product);
   }
 
   isServiceProduct(product = {}) {
@@ -756,8 +773,6 @@ class Item extends Component {
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
       item.order_type !== ORDER_TYPES.BOOKING;
 
-    const isDisabledMainButton = isOutOfStock(item);
-
     return (
       <View style={styles.container}>
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
@@ -844,6 +859,7 @@ class Item extends Component {
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
+                  disabled={this.isDisabledSubBtnAction}
                   onPress={() =>
                     this.handlePressSubAction(
                       item,
@@ -865,6 +881,7 @@ class Item extends Component {
                       {this.renderSubActionBtnIcon(item)}
                     </View>
                     <Text
+                      numberOfLines={1}
                       style={[
                         styles.item_actions_title,
                         styles.item_actions_title_chat,
@@ -874,7 +891,7 @@ class Item extends Component {
                       ]}>
                       {!this.isServiceProduct(item) &&
                       isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? 'Giao hộ'
+                        ? t('shopTitle.dropShip')
                         : is_like
                         ? t('liked')
                         : t('like')}
@@ -883,7 +900,7 @@ class Item extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  disabled={isDisabledMainButton}
+                  disabled={this.isDisabledBuyingProduct}
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
                       item,
@@ -895,16 +912,16 @@ class Item extends Component {
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_add_cart,
-                      isDisabledMainButton &&
+                      this.isDisabledBuyingProduct &&
                         styles.item_actions_btn_add_cart_disabled,
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
                       {this.renderMainActionBtnIcon(item)}
                     </View>
-                    <Text style={styles.item_actions_title}>
+                    <Text numberOfLines={1} style={styles.item_actions_title}>
                       {this.isServiceProduct(item)
                         ? t('shopTitle.book')
-                        : isDisabledMainButton
+                        : this.isDisabledBuyingProduct
                         ? t('shopTitle.outOfStock')
                         : t('shopTitle.buy')}
                     </Text>
@@ -918,67 +935,6 @@ class Item extends Component {
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
-                {/* {storeName && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.warehouse')}
-                      </Text>
-                    </View>
-
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
-                      <Text style={styles.item_content_item_value}>
-                        {storeName}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-
-                {item.brand != null && item.brand != '' && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.brands')}
-                      </Text>
-                    </View>
-                    <View style={[styles.item_content_item_right]}>
-                      <Text style={styles.item_content_item_value}>
-                        {item.brand}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.origin')}
-                      </Text>
-                    </View>
-                    <View style={[styles.item_content_item_right]}>
-                      <Text style={styles.item_content_item_value}>
-                        {item.made_in}
-                      </Text>
-                    </View>
-                  </View>
-                )} */}
               </View>
             )}
 
@@ -1184,6 +1140,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: (appConfig.device.width - 45) / 2,
     borderRadius: 5,
+    paddingHorizontal: 20,
   },
   item_actions_btn_icon_container: {
     height: '100%',

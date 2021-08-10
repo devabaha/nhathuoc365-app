@@ -11,9 +11,11 @@ import ListStoreProductSkeleton from '../../components/stores/ListStoreProductSk
 import RightButtonChat from '../../components/RightButtonChat';
 
 import appConfig from 'app-config';
+import NoResult from 'src/components/NoResult';
 
 const styles = StyleSheet.create({
   listContentContainer: {
+    flexGrow: 1,
     paddingTop: 8,
     paddingBottom: appConfig.device.bottomSpace
   },
@@ -68,17 +70,17 @@ const GroupProduct = ({
     }
     try {
       getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, pageIndex.current);
-      const response = await getProductsRequest.promise();
-      
-      if (response.length > 0) {
+      let responseData = await getProductsRequest.promise() || [];
+
+      if (responseData.length > 0) {
           layoutAnimation()
 
           productsOriginal.current = loadMore 
-            ? [...productsOriginal.current, ...response]
-            : response
+            ? [...productsOriginal.current, ...responseData]
+            : responseData
 
           setProducts(
-            response.length >= (pageIndex.current === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+            responseData.length >= (pageIndex.current === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
             ? [...productsOriginal.current, {id: -1, type: 'loadMore'}]
             : productsOriginal.current
           )
@@ -125,6 +127,14 @@ const GroupProduct = ({
       />
     );
   };
+
+  const renderEmpty = () => {
+    return !isLoading && <NoResult
+    iconName="cart-off"
+    message={`${props.t('stores:noProduct')} :(`}
+  />
+  }
+
   return (
     <>
       <AnimatedFlatList
@@ -135,6 +145,7 @@ const GroupProduct = ({
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={renderEmpty}
         onScrollBeginDrag={Animated.event(
           [
             {
@@ -178,4 +189,4 @@ const GroupProduct = ({
   );
 };
 
-export default withTranslation()(GroupProduct);
+export default withTranslation(['common', 'stores'])(GroupProduct);

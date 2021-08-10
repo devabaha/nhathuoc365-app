@@ -435,15 +435,21 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         userInfo: service.userInfo,
       });
       break;
+
+    /** AIRLINE TICKET */
+    case SERVICES_TYPE.AIRLINE_TICKET:
+      Actions.push(appConfig.routes.airlineTicket);
+      break;
+
+    /** AGENCY INFORMATION REGISTER */
+    case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
+      Actions.push(appConfig.routes.agencyInformationRegister);
+      break;
+
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
       // ]);
-      break;
-
-    /** Airline Ticket */
-    case SERVICES_TYPE.AIRLINE_TICKET:
-      Actions.push(appConfig.routes.airlineTicket);
       break;
   }
 };
