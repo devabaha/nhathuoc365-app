@@ -68,11 +68,11 @@ class Account extends Component {
     const isUpdate = notify.updating_version == 1;
     const codePushVersion = store.codePushMetaData
       ? // replace non-digit character in codePush label (format of codePush label is `v[number]`)
-      `-${store.codePushMetaData.label.replace(/\D+/, '')}`
+        `-${store.codePushMetaData.label.replace(/\D+/, '')}`
       : '';
     const user_info = store.user_info || {};
     const default_wallet = user_info.default_wallet || {};
-    const revenue_commissions = user_info.revenue_commissions || {}
+    const revenue_commissions = user_info.revenue_commissions || {};
     const {
       premium,
       premium_name,
@@ -158,7 +158,9 @@ class Account extends Component {
             </Text>
           </Text>
         ),
-        isHidden: !user_info.default_wallet || isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+        isHidden:
+          !user_info.default_wallet ||
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -220,7 +222,9 @@ class Account extends Component {
             backgroundColor: '#FD6D61',
           },
         ],
-        isHidden: !user_info.revenue_commissions || !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
+        isHidden:
+          !user_info.revenue_commissions ||
+          !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
       },
 
       {
@@ -254,8 +258,8 @@ class Account extends Component {
             aff_content: store.store_data
               ? store.store_data.aff_content
               : t('affiliateMarketingProgram', {
-                appName: APP_NAME_SHOW,
-              }),
+                  appName: APP_NAME_SHOW,
+                }),
           });
         },
         boxIconStyle: [
@@ -300,6 +304,28 @@ class Account extends Component {
             backgroundColor: '#f66',
           },
         ],
+      },
+      {
+        key: 'orders',
+        label: t('options.orders.label'),
+        desc: t('options.orders.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="cart"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: appConfig.colors.status.success,
+          },
+        ],
+        iconColor: '#ffffff',
       },
       {
         key: 'vouchers',
@@ -910,10 +936,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                    Actions.push(appConfig.routes.vndWallet, {
-                      title: wallet.name,
-                      wallet: wallet,
-                    })
+                      Actions.push(appConfig.routes.vndWallet, {
+                        title: wallet.name,
+                        wallet: wallet,
+                      })
                   : () => {}
               }
               underlayColor="transparent"
@@ -951,10 +977,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                    Actions.push(appConfig.routes.vndWallet, {
-                      title: wallet.name,
-                      wallet: wallet,
-                    })
+                      Actions.push(appConfig.routes.vndWallet, {
+                        title: wallet.name,
+                        wallet: wallet,
+                      })
                   : () => Actions.view_ndt_list()
               }
               underlayColor="transparent"
@@ -1008,9 +1034,9 @@ class Account extends Component {
     const extraStyle = isMax
       ? {}
       : {
-        borderTopRightRadius: 3,
-        borderBottomRightRadius: 3,
-      };
+          borderTopRightRadius: 3,
+          borderBottomRightRadius: 3,
+        };
 
     return (
       <View style={styles.premiumProgressContainer}>

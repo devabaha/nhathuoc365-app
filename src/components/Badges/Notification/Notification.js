@@ -22,7 +22,10 @@ class Notification extends PureComponent {
   }
 
   animating() {
-    if (!this.props.animation) return;
+    if (!this.props.animation) {
+      this.animatedShowValue.setValue(this.props.show ? 1 : 0);
+      return;
+    }
     Animated.parallel([
       Animated.timing(this.animatedShowValue, {
         toValue: this.props.show ? 1 : 0,
@@ -93,7 +96,8 @@ class Notification extends PureComponent {
       ],
     };
     return (
-      <Animated.View style={[styles.wrapper, extraStyle, this.props.wrapperStyle]}>
+      <Animated.View
+        style={[styles.wrapper, extraStyle, this.props.wrapperStyle]}>
         <Animated.View
           style={[
             styles.container,

@@ -271,6 +271,9 @@ class CommonAPI {
   get USER_NOTICE() {
     return BaseAPI.apiDomain + 'apiUser/notice';
   }
+  get USER_READ_NOTICE() {
+    return BaseAPI.apiDomain + 'apiUser/read_notice'
+  }
 
   // Notify
   get USER_NOTIFY() {

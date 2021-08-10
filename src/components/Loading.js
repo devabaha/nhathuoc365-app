@@ -26,7 +26,7 @@ export default class Loading extends Component {
           this.props.center ? styles.centerContainer : {},
           this.props.wrapperStyle,
         ]}>
-        {!!this.props.blur && <BlurFilter visible />}
+        {!!this.props.blur && <BlurFilter visible blurType={this.props.blurType}/>}
         <View
           style={[
             styles.container,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const BlurFilter = React.memo(({visible}) => {
+export const BlurFilter = React.memo(({visible, blurType}) => {
   const animatedOpacity = useValue(0);
 
   useEffect(() => {
@@ -126,6 +126,7 @@ export const BlurFilter = React.memo(({visible}) => {
       <BlurView
         style={styles.blurContainer}
         reducedTransparencyFallbackColor="#fff"
+        blurType={blurType}
       />
     </Animated.View>
   );

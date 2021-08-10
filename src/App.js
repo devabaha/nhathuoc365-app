@@ -200,6 +200,7 @@ import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
 import Booking from './containers/Booking';
 import ModalCalendar from './components/ModalCalendar';
+import MainNotify from './components/notify/MainNotify';
 
 /**
  * Not allow font scaling
@@ -825,8 +826,7 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    icon={FoodHubCartButton}>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -834,6 +834,29 @@ class RootRouter extends Component {
                    ************************ Tab 3 ************************
                    */}
                   <Stack
+                    key={appConfig.routes.mainNotify}
+                    icon={TabIcon}
+                    iconSize={20}
+                    iconLabel={t('appTab.tab3.title')}
+                    iconName="bell"
+                    notifyKey="notify_list_notice">
+                    <Scene
+                      key={`${appConfig.routes.mainNotify}_1`}
+                      title={t('appTab.tab3.title')}
+                      component={MainNotify}
+                      onEnter={() => {
+                        store.setUpdateNotify(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateNotify(false);
+                      }}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 4 ************************
+                   */}
+                  {/* <Stack
                     key={appConfig.routes.ordersTab}
                     icon={TabIcon}
                     iconSize={24}
@@ -852,10 +875,10 @@ class RootRouter extends Component {
                         store.setUpdateOrders(false);
                       }}
                     />
-                  </Stack>
+                  </Stack> */}
 
                   {/**
-                   ************************ Tab 4 ************************
+                   ************************ Tab 5 ************************
                    */}
                   <Stack
                     key={appConfig.routes.accountTab}

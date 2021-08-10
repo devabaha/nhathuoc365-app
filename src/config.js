@@ -217,6 +217,7 @@ class Config {
       ordersTab: 'ordersTab',
       deepLinkOrdersTab: 'deepLinkOrdersTab',
 
+      mainNotify: 'mainNotify',
       news: 'news',
       vndWallet: 'vnd_wallet',
       payWallet: 'pay_wallet',

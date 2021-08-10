@@ -670,10 +670,21 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * Lấy danh sách thông báo
+   *
+   * @param {Object} data
+   * @param {number} data.page
    */
-  async user_notice() {
-    var api = url_for(API.USER_NOTICE);
-    return await this.getAPI(api);
+  user_notice(data) {
+    const api = url_for(API.USER_NOTICE);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * Đánh dấu đã đọc 1 thông báo
+   */
+  user_read_notice(notice_id) {
+    const api = url_for(API.USER_READ_NOTICE, notice_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
