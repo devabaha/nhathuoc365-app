@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@alessiocancian/react-native-actionsheet@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@alessiocancian/react-native-actionsheet/-/react-native-actionsheet-3.0.3.tgz#b62aaed398c8539122193f920ff7d2af2319797e"
+  integrity sha512-B0akWApU7UPvng8v5e35+lyMBNxSORulyVjwc/ZP16bYJmxSMZTc9moIETuz7wv1tf93KyLhg1giXP3PlZRimA==
+  dependencies:
+    "@react-native-community/blur" "^3.6.0"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"
@@ -1569,6 +1576,13 @@
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
+
+"@types/react-native-actionsheet@^2.4.3":
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/@types/react-native-actionsheet/-/react-native-actionsheet-2.4.3.tgz#8a7f3f02d298482cade5b2f9cfe9b7fe6173b6ec"
+  integrity sha512-pAL+G0Ug6GPpB+Qc7WMYdAs8T3B0CHTfMXKL3HnIFrCnfd43fK3aZuGgK1ZRmTZSIqOxl+Y9LjeVmaZJxA7+pg==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-native-vector-icons@^6.4.6":
   version "6.4.6"

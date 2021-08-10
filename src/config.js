@@ -296,6 +296,7 @@ class Config {
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
       modalEditImages: 'modalEditImages',
+      modalActionSheet: 'modalActionSheet',
 
       //  Reset password
       resetPassword: 'resetPassword',

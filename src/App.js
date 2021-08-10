@@ -198,6 +198,7 @@ import Place from './containers/AirlineTicket/Place';
 import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import ModalActionSheet from './components/ModalActionSheet';
 
 /**
  * Not allow font scaling
@@ -897,15 +898,18 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.place}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}
-                >
+                <Stack key={appConfig.routes.datePicker}>
                   <Scene
-                    modal={true} panHandlers={null} title="Chọn ngày"
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
                     {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
@@ -916,7 +920,7 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title='Tìm chuyến bay'
+                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -944,7 +948,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
 
                 {/* ================ LIST USER CHAT ================ */}
                 <Stack key={appConfig.routes.listUserChat}>
@@ -2016,6 +2019,12 @@ class RootRouter extends Component {
                 component={ModalConfirm}
               />
 
+              {/* ================ MODAL ACTION SHEET ================ */}
+              <Stack
+                key={appConfig.routes.modalActionSheet}
+                component={ModalActionSheet}
+              />
+
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
                 key={appConfig.routes.countryPicker}
@@ -2033,9 +2042,11 @@ class RootRouter extends Component {
                 component={ModalFilterProduct}
               />
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}

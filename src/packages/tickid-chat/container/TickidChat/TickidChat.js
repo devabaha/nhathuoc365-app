@@ -50,13 +50,16 @@ import {
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
 import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
+import {Actions} from 'react-native-router-flux';
+import appConfig from 'app-config';
 
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
 const MAX_PIN = 9;
 const defaultListener = () => {};
-const NUMBER_PATTERN = /^\d{6,}$/;
+const ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
+
 class TickidChat extends Component {
   static propTypes = {
     showAllUserName: PropTypes.bool,
@@ -188,7 +191,6 @@ class TickidChat extends Component {
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
   refInput = React.createRef();
-  refActionSheet = React.createRef();
   unmounted = false;
   animatedShowUpValue = 0;
   pinListProps = {
@@ -199,8 +201,7 @@ class TickidChat extends Component {
     onPinPress: this.props.onPinPress,
   };
   getLayoutDidMount = false;
-  currentMessageTextNumber = 0;
-  numberPressedOptions = [
+  actionOptionForNumeric = [
     this.props.t('call'),
     this.props.t('sendSMS'),
     this.props.t('copy'),
@@ -744,33 +745,37 @@ class TickidChat extends Component {
     }
   };
 
-  handlePhoneNumbersPressOptions = (index) => {
-    switch (index) {
-      case 0:
-        Communications.phonecall(this.currentMessageTextNumber, true);
-        break;
-      case 1:
-        Communications.text(this.currentMessageTextNumber);
-        break;
-      case 2:
-        Clipboard.setString(this.currentMessageTextNumber);
-        break;
-      default:
-        break;
-    }
-  };
-
   handleParsePatterns = (linkStyle) => [
     {
-      pattern: NUMBER_PATTERN,
+      pattern: ACTIONABLE_NUMERIC_PATTERN,
       style: linkStyle,
       onPress: this.handlePressNumber,
     },
   ];
 
   handlePressNumber = (number) => {
-    this.refActionSheet.current.show();
-    this.currentMessageTextNumber = number;
+    Actions.push(appConfig.routes.modalActionSheet, {
+      title: number,
+      options: this.actionOptionForNumeric,
+      onPress: (index) => this.handlePressChatNumberActionOption(number, index),
+    });
+  };
+
+  handlePressChatNumberActionOption = (number, index) => {
+    switch (index) {
+      case 0:
+        Communications.phonecall(number, true);
+        break;
+      case 1:
+        Communications.text(number);
+        break;
+      case 2:
+        Clipboard.setString(number);
+        Toast.show('Đã sao chép thành công')
+        break;
+      default:
+        break;
+    }
   };
 
   renderLeftComposer = (props) => {
@@ -1377,13 +1382,6 @@ class TickidChat extends Component {
             extraData={this.props.extraData}
           />
         </View>
-        <ActionSheet
-          ref={this.refActionSheet}
-          options={this.numberPressedOptions}
-          cancelButtonIndex={this.numberPressedOptions.length - 1}
-          destructiveButtonIndex={this.numberPressedOptions.length - 1}
-          onPress={this.handlePhoneNumbersPressOptions}
-        />
       </SafeAreaView>
     );
   }
