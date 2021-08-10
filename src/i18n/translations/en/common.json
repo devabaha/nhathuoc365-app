@@ -240,7 +240,7 @@
   "saveImageLabel": "Save image",
   "noResult": "No data yet",
   "call": "Call",
-  "message": "SMS",
+  "sendSMS": "SMS",
 
   "loading": "Retrieving data..."
 }

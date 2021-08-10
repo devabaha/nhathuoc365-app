@@ -21,7 +21,6 @@ import {
   Time,
   Avatar,
   InputToolbar,
-  MessageText,
 } from 'react-native-gifted-chat';
 import {ImageMessageChat, CustomComposer} from '../../component';
 import PropTypes from 'prop-types';
@@ -57,6 +56,7 @@ const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
 const MAX_PIN = 9;
 const defaultListener = () => {};
+const NUMBER_PATTERN = /^\d{6,}$/;
 class TickidChat extends Component {
   static propTypes = {
     showAllUserName: PropTypes.bool,
@@ -199,15 +199,13 @@ class TickidChat extends Component {
     onPinPress: this.props.onPinPress,
   };
   getLayoutDidMount = false;
-  PHONE_NUMBER_PRESSED_OPTIONS = [
+  currentMessageTextNumber = 0;
+  numberPressedOptions = [
     this.props.t('call'),
-    this.props.t('message'),
+    this.props.t('sendSMS'),
     this.props.t('copy'),
     this.props.t('cancel'),
   ];
-  currentPhoneNumber = 0;
-  numberPattern = /^\d{6,}$/;
-
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
       if (nextProps.pinNotify > 0) {
@@ -749,13 +747,13 @@ class TickidChat extends Component {
   handlePhoneNumbersPressOptions = (index) => {
     switch (index) {
       case 0:
-        Communications.phonecall(this.currentPhoneNumber, true);
+        Communications.phonecall(this.currentMessageTextNumber, true);
         break;
       case 1:
-        Communications.text(this.currentPhoneNumber);
+        Communications.text(this.currentMessageTextNumber);
         break;
       case 2:
-        Clipboard.setString(this.currentPhoneNumber);
+        Clipboard.setString(this.currentMessageTextNumber);
         break;
       default:
         break;
@@ -764,7 +762,7 @@ class TickidChat extends Component {
 
   handleParsePatterns = (linkStyle) => [
     {
-      pattern: this.numberPattern,
+      pattern: NUMBER_PATTERN,
       style: linkStyle,
       onPress: this.handlePressNumber,
     },
@@ -772,7 +770,7 @@ class TickidChat extends Component {
 
   handlePressNumber = (number) => {
     this.refActionSheet.current.show();
-    this.currentPhoneNumber = number;
+    this.currentMessageTextNumber = number;
   };
 
   renderLeftComposer = (props) => {
@@ -1381,9 +1379,9 @@ class TickidChat extends Component {
         </View>
         <ActionSheet
           ref={this.refActionSheet}
-          options={this.PHONE_NUMBER_PRESSED_OPTIONS}
-          cancelButtonIndex={this.PHONE_NUMBER_PRESSED_OPTIONS.length - 1}
-          destructiveButtonIndex={this.PHONE_NUMBER_PRESSED_OPTIONS.length - 1}
+          options={this.numberPressedOptions}
+          cancelButtonIndex={this.numberPressedOptions.length - 1}
+          destructiveButtonIndex={this.numberPressedOptions.length - 1}
           onPress={this.handlePhoneNumbersPressOptions}
         />
       </SafeAreaView>
@@ -1517,7 +1515,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('common')(observer(TickidChat));
+export default withTranslation('common')(TickidChat);
 
 export const EmptyChat = ({
   onPress,
