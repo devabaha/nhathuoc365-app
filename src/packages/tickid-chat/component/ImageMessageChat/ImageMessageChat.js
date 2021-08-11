@@ -153,7 +153,7 @@ class ImageMessageChat extends Component {
     this.setState({isOpenLightBox: false});
   }
 
-  handleOnPress() {
+  handleViewImage() {
       Actions.item_image_viewer({
         images: [{url: this.props.lowQualityUri}],
       })
@@ -190,7 +190,7 @@ class ImageMessageChat extends Component {
         }>
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={this.handleOnPress.bind(this)}
+          onPress={this.handleViewImage.bind(this)}
         >
           {/* <Lightbox
           springConfig={{overshootClamping: true}}
