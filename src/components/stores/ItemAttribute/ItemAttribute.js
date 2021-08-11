@@ -423,7 +423,7 @@ class ItemAttribute extends PureComponent {
       : this.state.product.image;
 
     const isDropShipDisabled =
-      this.state.models.length !== 0 &&
+      this.hasAttrs &&
       !Object.keys(this.state.selectedModel).length;
 
     const discountPrice = this.state.models?.length
