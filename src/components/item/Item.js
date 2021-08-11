@@ -23,7 +23,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -68,7 +68,6 @@ class Item extends Component {
       preparePostForSaleDataLoading: false,
       like_flag: 0,
       scrollY: 0,
-      cartTypeConfirmMessage: '',
     };
 
     this.animatedScrollY = new Animated.Value(0);
@@ -84,18 +83,35 @@ class Item extends Component {
     this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
   }
 
+  get product() {
+    return this.state.item_data || this.state.item;
+  }
+
   get subActionColor() {
     const is_like = this.state.like_flag == 1;
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-      !this.isServiceProduct(this.state.item_data || this.state.item)
+    return this.isDisabledSubBtnAction
+      ? '#ccc'
+      : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+        !this.isServiceProduct(this.product)
       ? appConfig.colors.primary
       : is_like
       ? appConfig.colors.primary
       : appConfig.colors.primary;
   }
 
+  get isDisabledSubBtnAction() {
+    return (
+      this.isDisabledBuyingProduct &&
+      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+    );
+  }
+
+  get isDisabledBuyingProduct() {
+    return isOutOfStock(this.product);
+  }
+
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   componentDidMount() {
@@ -451,94 +467,6 @@ class Item extends Component {
     this.updateWarehouse(warehouse);
   };
 
-  // add item vào giỏ hàng
-  _addCart = (
-    item,
-    quantity = 1,
-    model = '',
-    newPrice = null,
-    buying = true,
-  ) => {
-    this.setState(
-      {
-        buying,
-      },
-      async () => {
-        const data = {
-          quantity,
-          model,
-        };
-        if (newPrice) {
-          data.new_price = newPrice;
-        }
-        const {t} = this.props;
-        try {
-          const response = await APIHandler.site_cart_plus(
-            store.store_id,
-            item.id,
-            data,
-          );
-
-          if (response && response.status == STATUS_SUCCESS) {
-            if (!this.unmounted && response.data.attrs) {
-              Actions.push(appConfig.routes.itemAttribute, {
-                itemId: item.id,
-                onSubmit: (quantity, modal_key) =>
-                  this._addCart(item, quantity, modal_key),
-              });
-            } else {
-              flashShowMessage({
-                message: response.message,
-                type: 'success',
-              });
-            }
-            store.setCartData(response.data);
-
-            var index = null,
-              length = 0;
-            if (response.data.products) {
-              length = Object.keys(response.data.products).length;
-
-              Object.keys(response.data.products)
-                .reverse()
-                .some((key, key_index) => {
-                  let value = response.data.products[key];
-                  if (value.id == item.id) {
-                    index = key_index;
-                    return true;
-                  }
-                });
-            }
-
-            if (index !== null && index < length) {
-              store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, {index});
-            }
-
-            flashShowMessage({
-              message: response.message,
-              type: 'success',
-            });
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_plus');
-          flashShowMessage({
-            type: 'danger',
-            message: t('common:api.error.message'),
-          });
-        } finally {
-          if (!this.unmounted) {
-            this.productTempData = [];
-            this.setState({
-              buying: false,
-              isSubActionLoading: false,
-            });
-          }
-        }
-      },
-    );
-  };
-
   _likeHandler(item) {
     this.setState(
       {
@@ -689,27 +617,6 @@ class Item extends Component {
     }
   }
 
-  confirmCartType = () => {
-    this.setState({actionLoading: true});
-    this.closeConfirmCartTypePopUp();
-    this._cancelCart(() => {
-      if (this.productTempData.length > 0) {
-        this._addCart(...this.productTempData);
-      }
-    });
-  };
-
-  closeConfirmCartTypePopUp = () => {
-    if (this.refPopupConfirmCartType.current) {
-      this.refPopupConfirmCartType.current.close();
-    }
-  };
-
-  cancelConfirmCartType = () => {
-    this.productTempData = [];
-    this.closeConfirmCartTypePopUp();
-  };
-
   renderPagination = (index, total, context, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
     return (
@@ -828,10 +735,11 @@ class Item extends Component {
     );
   }
 
-  renderSubActionBtnIcon() {
+  renderSubActionBtnIcon(product) {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+      !this.isServiceProduct(product) ? (
       <MaterialCommunityIcons
         name="truck-fast"
         size={24}
@@ -847,6 +755,7 @@ class Item extends Component {
   }
 
   renderPostForSaleBtn(product) {
+    console.log(product);
     return (
       (!!product?.img?.length || !!product.content) && (
         <TouchableOpacity
@@ -965,9 +874,7 @@ class Item extends Component {
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.SERVICE;
-
-    const isDisabledMainButton = isOutOfStock(item);
+      item.order_type !== ORDER_TYPES.BOOKING;
 
     return (
       <View style={styles.container}>
@@ -1053,11 +960,14 @@ class Item extends Component {
                     )}
                   </Text>
                 </Container>
-                {this.renderPostForSaleBtn(item)}
+                
+                {isConfigActive(CONFIG_KEY.ENABLE_POST_FOR_SALE_KEY) &&
+                  this.renderPostForSaleBtn(item)}
               </View>
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
+                  disabled={this.isDisabledSubBtnAction}
                   onPress={() =>
                     this.handlePressSubAction(
                       item,
@@ -1079,6 +989,7 @@ class Item extends Component {
                       {this.renderSubActionBtnIcon(item)}
                     </View>
                     <Text
+                      numberOfLines={1}
                       style={[
                         styles.item_actions_title,
                         styles.item_actions_title_chat,
@@ -1088,7 +999,7 @@ class Item extends Component {
                       ]}>
                       {!this.isServiceProduct(item) &&
                       isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? 'Giao hộ'
+                        ? t('shopTitle.dropShip')
                         : is_like
                         ? t('liked')
                         : t('like')}
@@ -1097,7 +1008,7 @@ class Item extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  disabled={isDisabledMainButton}
+                  disabled={this.isDisabledBuyingProduct}
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
                       item,
@@ -1109,16 +1020,16 @@ class Item extends Component {
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_add_cart,
-                      isDisabledMainButton &&
+                      this.isDisabledBuyingProduct &&
                         styles.item_actions_btn_add_cart_disabled,
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
                       {this.renderMainActionBtnIcon(item)}
                     </View>
-                    <Text style={styles.item_actions_title}>
+                    <Text numberOfLines={1} style={styles.item_actions_title}>
                       {this.isServiceProduct(item)
                         ? t('shopTitle.book')
-                        : isDisabledMainButton
+                        : this.isDisabledBuyingProduct
                         ? t('shopTitle.outOfStock')
                         : t('shopTitle.buy')}
                     </Text>
@@ -1132,67 +1043,6 @@ class Item extends Component {
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
-                {/* {storeName && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.warehouse')}
-                      </Text>
-                    </View>
-
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
-                      <Text style={styles.item_content_item_value}>
-                        {storeName}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-
-                {item.brand != null && item.brand != '' && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.brands')}
-                      </Text>
-                    </View>
-                    <View style={[styles.item_content_item_right]}>
-                      <Text style={styles.item_content_item_value}>
-                        {item.brand}
-                      </Text>
-                    </View>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View style={styles.item_content_item_container}>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_left,
-                      ]}>
-                      <Text style={styles.item_content_item_title}>
-                        {t('information.origin')}
-                      </Text>
-                    </View>
-                    <View style={[styles.item_content_item_right]}>
-                      <Text style={styles.item_content_item_value}>
-                        {item.made_in}
-                      </Text>
-                    </View>
-                  </View>
-                )} */}
               </View>
             )}
 
@@ -1305,18 +1155,6 @@ class Item extends Component {
           }}
           yesConfirm={this._removeCartItem.bind(this)}
         />
-
-        <PopupConfirm
-          ref_popup={this.refPopupConfirmCartType}
-          title={this.state.cartTypeConfirmMessage}
-          otherClose={false}
-          type="warning"
-          isConfirm
-          yesTitle={CONTINUE_ORDER_CONFIRM}
-          titleStyle={{textAlign: 'left'}}
-          noConfirm={this.cancelConfirmCartType}
-          yesConfirm={this.confirmCartType}
-        />
       </View>
     );
   }
@@ -1414,6 +1252,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: (appConfig.device.width - 45) / 2,
     borderRadius: 5,
+    paddingHorizontal: 20,
   },
 
   postForSaleWrapper: {

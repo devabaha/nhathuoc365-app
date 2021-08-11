@@ -1,6 +1,7 @@
 {
   "shopTitle": {
     "preOrder": "Đặt trước",
+    "dropShip": "Giao hộ",
     "buy": "Mua ngay",
     "book": "Đặt ngay",
     "postForSale": "Đăng bán",

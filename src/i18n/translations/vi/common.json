@@ -14,7 +14,7 @@
       "title": "Tin tức"
     },
     "tab3": {
-      "title": "Nông trại"
+      "title": "Thông báo"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -167,6 +167,9 @@
     },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
+    },
+    "booking": {
+      "mainTitle": "Đặt lịch"
     }
   },
 

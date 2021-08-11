@@ -41,8 +41,16 @@
       "placeholder": "Enter your note here",
       "noNote": "There are no notes"
     },
+    "date": {
+      "title": "Date",
+      "unselected": "Unselected"
+    },
+    "time": {
+      "title": "Time"
+    },
     "store": {
-      "title": "Store"
+      "title": "Store",
+      "unselected": "Unselected"
     },
     "items": {
       "selected": "Selected item(s)",
@@ -79,6 +87,7 @@
       }
     },
     "confirmOrder": "Continue",
+    "confirmTitle": "Confirm",
     "feedback": "Feedback",
     "addMoreItems": "Choose more items",
     "reorder": "Reorder",

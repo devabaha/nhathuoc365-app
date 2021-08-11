@@ -1,6 +1,7 @@
 {
   "shopTitle": {
     "preOrder": "Pre-order",
+    "dropShip": "Drop ship",
     "buy": "Add to cart",
     "book": "Book",
     "postForSale": "Post for sale",

@@ -13,13 +13,12 @@
     "edit": "Chỉnh sửa",
     "permissionNotGranted": "Không xác định được vị trí của bạn",
     "confirmPermission": "Cấp quyền Vị trí",
-    "noStore": "Không có cửa hàng"
+    "noStore": "Không có cửa hàng",
+    "store": "Địa chỉ cửa hàng"
   },
   "confirm": {
     "title": "2. Xác nhận"
   },
 
-  "nextBtnMessage": "Tiếp tục",
-
-  "pickUpAtTheStore": "Nhận hàng tại cửa hàng"
+  "nextBtnMessage": "Tiếp tục"
 }

@@ -8,11 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-adx916] Module booking by [minhnguyenit14@gmail.com].
+- [CU-aty6rq] LoadMore to show missing products in GroupProduct by [nguyenanhtuan191298@gmail.com].
+- [CU-9227a2][CU-bng0v8] Notifications in tab bar by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
 - [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
 - [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
 ### Fixed
+- [CU-bnknw5] View not-ordering orders when there is no address in cart_data by [lamah.dev@gmail.com].
+- Low performance because of using ScrollView in CategoryScreen by [minhnguyenit14@gmail.com].
 - Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
 
 ## [r12.0.6] - 2021-07-28

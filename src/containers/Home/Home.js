@@ -80,7 +80,7 @@ class Home extends Component {
         console.log(response.data);
         action(() => {
           store.setStoreData(response.data.site);
-          store.setAppData(response.data.app);
+          // store.setAppData(response.data.app);
           store.setPackageOptions(response.data.package_options || {});
         })();
 
