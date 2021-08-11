@@ -49,7 +49,6 @@ class ImageMessageChat extends Component {
     uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT,
   };
   unmounted = false;
-  images = [{url: this.props.lowQualityUri}]
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -156,7 +155,7 @@ class ImageMessageChat extends Component {
 
   handleOnPress() {
       Actions.item_image_viewer({
-        images: this.images,
+        images: [{url: this.props.lowQualityUri}],
       })
   }
 
