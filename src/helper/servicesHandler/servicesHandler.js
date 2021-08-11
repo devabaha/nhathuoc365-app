@@ -451,5 +451,27 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       //   { text: 'Đồng ý' }
       // ]);
       break;
+
+      case 'request_management':
+        Actions.push(appConfig.routes.requests, {
+          siteId: store.store_id,
+          // roomId: service.room_id,
+        });
+
+     /** ABAHA FEEDBACK */
+    /** List */
+    case SERVICES_TYPE.ABAHA_REQUESTS:
+      Actions.push(appConfig.routes.abahaRequests, {
+        siteId: service.id,
+      });
+      break;
+    /** CREATE */
+    case SERVICES_TYPE.ABAHA_CREATE_REQUEST:
+      Actions.push(appConfig.routes.abahaRequestCreation, {
+        siteId: service.id,
+      });
+      break;
+
+  
   }
 };
