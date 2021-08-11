@@ -121,14 +121,14 @@ class ItemAttribute extends PureComponent {
   }
 
   get isDiscount() {
-    return this.state.models?.length
+    return this.hasAttrs
       ? this.state.selectedModel?.price_before_discount !==
           this.state.selectedModel?.price
       : !!this.state.product?.discount_percent;
   }
 
   get listPrice() {
-    return this.state.models?.length
+    return this.hasAttrs
       ? this.state.selectedModel?.origin_price || 0
       : this.state?.product?.origin_price;
   }
@@ -140,7 +140,7 @@ class ItemAttribute extends PureComponent {
   }
 
   componentDidMount() {
-    !this.hasAttrs && this.getAttrs();
+    !this.hasAttrs && !this.isDropShip && this.getAttrs();
     this.eventTracker.logCurrentView();
   }
 
@@ -426,27 +426,27 @@ class ItemAttribute extends PureComponent {
       this.hasAttrs &&
       !Object.keys(this.state.selectedModel).length;
 
-    const discountPrice = this.state.models?.length
+    const discountPrice = this.hasAttrs
       ? this.state.selectedModel?.price_before_discount_view
       : this.state.product?.discount_view;
 
     const priceDropShip =
-      this.state.models.length !== 0
+      this.hasAttrs
         ? this.state.selectedModel.price_in_number
           ? this.state.selectedModel.price_in_number
           : 0
         : this.state.product?.price || 0;
 
     const priceDropShipView =
-      this.state.models.length !== 0
+      this.hasAttrs
         ? this.state.selectedModel.price
-          ? this.state.selectedModel.price
+          ? this.state.selectedModel.price_view
           : '-'
         : this.state.product?.price_view || '-';
 
     const price =
       (this.state.selectedModel.price
-        ? this.state.selectedModel.price
+        ? this.state.selectedModel.price_view
         : this.state.product.total_price_view) ||
       (this.isDropShip && this.state.product.price_view);
 
