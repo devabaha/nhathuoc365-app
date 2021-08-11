@@ -207,6 +207,8 @@ class TickidChat extends Component {
     this.props.t('copy'),
     this.props.t('cancel'),
   ];
+  messageLongPressOptions = [this.props.t('copy'), this.props.t('cancel')];
+
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
       if (nextProps.pinNotify > 0) {
@@ -771,7 +773,7 @@ class TickidChat extends Component {
         break;
       case 2:
         Clipboard.setString(number);
-        Toast.show('Đã sao chép thành công')
+        Toast.show('Đã sao chép thành công');
         break;
       default:
         break;
@@ -1325,6 +1327,7 @@ class TickidChat extends Component {
                 // onSend={this.handleSendMessage}
                 // alwaysShowSend={true}
                 isKeyboardInternallyHandled={!isIos}
+                optionTitles={this.messageLongPressOptions}
                 listViewProps={{
                   contentContainerStyle: [
                     styles.giftedChatContainer,
