@@ -563,8 +563,26 @@ class CommonAPI {
   get BOOKING_CANCEL() {
     return BaseAPI.apiDomain + 'apiBooking/cancel';
   }
+
+  // Request
+  get SITE_REQUESTS_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_requests_site';
+  }
+  get SITE_DETAIL_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_detail_request_site';
+  }
+  get SITE_REQUEST_TYPES_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_request_types_site';
+  }
+  get SITE_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/create_request_site';
+  }
+  get SITE_COMMENT_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/create_comment_request_site';
+  }
+  
 }
 
 export default new CommonAPI();
 
-export {CommonAPI};
+export { CommonAPI };

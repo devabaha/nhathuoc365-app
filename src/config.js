@@ -373,6 +373,11 @@ class Config {
 
       booking: 'booking',
 
+      // Requests
+      requests: 'requests',
+      requestDetail: 'requestDetail',
+      requestCreation: 'requestCreation',
+
       // ABAHA Requests
       abahaRequests: 'abahaRequests',
       abahaRequestDetail: 'abahaRequestDetail',

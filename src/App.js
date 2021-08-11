@@ -201,6 +201,10 @@ import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
 import Booking from './containers/Booking';
 import ModalCalendar from './components/ModalCalendar';
 import MainNotify from './components/notify/MainNotify';
+import Requests, {
+  RequestDetail,
+  RequestCreation
+} from './containers/Requests';
 
 /**
  * Not allow font scaling
@@ -906,6 +910,39 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ REQUESTS ================ */}
+                <Stack key={appConfig.routes.requests}>
+                  <Scene
+                    key={`${appConfig.routes.requests}_1`}
+                    component={Requests}
+                    title={t('screen.requests.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST CREATION ================ */}
+                <Stack key={appConfig.routes.requestCreation}>
+                  <Scene
+                    key={`${appConfig.routes.requestCreation}_1`}
+                    component={RequestCreation}
+                    title={t('screen.requests.creationTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST DETAIL ================ */}
+                <Stack key={appConfig.routes.requestDetail}>
+                  <Scene
+                    key={`${appConfig.routes.requestDetail}_1`}
+                    component={RequestDetail}
+                    // title={t('screen.requests.detailTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ BOOKING ================ */}
                 <Stack key={appConfig.routes.booking}>

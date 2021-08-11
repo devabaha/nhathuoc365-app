@@ -472,6 +472,5 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
 
-  
   }
 };
