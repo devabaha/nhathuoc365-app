@@ -241,6 +241,6 @@
   "noResult": "No data yet",
   "call": "Call",
   "sendSMS": "SMS",
-
+  "copySuccess": "Copying successfully",
   "loading": "Retrieving data..."
 }

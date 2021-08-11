@@ -207,7 +207,10 @@ class TickidChat extends Component {
     this.props.t('copy'),
     this.props.t('cancel'),
   ];
-  messageLongPressOptions = [this.props.t('copy'), this.props.t('cancel')];
+  actionOptionForLongPressMessage = [
+    this.props.t('copy'),
+    this.props.t('cancel'),
+  ];
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -773,10 +776,33 @@ class TickidChat extends Component {
         break;
       case 2:
         Clipboard.setString(number);
-        Toast.show('Đã sao chép thành công');
+        Toast.show(this.props.t('copySuccess'));
         break;
       default:
         break;
+    }
+  };
+
+  handleBubbleLongPress = (context, message) => {
+    if (message.text) {
+      const title = message.text;
+      const options = [this.props.t('copy'), this.props.t('cancel')];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions(
+        {
+          options,
+          title,
+          cancelButtonIndex,
+        },
+        (buttonIndex) => {
+          switch (buttonIndex) {
+            case 0:
+              Clipboard.setString(message.text);
+              Toast.show(this.props.t('copySuccess'));
+              break;
+          }
+        },
+      );
     }
   };
 
@@ -1327,7 +1353,8 @@ class TickidChat extends Component {
                 // onSend={this.handleSendMessage}
                 // alwaysShowSend={true}
                 isKeyboardInternallyHandled={!isIos}
-                optionTitles={this.messageLongPressOptions}
+                optionTitles={this.actionOptionForLongPressMessage}
+                onLongPress={this.handleBubbleLongPress}
                 listViewProps={{
                   contentContainerStyle: [
                     styles.giftedChatContainer,
