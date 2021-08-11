@@ -372,6 +372,11 @@ class Config {
       result: 'result',
 
       booking: 'booking',
+
+      // ABAHA Requests
+      abahaRequests: 'abahaRequests',
+      abahaRequestDetail: 'abahaRequestDetail',
+      abahaRequestCreation: 'abahaRequestCreation',
     };
   }
 }
