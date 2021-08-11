@@ -1516,7 +1516,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('common')(TickidChat);
+export default withTranslation()(TickidChat);
 
 export const EmptyChat = ({
   onPress,
