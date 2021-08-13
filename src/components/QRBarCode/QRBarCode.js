@@ -77,6 +77,7 @@ class QRBarCode extends Component {
 
   static defaultProps = {
     onCloseEnterCode: () => {},
+    isVisibleTabBar: true
   };
 
   constructor(props) {
@@ -570,6 +571,13 @@ class QRBarCode extends Component {
       if (this.unmounted) return;
       const text_result = event.data;
       const {wallet, from} = this.state;
+
+      if (this.props.getQRCode) {
+        this.props.getQRCode(text_result);
+        Actions.pop();
+        return;
+      }
+
       if (text_result) {
         if (isURL(text_result)) {
           if (isLinkTickID(text_result)) {
@@ -790,42 +798,48 @@ class QRBarCode extends Component {
             title={this.props.t('common:screen.qrBarCode.enterCode')}
           />
         ) : (
-          <View style={styles.bottomView}>
-            <TouchableOpacity
-              style={styles.bottomButton}
-              onPress={() => this.onPressTabButton(0)}
-              activeOpacity={1}>
-              <Icon
-                name="barcode-scan"
-                size={20}
-                color={index == 0 ? global.DEFAULT_COLOR : '#000'}
-              />
-              <Text
-                style={[
-                  styles.titleBottomButton,
-                  index == 0 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
-                ]}>
-                {title}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.bottomButton}
-              onPress={() => this.onPressTabButton(1)}
-              activeOpacity={1}>
-              <Icon
-                name="qrcode-scan"
-                size={20}
-                color={index == 1 ? global.DEFAULT_COLOR : '#000'}
-              />
-              <Text
-                style={[
-                  styles.titleBottomButton,
-                  index == 1 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
-                ]}>
-                Scan QRCode
-              </Text>
-            </TouchableOpacity>
-          </View>
+          !!this.props.isVisibleTabBar && (
+            <View style={styles.bottomView}>
+              <TouchableOpacity
+                style={styles.bottomButton}
+                onPress={() => this.onPressTabButton(0)}
+                activeOpacity={1}>
+                <Icon
+                  name="barcode-scan"
+                  size={20}
+                  color={index == 0 ? global.DEFAULT_COLOR : '#000'}
+                />
+                <Text
+                  style={[
+                    styles.titleBottomButton,
+                    index == 0
+                      ? {color: global.DEFAULT_COLOR}
+                      : {color: '#000'},
+                  ]}>
+                  {title}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.bottomButton}
+                onPress={() => this.onPressTabButton(1)}
+                activeOpacity={1}>
+                <Icon
+                  name="qrcode-scan"
+                  size={20}
+                  color={index == 1 ? global.DEFAULT_COLOR : '#000'}
+                />
+                <Text
+                  style={[
+                    styles.titleBottomButton,
+                    index == 1
+                      ? {color: global.DEFAULT_COLOR}
+                      : {color: '#000'},
+                  ]}>
+                  Scan QRCode
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )
         )}
       </View>
     );

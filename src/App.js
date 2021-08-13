@@ -215,6 +215,7 @@ Text.defaultProps.allowFontScaling = false;
 if (TextInput.defaultProps == null) TextInput.defaultProps = {};
 TextInput.defaultProps.allowFontScaling = false;
 TextInput.defaultProps.placeholderTextColor = appConfig.colors.placeholder;
+TextInput.defaultProps.underlineColorAndroid = 'transparent';
 /**
  * Initializes config for Phone Card module
  */
