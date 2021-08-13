@@ -36,7 +36,6 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service || !service.type) return;
   switch (service.type) {
     /** RADA */
-   
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
       const radaService = {
         id: service.id,
@@ -164,7 +163,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Alert.alert(
         'Thông báo',
         'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
-        [{ text: 'Đồng ý' }],
+        [{text: 'Đồng ý'}],
       );
       break;
 
@@ -452,7 +451,6 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       //   { text: 'Đồng ý' }
       // ]);
       break;
-    
 
     case 'request_management':
       Actions.push(appConfig.routes.requests, {

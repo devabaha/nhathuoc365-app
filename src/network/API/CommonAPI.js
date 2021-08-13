@@ -610,4 +610,4 @@ class CommonAPI {
 
 export default new CommonAPI();
 
-export { CommonAPI };
+export {CommonAPI};
