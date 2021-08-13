@@ -1,10 +1,10 @@
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
-import { Alert, Linking } from 'react-native';
+import {Alert, Linking} from 'react-native';
 import Communications from 'react-native-communications';
 import store from 'app-store';
 
-import { SERVICES_TYPE } from './types';
+import {SERVICES_TYPE} from './types';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -32,7 +32,7 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t = () => { }, callBack = () => { }) => {
+export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service || !service.type) return;
   switch (service.type) {
     /** RADA */
@@ -108,7 +108,7 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
       });
       break;
     case SERVICES_TYPE.MY_VOUCHER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.myVoucher, {
         title: t('common:screen.myVoucher.mainTitle'),
         from: 'home',
@@ -117,7 +117,7 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
       });
       break;
     case SERVICES_TYPE.VOUCHER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.mainVoucher, {
         from: 'deeplink',
       });
@@ -144,7 +144,7 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
       Actions.push(appConfig.routes.ordersTab);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.deepLinkOrdersTab);
       break;
 
@@ -207,7 +207,7 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
     /** CHAT */
     case SERVICES_TYPE.CHAT_NOTI:
       Actions.amazing_chat({
-        titleStyle: { width: 220 },
+        titleStyle: {width: 220},
         phoneNumber: service.tel,
         title: service.site_name,
         site_id: service.site_id,
@@ -216,12 +216,12 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
       break;
     case SERVICES_TYPE.LIST_CHAT:
       Actions.list_amazing_chat({
-        titleStyle: { width: 220 },
+        titleStyle: {width: 220},
       });
       break;
     case SERVICES_TYPE.LIST_USER_CHAT:
       Actions.push(appConfig.routes.listUserChat, {
-        titleStyle: { width: 220 },
+        titleStyle: {width: 220},
       });
       break;
 
@@ -452,6 +452,7 @@ export const servicesHandler = (service, t = () => { }, callBack = () => { }) =>
       //   { text: 'Đồng ý' }
       // ]);
       break;
+    
 
     case 'request_management':
       Actions.push(appConfig.routes.requests, {
