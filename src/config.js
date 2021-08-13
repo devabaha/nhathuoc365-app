@@ -304,6 +304,7 @@ class Config {
       modalComment: 'modalComment',
       modalEditImages: 'modalEditImages',
       modalCalendar: 'modalCalendar',
+      modalActionSheet: 'modalActionSheet',
 
       //  Reset password
       resetPassword: 'resetPassword',

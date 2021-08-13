@@ -242,6 +242,8 @@
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",
   "noResult": "No data yet",
-
+  "call": "Call",
+  "sendSMS": "SMS",
+  "copied": "Copied",
   "loading": "Retrieving data..."
 }

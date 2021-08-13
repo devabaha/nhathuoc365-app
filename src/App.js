@@ -201,6 +201,7 @@ import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
 import Booking from './containers/Booking';
 import ModalCalendar from './components/ModalCalendar';
 import MainNotify from './components/notify/MainNotify';
+import ModalActionSheet from './components/ModalActionSheet';
 
 /**
  * Not allow font scaling
@@ -2058,6 +2059,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.modalConfirm}
                 component={ModalConfirm}
+              />
+
+              {/* ================ MODAL ACTION SHEET ================ */}
+              <Stack
+                key={appConfig.routes.modalActionSheet}
+                component={ModalActionSheet}
               />
 
               {/* ================ COUNTRY PICKER ================ */}

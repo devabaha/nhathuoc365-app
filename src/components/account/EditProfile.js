@@ -375,12 +375,6 @@ class EditProfile extends Component {
           ref={(ref) => (this.actionSheet = ref)}
           options={this.GENDER_LIST}
           cancelButtonIndex={this.GENDER_LIST.length - 1}
-          destructiveButtonIndex={this.GENDER_LIST.length - 1}
-          // onPress={(index) => {
-          //   if(index !== this.GENDER_LIST.length -1){
-          //     this._onChangeGender(this.GENDER_LIST[index]
-          //     )}
-          // }}
           onPress={this._onChangeGender}
         />
         {this.state.loading && <Loading center />}
