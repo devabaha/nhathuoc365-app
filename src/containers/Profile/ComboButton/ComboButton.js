@@ -11,7 +11,7 @@ class ComboButton extends Component {
       <View style={[styles.container, this.props.style]}>
         <Button
           onPress={this.props.onCall}
-          title="Gọi trực tiếp"
+          title="Gọi"
           containerStyle={styles.btnContainer}
           btnContainerStyle={[styles.btnContent, styles.btnCall]}
           titleStyle={styles.btnTitle}
@@ -21,7 +21,7 @@ class ComboButton extends Component {
         />
         <Button
           onPress={this.props.onChat}
-          title="Chat kết nối"
+          title="Chat"
           containerStyle={styles.btnContainer}
           btnContainerStyle={[styles.btnContent]}
           titleStyle={styles.btnTitle}
