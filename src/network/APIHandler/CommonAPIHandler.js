@@ -1484,7 +1484,7 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * lấy danh sách phản ánh của căn hộ
+   * lấy danh sách phản ánh
    *
    * @method
    * @param {string} site_id
@@ -1496,7 +1496,7 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * lấy thông tin chi tiết phản ánh của căn hộ
+   * lấy thông tin chi tiết phản ánh 
    *
    * @method
    * @param {string} site_id
@@ -1518,7 +1518,7 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * Cập nhật trạng thái phản ánh căn hộ
+   * Cập nhật trạng thái phản ánh
    *
    * @method
    * @param {string} site_id
@@ -1541,7 +1541,7 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
-   * Gửi comment phản ánh căn hộ
+   * Gửi comment phản ánh
    *
    * @method
    * @param {string} site_id

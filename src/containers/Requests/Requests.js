@@ -12,7 +12,6 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 import appConfig from 'app-config';
-import store from '../../store';
 
 import Request from './Request';
 import Loading from '../../components/Loading';
@@ -26,14 +25,15 @@ import Button from '../../components/Button';
  * @author [Nguyễn Hoàng Minh](https://github.com/minhnguyenit14)
  */
 class Requests extends Component {
- 
+  static propTypes = {
+    siteId: PropTypes.string.isRequired,
+  };
   state = {
     loading: true,
     refreshing: false,
     requests: null,
   };
   unmounted = false;
-  siteId = store.store_id
 
   componentDidMount() {
     this.getRequests();
@@ -64,7 +64,7 @@ class Requests extends Component {
 
   createRequest = () => {
     Actions.push(appConfig.routes.requestCreation, {
-      siteId: store.store_id,
+      siteId: this.props.siteId,
       onRefresh: this.onRefresh,
     });
   };
@@ -72,8 +72,7 @@ class Requests extends Component {
   getRequests = async () => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.site_requests_room(store.store_id);
-      
+      const response = await APIHandler.site_requests_room(this.props.siteId);
 
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
@@ -104,7 +103,7 @@ class Requests extends Component {
 
   handlePressRequest(request) {
     Actions.push(appConfig.routes.requestDetail, {
-      siteId: store.store_id,
+      siteId: this.props.siteId,
       roomId: request.room_id,
       requestId: request.id,
       title: request.title || this.props.t('screen.requests.detailTitle'),
