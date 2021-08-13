@@ -170,6 +170,11 @@
     },
     "booking": {
       "mainTitle": "Booking"
+    },
+    "requests": {
+      "mainTitle": "Request list",
+      "detailTitle": "Request detail",
+      "creationTitle": "Create a request"
     }
   },
 

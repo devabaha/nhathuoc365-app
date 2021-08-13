@@ -170,6 +170,11 @@
     },
     "booking": {
       "mainTitle": "Đặt lịch"
+    },
+    "requests": {
+      "mainTitle": "Danh sách yêu cầu",
+      "detailTitle": "Chi tiết yêu cầu",
+      "creationTitle": "Tạo yêu cầu"
     }
   },
 
