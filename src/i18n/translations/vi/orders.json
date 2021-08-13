@@ -41,8 +41,16 @@
       "placeholder": "Nhập ghi chú của bạn tại đây",
       "noNote": "Không có ghi chú"
     },
+    "date": {
+      "title": "Ngày",
+      "unselected": "Chưa chọn"
+    },
+    "time": {
+      "title": "Thời gian"
+    },
     "store": {
-      "title": "Cửa hàng"
+      "title": "Cửa hàng",
+      "unselected": "Chưa chọn"
     },
     "items": {
       "selected": "Mặt hàng đã chọn",
@@ -79,6 +87,7 @@
       }
     },
     "confirmOrder": "Tiếp tục",
+    "confirmTitle": "Xác nhận",
     "feedback": "Phản ánh & đánh giá",
     "addMoreItems": "Chọn thêm mặt hàng",
     "reorder": "Đặt lại",

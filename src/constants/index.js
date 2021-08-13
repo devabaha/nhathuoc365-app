@@ -1,5 +1,6 @@
 import {ANALYTICS_EVENTS_NAME, formatViewEvents} from './analytics';
 import {PRODUCT_TYPES} from './product';
+import {ORDER_TYPES} from './orders';
 import appConfig from 'app-config';
 
 const LOGIN_MODE = {
@@ -19,6 +20,7 @@ export {
   LOGIN_MODE,
   LOGIN_STEP,
   PRODUCT_TYPES,
+  ORDER_TYPES
 };
 
 // Use with Ionicons.

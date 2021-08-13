@@ -37,7 +37,7 @@ class VoucherDetail extends Component {
     canUseNow: PropTypes.bool,
     showLoading: PropTypes.bool,
     isUseOnlineMode: PropTypes.bool,
-    campaignPoint: PropTypes.number,
+    campaignPoint: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
     addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),

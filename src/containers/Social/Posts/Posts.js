@@ -211,12 +211,12 @@ const Posts = ({
   }, []);
 
   const handlePressUserName = useCallback((user) => {
-    // user.id = user.user_id;
-    // servicesHandler({
-    //   type: SERVICES_TYPE.PERSONAL_PROFILE,
-    //   isMainUser: user.user_id == store.user_info?.id,
-    //   userInfo: user
-    // });
+    user.id = user.user_id;
+    servicesHandler({
+      type: SERVICES_TYPE.PERSONAL_PROFILE,
+      isMainUser: user.user_id == store.user_info?.id,
+      userInfo: user
+    });
   }, []);
 
   const onRefresh = () => {

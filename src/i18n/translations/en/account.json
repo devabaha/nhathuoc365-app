@@ -8,6 +8,10 @@
       "label": "My address",
       "desc": "Delivery address management"
     },
+    "orders": {
+      "label": "Orders",
+      "desc": "Manage orders"
+    },
     "myVoucher": {
       "label": "My Voucher",
       "desc": "Use the discount code received"

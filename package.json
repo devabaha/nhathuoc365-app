@@ -27,6 +27,8 @@
     "@tickid/tickid-rada": "^2.2.5",
     "@tickid/tickid-rn-loading": "^1.0.1",
     "@tickid/tickid-scaning-button": "^1.0.0",
+    "@types/react-native-calendars": "^1.505.4",
+    "@types/react-native-modalbox": "^1.4.9",
     "autobind-decorator": "^2.4.0",
     "axios": "^0.21.0",
     "d3-shape": "^2.0.0",
