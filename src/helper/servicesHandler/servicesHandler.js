@@ -452,7 +452,8 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       // ]);
       break;
 
-    case 'request_management':
+    /** REQUEST MANAGEMENT */
+    case SERVICES_TYPE.REQUEST_MANAGEMENT:
       Actions.push(appConfig.routes.requests, {
         siteId: store.store_id,
         roomId: service.room_id,
