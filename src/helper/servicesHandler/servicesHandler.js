@@ -333,9 +333,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       const selectedMethod =
         service.default_payment_method_id !== undefined
           ? {
-              id: service.default_payment_method_id,
-              type: service.default_payment_method_type,
-            }
+            id: service.default_payment_method_id,
+            type: service.default_payment_method_type,
+          }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
         selectedMethod: selectedMethod,
@@ -451,5 +451,27 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       //   { text: 'Đồng ý' }
       // ]);
       break;
-  }
+
+    /** REQUEST MANAGEMENT */
+    case SERVICES_TYPE.REQUEST_MANAGEMENT:
+      Actions.push(appConfig.routes.requests, {
+        siteId: store.store_id,
+        roomId: service.room_id,
+      });
+      break;
+
+    /** ABAHA FEEDBACK */
+    /** List */
+    case SERVICES_TYPE.ABAHA_REQUESTS:
+      Actions.push(appConfig.routes.abahaRequests, {
+        siteId: service.id,
+      });
+      break;
+    /** CREATE */
+    case SERVICES_TYPE.ABAHA_CREATE_REQUEST:
+      Actions.push(appConfig.routes.abahaRequestCreation, {
+        siteId: service.id,
+      });
+      break;
+    }
 };
