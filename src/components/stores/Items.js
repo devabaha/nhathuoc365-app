@@ -15,7 +15,7 @@ import FastImage from 'react-native-fast-image';
 
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
-import {PRODUCT_TYPES} from '../../constants';
+import {ORDER_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
 import {ProductItem} from '../Home/component/ListProducts';
@@ -32,7 +32,7 @@ class Items extends Component {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -50,102 +50,12 @@ class Items extends Component {
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, CART_TYPES.NORMAL);
-    // switch (product.product_type) {
-    //   case PRODUCT_TYPES.NORMAL:
-    //     this._addCart(product, quantity, model);
-    //     break;
-    //   case PRODUCT_TYPES.SERVICE:
-    //     this.goToSchedule(product);
-    //     break;
-    //   default:
-    //     this._addCart(product, quantity, model);
-    //     break;
-    // }
   };
 
   goToSchedule = (product) => {
     Actions.push(appConfig.routes.productSchedule, {
       productId: product.id,
     });
-  };
-
-  // add item vào giỏ hàng
-  _addCart = (item, quantity = 1, model = '') => {
-    if (this.props.buyPress) {
-      this.props.buyPress(item);
-    }
-
-    this.setState(
-      {
-        buying: true,
-      },
-      async () => {
-        const data = {
-          quantity,
-          model,
-        };
-        const {t} = this.props;
-
-        try {
-          const response = await APIHandler.site_cart_plus(
-            store.store_id,
-            item.id,
-            data,
-          );
-
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              if (response.data.attrs) {
-                Actions.push(appConfig.routes.itemAttribute, {
-                  itemId: item.id,
-                  onSubmit: (quantity, modal_key) =>
-                    this._addCart(item, quantity, modal_key),
-                });
-              } else {
-                store.setCartData(response.data);
-
-                var index = null,
-                  length = 0;
-                if (response.data.products) {
-                  length = Object.keys(response.data.products).length;
-
-                  Object.keys(response.data.products)
-                    .reverse()
-                    .some((key, key_index) => {
-                      let value = response.data.products[key];
-                      if (value.id == item.id) {
-                        index = key_index;
-                        return true;
-                      }
-                    });
-                }
-
-                flashShowMessage({
-                  message: response.message,
-                  type: 'success',
-                });
-              }
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
-              });
-            }
-          }
-        } catch (e) {
-          console.warn(e + ' site_cart_plus');
-          flashShowMessage({
-            type: 'danger',
-            message: t('common:api.error.message'),
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              buying: false,
-            });
-        }
-      },
-    );
   };
 
   getItemExtraStyle(index) {

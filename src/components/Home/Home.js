@@ -678,6 +678,7 @@ let styles = StyleSheet.create({
   },
 
   socialPostContainer: {
+    flex: 1,
     paddingHorizontal: 0,
     marginBottom: -15,
   },

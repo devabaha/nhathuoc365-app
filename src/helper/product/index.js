@@ -1,1 +1,1 @@
-export {isOutOfStock} from './product';
+export {isOutOfStock, isUnpaid, isPaid, canTransaction} from './product';

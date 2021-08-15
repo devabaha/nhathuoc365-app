@@ -20,16 +20,18 @@ export default class Loading extends Component {
   render() {
     return (
       <View
+        pointerEvents={this.props.pointerEvents}
         style={[
           styles.wrapper,
           this.props.center ? styles.centerContainer : {},
           this.props.wrapperStyle,
         ]}>
-        {!!this.props.blur && <BlurFilter visible />}
+        {!!this.props.blur && <BlurFilter visible blurType={this.props.blurType}/>}
         <View
           style={[
             styles.container,
-            (this.props.blur || this.props.highlight) && styles.blurContentContainer,
+            (this.props.blur || this.props.highlight) &&
+              styles.blurContentContainer,
             this.props.containerStyle,
           ]}>
           <ActivityIndicator
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const BlurFilter = React.memo(({visible}) => {
+export const BlurFilter = React.memo(({visible, blurType}) => {
   const animatedOpacity = useValue(0);
 
   useEffect(() => {
@@ -118,10 +120,13 @@ export const BlurFilter = React.memo(({visible}) => {
   }, [visible]);
 
   return (
-    <Animated.View pointerEvents="none" style={[styles.blurContainer, {opacity: animatedOpacity}]}>
+    <Animated.View
+      pointerEvents="none"
+      style={[styles.blurContainer, {opacity: animatedOpacity}]}>
       <BlurView
         style={styles.blurContainer}
         reducedTransparencyFallbackColor="#fff"
+        blurType={blurType}
       />
     </Animated.View>
   );

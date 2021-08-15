@@ -211,7 +211,7 @@ class CommonAPI {
   get SITE_CART_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/cartaddress';
   }
-  get SITE_ADDRESS(){
+  get SITE_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/address';
   }
 
@@ -270,6 +270,9 @@ class CommonAPI {
   // Notices
   get USER_NOTICE() {
     return BaseAPI.apiDomain + 'apiUser/notice';
+  }
+  get USER_READ_NOTICE() {
+    return BaseAPI.apiDomain + 'apiUser/read_notice'
   }
 
   // Notify
@@ -531,9 +534,77 @@ class CommonAPI {
   get USER_DELETE_IMAGE() {
     return BaseAPI.apiDomain + 'apiUser/delete_user_image';
   }
-  
+
   get USER_UPLOAD_IMAGE_COVER() {
     return BaseAPI.apiDomain + 'apiUser/upload_image_cover';
+  }
+
+  // Booking
+  get BOOKING_SHOW() {
+    return BaseAPI.apiDomain + 'apiBooking/show';
+  }
+
+  get BOOKING_GET_BOOKING_TIMES() {
+    return BaseAPI.apiDomain + 'apiBooking/get_booking_times';
+  }
+
+  get BOOKING_STORE() {
+    return BaseAPI.apiDomain + 'apiBooking/store';
+  }
+
+  get BOOKING_UPDATE() {
+    return BaseAPI.apiDomain + 'apiBooking/update';
+  }
+
+  get BOOKING_ORDER() {
+    return BaseAPI.apiDomain + 'apiBooking/order';
+  }
+
+  get BOOKING_CANCEL() {
+    return BaseAPI.apiDomain + 'apiBooking/cancel';
+  }
+
+  // Abaha Request
+  get SITE_REQUESTS_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_requests_site';
+  }
+  get SITE_DETAIL_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_detail_request_site';
+  }
+  get SITE_REQUEST_TYPES_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/get_request_types_site';
+  }
+  get SITE_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/create_request_site';
+  }
+  get SITE_COMMENT_REQUEST_SITE() {
+    return BaseAPI.apiDomain + 'apiSite/create_comment_request_site';
+  }
+
+  //Request Management
+  get SITE_REQUESTS_ROOMS() {
+    return BaseAPI.apiDomain + 'apiSite/get_requests_rooms';
+  }
+  get SITE_DETAIL_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_detail_request_room';
+  }
+  get SITE_COMMENT_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/create_comment_request_room';
+  }
+  get SITE_UPDATE_REQUEST_STATUS_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/update_status_request_room';
+  }
+  get SITE_GET_LIST_ADMIN_STAFF() {
+    return BaseAPI.apiDomain + 'apiSite/get_list_admin_staff';
+  }
+  get SITE_CHANGE_ADMIN_REQUEST() {
+    return BaseAPI.apiDomain + 'apiSite/change_admin_request';
+  }
+  get SITE_GET_LIST_ADMIN_REQUEST() {
+    return BaseAPI.apiDomain + 'apiSite/get_list_admin_request';
+  }
+  get SITE_DELETE_ADMIN_REQUEST() {
+    return BaseAPI.apiDomain + 'apiSite/delete_admin_request';
   }
 }
 

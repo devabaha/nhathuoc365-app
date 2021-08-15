@@ -107,7 +107,7 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking,
+  Booking as RadaBooking,
   OrderHistory,
 } from '@tickid/tickid-rada';
 import {
@@ -198,6 +198,14 @@ import Place from './containers/AirlineTicket/Place';
 import Customer from './containers/AirlineTicket/Customer';
 import Result from './containers/AirlineTicket/Result';
 import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import Booking from './containers/Booking';
+import ModalCalendar from './components/ModalCalendar';
+import MainNotify from './components/notify/MainNotify';
+import ModalActionSheet from './components/ModalActionSheet';
+import Requests, {
+  RequestDetail,
+  RequestCreation
+} from './containers/Requests';
 
 /**
  * Not allow font scaling
@@ -207,6 +215,7 @@ Text.defaultProps.allowFontScaling = false;
 if (TextInput.defaultProps == null) TextInput.defaultProps = {};
 TextInput.defaultProps.allowFontScaling = false;
 TextInput.defaultProps.placeholderTextColor = appConfig.colors.placeholder;
+TextInput.defaultProps.underlineColorAndroid = 'transparent';
 /**
  * Initializes config for Phone Card module
  */
@@ -823,8 +832,7 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    icon={FoodHubCartButton}>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -832,6 +840,29 @@ class RootRouter extends Component {
                    ************************ Tab 3 ************************
                    */}
                   <Stack
+                    key={appConfig.routes.mainNotify}
+                    icon={TabIcon}
+                    iconSize={20}
+                    iconLabel={t('appTab.tab3.title')}
+                    iconName="bell"
+                    notifyKey="notify_list_notice">
+                    <Scene
+                      key={`${appConfig.routes.mainNotify}_1`}
+                      title={t('appTab.tab3.title')}
+                      component={MainNotify}
+                      onEnter={() => {
+                        store.setUpdateNotify(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateNotify(false);
+                      }}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 4 ************************
+                   */}
+                  {/* <Stack
                     key={appConfig.routes.ordersTab}
                     icon={TabIcon}
                     iconSize={24}
@@ -850,10 +881,10 @@ class RootRouter extends Component {
                         store.setUpdateOrders(false);
                       }}
                     />
-                  </Stack>
+                  </Stack> */}
 
                   {/**
-                   ************************ Tab 4 ************************
+                   ************************ Tab 5 ************************
                    */}
                   <Stack
                     key={appConfig.routes.accountTab}
@@ -882,6 +913,50 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ REQUESTS ================ */}
+                <Stack key={appConfig.routes.requests}>
+                  <Scene
+                    key={`${appConfig.routes.requests}_1`}
+                    component={Requests}
+                    title={t('screen.requests.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST CREATION ================ */}
+                <Stack key={appConfig.routes.requestCreation}>
+                  <Scene
+                    key={`${appConfig.routes.requestCreation}_1`}
+                    component={RequestCreation}
+                    title={t('screen.requests.creationTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST DETAIL ================ */}
+                <Stack key={appConfig.routes.requestDetail}>
+                  <Scene
+                    key={`${appConfig.routes.requestDetail}_1`}
+                    component={RequestDetail}
+                    // title={t('screen.requests.detailTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BOOKING ================ */}
+                <Stack key={appConfig.routes.booking}>
+                  <Scene
+                    key={`${appConfig.routes.booking}_1`}
+                    title={t('screen.booking.mainTitle')}
+                    component={Booking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ AIRLINE TICKET RESULT ================ */}
                 <Stack key={appConfig.routes.result}>
                   <Scene
@@ -897,15 +972,18 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.place}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => <PlaceNavBar {...{onChangeText}}/>}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}
-                >
+                <Stack key={appConfig.routes.datePicker}>
                   <Scene
-                    modal={true} panHandlers={null} title="Chọn ngày"
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
                     {...navBarConfig}
                     key={`${appConfig.routes.datePicker}_1`}
                     component={DatePicker}
@@ -916,7 +994,7 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title='Tìm chuyến bay'
+                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -944,7 +1022,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
 
                 {/* ================ LIST USER CHAT ================ */}
                 <Stack key={appConfig.routes.listUserChat}>
@@ -1834,7 +1911,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.tickidRadaBooking}>
                   <Scene
                     key="tickidRadaBooking1"
-                    component={Booking}
+                    component={RadaBooking}
                     {...whiteNavBarConfig}
                     back
                   />
@@ -1986,6 +2063,12 @@ class RootRouter extends Component {
                 component={ItemAttribute}
               />
 
+              {/* ================ MODAL CALENDAR ================ */}
+              <Stack
+                key={appConfig.routes.modalCalendar}
+                component={ModalCalendar}
+              />
+
               {/* ================ MODAL PICKER ================ */}
               <Stack
                 key={appConfig.routes.modalPicker}
@@ -2016,6 +2099,12 @@ class RootRouter extends Component {
                 component={ModalConfirm}
               />
 
+              {/* ================ MODAL ACTION SHEET ================ */}
+              <Stack
+                key={appConfig.routes.modalActionSheet}
+                component={ModalActionSheet}
+              />
+
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
                 key={appConfig.routes.countryPicker}
@@ -2033,9 +2122,11 @@ class RootRouter extends Component {
                 component={ModalFilterProduct}
               />
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
-               <Stack key={appConfig.routes.customer} 
-               component={Customer}  hideNavBar/>
-
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -2047,6 +2138,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -2056,6 +2148,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -2066,6 +2159,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -2077,6 +2171,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene

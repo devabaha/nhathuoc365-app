@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,13 +6,13 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  Alert
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-crop-picker';
 import NoResult from 'src/components/NoResult';
 import ImageItem from './ImageItem';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import ProfileContext from '../ProfileContext';
 
@@ -25,18 +25,18 @@ const ORIGIN_HEIGHT =
 
 const CHOOSE_PHOTO_TYPE = {
   CAMERA: 'camera',
-  LIBRARY: 'library'
+  LIBRARY: 'library',
 };
 
 const CHOOSE_PHOTO_DATA = [
   {
     type: CHOOSE_PHOTO_TYPE.CAMERA,
-    title: 'Máy ảnh'
+    title: 'Máy ảnh',
   },
   {
     type: CHOOSE_PHOTO_TYPE.LIBRARY,
-    title: 'Thư viện'
-  }
+    title: 'Thư viện',
+  },
 ];
 
 class Gallery extends Component {
@@ -45,18 +45,18 @@ class Gallery extends Component {
     headingHeight: undefined,
     galleryHeight: undefined,
     isModalOpen: false,
-    animatedScroll: new Animated.Value(0)
+    animatedScroll: new Animated.Value(0),
   };
   refModal = React.createRef();
   unmounted = false;
   uploaded = false;
 
   get imagesLength() {
-    return this.props.data ? this.props.data.length : -1;
+    return this.props.data?.length;
   }
 
   get paddingAnimatedArea() {
-    const { upperLayout } = this.context;
+    const {upperLayout} = this.context;
     return upperLayout
       ? ORIGIN_HEIGHT * 0.8 - (ORIGIN_HEIGHT - upperLayout)
       : 0;
@@ -90,12 +90,12 @@ class Gallery extends Component {
       onPressItem: this.onPressChoosePhotoType,
       data: CHOOSE_PHOTO_DATA,
       onCloseModal: Actions.pop,
-      modalStyle: { height: undefined },
-      heading: 'Chọn ảnh'
+      modalStyle: {height: undefined},
+      heading: 'Chọn ảnh',
     });
   };
 
-  onPressChoosePhotoType = ({ type }) => {
+  onPressChoosePhotoType = ({type}) => {
     switch (type) {
       case CHOOSE_PHOTO_TYPE.CAMERA:
         this.openCamera();
@@ -111,8 +111,8 @@ class Gallery extends Component {
       includeExif: true,
       multiple: true,
       includeBase64: true,
-      mediaType: 'photo'
-    }).then(images => {
+      mediaType: 'photo',
+    }).then((images) => {
       Actions.pop();
       this.uploaded = true;
       const imgs = this.nomarlizeImages(images);
@@ -123,8 +123,8 @@ class Gallery extends Component {
   openCamera() {
     ImagePicker.openCamera({
       includeExif: true,
-      includeBase64: true
-    }).then(image => {
+      includeBase64: true,
+    }).then((image) => {
       Actions.pop();
       this.uploaded = true;
       const img = this.nomarlizeImages([image])[0];
@@ -133,7 +133,7 @@ class Gallery extends Component {
   }
 
   nomarlizeImages(images) {
-    return images.map(img => {
+    return images.map((img) => {
       if (!img.filename) {
         img.filename = `${new Date().getTime()}`;
       }
@@ -141,19 +141,19 @@ class Gallery extends Component {
     });
   }
 
-  renderItem = ({ item: img, index }) => {
+  renderItem = ({item: img, index}) => {
     const size = (appConfig.device.width - ORIGIN_PADDING * 4) / 3;
     const sizeStyle = {
       width: size,
       height: size,
-      marginRight: ORIGIN_PADDING
+      marginRight: ORIGIN_PADDING,
     };
     const paddingHorizontalStyle =
       index % 2 !== 0
-        ? { paddingRight: ORIGIN_PADDING }
-        : { paddingLeft: ORIGIN_PADDING };
+        ? {paddingRight: ORIGIN_PADDING}
+        : {paddingLeft: ORIGIN_PADDING};
 
-    const paddingTopStyle = index < 3 && { marginTop: ORIGIN_PADDING };
+    const paddingTopStyle = index < 3 && {marginTop: ORIGIN_PADDING};
 
     return (
       <ImageItem
@@ -165,16 +165,16 @@ class Gallery extends Component {
     );
   };
 
-  onHeadingLayout = e => {
-    this.setState({ headingHeight: e.nativeEvent.layout.height });
+  onHeadingLayout = (e) => {
+    this.setState({headingHeight: e.nativeEvent.layout.height});
   };
 
-  onGalleryLayout = e => {
-    this.setState({ galleryHeight: e.nativeEvent.layout.height });
+  onGalleryLayout = (e) => {
+    this.setState({galleryHeight: e.nativeEvent.layout.height});
   };
 
   render() {
-    const { isMainUser } = this.context;
+    const {isMainUser} = this.context;
     // const containerStyle = {
     //   height: this.containerHeight,
     //   transform: [{ translateY: -this.paddingAnimatedArea }]
@@ -198,7 +198,7 @@ class Gallery extends Component {
       // height: '100%',
       backgroundColor: '#fafafa',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
       // paddingTop: this.paddingAnimatedArea,
     };
 
@@ -207,14 +207,15 @@ class Gallery extends Component {
         <Animated.View
           onLayout={this.onHeadingLayout}
           style={[
-            styles.headerContainer
+            styles.headerContainer,
             // animatedStyle
-          ]}
-        >
+          ]}>
           {this.props.headerComponent}
 
           <View style={[styles.row]}>
-            <Text style={styles.title}>Ảnh ({this.imagesLength})</Text>
+            <Text style={styles.title}>
+              Ảnh {this.imagesLength !== null && `(${this.imagesLength})`}
+            </Text>
             {isMainUser && (
               <TouchableOpacity onPress={this.handleOpenUploadSelection}>
                 <Text style={styles.uploadText}>
@@ -227,10 +228,9 @@ class Gallery extends Component {
         <View
           onLayout={this.onGalleryLayout}
           style={[
-            styles.container
+            styles.container,
             // containerStyle
-          ]}
-        >
+          ]}>
           {this.imagesLength === 0 ? (
             <View style={emptyContainerStyle}>
               <NoResult
@@ -273,10 +273,10 @@ class Gallery extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    zIndex: 1
+    zIndex: 1,
   },
   headerContainer: {
-    zIndex: 2
+    zIndex: 2,
   },
   row: {
     backgroundColor: '#f1f1f1',
@@ -285,20 +285,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     padding: 15,
     borderBottomColor: '#ccc',
-    borderBottomWidth: 0.5
+    borderBottomWidth: 0.5,
   },
   title: {
     fontWeight: '600',
-    color: '#444'
+    color: '#444',
   },
   uploadText: {
-    color: '#777'
+    color: '#777',
   },
   columnWrapperStyle: {
     // justifyContent: 'space-between',
     paddingLeft: ORIGIN_PADDING,
-    backgroundColor: '#fcfcfc'
-  }
+    backgroundColor: '#fcfcfc',
+  },
 });
 
 export default withTranslation(['account', 'common'])(Gallery);

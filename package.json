@@ -8,9 +8,10 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "rm -rf node_modules/@tickid/react-native-accordion/node_modules/react-native-vector-icons && rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons && rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-webview && rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons"
+    "postinstall": "bash setup"
   },
   "dependencies": {
+    "@alessiocancian/react-native-actionsheet": "^3.0.3",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/blur": "^3.6.0",
@@ -27,6 +28,9 @@
     "@tickid/tickid-rada": "^2.2.5",
     "@tickid/tickid-rn-loading": "^1.0.1",
     "@tickid/tickid-scaning-button": "^1.0.0",
+    "@types/react-native-calendars": "^1.505.4",
+    "@types/react-native-modalbox": "^1.4.9",
+    "@types/react-native-actionsheet": "^2.4.3",
     "autobind-decorator": "^2.4.0",
     "axios": "^0.21.0",
     "d3-shape": "^2.0.0",

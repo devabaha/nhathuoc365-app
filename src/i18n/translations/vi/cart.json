@@ -8,6 +8,9 @@
     },
     "cancel": {
       "message": "Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
+    },
+    "cancelBooking": {
+      "message": "Huỷ đơn đặt lịch này, bạn đã chắc chắn chưa?"
     }
   },
   "notification": {

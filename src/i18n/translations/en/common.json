@@ -14,7 +14,7 @@
       "title": "News"
     },
     "tab3": {
-      "title": "Farms"
+      "title": "Notifications"
     },
     "tab4": {
       "title": "Orders"
@@ -167,6 +167,14 @@
     },
     "listUserChat": {
       "mainTitle": "Messages"
+    },
+    "booking": {
+      "mainTitle": "Booking"
+    },
+    "requests": {
+      "mainTitle": "Request list",
+      "detailTitle": "Request detail",
+      "creationTitle": "Create a request"
     }
   },
 
@@ -239,6 +247,8 @@
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",
   "noResult": "No data yet",
-
+  "call": "Call",
+  "sendSMS": "SMS",
+  "copied": "Copied",
   "loading": "Retrieving data..."
 }

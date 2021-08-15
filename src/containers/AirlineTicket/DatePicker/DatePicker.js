@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {Actions} from 'react-native-router-flux';
-import config from 'app-config';
+import appConfig from 'app-config';
 
 LocaleConfig.locales['vi'] = {
   monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
@@ -40,6 +40,18 @@ class CalendarsScreen extends Component {
     };
   }
 
+  _onDayPress(day) {
+    console.log(day)
+    this.setState({
+      selected: day.dateString
+    }, () => {
+      if (this.props.onSelected) {
+        this.props.onSelected(this.state.selected, day);
+      }
+      Actions.pop();
+    });
+  }
+
   render() {
     var { current, minDate } = this.props;
 
@@ -50,15 +62,15 @@ class CalendarsScreen extends Component {
             backgroundColor: '#ffffff',
             calendarBackground: '#ffffff',
             textSectionTitleColor: '#2d4150',
-            selectedDayBackgroundColor: config._primaryColor,
+            selectedDayBackgroundColor: appConfig.colors.primary,
             selectedDayTextColor: '#ffffff',
-            todayTextColor: config._primaryColor,
+            todayTextColor: appConfig.colors.primary,
             selectedDayTextColor: '#fff',
             dayTextColor: '#2d4150',
             textDisabledColor: '#ccc',
-            dotColor: config._primaryColor,
+            dotColor: appConfig.colors.primary,
             selectedDotColor: '#ffffff',
-            arrowColor: config._primaryColor,
+            arrowColor: appConfig.colors.primary,
             textDayFontWeight: '300',
             textMonthFontWeight: 'bold',
             textDayFontSize: 16,
@@ -72,20 +84,10 @@ class CalendarsScreen extends Component {
             [this.state.selected]: {selected: true}
           }}
           minDate={minDate}
+          enableSwipeMonths
         />
       </ScrollView>
     );
-  }
-
-  _onDayPress(day) {
-    this.setState({
-      selected: day.dateString
-    }, () => {
-      if (this.props.onSelected) {
-        this.props.onSelected(this.state.selected);
-      }
-      Actions.pop();
-    });
   }
 }
 

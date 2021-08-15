@@ -14,7 +14,7 @@
       "title": "Tin tức"
     },
     "tab3": {
-      "title": "Nông trại"
+      "title": "Thông báo"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -167,6 +167,14 @@
     },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
+    },
+    "booking": {
+      "mainTitle": "Đặt lịch"
+    },
+    "requests": {
+      "mainTitle": "Danh sách yêu cầu",
+      "detailTitle": "Chi tiết yêu cầu",
+      "creationTitle": "Tạo yêu cầu"
     }
   },
 
@@ -239,6 +247,8 @@
   "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
   "saveImageLabel": "Lưu ảnh",
   "noResult": "Chưa có dữ liệu",
-
+  "call": "Gọi điện",
+  "sendSMS": "Nhắn tin",
+  "copied": "Đã sao chép",
   "loading": "Đang lấy dữ liệu..."
 }

@@ -619,7 +619,7 @@ class CreateAddress extends Component {
                     });
                   }}
                   value={this.state.default_flag}
-                  trackColor={DEFAULT_COLOR}
+                  trackColor={{true: appConfig.colors.primary, false: appConfig.colors.sceneBackground}}
                 />
               </View>
             </View>

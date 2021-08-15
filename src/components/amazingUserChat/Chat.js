@@ -339,7 +339,7 @@ class Chat extends Component {
         // galleryVisible={appConfig.device.isIOS}
         galleryVisible={false}
         useModalGallery
-        uploadURL={APIHandler.url_user_upload_image()}
+        uploadURL={UPLOAD_URL}
         onSendImage={this.handleSendImage}
         onUploadedImage={(response) =>
           this._onSend({image: response.data.name})

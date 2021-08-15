@@ -237,7 +237,10 @@ class CategoryScreen extends Component {
               : response.data;
             this.setState({
               items_data:
-                response.data.length >= (this.page == 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+                response.data.length >=
+                (this.page == 0
+                  ? FIRST_PAGE_STORES_LOAD_MORE
+                  : STORES_LOAD_MORE)
                   ? [...items_data, {id: -1, type: 'loadMore'}]
                   : items_data,
               items_data_bak: items_data,
@@ -299,10 +302,105 @@ class CategoryScreen extends Component {
     return (
       <>
         <View style={styles.containerScreen}>
-          <Animated.ScrollView
+          <ListStoreProduct
+            useList
+            products={items_data}
+            onPressLoadMore={this._loadMore}
+            listProps={{
+              numColumns: 2,
+              ListHeaderComponent: this.state.isAll &&
+                this.state.promotions &&
+                this.state.promotions.length > 0 && (
+                  <Swiper
+                    style={{
+                      marginVertical: 8,
+                    }}
+                    width={Util.size.width}
+                    height={Util.size.width * 0.96 * (50 / 320) + 16}
+                    autoplayTimeout={3}
+                    showsPagination={false}
+                    horizontal
+                    autoplay>
+                    {this.state.promotions.map((banner, i) => {
+                      return (
+                        <View
+                          key={i}
+                          style={{
+                            width: Util.size.width,
+                            alignItems: 'center',
+                          }}>
+                          <CachedImage
+                            source={{uri: banner.banner}}
+                            style={{
+                              width: Util.size.width * 0.96,
+                              height: Util.size.width * 0.96 * (50 / 320),
+                            }}
+                          />
+                        </View>
+                      );
+                    })}
+                  </Swiper>
+                ),
+
+              ListEmptyComponent: (
+                <View style={[styles.containerScreen]}>
+                  {fetched && (
+                    <NoResult
+                      iconName="cart-off"
+                      message={`${t('noProduct')} :(`}
+                    />
+                  )}
+                </View>
+              ),
+
+              contentContainerStyle: {
+                flexGrow: 1,
+                // paddingTop: 15,
+                paddingBottom: store.cart_data
+                  ? 5
+                  : appConfig.device.bottomSpace,
+              },
+              scrollEventThrottle: 16,
+              refreshControl: (
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />
+              ),
+              onScrollBeginDrag: Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: this.props.animatedContentOffsetY,
+                      },
+                    },
+                  },
+                ],
+                {
+                  useNativeDriver: true,
+                },
+              ),
+              onScroll: Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: this.props.animatedScrollY,
+                      },
+                    },
+                  },
+                ],
+                {
+                  useNativeDriver: true,
+                },
+              ),
+            }}
+          />
+          {/* <Animated.ScrollView
             contentContainerStyle={{
               flexGrow: 1,
-              paddingBottom: store.cart_data ?0: appConfig.device.bottomSpace
+              paddingBottom: store.cart_data ? 0 : appConfig.device.bottomSpace,
             }}
             scrollEventThrottle={16}
             refreshControl={
@@ -373,31 +471,11 @@ class CategoryScreen extends Component {
                 </Swiper>
               )}
 
-            {/* <ListHeader title={header_title} /> */}
+            <ListStoreProduct
+              products={items_data}
+              onPressLoadMore={this._loadMore}
+            />
 
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                paddingTop: 20,
-                paddingBottom: 5,
-              }}>
-              {items_data !== null
-                ? items_data.map((item, index) => (
-                    <Items
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onPress={
-                        item.type != 'loadMore'
-                          ? this._goItem.bind(this, item)
-                          : this._loadMore
-                      }
-                    />
-                  ))
-                : null}
-            </View> */}
-            <ListStoreProduct products={items_data} onPressLoadMore={this._loadMore}/>
             {items_data == null ? (
               <View style={[styles.containerScreen]}>
                 {fetched && (
@@ -408,7 +486,7 @@ class CategoryScreen extends Component {
                 )}
               </View>
             ) : null}
-          </Animated.ScrollView>
+          </Animated.ScrollView> */}
         </View>
         <ListStoreProductSkeleton loading={this.state.loading} />
       </>

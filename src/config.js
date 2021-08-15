@@ -4,7 +4,11 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
-import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
+import {
+  CART_PAYMENT_STATUS,
+  CART_TYPES,
+  DELIVERY_STATUS_CODE,
+} from './constants/cart';
 
 class Config {
   constructor() {
@@ -12,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.0.6';
+    return 'r12.1.1';
   }
 
   get appName() {
@@ -87,8 +91,9 @@ class Config {
         other: '#073b4c',
       },
       cartType: {
-        cart: '#B0C0F0',
-        dropship: '#FF9F1C',
+        [CART_TYPES.NORMAL]: '#B0C0F0',
+        [CART_TYPES.DROP_SHIP]: '#FF9F1C',
+        [CART_TYPES.BOOKING]: '#53917E',
       },
       delivery: {
         [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
@@ -123,7 +128,7 @@ class Config {
         standard: ['#333', '#ccc'],
         gold: ['#d99b2d', '#FFCF40'],
         platinum: ['#a1a3a6', '#d8dadb'],
-        diamond: ['#723dc6', '#d1a0f6']
+        diamond: ['#723dc6', '#d1a0f6'],
       },
       typography: {
         text: '#2B2B2B',
@@ -212,6 +217,7 @@ class Config {
       ordersTab: 'ordersTab',
       deepLinkOrdersTab: 'deepLinkOrdersTab',
 
+      mainNotify: 'mainNotify',
       news: 'news',
       vndWallet: 'vnd_wallet',
       payWallet: 'pay_wallet',
@@ -263,7 +269,8 @@ class Config {
       // end routes of Voucher module **
 
       // Routes of Order
-      orders: 'Orders',
+      orders: 'orders',
+      ordersDetail: 'orders_item',
       paymentConfirm: 'paymentConfirm',
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',
@@ -296,6 +303,8 @@ class Config {
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
       modalEditImages: 'modalEditImages',
+      modalCalendar: 'modalCalendar',
+      modalActionSheet: 'modalActionSheet',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -352,7 +361,7 @@ class Config {
       editPersonalProfile: 'editPersonalProfile',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
-      
+
       listAddressStore: 'listAddressStore',
 
       itemImageViewer: 'item_image_viewer',
@@ -362,6 +371,18 @@ class Config {
       place: 'place',
       customer: 'customer',
       result: 'result',
+
+      booking: 'booking',
+
+      // Requests
+      requests: 'requests',
+      requestDetail: 'requestDetail',
+      requestCreation: 'requestCreation',
+
+      // ABAHA Requests
+      abahaRequests: 'abahaRequests',
+      abahaRequestDetail: 'abahaRequestDetail',
+      abahaRequestCreation: 'abahaRequestCreation',
     };
   }
 }

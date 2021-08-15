@@ -165,14 +165,6 @@ class ItemImageViewer extends Component {
           onClick={this.toggleHeaderVisibility}
           onLongPress={this.handleLongPressImage}
         />
-
-        {/* <ActionSheet
-          ref={this.refActionSheet}
-          options={this.OPTIONS_LIST}
-          cancelButtonIndex={1}
-          destructiveButtonIndex={1}
-          onPress={this.handleOptionPress}
-        /> */}
       </View>
     );
   }

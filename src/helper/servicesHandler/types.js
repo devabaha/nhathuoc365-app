@@ -107,6 +107,16 @@ export const SERVICES_TYPE = {
   /** PROFILE */
   PERSONAL_PROFILE: 'personal_profile',
 
-   /** AIRLINE TICKET */
-   AIRLINE_TICKET: 'airline_ticket',
+  /** AIRLINE TICKET */
+  AIRLINE_TICKET: 'airline_ticket',
+
+  /** AGENCY INFORMATION REGISTER */
+  AGENCY_INFORMATION_REGISTER: 'agency_information_register',
+
+  /** ABAHA FEEDBACK */
+  ABAHA_REQUESTS: 'abaha_requests',
+  ABAHA_CREATE_REQUEST: 'abaha_create_request',
+
+  /** REQUEST MANAGEMENT */
+  REQUEST_MANAGEMENT: 'request_management'
 };

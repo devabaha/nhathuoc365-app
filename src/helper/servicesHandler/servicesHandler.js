@@ -226,6 +226,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** STORE */
     case SERVICES_TYPE.OPEN_SHOP:
+      if (service.callback) {
+        service.callback();
+      }
       APIHandler.site_info(service.siteId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
@@ -271,6 +274,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
+      if (service.callback) {
+        service.callback();
+      }
       APIHandler.site_product(service.siteId, service.productId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
@@ -332,7 +338,6 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
           }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
-        onConfirm: (method, extraData) => callBack(true, method, extraData),
         selectedMethod: selectedMethod,
         price: service.total_before_view,
         totalPrice: service.total_selected,
@@ -430,16 +435,43 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         userInfo: service.userInfo,
       });
       break;
+
+    /** AIRLINE TICKET */
+    case SERVICES_TYPE.AIRLINE_TICKET:
+      Actions.push(appConfig.routes.airlineTicket);
+      break;
+
+    /** AGENCY INFORMATION REGISTER */
+    case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
+      Actions.push(appConfig.routes.agencyInformationRegister);
+      break;
+
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
       // ]);
       break;
 
-    /** Airline Ticket */
-    case SERVICES_TYPE.AIRLINE_TICKET:
-      Actions.push(appConfig.routes.airlineTicket);
+    /** REQUEST MANAGEMENT */
+    case SERVICES_TYPE.REQUEST_MANAGEMENT:
+      Actions.push(appConfig.routes.requests, {
+        siteId: store.store_id,
+        roomId: service.room_id,
+      });
       break;
 
-  }
+    /** ABAHA FEEDBACK */
+    /** List */
+    case SERVICES_TYPE.ABAHA_REQUESTS:
+      Actions.push(appConfig.routes.abahaRequests, {
+        siteId: service.id,
+      });
+      break;
+    /** CREATE */
+    case SERVICES_TYPE.ABAHA_CREATE_REQUEST:
+      Actions.push(appConfig.routes.abahaRequestCreation, {
+        siteId: service.id,
+      });
+      break;
+    }
 };

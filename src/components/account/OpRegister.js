@@ -7,6 +7,7 @@ import {
   Keyboard,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -39,7 +40,7 @@ class OpRegister extends Component {
       licenseChecked: false,
       birth: store.user_info ? store.user_info.birth : '',
       cities: [],
-      listWarehouse: []
+      listWarehouse: [],
     };
 
     this.eventTracker = new EventTracker();
@@ -167,10 +168,13 @@ class OpRegister extends Component {
     try {
       this.getUserCityRequest.data = APIHandler.user_site_city();
       const response = await this.getUserCityRequest.promise();
-      
+
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
-        if (!this.state.provinceSelected.id && response.data.cities.length > 0) {
+        if (
+          !this.state.provinceSelected.id &&
+          response.data.cities.length > 0
+        ) {
           provinceSelected = response.data.cities[0];
         } else {
           provinceSelected =
@@ -199,22 +203,25 @@ class OpRegister extends Component {
     }
   }
 
-  async getListWarehouse(){
+  async getListWarehouse() {
     this.setState({isWarehouseLoading: true});
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
-      const listWarehouse = responseData?.stores?.map(store => ({...store, 
-        title: store.name,
-        description: store.address,
-        image: store.image_url
-      })) || [];
+      const listWarehouse =
+        responseData?.stores?.map((store) => ({
+          ...store,
+          title: store.name,
+          description: store.address,
+          image: store.image_url,
+        })) || [];
       let warehouseSelected = this.state.warehouseSelected;
       if (!this.state.warehouseSelected.id && listWarehouse.length > 0) {
         warehouseSelected = listWarehouse[0];
       } else {
-        warehouseSelected = listWarehouse.find(
+        warehouseSelected =
+          listWarehouse.find(
             (warehouse) => warehouse.id == warehouseSelected.id,
           ) || {};
       }
@@ -274,7 +281,7 @@ class OpRegister extends Component {
   onSelectWarehouse = (warehouseSelected, closeModal) => {
     this.setState({warehouseSelected});
     closeModal();
-  }
+  };
 
   onPressWarehouse = () => {
     Keyboard.dismiss();
@@ -285,11 +292,24 @@ class OpRegister extends Component {
       onPressItem: this.onSelectWarehouse,
       onCloseModal: Actions.pop,
       modalStyle: {
-        height: null, 
-        maxHeight: '80%'
-      }
-    })
-  }
+        height: null,
+        maxHeight: '80%',
+      },
+    });
+  };
+
+  onPressScanInvitationCode = () => {
+    Actions.push(appConfig.routes.qrBarCode, {
+      title: this.props.t('common:screen.qrBarCode.scanTitle'),
+      index: 1,
+      isVisibleTabBar: false,
+      getQRCode: (result) => {
+        this.setState({
+          refer: result,
+        });
+      },
+    });
+  };
 
   renderDOB() {
     if (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY)) {
@@ -319,8 +339,9 @@ class OpRegister extends Component {
       const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
         title: this.props.t('data.province.title'),
-        value: this.state.provinceSelected?.name
-          || this.props.t('data.province.placeholder'),
+        value:
+          this.state.provinceSelected?.name ||
+          this.props.t('data.province.placeholder'),
         isLoading: this.state.isCityLoading,
         select: true,
         disable,
@@ -341,20 +362,22 @@ class OpRegister extends Component {
 
   renderWarehouse() {
     if (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) {
-      const disable = !this.state.listWarehouse || this.state.listWarehouse.length === 0;
+      const disable =
+        !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
         title: this.props.t('data.warehouse.title'),
-        value: this.state.warehouseSelected?.name ||
+        value:
+          this.state.warehouseSelected?.name ||
           this.props.t('data.warehouse.placeholder'),
         isLoading: this.state.isWarehouseLoading,
         select: true,
-        disable
+        disable,
       };
 
-      if(!this.state.warehouseSelected?.name){
+      if (!this.state.warehouseSelected?.name) {
         wareHouseData.rightTextStyle = {
-          color: appConfig.colors.placeholder
-        }
+          color: appConfig.colors.placeholder,
+        };
       }
 
       return (
@@ -371,7 +394,15 @@ class OpRegister extends Component {
   }
 
   render() {
-    const {name, email, loading, refer, birth, provinceSelected, warehouseSelected} = this.state;
+    const {
+      name,
+      email,
+      loading,
+      refer,
+      birth,
+      provinceSelected,
+      warehouseSelected,
+    } = this.state;
     const {t} = this.props;
     this.updateReferCode();
     const disabled =
@@ -426,17 +457,19 @@ class OpRegister extends Component {
 
           {this.state.referCodeEditable && (
             <>
-              <View style={styles.input_box}>
-                <Text style={styles.input_label}>
+              <View style={[styles.input_box, styles.referInputWrapper]}>
+                <Text style={[styles.input_label, styles.referInputLabel]}>
                   {t('data.referCode.title')}
                 </Text>
 
-                <View style={styles.input_text_box}>
+                <View
+                  style={[styles.input_text_box, styles.referInputContainer]}>
                   <TextInput
                     editable={this.state.referCodeEditable}
                     ref={(ref) => (this.refs_refer = ref)}
                     style={[
                       styles.input_text,
+                      styles.referInput,
                       !this.state.referCodeEditable &&
                         styles.input_text_disabled,
                     ]}
@@ -446,11 +479,18 @@ class OpRegister extends Component {
                     underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
-                        refer: value.replaceAll(' ', ''),
+                        refer: value,
                       });
                     }}
                     value={this.state.refer}
                   />
+
+                  <TouchableOpacity
+                    hitSlop={HIT_SLOP}
+                    onPress={this.onPressScanInvitationCode}
+                    style={styles.inputIconContainer}>
+                    <Icon name="qrcode" style={styles.inputIcon} />
+                  </TouchableOpacity>
                 </View>
               </View>
               {/* <Text style={styles.disclaimerText}>
@@ -482,11 +522,11 @@ class OpRegister extends Component {
               {/* {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : ( */}
-                <Icon
-                  name={this.state.edit_mode ? 'save' : 'user-plus'}
-                  size={20}
-                  color="#ffffff"
-                />
+              <Icon
+                name={this.state.edit_mode ? 'save' : 'user-plus'}
+                size={20}
+                color="#ffffff"
+              />
               {/* )} */}
             </View>
 
@@ -550,37 +590,49 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   input_box: {
-    width: '100%',
-    height: 44,
+    flex: 1,
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
     borderBottomColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
   },
   input_text_box: {
     flex: 1,
-    alignItems: 'flex-end',
     justifyContent: 'center',
   },
   input_label: {
-    fontSize: 14,
-    color: '#000000',
+    color: '#888',
+    paddingHorizontal: 15,
   },
   input_text: {
-    width: '96%',
-    height: 38,
-    paddingLeft: 8,
-    color: '#000000',
-    fontSize: 14,
+    flex: 1,
+    padding: 15,
+    paddingVertical: 15,
+    color: '#242424',
     textAlign: 'right',
-    paddingVertical: 0,
   },
   input_text_disabled: {
     color: '#777',
   },
-
+  inputIconContainer: {
+    marginHorizontal: 15,
+    width: appConfig.device.isIOS ? 26: 28,
+    height: appConfig.device.isIOS ? 26: 28,
+    borderWidth: 1,
+    borderColor: appConfig.colors.primary,
+    borderStyle: 'dashed',
+    borderBottomLeftRadius: 0,
+    borderRadius: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputIcon: {
+    color: appConfig.colors.primary,
+    fontSize: appConfig.device.isIOS ? 20 : 22,
+    top: 1,
+    left: 0.1,
+  },
   input_address_box: {
     width: '100%',
     minHeight: 100,
@@ -668,6 +720,22 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     marginRight: -5,
   },
+
+  referInputWrapper: {
+    flexDirection: undefined,
+    alignItems: undefined,
+  },
+  referInputLabel: {
+    paddingTop: 10,
+  },
+  referInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: -5,
+  },
+  referInput: {
+    textAlign: 'left'
+  }
 });
 
 export default withTranslation(['opRegister', 'common'])(observer(OpRegister));

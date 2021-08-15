@@ -1,0 +1,23 @@
+#!/bin/bash
+#title           :setup
+#description     :This script will do things to clean, setup for source code.
+#author          :minhnguyenit14@gmail.com
+#date            :20210813
+#version         :1.0
+#===============================================================================
+
+
+
+# Remove redandunt child dependencies from some package.
+# => Force using installed dependencies of source instead of package.
+rm -rf node_modules/@tickid/react-native-accordion/node_modules/react-native-vector-icons 
+rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons
+rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-webview
+rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons
+
+# Comment execution for regex (type: 'phone') in react-native-gifted-chat.
+# for custom handling type number of chat message regex.
+declare sign="type: 'phone'";
+declare rn_gifted_chat_path="node_modules/react-native-gifted-chat/lib/MessageText.js";
+sed -i '' "/${sign}/ s/\/\/ //" $rn_gifted_chat_path
+sed -i '' "/${sign}/ s/^/\/\/ /" $rn_gifted_chat_path
