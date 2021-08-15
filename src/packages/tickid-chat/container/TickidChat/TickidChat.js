@@ -52,6 +52,7 @@ import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 
+const  ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
@@ -211,7 +212,6 @@ class TickidChat extends Component {
     this.props.t('copy'),
     this.props.t('cancel'),
   ];
-  ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -753,7 +753,7 @@ class TickidChat extends Component {
 
   handleParsePatterns = (linkStyle) => [
     {
-      pattern: this.ACTIONABLE_NUMERIC_PATTERN,
+      pattern: ACTIONABLE_NUMERIC_PATTERN,
       style: linkStyle,
       onPress: this.handlePressNumber,
     },
