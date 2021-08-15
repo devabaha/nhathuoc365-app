@@ -40,7 +40,6 @@ import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
-import YoutubeIframe from 'react-native-youtube-iframe';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -686,24 +685,7 @@ class Item extends Component {
   }
 
   renderProductImages(images) {
-    images.unshift({
-      videoId: '-OROgFhSctQ',
-    });
     return images.map((image, index) => {
-      if (image.videoId) {
-        return (
-          <View style={{height: appConfig.device.height/2}}>
-            <View style={{bottom: 0, position: 'absolute', left:0, right:0}}>
-            <YoutubeIframe
-              height={300}
-              play
-              videoId={image.videoId}
-              // onChangeState={onStateChange}
-            />
-            </View>
-          </View>
-        );
-      }
       return (
         <TouchableHighlight
           underlayColor="transparent"
@@ -891,6 +873,7 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
+        
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
