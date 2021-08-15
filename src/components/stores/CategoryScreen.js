@@ -50,7 +50,7 @@ class CategoryScreen extends Component {
     };
 
     this.unmounted = false;
-    this.paramsFilter = undefined;
+    this.paramsFilter = {};
     this.getProductsRequest = new APIRequest();
     this.requests = [this.getProductsRequest];
     this.page = 0;
@@ -66,9 +66,12 @@ class CategoryScreen extends Component {
     var {item, index} = this.props;
     this.start_time = 0;
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
-    if (index == 0 || index == 1) {
+    if (index == 0) {
       this._getItemByCateId(item.id);
     } else {
+      if(index == 1){
+        this._getItemByCateIdFromServer(item.id)
+      }
       Events.on(keyAutoLoad, keyAutoLoad, () => {
         // setTimeout(() => {
         //   console.log(
