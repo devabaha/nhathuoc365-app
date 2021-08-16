@@ -31,6 +31,8 @@ import {
 } from 'src/constants/social/comments';
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
+import TextPressable from 'src/components/TextPressable';
+import { servicesHandler, SERVICES_TYPE } from 'app-helper/servicesHandler';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '700',
     fontSize: 13,
-    marginBottom: 2
+    marginBottom: 2,
   },
   titleError: {
     color: appConfig.colors.status.danger,
@@ -514,6 +516,18 @@ class Comment extends Component {
     }
   };
 
+  handlePressUserName = (userId) => {
+    if (!userId) return;
+    if(this.refTickidChat.state.selectedType === COMPONENT_TYPE.EMOJI){
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI)
+    }
+    servicesHandler({
+      type: SERVICES_TYPE.PERSONAL_PROFILE,
+      isMainUser: userId == store.user_info?.id,
+      userInfo: {id: userId},
+    });
+  };
+
   handleTouchStart = () => {
     if (this.isPressingReply) {
       this.isPressingReply = false;
@@ -717,8 +731,14 @@ class Comment extends Component {
   renderUserName = (props) => {
     const userName =
       props.currentMessage?.user?.name ||
-      (props.currentMessage?.user?.id && 'ID' + props.currentMessage?.user?.id);
-    return <Text style={styles.userName}>{userName}</Text>;
+      (props.currentMessage?.user_id && 'ID' + props.currentMessage?.user_id);
+    return (
+      <TextPressable
+        onPress={() => this.handlePressUserName(props.currentMessage?.user_id)}
+        style={styles.userName}>
+        {userName}
+      </TextPressable>
+    );
   };
 
   renderAvatar = (props) => {
