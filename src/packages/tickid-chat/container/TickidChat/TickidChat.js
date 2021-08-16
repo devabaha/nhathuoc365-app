@@ -52,13 +52,12 @@ import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 
-const  ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
+const ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
 const MAX_PIN = 9;
 const defaultListener = () => {};
-
 
 class TickidChat extends Component {
   static propTypes = {
@@ -1520,7 +1519,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation()(TickidChat);
+export default withTranslation('common', {withRef: true})(TickidChat);
 
 export const EmptyChat = ({
   onPress,

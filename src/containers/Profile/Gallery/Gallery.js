@@ -52,7 +52,7 @@ class Gallery extends Component {
   uploaded = false;
 
   get imagesLength() {
-    return this.props.data?.length;
+    return this.props.data?.length || 0;
   }
 
   get paddingAnimatedArea() {
@@ -192,7 +192,6 @@ class Gallery extends Component {
     // };
     const emptyContainerStyle = {
       flex: 1,
-      marginTop: 100,
       // marginTop: this.state.headingHeight || 0,
       // width: '100%',
       // height: '100%',
@@ -213,9 +212,7 @@ class Gallery extends Component {
           {this.props.headerComponent}
 
           <View style={[styles.row]}>
-            <Text style={styles.title}>
-              Ảnh {this.imagesLength !== null && `(${this.imagesLength})`}
-            </Text>
+            <Text style={styles.title}>Ảnh {`(${this.imagesLength})`}</Text>
             {isMainUser && (
               <TouchableOpacity onPress={this.handleOpenUploadSelection}>
                 <Text style={styles.uploadText}>
@@ -233,10 +230,9 @@ class Gallery extends Component {
           ]}>
           {this.imagesLength === 0 ? (
             <View style={emptyContainerStyle}>
-              <NoResult
-                iconName="image-broken-variant"
-                message="Chưa có ảnh tải lên"
-              />
+              <Text style={styles.noImage}>
+                Chưa có ảnh
+              </Text>
             </View>
           ) : (
             <View>
@@ -298,6 +294,14 @@ const styles = StyleSheet.create({
     // justifyContent: 'space-between',
     paddingLeft: ORIGIN_PADDING,
     backgroundColor: '#fcfcfc',
+  },
+  noImage: {
+    padding: 15,
+    fontSize: 13,
+    fontStyle: 'italic',
+    color: '#666',
+    fontWeight: '300',
+    textAlign: 'center'
   },
 });
 
