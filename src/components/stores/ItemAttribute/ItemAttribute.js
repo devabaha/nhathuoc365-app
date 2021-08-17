@@ -219,7 +219,28 @@ class ItemAttribute extends PureComponent {
   }
 
   getNumberSelectedAttrs(selectedAttrs) {
-    return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '').length;
+    return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '')?.length || 0;
+  }
+
+  getInfoBySelectedAttrs() {
+    const numberSelectedAttrs = this.getNumberSelectedAttrs(
+      this.state.selectedAttrs,
+    );
+    let modelIncludedAttrs = {};
+    if (numberSelectedAttrs) {
+      const selectedAttrsInModelFormat = this.getSelectedAttrsViewData(
+        numberSelectedAttrs,
+      );
+
+      modelIncludedAttrs =
+        Object.values(this.state.models || {}).find((model) => {
+          return selectedAttrsInModelFormat.every(
+            (attr) => model.name && model.name.includes(attr),
+          );
+        }) || {};
+    }
+
+    return {...modelIncludedAttrs};
   }
 
   handlePressProductAttr = (attr) => {
@@ -418,31 +439,32 @@ class ItemAttribute extends PureComponent {
       disabled,
     };
 
+    const infoByAttrs = this.getInfoBySelectedAttrs();
+
     const imageUri = this.state.selectedModel.image
       ? this.state.selectedModel.image
+      : infoByAttrs.image
+      ? infoByAttrs.image
       : this.state.product.image;
 
     const isDropShipDisabled =
-      this.hasAttrs &&
-      !Object.keys(this.state.selectedModel).length;
+      this.hasAttrs && !Object.keys(this.state.selectedModel).length;
 
     const discountPrice = this.hasAttrs
       ? this.state.selectedModel?.price_before_discount_view
       : this.state.product?.discount_view;
 
-    const priceDropShip =
-      this.hasAttrs
+    const priceDropShip = this.hasAttrs
+      ? this.state.selectedModel.price_in_number
         ? this.state.selectedModel.price_in_number
-          ? this.state.selectedModel.price_in_number
-          : 0
-        : this.state.product?.price || 0;
+        : 0
+      : this.state.product?.price || 0;
 
-    const priceDropShipView =
-      this.hasAttrs
-        ? this.state.selectedModel.price
-          ? this.state.selectedModel.price_view
-          : '-'
-        : this.state.product?.price_view || '-';
+    const priceDropShipView = this.hasAttrs
+      ? this.state.selectedModel.price
+        ? this.state.selectedModel.price_view
+        : '-'
+      : this.state.product?.price_view || '-';
 
     const price =
       (this.state.selectedModel.price

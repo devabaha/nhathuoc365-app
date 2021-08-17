@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-aty6rq] LoadMore to show missing products in GroupProduct by [nguyenanhtuan191298@gmail.com].
 - [CU-9227a2][CU-bng0v8] Notifications in tab bar by [minhnguyenit14@gmail.com].
 - [CU-anxf53] Copy button when press long array numbers in GiftedChat view  by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
-- voucher_campaign_detail in servicesHandler by [minhnguyenit14@gmail.com]
+- voucher_campaign_detail in servicesHandler by [minhnguyenit14@gmail.com].
+- [CU-cqx6x5] Avatar Image of ItemAttribute is not changed while choosing only 1 attribute by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-akxhu3] Zoom image in chat screen by [lamah.dev@gmail.com].
 - [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
