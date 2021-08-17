@@ -222,6 +222,20 @@ class ItemAttribute extends PureComponent {
     return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '').length;
   }
 
+  getInfoByAttributes() {
+    const selectedAttrs = this.state.selectedAttrs;
+    const models = Object.values(this.state.models);
+    let foundModel;
+    if (this.getNumberSelectedAttrs(selectedAttrs) === 1) {
+      foundModel = models.find((element) => {
+        return !!element.name.includes(selectedAttrs[0].value);
+      });
+    }
+    if (foundModel) {
+      return {image: foundModel.image};
+    } else return {image: ''};
+  }
+
   handlePressProductAttr = (attr) => {
     const viewData = [...this.state.viewData];
 
@@ -418,8 +432,12 @@ class ItemAttribute extends PureComponent {
       disabled,
     };
 
+    const infoByAttrs = this.getInfoByAttributes();
+
     const imageUri = this.state.selectedModel.image
       ? this.state.selectedModel.image
+      : infoByAttrs.image
+      ? infoByAttrs.image
       : this.state.product.image;
 
     const isDropShipDisabled =
