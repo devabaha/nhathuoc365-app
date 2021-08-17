@@ -188,16 +188,15 @@ class Account extends Component {
         iconSize: 14,
         marginTop: 10,
         labelProps: {
-          numberOfLines: 1
+          numberOfLines: 1,
         },
         desProps: {
-          numberOfLines: 1
+          numberOfLines: 1,
         },
         label: (
           <>
             {!!revenue_commissions?.this_month_commissions?.title &&
-              `${revenue_commissions.this_month_commissions.title}: `
-            }
+              `${revenue_commissions.this_month_commissions.title}: `}
             <Text style={styles.commissionValue}>
               {revenue_commissions?.this_month_commissions?.value}
             </Text>
@@ -206,8 +205,7 @@ class Account extends Component {
         desc: (
           <>
             {!!revenue_commissions?.last_month_commissions?.title &&
-              `${revenue_commissions.last_month_commissions.title}: `
-            }
+              `${revenue_commissions.last_month_commissions.title}: `}
             <Text style={styles.commissionValue}>
               {revenue_commissions?.last_month_commissions?.value}
             </Text>
@@ -898,12 +896,12 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    Actions.push(appConfig.routes.profileDetail, {
-      userInfo: store.user_info,
-    });
-    // Actions.push(appConfig.routes.personalProfile, {
-    //   isMainUser: true
+    // Actions.push(appConfig.routes.profileDetail, {
+    //   userInfo: store.user_info,
     // });
+    Actions.push(appConfig.routes.personalProfile, {
+      isMainUser: true,
+    });
   };
 
   handleLogin = () => {
@@ -1085,13 +1083,14 @@ class Account extends Component {
                 underlayColor="rgba(255,255,255,.7)">
                 <>
                   <TouchableHighlight
+                    disabled={!!avatar_loading}
                     onPress={this.onTapAvatar.bind(this)}
                     style={[
                       styles.profile_avatar_box,
                       styles.profile_avatar_box_container,
                     ]}
-                    underlayColor="transparent">
-                    <>
+                    underlayColor="rgba(0,0,0,.3)">
+                    <View>
                       <View style={styles.profile_avatar_box}>
                         {avatar_loading ? (
                           <View style={{width: '100%', height: '100%'}}>
@@ -1129,7 +1128,7 @@ class Account extends Component {
                           ]}
                         />
                       )} */}
-                    </>
+                    </View>
                   </TouchableHighlight>
 
                   <View
@@ -1281,12 +1280,12 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   profile_avatar_box_container: {
+    backgroundColor: '#f0f0f0',
     marginRight: 15,
   },
   profile_avatar_box: {
     width: 60,
     height: 60,
-    backgroundColor: '#f0f0f0',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1548,8 +1547,8 @@ const styles = StyleSheet.create({
     marginBottom: appConfig.device.isIOS ? -7 : 0,
   },
   commissionValue: {
-    color: appConfig.colors.primary
-  }
+    color: appConfig.colors.primary,
+  },
 });
 
 export default withTranslation(['account', 'common', 'opRegister'])(

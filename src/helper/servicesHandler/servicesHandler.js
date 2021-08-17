@@ -121,6 +121,13 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         from: 'deeplink',
       });
       break;
+    case SERVICES_TYPE.VOUCHER_CAMPAIGN_DETAIL:
+      Actions.push(appConfig.routes.voucherDetail, {
+        voucherId: service.voucherId,
+        campaignId: service.campaignId,
+        title: service.name,  
+      });
+      break;
 
     /** TRANSACTION */
     case SERVICES_TYPE.TRANSACTION:
@@ -333,9 +340,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       const selectedMethod =
         service.default_payment_method_id !== undefined
           ? {
-            id: service.default_payment_method_id,
-            type: service.default_payment_method_type,
-          }
+              id: service.default_payment_method_id,
+              type: service.default_payment_method_type,
+            }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
         selectedMethod: selectedMethod,
@@ -473,5 +480,5 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         siteId: service.id,
       });
       break;
-    }
+  }
 };

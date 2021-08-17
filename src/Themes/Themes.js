@@ -3,7 +3,8 @@ import {SvgXml} from 'react-native-svg';
 import FastImage from 'react-native-fast-image';
 
 import basicSales from './basicSales';
-import {ASSETS_TYPE, BUNDLE_ICON_SETS, THEMES_TYPE} from './constants';
+import {ASSETS_TYPE, THEMES_TYPE} from './constants';
+import {BUNDLE_ICON_SETS} from 'src/constants';
 import {isEmpty} from 'lodash';
 
 export const THEMES = [

@@ -15,8 +15,7 @@ import Image from 'src/components/Image';
 import {getNewsFeedSize} from 'app-helper/image';
 
 import appConfig from 'app-config';
-import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
-import {getPostGridImagesType, renderGridImages} from 'app-helper/social';
+import {renderGridImages} from 'app-helper/social';
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
 import TextPressable from 'src/components/TextPressable';
 
@@ -118,29 +117,33 @@ const Post = ({
   onPress = () => {},
   onPressGroup = () => {},
   onPressUserName = () => {},
+  onPressAvatar = () => {},
 }) => {
-  const initIsShowFullMessage = () => {
+  const canExpandMessage = () => {
     if (content) {
       const numOfBreakIos = content.split('\r')?.length;
       const numOfBreakAndroid = content.split('\n')?.length;
-
       return (
-        content.length <= MAX_LENGTH_TEXT &&
-        numOfBreakIos <= MAX_LINE &&
-        numOfBreakAndroid <= MAX_LINE
+        content.length > MAX_LENGTH_TEXT ||
+        numOfBreakIos > MAX_LINE ||
+        numOfBreakAndroid > MAX_LINE
       );
     }
 
     return true;
   };
 
-  const [isShowFullMessage, setShowFullMessage] = useState(
-    initIsShowFullMessage(),
-  );
+  const [isShowFullMessage, setShowFullMessage] = useState(!canExpandMessage());
 
   const handleShowFullMessage = useCallback(() => {
     setShowFullMessage(true);
   }, []);
+
+  const handleToggleExpandMessage = useCallback(() => {
+    if (canExpandMessage()) {
+      setShowFullMessage(!isShowFullMessage);
+    }
+  }, [isShowFullMessage, content]);
 
   const contentContainerStyle = {
     maxHeight: !isShowFullMessage ? MAX_COLLAPSED_HEIGHT : undefined,
@@ -167,13 +170,16 @@ const Post = ({
     <TouchableWithoutFeedback onPress={onPress}>
       <Container centerVertical={false} style={styles.container}>
         <Container row style={styles.block}>
-          <Container style={styles.avatarContainer}>
+          <TouchableHighlight
+            underlayColor="rgba(0,0,0,.6)"
+            onPress={onPressAvatar}
+            style={styles.avatarContainer}>
             <Image
               source={{uri: avatarUrl}}
               style={styles.avatar}
               resizeMode="cover"
             />
-          </Container>
+          </TouchableHighlight>
           <Container centerVertical={false} style={styles.userNameContainer}>
             <Text style={styles.userName}>
               <TextPressable onPress={onPressUserName}>
@@ -193,7 +199,9 @@ const Post = ({
             <Container
               centerVertical={false}
               style={[styles.contentContainer, contentContainerStyle]}>
-              <Text style={styles.content}>{content}</Text>
+              <TouchableWithoutFeedback onPress={handleToggleExpandMessage}>
+                <Text style={styles.content}>{content}</Text>
+              </TouchableWithoutFeedback>
               {!isShowFullMessage && (
                 <SeeMoreBtn
                   containerStyle={styles.seeMoreContainer}

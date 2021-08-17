@@ -20,19 +20,13 @@ export {
   LOGIN_MODE,
   LOGIN_STEP,
   PRODUCT_TYPES,
-  ORDER_TYPES
+  ORDER_TYPES,
 };
 
 // Use with Ionicons.
 export const BACK_NAV_ICON_NAME = appConfig.device.isIOS
   ? 'ios-chevron-back'
   : 'md-arrow-back';
-
-/**
- *  Will delete when merge issue/making_themes
- *  -- start --
- * @deprecated
- * */
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -66,7 +60,21 @@ export const BUNDLE_ICON_SETS = {
   SimpleLineIcons,
 };
 
-// -- end --
+export type BUNDLE_ICON_SETS_NAME =
+  | 'AntDesign'
+  | 'Entypo'
+  | 'EvilIcons'
+  | 'Feather'
+  | 'FontAwesome'
+  | 'FontAwesome5'
+  | 'Fontisto'
+  | 'Foundation'
+  | 'Ionicons'
+  | 'MaterialIcons'
+  | 'MaterialCommunityIcons'
+  | 'Octicons'
+  | 'Zocial'
+  | 'SimpleLineIcons';
 
 export const BUNDLE_ICON_SETS_NAME = {
   AntDesign: 'AntDesign',

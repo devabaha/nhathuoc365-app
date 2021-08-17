@@ -307,6 +307,7 @@ const Posts = ({
               disableShare
               onPressGroup={() => handlePressGroup(group)}
               onPressUserName={() => handlePressUserName(user)}
+              onPressAvatar={() => handlePressUserName(user)}
               renderActionBar={
                 !!feeds.accept_status || progress !== undefined
                   ? () => renderStatusText(feeds)

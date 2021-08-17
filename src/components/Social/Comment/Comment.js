@@ -5,6 +5,7 @@ import {
   Keyboard,
   StyleSheet,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -32,7 +33,7 @@ import {
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
 import TextPressable from 'src/components/TextPressable';
-import { servicesHandler, SERVICES_TYPE } from 'app-helper/servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -518,8 +519,8 @@ class Comment extends Component {
 
   handlePressUserName = (userId) => {
     if (!userId) return;
-    if(this.refTickidChat.state.selectedType === COMPONENT_TYPE.EMOJI){
-      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI)
+    if (this.refTickidChat.state.selectedType === COMPONENT_TYPE.EMOJI) {
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
     }
     servicesHandler({
       type: SERVICES_TYPE.PERSONAL_PROFILE,
@@ -667,6 +668,8 @@ class Comment extends Component {
     }
   };
 
+  handleCancelReplying = () => this.setStater({replyingComment: {}});
+
   isReplyingYourSelf = (userId = this.state.replyingComment.user?.user_id) => {
     return userId === this.state.user?.user_id;
   };
@@ -688,7 +691,7 @@ class Comment extends Component {
         previewImages={this.state.previewImages}
         replyingName={replyingName}
         replyingMentionName={replyingMention?.name}
-        onCancelReplying={() => this.setStater({replyingComment: {}})}
+        onCancelReplying={this.handleCancelReplying}
         onCancelPreviewImage={this.handleCancelPreviewImage}
       />
     );
@@ -733,41 +736,48 @@ class Comment extends Component {
       props.currentMessage?.user?.name ||
       (props.currentMessage?.user_id && 'ID' + props.currentMessage?.user_id);
     return (
-      <TextPressable
-        onPress={() => this.handlePressUserName(props.currentMessage?.user_id)}
-        style={styles.userName}>
-        {userName}
-      </TextPressable>
+      <Text style={styles.userName}>
+        <TextPressable
+          onPress={() =>
+            this.handlePressUserName(props.currentMessage?.user_id)
+          }>
+          {userName}
+        </TextPressable>
+      </Text>
     );
   };
 
   renderAvatar = (props) => {
+    const avatarDimension =
+      props.currentMessage.level > 0
+        ? 40 * (props.currentMessage.level * 0.75)
+        : 40;
+
     props.containerStyle = {
       left: {
         marginRight: 0,
         marginLeft: 10,
+        borderRadius: avatarDimension / 2,
+        overflow: 'hidden',
       },
     };
     props.imageStyle = {
       left: {
-        width:
-          props.currentMessage.level > 0
-            ? 40 * (props.currentMessage.level * 0.75)
-            : 40,
-        height:
-          props.currentMessage.level > 0
-            ? 40 * (props.currentMessage.level * 0.75)
-            : 40,
-        borderRadius: 22,
+        width: avatarDimension,
+        height: avatarDimension,
+        borderRadius: avatarDimension / 2,
       },
     };
     return (
-      <View style={props.containerStyle.left}>
+      <TouchableHighlight
+        underlayColor="rgba(0,0,0,.6)"
+        style={props.containerStyle.left}
+        onPress={() => this.handlePressUserName(props.currentMessage?.user_id)}>
         <Image
           style={props.imageStyle.left}
           source={{uri: props.currentMessage?.user?.avatar || 'any'}}
         />
-      </View>
+      </TouchableHighlight>
     );
   };
 
