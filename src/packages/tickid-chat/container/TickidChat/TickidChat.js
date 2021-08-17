@@ -400,7 +400,6 @@ class TickidChat extends Component {
   handleBlur = () => {
     if (this.refInput.current) {
       this.refInput.current.blur();
-      this.setState({editable: false});
     }
   };
 
@@ -686,18 +685,14 @@ class TickidChat extends Component {
   };
 
   collapseComposer() {
-    this.setState(
-      {
-        editable: !!this.state.text,
-        showBackBtn: false,
-        showSendBtn: !!this.state.text,
-        showToolBar: false,
-        selectedType: COMPONENT_TYPE._NONE,
-      },
-      () => {
-        setTimeout(() => this.handleBlur(), 100);
-      },
-    );
+    this.setState({
+      editable: !!this.state.text,
+      showBackBtn: false,
+      showSendBtn: !!this.state.text,
+      showToolBar: false,
+      selectedType: COMPONENT_TYPE._NONE,
+    });
+    this.handleBlur();
   }
 
   handleContainerLayout = (e) => {

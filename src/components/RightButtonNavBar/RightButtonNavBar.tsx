@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import appConfig from '../../config';
 import store from '../../store';
 import {RightButtonNavBarProps} from '.';
@@ -17,6 +16,8 @@ import {NotiBadge} from '../Badges';
 import {autorun} from 'mobx';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {saveImage} from '../../helper/image';
+import {BUNDLE_ICON_SETS} from 'src/constants';
+import {IWrappedComponent} from 'mobx-react';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -57,26 +58,31 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
   get icon() {
     if (this.props.icon) return this.props.icon;
-    let Icon = Ionicons,
-      name = '',
+    let Icon = this.props.iconBundle
+        ? BUNDLE_ICON_SETS[this.props.iconBundle]
+        : Ionicons,
+      iconName = this.props.iconName || '',
       extraStyle = {};
-    switch (this.props.type) {
-      case RIGHT_BUTTON_TYPE.SHOPPING_CART:
-        name = 'ios-cart';
-        break;
-      case RIGHT_BUTTON_TYPE.CHAT:
-        name = 'ios-chatbubles';
-        break;
-      case RIGHT_BUTTON_TYPE.SHARE:
-        name = 'ios-share-social';
-        break;
-      case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
-        name = 'ios-download-outline';
+
+    if (!iconName) {
+      switch (this.props.type) {
+        case RIGHT_BUTTON_TYPE.SHOPPING_CART:
+          iconName = 'ios-cart';
+          break;
+        case RIGHT_BUTTON_TYPE.CHAT:
+          iconName = 'ios-chatbubble-ellipses-outline';
+          break;
+        case RIGHT_BUTTON_TYPE.SHARE:
+          iconName = 'ios-share-social';
+          break;
+        case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
+          iconName = 'ios-download-outline';
+      }
     }
 
     return (
       <Icon
-        name={name}
+        name={iconName}
         style={[styles.icon, extraStyle, this.props.iconStyle]}
       />
     );
@@ -108,13 +114,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true,
         });
-      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
+      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
         Actions.push(appConfig.routes.myAddress, {
           redirect: 'confirm',
           goBack: true,
           isVisibleStoreAddress: true,
-  
-        })
+        });
       } else {
         Actions.create_address({
           redirect: 'confirm',
@@ -172,7 +177,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   handlePressDownloadImage() {
-    saveImage(this.props?.imageUrl)
+    saveImage(this.props?.imageUrl);
   }
 
   updateNoti() {
@@ -221,4 +226,5 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 }
 
 //@ts-ignore
-export default observer(RightButtonNavBar);
+export default observer(RightButtonNavBar) as typeof RightButtonNavBar &
+  IWrappedComponent<RightButtonNavBarProps>;

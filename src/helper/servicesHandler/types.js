@@ -27,6 +27,7 @@ export const SERVICES_TYPE = {
   MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER_DETAIL: 'my_voucher_detail',
   VOUCHER_DETAIL: 'voucher_detail',
+  VOUCHER_CAMPAIGN_DETAIL: 'voucher_campaign_detail',
 
   /** TRANSACTION */
   TRANSACTION: 'TRANSACTION_TYPE',

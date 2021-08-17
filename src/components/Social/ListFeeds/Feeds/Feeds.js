@@ -72,6 +72,7 @@ const Feeds = ({
   onPressPost,
   onPressGroup,
   onPressUserName,
+  onPressAvatar,
   renderActionBar,
   onActionBarPress,
   onPressTotalComments,
@@ -158,6 +159,7 @@ const Feeds = ({
           onPress={onPressPost}
           onPressGroup={onPressGroup}
           onPressUserName={onPressUserName}
+          onPressAvatar={onPressAvatar}
         />
 
         <ActionContainer
