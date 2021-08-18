@@ -9,9 +9,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  loadingBackground: {
-    backgroundColor: '#eee',
-  },
 });
 
 const Image = (props: ImageProps) => {
@@ -74,7 +71,7 @@ const Image = (props: ImageProps) => {
       style={[
         styles.image,
         props.style,
-        !isLoadEnd && styles.loadingBackground,
+        !isLoadEnd && {backgroundColor: props.loadingColor || '#eee'},
         isError && {backgroundColor: props.errorColor || '#eee'},
       ]}
     />

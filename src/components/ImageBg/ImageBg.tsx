@@ -1,42 +1,36 @@
 import React from 'react';
-import { Image, View, StyleSheet } from 'react-native';
-import { ImageBgProps } from '.';
-import FastImage from 'react-native-fast-image';
+import {View, StyleSheet} from 'react-native';
+import Image from 'src/components/Image';
+import {ImageBgProps} from '.';
 const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        // flex: 1,
-    },
-    image: {
-        ...StyleSheet.absoluteFillObject
-    }
-})
-
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // flex: 1,
+  },
+  image: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
 
 const ImageBackground = ({
-    style,
-    imageStyle,
-    imageProps,
-    source,
-    children,
-    ...props
+  style,
+  imageStyle,
+  imageProps,
+  source,
+  children,
+  ...props
 }: ImageBgProps) => {
-    return (
-        <View
-            {...props}
-            style={[
-                styles.container,
-                style
-            ]}>
-            <FastImage
-                {...imageProps}
-                source={source}
-                style={[styles.image, imageStyle]}
-            />
-            {children}
-        </View>
-    )
-}
+  return (
+    <View {...props} style={[styles.container, style]}>
+      <Image
+        {...imageProps}
+        source={source}
+        style={[styles.image, imageStyle]}
+      />
+      {children}
+    </View>
+  );
+};
 
 export default ImageBackground;
