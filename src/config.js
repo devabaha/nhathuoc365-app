@@ -145,6 +145,7 @@ class Config {
       cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
+      overlay: 'rgba(0,0,0,.6)',
       highlight: {
         1: '#51B748',
       },

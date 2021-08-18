@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AntIcon from 'react-native-vector-icons/AntDesign';
-import SVGLandscape from 'src/images/landscape.svg';
 import {CachedImageBackground} from 'react-native-img-cache';
 import ImagePicker from 'react-native-image-picker';
 import ProfileContext from '../ProfileContext';
 import PremiumIcon from 'src/components/PremiumIcon';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 import Loading from 'src/components/Loading';
+import NavBarButton from '../NavBar/NavBarButton';
 
 class Header extends Component {
   static contextType = ProfileContext;
@@ -49,29 +48,18 @@ class Header extends Component {
     const {isMainUser} = this.context;
     return (
       <View style={styles.container}>
-        {/* {isMainUser && (
-          <NavBar onEdit={this.props.onEdit} onLogout={this.props.onLogout} />
-        )} */}
         <CachedImageBackground
           mutable
           source={{uri: this.props.cover}}
           style={[styles.wrapper]}>
           <View style={styles.defaultCover}>
-            {!!!this.props.cover && (
-              <SVGLandscape
-                fill={appConfig.colors.primary}
-                height={'100%'}
-                width={'100%'}
-                style={{position: 'absolute'}}
-              />
-            )}
-
             {isMainUser && (
-              <TouchableOpacity
-                style={styles.cameraIconContainer}
-                onPress={this.onChangeCover}>
-                <AntIcon name="camerao" style={styles.cameraIcon} />
-              </TouchableOpacity>
+              <NavBarButton
+                containerStyle={styles.cameraIconContainer}
+                iconStyle={styles.cameraIcon}
+                iconName="camerao"
+                onPress={this.onChangeCover}
+              />
             )}
           </View>
           <View style={styles.avatarContainer}>
@@ -105,7 +93,9 @@ class Header extends Component {
         </CachedImageBackground>
 
         <Text style={styles.title}>{this.props.name}</Text>
-        <Text style={styles.subTitle}>{this.props.quote}</Text>
+        {!!this.props.quote && (
+          <Text style={styles.subTitle}>{this.props.quote}</Text>
+        )}
         {!!this.props.address && (
           <Row iconName="map-marker" content={this.props.address} />
         )}
@@ -124,31 +114,38 @@ class Header extends Component {
   }
 }
 
+const MAX_AVATAR_DIMENSIONS = 150;
+const AVATAR_DIMENSIONS =
+  appConfig.device.width / 3 > MAX_AVATAR_DIMENSIONS
+    ? MAX_AVATAR_DIMENSIONS
+    : appConfig.device.width / 3;
+const AVATAR_BORDER_RADIUS = AVATAR_DIMENSIONS / 2;
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fafafa',
+    backgroundColor: '#fff',
     paddingBottom: 15,
   },
   wrapper: {
     width: appConfig.device.width,
     height: appConfig.device.width / 2,
-    backgroundColor: '#b5b5b5',
+    backgroundColor: '#eee',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 33,
+    marginBottom: AVATAR_BORDER_RADIUS,
     borderBottomWidth: 3,
     borderBottomColor: '#eee',
   },
   avatarContainer: {
-    width: 100,
-    height: 100,
-    bottom: -33,
+    width: AVATAR_DIMENSIONS,
+    height: AVATAR_DIMENSIONS,
+    borderRadius: AVATAR_BORDER_RADIUS,
+    bottom: -AVATAR_BORDER_RADIUS,
     backgroundColor: '#eee',
-    borderRadius: 50,
   },
   avatarWrapper: {
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: AVATAR_BORDER_RADIUS,
     overflow: 'hidden',
     borderWidth: 3,
     borderColor: '#eee',
@@ -171,7 +168,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '700',
     color: '#333',
     fontSize: 18,
     marginTop: 10,
@@ -184,6 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontWeight: '300',
     fontStyle: 'italic',
+    fontSize: 13,
     paddingHorizontal: 15,
   },
   infoBlock: {
@@ -202,11 +200,10 @@ const styles = StyleSheet.create({
     width: 20,
     fontSize: 16,
     marginRight: 0,
-    color: '#444',
+    color: '#333',
   },
   rowTitle: {
-    color: '#444',
-    fontSize: 13,
+    color: '#333',
     lineHeight: 18,
     flex: 1,
   },
@@ -219,8 +216,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 15,
     right: 0,
-    // alignItems: 'flex-end',
-    // flex: 1
   },
   defaultCover: {
     position: 'absolute',
@@ -228,15 +223,15 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   cameraIconContainer: {
-    ...elevationShadowStyle(7),
     position: 'absolute',
-    right: 10,
-    top: appConfig.isIOS ? 60 : 75,
+    right: 5,
+    bottom: 5,
+    backgroundColor: 'rgba(0,0,0,.3)'
   },
   cameraIcon: {
-    fontSize: 26,
-    color: '#fff',
-  },
+    color: '#ddd',
+    fontSize: 20
+  }
 });
 
 export default withTranslation('editProfile')(Header);

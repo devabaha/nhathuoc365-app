@@ -60,11 +60,11 @@
     }
   },
   "avatarPicker": {
-    "title": "Cập nhật ảnh đại diện tài khoản",
+    "title": "Thay đổi ảnh đại diện",
     "cancelTitle": "Huỷ bỏ",
     "takePhotoTitle": "Chụp ảnh",
     "chooseFromLibraryTitle": "Chọn ảnh từ thư viện",
-    "messageUpdateSuccessfully": "Thay ảnh đại diện thành công."
+    "messageUpdateSuccessfully": "Thay đổi ảnh đại diện thành công."
   },
   "signIn": "Đăng nhập",
   "referralCode": "Mã giới thiệu",

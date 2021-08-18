@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, Animated, Alert, View, RefreshControl} from 'react-native';
+import {
+  StyleSheet,
+  Animated,
+  Easing,
+  Alert,
+  View,
+  RefreshControl,
+} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
 import store from 'app-store';
@@ -25,15 +32,19 @@ class Profile extends Component {
     isMainUser: false,
   };
   state = {
-    userInfo: {},
+    userInfo: this.props.userInfo || {},
     gallery: null,
     loading: true,
     refreshing: false,
     avatarLoading: false,
     upperLayout: undefined,
-    animatedScroll: new Animated.Value(0),
   };
   unmounted = false;
+
+  isNavBarVisible = false;
+  animatedScroll = new Animated.Value(0);
+  animatedVisibleNavBar = new Animated.Value(0);
+
   eventTracker = new EventTracker();
 
   get introData() {
@@ -55,11 +66,13 @@ class Profile extends Component {
       {
         title: 'My Facebook',
         select: true,
+        isLink: true,
         value: userInfo.facebook,
       },
       {
         title: 'My Youtube',
         select: true,
+        isLink: true,
         value: userInfo.youtube,
       },
     ]);
@@ -77,6 +90,30 @@ class Profile extends Component {
     this.eventTracker.clearTracking();
   }
 
+  handleAnimatedScrollValue = (e) => {
+    if (e.nativeEvent.contentOffset.y > appConfig.device.width / 2) {
+      if (!this.isNavBarVisible) {
+        Animated.timing(this.animatedVisibleNavBar, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.quad,
+          useNativeDriver: true,
+        }).start();
+        this.isNavBarVisible = true;
+      }
+    } else {
+      if (this.isNavBarVisible) {
+        Animated.timing(this.animatedVisibleNavBar, {
+          toValue: 0,
+          duration: 300,
+          easing: Easing.quad,
+          useNativeDriver: true,
+        }).start();
+        this.isNavBarVisible = false;
+      }
+    }
+  };
+
   getProfile = async () => {
     let userInfo = store.user_info;
     if (this.props.userInfo) {
@@ -91,12 +128,15 @@ class Profile extends Component {
 
     try {
       const response = await APIHandler.site_user_profile(store_id, user_id);
-      console.log(response)
+
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
           this.setState({
             userInfo: response.data.user,
-            gallery: response.data.images || [],
+            gallery: (response.data.images || []).map((image) => ({
+              ...image,
+              url: image.name,
+            })),
           });
         } else {
           flashShowMessage({
@@ -117,7 +157,7 @@ class Profile extends Component {
   };
 
   handleEdit = () => {
-    Actions.push(appConfig.routes.editPersonalProfile, {
+    Actions.push(appConfig.routes.editProfile, {
       user_info: this.state.userInfo,
       refresh: this.getProfile,
     });
@@ -196,7 +236,7 @@ class Profile extends Component {
     }
   };
 
-  onChat = async () => {
+  handleChat = async () => {
     this.setState({
       loading: true,
     });
@@ -437,7 +477,7 @@ class Profile extends Component {
         this.uploadAvatar(response);
       }
     });
-  }
+  };
 
   uploadAvatar(response) {
     this.setState(
@@ -465,6 +505,9 @@ class Profile extends Component {
             var {data} = resp;
             var response = JSON.parse(data);
             if (response) {
+              if (response?.status === STATUS_SUCCESS) {
+                this.getProfile();
+              }
               flashShowMessage({
                 type: response?.status == STATUS_SUCCESS ? 'success' : 'danger',
                 message:
@@ -531,81 +574,94 @@ class Profile extends Component {
     this.getProfile();
   };
 
+  renderPersonalInfo = () => {
+    return (
+      <>
+        <View onLayout={this.onUpperLayout}>
+          <Header
+            avatarLoading={this.state.avatarLoading}
+            avatar={this.state.userInfo.avatar}
+            cover={this.state.userInfo.image_cover}
+            name={this.state.userInfo.name}
+            quote={this.state.userInfo.quote}
+            address={this.state.userInfo.address_view}
+            // tel={this.state.userInfo.tel}
+            distance={this.state.userInfo.distance}
+            premium={this.state.userInfo.premium}
+            loading={this.state.loading}
+            uploadTempCover={(data) =>
+              this.uploadTempImage(data, IMAGE_TYPE.COVER)
+            }
+            onPressAvatar={this.onTapAvatar}
+          />
+        </View>
+        <Intro content={this.state.userInfo.intro} data={this.introData} />
+      </>
+    );
+  };
+
+  listGalleryProps = {
+    contentContainerStyle: styles.contentContainer,
+    // onScroll: Animated.event(
+    //   [
+    //     {
+    //       nativeEvent: {
+    //         contentOffset: {
+    //           y: this.animatedScroll,
+    //         },
+    //       },
+    //     },
+    //   ],
+    //   {
+    //     useNativeDriver: true,
+    //     listener: this.handleAnimatedScrollValue,
+    //   },
+    // ),
+    refreshControl: (
+      <RefreshControl
+        refreshing={this.state.refreshing}
+        onRefresh={this.onRefresh}
+      />
+    ),
+  };
+
   render() {
     const data = {
       isMainUser: this.props.isMainUser,
       upperLayout: this.state.upperLayout,
-      animatedScroll: this.state.animatedScroll,
+      animatedScroll: this.animatedScroll,
       animatedInputRange: [0, 70],
+      animatedVisibleNavBar: this.animatedVisibleNavBar,
     };
 
     return (
       <ProfileProvider value={data}>
         <NavBar
-          onChat={this.onChat}
+          onChat={this.handleChat}
           onEdit={this.handleEdit}
           onLogout={this.handleLogout}
-          title={this.state.userInfo.name}
+          title={this.state.userInfo.name || this.props.title}
         />
-        <Animated.ScrollView
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: this.state.animatedScroll,
-                  },
-                },
-              },
-            ],
-            {useNativeDriver: true},
-          )}
-          style={styles.container}
-          scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }>
-          {this.state.loading && <Loading center />}
-          <View onLayout={this.onUpperLayout}>
-            <Header
-              avatarLoading={this.state.avatarLoading}
-              avatar={this.state.userInfo.avatar}
-              cover={this.state.userInfo.image_cover}
-              name={this.state.userInfo.name}
-              quote={this.state.userInfo.quote}
-              address={this.state.userInfo.address_view}
-              // tel={this.state.userInfo.tel}
-              distance={this.state.userInfo.distance}
-              premium={this.state.userInfo.premium}
-              loading={this.state.loading}
-              uploadTempCover={(data) =>
-                this.uploadTempImage(data, IMAGE_TYPE.COVER)
-              }
-              onPressAvatar={this.onTapAvatar}
-              onEdit={this.handleEdit}
-              onLogout={this.handleLogout}
-            />
-          </View>
-          <Gallery
-            uploadMultiTempImage={this.uploadMultiTempImage}
-            uploadTempImage={this.uploadTempImage}
-            onDeleteImage={this.deleteImage}
-            data={this.state.gallery}
-            // headerComponent={
-            //   this.props.isMainUser || (
-            //     <ComboButton
-            //       style={styles.comboBtn}
-            //       onCall={this.onCall}
-            //       onChat={this.onChat}
-            //     />
-            //   )
-            // }
-          />
-          <Intro content={this.state.userInfo.intro} data={this.introData} />
-        </Animated.ScrollView>
+
+        {this.state.loading && <Loading center />}
+
+        <Gallery
+          uploadMultiTempImage={this.uploadMultiTempImage}
+          uploadTempImage={this.uploadTempImage}
+          onDeleteImage={this.deleteImage}
+          data={this.state.gallery}
+          renderHeader={this.renderPersonalInfo}
+          listProps={this.listGalleryProps}
+          // headerComponent={
+          //   this.props.isMainUser || (
+          //     <ComboButton
+          //       style={styles.comboBtn}
+          //       onCall={this.onCall}
+          //       onChat={this.handleChat}
+          //     />
+          //   )
+          // }
+        />
       </ProfileProvider>
     );
   }
@@ -614,11 +670,11 @@ class Profile extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'absolute',
     height: '100%',
     width: '100%',
+  },
+  contentContainer: {
     paddingBottom: appConfig.device.bottomSpace,
-    backgroundColor: '#fcfcfc',
   },
   icon: {
     color: '#fff',

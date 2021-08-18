@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r12.1.1] - 2021-08-17
+## [r12.1.1] - 2021-08-18
 ### Added
 - [CU-cquwh3] Function abaha_request and request_management in serviceHandler by [lamah.dev@gmail.com].
 - [CU-bv7k11] Scan QR code button when enter invitation code by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
 - [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
 - Use Profile for Account detail by [minhnguyenit14@gmail.com].
+- [CU-cqx6x5] Use ItemImageViewer to display Gallery in Profile by [minhnguyenit14@gmail.com].
+- Integrate EditPersonalProfile to EditProfile by [minhnguyenit14@gmail.com].
+- Refactor Profile by [minhnguyenit14@gmail.com].
 ### Fixed
 - [CU-bnknw5] View not-ordering orders when there is no address in cart_data by [lamah.dev@gmail.com].
 - Low performance because of using ScrollView in CategoryScreen by [minhnguyenit14@gmail.com].

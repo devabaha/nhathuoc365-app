@@ -61,6 +61,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
 
     appConfig.routes.itemAttribute,
     appConfig.routes.accountTab,
+    appConfig.routes.personalProfile,
   ];
 
   switch (action.type) {

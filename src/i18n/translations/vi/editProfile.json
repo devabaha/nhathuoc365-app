@@ -48,10 +48,10 @@
 
   "saveChanges": "Lưu thay đổi",
   "coverPicker": {
-    "title": "Cập nhật ảnh bìa",
+    "title": "Thay đổi ảnh bìa",
     "cancelTitle": "Huỷ bỏ",
     "takePhotoTitle": "Chụp ảnh",
     "chooseFromLibraryTitle": "Chọn ảnh từ thư viện",
-    "messageUpdateSuccessfully": "Thay ảnh bìa thành công."
+    "messageUpdateSuccessfully": "Thay đổi ảnh bìa thành công."
   }
 }
