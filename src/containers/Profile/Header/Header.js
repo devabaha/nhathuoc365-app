@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {CachedImageBackground} from 'react-native-img-cache';
 import ImagePicker from 'react-native-image-picker';
 import ProfileContext from '../ProfileContext';
 import PremiumIcon from 'src/components/PremiumIcon';
-import {TouchableHighlight} from 'react-native-gesture-handler';
 import Loading from 'src/components/Loading';
 import NavBarButton from '../NavBar/NavBarButton';
+import ImageBackground from 'src/components/ImageBg';
+import Image from 'src/components/Image';
 
 class Header extends Component {
   static contextType = ProfileContext;
@@ -48,8 +48,7 @@ class Header extends Component {
     const {isMainUser} = this.context;
     return (
       <View style={styles.container}>
-        <CachedImageBackground
-          mutable
+        <ImageBackground
           source={{uri: this.props.cover}}
           style={[styles.wrapper]}>
           <View style={styles.defaultCover}>
@@ -69,10 +68,11 @@ class Header extends Component {
               onPress={this.props.onPressAvatar}
               style={styles.avatarWrapper}>
               <View style={styles.avatar}>
-                <CachedImage
-                  mutable
+                <Image
                   source={{uri: this.props.avatar}}
                   style={styles.avatar}
+                  loadingColor="#ccc"
+                  errorColor="#ccc"
                 />
                 {!!this.props.avatarLoading && (
                   <Loading
@@ -90,7 +90,7 @@ class Header extends Component {
               />
             )}
           </View>
-        </CachedImageBackground>
+        </ImageBackground>
 
         <Text style={styles.title}>{this.props.name}</Text>
         {!!this.props.quote && (
@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
     height: AVATAR_DIMENSIONS,
     borderRadius: AVATAR_BORDER_RADIUS,
     bottom: -AVATAR_BORDER_RADIUS,
-    backgroundColor: '#eee',
   },
   avatarWrapper: {
     alignItems: 'center',
