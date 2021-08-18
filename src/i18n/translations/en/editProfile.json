@@ -48,10 +48,10 @@
 
   "saveChanges": "Save changes",
   "coverPicker": {
-    "title": "Update your cover",
+    "title": "Change your cover",
     "cancelTitle": "Cancel",
     "takePhotoTitle": "Take a photo",
     "chooseFromLibraryTitle": "Choose from library",
-    "messageUpdateSuccessfully": "Your cover updated successfully."
+    "messageUpdateSuccessfully": "Your cover changed successfully."
   }
 }

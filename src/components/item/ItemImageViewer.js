@@ -24,13 +24,15 @@ import RightButtonNavBar from '../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 
 const HEADER_BUTTON_TYPE = {
-  BACK_BUTTON: 'back_button',
-  DOWNLOAD_IMAGE_BUTTON: 'download_image_button',
+  BACK: 0,
+  DOWNLOAD_IMAGE: 1,
+  MORE: 2,
 };
 
 class ItemImageViewer extends Component {
   static defaultProps = {
     index: 0,
+    moreActionSheetOptions: null,
   };
 
   constructor(props) {
@@ -38,10 +40,6 @@ class ItemImageViewer extends Component {
 
     this.isHeaderVisible = true;
     this.opacity = new Animated.Value(1);
-    this.OPTIONS_LIST = [
-      props.t('common:saveImageLabel'),
-      props.t('common:cancel'),
-    ];
 
     this.refActionSheet = React.createRef();
     this.refButtonDownloadImage = React.createRef();
@@ -74,11 +72,17 @@ class ItemImageViewer extends Component {
       return;
     }
     switch (type) {
-      case HEADER_BUTTON_TYPE.BACK_BUTTON:
+      case HEADER_BUTTON_TYPE.BACK:
         this.handleBack();
         break;
-      case HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON:
+      case HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE:
         this.handleDownloadImage();
+      case HEADER_BUTTON_TYPE.MORE:
+        Actions.push(
+          appConfig.routes.modalActionSheet,
+          this.props.moreActionSheetOptions,
+        );
+        break;
       default:
         break;
     }
@@ -114,7 +118,7 @@ class ItemImageViewer extends Component {
                 hitSlop={HIT_SLOP}
                 style={styles.headerLeftButton}
                 onPress={() =>
-                  this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.BACK_BUTTON)
+                  this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.BACK)
                 }>
                 <Ionicons size={26} name="ios-chevron-back" color="#fff" />
               </TouchableOpacity>
@@ -124,22 +128,36 @@ class ItemImageViewer extends Component {
                 </Text>
               </View>
 
-              <TouchableOpacity
-                onPress={() =>
-                  this.handlePressHeaderBtn(
-                    HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE_BUTTON,
-                  )
-                }>
-                <View pointerEvents="none">
-                  <RightButtonNavBar
-                    ref={this.refButtonDownloadImage}
-                    touchableOpacity
-                    type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
-                    containerStyle={styles.headerRightBtnContainer}
-                    imageUrl={this.props.images[currentIndex].url}
-                  />
-                </View>
-              </TouchableOpacity>
+              <View style={[styles.headerContent, styles.headerLeftButton]}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE)
+                  }>
+                  <View pointerEvents="none">
+                    <RightButtonNavBar
+                      ref={this.refButtonDownloadImage}
+                      touchableOpacity
+                      type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
+                      containerStyle={styles.headerRightBtnContainer}
+                      imageUrl={this.props.images[currentIndex].url}
+                    />
+                  </View>
+                </TouchableOpacity>
+                {!!this.props.moreActionSheetOptions && (
+                  <TouchableOpacity
+                    hitSlop={HIT_SLOP}
+                    style={styles.headerRightBtnContainer}
+                    onPress={() =>
+                      this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.MORE)
+                    }>
+                    <Ionicons
+                      size={26}
+                      name="ios-ellipsis-vertical"
+                      color="#fff"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           </SafeAreaView>
         </Animated.View>
@@ -214,10 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   headerRightBtnContainer: {
-    paddingRight: 20,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingBottom: 20,
+    paddingLeft: 15,
   },
 });
 

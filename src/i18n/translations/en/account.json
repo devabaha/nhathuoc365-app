@@ -60,11 +60,11 @@
     }
   },
   "avatarPicker": {
-    "title": "Update your avatar",
+    "title": "Change avatar",
     "cancelTitle": "Cancel",
     "takePhotoTitle": "Take a photo",
     "chooseFromLibraryTitle": "Choose from library",
-    "messageUpdateSuccessfully": "Your avatar updated successfully."
+    "messageUpdateSuccessfully": "Your avatar changed successfully."
   },
   "signIn": "Sign in",
   "referralCode": "Referral code",

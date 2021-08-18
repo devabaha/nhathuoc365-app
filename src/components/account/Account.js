@@ -164,8 +164,9 @@ class Account extends Component {
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Actions.push(appConfig.routes.vndWallet, {
-            title: default_wallet.name,
+          servicesHandler({
+            type: SERVICES_TYPE.WALLET,
+            name: default_wallet?.name,
             wallet: default_wallet,
           });
         },
@@ -899,8 +900,10 @@ class Account extends Component {
     // Actions.push(appConfig.routes.profileDetail, {
     //   userInfo: store.user_info,
     // });
-    Actions.push(appConfig.routes.personalProfile, {
+    servicesHandler({
+      type: SERVICES_TYPE.PERSONAL_PROFILE,
       isMainUser: true,
+      title: store.user_info?.name,
     });
   };
 
@@ -934,9 +937,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        wallet,
+                        name: wallet.name,
                       })
                   : () => {}
               }

@@ -9,14 +9,23 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  loadingBackground: {
+    backgroundColor: '#eee',
+  },
 });
 
 const Image = (props: ImageProps) => {
   const [isError, setError] = useState(false);
   const [isOpenLightBox, setOpenLightBox] = useState(false);
+  const [isLoadEnd, setLoadEnd] = useState(false);
 
   const handleStartLoading = () => {
     setError(false);
+    setLoadEnd(false);
+  };
+
+  const handleLoadEnd = () => {
+    setLoadEnd(true);
   };
 
   const handleError = () => {
@@ -45,6 +54,7 @@ const Image = (props: ImageProps) => {
         <FastImage
           onLoadStart={handleStartLoading}
           onError={handleError}
+          onLoadEnd={handleLoadEnd}
           resizeMode={isOpenLightBox ? 'contain' : 'cover'}
           {...props}
           style={[
@@ -59,10 +69,12 @@ const Image = (props: ImageProps) => {
     <FastImage
       onLoadStart={handleStartLoading}
       onError={handleError}
+      onLoadEnd={handleLoadEnd}
       {...props}
       style={[
         styles.image,
         props.style,
+        !isLoadEnd && styles.loadingBackground,
         isError && {backgroundColor: props.errorColor || '#eee'},
       ]}
     />

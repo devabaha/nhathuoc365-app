@@ -119,5 +119,8 @@ export const SERVICES_TYPE = {
   ABAHA_CREATE_REQUEST: 'abaha_create_request',
 
   /** REQUEST MANAGEMENT */
-  REQUEST_MANAGEMENT: 'request_management'
+  REQUEST_MANAGEMENT: 'request_management',
+
+  /** Wallet */
+  WALLET: 'wallet'
 };

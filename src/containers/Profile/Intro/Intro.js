@@ -1,15 +1,18 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Linking, Alert } from 'react-native';
+import React, {Component, Fragment} from 'react';
+import {StyleSheet, View, Text, Linking, Alert} from 'react-native';
+
+import appConfig from 'app-config';
+
 import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
 
 class Intro extends Component {
   state = {
-    footerData: this.footerData
+    footerData: this.footerData,
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps !== this.props) {
-      this.setState({ footerData: this.footerData });
+      this.setState({footerData: this.footerData});
       return true;
     }
 
@@ -23,9 +26,9 @@ class Intro extends Component {
     return this.props.data;
   }
 
-  onPressFooterDataPress = ({ value: url }) => {
+  onPressFooterDataPress = ({value: url}) => {
     if (url) {
-      Linking.openURL(url).catch(err => {
+      Linking.openURL(url).catch((err) => {
         console.log('open link', err);
         Alert.alert('Không mở được link');
       });
@@ -34,18 +37,23 @@ class Intro extends Component {
 
   renderFooter() {
     const inputProps = {
-      numberOfLines: 2
+      numberOfLines: 2,
     };
 
-    return this.state.footerData.map((item, index) => (
-      <HorizontalInfoItem
-        key={index}
-        data={item}
-        onSelectedValue={this.onPressFooterDataPress}
-        detailTitleStyle={item.select && styles.link}
-        inputProps={inputProps}
-      />
-    ));
+    return this.state.footerData.map(
+      (item, index) =>
+        !!item.value && (
+          <Fragment key={index}>
+            <View style={styles.separator} />
+            <HorizontalInfoItem
+              data={item}
+              onSelectedValue={this.onPressFooterDataPress}
+              inputProps={inputProps}
+              containerStyle={styles.horizontalInfoContainer}
+            />
+          </Fragment>
+        ),
+    );
   }
 
   render() {
@@ -54,11 +62,17 @@ class Intro extends Component {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Giới thiệu</Text>
         </View>
-        <View style={styles.contentContainer}>
-          <Text style={!this.props.content && styles.noIntro}>
-            {this.props.content || 'Chưa có lời giới thiệu'}
-          </Text>
-        </View>
+        {!!this.props.content && (
+          <>
+            <View style={styles.separator} />
+            <View style={styles.contentContainer}>
+              <Text style={styles.content, !this.props.content && styles.noIntro}>
+                {this.props.content}
+              </Text>
+            </View>
+          </>
+        )}
+
         <View style={styles.footer}>{this.renderFooter()}</View>
       </View>
     );
@@ -67,25 +81,28 @@ class Intro extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 15
+    // marginBottom: 15
     // flex: 1,
     // zIndex: 99
   },
   titleContainer: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#fff',
     padding: 15,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 0.5
+    borderTopColor: appConfig.colors.border,
+    borderTopWidth: 0.5,
   },
   title: {
     fontWeight: '600',
-    color: '#444'
+    color: '#333',
+    fontSize: 16,
+    letterSpacing: 1,
   },
   contentContainer: {
     backgroundColor: '#fff',
     padding: 15,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 0.5
+  },
+  content: {
+    color: '#333'
   },
   footer: {},
   noIntro: {
@@ -93,12 +110,17 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#666',
     fontWeight: '300',
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  link: {
-    color: 'blue',
-    textDecorationLine: 'underline'
-  }
+  horizontalInfoContainer: {
+    paddingHorizontal: 15,
+  },
+  separator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#fafafa',
+    left: 15,
+  },
 });
 
 export default Intro;

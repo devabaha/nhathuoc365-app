@@ -125,7 +125,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.voucherDetail, {
         voucherId: service.voucherId,
         campaignId: service.campaignId,
-        title: service.name,  
+        title: service.name,
       });
       break;
 
@@ -440,6 +440,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.personalProfile, {
         isMainUser: service.isMainUser,
         userInfo: service.userInfo,
+        title: service.title || service.userInfo?.name
       });
       break;
 
@@ -451,12 +452,6 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** AGENCY INFORMATION REGISTER */
     case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
       Actions.push(appConfig.routes.agencyInformationRegister);
-      break;
-
-    default:
-      // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
-      //   { text: 'Đồng ý' }
-      // ]);
       break;
 
     /** REQUEST MANAGEMENT */
@@ -479,6 +474,20 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.abahaRequestCreation, {
         siteId: service.id,
       });
+      break;
+
+    /** WALLET */
+    case SERVICES_TYPE.WALLET:
+      Actions.push(appConfig.routes.vndWallet, {
+        title: service.name || store?.user_info?.name,
+        wallet: service.wallet || store?.user_info?.default_wallet,
+      });
+      break;
+
+    default:
+      // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
+      //   { text: 'Đồng ý' }
+      // ]);
       break;
   }
 };
