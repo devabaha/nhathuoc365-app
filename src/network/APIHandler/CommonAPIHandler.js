@@ -1043,6 +1043,15 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * edit user note
+   * 
+  */
+  async edit_user_note(site_id, cart_id, data) {
+   const api = url_for(API.SITE_CART_EDIT_USER_NOTE + '/' + site_id + '/' + cart_id);
+   return await this.postAPI(api, data)
+ }
+
+  /**
    * @todo Lấy thông tin game đoán số
    *
    * @typedef {Object | null} LotteryInfo

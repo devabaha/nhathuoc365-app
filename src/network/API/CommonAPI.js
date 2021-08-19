@@ -149,6 +149,9 @@ class CommonAPI {
   get SITE_CART_CANCELING() {
     return BaseAPI.apiDomain + 'apiCart/cancel';
   }
+  get SITE_CART_EDIT_USER_NOTE() {
+    return BaseAPI.apiDomain + 'apiCart/edit_user_note';
+  }
   get SITE_CART_ADDING() {
     return BaseAPI.apiDomain + 'apiSite/cartadding';
   }
