@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-picker';
@@ -9,12 +9,16 @@ import Loading from 'src/components/Loading';
 import NavBarButton from '../NavBar/NavBarButton';
 import ImageBackground from 'src/components/ImageBg';
 import Image from 'src/components/Image';
+import {Container} from 'src/components/Layout';
 
 class Header extends Component {
   static contextType = ProfileContext;
-  state = {};
+  state = {
+    coverLoading: false,
+  };
 
   onChangeCover = () => {
+    this.setState({coverLoading: true});
     const {t} = this.props;
 
     const options = {
@@ -41,6 +45,8 @@ class Header extends Component {
         }
         this.props.uploadTempCover(response);
       }
+
+      this.setState({coverLoading: false});
     });
   };
 
@@ -56,26 +62,28 @@ class Header extends Component {
     return (
       <View style={styles.container}>
         <ImageBackground
+          imageProps={{canTouch: true}}
           source={{uri: this.props.cover}}
-          style={[styles.wrapper]}>
-          <View style={styles.defaultCover}>
-            {isMainUser && (
-              <NavBarButton
-                containerStyle={styles.cameraIconContainer}
-                iconStyle={styles.cameraIcon}
-                iconName="camerao"
-                onPress={this.onChangeCover}
-              />
-            )}
-          </View>
+          style={[styles.wrapper]}
+          imageStyle={styles.imageWrapper}>
+
+          {isMainUser && (
+            <NavBarButton
+              disabled={this.state.coverLoading}
+              containerStyle={[styles.cameraIconContainer, styles.coverCameraIconContainer]}
+              iconStyle={styles.cameraIcon}
+              iconName="camerao"
+              onPress={this.onChangeCover}
+            />
+          )}
+          <View style={styles.coverBottomSpace}/>
           <View style={styles.avatarContainer}>
-            <TouchableHighlight
-              disabled={this.props.avatarLoading}
-              underlayColor="rgba(0,0,0,.3)"
+            <View
               onPress={this.props.onPressAvatar}
               style={styles.avatarWrapper}>
               <View style={styles.avatar}>
                 <Image
+                  canTouch
                   source={{uri: this.props.avatar}}
                   style={styles.avatar}
                   loadingColor="#ccc"
@@ -89,19 +97,36 @@ class Header extends Component {
                   />
                 )}
               </View>
-            </TouchableHighlight>
+            </View>
+            {isMainUser && (
+              <NavBarButton
+                disabled={this.props.avatarLoading}
+                containerStyle={[
+                  styles.cameraIconContainer,
+                  styles.avatarCameraIconContainer,
+                  styles.avatarCorner,
+                ]}
+                iconStyle={[styles.cameraIcon, styles.avatarCameraIcon]}
+                iconName="camerao"
+                onPress={this.props.onPressAvatar}
+              />
+            )}
+          </View>
+        </ImageBackground>
+
+        <Container row center style={styles.titleContainer}>
+          <View>
             {!!this.props.premium && (
               <PremiumIcon
                 premium={this.props.premium}
                 style={styles.premium}
               />
             )}
+            <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
+              {this.props.name}
+            </Text>
           </View>
-        </ImageBackground>
-
-        <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
-          {this.props.name}
-        </Text>
+        </Container>
         {!!this.props.quote && (
           <Text style={styles.subTitle}>{this.props.quote}</Text>
         )}
@@ -129,6 +154,12 @@ const AVATAR_DIMENSIONS =
     ? MAX_AVATAR_DIMENSIONS
     : appConfig.device.width / 3;
 const AVATAR_BORDER_RADIUS = AVATAR_DIMENSIONS / 2;
+const PREMIUM_DIMENSIONS = 22;
+const AVATAR_CAMERA_ICON_DIMENSIONS = 24;
+const DISTANCE_FROM_ROUND_EDGE_TO_SQUARE_CONNER_OF_AVATAR_CONTAINER =
+  (AVATAR_DIMENSIONS * (Math.sqrt(2) - 1)) / 2 -
+  AVATAR_CAMERA_ICON_DIMENSIONS -
+  2;
 
 const styles = StyleSheet.create({
   container: {
@@ -136,20 +167,30 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   wrapper: {
-    width: appConfig.device.width,
-    height: appConfig.device.width / 2,
     backgroundColor: '#eee',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: AVATAR_BORDER_RADIUS,
-    borderBottomWidth: 3,
-    borderBottomColor: '#eee',
+    width: appConfig.device.width,
+    height: appConfig.device.width / 2 + AVATAR_BORDER_RADIUS,
+    justifyContent: 'flex-start',
+  },
+  imageWrapper: {
+    position: undefined,
+    height: appConfig.device.width / 2,
+  },
+  coverBottomSpace: {
+    backgroundColor: '#fff',
+    width: appConfig.device.width,
+    height: AVATAR_BORDER_RADIUS,
+    bottom: 0,
+    position: 'absolute',
+    borderTopWidth: 3.5,
+    borderTopColor: '#eee',
   },
   avatarContainer: {
+    position: 'absolute',
     width: AVATAR_DIMENSIONS,
     height: AVATAR_DIMENSIONS,
     borderRadius: AVATAR_BORDER_RADIUS,
-    bottom: -AVATAR_BORDER_RADIUS,
+    bottom: 0,
   },
   avatarWrapper: {
     alignItems: 'center',
@@ -157,6 +198,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 3,
     borderColor: '#eee',
+    backgroundColor: '#fff',
   },
   avatar: {
     width: '100%',
@@ -166,30 +208,49 @@ const styles = StyleSheet.create({
   avatarLoadingWrapper: {
     backgroundColor: 'rgba(0,0,0,.6)',
   },
-  premium: {
+  avatarCorner: {
     position: 'absolute',
-    bottom: 0,
-    right: 10,
-    backgroundColor: '#fafafa',
-    padding: 4,
+    right:
+      DISTANCE_FROM_ROUND_EDGE_TO_SQUARE_CONNER_OF_AVATAR_CONTAINER *
+      Math.sin(45),
+    bottom:
+      DISTANCE_FROM_ROUND_EDGE_TO_SQUARE_CONNER_OF_AVATAR_CONTAINER *
+      Math.cos(45),
+  },
+  avatarCameraIconContainer: {
+    width: AVATAR_CAMERA_ICON_DIMENSIONS,
+    height: AVATAR_CAMERA_ICON_DIMENSIONS,
+    backgroundColor: 'rgba(0,0,0,.6)',
+  },
+  premium: {
+    // backgroundColor: '#eee',
+    width: PREMIUM_DIMENSIONS,
+    height: PREMIUM_DIMENSIONS,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 15,
+    position: 'absolute',
+    right: '100%',
+  },
+  titleContainer: {
+    marginTop: 10,
+    paddingHorizontal: appConfig.device.width * 0.15,
   },
   title: {
     textAlign: 'center',
     fontWeight: '700',
     color: '#333',
     fontSize: 18,
-    marginTop: 10,
     letterSpacing: 1,
-    paddingHorizontal: 15,
+    marginHorizontal: 10,
   },
   noHeaderInfo: {
     marginBottom: 15,
   },
   subTitle: {
     textAlign: 'center',
-    color: '#333',
-    marginTop: 3,
+    color: '#666',
+    marginTop: 5,
     fontWeight: '300',
     fontStyle: 'italic',
     fontSize: 13,
@@ -228,11 +289,6 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 0,
   },
-  defaultCover: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
   cameraIconContainer: {
     width: 34,
     height: 34,
@@ -241,9 +297,15 @@ const styles = StyleSheet.create({
     bottom: 5,
     backgroundColor: 'rgba(0,0,0,.3)',
   },
+  coverCameraIconContainer: {
+    bottom: 5 + AVATAR_BORDER_RADIUS
+  },
   cameraIcon: {
     color: '#eee',
     fontSize: 18,
+  },
+  avatarCameraIcon: {
+    fontSize: 14,
   },
 });
 
