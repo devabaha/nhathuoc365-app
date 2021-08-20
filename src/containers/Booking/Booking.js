@@ -212,7 +212,8 @@ export class Booking extends Component {
         nextState.note !== this.state.note ||
         (nextState.date &&
           (nextState.date !== this.state.date ||
-            nextState.timeValue !== this.state.timeValue)) ||
+            (nextState.timeValue &&
+              nextState.timeValue !== this.state.timeValue))) ||
         nextState.paymentType !== this.state.paymentType ||
         nextState.paymentMethodId !== this.state.paymentMethodId)
     ) {
@@ -238,8 +239,7 @@ export class Booking extends Component {
   }
 
   updateNavBar = (booking = this.state.booking) => {
-    if (!booking) return;
-    console.log(booking);
+    if (!booking || this.unmounted) return;
     const navbarConfig = {
       right: () => (
         <RightButtonChat

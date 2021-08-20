@@ -74,7 +74,7 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    const { t } = this.props;
+    const {t} = this.props;
     return `${name && `${name} - `}${store.store_data.name || 'cửa hàng'}`;
   }
 
@@ -142,7 +142,7 @@ class Search extends Component {
     try {
       const response = await APIHandler.site_info(
         store.store_id,
-        this.props.categoryId
+        this.props.categoryId,
       );
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -152,20 +152,20 @@ class Search extends Component {
     } catch (e) {
       console.log(e + ' site_info');
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
   parseDataCategories(response) {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.props.categoryId) {
       response.data.categories.unshift({
         id: 0,
         name: t('tabs.store.title'),
-        active: true
+        active: true,
       });
     }
-    this.setState({ categories: response.data.categories });
+    this.setState({categories: response.data.categories});
   }
 
   getHistory(categoryId = this.state.selectedCategory.id) {
@@ -218,6 +218,7 @@ class Search extends Component {
           const response = await APIHandler.search_product(store.store_id, {
             search: keyword,
             category_id: this.state.selectedCategory.id,
+            type: this.props.type,
           });
 
           if (response && response.status == STATUS_SUCCESS) {

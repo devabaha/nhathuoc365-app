@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-cqx6x5] Use ItemImageViewer to display Gallery in Profile by [minhnguyenit14@gmail.com].
 - Integrate EditPersonalProfile to EditProfile by [minhnguyenit14@gmail.com].
 - Refactor Profile by [minhnguyenit14@gmail.com].
+- Integrate GroupProduct to Store (with Search, Filter) by [minhnguyenit14@gmail.com].
 ### Fixed
 - [CU-bnknw5] View not-ordering orders when there is no address in cart_data by [lamah.dev@gmail.com].
 - Low performance because of using ScrollView in CategoryScreen by [minhnguyenit14@gmail.com].

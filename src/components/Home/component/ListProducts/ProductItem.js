@@ -169,7 +169,6 @@ class ProductItem extends PureComponent {
                       </Text>
 
                       <TouchableOpacity
-                        hitSlop={HIT_SLOP}
                         disabled={isOutOfStock(item)}
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}

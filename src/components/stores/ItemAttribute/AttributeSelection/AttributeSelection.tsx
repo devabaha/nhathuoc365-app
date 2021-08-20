@@ -126,13 +126,15 @@ export class AttributeSelection extends Component<AttributeSelectionProps> {
         selectedAttrs,
       },
       () => {
-        const hasOnlyOneOption =
-          Object.keys(attrs)?.length === 1 &&
-          //@ts-ignore
-          Object.values(attrs)[0]?.length === 1;
+        if (!this.props.defaultSelectedModel) {
+          const hasOnlyOneOption =
+            Object.keys(attrs)?.length === 1 &&
+            //@ts-ignore
+            Object.values(attrs)[0]?.length === 1;
 
-        if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
-          this.handlePressProductAttr(this.state.viewData[0].data[0]);
+          if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+            this.handlePressProductAttr(this.state.viewData[0].data[0]);
+          }
         }
 
         callback();
