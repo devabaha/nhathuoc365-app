@@ -5,12 +5,12 @@ import {BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME} from 'src/constants';
 const NO_RESULT_COLOR = '#909090';
 
 const NoResult = ({
-  icon,
+  icon = null,
   iconBundle = BUNDLE_ICON_SETS_NAME.MaterialCommunityIcons,
   iconName = 'file-remove',
-  message,
-  containerStyle,
-  textStyle
+  message = "",
+  containerStyle = {},
+  textStyle = {}
 }) => {
   const Icon = BUNDLE_ICON_SETS[iconBundle];
 

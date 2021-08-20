@@ -46,6 +46,13 @@ class Header extends Component {
 
   render() {
     const {isMainUser} = this.context;
+
+    const hasHeaderInfo =
+      !!this.props.quote ||
+      !!this.props.address ||
+      !!this.props.tel ||
+      !!this.props.distance;
+
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -92,7 +99,9 @@ class Header extends Component {
           </View>
         </ImageBackground>
 
-        <Text style={styles.title}>{this.props.name}</Text>
+        <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
+          {this.props.name}
+        </Text>
         {!!this.props.quote && (
           <Text style={styles.subTitle}>{this.props.quote}</Text>
         )}
@@ -173,6 +182,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     letterSpacing: 1,
     paddingHorizontal: 15,
+  },
+  noHeaderInfo: {
+    marginBottom: 15,
   },
   subTitle: {
     textAlign: 'center',
