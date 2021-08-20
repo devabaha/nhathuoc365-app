@@ -6,10 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-[CU-1d7nt7u] Fix display error when loadmore in store by [kienluu612@gmail.com].
 
-## [r12.1.1] - 2021-08-18
+## [r12.1.1] - 2021-08-20
 ### Added
 - [CU-cquwh3] Function abaha_request and request_management in serviceHandler by [lamah.dev@gmail.com].
 - [CU-bv7k11] Scan QR code button when enter invitation code by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -19,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-anxf53] Copy button when press long array numbers in GiftedChat view  by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 - voucher_campaign_detail in servicesHandler by [minhnguyenit14@gmail.com].
 - [CU-cqx6x5] Avatar Image of ItemAttribute is not changed while choosing only 1 attribute by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-1d7nt7u] Fix display error when loadmore in store by [kienluu612@gmail.com].
 ### Changed
 - [CU-akxhu3] Zoom image in chat screen by [lamah.dev@gmail.com].
 - [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
