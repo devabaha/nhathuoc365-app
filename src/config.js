@@ -152,6 +152,11 @@ class Config {
       action: {
         1: '#126DEA',
       },
+
+      brand: {
+        facebook: '#4267B2',
+        youtube: '#FF0000',
+      },
     };
   }
 

@@ -77,6 +77,7 @@ class ItemImageViewer extends Component {
         break;
       case HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE:
         this.handleDownloadImage();
+        break;
       case HEADER_BUTTON_TYPE.MORE:
         Actions.push(
           appConfig.routes.modalActionSheet,
@@ -218,6 +219,7 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   headerLeftButton: {
     padding: 20,
@@ -226,6 +228,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    width: '100%',
+    zIndex: -1,
   },
   headerMiddleTitle: {
     color: '#fff',

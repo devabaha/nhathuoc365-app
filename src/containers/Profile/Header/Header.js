@@ -222,15 +222,17 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   cameraIconContainer: {
+    width: 34,
+    height: 34,
     position: 'absolute',
     right: 5,
     bottom: 5,
-    backgroundColor: 'rgba(0,0,0,.3)'
+    backgroundColor: 'rgba(0,0,0,.3)',
   },
   cameraIcon: {
-    color: '#ddd',
-    fontSize: 20
-  }
+    color: '#eee',
+    fontSize: 18,
+  },
 });
 
 export default withTranslation('editProfile')(Header);
