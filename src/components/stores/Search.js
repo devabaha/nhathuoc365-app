@@ -31,6 +31,10 @@ const END_DEG = new Animated.Value(Math.PI);
 const STORE_SEARCH_KEY = 'STORE-SEARCH';
 
 class Search extends Component {
+  static defaultProps = {
+    categoriesCollapsed: false,
+  };
+
   constructor(props) {
     super(props);
 
@@ -44,14 +48,20 @@ class Search extends Component {
       searchValue: '',
       categories: this.categories,
       selectedCategory: this.selectedCategory,
-      animatedCategories: new Animated.Value(0),
+      animatedCategories: new Animated.Value(
+        !!props.categoriesCollapsed ? 1 : 0,
+      ),
       bodyCategoriesHeight: null,
     };
+
+    this.animatedCategoriesShowUp = new Animated.Value(
+      props.categoriesCollapsed ? 0 : 1,
+    );
 
     this.onSearch = this.onSearch.bind(this);
     this.getHistory = this.getHistory.bind(this);
     this.unmounted = false;
-    this.categoriesCollapsed = false;
+    this.categoriesCollapsed = !!this.props.categoriesCollapsed;
 
     this.eventTracker = new EventTracker();
   }
@@ -152,7 +162,10 @@ class Search extends Component {
     } catch (e) {
       console.log(e + ' site_info');
     } finally {
-      !this.unmounted && this.setState({loading: false});
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+        });
     }
   };
 
@@ -376,7 +389,13 @@ class Search extends Component {
 
   handleCategoriesLayout = (e) => {
     if (!this.state.bodyCategoriesHeight) {
-      this.setState({bodyCategoriesHeight: e.nativeEvent.layout.height});
+      this.setState({bodyCategoriesHeight: e.nativeEvent.layout.height}, () => {
+        Animated.timing(this.animatedCategoriesShowUp, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.quad,
+        }).start();
+      });
     }
   };
 
@@ -388,6 +407,62 @@ class Search extends Component {
     }).start();
     this.categoriesCollapsed = !this.categoriesCollapsed;
   };
+
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      const data = {
+        quantity: 0,
+        model: item.model,
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+          // prev item in list
+          if (isAndroid && store.cart_item_index > 0) {
+            var index = store.cart_item_index - 1;
+            store.setCartItemIndex(index);
+            Events.trigger(NEXT_PREV_CART, {index});
+          }
+        })();
+
+        flashShowMessage({
+          message: response.message,
+          type: 'success',
+        });
+      }
+
+      this.cartItemConfirmRemove = undefined;
+    } catch (e) {
+      console.log(e + ' site_cart_update');
+
+      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
+    }
+  }
 
   render() {
     const {loading, search_data, history, buying_idx} = this.state;
@@ -407,20 +482,35 @@ class Search extends Component {
         },
       ],
     };
-    const animatedCategoriesStyle = this.state.bodyCategoriesHeight && {
-      height: interpolate(this.state.animatedCategories, {
-        inputRange: [0, 1],
-        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES],
+    const animatedCategoriesStyle = {
+      ...(this.state.bodyCategoriesHeight && {
+        height: interpolate(this.state.animatedCategories, {
+          inputRange: [0, 1],
+          outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES],
+        }),
       }),
     };
+
+    const animatedCategoriesBodyStyle = {
+      opacity: this.animatedCategoriesShowUp,
+      transform: [
+        {
+          translateY: interpolate(this.animatedCategoriesShowUp, {
+            inputRange: [0, 1],
+            outputRange: [-100, 0],
+          }),
+        },
+      ],
+    };
     // show loading
-    if (loading) {
-      return <Indicator />;
-    }
+    // if (loading) {
+    //   return <Indicator />;
+    // }
 
     return (
       <>
         <SafeAreaView style={styles.container}>
+          {loading && <Indicator />}
           {search_data != null ? (
             <FlatList
               keyboardShouldPersistTaps="handled"
@@ -455,7 +545,12 @@ class Search extends Component {
               )}
               {this.state.categories.length !== 0 && (
                 <ModernList
-                  containerStyle={{marginBottom: 15}}
+                  containerStyle={[
+                    {
+                      marginBottom: 15,
+                    },
+                    animatedCategoriesBodyStyle,
+                  ]}
                   scrollEnabled={false}
                   headerTitle="Danh mục"
                   mainKey="name"
@@ -588,62 +683,6 @@ class Search extends Component {
         )}
       </>
     );
-  }
-
-  _confirmRemoveCartItem(item) {
-    this.cartItemConfirmRemove = item;
-
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.open();
-    }
-  }
-
-  async _removeCartItem() {
-    if (!this.cartItemConfirmRemove) {
-      return;
-    }
-
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
-    }
-
-    var item = this.cartItemConfirmRemove;
-
-    try {
-      const data = {
-        quantity: 0,
-        model: item.model,
-      };
-
-      var response = await APIHandler.site_cart_update(
-        store.store_id,
-        item.id,
-        data,
-      );
-
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          // prev item in list
-          if (isAndroid && store.cart_item_index > 0) {
-            var index = store.cart_item_index - 1;
-            store.setCartItemIndex(index);
-            Events.trigger(NEXT_PREV_CART, {index});
-          }
-        })();
-
-        flashShowMessage({
-          message: response.message,
-          type: 'success',
-        });
-      }
-
-      this.cartItemConfirmRemove = undefined;
-    } catch (e) {
-      console.log(e + ' site_cart_update');
-
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
-    }
   }
 }
 

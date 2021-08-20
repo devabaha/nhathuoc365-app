@@ -50,7 +50,7 @@ class ModernListComponent extends Component {
     const body = this.renderBody();
 
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <Animated.View style={[styles.container, this.props.containerStyle]}>
         <View style={[styles.headerWrapper, this.props.headerWrapperStyle]}>
           {header}
         </View>
@@ -61,7 +61,7 @@ class ModernListComponent extends Component {
         >
           {body}
         </Animated.View>
-      </View>
+      </Animated.View>
     );
   }
 }

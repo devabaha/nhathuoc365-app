@@ -16,7 +16,7 @@ function ButtonTag({text, onPress, checked}) {
       onPress={onPress}>
       <Text
         style={[styles.title, {color: checked ? '#fff' : '#333'}]}
-        numberOfLines={2}>
+        numberOfLines={3}>
         {text}
       </Text>
     </TouchableOpacity>
@@ -27,11 +27,12 @@ const styles = StyleSheet.create({
   containerStyleTag: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10,
+    padding: 10,
     borderRadius: 4,
   },
   title: {
     textAlign: 'center',
+    fontSize: 13
   },
 });
 

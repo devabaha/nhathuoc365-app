@@ -57,7 +57,13 @@ const styles = StyleSheet.create({
   },
   right_btn_box: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 12,
+  },
+  searchIcon: {
+    color: appConfig.colors.white,
+    fontSize: 26,
+    top: appConfig.device.isAndroid ? 1 : 0,
   },
 });
 
@@ -162,7 +168,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               //         : ''
             });
           }}>
-          <IconFeather size={26} color={appConfig.colors.white} name="search" />
+          <IconFeather name="search" style={styles.searchIcon} />
         </Button>
         <RightButtonNavBar type={RIGHT_BUTTON_TYPE.SHOPPING_CART} />
       </View>
@@ -195,11 +201,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               : categories.find(
                   (cate) => cate.id === this.state.selectedMainCategory.id,
                 ) || defaultSelectedCategory;
-            // this.setState({
-            //   //   type: CATEGORY_TYPE.FIX_2_LEVEL,
-            //   categories: this.formatCategories(TEMP_CATEGORIES),
-            //   selectedMainCategory: TEMP_CATEGORIES[0],
-            // });
+          // this.setState({
+          //   //   type: CATEGORY_TYPE.FIX_2_LEVEL,
+          //   categories: this.formatCategories(TEMP_CATEGORIES),
+          //   selectedMainCategory: TEMP_CATEGORIES[0],
+          // });
           this.setState(
             (prevState: any) => ({
               type: response.data.type || prevState.type,
@@ -207,8 +213,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               // selectedMainCategory,
             }),
             () => {
-              setTimeout(() =>
-                this.onPressMainCategory(selectedMainCategory), 300
+              setTimeout(
+                () => this.onPressMainCategory(selectedMainCategory),
+                300,
               );
             },
           );
@@ -333,7 +340,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         this.state.type === CATEGORY_TYPE.FIX_2_LEVEL
           ? categories
           : category.list;
-          
+
       return (
         <Container key={index} flex centerVertical={false}>
           <SubCategory
