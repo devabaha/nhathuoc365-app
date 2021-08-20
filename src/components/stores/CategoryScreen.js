@@ -175,7 +175,7 @@ class CategoryScreen extends Component {
             // delay append data
             setTimeout(() => {
               layoutAnimation();
-              this.page = 1;
+              // this.page = 1;
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
