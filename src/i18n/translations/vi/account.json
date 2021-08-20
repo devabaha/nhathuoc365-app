@@ -9,7 +9,7 @@
       "desc": "Quản lý địa chỉ nhận hàng"
     },
     "orders": {
-      "label": "Đơn hàng",
+      "label": "Đơn hàng của tôi",
       "desc": "Quản lý đơn hàng"
     },
     "myVoucher": {

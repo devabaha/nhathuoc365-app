@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Animated,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
@@ -96,7 +95,6 @@ class ItemAttribute extends PureComponent {
   state = {
     product: this.props.product,
     loading: false,
-    animateAvoidKeyboard: new Animated.Value(0),
     viewData: this.initBaseData.viewData,
     models: this.props.product?.models || {},
     selectedAttrs: this.initBaseData.selectedAttrs,
@@ -509,12 +507,12 @@ class ItemAttribute extends PureComponent {
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <SafeAreaView style={[styles.safeView]}>
+        <View style={[styles.safeView]}>
           <TouchableWithoutFeedback onPress={this.handleClose}>
             <View style={{flex: 1}} />
           </TouchableWithoutFeedback>
 
-          <Animated.View style={[styles.optionListContainer]}>
+          <View style={[styles.optionListContainer]}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <ProductInfo
                 imageUri={imageUri}
@@ -615,10 +613,10 @@ class ItemAttribute extends PureComponent {
               onPress={this.handleSubmit}
               {...btnProps}
             />
-          </Animated.View>
+          </View>
 
-          {appConfig.device.isIOS && <KeyboardSpacer />}
-        </SafeAreaView>
+          {appConfig.device.isIOS && <KeyboardSpacer topSpacing={15} />}
+        </View>
       </Modal>
     );
   }

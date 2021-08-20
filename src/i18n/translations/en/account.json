@@ -9,7 +9,7 @@
       "desc": "Delivery address management"
     },
     "orders": {
-      "label": "Orders",
+      "label": "My orders",
       "desc": "Manage orders"
     },
     "myVoucher": {

@@ -11,14 +11,14 @@ export default function handleTabBarOnPress(props) {
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
       if (productOpening) return;
-      productOpening = true;
+      // productOpening = true;
 
       const service = {
         type: SERVICES_TYPE.OPEN_SHOP,
         siteId: store.store_id || appConfig.defaultSiteId
       };
       servicesHandler(service, null, () => {
-        productOpening = false;
+        // productOpening = false;
       });
 
       // APIHandler.site_info(store.store_id || appConfig.defaultSiteId)

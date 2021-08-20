@@ -1593,6 +1593,14 @@
     "@types/react-native" "*"
     "@types/xdate" "*"
 
+"@types/react-native-keyboard-spacer@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@types/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.4.2.tgz#1989655f8bf1c46bd355494984233779a6267676"
+  integrity sha512-5L2lvRbewC07Rj6KJj9EK9tcZbjVXZUtSkQ48ml9kMVSW5O0F9wIY/giF5ahXYL5/pbYyMsre+SsmDEFCQJUSA==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-modalbox@^1.4.9":
   version "1.4.9"
   resolved "https://registry.yarnpkg.com/@types/react-native-modalbox/-/react-native-modalbox-1.4.9.tgz#762bd9a0c21bc79391bf5a245a30c3b588075e59"

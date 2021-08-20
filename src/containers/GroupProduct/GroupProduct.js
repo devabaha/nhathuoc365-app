@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   listContentContainer: {
     flexGrow: 1,
     paddingTop: 8,
-    paddingBottom: appConfig.device.bottomSpace
+    paddingBottom: appConfig.device.bottomSpace,
   },
 });
 
@@ -32,8 +32,8 @@ const GroupProduct = ({
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
-  const productsOriginal = useRef([])
-  const pageIndex = useRef(0)
+  const productsOriginal = useRef([]);
+  const pageIndex = useRef(0);
 
   const getProductsRequest = new APIRequest();
 
@@ -59,32 +59,35 @@ const GroupProduct = ({
     return <RightButtonChat />;
   };
 
-  const getProducts = async (
-    loadMore = false,
-  ) => {
-
-    if(loadMore){
-      pageIndex.current++
+  const getProducts = async (loadMore = false) => {
+    if (loadMore) {
+      pageIndex.current++;
     } else {
-      pageIndex.current = 0
+      pageIndex.current = 0;
     }
     try {
-      getProductsRequest.data = APIHandler.site_group_product(siteId, groupId, pageIndex.current);
-      let responseData = await getProductsRequest.promise() || [];
+      getProductsRequest.data = APIHandler.site_group_product(
+        siteId,
+        groupId,
+        pageIndex.current,
+      );
+      let responseData = (await getProductsRequest.promise()) || [];
 
       if (responseData.length > 0) {
-          layoutAnimation()
+        layoutAnimation();
 
-          productsOriginal.current = loadMore 
-            ? [...productsOriginal.current, ...responseData]
-            : responseData
+        productsOriginal.current = loadMore
+          ? [...productsOriginal.current, ...responseData]
+          : responseData;
 
-          setProducts(
-            responseData.length >= (pageIndex.current === 0 ? FIRST_PAGE_STORES_LOAD_MORE : STORES_LOAD_MORE)
+        setProducts(
+          responseData.length >=
+            (pageIndex.current === 0
+              ? FIRST_PAGE_STORES_LOAD_MORE
+              : STORES_LOAD_MORE)
             ? [...productsOriginal.current, {id: -1, type: 'loadMore'}]
-            : productsOriginal.current
-          )
-          
+            : productsOriginal.current,
+        );
       }
     } catch (error) {
       console.log('%cget_group_product', 'color:red', error);
@@ -104,8 +107,8 @@ const GroupProduct = ({
   };
 
   const onPressLoadMore = () => {
-    getProducts(true)
-  }
+    getProducts(true);
+  };
 
   const onPressProduct = (product) => {
     Actions.item({
@@ -121,19 +124,23 @@ const GroupProduct = ({
         index={index}
         onPress={
           product.type != 'loadMore'
-          ? () => onPressProduct(product)
-          : onPressLoadMore
+            ? () => onPressProduct(product)
+            : onPressLoadMore
         }
       />
     );
   };
 
   const renderEmpty = () => {
-    return !isLoading && <NoResult
-    iconName="cart-off"
-    message={`${props.t('stores:noProduct')} :(`}
-  />
-  }
+    return (
+      !isLoading && (
+        <NoResult
+          iconName="cart-off"
+          message={`${props.t('stores:noProduct')} :(`}
+        />
+      )
+    );
+  };
 
   return (
     <>

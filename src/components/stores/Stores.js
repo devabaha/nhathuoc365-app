@@ -13,7 +13,6 @@ import store from '../../store/Store';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
-import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from '../../config';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -45,8 +44,10 @@ class Stores extends Component {
     this.state = {
       loading: true,
       category_nav_index: 0,
-      categories_data: null,
-      selected_category: {id: 0, name: ''},
+      categories_data: props.categoriesData || null,
+      selected_category: props.categoriesData?.length
+        ? props.categoriesData[0]
+        : {id: 0, name: ''},
       categoriesPosition: [],
       filterParams: {},
       valueSort: {},
@@ -152,7 +153,7 @@ class Stores extends Component {
     this.start_time = time();
 
     // get categories navigator
-    this._getCategoriesNavFromServer();
+    !this.props.categoriesData && this._getCategoriesNavFromServer();
 
     // update order information
     this._getCart();
@@ -190,6 +191,7 @@ class Stores extends Component {
     this.setState(
       {
         categories_data: response.data.categories,
+        selected_category: response.data.categories[0],
         promotions: response.data.promotions,
       },
       // () =>
@@ -240,10 +242,10 @@ class Stores extends Component {
   _renderRightButton() {
     return (
       <View style={[styles.right_btn_box]}>
-        {/* <RightButtonOrders tel={store.store_data.tel} /> */}
         <Button
           onPress={() => {
             Actions.push(appConfig.routes.searchStore, {
+              type: this.props.type,
               categories: this.state.categories_data,
               category_id: this.state.selected_category.id,
               category_name:
@@ -459,24 +461,27 @@ class Stores extends Component {
                     );
                   }}
                 />
-                <FilterProduct
-                  selectedFilter={store.selectedFilter}
-                  onValueSort={this.handleValue}
-                  animatedScrollY={this.animatedScrollY}
-                  animatedContentOffsetY={this.animatedContentOffsetY}
-                />
               </View>
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
+        {!!this.state.categories_data?.length && (
+          <FilterProduct
+            selectedFilter={store.selectedFilter}
+            onValueSort={this.handleValue}
+            animatedScrollY={this.animatedScrollY}
+            animatedContentOffsetY={this.animatedContentOffsetY}
+          />
+        )}
+
         {this.state.categories_data != null && (
           <FlatList
-            scrollEnabled={this.state.categories_data.length > 1}
+            scrollEnabled={this.state.categories_data?.length > 1}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ref={(ref) => (this.refs_category_screen = ref)}
             onScrollToIndexFailed={() => {}}
-            data={this.state.categories_data}
+            data={this.state.categories_data || []}
             extraData={this.state.category_nav_index}
             keyExtractor={(item) => `${item.id}`}
             horizontal
@@ -503,6 +508,7 @@ class Stores extends Component {
               return (
                 <CategoryScreen
                   item={item}
+                  type={this.props.type}
                   index={index}
                   cate_index={this.state.category_nav_index}
                   isAutoLoad={isAutoLoad}

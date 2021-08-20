@@ -236,6 +236,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       if (service.callback) {
         service.callback();
       }
+
       APIHandler.site_info(service.siteId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
@@ -310,10 +311,10 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GROUP_PRODUCT:
-      Actions.push(appConfig.routes.groupProduct, {
-        groupId: service.groupId,
-        siteId: service.siteId || store?.store_data?.id,
+      Actions.push(appConfig.routes.store, {
+        categoriesData: [{id: service.groupId, name: service.title}],
         title: service.title,
+        type: SERVICES_TYPE.GROUP_PRODUCT,
       });
       break;
     case SERVICES_TYPE.PRODUCT_STAMPS:
@@ -440,7 +441,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.personalProfile, {
         isMainUser: service.isMainUser,
         userInfo: service.userInfo,
-        title: service.title || service.userInfo?.name
+        title: service.title || service.userInfo?.name,
       });
       break;
 

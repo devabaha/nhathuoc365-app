@@ -30,6 +30,7 @@
     "@tickid/tickid-scaning-button": "^1.0.0",
     "@types/react-native-actionsheet": "^2.4.3",
     "@types/react-native-calendars": "^1.505.4",
+    "@types/react-native-keyboard-spacer": "^0.4.2",
     "@types/react-native-modalbox": "^1.4.9",
     "autobind-decorator": "^2.4.0",
     "axios": "^0.21.0",
