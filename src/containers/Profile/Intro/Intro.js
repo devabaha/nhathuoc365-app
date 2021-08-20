@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     // zIndex: 99
   },
   titleContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
     padding: 15,
     borderTopColor: appConfig.colors.border,
     borderTopWidth: 0.5,

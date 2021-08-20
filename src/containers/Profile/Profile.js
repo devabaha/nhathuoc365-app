@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import store from 'app-store';
 import appConfig from 'app-config';
 import Header from './Header';
@@ -64,13 +65,17 @@ class Profile extends Component {
     }
     data = data.concat([
       {
-        title: 'My Facebook',
+        title: this.props.t('editProfile:sections.facebook.title'),
+        leftTitle: (
+          <AntDesignIcon name="facebook-square" style={[styles.introIcon, styles.facebookIcon]} />
+        ),
         select: true,
         isLink: true,
         value: userInfo.facebook,
       },
       {
-        title: 'My Youtube',
+        title: this.props.t('editProfile:sections.youtube.title'),
+        leftTitle: <AntDesignIcon name="youtube" style={[styles.introIcon, styles.youtubeIcon]} />,
         select: true,
         isLink: true,
         value: userInfo.youtube,
@@ -133,10 +138,7 @@ class Profile extends Component {
         if (response && response.status === STATUS_SUCCESS && response.data) {
           this.setState({
             userInfo: response.data.user,
-            gallery: (response.data.images || []).map((image) => ({
-              ...image,
-              url: image.name,
-            })),
+            gallery: this.formatGallery(response.data.images || []),
           });
         } else {
           flashShowMessage({
@@ -276,6 +278,10 @@ class Profile extends Component {
     }
   };
 
+  formatGallery = (gallery = []) => {
+    return gallery.map((image) => ({...image, url: image.name}));
+  };
+
   uploadMultiTempImage = async (images) => {
     this.setState({loading: true});
     const uploadImages = [];
@@ -379,7 +385,9 @@ class Profile extends Component {
       const response = await APIHandler.user_upload_image(data);
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
-          this.setState({gallery: response.data.images});
+          this.setState({
+            gallery: this.formatGallery(response.data.images || []),
+          });
         } else {
           flashShowMessage({
             type: 'danger',
@@ -685,8 +693,19 @@ const styles = StyleSheet.create({
   comboBtn: {
     backgroundColor: '#f9f9f9',
   },
+
+  introIcon: {
+    marginRight: 7,
+    fontSize: 15,
+  },
+  facebookIcon: {
+    color: appConfig.colors.brand.facebook,
+  },
+  youtubeIcon: {
+    color: appConfig.colors.brand.youtube,
+  },
 });
 
-export default withTranslation(['profileDetail', 'common', 'account'])(
+export default withTranslation(['profileDetail', 'common', 'account', 'editProfile'])(
   observer(Profile),
 );

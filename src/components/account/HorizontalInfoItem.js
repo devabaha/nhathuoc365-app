@@ -9,9 +9,11 @@ import {
 
 import {isEmpty, isFunction} from 'lodash';
 import DatePicker from 'react-native-datepicker';
+// import DatePicker from '@react-native-community/datetimepicker';
 import appConfig from 'app-config';
 import {Actions} from 'react-native-router-flux';
 import Loading from '../Loading';
+import {Container} from '../Layout';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
@@ -104,6 +106,7 @@ export default class HorizontalInfoItem extends Component {
             <DatePicker
               style={{justifyContent: 'center'}}
               date={value || this.state.selectedDate}
+              // value={new Date(value || this.state.selectedDate)}
               mode="date"
               placeholder={defaultValue}
               format="YYYY-MM-DD"
@@ -196,6 +199,7 @@ export default class HorizontalInfoItem extends Component {
         titleStyle,
         containerStyle: dataContainerStyle,
         isLink,
+        leftTitle
       },
       containerStyle,
       inputProps,
@@ -223,7 +227,12 @@ export default class HorizontalInfoItem extends Component {
           containerStyle,
           dataContainerStyle,
         ]}>
-        <Text style={[styles.title, extraTitleStyle, titleStyle]}>{title}</Text>
+        <Container row>
+          {leftTitle}
+          <Text style={[styles.title, extraTitleStyle, titleStyle]}>
+            {title}
+          </Text>
+        </Container>
         {renderRight
           ? renderRight()
           : this._renderRightView(

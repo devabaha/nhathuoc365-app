@@ -237,6 +237,7 @@ class Gallery extends Component {
   };
 
   render() {
+    console.log(this.props.data)
     return (
       <>
         <View onLayout={this.onGalleryLayout} style={[styles.container]}>
@@ -269,11 +270,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerContainer: {
+    backgroundColor: '#f5f5f5',
     zIndex: 2,
   },
   row: {
-    backgroundColor: '#f1f1f1',
-    backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',

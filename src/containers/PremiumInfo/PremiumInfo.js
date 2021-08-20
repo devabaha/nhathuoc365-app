@@ -374,6 +374,7 @@ class PremiumInfo extends Component {
         renderTabBarItem={(props) => {
           return (
             <Button
+              key={props.route.key}
               onPress={() => this.setState({index: props.route.key})}
               containerStyle={{
                 minHeight: 48,
