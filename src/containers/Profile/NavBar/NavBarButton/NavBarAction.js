@@ -30,10 +30,12 @@ const NavBarAction = ({
   containerStyle = {},
   maskStyle = {},
   iconStyle = {},
+  disabled = false,
   onPress = () => {},
 }) => {
   return (
     <AnimatedTouchable
+      disabled={disabled}
       onPress={onPress}
       hitSlop={HIT_SLOP}
       style={[styles.iconContainer, containerStyle]}>
