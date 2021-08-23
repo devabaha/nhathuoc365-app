@@ -755,7 +755,6 @@ class Item extends Component {
   }
 
   renderPostForSaleBtn(product) {
-    console.log(product);
     return (
       (!!product?.img?.length || !!product.content) && (
         <TouchableOpacity
