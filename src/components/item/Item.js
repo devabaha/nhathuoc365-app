@@ -775,6 +775,7 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
+        
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}

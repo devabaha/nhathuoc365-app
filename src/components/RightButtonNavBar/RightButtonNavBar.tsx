@@ -6,6 +6,7 @@ import {
   View,
   Share,
 } from 'react-native';
+import RNShare from 'react-native-share';
 import {Actions} from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import appConfig from '../../config';

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.1.2] - 2021-08-23
+### Added
+- react-native-video, react-native-youtube-iframe by [minhnguyenit14@gmail.com]
+
 ## [r12.1.1] - 2021-08-20
 ### Added
 - [CU-cquwh3] Function abaha_request and request_management in serviceHandler by [lamah.dev@gmail.com].
