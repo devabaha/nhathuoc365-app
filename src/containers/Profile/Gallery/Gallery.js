@@ -15,7 +15,7 @@ import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import ProfileContext from '../ProfileContext';
 
-const MAX_IMAGE_UPLOADED = 9;
+const MAX_IMAGE_UPLOADED = 30;
 const ORIGIN_PADDING = 5;
 const ORIGIN_HEIGHT =
   appConfig.device.height -
@@ -88,7 +88,7 @@ class Gallery extends Component {
 
   handleOpenUploadSelection = () => {
     if (this.imagesLength >= MAX_IMAGE_UPLOADED) {
-      Alert.alert('Bạn chỉ có thể upload tối đa 9 ảnh');
+      Alert.alert(`Bạn chỉ có thể upload tối đa ${MAX_IMAGE_UPLOADED} ảnh`);
       return;
     }
 
