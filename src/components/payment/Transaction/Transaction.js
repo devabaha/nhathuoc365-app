@@ -10,10 +10,8 @@ import {
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Actions} from 'react-native-router-flux';
-import CameraRoll from '@react-native-community/cameraroll';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
-import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -26,12 +24,13 @@ import {APIRequest} from '../../../network/Entity';
 import HorizontalInfoItem from '../../../components/account/HorizontalInfoItem';
 import ScreenWrapper from '../../../components/ScreenWrapper';
 import Button from '../../../components/Button';
-import Loading, {BlurFilter} from '../../../components/Loading';
+import Loading from '../../../components/Loading';
 import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
 import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
+import { saveImage } from 'app-helper/image';
 
 const styles = StyleSheet.create({
   container: {
@@ -311,31 +310,8 @@ const Transaction = ({
   }, []);
 
   const handleSavePhoto = async (dataURL) => {
-    const imageName = new Date().getTime() + '.png';
-
-    const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
-    const iOSPath = 'data:image/png;base64,' + dataURL;
-
-    try {
-      const data = await (appConfig.device.isIOS
-        ? CameraRoll.save(iOSPath, {type: 'photo'})
-        : RNFetchBlob.fs.writeFile(androidPath, dataURL, 'base64'));
-        
-      if (data) {
-        flashShowMessage({
-          type: 'success',
-          message: 'Lưu ảnh thành công',
-        });
-      }
-    } catch (error) {
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-      console.log('err_save_qr_code', error);
-    } finally {
-      setImageSavingLoading(false);
-    }
+    await saveImage(undefined, dataURL, 'png');
+    setImageSavingLoading(false);
   };
 
   const onSaveQRCode = async () => {
