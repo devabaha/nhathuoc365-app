@@ -1,25 +1,31 @@
 import appConfig from 'app-config';
 import i18n from 'i18next';
-import RNFS from 'react-native-fs';
+import RNFetchBlob from 'rn-fetch-blob';
 import CameraRoll from '@react-native-community/cameraroll';
 import {downloadImage} from './imageDownloadingHandler';
 import {PhotoLibraryPermission} from '../permissionHelper';
 import showFlashNotification from '../../components/FlashNotification';
 
-const saveImage = async (url = '') => {
+const saveImage = async (url = '', dataURL = '', mimeType = '') => {
   const t = i18n.getFixedT(undefined, 'common');
-  let base64, imageType;
-  try {
-    const res = await downloadImage(url);
-    if (res) {
-      base64 = res.base64;
-      imageType = res.imageType;
+  let base64 = dataURL,
+    imageType = mimeType;
+
+  if (!base64) {
+    try {
+      const res = await downloadImage(url);
+      console.log(res);
+      if (res) {
+        base64 = res.base64Str;
+        imageType = res.imageType;
+      }
+    } catch (err) {
+      console.log('download_image', err);
     }
-  } catch (err) {
-    console.log(err);
   }
+
   const imageName = new Date().getTime() + '.' + imageType;
-  const androidPath = RNFS.DownloadDirectoryPath + '/' + imageName;
+  const androidPath = RNFetchBlob.fs.dirs.DownloadDir + '/' + imageName;
   console.log(androidPath);
   const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
   try {
@@ -29,10 +35,19 @@ const saveImage = async (url = '') => {
     if (granted) {
       const data = await (appConfig.device.isIOS
         ? CameraRoll.save(iOSPath, {type: 'photo'})
-        : RNFS.downloadFile({fromUrl: url, toFile: androidPath}));
-      //  RNFetchBlob.fs.writeFile(androidPath, base64, 'base64')
+        : RNFetchBlob.fs.writeFile(androidPath, base64, 'base64'));
       if (data) {
-        showFlashNotification(t('saved'));
+        if (appConfig.device.isAndroid) {
+          RNFetchBlob.fs
+            .scanFile([{path: androidPath, mime: imageType}])
+            .then((res) => {
+              console.log('scan_image_successfully', res);
+              showFlashNotification(t('saved'));
+            })
+            .catch((err) => console.log('scan_image_error', err));
+        } else {
+          showFlashNotification(t('saved'));
+        }
       } else {
         flashShowMessage({
           type: 'danger',
