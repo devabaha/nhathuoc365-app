@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r12.1.2] - 2021-08-23
 ### Added
 - react-native-video, react-native-youtube-iframe by [minhnguyenit14@gmail.com]
+- [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 
 ## [r12.1.1] - 2021-08-20
 ### Added
