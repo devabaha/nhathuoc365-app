@@ -564,47 +564,21 @@ class CommonAPI {
     return BaseAPI.apiDomain + 'apiBooking/cancel';
   }
 
-  // Abaha Request
-  get SITE_REQUESTS_SITE() {
-    return BaseAPI.apiDomain + 'apiSite/get_requests_site';
+  // Request
+  get SITE_REQUESTS_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_requests_room';
   }
-  get SITE_DETAIL_REQUEST_SITE() {
-    return BaseAPI.apiDomain + 'apiSite/get_detail_request_site';
+  get SITE_REQUEST_TYPES_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_request_types_room';
   }
-  get SITE_REQUEST_TYPES_SITE() {
-    return BaseAPI.apiDomain + 'apiSite/get_request_types_site';
-  }
-  get SITE_REQUEST_SITE() {
-    return BaseAPI.apiDomain + 'apiSite/create_request_site';
-  }
-  get SITE_COMMENT_REQUEST_SITE() {
-    return BaseAPI.apiDomain + 'apiSite/create_comment_request_site';
-  }
-
-  //Request Management
-  get SITE_REQUESTS_ROOMS() {
-    return BaseAPI.apiDomain + 'apiSite/get_requests_rooms';
-  }
-  get SITE_DETAIL_REQUEST_ROOM() {
-    return BaseAPI.apiDomain + 'apiSite/get_detail_request_room';
+  get SITE_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/create_request_room';
   }
   get SITE_COMMENT_REQUEST_ROOM() {
     return BaseAPI.apiDomain + 'apiSite/create_comment_request_room';
   }
-  get SITE_UPDATE_REQUEST_STATUS_ROOM() {
-    return BaseAPI.apiDomain + 'apiSite/update_status_request_room';
-  }
-  get SITE_GET_LIST_ADMIN_STAFF() {
-    return BaseAPI.apiDomain + 'apiSite/get_list_admin_staff';
-  }
-  get SITE_CHANGE_ADMIN_REQUEST() {
-    return BaseAPI.apiDomain + 'apiSite/change_admin_request';
-  }
-  get SITE_GET_LIST_ADMIN_REQUEST() {
-    return BaseAPI.apiDomain + 'apiSite/get_list_admin_request';
-  }
-  get SITE_DELETE_ADMIN_REQUEST() {
-    return BaseAPI.apiDomain + 'apiSite/delete_admin_request';
+  get SITE_DETAIL_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_detail_request_room';
   }
 }
 

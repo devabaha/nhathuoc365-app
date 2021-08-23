@@ -940,7 +940,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requestDetail}_1`}
                     component={RequestDetail}
-                    // title={t('screen.requests.detailTitle')}
+                    title={t('screen.requests.detailTitle')}
                     {...navBarConfig}
                     back
                   />

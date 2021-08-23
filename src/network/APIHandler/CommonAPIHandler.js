@@ -187,12 +187,12 @@ class CommonAPIHandler extends BaseHandler {
   async site_category_product(store_id, category_id, page_num) {
     var api = url_for(
       API.SITE_CATEGORY_PRODUCT +
-        '/' +
-        store_id +
-        '/' +
-        category_id +
-        '/' +
-        page_num,
+      '/' +
+      store_id +
+      '/' +
+      category_id +
+      '/' +
+      page_num,
     );
     return await this.getAPI(api);
   }
@@ -200,12 +200,12 @@ class CommonAPIHandler extends BaseHandler {
   site_category_product_by_filter(store_id, category_id, page_num, params) {
     const api = url_for(
       API.SITE_CATEGORY_PRODUCT +
-        '/' +
-        store_id +
-        '/' +
-        category_id +
-        '/' +
-        page_num,
+      '/' +
+      store_id +
+      '/' +
+      category_id +
+      '/' +
+      page_num,
     );
 
     return this.postCancelableAPI(api, params);
@@ -557,12 +557,12 @@ class CommonAPIHandler extends BaseHandler {
   site_load_conversation(store_id, user_id, last_mesage_id) {
     const api = url_for(
       API.SITE_CONVERSATION +
-        '/' +
-        store_id +
-        '/' +
-        user_id +
-        '/' +
-        last_mesage_id,
+      '/' +
+      store_id +
+      '/' +
+      user_id +
+      '/' +
+      last_mesage_id,
     );
 
     return this.getCancelableAPI(api);
@@ -1331,10 +1331,10 @@ class CommonAPIHandler extends BaseHandler {
 
     const api = url_for(
       API.USER_LIST_CHAT_CONVERSATION +
-        '/' +
-        conversation_id +
-        '/' +
-        last_message_id,
+      '/' +
+      conversation_id +
+      '/' +
+      last_message_id,
     );
     return [
       cancelInstance,
@@ -1434,64 +1434,34 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * @todo Huỷ đơn đã booking
    */
-   booking_cancel(site_id, booking_id) {
+  booking_cancel(site_id, booking_id) {
     const api = url_for(API.BOOKING_CANCEL, site_id, booking_id);
     return this.postCancelableAPI(api);
   }
 
   /**
-   * @todo lấy danh sách phản ánh
-   */
-   site_requests_site(site_id) {
-    const api = url_for(API.SITE_REQUESTS_SITE + '/' + site_id);
-    return this.getCancelableAPI(api);
+  * @todo lấy danh sách phản ánh của căn hộ
+  */
+  async site_requests_room(site_id, room_id) {
+    const api = url_for(API.SITE_REQUESTS_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
   }
 
   /**
-   * @todo lấy thông tin chi tiết phản ánh
+   * @todo Tạo phản ánh căn hộ
    */
-  site_detail_request_site(site_id, request_id) {
+  async site_request_room(site_id, room_id, data) {
+    const api = url_for(API.SITE_REQUEST_ROOM + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * @todo lấy danh sách loại phản ánh của căn hộ
+   */
+  async site_request_types_room(site_id, room_id) {
     const api = url_for(
-      API.SITE_DETAIL_REQUEST_SITE + '/' + site_id + '/' + request_id,
+      API.SITE_REQUEST_TYPES_ROOM + '/' + site_id + '/' + room_id
     );
-    return this.getCancelableAPI(api);
-  }
-
-  /**
-   * @todo lấy danh sách loại phản ánh
-   */
-  site_request_types_site(site_id) {
-    const api = url_for(API.SITE_REQUEST_TYPES_SITE + '/' + site_id);
-    return this.getCancelableAPI(api);
-  }
-
-  /**
-   * @todo Tạo phản ánh
-   */
-  site_request_site(site_id, data) {
-    const api = url_for(API.SITE_REQUEST_SITE + '/' + site_id);
-    return this.postCancelableAPI(api, data);
-  }
-
-  /**
-   * @todo Gửi comment phản ánh
-   */
-  site_comment_request_site(site_id, request_id, data) {
-    const api = url_for(
-      API.SITE_COMMENT_REQUEST_SITE + '/' + site_id + '/' + request_id,
-    );
-    return this.postCancelableAPI(api, data);
-  }
-
-  /**
-   * lấy danh sách phản ánh
-   *
-   * @method
-   * @param {string} site_id
-   * @returns {Promise} Promise object represents the request to get all request of the room
-   */
-   async site_requests_room(site_id) {
-    const api = url_for(API.SITE_REQUESTS_ROOMS + '/' + site_id);
     return await this.getAPI(api);
   }
 
@@ -1507,37 +1477,14 @@ class CommonAPIHandler extends BaseHandler {
   async site_detail_request_room(site_id, room_id, request_id) {
     const api = url_for(
       API.SITE_DETAIL_REQUEST_ROOM +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
+      '/' +
+      site_id +
+      '/' +
+      room_id +
+      '/' +
+      request_id
     );
     return await this.getAPI(api);
-  }
-
-  /**
-   * Cập nhật trạng thái phản ánh
-   *
-   * @method
-   * @param {string} site_id
-   * @param {string} room_id
-   * @param {string} request_id
-   * @param {{status_id: number}} data
-   * @returns {Promise} Promise object represents the request to update the status of the request in the room
-   */
-  async site_update_request_status_room(site_id, room_id, request_id, data) {
-    var api = url_for(
-      API.SITE_UPDATE_REQUEST_STATUS_ROOM +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
-    );
-    return await this.postAPI(api, data);
   }
 
   /**
@@ -1553,87 +1500,16 @@ class CommonAPIHandler extends BaseHandler {
   async site_comment_request_room(site_id, room_id, request_id, data) {
     var api = url_for(
       API.SITE_COMMENT_REQUEST_ROOM +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
+      '/' +
+      site_id +
+      '/' +
+      room_id +
+      '/' +
+      request_id
     );
     return await this.postAPI(api, data);
   }
 
-  /**
-   * @todo lấy danh sách nhân viên tiếp nhận yêu cầu.
-   *
-   * @param {string} site_id
-   */
-  async site_get_list_admin_staff(site_id) {
-    var api = url_for(API.SITE_GET_LIST_ADMIN_STAFF + '/' + site_id);
-    return await this.getAPI(api);
-  }
-
-  /**
-   * @todo thay đổi nhân viên tiếp nhận yêu cầu
-   *
-   * @param {string} site_id
-   * @param {string} room_id
-   * @param {string} request_id
-   * @param {{admin_id: string}} data
-   */
-  async site_change_admin_request(site_id, room_id, request_id, data) {
-    var api = url_for(
-      API.SITE_CHANGE_ADMIN_REQUEST +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
-    );
-    return await this.postAPI(api, data);
-  }
-
-  /**
-   * @todo lấy danh sách nhân viên đã tiếp nhận yêu cầu
-   *
-   * @param {string} site_id
-   * @param {string} room_id
-   * @param {string} request_id
-   */
-  async site_get_list_admin_request(site_id, room_id, request_id) {
-    var api = url_for(
-      API.SITE_GET_LIST_ADMIN_REQUEST +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
-    );
-    return await this.postAPI(api, data);
-  }
-
-  /**
-   * @todo xóa nhân viên khỏi danh sách nhân viên đã tiếp nhận yêu cầu
-   *
-   * @param {string} site_id
-   * @param {string} room_id
-   * @param {string} request_id
-   * @param {{admin_id: string}} data
-   */
-  async site_delete_admin_request(site_id, room_id, request_id, data) {
-    var api = url_for(
-      API.SITE_DELETE_ADMIN_REQUEST +
-        '/' +
-        site_id +
-        '/' +
-        room_id +
-        '/' +
-        request_id
-    );
-    return await this.postAPI(api, data);
-  }
 }
 
 export default CommonAPIHandler;

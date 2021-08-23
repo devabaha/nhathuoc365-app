@@ -588,3 +588,10 @@ global.dateHandler = function(date = new Date()) {
   };
 }
 
+global.normalizeNotify = (notify = '') => {
+  if (isNaN(notify) || !!!notify) {
+    return notify;
+  }
+  return notify > 9 ? '9+' : notify + '';
+};
+
