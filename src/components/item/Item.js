@@ -1019,6 +1019,8 @@ class Item extends Component {
               SOCIAL_DATA_TYPES.PRODUCT,
               item,
             )}
+            commentTitle={this.props.t("common:rate")}
+            disableShare
             // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
             onActionBarPress={(type) =>
               handleSocialActionBarPress(SOCIAL_DATA_TYPES.PRODUCT, type, item)

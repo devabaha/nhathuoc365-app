@@ -30,6 +30,7 @@ import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   REPLYING_BAR_HEIGHT,
   ACCESSORY_TYPE,
+  MAX_RATING_VALUE,
 } from 'src/constants/social';
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
@@ -64,13 +65,15 @@ const styles = StyleSheet.create({
     fontSize: 80,
     color: '#909090',
   },
-  userName: {
+  userNameContainer: {
     paddingHorizontal: 10,
     paddingTop: 5,
+    marginBottom: 2,
+  },
+  userName: {
     color: '#333',
     fontWeight: '700',
     fontSize: 13,
-    marginBottom: 2,
   },
   titleError: {
     color: appConfig.colors.status.danger,
@@ -78,8 +81,16 @@ const styles = StyleSheet.create({
 
   accessoryContainer: {
     justifyContent: 'center',
-    borderTopColor: '#b2b2b2',
-    borderTopWidth: StyleSheet.hairlineWidth,
+    // borderTopColor: '#b2b2b2',
+    // borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  ratingContainer: {
+    marginVertical: 4,
+  },
+  ratingIcon: {
+    marginRight: 2,
+    fontSize: 13,
+    color: appConfig.colors.marigold,
   },
 });
 
@@ -122,6 +133,7 @@ class Comment extends Component {
   refContentComments = null;
   refReplyMessage = null;
   refReplyContentMessage = null;
+  refRating = React.createRef();
 
   getMessagesAPI = new APIRequest();
   getCommentsAPI = new APIRequest();
@@ -129,6 +141,8 @@ class Comment extends Component {
   likeRequest = new APIRequest();
   requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
   uploadURL = APIHandler.url_user_upload_image();
+
+  ratingValue = 0;
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -469,6 +483,7 @@ class Comment extends Component {
       image: message.image || '',
       parent_id: message.real_parent_id || '',
       reply_id: message.reply_id || '',
+      star: this.ratingValue,
     };
     if (message.image_info) {
       data.image_width = message.image_info.width;
@@ -481,6 +496,8 @@ class Comment extends Component {
       console.log(response, message, data);
       let clientComment = message;
       let error = true;
+
+      this.collapseRating();
 
       if (response) {
         if (response.status == STATUS_SUCCESS) {
@@ -683,6 +700,16 @@ class Comment extends Component {
     return userId === this.state.user?.user_id;
   };
 
+  collapseRating = () => {
+    if (this.refRating?.current) {
+      this.refRating.current.toggleRating(false);
+    }
+  };
+
+  handleChangeRating = (ratingValue) => {
+    this.ratingValue = ratingValue;
+  };
+
   renderInputToolbar = (props) => {
     const replyingMention = this.state.replyingComment?.user;
     const isReplyingYourSelf = this.isReplyingYourSelf(
@@ -741,19 +768,40 @@ class Comment extends Component {
     );
   };
 
+  renderRatings = (rating) => {
+    if (!rating) return null;
+
+    return (
+      <Container row style={styles.ratingContainer}>
+        {Array.from({length: MAX_RATING_VALUE}).map((star, index) => {
+          return (
+            <FontAwesomeIcon
+              key={index}
+              name={index < rating ? 'star' : 'star-o'}
+              style={styles.ratingIcon}
+            />
+          );
+        })}
+      </Container>
+    );
+  };
+
   renderUserName = (props) => {
     const userName =
       props.currentMessage?.user?.name ||
       (props.currentMessage?.user_id && 'ID' + props.currentMessage?.user_id);
     return (
-      <Text style={styles.userName}>
-        <TextPressable
-          onPress={() =>
-            this.handlePressUserName(props.currentMessage?.user_id)
-          }>
-          {userName}
-        </TextPressable>
-      </Text>
+      <View style={styles.userNameContainer}>
+        <Text style={styles.userName}>
+          <TextPressable
+            onPress={() =>
+              this.handlePressUserName(props.currentMessage?.user_id)
+            }>
+            {userName}
+          </TextPressable>
+        </Text>
+        {this.renderRatings(props.currentMessage?.star)}
+      </View>
     );
   };
 
@@ -834,7 +882,14 @@ class Comment extends Component {
     this.props.accessoryTypes.forEach((accessoryType, index) => {
       switch (accessoryType) {
         case ACCESSORY_TYPE.RATING:
-          accessory.push(<RatingAccessory key={index} />);
+          accessory.push(
+            <RatingAccessory
+              ref={this.refRating}
+              key={index}
+              isDefaultVisible
+              onChangeRating={this.handleChangeRating}
+            />,
+          );
           break;
       }
     });

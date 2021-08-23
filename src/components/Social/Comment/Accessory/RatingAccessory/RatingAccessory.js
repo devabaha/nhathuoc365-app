@@ -1,25 +1,22 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {PureComponent} from 'react';
 import {
   StyleSheet,
-  Text,
   TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {
-  concat,
-  Easing,
-  color,
-  Extrapolate,
-} from 'react-native-reanimated';
+import Animated, {color, Extrapolate} from 'react-native-reanimated';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 import appConfig from 'app-config';
 
 import Ratings from 'src/components/Ratings';
 import {Container} from 'src/components/Layout';
 
-const AnimatedIcon = Animated.createAnimatedComponent(AntDesignIcon);
+const AnimatedFontAwesomeIcon = Animated.createAnimatedComponent(
+  FontAwesomeIcon,
+);
 
 const styles = StyleSheet.create({
   ratingWrapper: {
@@ -38,9 +35,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   ratingTitle: {
-    color: appConfig.colors.typography.text,
+    color: appConfig.colors.status.other,
     fontWeight: '500',
     fontSize: 12,
+  },
+  ratingIcon: {
+    color: appConfig.colors.status.other,
+    alignSelf: 'center',
+    marginRight: 5,
   },
 
   ratingStarContainer: {
@@ -64,69 +66,101 @@ const styles = StyleSheet.create({
   },
 });
 
-const RatingAccessory = ({title = 'Đánh giá'}) => {
-  const [isVisibleRating, setVisibleRating] = useState(false);
-  const [ratingContainerWidth, setRatingContainerWidth] = useState(0);
-  const [ratingWidth, setRatingWidth] = useState(0);
-  const [animatedVisibleRating] = useState(new Animated.Value(0));
+class RatingAccessory extends PureComponent {
+  static defaultProps = {
+    defaultRating: 5,
+    onChangeRating: () => {},
+    isDefaultVisible: false,
+  };
 
-  const toggleRating = useCallback(() => {
-    Animated.spring(animatedVisibleRating, {
-      toValue: isVisibleRating ? 0 : 1,
-      damping: isVisibleRating ? 30: 15,
-      mass: .8,
+  state = {
+    isVisibleRating: false,
+    ratingContainerWidth: 0,
+    ratingWidth: 0,
+  };
+  ratingValue = this.props.defaultRating;
+
+  animatedVisibleRating = new Animated.Value(0);
+
+  componentDidMount() {
+    if (this.props.isDefaultVisible) {
+      this.toggleRating(true);
+    }
+  }
+
+  toggleRating = (isVisibleRating) => {
+    Animated.spring(this.animatedVisibleRating, {
+      toValue: this.state.isVisibleRating ? 0 : 1,
+      damping: this.state.isVisibleRating ? 30 : 15,
+      mass: 0.8,
       stiffness: 200,
     }).start();
-    setVisibleRating(!isVisibleRating);
-  }, [isVisibleRating]);
 
-  const handleRatingContainerLayout = (e) => {
-    if (!ratingContainerWidth) {
-      setRatingContainerWidth(e.nativeEvent.layout.width);
+    this.props.onChangeRating(
+      this.state.isVisibleRating ? 0 : this.ratingValue,
+    );
+    this.setState((prevState) => ({
+      isVisibleRating:
+        isVisibleRating !== undefined
+          ? isVisibleRating
+          : !prevState.isVisibleRating,
+    }));
+  };
+
+  handleFinishRating = (rating) => {
+    this.ratingValue = rating;
+    this.props.onChangeRating(this.ratingValue);
+  };
+
+  handleRatingContainerLayout = (e) => {
+    if (!this.state.ratingContainerWidth) {
+      this.setState({ratingContainerWidth: e.nativeEvent.layout.width});
     }
   };
 
-  const handleRatingLayout = (e) => {
-    setRatingWidth(e.nativeEvent.layout.width);
+  handleRatingLayout = (e) => {
+    this.setState({ratingWidth: e.nativeEvent.layout.width});
   };
 
-  const animatedRatingContainerStyle = useMemo(
-    () =>
-      !!ratingContainerWidth && {
-        width: animatedVisibleRating.interpolate({
-          inputRange: [0, 1],
-          outputRange: [ratingContainerWidth, ratingWidth],
-          extrapolateLeft: Extrapolate.CLAMP,
-        }),
-        backgroundColor:
-         color(
-          ...hexToRgbCode(appConfig.colors.status.warning),
-          animatedVisibleRating.interpolate({
+  get animatedRatingContainerStyle() {
+    return {
+      width: !!this.state.ratingContainerWidth
+        ? this.animatedVisibleRating.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, 0],
-            extrapolate: Extrapolate.CLAMP,
-          }),
-        ),
-      },
-    [ratingContainerWidth, ratingWidth],
-  );
+            outputRange: [
+              this.state.ratingContainerWidth,
+              this.state.ratingWidth,
+            ],
+            extrapolateLeft: Extrapolate.CLAMP,
+          })
+        : undefined,
+      backgroundColor: color(
+        ...hexToRgbCode(appConfig.colors.status.warning),
+        this.animatedVisibleRating.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0],
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
+    };
+  }
 
-  const animatedRatingTitleStyle = {
-    opacity: animatedVisibleRating.interpolate({
+  animatedRatingTitleStyle = {
+    opacity: this.animatedVisibleRating.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 0],
       extrapolate: Extrapolate.CLAMP,
     }),
   };
-  const animatedRatingStyle = {
-    opacity: animatedVisibleRating.interpolate({
+  animatedRatingStyle = {
+    opacity: this.animatedVisibleRating.interpolate({
       inputRange: [0, 0.5, 1],
       outputRange: [0, 0, 1],
       extrapolate: Extrapolate.CLAMP,
     }),
     transform: [
       {
-        translateX: animatedVisibleRating.interpolate({
+        translateX: this.animatedVisibleRating.interpolate({
           inputRange: [0, 1],
           outputRange: [-50, 0],
         }),
@@ -134,42 +168,56 @@ const RatingAccessory = ({title = 'Đánh giá'}) => {
     ],
   };
 
-  return (
-    <View style={styles.ratingWrapper}>
-      <Animated.View
-        onLayout={handleRatingContainerLayout}
-        style={[styles.ratingContainer, animatedRatingContainerStyle]}>
-        <TouchableHighlight
-          disabled={isVisibleRating}
-          hitSlop={HIT_SLOP}
-          underlayColor="rgba(0,0,0,.1)"
-          style={styles.ratingTitleContainer}
-          onPress={toggleRating}>
-          <Animated.Text style={[styles.ratingTitle, animatedRatingTitleStyle]}>
-            {title}
-          </Animated.Text>
-          {/* <AnimatedIcon name="star" style={[ {color: appConfig.colors.white, alignSelf: 'center'}, animatedRatingTitleStyle]}/> */}
-        </TouchableHighlight>
-
-        <Container
-          reanimated
-          row
-          pointerEvents={isVisibleRating ? 'auto' : 'none'}
-          style={[styles.ratingStarContainer, animatedRatingStyle]}
-          onLayout={handleRatingLayout}>
-          <Ratings type="airbnb" size={20} />
-          <TouchableOpacity
+  render() {
+    return (
+      <View style={styles.ratingWrapper}>
+        <Animated.View
+          onLayout={this.handleRatingContainerLayout}
+          style={[styles.ratingContainer, this.animatedRatingContainerStyle]}>
+          <TouchableHighlight
+            disabled={this.state.isVisibleRating}
             hitSlop={HIT_SLOP}
-            style={styles.closeRatingContainer}
-            onPress={toggleRating}>
-            <View style={styles.closeRatingIconContainer}>
-              <AntDesignIcon name="close" style={styles.closeRatingIcon} />
-            </View>
-          </TouchableOpacity>
-        </Container>
-      </Animated.View>
-    </View>
-  );
-};
+            underlayColor="rgba(0,0,0,.1)"
+            style={styles.ratingTitleContainer}
+            onPress={this.toggleRating}>
+            <Container row>
+              <AnimatedFontAwesomeIcon
+                name="star"
+                style={[styles.ratingIcon, this.animatedRatingTitleStyle]}
+              />
+              <Animated.Text
+                style={[styles.ratingTitle, this.animatedRatingTitleStyle]}>
+                {this.props.title || this.props.t('common:rate')}
+              </Animated.Text>
+            </Container>
+          </TouchableHighlight>
 
-export default React.memo(RatingAccessory);
+          <Container
+            reanimated
+            row
+            pointerEvents={this.state.isVisibleRating ? 'auto' : 'none'}
+            style={[styles.ratingStarContainer, this.animatedRatingStyle]}
+            onLayout={this.handleRatingLayout}>
+            <Ratings
+              type="airbnb"
+              size={20}
+              defaultRating={this.props.defaultRating}
+              startingValue={this.props.defaultRating}
+              onFinishRating={this.handleFinishRating}
+            />
+            <TouchableOpacity
+              hitSlop={HIT_SLOP}
+              style={styles.closeRatingContainer}
+              onPress={this.toggleRating}>
+              <View style={styles.closeRatingIconContainer}>
+                <AntDesignIcon name="close" style={styles.closeRatingIcon} />
+              </View>
+            </TouchableOpacity>
+          </Container>
+        </Animated.View>
+      </View>
+    );
+  }
+}
+
+export default withTranslation(undefined, {withRef: true})(RatingAccessory);

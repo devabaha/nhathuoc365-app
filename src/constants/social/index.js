@@ -46,3 +46,5 @@ export const SOCIAL_DATA_TYPES = {
   POST: 'post',
   PRODUCT: 'product',
 };
+
+export const MAX_RATING_VALUE = 5;
