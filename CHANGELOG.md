@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - react-native-video, react-native-youtube-iframe by [minhnguyenit14@gmail.com].
 - [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
-### Fixed
-- [Android] Not showing up in Gallery after saveImage by [minhnguyenit14@gmail.com].
 
 ## [r12.1.1] - 2021-08-20
 ### Added
@@ -40,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-bnknw5] View not-ordering orders when there is no address in cart_data by [lamah.dev@gmail.com].
 - Low performance because of using ScrollView in CategoryScreen by [minhnguyenit14@gmail.com].
 - Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
+- [Android] Image doesn't show up in Gallery after saveImage by [minhnguyenit14@gmail.com].
 
 ## [r12.0.6] - 2021-07-28
 ### Added
