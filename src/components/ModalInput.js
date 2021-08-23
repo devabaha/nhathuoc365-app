@@ -105,6 +105,7 @@ function ModalInput({
             ref={ref_input}
             value={getFormattedText()}
             onChangeText={onChangeText}
+            multiline
             {...textInputProps}
             style={[styles.textInput, textInputStyle]}
           />
@@ -125,6 +126,9 @@ function ModalInput({
     </ModalBox>
   );
 }
+
+const MIN_ADDRESS_HEIGHT = 30;
+const MAX_ADDRESS_HEIGHT = MIN_ADDRESS_HEIGHT * 4;
 
 const styles = StyleSheet.create({
   container: {
@@ -183,6 +187,7 @@ const styles = StyleSheet.create({
     color: '#242424',
     paddingVertical: 0,
     paddingHorizontal: 0,
+    maxHeight: MAX_ADDRESS_HEIGHT,
   },
 
   btnContainer: {

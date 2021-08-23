@@ -33,12 +33,14 @@ const NoteSection = ({
   refInput,
 
   title,
+  status,
   value = '',
   editable = true,
 
   onChangeText = () => {},
   onContentSizeChange = () => {},
   onBlur = () => {},
+  onPressActionBtn = () => {},
 }) => {
   const {t} = useTranslation(['orders', 'confirm']);
 
@@ -55,7 +57,10 @@ const NoteSection = ({
             </Text>
           </>
         )
-      }>
+      }
+      actionBtnTitle={status == CART_STATUS_READY && t('confirm.change')}
+      onPressActionBtn={onPressActionBtn}
+      >
       <View pointerEvents={editable ? 'auto' : 'none'}>
         <TextInput
           ref={refInput}

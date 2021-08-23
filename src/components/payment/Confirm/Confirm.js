@@ -81,6 +81,7 @@ class Confirm extends Component {
     this.reorderRequest = new APIRequest();
     this.requests = [this.getShippingInfoRequest, this.reorderRequest];
     this.eventTracker = new EventTracker();
+    this.refModal = null;
   }
 
   get isSiteUseShipNotConfirming() {
@@ -655,6 +656,42 @@ class Confirm extends Component {
     this._showSticker();
   }
 
+  openEditNote = () => {
+    Actions.push(appConfig.routes.modalInput, {
+      backdropPressToClose: true,
+      title: 'Ghi chú',
+      btnTitle: 'Thay đổi',
+      value: store.user_cart_note || 
+             (store.cart_data ? store.cart_data.user_note : '') || 
+             this.state.data.user_note,
+      textInputProps: {
+        autoFocus: true,
+      },
+      onSubmit: this.handleChangeNote,
+      refModal: (inst) => (this.refModal = inst)
+    });
+  }
+
+  handleChangeNote = async (data) => {
+    store.setUserCartNote(data)
+    if (this.refModal) {
+      this.refModal.close();
+    }
+    const siteId = this.state.data.site_id
+    const cartId = store.cart_data.id
+    
+    // try {
+    //   const response = await APIHandler.edit_user_note(
+    //     siteId,
+    //     cartId,
+    //     data
+    //   )
+    //   console.log(response);
+    // } catch(e) {
+    //   console.log('edit_user_note ' + e);
+    // }
+  }
+
   _popupClose() {
     if (this.popup_message) {
       this.popup_message.close();
@@ -1084,12 +1121,14 @@ class Confirm extends Component {
           <NoteSection
             onChangeText={store.setUserCartNote}
             editable={single}
+            status={cart_data.status}
             value={
               single
                 ? store.user_cart_note ||
                   (store.cart_data ? store.cart_data.user_note : '')
-                : cart_data.user_note || t('confirm.note.noNote')
+                : store.user_cart_note || cart_data.user_note || t('confirm.note.noNote')
             }
+            onPressActionBtn={this.openEditNote}
           />
 
           {!!storeInfo && (
