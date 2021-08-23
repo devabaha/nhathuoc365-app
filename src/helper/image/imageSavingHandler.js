@@ -12,7 +12,7 @@ const saveImage = async (url = '') => {
   try {
     const res = await downloadImage(url);
     if (res) {
-      base64 = res.base64Str;
+      base64 = res.base64;
       imageType = res.imageType;
     }
   } catch (err) {

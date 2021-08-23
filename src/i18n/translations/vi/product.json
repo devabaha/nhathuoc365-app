@@ -4,6 +4,7 @@
     "dropShip": "Giao hộ",
     "buy": "Mua ngay",
     "book": "Đặt ngay",
+    "postForSale": "Đăng bán",
     "outOfStock": "Tạm hết hàng"
   },
   "attr": {
@@ -21,5 +22,6 @@
     "origin": "Xuất xứ"
   },
   "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
-  "goToStore": "Vào cửa hàng"
+  "goToStore": "Vào cửa hàng",
+  "copyContent": "Đã sao chép nội dung bài viết sản phẩm"
 }

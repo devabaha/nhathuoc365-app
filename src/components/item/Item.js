@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Animated,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
@@ -35,10 +37,14 @@ import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {shareImages} from '../../helper/share';
 import {isOutOfStock} from 'app-helper/product';
+import {Container} from '../Layout';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
+const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 
 class Item extends Component {
   static defaultProps = {
@@ -59,6 +65,7 @@ class Item extends Component {
       buying: false,
       like_loading: !this.props.preventUpdate,
       isSubActionLoading: false,
+      preparePostForSaleDataLoading: false,
       like_flag: 0,
       scrollY: 0,
     };
@@ -66,6 +73,8 @@ class Item extends Component {
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
+    this.refPopupConfirmCartType = React.createRef();
+    this.refWebview = React.createRef();
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -398,6 +407,60 @@ class Item extends Component {
     });
   };
 
+  handlePostForSale = (product) => {
+    this.setState({
+      preparePostForSaleDataLoading: true,
+    });
+
+    if (!!product?.content) {
+      if (this.refWebview.current) {
+        this.refWebview.current.getInnerText();
+      } else {
+        this.handleCompletingPreparingPostForSaleData();
+      }
+    } else if (!!product?.images?.length) {
+      this.handleSharingImages(product.images, product?.name, product?.url);
+    } else {
+      this.handleCompletingPreparingPostForSaleData();
+    }
+  };
+
+  handleGetInnerTextWebview = (innerText, product) => {
+    Clipboard.setString(innerText);
+    this.handleSharingImages(product?.img, product?.name, product?.url);
+  };
+
+  handleSharingImages = (images = [], title, metadataUrl) => {
+    const imageUrls = images.map((item) => {
+      return item.image;
+    });
+
+    shareImages(
+      imageUrls,
+      //callback
+      () => {
+        if (appConfig.device.isIOS) {
+          flashShowMessage({
+            type: 'success',
+            message: this.props.t('copyContent'),
+            duration: 3000,
+          });
+        } else {
+          Toast.show(this.props.t('copyContent'));
+        }
+      },
+      title,
+      '',
+      metadataUrl,
+    )
+      .catch((err) => console.log(err))
+      .finally(this.handleCompletingPreparingPostForSaleData);
+  };
+
+  handleCompletingPreparingPostForSaleData = () => {
+    this.setState({preparePostForSaleDataLoading: false});
+  };
+
   onSelectWarehouse = (warehouse, closeModal) => {
     this.setState({loading: true});
     closeModal();
@@ -691,6 +754,46 @@ class Item extends Component {
     );
   }
 
+  renderPostForSaleBtn(product) {
+    console.log(product);
+    return (
+      (!!product?.img?.length || !!product.content) && (
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          disabled={this.state.preparePostForSaleDataLoading}
+          onPress={() => this.handlePostForSale(product)}
+          style={styles.postForSaleWrapper}>
+          <View
+            style={[
+              styles.postForSaleContainer,
+              this.state.preparePostForSaleDataLoading &&
+                styles.postForSaleContainerLoading,
+            ]}>
+            <Text style={styles.postForSaleTitle}>
+              {this.props.t('shopTitle.postForSale')}
+            </Text>
+          </View>
+
+          <View
+            style={[
+              styles.postForSaleIconContainer,
+              this.state.preparePostForSaleDataLoading &&
+                styles.postForSaleIconContainerLoading,
+            ]}>
+            {this.state.preparePostForSaleDataLoading ? (
+              <Loading size="small" />
+            ) : (
+              <MaterialCommunityIcons
+                name="share"
+                style={styles.postForSaleIcon}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
+      )
+    );
+  }
+
   renderBtnProductStamps = () => {
     return (
       !!this.props.showBtnProductStamps && (
@@ -775,6 +878,7 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
+        
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
@@ -840,21 +944,26 @@ class Item extends Component {
               )}
 
               <View style={styles.item_heading_price_box}>
-                {item.discount_percent > 0 && (
-                  <Text style={styles.item_heading_safe_off_value}>
-                    <Text style={{textDecorationLine: 'line-through'}}>
-                      {item.discount_view}
-                    </Text>
-                  </Text>
-                )}
-                <Text style={styles.item_heading_price}>
-                  {item.price_view}
-                  {!!unitName && (
+                <Container centerVertical={false} flex>
+                  {item.discount_percent > 0 && (
                     <Text style={styles.item_heading_safe_off_value}>
-                      / {unitName}
+                      <Text style={{textDecorationLine: 'line-through'}}>
+                        {item.discount_view}
+                      </Text>
                     </Text>
                   )}
-                </Text>
+                  <Text style={styles.item_heading_price}>
+                    {item.price_view}
+                    {!!unitName && (
+                      <Text style={styles.item_heading_safe_off_value}>
+                        / {unitName}
+                      </Text>
+                    )}
+                  </Text>
+                </Container>
+                
+                {isConfigActive(CONFIG_KEY.ENABLE_POST_FOR_SALE_KEY) &&
+                  this.renderPostForSaleBtn(item)}
               </View>
 
               <View style={styles.item_actions_box}>
@@ -940,8 +1049,12 @@ class Item extends Component {
 
             {!!item?.content && (
               <CustomAutoHeightWebview
+                ref={(inst) => (this.refWebview.current = inst)}
                 containerStyle={[styles.block, styles.item_content_text]}
                 content={item.content}
+                onGetInnerText={(innerText) =>
+                  this.handleGetInnerTextWebview(innerText, item)
+                }
               />
             )}
 
@@ -1104,8 +1217,8 @@ const styles = StyleSheet.create({
     color: appConfig.colors.cherry,
   },
   item_heading_price_box: {
-    // marginTop: 15,
-    // flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   item_heading_safe_off_value: {
     ...appConfig.styles.typography.secondary,
@@ -1132,7 +1245,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
   item_actions_btn: {
-    borderWidth: Util.pixel,
+    borderWidth: 0.5,
     borderColor: appConfig.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -1142,6 +1255,47 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 20,
   },
+
+  postForSaleWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postForSaleContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: appConfig.colors.primary,
+    borderWidth: 0.5,
+    borderRadius: 5,
+    padding: 5,
+    paddingHorizontal: 10,
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  postForSaleContainerLoading: {
+    opacity: 0.3,
+  },
+  postForSaleIconContainer: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    minWidth: 30,
+    minHeight: 20,
+    padding: 2,
+    top: appConfig.device.isIOS ? -9 : -9,
+    transform: [{rotate: '-30deg'}],
+  },
+  postForSaleIconContainerLoading: {
+    transform: [{rotate: '0deg'}],
+  },
+  postForSaleIcon: {
+    color: appConfig.colors.primary,
+    fontSize: 20,
+  },
+  postForSaleTitle: {
+    color: appConfig.colors.primary,
+    fontSize: 12,
+    fontWeight: '400',
+  },
+
   item_actions_btn_icon_container: {
     height: '100%',
     minWidth: 24,
@@ -1153,10 +1307,9 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   item_actions_btn_chat: {
-    marginRight: 6,
+    marginRight: 15,
   },
   item_actions_btn_add_cart: {
-    marginLeft: 6,
     backgroundColor: appConfig.colors.primary,
   },
   item_actions_btn_add_cart_disabled: {

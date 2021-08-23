@@ -4,6 +4,7 @@
     "dropShip": "Drop ship",
     "buy": "Add to cart",
     "book": "Book",
+    "postForSale": "Post for sale",
     "outOfStock": "Out of stock"
   },
   "attr": {
@@ -21,5 +22,6 @@
     "origin": "Origin"
   },
   "relatedItems": "PRODUCTS OF THE SAME TYPE",
-  "goToStore": "Go to store"
+  "goToStore": "Go to store",
+  "copyContent": "Copied product article content"
 }
