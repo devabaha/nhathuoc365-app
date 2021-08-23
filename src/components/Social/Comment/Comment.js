@@ -29,11 +29,14 @@ import CustomInputToolbar from './CustomInputToolbar';
 import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   REPLYING_BAR_HEIGHT,
-} from 'src/constants/social/comments';
+  ACCESSORY_TYPE,
+} from 'src/constants/social';
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
 import TextPressable from 'src/components/TextPressable';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {RatingAccessory} from './Accessory';
+import {Container} from 'src/components/Layout';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -55,7 +58,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   emptyChatContainer: {
-    paddingBottom: '100%',
+    paddingBottom: '200%',
   },
   emptyIcon: {
     fontSize: 80,
@@ -71,6 +74,12 @@ const styles = StyleSheet.create({
   },
   titleError: {
     color: appConfig.colors.status.danger,
+  },
+
+  accessoryContainer: {
+    justifyContent: 'center',
+    borderTopColor: '#b2b2b2',
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });
 
@@ -688,6 +697,7 @@ class Comment extends Component {
     return (
       <CustomInputToolbar
         {...props}
+        accessoryStyle={styles.accessoryContainer}
         previewImages={this.state.previewImages}
         replyingName={replyingName}
         replyingMentionName={replyingMention?.name}
@@ -819,6 +829,18 @@ class Comment extends Component {
     );
   };
 
+  renderAccessory = (props) => {
+    const accessory = [];
+    this.props.accessoryTypes.forEach((accessoryType, index) => {
+      switch (accessoryType) {
+        case ACCESSORY_TYPE.RATING:
+          accessory.push(<RatingAccessory key={index} />);
+          break;
+      }
+    });
+    return <Container row>{accessory}</Container>;
+  };
+
   render() {
     const paddingTop =
       (this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
@@ -834,6 +856,7 @@ class Comment extends Component {
           mixSend={this.handleMixSend}
           handlePickedImages={this.handleAddImageToComposer}
           onKeyPress={this.handleKeyPress}
+          placeholder={this.props.placeholder}
           renderEmpty={
             !this.state.loading ? (
               <EmptyChat
@@ -844,7 +867,7 @@ class Comment extends Component {
                 message={this.props.t('social:emptyComment')}
               />
             ) : (
-              <View></View>
+              <View />
             )
           }
           // Root props
@@ -888,6 +911,7 @@ class Comment extends Component {
           renderTime={() => null}
           renderActions={this.renderActions}
           renderSend={this.renderSend}
+          renderAccessory={this.renderAccessory}
         />
       </>
     );

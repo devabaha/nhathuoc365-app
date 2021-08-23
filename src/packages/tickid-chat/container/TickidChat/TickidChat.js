@@ -1315,6 +1315,7 @@ class TickidChat extends Component {
                 renderInputToolbar={this.renderInputToolbar}
                 renderBubble={this.renderBubble}
                 renderTime={this.renderTime}
+                renderAccessory={this.props.renderAccessory}
                 // renderChatFooter={this.renderFooter.bind(this)}
                 keyboardShouldPersistTaps={'always'}
                 messages={this.props.messages}

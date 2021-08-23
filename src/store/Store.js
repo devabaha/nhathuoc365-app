@@ -658,6 +658,20 @@ class Store {
     this.socialPosts.replace(new Map());
   }
 
+  @observable socialProducts = observable.map(new Map());
+  @action setSocialProducts(socialProducts = {}) {
+    this.socialProducts.merge(socialProducts);
+  }
+
+  @action updateSocialProducts(id, data = {}) {
+    let temp = this.socialProducts.get(id) || {};
+    this.socialProducts.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialProducts() {
+    this.socialProducts.replace(new Map());
+  }
+
   @observable socialPostingData = {};
   @action setSocialPostingData(data = {}) {
     this.socialPostingData = data;
