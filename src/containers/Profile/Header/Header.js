@@ -102,7 +102,6 @@ class Header extends Component {
               <NavBarButton
                 disabled={this.props.avatarLoading}
                 containerStyle={[
-                  styles.cameraIconContainer,
                   styles.avatarCameraIconContainer,
                   styles.avatarCorner,
                 ]}
@@ -159,7 +158,7 @@ const AVATAR_CAMERA_ICON_DIMENSIONS = 24;
 const DISTANCE_FROM_ROUND_EDGE_TO_SQUARE_CONNER_OF_AVATAR_CONTAINER =
   (AVATAR_DIMENSIONS * (Math.sqrt(2) - 1)) / 2 -
   AVATAR_CAMERA_ICON_DIMENSIONS -
-  2;
+  3;
 
 const styles = StyleSheet.create({
   container: {
