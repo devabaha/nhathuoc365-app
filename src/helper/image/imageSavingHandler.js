@@ -16,7 +16,7 @@ const saveImage = async (url = '', dataURL = '', mimeType = '') => {
       const res = await downloadImage(url);
       console.log(res);
       if (res) {
-        base64 = res.base64Str;
+        base64 = res.base64;
         imageType = res.imageType;
       }
     } catch (err) {
