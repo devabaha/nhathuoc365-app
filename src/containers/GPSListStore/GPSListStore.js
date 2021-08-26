@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import FastImage from 'react-native-fast-image';
@@ -25,6 +26,8 @@ import {
 import Loading from '../../components/Loading';
 import {APIRequest} from '../../network/Entity';
 import Container from '../../components/Layout/Container';
+import Communications from 'react-native-communications';
+
 import {openMap} from '../../helper/map';
 
 const styles = StyleSheet.create({
@@ -89,10 +92,10 @@ const styles = StyleSheet.create({
   distanceUnitTxt: {
     fontSize: 9,
   },
-  openMapWrapper: {
+  btnWrapper: {
     overflow: 'hidden',
     borderRadius: 15,
-    marginLeft: 15,
+    marginLeft: 10,
   },
   openMapContainer: {
     backgroundColor: appConfig.colors.primary,
@@ -206,7 +209,7 @@ const GPSListStore = () => {
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setRequestLocationErrorCode(result);
           setGotoSetting(false);
-          updateLocation();
+          updateLocation(undefined, result);
         } else {
           handleErrorLocationPermission({code: result});
           !listStore?.length && getListStore();
@@ -215,7 +218,11 @@ const GPSListStore = () => {
     );
   };
 
-  const updateLocation = (timeout = 5000) => {
+  const updateLocation = (
+    timeout = 5000,
+    errorCode = requestLocationErrorCode,
+  ) => {
+    if (errorCode !== REQUEST_RESULT_TYPE.GRANTED) return;
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
@@ -294,6 +301,14 @@ const GPSListStore = () => {
     getListStore();
   };
 
+  const handleCall = (phone) => {
+    if (phone && phone != '') {
+      Communications.phonecall(phone, true);
+    } else {
+      Alert.alert('Không thể liên lạc');
+    }
+  };
+
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
     return (
@@ -333,15 +348,30 @@ const GPSListStore = () => {
               </Text>
             </Container>
 
-            <Container style={styles.openMapWrapper}>
-              <Button
-                containerStyle={styles.openMapContainer}
-                onPress={() => openMap(store.lat, store.lng)}>
-                <Container row style={styles.openMapBtn}>
-                  <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>Xem bản đồ</Text>
+            <Container row>
+              {!!store.phone && (
+                <Container style={styles.btnWrapper}>
+                  <Button
+                    containerStyle={styles.openMapContainer}
+                    onPress={() => handleCall(store.phone)}>
+                    <Container row style={styles.openMapBtn}>
+                      <Ionicons name="call" style={styles.mapIcon} />
+                      <Text style={styles.openMapTxt}>Gọi</Text>
+                    </Container>
+                  </Button>
                 </Container>
-              </Button>
+              )}
+
+              <Container style={styles.btnWrapper}>
+                <Button
+                  containerStyle={styles.openMapContainer}
+                  onPress={() => openMap(store.lat, store.lng)}>
+                  <Container row style={styles.openMapBtn}>
+                    <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
+                    <Text style={styles.openMapTxt}>Xem bản đồ</Text>
+                  </Container>
+                </Button>
+              </Container>
             </Container>
           </Container>
         </Container>
