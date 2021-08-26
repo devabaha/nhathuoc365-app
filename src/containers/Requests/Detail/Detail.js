@@ -67,7 +67,7 @@ class Detail extends Component {
         this.props.roomId,
         this.props.requestId,
       );
-
+      
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({

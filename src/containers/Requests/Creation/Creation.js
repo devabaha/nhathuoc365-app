@@ -185,12 +185,12 @@ class Creation extends Component {
     try {
       const response = await APIHandler.site_request_types_room(
         this.props.siteId,
-        this.props.roomId
+        this.props.roomId,
       );
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = {...this.state};
-          const requestTypes = response.data.request_types.map(type => ({
+          const requestTypes = response.data.request_types.map((type) => ({
             ...type,
             label: type.title,
             value: type.id,
@@ -222,31 +222,28 @@ class Creation extends Component {
     }
   }
 
-  onSubmit = async data => {
-    this.setState({ loading: true });
+  onSubmit = async (data) => {
+    this.setState({loading: true});
     const {t} = this.props;
     console.log(data);
     try {
       const response = await APIHandler.site_request_room(
         this.props.siteId,
         this.props.roomId,
-        data
+        data,
       );
-      console.log(response);
-      if (!this.unmounted && response) {
-        if (response.status === STATUS_SUCCESS) {
-          this.props.onRefresh();
-          Actions.pop();
-          flashShowMessage({
-            type: 'success',
-            message: response.message,
-          });
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message'),
-          });
-        }
+      if (this.unmounted) return;
+      if (response?.status === STATUS_SUCCESS) {
+        Actions.pop();
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || t('api.error.message'),
+        });
       }
     } catch (err) {
       console.log('create_request_room', err);
@@ -257,6 +254,16 @@ class Creation extends Component {
     } finally {
       !this.unmounted && this.setState({loading: false});
     }
+  };
+
+  handleDeleteImage = (image) => {
+    const images = [...this.state.images];
+    const imgIndex = images.findIndex((img) => img?.name === image?.name);
+    if (imgIndex !== -1) {
+      images.splice(imgIndex, 1);
+    }
+
+    this.setState({images});
   };
 
   handleChangeFormData(value, type) {
@@ -338,6 +345,7 @@ class Creation extends Component {
               onOpenImageSelector={() =>
                 this.takePicture(FORM_DATA.IMAGES.name, values)
               }
+              onDelete={this.handleDeleteImage}
               uploadImageLoading={this.state.uploadImageLoading}
             />
           );
