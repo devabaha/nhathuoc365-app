@@ -96,7 +96,6 @@ export const likeSocial = (type, feeds) => {
   updateFunction(feeds.id, {
     like_flag: newLikeFlag,
   });
-  console.log(type, feeds);
 
   const data = {
     object: feeds.object,
@@ -132,19 +131,13 @@ export const handleSocialActionBarPress = (
   actionType,
   feeds,
   isCommentInputAutoFocus = true,
+  extraProps = {}
 ) => {
   switch (actionType) {
     case SOCIAL_BUTTON_TYPES.LIKE:
       likeSocial(dataType, feeds);
       break;
     case SOCIAL_BUTTON_TYPES.COMMENT:
-      let extraProps = {};
-      if (dataType === SOCIAL_DATA_TYPES.PRODUCT) {
-        extraProps = {
-          accessoryTypes: ['rating'],
-          placeholder: 'Nhập đánh giá của bạn...'
-        };
-      }
       Actions.push(appConfig.routes.modalComment, {
         // title: 'Bình luận',
         title: feeds.title || feeds.name,

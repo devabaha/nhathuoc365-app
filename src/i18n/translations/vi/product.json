@@ -21,5 +21,6 @@
     "origin": "Xuất xứ"
   },
   "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
-  "goToStore": "Vào cửa hàng"
+  "goToStore": "Vào cửa hàng",
+  "placeholderRating": "Nhập đánh giá của bạn..."
 }

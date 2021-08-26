@@ -100,6 +100,7 @@ class Comment extends Component {
     user_id: store.user_info?.id,
     user_name: store.user_info?.name,
     user_avatar: store.user_info?.img,
+    accessoryTypes: [],
   };
 
   state = {
@@ -265,9 +266,6 @@ class Comment extends Component {
       this.isLoadFirstTime = false;
       if (!this.unmounted) {
         this.setStater({loading: false});
-        if (!isReload && this.props.autoFocus && this.refTickidChat) {
-          this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
-        }
       }
     }
   };
@@ -885,7 +883,7 @@ class Comment extends Component {
           accessory.push(
             <RatingAccessory
               ref={this.refRating}
-              key={index}
+              key={accessoryType}
               isDefaultVisible
               onChangeRating={this.handleChangeRating}
             />,
@@ -905,6 +903,7 @@ class Comment extends Component {
       <>
         {this.state.loading && <Loading center />}
         <TickidChat
+          autoFocus={this.props.autoFocus}
           isMultipleImagePicker={false}
           extraData={this.state.isUpdateForRendering}
           alwaysShowInput
@@ -966,7 +965,11 @@ class Comment extends Component {
           renderTime={() => null}
           renderActions={this.renderActions}
           renderSend={this.renderSend}
-          renderAccessory={this.renderAccessory}
+          renderAccessory={
+            !!this.props.accessoryTypes?.length
+              ? this.renderAccessory
+              : undefined
+          }
         />
       </>
     );

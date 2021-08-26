@@ -252,5 +252,7 @@
   "sendSMS": "SMS",
   "copied": "Copied",
   "loading": "Retrieving data...",
-  "rate": "Rate"
+  "rate": "Rate",
+  "review": "Review",
+  "reviews": "Reviews"
 }

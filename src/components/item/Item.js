@@ -37,7 +37,11 @@ import ListStoreProduct from '../stores/ListStoreProduct';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import {isOutOfStock} from 'app-helper/product';
 import ActionContainer from '../Social/ActionContainer';
-import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+import {
+  ACCESSORY_TYPE,
+  SOCIAL_BUTTON_TYPES,
+  SOCIAL_DATA_TYPES,
+} from 'src/constants/social';
 import {
   calculateLikeCountFriendly,
   getSocialCommentsCount,
@@ -311,12 +315,16 @@ class Item extends Component {
       const response = await APIHandler.site_product(store.store_id, item.id);
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        store.updateSocialProducts(item.id, {
-          like_count: response.data.like_count || 0,
-          like_flag: response.data.like_flag || 0,
-          share_count: response.data.share_count || 0,
-          comment_count: response.data.comment_count || 0,
-          like_count_friendly: calculateLikeCountFriendly(response.data) || 0,
+        const productSocialFormat = this.getProductWithSocialFormat(
+          response.data,
+        );
+        store.updateSocialProducts(productSocialFormat.id, {
+          like_count: productSocialFormat.like_count || 0,
+          like_flag: productSocialFormat.like_flag || 0,
+          share_count: productSocialFormat.share_count || 0,
+          comment_count: productSocialFormat.comment_count || 0,
+          like_count_friendly:
+            calculateLikeCountFriendly(productSocialFormat) || 0,
         });
         // delay append data
         setTimeout(() => {
@@ -363,6 +371,15 @@ class Item extends Component {
         message: t('common:api.error.message'),
       });
     }
+  }
+
+  getProductWithSocialFormat(
+    product = this.state.item_data || this.state.item || {},
+  ) {
+    return {
+      ...product,
+      like_flag: product.is_liked_product,
+    };
   }
 
   _renderRightButton() {
@@ -780,6 +797,9 @@ class Item extends Component {
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
+    const productWithSocialDataFormat = item?.object
+      ? this.getProductWithSocialFormat(item)
+      : {};
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
     const unitName = item.unit_name && item.unit_name_view;
@@ -788,6 +808,11 @@ class Item extends Component {
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
       item.order_type !== ORDER_TYPES.BOOKING;
+
+    const extraSocialProps = {
+      accessoryTypes: [ACCESSORY_TYPE.RATING],
+      placeholder: this.props.t('placeholderRating'),
+    };
 
     return (
       <View style={styles.container}>
@@ -1013,25 +1038,39 @@ class Item extends Component {
         {!!item.object && (
           <ActionContainer
             style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.PRODUCT, item)}
-            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.PRODUCT, item)}
+            isLiked={getSocialLikeFlag(
+              SOCIAL_DATA_TYPES.PRODUCT,
+              productWithSocialDataFormat,
+            )}
+            likeCount={getSocialLikeCount(
+              SOCIAL_DATA_TYPES.PRODUCT,
+              productWithSocialDataFormat,
+            )}
             commentsCount={getSocialCommentsCount(
               SOCIAL_DATA_TYPES.PRODUCT,
-              item,
+              productWithSocialDataFormat,
             )}
-            commentTitle={this.props.t("common:rate")}
+            commentTitle={this.props.t('common:review')}
+            totalCommentsTitle={this.props.t('common:reviews')}
             disableShare
             // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
             onActionBarPress={(type) =>
-              handleSocialActionBarPress(SOCIAL_DATA_TYPES.PRODUCT, type, item)
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.PRODUCT,
+                type,
+                productWithSocialDataFormat,
+                true,
+                extraSocialProps,
+              )
             }
             hasInfoExtraBottom={false}
             onPressTotalComments={() =>
               handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.PRODUCT,
                 SOCIAL_BUTTON_TYPES.COMMENT,
-                item,
+                productWithSocialDataFormat,
                 false,
+                extraSocialProps,
               )
             }
           />

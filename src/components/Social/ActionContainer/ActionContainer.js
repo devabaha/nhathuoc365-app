@@ -17,6 +17,7 @@ const ActionContainer = ({
   commentsCount,
   style,
   commentTitle,
+  totalCommentsTitle,
   disableComment,
   hasInfoExtraBottom,
   disableShare,
@@ -33,6 +34,7 @@ const ActionContainer = ({
         isLiked={isLiked}
         totalReaction={likeCount}
         totalComments={commentsCount}
+        totalCommentsTitle={totalCommentsTitle}
         onPressTotalComments={onPressTotalComments}
         disableComment={disableComment}
         hasInfoExtraBottom={hasInfoExtraBottom}

@@ -88,23 +88,18 @@ class RatingAccessory extends PureComponent {
     }
   }
 
-  toggleRating = (isVisibleRating) => {
+  toggleRating = (isVisibleRating = !this.state.isVisibleRating) => {
     Animated.spring(this.animatedVisibleRating, {
-      toValue: this.state.isVisibleRating ? 0 : 1,
-      damping: this.state.isVisibleRating ? 30 : 15,
+      toValue: !isVisibleRating ? 0 : 1,
+      damping: !isVisibleRating ? 30 : 15,
       mass: 0.8,
       stiffness: 200,
     }).start();
 
-    this.props.onChangeRating(
-      this.state.isVisibleRating ? 0 : this.ratingValue,
-    );
-    this.setState((prevState) => ({
-      isVisibleRating:
-        isVisibleRating !== undefined
-          ? isVisibleRating
-          : !prevState.isVisibleRating,
-    }));
+    this.props.onChangeRating(!isVisibleRating ? 0 : this.ratingValue);
+    this.setState({
+      isVisibleRating,
+    });
   };
 
   handleFinishRating = (rating) => {
@@ -179,7 +174,7 @@ class RatingAccessory extends PureComponent {
             hitSlop={HIT_SLOP}
             underlayColor="rgba(0,0,0,.1)"
             style={styles.ratingTitleContainer}
-            onPress={this.toggleRating}>
+            onPress={() => this.toggleRating()}>
             <Container row>
               <AnimatedFontAwesomeIcon
                 name="star"
@@ -208,7 +203,7 @@ class RatingAccessory extends PureComponent {
             <TouchableOpacity
               hitSlop={HIT_SLOP}
               style={styles.closeRatingContainer}
-              onPress={this.toggleRating}>
+              onPress={() => this.toggleRating()}>
               <View style={styles.closeRatingIconContainer}>
                 <AntDesignIcon name="close" style={styles.closeRatingIcon} />
               </View>

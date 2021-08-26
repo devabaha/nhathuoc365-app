@@ -252,5 +252,7 @@
   "sendSMS": "Nhắn tin",
   "copied": "Đã sao chép",
   "loading": "Đang lấy dữ liệu...",
-  "rate": "Đánh giá"
+  "rate": "Xếp hạng",
+  "review": "Đánh giá",
+  "reviews": "Đánh giá"
 }

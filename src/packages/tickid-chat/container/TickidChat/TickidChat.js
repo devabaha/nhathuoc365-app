@@ -911,6 +911,7 @@ class TickidChat extends Component {
         onFocusInput={() =>
           this.handlePressComposerButton(COMPONENT_TYPE.EMOJI, true)
         }
+        autoFocus={this.props.autoFocus}
         refInput={this.refInput}
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}
