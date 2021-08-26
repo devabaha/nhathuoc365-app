@@ -71,6 +71,7 @@ const ModalConfirm = ({
       onRequestClose={handleClosed}
       onCancel={handleNoConfirm}
       onOk={handleYesConfirm}
+      otherClose={otherClose}
       {...props}
     />
   ) : (

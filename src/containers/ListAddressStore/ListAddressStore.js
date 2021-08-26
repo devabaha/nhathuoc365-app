@@ -245,8 +245,7 @@ const ListAddressStore = ({
       (err) => {
         console.log('watch_position', watchID.current, err);
         setConnectGPS(false);
-        !listStore?.length &&
-          getListAddressStore();
+        !listStore?.length && getListAddressStore();
       },
       config,
     );
@@ -278,15 +277,13 @@ const ListAddressStore = ({
     setTimeout(() => setModalVisible(appState.current === 'active'), 500);
   };
 
-  const handleLocationError = (errorCode) => {
+  const handleLocationError = (errCode) => {
     // setGotoSetting(true);
     isGoToSetting.current = true;
-    LocationPermission.openPermissionAskingModal(
-      errorCode,
-      undefined,
-      undefined,
+    LocationPermission.openPermissionAskingModal({
+      errCode,
       errContent,
-    );
+    });
   };
 
   const handleSelectAddress = (storeAddress) => {
@@ -340,7 +337,8 @@ const ListAddressStore = ({
             <NoResult iconName={'storefront'} message={t('address.noStore')} />
           )}
 
-      {!isLoading && requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED &&
+      {!isLoading &&
+        requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED &&
         !!listStore?.length && (
           <NoResult
             iconName={'map-marker-off'}

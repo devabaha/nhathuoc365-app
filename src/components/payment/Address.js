@@ -427,6 +427,7 @@ class Address extends Component {
 
                   return (
                     <AddressItem
+                      key={index}
                       address={item}
                       editable
                       selectable={single}
@@ -474,21 +475,21 @@ class Address extends Component {
             </AddressContainer>
           )}
 
-          {this.isVisibleStoreAddress && (
-            <AddressContainer
-              title={t('address.store')}
-              onLayout={this.handleListAddressStoreLayout}>
-              <ListAddressStore
-                refreshing={this.state.refreshing}
-                selectedAddressId={this.state.item_selected}
-                onChangeAddress={this._addressSelectHandler.bind(this)}
-                onLoadedData={() =>
-                  this.scrollToSelectedAddress(ADDRESS_TYPE.STORE)
-                }
-                onSelectedAddressLayout={this.handleSelectedStoreAddressLayout}
-              />
-            </AddressContainer>
-          )}
+          {/* {this.isVisibleStoreAddress && ( */}
+          <AddressContainer
+            title={t('address.store')}
+            onLayout={this.handleListAddressStoreLayout}>
+            <ListAddressStore
+              refreshing={this.state.refreshing}
+              selectedAddressId={this.state.item_selected}
+              onChangeAddress={this._addressSelectHandler.bind(this)}
+              onLoadedData={() =>
+                this.scrollToSelectedAddress(ADDRESS_TYPE.STORE)
+              }
+              onSelectedAddressLayout={this.handleSelectedStoreAddressLayout}
+            />
+          </AddressContainer>
+          {/* )} */}
         </ScrollView>
 
         {single && (
