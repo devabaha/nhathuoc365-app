@@ -8,4 +8,5 @@ export const REQUEST_RESULT_TYPE = {
   NOT_GRANTED: 1,
   NOT_AVAILABLE: 2,
   TIMEOUT: 3,
+  BLOCKED: 4,
 };

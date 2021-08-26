@@ -1,9 +1,10 @@
-import {RESULTS, PERMISSIONS, request, check} from 'react-native-permissions';
-import {LOCATION_PERMISSION_TYPE, REQUEST_RESULT_TYPE} from '../constants';
-import appConfig from 'app-config';
 import {Alert, Linking} from 'react-native';
+import {RESULTS, PERMISSIONS, request, check} from 'react-native-permissions';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import {Actions} from 'react-native-router-flux';
+
+import appConfig from 'app-config';
+import {LOCATION_PERMISSION_TYPE, REQUEST_RESULT_TYPE} from '../constants';
 
 const LOCATION_TITLE = 'Vị trí';
 const REQUEST_TIMEOUT_MESSAGE = 'Hết thời gian yêu cầu.';
@@ -14,6 +15,7 @@ class LocationPermission {
   callPermission = async (type, callback = () => {}) => {
     const permissionGranted = await this.handleLocationPermission(type);
     callback(permissionGranted);
+    return permissionGranted;
   };
 
   handleLocationPermission = async (type) => {
@@ -49,7 +51,7 @@ class LocationPermission {
           return REQUEST_RESULT_TYPE.GRANTED;
         case RESULTS.BLOCKED:
           console.log('The permission is denied and not requestable anymore');
-          return REQUEST_RESULT_TYPE.NOT_GRANTED;
+          return REQUEST_RESULT_TYPE.BLOCKED;
       }
     } catch (error) {
       console.log('%crequest_location_permission', 'color:red', error);
@@ -60,14 +62,15 @@ class LocationPermission {
   handleAccessSettingWhenRequestLocationError = (errorCode) => {
     switch (errorCode) {
       case REQUEST_RESULT_TYPE.NOT_GRANTED:
+      case REQUEST_RESULT_TYPE.BLOCKED:
         appConfig.device.isIOS
           ? this.openSettingIOS('app-settings:')
-          : this.openSettingsAndroid(REQUEST_RESULT_TYPE.NOT_GRANTED);
+          : this.openSettingsAndroid(errorCode);
         break;
       case REQUEST_RESULT_TYPE.NOT_AVAILABLE:
         appConfig.device.isIOS
           ? this.openSettingIOS('App-Prefs:root=Privacy&path=LOCATION')
-          : this.openSettingsAndroid(REQUEST_RESULT_TYPE.NOT_AVAILABLE);
+          : this.openSettingsAndroid(errorCode);
         break;
     }
   };
@@ -91,19 +94,24 @@ class LocationPermission {
         AndroidOpenSettings.locationSourceSettings();
         break;
       case REQUEST_RESULT_TYPE.NOT_GRANTED:
+      case REQUEST_RESULT_TYPE.BLOCKED:
         AndroidOpenSettings.appDetailsSettings();
         break;
     }
   };
 
-  openPermissionAskingModal(
+  openPermissionAskingModal({
+    title,
     errCode,
-    onConfirm,
-    onCancel,
     errContent = '',
     confirmTitle = '',
     cancelTitle = '',
-  ) {
+    otherClose = false,
+
+    onConfirm,
+    onCancel,
+    ...props
+  }) {
     const content =
       errContent ||
       (errCode === REQUEST_RESULT_TYPE.TIMEOUT
@@ -117,7 +125,8 @@ class LocationPermission {
 
     Actions.push(appConfig.routes.modalConfirm, {
       momo: true,
-      title: `Cho phép truy cập ${LOCATION_TITLE}`,
+      otherClose,
+      title: title || `Cho phép truy cập ${LOCATION_TITLE}`,
       content,
       yesTitle,
       noTitle,
@@ -126,6 +135,7 @@ class LocationPermission {
         this.handleAccessSettingWhenRequestLocationError(errCode);
       },
       noConfirm: onCancel,
+      ...props,
     });
   }
 }
