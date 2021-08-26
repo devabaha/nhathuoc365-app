@@ -121,6 +121,9 @@ const styles = StyleSheet.create({
     width: null,
     right: -4
   },
+  badgeContent: {
+    fontSize: 12,
+  },
   container: {
     // width: 205,
   },
@@ -183,11 +186,6 @@ const styles = StyleSheet.create({
   notiMess: {
     right: -10
   },
-
-  badgeContent: {
-    fontSize: 12,
-    fontWeight: '400',
-  }
 });
 
 export default Request;

@@ -44,6 +44,7 @@ class Requests extends Component {
     this.getRequests();
     setTimeout(() => {
       Actions.refresh({
+        title: this.props.title || this.props.t('screen.requests.mainTitle'),
         right: this.renderRight()
       });
     });
@@ -133,7 +134,7 @@ class Requests extends Component {
         title={request.title}
         subTitle={request.content}
         status={request.status}
-        adminName={request.admin_name}
+        adminName={request.admin_id && request.admin_name}
         bgColor={request.color}
         textColor={request.textColor}
         description={request.created}

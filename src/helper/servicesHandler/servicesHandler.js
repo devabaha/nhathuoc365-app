@@ -459,6 +459,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** List */
     case SERVICES_TYPE.REQUESTS:
       Actions.push(appConfig.routes.requests, {
+        title: service.title,
         siteId: store.store_id,
         roomId: service.room_id || service.channel_id,
       });
