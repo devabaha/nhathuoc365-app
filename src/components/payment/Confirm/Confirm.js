@@ -392,7 +392,12 @@ class Confirm extends Component {
     try {
       const response = await this.getShippingInfoRequest.promise();
       console.log(response);
-      setTimeout(() => this.refs_confirm_page.current.scrollToEnd());
+      setTimeout(
+        () =>
+          !this.unmounted &&
+          !!this.refs_confirm_page.current &&
+          this.refs_confirm_page.current.scrollToEnd(),
+      );
 
       if (response) {
         if (response.status === STATUS_SUCCESS) {
