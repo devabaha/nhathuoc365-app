@@ -5,3 +5,7 @@ export const PREVIEW_IMAGES_BAR_HEIGHT =
   PREVIEW_IMAGE_HEIGHT + PADDING_IMAGE_HEIGHT * 2;
 
 export const IMAGE_COMMENT_HEIGHT = 180;
+
+export const ACCESSORY_TYPE = {
+  RATING: 'rating'
+}

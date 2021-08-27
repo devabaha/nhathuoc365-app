@@ -31,6 +31,9 @@ export const getSocialLikeFlag = (type, feeds) => {
     case SOCIAL_DATA_TYPES.POST:
       likeFlag = store.socialPosts.get(feeds.id)?.like_flag;
       break;
+    case SOCIAL_DATA_TYPES.PRODUCT:
+      likeFlag = store.socialProducts.get(feeds.id)?.like_flag;
+      break;
   }
 
   likeFlag === undefined && (likeFlag = feeds.like_flag);
@@ -46,6 +49,9 @@ export const getSocialLikeCount = (type, feeds) => {
     case SOCIAL_DATA_TYPES.POST:
       likeCount = store.socialPosts.get(feeds.id)?.like_count_friendly;
       break;
+    case SOCIAL_DATA_TYPES.PRODUCT:
+      likeCount = store.socialProducts.get(feeds.id)?.like_count_friendly;
+      break;
   }
 
   likeCount === undefined && (likeCount = feeds.like_count);
@@ -60,6 +66,9 @@ export const getSocialCommentsCount = (type, feeds) => {
       break;
     case SOCIAL_DATA_TYPES.POST:
       commentsCount = store.socialPosts.get(feeds.id)?.comment_count;
+      break;
+    case SOCIAL_DATA_TYPES.PRODUCT:
+      commentsCount = store.socialProducts.get(feeds.id)?.comment_count;
       break;
   }
 
@@ -79,12 +88,14 @@ export const likeSocial = (type, feeds) => {
     case SOCIAL_DATA_TYPES.POST:
       updateFunction = store.updateSocialPost;
       break;
+    case SOCIAL_DATA_TYPES.PRODUCT:
+      updateFunction = store.updateSocialProducts;
+      break;
   }
 
   updateFunction(feeds.id, {
     like_flag: newLikeFlag,
   });
-  console.log(type, feeds);
 
   const data = {
     object: feeds.object,
@@ -93,7 +104,7 @@ export const likeSocial = (type, feeds) => {
     status: newLikeFlag,
   };
 
-  console.log(data)
+  console.log(data);
 
   APIHandler.social_likes(data)
     .promise()
@@ -120,6 +131,7 @@ export const handleSocialActionBarPress = (
   actionType,
   feeds,
   isCommentInputAutoFocus = true,
+  extraProps = {}
 ) => {
   switch (actionType) {
     case SOCIAL_BUTTON_TYPES.LIKE:
@@ -128,11 +140,12 @@ export const handleSocialActionBarPress = (
     case SOCIAL_BUTTON_TYPES.COMMENT:
       Actions.push(appConfig.routes.modalComment, {
         // title: 'Bình luận',
-        title: feeds.title,
+        title: feeds.title || feeds.name,
         object: feeds?.object,
         object_id: feeds?.object_id || feeds?.id,
         site_id: feeds.site_id,
         autoFocus: isCommentInputAutoFocus,
+        ...extraProps
       });
       break;
     case SOCIAL_BUTTON_TYPES.SHARE:

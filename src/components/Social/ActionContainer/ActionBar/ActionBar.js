@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActionBar = ({isLiked, disableComment, disableShare, onActionBarPress = () => {}}) => {
+const ActionBar = ({isLiked, commentTitle, disableComment, disableShare, onActionBarPress = () => {}}) => {
   // console.log('render action bar')
   const {t} = useTranslation('social');
 
@@ -29,7 +29,7 @@ const ActionBar = ({isLiked, disableComment, disableShare, onActionBarPress = ()
       />
       {!disableComment && (
         <Button
-          title={t('comment')}
+          title={commentTitle || t('comment')}
           iconName="message1"
           onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
         />

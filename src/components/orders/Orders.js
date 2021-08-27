@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
+  StatusBar
 } from 'react-native';
 import {reaction} from 'mobx';
 import appConfig from 'app-config';
@@ -15,7 +16,6 @@ import {Actions} from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
-import {StatusBar} from 'react-native';
 
 class Orders extends Component {
   constructor(props) {

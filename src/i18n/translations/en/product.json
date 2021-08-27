@@ -23,5 +23,6 @@
   },
   "relatedItems": "PRODUCTS OF THE SAME TYPE",
   "goToStore": "Go to store",
-  "copyContent": "Copied product article content"
+  "copyContent": "Copied product article content",
+  "placeholderRating": "Enter your rating..."
 }

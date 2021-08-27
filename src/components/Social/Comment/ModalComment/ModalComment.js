@@ -88,6 +88,8 @@ class ModalComment extends Component {
         object={this.props.object}
         object_id={this.props.object_id}
         autoFocus={this.props.autoFocus}
+        accessoryTypes={this.props.accessoryTypes}
+        placeholder={this.props.placeholder}
       />
     );
   }

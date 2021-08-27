@@ -251,5 +251,8 @@
   "call": "Gọi điện",
   "sendSMS": "Nhắn tin",
   "copied": "Đã sao chép",
-  "loading": "Đang lấy dữ liệu..."
+  "loading": "Đang lấy dữ liệu...",
+  "rate": "Xếp hạng",
+  "review": "Đánh giá",
+  "reviews": "Đánh giá"
 }
