@@ -29,11 +29,15 @@ import CustomInputToolbar from './CustomInputToolbar';
 import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   REPLYING_BAR_HEIGHT,
-} from 'src/constants/social/comments';
+  ACCESSORY_TYPE,
+  MAX_RATING_VALUE,
+} from 'src/constants/social';
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
 import TextPressable from 'src/components/TextPressable';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {RatingAccessory} from './Accessory';
+import {Container} from 'src/components/Layout';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -55,22 +59,38 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   emptyChatContainer: {
-    paddingBottom: '100%',
+    paddingBottom: '200%',
   },
   emptyIcon: {
     fontSize: 80,
     color: '#909090',
   },
-  userName: {
+  userNameContainer: {
     paddingHorizontal: 10,
     paddingTop: 5,
+    marginBottom: 2,
+  },
+  userName: {
     color: '#333',
     fontWeight: '700',
     fontSize: 13,
-    marginBottom: 2,
   },
   titleError: {
     color: appConfig.colors.status.danger,
+  },
+
+  accessoryContainer: {
+    justifyContent: 'center',
+    // borderTopColor: '#b2b2b2',
+    // borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  ratingContainer: {
+    marginVertical: 4,
+  },
+  ratingIcon: {
+    marginRight: 2,
+    fontSize: 13,
+    color: appConfig.colors.marigold,
   },
 });
 
@@ -80,6 +100,7 @@ class Comment extends Component {
     user_id: store.user_info?.id,
     user_name: store.user_info?.name,
     user_avatar: store.user_info?.img,
+    accessoryTypes: [],
   };
 
   state = {
@@ -113,6 +134,7 @@ class Comment extends Component {
   refContentComments = null;
   refReplyMessage = null;
   refReplyContentMessage = null;
+  refRating = React.createRef();
 
   getMessagesAPI = new APIRequest();
   getCommentsAPI = new APIRequest();
@@ -120,6 +142,8 @@ class Comment extends Component {
   likeRequest = new APIRequest();
   requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
   uploadURL = APIHandler.url_user_upload_image();
+
+  ratingValue = 0;
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -242,9 +266,6 @@ class Comment extends Component {
       this.isLoadFirstTime = false;
       if (!this.unmounted) {
         this.setStater({loading: false});
-        if (!isReload && this.props.autoFocus && this.refTickidChat) {
-          this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
-        }
       }
     }
   };
@@ -460,6 +481,7 @@ class Comment extends Component {
       image: message.image || '',
       parent_id: message.real_parent_id || '',
       reply_id: message.reply_id || '',
+      star: this.ratingValue,
     };
     if (message.image_info) {
       data.image_width = message.image_info.width;
@@ -472,6 +494,8 @@ class Comment extends Component {
       console.log(response, message, data);
       let clientComment = message;
       let error = true;
+
+      this.collapseRating();
 
       if (response) {
         if (response.status == STATUS_SUCCESS) {
@@ -674,6 +698,16 @@ class Comment extends Component {
     return userId === this.state.user?.user_id;
   };
 
+  collapseRating = () => {
+    if (this.refRating?.current) {
+      this.refRating.current.toggleRating(false);
+    }
+  };
+
+  handleChangeRating = (ratingValue) => {
+    this.ratingValue = ratingValue;
+  };
+
   renderInputToolbar = (props) => {
     const replyingMention = this.state.replyingComment?.user;
     const isReplyingYourSelf = this.isReplyingYourSelf(
@@ -688,6 +722,7 @@ class Comment extends Component {
     return (
       <CustomInputToolbar
         {...props}
+        accessoryStyle={styles.accessoryContainer}
         previewImages={this.state.previewImages}
         replyingName={replyingName}
         replyingMentionName={replyingMention?.name}
@@ -731,19 +766,40 @@ class Comment extends Component {
     );
   };
 
+  renderRatings = (rating) => {
+    if (!rating) return null;
+
+    return (
+      <Container row style={styles.ratingContainer}>
+        {Array.from({length: MAX_RATING_VALUE}).map((star, index) => {
+          return (
+            <FontAwesomeIcon
+              key={index}
+              name={index < rating ? 'star' : 'star-o'}
+              style={styles.ratingIcon}
+            />
+          );
+        })}
+      </Container>
+    );
+  };
+
   renderUserName = (props) => {
     const userName =
       props.currentMessage?.user?.name ||
       (props.currentMessage?.user_id && 'ID' + props.currentMessage?.user_id);
     return (
-      <Text style={styles.userName}>
-        <TextPressable
-          onPress={() =>
-            this.handlePressUserName(props.currentMessage?.user_id)
-          }>
-          {userName}
-        </TextPressable>
-      </Text>
+      <View style={styles.userNameContainer}>
+        <Text style={styles.userName}>
+          <TextPressable
+            onPress={() =>
+              this.handlePressUserName(props.currentMessage?.user_id)
+            }>
+            {userName}
+          </TextPressable>
+        </Text>
+        {this.renderRatings(props.currentMessage?.star)}
+      </View>
     );
   };
 
@@ -819,6 +875,25 @@ class Comment extends Component {
     );
   };
 
+  renderAccessory = (props) => {
+    const accessory = [];
+    this.props.accessoryTypes.forEach((accessoryType, index) => {
+      switch (accessoryType) {
+        case ACCESSORY_TYPE.RATING:
+          accessory.push(
+            <RatingAccessory
+              ref={this.refRating}
+              key={accessoryType}
+              isDefaultVisible
+              onChangeRating={this.handleChangeRating}
+            />,
+          );
+          break;
+      }
+    });
+    return <Container row>{accessory}</Container>;
+  };
+
   render() {
     const paddingTop =
       (this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
@@ -828,12 +903,14 @@ class Comment extends Component {
       <>
         {this.state.loading && <Loading center />}
         <TickidChat
+          autoFocus={this.props.autoFocus}
           isMultipleImagePicker={false}
           extraData={this.state.isUpdateForRendering}
           alwaysShowInput
           mixSend={this.handleMixSend}
           handlePickedImages={this.handleAddImageToComposer}
           onKeyPress={this.handleKeyPress}
+          placeholder={this.props.placeholder}
           renderEmpty={
             !this.state.loading ? (
               <EmptyChat
@@ -844,7 +921,7 @@ class Comment extends Component {
                 message={this.props.t('social:emptyComment')}
               />
             ) : (
-              <View></View>
+              <View />
             )
           }
           // Root props
@@ -888,6 +965,11 @@ class Comment extends Component {
           renderTime={() => null}
           renderActions={this.renderActions}
           renderSend={this.renderSend}
+          renderAccessory={
+            !!this.props.accessoryTypes?.length
+              ? this.renderAccessory
+              : undefined
+          }
         />
       </>
     );

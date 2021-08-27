@@ -251,5 +251,8 @@
   "call": "Call",
   "sendSMS": "SMS",
   "copied": "Copied",
-  "loading": "Retrieving data..."
+  "loading": "Retrieving data...",
+  "rate": "Rate",
+  "review": "Review",
+  "reviews": "Reviews"
 }

@@ -40,6 +40,19 @@ import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import {shareImages} from '../../helper/share';
 import {isOutOfStock} from 'app-helper/product';
 import {Container} from '../Layout';
+import ActionContainer from '../Social/ActionContainer';
+import {
+  ACCESSORY_TYPE,
+  SOCIAL_BUTTON_TYPES,
+  SOCIAL_DATA_TYPES,
+} from 'src/constants/social';
+import {
+  calculateLikeCountFriendly,
+  getSocialCommentsCount,
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  handleSocialActionBarPress,
+} from 'app-helper/social';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -309,8 +322,19 @@ class Item extends Component {
     const {t} = this.props;
     try {
       const response = await APIHandler.site_product(store.store_id, item.id);
-
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
+        const productSocialFormat = this.getProductWithSocialFormat(
+          response.data,
+        );
+        store.updateSocialProducts(productSocialFormat.id, {
+          like_count: productSocialFormat.like_count || 0,
+          like_flag: productSocialFormat.like_flag || 0,
+          share_count: productSocialFormat.share_count || 0,
+          comment_count: productSocialFormat.comment_count || 0,
+          like_count_friendly:
+            calculateLikeCountFriendly(productSocialFormat) || 0,
+        });
         // delay append data
         setTimeout(() => {
           if (isIOS) {
@@ -356,6 +380,15 @@ class Item extends Component {
         message: t('common:api.error.message'),
       });
     }
+  }
+
+  getProductWithSocialFormat(
+    product = this.state.item_data || this.state.item || {},
+  ) {
+    return {
+      ...product,
+      like_flag: product.is_liked_product,
+    };
   }
 
   _renderRightButton() {
@@ -866,6 +899,9 @@ class Item extends Component {
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
+    const productWithSocialDataFormat = item?.object
+      ? this.getProductWithSocialFormat(item)
+      : {};
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
     const unitName = item.unit_name && item.unit_name_view;
@@ -874,6 +910,11 @@ class Item extends Component {
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
       item.order_type !== ORDER_TYPES.BOOKING;
+
+    const extraSocialProps = {
+      accessoryTypes: [ACCESSORY_TYPE.RATING],
+      placeholder: this.props.t('placeholderRating'),
+    };
 
     return (
       <View style={styles.container}>
@@ -1064,49 +1105,12 @@ class Item extends Component {
                   <View style={[styles.newsWrapper]}>
                     <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
                     <ListStoreProduct products={item.related} />
-
-                    {/* <FlatList
-                  data={item.related}
-                  keyExtractor={(i, index) => `item-related-${i.id}`}
-                  // horizontal
-                  renderItem={({item: product, index}) => (
-                    <Items
-                      // containerStyle={{
-                      //   width: appConfig.device.width / 2 - 20,
-                      // }}
-                      // imageStyle={{
-                      //   width: appConfig.device.width / 2 - 30,
-                      //   height: appConfig.device.width / 2 - 30,
-                      // }}
-                      item={product}
-                      index={index}
-                      onPress={this._itemRefresh.bind(this, product)}
-                    />
-                  )}
-                  // style={{overflow: 'visible'}}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingRight: 15,
-                    paddingTop: 15,
-                  }}
-                /> */}
                   </View>
                 )}
               {item.news_linking !== null &&
                 !isEmpty(item.news_linking) &&
                 typeof item.news_linking === 'object' && (
                   <View style={[styles.newsWrapper, styles.newsWrapperExtra]}>
-                    {/* <FlatList
-                      data={item.news_linking}
-                      renderItem={this.renderListNews}
-                      keyExtractor={(i, index) => `news__${i.id}`}
-                      showsHorizontalScrollIndicator={false}
-                      horizontal
-                      style={{overflow: 'visible'}}
-                      contentContainerStyle={{
-                        paddingHorizontal: 2.5,
-                      }}
-                    /> */}
                     <HomeCardList
                       onShowAll={null}
                       data={item.news_linking}
@@ -1141,7 +1145,48 @@ class Item extends Component {
           </Animated.ScrollView>
         </View>
 
-        {this.renderCartFooter(item)}
+        {/* {this.renderCartFooter(item)} */}
+
+        {!!item.object && (
+          <ActionContainer
+            style={styles.actionContainer}
+            isLiked={getSocialLikeFlag(
+              SOCIAL_DATA_TYPES.PRODUCT,
+              productWithSocialDataFormat,
+            )}
+            likeCount={getSocialLikeCount(
+              SOCIAL_DATA_TYPES.PRODUCT,
+              productWithSocialDataFormat,
+            )}
+            commentsCount={getSocialCommentsCount(
+              SOCIAL_DATA_TYPES.PRODUCT,
+              productWithSocialDataFormat,
+            )}
+            commentTitle={this.props.t('common:review')}
+            totalCommentsTitle={this.props.t('common:reviews')}
+            disableShare
+            // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            onActionBarPress={(type) =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.PRODUCT,
+                type,
+                productWithSocialDataFormat,
+                true,
+                extraSocialProps,
+              )
+            }
+            hasInfoExtraBottom={false}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.PRODUCT,
+                SOCIAL_BUTTON_TYPES.COMMENT,
+                productWithSocialDataFormat,
+                false,
+                extraSocialProps,
+              )
+            }
+          />
+        )}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1227,15 +1272,6 @@ const styles = StyleSheet.create({
   item_heading_price: {
     ...appConfig.styles.typography.heading1,
     color: appConfig.colors.primary,
-  },
-  item_unit_name: {
-    // ...appConfig.styles.typography.secondary,
-    // fontSize: 16,
-  },
-  item_heading_qnt: {
-    color: '#666666',
-    fontSize: 12,
-    marginTop: 4,
   },
   item_actions_box: {
     flexDirection: 'row',
@@ -1335,10 +1371,6 @@ const styles = StyleSheet.create({
   item_content_item_right: {
     flex: 1,
   },
-  item_content_icon_box: {
-    width: 24,
-    alignItems: 'center',
-  },
   item_content_item_title: {
     ...appConfig.styles.typography.secondary,
     color: '#8b8b8b',
@@ -1352,15 +1384,6 @@ const styles = StyleSheet.create({
   item_content_text: {
     width: '100%',
     paddingTop: 20,
-  },
-
-  items_box: {
-    marginTop: 20,
-    backgroundColor: '#f5f5f5',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: appConfig.device.width,
-    marginLeft: 5,
   },
 
   boxButtonActions: {
@@ -1496,6 +1519,14 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     backgroundColor: '#f5f7f8',
     paddingHorizontal: 15,
+  },
+
+  actionContainer: {
+    backgroundColor: '#fff',
+    borderBottomColor: '#eee',
+    borderBottomWidth: 1,
+    paddingBottom: appConfig.device.bottomSpace,
+    ...elevationShadowStyle(7),
   },
 });
 

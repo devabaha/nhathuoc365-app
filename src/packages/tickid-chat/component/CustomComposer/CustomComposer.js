@@ -17,6 +17,12 @@ class CustomComposer extends PureComponent {
   };
   state = {};
   contentSize = undefined;
+
+  componentDidMount() {
+    this.props.autoFocus && this.props.onFocusInput();
+  }
+  
+
   onContentSizeChange = (e) => {
     const {contentSize} = e.nativeEvent;
     // Support earlier versions of React Native on Android.
