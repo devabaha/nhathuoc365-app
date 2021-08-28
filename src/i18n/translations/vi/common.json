@@ -254,5 +254,7 @@
   "loading": "Đang lấy dữ liệu...",
   "rate": "Xếp hạng",
   "review": "Đánh giá",
-  "reviews": "Đánh giá"
+  "reviews": "Đánh giá",
+  "showMore": "Xem thêm",
+  "showLess": "Thu gọn"
 }
