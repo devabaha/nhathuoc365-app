@@ -56,6 +56,7 @@ class Request extends Component {
               )}
               <DiscountBadge
                 containerStyle={styles.badge}
+                contentStyle={styles.badgeContent}
                 tailSpace={4}
                 right
                 label={this.props.type}
@@ -80,14 +81,7 @@ class Request extends Component {
                   {this.props.subTitle}
                 </Text>
               )}
-            </View>
 
-            <View style={styles.footer}>
-              {!!this.props.subDescription && (
-                <Text style={styles.subDescription}>
-                  {this.props.subDescription}
-                </Text>
-              )}
               {!!this.props.description && (
                 <Text style={styles.description}>
                   <Icon name="clock" /> {this.props.description}
@@ -103,7 +97,7 @@ class Request extends Component {
 
 const styles = StyleSheet.create({
   containerBtn: {
-    marginLeft: 16,
+    marginLeft: 15,
     marginVertical: 5,
     borderRadius: 4,
     width: 280
@@ -126,6 +120,9 @@ const styles = StyleSheet.create({
   badge: {
     width: null,
     right: -4
+  },
+  badgeContent: {
+    fontSize: 12,
   },
   container: {
     // width: 205,
@@ -186,15 +183,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#fff'
   },
-  footer: {
-    flex: 1,
-    alignItems: 'flex-end',
-    paddingTop: 15,
-    paddingBottom: 10
-  },
   notiMess: {
     right: -10
-  }
+  },
 });
 
 export default Request;

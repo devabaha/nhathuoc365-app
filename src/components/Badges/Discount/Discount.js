@@ -29,7 +29,7 @@ class Discount extends Component {
       <View style={[styles.container, extraStyle, this.props.containerStyle]}>
         <View
           style={[styles.content_wrapper, this.props.contentContainerStyle]}>
-          <Text style={styles.content}>{this.props.label}</Text>
+          <Text style={[styles.content, this.props.contentStyle]}>{this.props.label}</Text>
         </View>
         <View style={[styles.tail, tailStyle]} />
       </View>
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
+    paddingHorizontal: 5
   },
   content: {
     color: '#fff',

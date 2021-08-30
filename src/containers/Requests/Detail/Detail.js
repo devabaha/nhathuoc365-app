@@ -1,19 +1,22 @@
 import React, {Component} from 'react';
 import {SafeAreaView, StyleSheet, RefreshControl} from 'react-native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import equal from 'deep-equal';
-
 import appConfig from 'app-config';
 
 import Loading from '../../../components/Loading';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Comments from './Comments';
-import {APIRequest} from '../../../network/Entity';
+import equal from 'deep-equal';
+import {Actions} from 'react-native-router-flux';
 
 const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 
 class Detail extends Component {
+  static defaultProps = {
+    callbackReload: () => {}
+  }
+
   state = {
     loading: true,
     refreshing: false,
@@ -21,16 +24,22 @@ class Detail extends Component {
     comments: [],
     title_request: '',
     text: '',
-    user: {},
-    receptionStaffs: [],
-    selectedStaff: {},
-    loadingReceptionStaffs: true,
+    user: {}
   };
   unmounted = false;
   timerGetChat = null;
 
   componentDidMount() {
     this.getRequest();
+    
+    setTimeout(() =>
+      Actions.refresh({
+        onBack: () => {
+          this.props.callbackReload();
+          Actions.pop();
+        },
+      }),
+    );
   }
 
   componentWillUnmount() {
@@ -39,23 +48,11 @@ class Detail extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState !== this.state) {
-      return (
-        nextState.loading !== this.state.loading ||
-        nextState.refreshing !== this.state.refreshing ||
-        nextState.text !== this.state.text ||
-        nextState.title_request !== this.state.title_request ||
-        nextState.loadingReceptionStaffs !==
-          this.state.loadingReceptionStaffs ||
-        !equal(nextState.receptionStaffs, this.state.receptionStaffs) ||
-        !equal(nextState.selectedStaff, this.state.selectedStaff) ||
-        !equal(nextState.user, this.state.user) ||
-        !equal(nextState.comments, this.state.comments) ||
-        !equal(nextState.request, this.state.request)
-      );
+    if(nextState !== this.state){
+     return !equal(nextState, this.state);
     }
 
-    if (nextProps !== this.props) {
+    if(nextProps !== this.props){
       return true;
     }
 
@@ -63,14 +60,14 @@ class Detail extends Component {
   }
 
   getRequest = async () => {
-    const {t} = this.props;
+    const { t } = this.props;
     try {
       const response = await APIHandler.site_detail_request_room(
         this.props.siteId,
         this.props.roomId,
         this.props.requestId,
       );
-
+      
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
@@ -78,9 +75,7 @@ class Detail extends Component {
             comments: response.data.comments,
             title_request: response.data.title_request,
             user: response.data.main_user,
-            status: this.normalizeDataForPicker(response.data.status),
           });
-          this.getListRequestReceptionStaff();
         } else {
           flashShowMessage({
             type: 'danger',
@@ -107,99 +102,7 @@ class Detail extends Component {
     }
   };
 
-  async getListRequestReceptionStaff() {
-    const {t} = this.props;
-    try {
-      const response = await APIHandler.site_get_list_admin_staff(
-        this.props.siteId,
-      );
-      if (!this.unmounted) {
-        if (response) {
-          if (response.status === STATUS_SUCCESS && response.data) {
-            const receptionStaffs = this.normalizeDataForPicker(
-              response.data.users,
-            );
-            const selectedStaff =
-              receptionStaffs.find(
-                (staff) => staff.id === this.state.request.admin_id,
-              ) || {};
-            this.setState({receptionStaffs, selectedStaff});
-          } else {
-            flashShowMessage({
-              type: 'danger',
-              message: response.message || t('api.error.message'),
-            });
-          }
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: t('api.error.message'),
-          });
-        }
-      }
-    } catch (err) {
-      console.log('getListRequestReceptionStaff', err);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-    } finally {
-      !this.unmounted && this.setState({loadingReceptionStaffs: false});
-    }
-  }
-
-  changeSelectedStaff = async (admin_id) => {
-    this.setState({loading: true});
-    const {t} = this.props;
-    const data = {admin_id};
-    try {
-      const response = await APIHandler.site_change_admin_request(
-        this.props.siteId,
-        this.props.roomId,
-        this.props.requestId,
-        data,
-      );
-      if (!this.unmounted) {
-        if (response) {
-          if (response.status === STATUS_SUCCESS && response.message) {
-            flashShowMessage({
-              type: 'success',
-              message: response.message,
-            });
-            setTimeout(() => {
-              this.setState({loadingReceptionStaffs: true}, () => {
-                this.getRequest();
-                this.props.reloadData();
-              });
-            });
-          }
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: t('api.error.message'),
-          });
-        }
-      }
-    } catch (err) {
-      console.log('getListRequestReceptionStaff', err);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-    } finally {
-      !this.unmounted && this.setState({loading: false});
-    }
-  };
-
-  normalizeDataForPicker(data) {
-    return data.map((item) => ({
-      ...item,
-      label: item.name,
-      value: item.id,
-    }));
-  }
-
-  handlePressSend = (callBack) => {
+  handlePressSend = callBack => {
     const text = this.state.text.trim();
     if (text) {
       const comments = [...this.state.comments];
@@ -245,47 +148,6 @@ class Detail extends Component {
       }
     } catch (error) {
       console.log('send_request', error);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-    } finally {
-      !this.unmounted &&
-        this.setState({
-          loading: false,
-          refreshing: false,
-        });
-    }
-  };
-
-  handleUpdateStatus = async (status_id) => {
-    this.setState({loading: true});
-    const {t} = this.props;
-    const data = {
-      status_id,
-    };
-    try {
-      const response = await APIHandler.site_update_request_status_room(
-        this.props.siteId,
-        this.props.roomId,
-        this.props.requestId,
-        data,
-      );
-      if (!this.unmounted && response) {
-        if (response.status === STATUS_SUCCESS && response.data) {
-          this.setState({
-            request: response.data.request,
-          });
-          this.props.reloadData();
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message'),
-          });
-        }
-      }
-    } catch (error) {
-      console.log('update_request_status', error);
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
@@ -389,14 +251,8 @@ class Detail extends Component {
           onSendTempImage={this.handleSendImage}
           onSendImage={this.sendRequest}
           onSendText={this.handleSendText}
-          onUpdateStatus={this.handleUpdateStatus}
-          status={this.state.status}
           text={this.state.text}
           user={this.state.user}
-          receptionStaffs={this.state.receptionStaffs}
-          selectedStaff={this.state.selectedStaff}
-          loadingReceptionStaffs={this.state.loadingReceptionStaffs}
-          onChangeStaff={this.changeSelectedStaff}
         />
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </SafeAreaView>

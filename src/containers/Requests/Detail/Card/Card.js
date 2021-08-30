@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Animated, Keyboard, Text } from 'react-native';
+import { StyleSheet, View, Animated, Keyboard } from 'react-native';
 
 import Reanimated, { Easing } from 'react-native-reanimated';
-import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 import appConfig from 'app-config';
 import Header from './Header';
 import Row from './Row';
 import Images from './Images';
 import Toggle from './Toggle';
-import UserRow from './UserRow';
-import Loading from '../../../../components/Loading';
 
 const EXTEND_MESSAGE = 'Mở rộng';
 const COLLAPSE_MESSAGE = 'Thu gọn';
@@ -132,66 +128,8 @@ class Card extends Component {
     this.props.onUpdateStatus(status);
   };
 
-  openStatusCollection = () => {
-    if (!this.props.request) return null;
-
-    Actions.push(appConfig.routes.modalPicker, {
-      title: 'Chọn trạng thái',
-      cancelTitle: 'Hủy',
-      selectTitle: 'Chọn',
-      selectedValue: this.props.request.status_id,
-      selectedLabel: this.props.request.status,
-      data: this.props.status,
-      onSelect: this.handleConfirmChangeStatus
-    });
-  };
-
-  openStaffCollection = () => {
-    if (!this.props.request || !this.props.selectedStaff.id) return null;
-
-    Actions.push(appConfig.routes.modalPicker, {
-      title: 'Chọn nhân viên',
-      cancelTitle: 'Hủy',
-      selectTitle: 'Chọn',
-      selectedValue: this.props.selectedStaff.id,
-      selectedLabel: this.props.selectedStaff.name,
-      data: this.props.receptionStaffs,
-      onSelect: this.props.onChangeStaff
-    });
-  };
-
   onContainerLayout(e) {
     this.props.onContainerLayout(e);
-  }
-
-  renderLoadingReceptionStaffs() {
-    return (
-      this.props.loadingReceptionStaffs && (
-        <View style={styles.loadingRowContainer}>
-          <Loading size="small" style={styles.loadingRow} />
-        </View>
-      )
-    );
-  }
-
-  renderSelectedStaff() {
-    return (
-      !this.props.loadingReceptionStaffs && (
-        <Text>
-          {this.props.selectedStaff.name} <Icon name="caret-down" />
-        </Text>
-      )
-    );
-  }
-
-  renderSelectedStatus() {
-    return (
-      !!this.props.request && (
-        <Text>
-          {this.props.request.status} <Icon name="caret-down" />
-        </Text>
-      )
-    );
   }
 
   render() {
@@ -206,13 +144,9 @@ class Card extends Component {
       color: bgColor,
       textColor,
       user,
-      room_code
+      room_code,
+      admin_name
     } = this.props.request;
-
-    const userRowProps = {
-      ...user,
-      room_code
-    };
 
     const toggleValue = this.state.isExpanded
       ? COLLAPSE_MESSAGE
@@ -264,14 +198,7 @@ class Card extends Component {
             >
               <Header type={request_type} title={title} subTitle={created} />
             </View>
-            <Row renderRow={<UserRow {...userRowProps} />} />
-            <Row
-              disabled={false}
-              label="Trạng thái"
-              value={this.renderSelectedStatus()}
-              valueStyle={statusStyle}
-              onPressValue={this.openStatusCollection}
-            />
+            <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
             <View
               pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
             >
@@ -279,13 +206,7 @@ class Card extends Component {
                 onLayout={this.handleLayoutAnimatedArea}
                 style={animatedHeight}
               >
-                <Row
-                  label="Nhân viên tiếp nhận"
-                  valueComponent={this.renderLoadingReceptionStaffs()}
-                  value={this.renderSelectedStaff()}
-                  disabled={this.props.loadingReceptionStaffs}
-                  onPressValue={this.openStaffCollection}
-                />
+                <Row label="Nhân viên tiếp nhận" value={admin_name} />
                 {/* <Row label="Thời gian yêu cầu" value={created} /> */}
                 <Row
                   isColumn
@@ -295,7 +216,7 @@ class Card extends Component {
                   valueContainerProps={{
                     bounces: false,
                     style: {
-                      maxHeight: 50
+                      height: 50
                     }
                   }}
                   extraComponent={<Images images={images} />}
@@ -333,14 +254,6 @@ const styles = StyleSheet.create({
   imagesValue: {
     alignSelf: 'center',
     color: appConfig.colors.primary
-  },
-  loadingRowContainer: {
-    flex: 1,
-    marginHorizontal: 15
-  },
-  loadingRow: {
-    flex: 1,
-    alignSelf: 'center'
   }
 });
 

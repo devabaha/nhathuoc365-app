@@ -10,6 +10,7 @@ const Header = ({ title, subTitle, type }) => {
       {!!type && (
         <DiscountBadge
           containerStyle={styles.badge}
+          contentStyle={styles.badgeContent}
           tailSpace={4}
           label={type}
         />
@@ -22,11 +23,15 @@ const Header = ({ title, subTitle, type }) => {
 
 const styles = StyleSheet.create({
   header: {
-    padding: 15
+    padding: 15,
+    paddingTop: 25,
   },
   badge: {
     position: 'absolute',
     top: -2
+  },
+  badgeContent: {
+    fontSize: 12
   },
   title: {
     textAlign: 'center',
