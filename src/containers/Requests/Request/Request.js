@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     width: 280
   },
   extraWrapper: {
-    backgroundColor: '#f7f6d5',
+    backgroundColor: '#fff',
     borderRadius: 4,
     paddingHorizontal: 15,
     paddingBottom: 15,
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     marginBottom: 5,
     borderBottomColor: '#ddd',
-    backgroundColor: '#f7f6d5'
   },
   title: {
     color: '#333',
