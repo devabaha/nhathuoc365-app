@@ -114,12 +114,9 @@ export const SERVICES_TYPE = {
   /** AGENCY INFORMATION REGISTER */
   AGENCY_INFORMATION_REGISTER: 'agency_information_register',
 
-  /** ABAHA FEEDBACK */
-  ABAHA_REQUESTS: 'abaha_requests',
-  ABAHA_CREATE_REQUEST: 'abaha_create_request',
-
-  /** REQUEST MANAGEMENT */
-  REQUEST_MANAGEMENT: 'request_management',
+  /** REQUESTS */
+  REQUESTS: 'requests',
+  CREATE_REQUEST: 'create_request',
 
   /** Wallet */
   WALLET: 'wallet'

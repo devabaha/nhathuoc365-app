@@ -455,25 +455,20 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.agencyInformationRegister);
       break;
 
-    /** REQUEST MANAGEMENT */
-    case SERVICES_TYPE.REQUEST_MANAGEMENT:
-      Actions.push(appConfig.routes.requests, {
-        siteId: store.store_id,
-        roomId: service.room_id,
-      });
-      break;
-
-    /** ABAHA FEEDBACK */
+ /**  REQUEST */
     /** List */
-    case SERVICES_TYPE.ABAHA_REQUESTS:
-      Actions.push(appConfig.routes.abahaRequests, {
-        siteId: service.id,
+    case SERVICES_TYPE.REQUESTS:
+      Actions.push(appConfig.routes.requests, {
+        title: service.title,
+        siteId: store.store_id,
+        roomId: service.room_id || service.channel_id,
       });
       break;
     /** CREATE */
-    case SERVICES_TYPE.ABAHA_CREATE_REQUEST:
-      Actions.push(appConfig.routes.abahaRequestCreation, {
-        siteId: service.id,
+    case SERVICES_TYPE.CREATE_REQUEST:
+      Actions.push(appConfig.routes.requestCreation, {
+        siteId: store.store_id,
+        roomId: service.room_id || service.channel_id,
       });
       break;
 

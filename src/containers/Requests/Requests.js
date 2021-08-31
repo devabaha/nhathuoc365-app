@@ -5,7 +5,7 @@ import {
   FlatList,
   RefreshControl,
   View,
-  TouchableHighlight,
+  TouchableHighlight
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Actions} from 'react-native-router-flux';
@@ -17,6 +17,7 @@ import Request from './Request';
 import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
+import { servicesHandler, SERVICES_TYPE } from 'src/helper/servicesHandler';
 
 /**
  * A list of all request of this site
@@ -33,15 +34,20 @@ class Requests extends Component {
     refreshing: false,
     requests: null,
   };
+  /**
+   * @todo will true when component unmount
+   * @todo prevent setState or doing anything when component unmounted
+   */
   unmounted = false;
 
   componentDidMount() {
     this.getRequests();
-    // setTimeout(() => {
-    //   Actions.refresh({
-    //     right: this.renderRight(),
-    //   });
-    // });
+    setTimeout(() => {
+      Actions.refresh({
+        title: this.props.title || this.props.t('screen.requests.mainTitle'),
+        right: this.renderRight()
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -65,14 +71,18 @@ class Requests extends Component {
   createRequest = () => {
     Actions.push(appConfig.routes.requestCreation, {
       siteId: this.props.siteId,
-      onRefresh: this.onRefresh,
+      roomId: this.props.roomId,
+      onRefresh: this.onRefresh
     });
   };
 
   getRequests = async () => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.site_requests_room(this.props.siteId);
+      const response = await APIHandler.site_requests_room(
+        this.props.siteId,
+        this.props.roomId
+      );
 
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
@@ -104,10 +114,10 @@ class Requests extends Component {
   handlePressRequest(request) {
     Actions.push(appConfig.routes.requestDetail, {
       siteId: this.props.siteId,
-      roomId: request.room_id,
+      roomId: this.props.roomId,
       requestId: request.id,
       title: request.title || this.props.t('screen.requests.detailTitle'),
-      reloadData: this.onRefresh
+      callbackReload: this.getRequests
     });
   }
 
@@ -124,7 +134,7 @@ class Requests extends Component {
         title={request.title}
         subTitle={request.content}
         status={request.status}
-        adminName={request.admin_name}
+        adminName={request.admin_id && request.admin_name}
         bgColor={request.color}
         textColor={request.textColor}
         description={request.created}
@@ -155,11 +165,11 @@ class Requests extends Component {
             ListEmptyComponent={NoResultComp}
           />
         )}
-        {/* <Button
-          title="Tạo phản ánh"
+        <Button
+          title="Tạo yêu cầu"
           iconLeft={<Icon name="filetext1" style={styles.icon} />}
           onPress={this.createRequest}
-        /> */}
+        />
       </SafeAreaView>
     );
   }
@@ -202,6 +212,6 @@ export default withTranslation()(Requests);
  */
 const NoResultComp = (
   <View style={{marginTop: '50%'}}>
-    <NoResult message="Danh sách phản ánh đang trống" />
+    <NoResult message="Danh sách yêu cầu đang trống" />
   </View>
 );

@@ -384,11 +384,6 @@ class Config {
       requests: 'requests',
       requestDetail: 'requestDetail',
       requestCreation: 'requestCreation',
-
-      // ABAHA Requests
-      abahaRequests: 'abahaRequests',
-      abahaRequestDetail: 'abahaRequestDetail',
-      abahaRequestCreation: 'abahaRequestCreation',
     };
   }
 }

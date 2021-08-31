@@ -52,11 +52,7 @@ class Comments extends Component {
       nextProps.user !== this.props.user ||
       nextProps.request !== this.props.request ||
       nextProps.loading !== this.props.loading ||
-      nextProps.comments !== this.props.comments ||
-      nextProps.status !== this.props.status ||
-      nextProps.selectedStaff !== this.props.selectedStaff ||
-      nextProps.receptionStaffs !== this.props.receptionStaffs ||
-      nextProps.loadingReceptionStaffs !== this.props.loadingReceptionStaffs
+      nextProps.comments !== this.props.comments
     ) {
       return true;
     }
@@ -115,16 +111,10 @@ class Comments extends Component {
 
     return this.props.request ? (
       <DetailCard
-        receptionStaffs={this.props.receptionStaffs}
-        selectedStaff={this.props.selectedStaff}
-        loadingReceptionStaffs={this.props.loadingReceptionStaffs}
-        onChangeStaff={this.props.onChangeStaff}
         onFinishLayout={this.handleFinishLayout}
         onContainerLayout={this.handleHeaderLayout}
-        onUpdateStatus={this.props.onUpdateStatus}
         containerStyle={[styles.header, animatedHeaderStyle]}
         request={this.props.request}
-        status={this.props.status}
         forceCloseKeyboard={this.handleForceCloseKeyboard}
         onPressLayout={() => {
           if (this.refTickidChat) {

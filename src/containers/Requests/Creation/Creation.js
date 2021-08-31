@@ -26,7 +26,6 @@ import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import Loading from '../../../components/Loading';
 import Button from '../../../components/Button';
 import Images from './Images';
-import {APIRequest} from 'src/network/Entity';
 
 const MyInput = compose(
   handleTextInput,
@@ -77,9 +76,6 @@ class Creation extends Component {
     images: [],
   };
   unmounted = false;
-  requestTypesRequest = new APIRequest();
-  makeRequestRequest = new APIRequest();
-  requests = [this.requestTypesRequest, this.makeRequestRequest];
   refForm = React.createRef();
   takePicture = this.takePicture.bind(this);
 
@@ -99,7 +95,6 @@ class Creation extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    cancelRequests(this.requests);
   }
 
   takePicture(key, values) {
@@ -144,7 +139,6 @@ class Creation extends Component {
       filename: response.filename,
       data: response.data,
     };
-
     // call api post my form data
     RNFetchBlob.fetch(
       'POST',
@@ -188,12 +182,12 @@ class Creation extends Component {
 
   async getRequestTypes() {
     const {t} = this.props;
-    this.requestTypesRequest.data = ADMIN_APIHandler.site_request_types_site(
-      this.props.siteId,
-    );
     try {
-      const response = await this.requestTypesRequest.promise();
-      if (response) {
+      const response = await APIHandler.site_request_types_room(
+        this.props.siteId,
+        this.props.roomId,
+      );
+      if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = {...this.state};
           const requestTypes = response.data.request_types.map((type) => ({
@@ -216,11 +210,6 @@ class Creation extends Component {
             message: response.message || t('api.error.message'),
           });
         }
-      } else {
-        flashShowMessage({
-          type: 'danger',
-          message: t('api.error.message'),
-        });
       }
     } catch (error) {
       console.log('get_request_types', error);
@@ -229,7 +218,7 @@ class Creation extends Component {
         message: t('api.error.message'),
       });
     } finally {
-      this.setState({loading: false});
+      !this.unmounted && this.setState({loading: false});
     }
   }
 
@@ -237,31 +226,23 @@ class Creation extends Component {
     this.setState({loading: true});
     const {t} = this.props;
     console.log(data);
-    this.makeRequestRequest.data = ADMIN_APIHandler.site_request_site(
-      this.props.siteId,
-      data,
-    );
     try {
-      const response = await this.makeRequestRequest.promise();
-      console.log(response);
-      if (response) {
-        if (response.status === STATUS_SUCCESS) {
-          this.props.onRefresh();
-          Actions.pop();
-          flashShowMessage({
-            type: 'success',
-            message: response.message,
-          });
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message'),
-          });
-        }
+      const response = await APIHandler.site_request_room(
+        this.props.siteId,
+        this.props.roomId,
+        data,
+      );
+      if (this.unmounted) return;
+      if (response?.status === STATUS_SUCCESS) {
+        Actions.pop();
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
       } else {
         flashShowMessage({
           type: 'danger',
-          message: t('api.error.message'),
+          message: response.message || t('api.error.message'),
         });
       }
     } catch (err) {
@@ -271,8 +252,18 @@ class Creation extends Component {
         message: t('api.error.message'),
       });
     } finally {
-      this.setState({loading: false});
+      !this.unmounted && this.setState({loading: false});
     }
+  };
+
+  handleDeleteImage = (image) => {
+    const images = [...this.state.images];
+    const imgIndex = images.findIndex((img) => img?.name === image?.name);
+    if (imgIndex !== -1) {
+      images.splice(imgIndex, 1);
+    }
+
+    this.setState({images});
   };
 
   handleChangeFormData(value, type) {
@@ -339,7 +330,6 @@ class Creation extends Component {
         case FORM_DATA.REQUEST_TYPE.name:
           return (
             <MyInputTouchable
-              key={index}
               label={label}
               name={name}
               type={type}
@@ -351,11 +341,11 @@ class Creation extends Component {
         case FORM_DATA.IMAGES.name:
           return (
             <Images
-              key={index}
               images={this.state.images}
               onOpenImageSelector={() =>
                 this.takePicture(FORM_DATA.IMAGES.name, values)
               }
+              onDelete={this.handleDeleteImage}
               uploadImageLoading={this.state.uploadImageLoading}
             />
           );
@@ -475,6 +465,7 @@ export default withTranslation()(Creation);
 
 const MyInputTouchable = ({
   onPress,
+  key,
   label,
   name,
   type,

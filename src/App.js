@@ -918,7 +918,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requests}_1`}
                     component={Requests}
-                    title={t('screen.requests.mainTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -940,7 +939,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requestDetail}_1`}
                     component={RequestDetail}
-                    // title={t('screen.requests.detailTitle')}
+                    title={t('screen.requests.detailTitle')}
                     {...navBarConfig}
                     back
                   />
