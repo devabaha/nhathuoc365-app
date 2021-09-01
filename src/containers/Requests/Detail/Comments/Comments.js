@@ -52,7 +52,8 @@ class Comments extends Component {
       nextProps.user !== this.props.user ||
       nextProps.request !== this.props.request ||
       nextProps.loading !== this.props.loading ||
-      nextProps.comments !== this.props.comments
+      nextProps.comments !== this.props.comments ||
+      nextProps.forceUpdate !== this.props.forceUpdate
     ) {
       return true;
     }
@@ -121,6 +122,8 @@ class Comments extends Component {
             this.refTickidChat.onListViewPress();
           }
         }}
+
+        forceUpdate={this.props.forceUpdate}
       />
     ) : (
       !this.props.loading && (

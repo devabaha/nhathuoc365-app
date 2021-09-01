@@ -23,7 +23,7 @@ class BaseAPI {
   constructor(
     apiDomain = DEV_API_DOMAIN,
     socialDomain = LIVE_SOCIAL_DOMAIN,
-    imageDomain = LIVE_IMAGE_DOMAIN,
+    imageDomain = DEV_IMAGE_DOMAIN,
     airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,
   ) {
     this._apiDomain = apiDomain;

@@ -39,11 +39,11 @@ const Tag = ({
     fill,
     strokeColor,
     label = "",
-    strokeWidth: propsStrokeWidth,
+    strokeWidth: propsStrokeWidth = 0,
     containerStyle = {},
     labelContainerStyle = {},
     labelStyle = {},
-    animate
+    animate = false
 }: TagProps) => {
     let counter = 0;
     let refPath = null;

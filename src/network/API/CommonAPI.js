@@ -272,7 +272,7 @@ class CommonAPI {
     return BaseAPI.apiDomain + 'apiUser/notice';
   }
   get USER_READ_NOTICE() {
-    return BaseAPI.apiDomain + 'apiUser/read_notice'
+    return BaseAPI.apiDomain + 'apiUser/read_notice';
   }
 
   // Notify
@@ -579,6 +579,12 @@ class CommonAPI {
   }
   get SITE_DETAIL_REQUEST_ROOM() {
     return BaseAPI.apiDomain + 'apiSite/get_detail_request_room';
+  }
+  get SITE_UPDATE_STATUS_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/update_status_request_room';
+  }
+  get SITE_UPDATE_REQUEST() {
+    return BaseAPI.apiDomain + 'apiSite/update_request';
   }
 }
 
