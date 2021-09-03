@@ -70,7 +70,8 @@ const validationSchema = Yup.object().shape({
 class Creation extends Component {
   static defaultProps = {
     request: {},
-    onRefresh: () => {}
+    extraSubmitData: {},
+    onRefresh: () => {},
   };
 
   state = {
@@ -108,22 +109,22 @@ class Creation extends Component {
       let itemValue = '';
       switch (value.name) {
         case FORM_DATA.TITLE.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.TITLE.name]
             ? this.props.request[FORM_DATA.TITLE.name] || ''
             : '';
           break;
         case FORM_DATA.REQUEST_TYPE.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.REQUEST_TYPE.name]
             ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
             : '';
           break;
         case FORM_DATA.CONTENT.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.CONTENT.name]
             ? this.props.request[FORM_DATA.CONTENT.name] || ''
             : '';
           break;
         case FORM_DATA.IMAGES.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.IMAGES.name]
             ? this.props.request[FORM_DATA.IMAGES.name].map(
                 (image) => image.name,
               ) || ''
@@ -241,6 +242,7 @@ class Creation extends Component {
         this.props.siteId,
         this.props.roomId,
       );
+      console.log(response, this.props.siteId, this.props.roomId )
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = {...this.state};
@@ -276,8 +278,13 @@ class Creation extends Component {
     }
   }
 
-  onSubmit = async (data) => {
+  onSubmit = async (data = {}) => {
     this.setState({loading: true});
+    data = {
+      ...data,
+      ...this.props.extraSubmitData,
+    };
+
     const {t} = this.props;
     const apiHandler = this.props.request?.id
       ? APIHandler.site_update_request(
@@ -454,9 +461,11 @@ class Creation extends Component {
             validationSchema={validationSchema}
             innerRef={this.refForm}>
             {(props) => {
-              console.log(props.values)
+              console.log(props.values);
               const disabled =
-                this.isEmptyRequiredData(props.values) || !props.isValid || !props.dirty;
+                this.isEmptyRequiredData(props.values) ||
+                !props.isValid ||
+                !props.dirty;
               return (
                 <>
                   <ScrollView

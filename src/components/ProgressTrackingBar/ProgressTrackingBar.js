@@ -1,9 +1,19 @@
 import React from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {
+  SectionList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 import appConfig from 'app-config';
 
 import Container from '../Layout/Container';
+import CustomPad from 'src/containers/ProgressTracking/ProgressTrackingDetail/CustomPad';
+import NoResult from 'src/components/NoResult';
+import ProgressTrackingBarSkeleton from './ProgressTrackingBarSkeleton';
 
 const TRACK_CONTENT_WIDTH = 1;
 const TRACK_PADDING = 2;
@@ -69,29 +79,101 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 13,
   },
+
+  sectionHeader: {
+    backgroundColor: appConfig.colors.sceneBackground,
+    paddingVertical: 10,
+    marginBottom: 5,
+  },
+  headerIcon: {
+    paddingHorizontal: 6,
+    fontSize: 18,
+  },
+  headerTitleContainer: {
+    paddingRight: 15,
+  },
+  headerTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#666',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+
+  sectionFooter: {
+    marginBottom: 30,
+    flex: undefined,
+    width: undefined,
+    height: undefined,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingHorizontal: 30,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  sectionFooterText: {
+    fontStyle: 'italic',
+    fontSize: 13,
+    paddingTop: 0,
+  },
 });
 
 const ProgressTrackingBar = ({
   renderPad,
+  trackWrapperStyle,
   trackContainerStyle,
   trackStyle,
   data = [],
   listProps = {},
+  loading,
+  renderSectionFooter: renderSectionFooterProp = () => null,
 }) => {
-  const renderItem = ({item, index}) => {
+  const {t} = useTranslation(['common']);
+
+  const renderSectionHeader = ({section}) => {
+    return (
+      <Container row style={styles.sectionHeader}>
+        <EntypoIcon
+          name="dot-single"
+          style={[styles.headerTitle, styles.headerIcon]}
+        />
+
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>{section.title}</Text>
+        </View>
+      </Container>
+    );
+  };
+
+  const renderSectionFooter = ({section}) => {
+    return (
+      renderSectionFooterProp() || (
+        <NoResult
+          textStyle={styles.sectionFooterText}
+          containerStyle={[styles.sectionFooter]}
+          icon={<View />}
+          message={!section.data.length && t('noResult')}
+        />
+      )
+    );
+  };
+
+  const renderItem = ({item, index, section}) => {
     const extraStyle =
       index === 0
         ? styles.firstTrack
-        : index === data.length - 1 && styles.lastTrack;
+        : index === section.data.length - 1 && styles.lastTrack;
     return (
-      <Container centerVertical={false} style={styles.itemWrapper}>
+      <Container
+        centerVertical={false}
+        style={[styles.itemWrapper, trackWrapperStyle]}>
         <Container
           style={[styles.trackContainer, extraStyle, trackContainerStyle]}>
           <Container style={[styles.track, extraStyle, trackStyle]} />
           {renderPad ? (
             renderPad(PAD_DIMENSIONS)
           ) : (
-            <Container style={styles.pad} />
+            <CustomPad dimensions={PAD_DIMENSIONS} isReverse={!!section.key} />
           )}
         </Container>
 
@@ -103,10 +185,14 @@ const ProgressTrackingBar = ({
     );
   };
 
-  return (
-    <FlatList
-      data={data}
+  return loading ? (
+    <ProgressTrackingBarSkeleton />
+  ) : (
+    <SectionList
+      sections={data}
       renderItem={renderItem}
+      renderSectionHeader={renderSectionHeader}
+      renderSectionFooter={renderSectionFooter}
       keyExtractor={(item, index) => index.toString()}
       {...listProps}
       contentContainerStyle={{

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {RefreshControl, StyleSheet, Text, SectionList} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import {TabView, TabBar} from 'react-native-tab-view';
 import Button from 'react-native-button';
@@ -13,13 +13,13 @@ import NoResult from 'src/components/NoResult';
 import ProgressTrackingBar from 'src/components/ProgressTrackingBar';
 import ScreenWrapper from 'src/components/ScreenWrapper';
 import ProgressItem from '../ProgressItem';
-import Container from 'src/components/Layout/Container';
+import {default as CustomButton} from 'src/components/Button';
 import CustomPad from './CustomPad';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
-  trackingContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 15,
+  trackingWrapper: {
+    marginHorizontal: 15,
   },
 
   tabBarContainer: {
@@ -51,22 +51,21 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
   const isMounted = useIsMounted();
   const [getProgressTrackingDetailRequest] = useState(new APIRequest());
 
-  const ROUTE_KEY = 0;
-  const HISTORY_KEY = 1;
+  const HISTORY_KEY = 0;
+  const ROUTE_KEY = 1;
   const DEFAULT_ROUTES = [
-    {
-      key: ROUTE_KEY,
-      title: t('progressTracking:routeTitle'),
-    },
     {
       key: HISTORY_KEY,
       title: t('progressTracking:historyTitle'),
+      data: [],
+    },
+    {
+      key: ROUTE_KEY,
+      title: t('progressTracking:routeTitle'),
+      data: [],
     },
   ];
 
-  const jumpTo = useRef();
-
-  const [index, setIndex] = useState(indexProp);
   const [routes, setRoutes] = useState(DEFAULT_ROUTES);
 
   const [progressTrackingDetail, setProgressTrackingDetail] = useState({});
@@ -87,18 +86,20 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
-            const updatedRoutes = DEFAULT_ROUTES.map((route, index) => {
+            const formattedRoutes = DEFAULT_ROUTES.map((route, index) => {
               const extraData =
                 (index === 0
-                  ? response.data?.route_detail?.route
-                  : response.data?.histories?.route) || [];
+                  ? response.data?.histories?.route
+                  : response.data?.route_detail?.route) || [];
 
               return {
-                route: extraData,
-                ...route,
+                key: index,
+                data: routesFormatter(extraData),
+                title: route.title,
               };
             });
-            const formattedRoutes = routesFormatter(updatedRoutes);
+            // const formattedRoutes = routesFormatter(updatedRoutes);
+            console.log(formattedRoutes);
 
             setProgressTrackingDetail(response.data);
             setRoutes(formattedRoutes);
@@ -130,20 +131,10 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
 
   const routesFormatter = (data = []) => {
     return data.map((item, index) => ({
-      key: index,
       ...item,
-      route: item.route.map((r) => ({
-        title: r.date_time,
-        description: r.content,
-      })),
+      title: item.date_time,
+      description: item.content,
     }));
-  };
-
-  const handleIndexChange = (index, isTabBarPress = false) => {
-    if (!!jumpTo.current && isTabBarPress) {
-      jumpTo.current(index);
-    }
-    setIndex(index);
   };
 
   const handleRefresh = () => {
@@ -151,73 +142,17 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
     getProgressTrackingDetail();
   };
 
-  const renderTabBarLabel = (props) => {
-    const {
-      route: {title, key},
-    } = props;
-    const focused = key === index;
-
-    return (
-      <Text
-        numberOfLines={2}
-        style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}>
-        {title}
-      </Text>
-    );
-  };
-
-  const renderTabBar = (props) => {
-    if (!jumpTo.current) {
-      // use this function instead of default behavior (using index) when change index of tab bar to improve FPS.
-      jumpTo.current = props.jumpTo;
-    }
-    const tabWidth = appConfig.device.width / 2;
-    return (
-      <TabBar
-        {...props}
-        renderTabBarItem={(props) => {
-          return (
-            <Button
-              key={props.key}
-              onPress={() => handleIndexChange(props.route.key, true)}
-              containerStyle={{
-                minHeight: 48,
-                width: tabWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {renderTabBarLabel(props)}
-            </Button>
-          );
-        }}
-        indicatorStyle={styles.indicatorStyle}
-        tabStyle={{width: tabWidth}}
-        style={styles.tabBarContainer}
-        scrollEnabled
-      />
-    );
-  };
-
-  const renderScene = ({route}) => {
-    const isReverse = route.key === ROUTE_KEY;
-    return (
-      <ProgressTrackingBar
-        data={route?.route || []}
-        renderPad={(padDimensions) => {
-          return <CustomPad dimensions={padDimensions} isReverse={isReverse} />;
-        }}
-        listProps={{
-          contentContainerStyle: styles.trackingContainer,
-          ListEmptyComponent: renderEmpty(),
-          refreshControl: (
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-            />
-          ),
-        }}
-      />
-    );
+  const goToRequestCreation = () => {
+    Actions.push(appConfig.routes.requestCreation, {
+      siteId: progressTrackingDetail.site_id,
+      request: {
+        title: progressTrackingDetail.product?.name,
+        // content: progressTrackingDetail?.product?.name,
+      },
+      extraSubmitData: {
+        warranty_id: progressTrackingDetail.id,
+      },
+    });
   };
 
   const renderEmpty = () => {
@@ -230,7 +165,6 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
 
   return (
     <ScreenWrapper>
-      {isLoading && <Loading center />}
       <ProgressItem
         image={progressTrackingDetail.product?.image}
         title={progressTrackingDetail.product?.name}
@@ -239,22 +173,22 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
         endDate={progressTrackingDetail.end_date}
       />
 
-      {!!routes.length ? (
-        <TabView
-          navigationState={{
-            routes: routes,
-            index: index,
-          }}
-          renderTabBar={renderTabBar}
-          renderScene={renderScene}
-          onIndexChange={(index) => handleIndexChange(index)}
-          initialLayout={{width: appConfig.device.width}}
-        />
-      ) : (
-        !isLoading && (
-          <NoResult iconName="note-multiple" message={t('noResult')} />
-        )
-      )}
+      <ProgressTrackingBar
+        loading={isLoading}
+        data={routes}
+        trackWrapperStyle={styles.trackingWrapper}
+        listProps={{
+          ListEmptyComponent: renderEmpty(),
+          refreshControl: (
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
+          ),
+        }}
+      />
+
+      <CustomButton title="Tạo yêu cầu" onPress={goToRequestCreation} />
     </ScreenWrapper>
   );
 };
