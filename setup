@@ -15,9 +15,12 @@ rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons
 rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-webview
 rm -rf node_modules/@tickid/tickid-rada/node_modules/react-native-vector-icons
 
-# Comment execution for regex (type: 'phone') in react-native-gifted-chat.
-# for custom handling type number of chat message regex.
-declare sign="type: 'phone'";
+# Comment regex (type: 'phone') (type: 'url') in react-native-gifted-chat.
+# for custom handling type `number`, `url` of chat message regex.
 declare rn_gifted_chat_path="node_modules/react-native-gifted-chat/lib/MessageText.js";
-sed -i '' "/${sign}/ s/\/\/ //" $rn_gifted_chat_path
-sed -i '' "/${sign}/ s/^/\/\/ /" $rn_gifted_chat_path
+declare phoneSign="type: 'phone'";
+sed -i '' "/${phoneSign}/ s/\/\/ //" $rn_gifted_chat_path
+sed -i '' "/${phoneSign}/ s/^/\/\/ /" $rn_gifted_chat_path
+declare urlSign="type: 'url'";
+sed -i '' "/${urlSign}/ s/\/\/ //" $rn_gifted_chat_path
+sed -i '' "/${urlSign}/ s/^/\/\/ /" $rn_gifted_chat_path

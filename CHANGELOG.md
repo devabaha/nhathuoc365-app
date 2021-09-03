@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LocationTracker by [minhnguyenit14@gmail.com].
 ### Fixed
 - [Android] resource android:attr/lStar not found by [minhnguyenit14@gmail.com].
+- Regex url fail because of priority of number regex by [minhnguyenit14@gmail.com].
 
 ## [r12.1.1] - 2021-08-20
 ### Added
