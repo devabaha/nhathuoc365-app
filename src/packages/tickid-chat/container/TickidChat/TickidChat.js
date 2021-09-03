@@ -12,6 +12,7 @@ import {
   Text,
   Dimensions,
   Clipboard,
+  Linking,
 } from 'react-native';
 import {
   GiftedChat,
@@ -52,7 +53,23 @@ import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 
-const ACTIONABLE_NUMERIC_PATTERN = /\d{6,}/g;
+export const PATTERNS = {
+  /**
+   * Segments/Features:
+   *  - http/https support https?
+   *  - auto-detecting loose domains if preceded by `www.`
+   *  - Localized & Long top-level domains \.(xn--)?[a-z0-9-]{2,20}\b
+   *  - Allowed query parameters & values, it's two blocks of matchers
+   *    ([-a-zA-Z0-9@:%_\+,.~#?&\/=]*[-a-zA-Z0-9@:%_\+~#?&\/=])*
+   *    - First block is [-a-zA-Z0-9@:%_\+\[\],.~#?&\/=]* -- this matches parameter names & values (including commas, dots, opening & closing brackets)
+   *    - The first block must be followed by a closing block [-a-zA-Z0-9@:%_\+\]~#?&\/=] -- this doesn't match commas, dots, and opening brackets
+   */
+  URL: /(https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.(xn--)?[a-z0-9-]{2,20}\b([-a-zA-Z0-9@:%_\+\[\],.~#?&\/=]*[-a-zA-Z0-9@:%_\+\]~#?&\/=])*/i,
+  PHONE: /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,7}/,
+  EMAIL: /\S+@\S+\.\S+/,
+  NUMBER: /\d{6,}/g,
+  WWW_URL: /^www\./i,
+};
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
@@ -747,7 +764,12 @@ class TickidChat extends Component {
 
   handleParsePatterns = (linkStyle) => [
     {
-      pattern: ACTIONABLE_NUMERIC_PATTERN,
+      pattern: PATTERNS.URL,
+      style: linkStyle,
+      onPress: this.handlePressURL,
+    },
+    {
+      pattern: PATTERNS.NUMBER,
       style: linkStyle,
       onPress: this.handlePressNumber,
     },
@@ -776,6 +798,20 @@ class TickidChat extends Component {
         break;
       default:
         break;
+    }
+  };
+
+  handlePressURL = (url) => {
+    if (PATTERNS.WWW_URL.test(url)) {
+      this.handlePressURL(`http://${url}`);
+    } else {
+      Linking.canOpenURL(url).then((supported) => {
+        if (!supported) {
+          console.error('No handler for URL:', url);
+        } else {
+          Linking.openURL(url);
+        }
+      });
     }
   };
 
