@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-e5mme0] discount_content in Payment/CartItem by [minhnguyenit14@gmail.com].
 - [CU-860k7x] Module social in Item by [minhnguyenit14@gmail.com].
+- [CU-d388n6] Request in ProgressTrackingDetail by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-f824fk] Request UI, flow by [minhnguyenit14@gmail.com].
 
