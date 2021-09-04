@@ -455,20 +455,37 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.agencyInformationRegister);
       break;
 
- /**  REQUEST */
+    /**  REQUEST */
     /** List */
     case SERVICES_TYPE.REQUESTS:
       Actions.push(appConfig.routes.requests, {
         title: service.title,
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        requestType: service.request_type,
+        objectId: service.object_id,
       });
       break;
-    /** CREATE */
+    /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
       Actions.push(appConfig.routes.requestCreation, {
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        request: service.request,
+        requestType: service.request_type,
+        objectId: service.object_id,
+        onRefresh: service.onRefresh,
+      });
+      break;
+    /** Detail */
+    case SERVICES_TYPE.REQUEST_DETAIL:
+      console.log(service)
+      Actions.push(appConfig.routes.requestDetail, {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        requestId: service.request_id,
+        title: service.title,
+        callbackReload: service.callbackReload,
       });
       break;
 

@@ -43,6 +43,7 @@ class Detail extends Component {
 
     setTimeout(() =>
       Actions.refresh({
+        title: this.props.title || this.props.t('screen.requests.detailTitle'),
         onBack: () => {
           this.props.callbackReload();
           Actions.pop();
@@ -103,6 +104,8 @@ class Detail extends Component {
       );
     } catch (error) {
       console.log('get_request', error);
+      if (this.unmounted) return;
+
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
@@ -259,7 +262,6 @@ class Detail extends Component {
     try {
       const response = await this.updateStatusRequest.promise();
       if (this.unmounted) return;
-
       if (response?.status === STATUS_SUCCESS) {
         if (response.data) {
           this.setState({request: response.data.request});

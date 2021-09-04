@@ -1,21 +1,24 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {RefreshControl, StyleSheet, Text, SectionList} from 'react-native';
+import {
+  RefreshControl,
+  StyleSheet,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
-import {TabView, TabBar} from 'react-native-tab-view';
-import Button from 'react-native-button';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import appConfig from 'app-config';
 
 import {APIRequest} from 'src/network/Entity';
 
-import Loading from 'src/components/Loading';
 import NoResult from 'src/components/NoResult';
 import ProgressTrackingBar from 'src/components/ProgressTrackingBar';
 import ScreenWrapper from 'src/components/ScreenWrapper';
 import ProgressItem from '../ProgressItem';
 import {default as CustomButton} from 'src/components/Button';
-import CustomPad from './CustomPad';
 import {Actions} from 'react-native-router-flux';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   trackingWrapper: {
@@ -43,6 +46,15 @@ const styles = StyleSheet.create({
   indicatorStyle: {
     backgroundColor: appConfig.colors.primary,
     height: 2,
+  },
+
+  nav_right: {
+    paddingRight: 8,
+  },
+  nav_right_btn: {
+    paddingVertical: 1,
+    paddingHorizontal: 8,
+    paddingTop: appConfig.device.isAndroid ? 8 : 4,
   },
 });
 
@@ -75,6 +87,14 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
   useEffect(() => {
     getProgressTrackingDetail();
   }, [getProgressTrackingDetail]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      Actions.refresh({
+        right: renderRightNavBar(),
+      });
+    });
+  }, [progressTrackingDetail]);
 
   const getProgressTrackingDetail = useCallback(async () => {
     getProgressTrackingDetailRequest.data = APIHandler.user_warranty_detail(id);
@@ -143,16 +163,51 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
   };
 
   const goToRequestCreation = () => {
-    Actions.push(appConfig.routes.requestCreation, {
-      siteId: progressTrackingDetail.site_id,
+    servicesHandler({
+      type: SERVICES_TYPE.CREATE_REQUEST,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
       request: {
         title: progressTrackingDetail.product?.name,
         // content: progressTrackingDetail?.product?.name,
       },
-      extraSubmitData: {
-        warranty_id: progressTrackingDetail.id,
-      },
+      request_type: progressTrackingDetail.request_type,
+      object_id: progressTrackingDetail.id,
+      onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
     });
+  };
+
+  const goToRequests = () => {
+    servicesHandler({
+      type: SERVICES_TYPE.REQUESTS,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
+      request_type: progressTrackingDetail.request_type,
+      object_id: progressTrackingDetail.id,
+    });
+  };
+
+  const goToRequestDetail = (request = {}) => {
+    servicesHandler({
+      type: SERVICES_TYPE.REQUEST_DETAIL,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
+      request_id: request.id,
+    });
+  };
+
+  const renderRightNavBar = () => {
+    return (
+      <View style={styles.nav_right}>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={goToRequestCreation}>
+          <View style={styles.nav_right_btn}>
+            <Icon name="plus" size={22} color="#ffffff" />
+          </View>
+        </TouchableHighlight>
+      </View>
+    );
   };
 
   const renderEmpty = () => {
@@ -188,7 +243,10 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
         }}
       />
 
-      <CustomButton title="Tạo yêu cầu" onPress={goToRequestCreation} />
+      <CustomButton
+        title={t('screen.requests.mainTitle')}
+        onPress={goToRequests}
+      />
     </ScreenWrapper>
   );
 };

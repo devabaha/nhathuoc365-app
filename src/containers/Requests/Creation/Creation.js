@@ -242,7 +242,7 @@ class Creation extends Component {
         this.props.siteId,
         this.props.roomId,
       );
-      console.log(response, this.props.siteId, this.props.roomId )
+
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = {...this.state};
@@ -282,7 +282,8 @@ class Creation extends Component {
     this.setState({loading: true});
     data = {
       ...data,
-      ...this.props.extraSubmitData,
+      request_type: this.props.requestType,
+      object_id: this.props.objectId,
     };
 
     const {t} = this.props;
@@ -294,7 +295,7 @@ class Creation extends Component {
         )
       : APIHandler.site_request_room(
           this.props.siteId,
-          this.props.roomId,
+          this.props.roomId || 0,
           data,
         );
     try {
@@ -302,7 +303,7 @@ class Creation extends Component {
 
       if (this.unmounted) return;
       if (response?.status === STATUS_SUCCESS) {
-        this.props.onRefresh();
+        this.props.onRefresh(response.data?.request);
         Actions.pop();
         flashShowMessage({
           type: 'success',
@@ -461,7 +462,6 @@ class Creation extends Component {
             validationSchema={validationSchema}
             innerRef={this.refForm}>
             {(props) => {
-              console.log(props.values);
               const disabled =
                 this.isEmptyRequiredData(props.values) ||
                 !props.isValid ||

@@ -93,10 +93,9 @@ const ProgressTrackingBarSkeleton = () => {
               <View style={[styles.contentContainer, styles.trackContainer]} />
               <View>
                 {Array.from({length: 5}).map((_, index) => (
-                  <View style={styles.contentWrapper}>
+                  <View key={index} style={styles.contentWrapper}>
                     <View style={[styles.content, styles.pad]} />
                     <Container
-                      key={index}
                       centerVertical={false}
                       style={[styles.contentContainer, styles.padContainer]}>
                       <View style={[styles.content, styles.description1]} />
