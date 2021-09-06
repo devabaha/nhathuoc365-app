@@ -88,6 +88,7 @@ class Account extends Component {
     } = user_info;
     const isShowPremium =
       premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
+    const open_fb_page = store.open_fb_page;
 
     return [
       {
@@ -501,7 +502,8 @@ class Account extends Component {
         label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Communications.web(APP_FANPAGE),
+        onPress: () => open_fb_page ? 
+        Communications.web('https://facebook.com/'+ open_fb_page) : {},
         boxIconStyle: [
           styles.boxIconStyle,
           {
