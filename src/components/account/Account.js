@@ -164,11 +164,7 @@ class Account extends Component {
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          servicesHandler({
-            type: SERVICES_TYPE.WALLET,
-            name: default_wallet?.name,
-            wallet: default_wallet,
-          });
+          servicesHandler({type: SERVICES_TYPE.WALLET});
         },
         boxIconStyle: [
           styles.boxIconStyle,
@@ -939,8 +935,8 @@ class Account extends Component {
                   ? () =>
                       servicesHandler({
                         type: SERVICES_TYPE.WALLET,
-                        wallet,
                         name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => {}
               }
@@ -979,9 +975,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => Actions.view_ndt_list()
               }

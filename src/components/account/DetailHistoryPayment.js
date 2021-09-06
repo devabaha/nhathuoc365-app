@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, SectionList } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, SectionList} from 'react-native';
+
+import appConfig from 'app-config';
 
 import HorizontalInfoItem from './HorizontalInfoItem';
 import EventTracker from '../../helper/EventTracker';
+import Clipboard from '@react-native-community/clipboard';
 
 class DetailHistoryPayment extends Component {
   constructor(props) {
@@ -16,14 +19,18 @@ class DetailHistoryPayment extends Component {
             {
               id: 'ma_giao_dich',
               title: 'Mã giao dịch',
-              value: this.props.transaction_hash
+              value: this.props.transaction_hash,
+              select: true,
+              rightTextStyle: {
+                fontSize: 13,
+              },
             },
             {
               id: 'thoi_gian',
               title: 'Thời gian',
-              value: this.props.created
-            }
-          ]
+              value: this.props.created,
+            },
+          ],
         },
         {
           id: 'id_section_2',
@@ -31,9 +38,12 @@ class DetailHistoryPayment extends Component {
             {
               id: 'noi_dung',
               title: 'Nội dung',
-              value: this.props.content
-            }
-          ]
+              value: this.props.content,
+              rightTextStyle: {
+                fontWeight: '500',
+              },
+            },
+          ],
         },
         {
           id: 'id_section_3',
@@ -42,11 +52,18 @@ class DetailHistoryPayment extends Component {
               id: 'thay_doi',
               title: 'Thay đổi',
               value: this.props.amount_view,
-              specialColor: 'green'
-            }
-          ]
-        }
-      ]
+              rightTextStyle: {
+                fontWeight: 'bold',
+                fontSize: 16,
+                color:
+                  this.props.amount > 0
+                    ? appConfig.colors.status.success
+                    : appConfig.colors.status.danger,
+              },
+            },
+          ],
+        },
+      ],
     };
     this.eventTracker = new EventTracker();
   }
@@ -59,6 +76,11 @@ class DetailHistoryPayment extends Component {
     this.eventTracker.clearTracking();
   }
 
+  handleSelectValue = (transaction) => {
+    Clipboard.setString(transaction.value);
+    Toast.show(this.props.t('copied'));
+  };
+
   _renderSectionSeparator = () => {
     return <View style={styles.separatorSection} />;
   };
@@ -67,15 +89,20 @@ class DetailHistoryPayment extends Component {
     return <View style={styles.separatorItem} />;
   };
 
-  _renderItems = ({ item, index, section }) => {
-    return <HorizontalInfoItem data={item} />;
+  _renderItems = ({item, index, section}) => {
+    return (
+      <HorizontalInfoItem
+        data={item}
+        onSelectedValue={this.handleSelectValue}
+      />
+    );
   };
 
   render() {
     return (
       <View style={styles.container}>
         <SectionList
-          style={{ flex: 1 }}
+          style={{flex: 1}}
           renderItem={this._renderItems}
           SectionSeparatorComponent={this._renderSectionSeparator}
           ItemSeparatorComponent={this._renderItemSeparator}
@@ -93,17 +120,17 @@ const styles = StyleSheet.create({
 
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#EFEFF4'
+    backgroundColor: '#EFEFF4',
   },
 
   separatorSection: {
     width: '100%',
-    height: 5
+    height: 5,
   },
 
   separatorItem: {
     height: 1,
-    backgroundColor: '#EFEFF4'
+    backgroundColor: '#EFEFF4',
   },
 
   rightBtnEdit: {
@@ -113,13 +140,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
   },
 
   txtEdit: {
     fontSize: 14,
-    color: '#ffffff'
-  }
+    color: '#ffffff',
+  },
 });
 
-export default observer(DetailHistoryPayment);
+export default withTranslation()(observer(DetailHistoryPayment));

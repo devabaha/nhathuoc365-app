@@ -67,7 +67,10 @@ class Profile extends Component {
       {
         title: this.props.t('editProfile:sections.facebook.title'),
         leftTitle: (
-          <AntDesignIcon name="facebook-square" style={[styles.introIcon, styles.facebookIcon]} />
+          <AntDesignIcon
+            name="facebook-square"
+            style={[styles.introIcon, styles.facebookIcon]}
+          />
         ),
         select: true,
         isLink: true,
@@ -75,7 +78,12 @@ class Profile extends Component {
       },
       {
         title: this.props.t('editProfile:sections.youtube.title'),
-        leftTitle: <AntDesignIcon name="youtube" style={[styles.introIcon, styles.youtubeIcon]} />,
+        leftTitle: (
+          <AntDesignIcon
+            name="youtube"
+            style={[styles.introIcon, styles.youtubeIcon]}
+          />
+        ),
         select: true,
         isLink: true,
         value: userInfo.youtube,
@@ -552,6 +560,10 @@ class Profile extends Component {
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
           this.setState({userInfo: response.data.user});
+          flashShowMessage({
+            type: 'success',
+            message: response.message,
+          });
         } else {
           flashShowMessage({
             type: 'danger',
@@ -706,6 +718,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['profileDetail', 'common', 'account', 'editProfile'])(
-  observer(Profile),
-);
+export default withTranslation([
+  'profileDetail',
+  'common',
+  'account',
+  'editProfile',
+])(observer(Profile));

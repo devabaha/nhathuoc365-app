@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   StyleSheet,
   TextInput,
-  Clipboard,
   Keyboard,
   Alert,
 } from 'react-native';
@@ -47,6 +46,7 @@ import {
   OrderInfoSection,
 } from './components';
 import AddressSection from './components/AddressSection';
+import Clipboard from '@react-native-community/clipboard';
 
 class Confirm extends Component {
   static defaultProps = {

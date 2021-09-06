@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Clipboard } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import ActionSheet from 'react-native-actionsheet';
 import Communications from 'react-native-communications';
 import CardItemComponent from '../../component/CardItem';

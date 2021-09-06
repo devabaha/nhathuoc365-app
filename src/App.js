@@ -202,10 +202,7 @@ import Booking from './containers/Booking';
 import ModalCalendar from './components/ModalCalendar';
 import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
-import Requests, {
-  RequestDetail,
-  RequestCreation
-} from './containers/Requests';
+import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 
 /**
  * Not allow font scaling
@@ -1695,9 +1692,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="vnd_wallet">
+                <Stack key={appConfig.routes.vndWallet}>
                   <Scene
-                    key="vnd_wallet_1"
+                    key={`${appConfig.routes.vndWallet}_1`}
                     component={VndWallet}
                     {...navBarConfig}
                     back
@@ -1793,7 +1790,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.detailHistoryPayment}>
                   <Scene
                     key={`${appConfig.routes.detailHistoryPayment}_1`}
-                    title="Tích điểm"
                     component={DetailHistoryPayment}
                     {...navBarConfig}
                     back

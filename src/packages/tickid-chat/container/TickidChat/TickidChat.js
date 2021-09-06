@@ -11,7 +11,6 @@ import {
   SafeAreaView,
   Text,
   Dimensions,
-  Clipboard,
   Linking,
 } from 'react-native';
 import {
@@ -31,6 +30,7 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 import Communications from 'react-native-communications';
+import Clipboard from '@react-native-community/clipboard';
 import {setStater} from '../../helper';
 import {
   WIDTH,

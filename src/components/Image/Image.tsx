@@ -42,7 +42,7 @@ const Image = (props: ImageProps) => {
   ) : props.canTouch ? (
     <View
       style={[styles.image, props.containerStyle]}
-      pointerEvents={props.canTouch ? 'auto' : 'none'}>
+      pointerEvents={props.canTouch && !isError ? 'auto' : 'none'}>
       <Lightbox
         underlayColor="transparent"
         springConfig={{overshootClamping: true}}
