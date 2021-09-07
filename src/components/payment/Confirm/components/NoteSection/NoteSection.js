@@ -1,5 +1,9 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+
+import appConfig from 'app-config';
+
 import SectionContainer from '../SectionContainer';
 
 const MIN_ADDRESS_HEIGHT = 50;
@@ -32,15 +36,74 @@ const styles = StyleSheet.create({
 const NoteSection = ({
   refInput,
 
+  siteId,
+  cartId,
+
   title,
+  isShowActionTitle,
   value = '',
   editable = true,
 
   onChangeText = () => {},
   onContentSizeChange = () => {},
   onBlur = () => {},
+  onNoteUpdated = () => {},
+  onPressActionBtn,
 }) => {
-  const {t} = useTranslation(['orders', 'confirm']);
+  const {t} = useTranslation(['orders', 'confirm', 'common']);
+  const refModalInput = useRef();
+
+  const handlePressActionBtn = () => {
+    typeof onPressActionBtn === 'function'
+      ? onPressActionBtn()
+      : openEditNote();
+  };
+
+  const openEditNote = () => {
+    Actions.push(appConfig.routes.modalInput, {
+      backdropPressToClose: true,
+      title: t('confirm.note.title'),
+      btnTitle: t('confirm.change'),
+      value,
+      textInputProps: {
+        autoFocus: true,
+        multiline: true,
+        placeholder: t('confirm.note.placeholder'),
+      },
+      textInputStyle: {
+        minHeight: 60,
+      },
+      onSubmit: (note) => handleUpdateNote(note),
+      refModal: (inst) => (refModalInput.current = inst),
+    });
+  };
+
+  const handleUpdateNote = async (note) => {
+    if (refModalInput.current) {
+      refModalInput.current.close();
+    }
+
+    const data = {user_note: note};
+
+    try {
+      const response = await APIHandler.edit_user_note(siteId, cartId, data);
+
+      if (response?.status === STATUS_SUCCESS) {
+        onNoteUpdated(note);
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log('edit_user_note ' + e);
+      flashShowMessage({
+        type: 'danger',
+        message: t('common:api.error.message'),
+      });
+    }
+  };
 
   return (
     <SectionContainer
@@ -55,7 +118,9 @@ const NoteSection = ({
             </Text>
           </>
         )
-      }>
+      }
+      actionBtnTitle={isShowActionTitle && t('confirm.change')}
+      onPressActionBtn={handlePressActionBtn}>
       <View pointerEvents={editable ? 'auto' : 'none'}>
         <TextInput
           ref={refInput}

@@ -811,11 +811,15 @@ export class Booking extends Component {
 
           <View onLayout={this.handleNoteSizeChange}>
             <NoteSection
+              siteId={this.state.booking.site_id}
+              cartId={this.state.booking.id}
               editable={this.editable}
               title={this.props.t('orders:confirm.note.title')}
               value={this.state.tempNote}
               onChangeText={this.handleChangeNote}
               onBlur={this.handleUpdateNote}
+              isShowActionTitle={this.state.booking.status != CART_STATUS_ORDERING}
+              onNoteUpdated={this.handleChangeNote}
             />
           </View>
 

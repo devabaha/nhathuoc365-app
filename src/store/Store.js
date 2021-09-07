@@ -408,6 +408,7 @@ class Store {
     }
 
     this.cart_data = data;
+    this.setUserCartNote(data.user_note);
 
     // object to array and reverse stack
     if (data && Object.keys(data.products).length > 0) {

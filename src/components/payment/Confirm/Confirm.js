@@ -47,6 +47,7 @@ import {
   OrderInfoSection,
 } from './components';
 import AddressSection from './components/AddressSection';
+import {debounce} from 'lodash';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -81,6 +82,7 @@ class Confirm extends Component {
     this.reorderRequest = new APIRequest();
     this.requests = [this.getShippingInfoRequest, this.reorderRequest];
     this.eventTracker = new EventTracker();
+    this.refNoteModalInput = null;
   }
 
   get isSiteUseShipNotConfirming() {
@@ -207,9 +209,9 @@ class Confirm extends Component {
     }
   }
 
-  async _getOrdersItem(site_id, page_id, is_paymenting = true) {
+  async _getOrdersItem(site_id, cart_id, is_paymenting = true) {
     try {
-      const response = await APIHandler.site_cart_show(site_id, page_id);
+      const response = await APIHandler.site_cart_show(site_id, cart_id);
       console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -660,6 +662,52 @@ class Confirm extends Component {
     this._showSticker();
   }
 
+  handleChangeNote = (note) => {
+    store.setUserCartNote(note);
+    this.handleDebounceUpdateNote(note);
+  };
+
+  handleDebounceUpdateNote = debounce(
+    (note) => this.handleUpdateNote(note),
+    1000,
+  );
+
+  handleUpdateNote = async (note, isReloadData = false) => {
+    if (this.refNoteModalInput) {
+      this.refNoteModalInput.close();
+    }
+
+    const siteId = this.cartData.site_id;
+    const cartId = this.cartData.id;
+    const data = {user_note: note};
+
+    try {
+      const response = await APIHandler.edit_user_note(siteId, cartId, data);
+
+      if (response?.status === STATUS_SUCCESS) {
+        if (isReloadData) {
+          this._getOrdersItem(siteId, cartId, false);
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message:
+            response?.message || this.props.t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log('edit_user_note ' + e);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
+    }
+  };
+
+  handleNoteUpdated = () => {
+    this._getOrdersItem(this.cartData.site_id, this.cartData.id, false);
+  };
+
   _popupClose() {
     if (this.popup_message) {
       this.popup_message.close();
@@ -1087,14 +1135,13 @@ class Confirm extends Component {
           )}
 
           <NoteSection
-            onChangeText={store.setUserCartNote}
+            siteId={this.cartData.site_id}
+            cartId={this.cartData.id}
             editable={single}
-            value={
-              single
-                ? store.user_cart_note ||
-                  (store.cart_data ? store.cart_data.user_note : '')
-                : cart_data.user_note || t('confirm.note.noNote')
-            }
+            isShowActionTitle={!is_paymenting}
+            value={single ? store.user_cart_note : cart_data.user_note}
+            onChangeText={this.handleChangeNote}
+            onNoteUpdated={this.handleNoteUpdated}
           />
 
           {!!storeInfo && (
