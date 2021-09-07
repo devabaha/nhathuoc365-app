@@ -1,25 +1,27 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import React, {Fragment} from 'react';
 import {
   View,
   FlatList,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import {Actions} from 'react-native-router-flux';
 
 import Loading from '../../Loading';
 import appConfig from 'app-config';
 
-const History = props => {
-  const { t } = props;
+const History = (props) => {
+  const {t} = props;
   var historyData = props.historyData ? props.historyData : [];
-  function renderHistory({ item: history, index }) {
+  function renderHistory({item: history, index}) {
     return (
       <HistoryRow
         id={history.transaction_hash}
@@ -37,7 +39,7 @@ const History = props => {
         <FlatList
           data={historyData}
           renderItem={renderHistory}
-          keyExtractor={item => item.transaction_hash}
+          keyExtractor={(item) => item.transaction_hash}
         />
       ) : (
         <Text style={styles.note}>{t('tabs.history.message')}</Text>
@@ -49,7 +51,7 @@ const History = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: Util.size.width
+    width: Util.size.width,
   },
   history_row: {
     flexDirection: 'row',
@@ -58,78 +60,72 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '100%',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   history_row_main_content: {
-    flexDirection: 'column',
     justifyContent: 'center',
-    marginLeft: 10
+    flex: 1,
+    paddingRight: 30,
   },
   history_row_last_content: {
     justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'flex-end'
+    maxWidth: '30%',
   },
   title: {
     fontSize: 16,
-    color: '#404040',
-    width: '80%'
+    color: appConfig.colors.text,
+    fontWeight: '500',
+    marginBottom: 3,
   },
   des: {
     fontSize: 12,
-    color: '#404040',
+    color: appConfig.colors.typography.secondary,
+    marginTop: 2,
+  },
+  sub: {
+    color: appConfig.colors.text,
   },
   note: {
     padding: 15,
     fontSize: 16,
-    marginBottom: 2
-  }
+    marginBottom: 2,
+  },
 });
 
 export default withTranslation('vndWallet')(History);
 
-const HistoryRow = props => {
+const HistoryRow = (props) => {
   _onShowHistoryDetail = () => {
     Actions.push(appConfig.routes.detailHistoryPayment, {
+      title: props.title,
       transaction_hash: props.id,
       created: props.date,
       content: props.title,
-      amount_view: props.money
+      amount_view: props.money,
+      amount: props.amount,
     });
   };
 
   return (
-    <TouchableOpacity
+    <TouchableHighlight
+      underlayColor={'rgba(0,0,0,.05)'}
       style={[styles.history_row]}
-      onPress={_onShowHistoryDetail}
-    >
+      onPress={_onShowHistoryDetail}>
       <View
         style={[
           {
             flexDirection: 'row',
-            alignItems: 'center'
-          }
-        ]}
-      >
-        <Icon
-          name={
-            props.amount > 0 ? 'chevron-circle-right' : 'chevron-circle-left'
-          }
-          color={'#333333'}
-          size={24}
-        />
+            alignItems: 'center',
+          },
+        ]}>
         <View style={[styles.history_row_main_content]}>
-          <Text numberOfLines={1} style={[styles.title]}>
-            {props.title}
-          </Text>
-          <Text style={[styles.des]}>{props.date}</Text>
-          <Text numberOfLines={1} style={[styles.des, {maxWidth: '60%'}]}>
-            Txid: {props.id}
+          <Text style={[styles.title]}>{props.title}</Text>
+          <Text style={[styles.des, styles.sub]}>{props.date}</Text>
+          <Text numberOfLines={1} style={[styles.des]}>
+            {props.id}
           </Text>
         </View>
-      </View>
 
-      <Fragment>
         <View style={[styles.history_row_last_content]}>
           <Text
             style={[
@@ -137,30 +133,31 @@ const HistoryRow = props => {
               {
                 fontWeight: 'bold',
                 fontSize: 16,
-                position: 'absolute',
-                top: -6,
-                right: 0
-              }
-            ]}
-          >
+                right: 0,
+                textAlign: 'right',
+              },
+              {
+                color:
+                  props.amount > 0
+                    ? appConfig.colors.status.success
+                    : appConfig.colors.status.danger,
+              },
+            ]}>
             {props.money}
           </Text>
           <Text
             style={[
               styles.des,
               {
-                color: '#cc9900',
+                color: appConfig.colors.typography.secondary,
                 fontSize: 12,
-                position: 'absolute',
-                top: 10,
-                right: 0
-              }
-            ]}
-          >
+                textAlign: 'right',
+              },
+            ]}>
             Trước đó: {props.balance_view}
           </Text>
         </View>
-      </Fragment>
-    </TouchableOpacity>
+      </View>
+    </TouchableHighlight>
   );
 };

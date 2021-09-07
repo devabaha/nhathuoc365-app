@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   TouchableHighlight,
   StyleSheet,
-  FlatList
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import store from '../../../store/Store';
 import History from './History';
 import Info from './Info';
@@ -16,7 +16,7 @@ import Loading from '../../Loading';
 import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
 import {
   isActivePackageOptionConfig,
-  PACKAGE_OPTIONS_TYPE
+  PACKAGE_OPTIONS_TYPE,
 } from '../../../helper/packageOptionsHandler';
 import EventTracker from '../../../helper/EventTracker';
 
@@ -28,7 +28,7 @@ class VndWallet extends Component {
       historiesData: null,
       wallet: props.wallet,
       activeTab: 0,
-      loading: true
+      loading: true,
     };
 
     this.unmounted = false;
@@ -37,6 +37,9 @@ class VndWallet extends Component {
 
   componentDidMount() {
     this._getWallet();
+    if (this.props.tabIndex) {
+      setTimeout(() => this.changeActiveTab(this.props.tabIndex));
+    }
     this.eventTracker.logCurrentView();
   }
 
@@ -49,12 +52,12 @@ class VndWallet extends Component {
     // user_coins_wallet
     try {
       const response = await APIHandler.user_wallet_history(
-        this.state.wallet.zone_code
+        this.state.wallet.zone_code,
       );
       console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
-          this.setState({ historiesData: response.data.histories });
+          this.setState({historiesData: response.data.histories});
         }
       }
     } catch (e) {
@@ -62,7 +65,7 @@ class VndWallet extends Component {
     } finally {
       !this.unmounted &&
         this.setState({
-          loading: false
+          loading: false,
         });
     }
   }
@@ -70,17 +73,17 @@ class VndWallet extends Component {
   _goTransfer() {
     Actions.push(appConfig.routes.transfer, {
       wallet: this.state.wallet,
-      address: this.state.wallet.address
+      address: this.state.wallet.address,
     });
   }
 
   _goQRCode() {
-    const { t } = this.props;
+    const {t} = this.props;
 
     Actions.push(appConfig.routes.qrBarCode, {
       title: t('common:screen.qrBarCode.walletAddressTitle'),
       wallet: this.state.wallet,
-      address: this.state.wallet.address
+      address: this.state.wallet.address,
     });
   }
 
@@ -95,37 +98,31 @@ class VndWallet extends Component {
     this.changeActiveTab(pageNum);
   }
 
-  changeActiveTab = activeTab => {
+  changeActiveTab = (activeTab) => {
     if (activeTab !== this.state.activeTab) {
       if (this.flatlist) {
-        this.flatlist.scrollToIndex({ index: activeTab, animated: true });
+        this.flatlist.scrollToIndex({index: activeTab, animated: true});
       }
       if (activeTab !== this.state.activeTab) {
         let state = this.state;
         state.activeTab = activeTab;
-        this.setState({ ...state });
+        this.setState({...state});
       }
     }
   };
 
-  _onShowDetailHistory = item => {
-    Actions.push(appConfig.routes.detailHistoryPayment, {
-      data: item
-    });
-  };
-
-  renderRow({ item, index }) {
+  renderRow({item, index}) {
     return (
       <View>
         <View style={styles.containerRowView}>
           <Icon
-            style={{ flex: 1, marginLeft: 20 }}
+            style={{flex: 1, marginLeft: 20}}
             name={item.change >= 0 ? 'plus-square' : 'minus-square'}
             size={25}
             color="rgb(0,0,0)"
           />
-          <View style={{ flex: 6, flexDirection: 'column' }}>
-            <Text style={{ fontSize: 16 }}>{item.content}</Text>
+          <View style={{flex: 6, flexDirection: 'column'}}>
+            <Text style={{fontSize: 16}}>{item.content}</Text>
             <View style={styles.bottomRowView}>
               <Text style={styles.dateText}>{item.created}</Text>
               <Text style={styles.pointText}>{item.change}</Text>
@@ -138,9 +135,9 @@ class VndWallet extends Component {
   }
 
   renderTopLabelCoin() {
-    var { wallet } = this.state;
-    const { user_info } = store;
-    const { t } = this.props;
+    var {wallet} = this.state;
+    const {user_info} = store;
+    const {t} = this.props;
 
     return (
       <View>
@@ -149,8 +146,7 @@ class VndWallet extends Component {
             <TouchableHighlight
               onPress={this._goQRCode.bind(this)}
               underlayColor="transparent"
-              style={styles.add_store_action_btn}
-            >
+              style={styles.add_store_action_btn}>
               <View style={styles.add_store_action_btn_box}>
                 <Icon name="qrcode" size={30} color="#333333" />
                 <Text style={styles.add_store_action_label}>
@@ -183,24 +179,21 @@ class VndWallet extends Component {
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}
             underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
+            style={styles.add_store_action_btn}>
             <View
               style={[
                 styles.add_store_action_btn_box_balance,
-                { borderRightWidth: 0 }
-              ]}
-            >
+                {borderRightWidth: 0},
+              ]}>
               <Text
                 style={[
                   styles.add_store_action_label_balance,
                   {
                     textAlign: 'left',
                     width: '100%',
-                    paddingHorizontal: 15
-                  }
-                ]}
-              >
+                    paddingHorizontal: 15,
+                  },
+                ]}>
                 <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
                 {'  '}
                 {t('header.balance')}
@@ -212,10 +205,9 @@ class VndWallet extends Component {
                     textAlign: 'right',
                     width: '100%',
                     paddingHorizontal: 15,
-                    color: wallet.color
-                  }
-                ]}
-              >
+                    color: wallet.color,
+                  },
+                ]}>
                 {wallet.balance_view}
               </Text>
             </View>
@@ -226,15 +218,15 @@ class VndWallet extends Component {
   }
 
   render() {
-    var { wallet, activeTab, historiesData } = this.state;
-    const { t } = this.props;
+    var {wallet, activeTab, historiesData} = this.state;
+    const {t} = this.props;
     const data = [
       {
         key: 0,
         title: t('tabs.history.title'),
         component: (
           <History loading={this.state.loading} historyData={historiesData} />
-        )
+        ),
       },
       // {
       //   key: 1,
@@ -251,8 +243,8 @@ class VndWallet extends Component {
         title: t('tabs.information.title'),
         component: (
           <Info loading={this.state.loading} content={wallet.content} />
-        )
-      }
+        ),
+      },
     ];
     const tabHeader = data.map((d, i) => (
       <TouchableHighlight
@@ -262,24 +254,21 @@ class VndWallet extends Component {
           styles.tabStyle,
           d.key === activeTab && styles.activeTab,
           ,
-          { paddingVertical: 15 }
+          {paddingVertical: 15},
         ]}
-        onPress={() => this.changeActiveTab(d.key)}
-      >
+        onPress={() => this.changeActiveTab(d.key)}>
         <View
           style={[
             i !== data.length - 1 && {
               borderRightColor: '#dddddd',
-              borderRightWidth: 1
-            }
-          ]}
-        >
+              borderRightWidth: 1,
+            },
+          ]}>
           <Text
             style={{
               textAlign: 'center',
-              color: '#404040'
-            }}
-          >
+              color: '#404040',
+            }}>
             {d.title}
           </Text>
         </View>
@@ -293,35 +282,34 @@ class VndWallet extends Component {
           style={{
             flexDirection: 'row',
             borderBottomColor: '#dddddd',
-            borderBottomWidth: 1
-          }}
-        >
+            borderBottomWidth: 1,
+          }}>
           {tabHeader}
         </View>
         <FlatList
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          ref={ref => (this.flatlist = ref)}
+          ref={(ref) => (this.flatlist = ref)}
           data={data}
-          keyExtractor={item => item.key.toString()}
+          keyExtractor={(item) => item.key.toString()}
           horizontal={true}
           onScrollToIndexFailed={() => {}}
           pagingEnabled
           style={{
-            width: Util.size.width
+            width: Util.size.width,
           }}
           contentContainerStyle={{
-            flexGrow: 1
+            flexGrow: 1,
           }}
           onMomentumScrollEnd={this._onScrollEnd.bind(this)}
           getItemLayout={(data, index) => {
             return {
               length: Util.size.width,
               offset: Util.size.width * index,
-              index
+              index,
             };
           }}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return item.component;
           }}
         />
@@ -357,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     marginBottom: 0,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   profile_list_opt_btn: {
     width: Util.size.width,
@@ -368,45 +356,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   point_icon: {
     width: 60,
-    height: 60
+    height: 60,
   },
   iconView: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   profile_list_icon_box: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: 70,
-    height: 70
+    height: 70,
   },
   profile_list_label: {
     fontSize: 18,
     color: '#000000',
-    fontWeight: '400'
+    fontWeight: '400',
   },
   profile_list_small_label: {
     fontSize: 14,
     color: '#666666',
-    marginTop: 2
+    marginTop: 2,
   },
   labelCoinParentView: {
     flex: 5,
     marginTop: 0,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   labelCoinView: {
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   lineView: {
     marginTop: 10,
@@ -414,7 +402,7 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   lineViewWallet: {
     marginTop: 1,
@@ -422,57 +410,57 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 1,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   lineRowView: {
     marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   newsCoinView: {
     flexDirection: 'row',
     height: 30,
     marginTop: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   historyCoinText: {
     marginLeft: 20,
     marginBottom: 20,
     fontSize: 18,
-    color: 'rgb(0,0,0)'
+    color: 'rgb(0,0,0)',
   },
   containerRowView: {
     flex: 1,
     height: 70,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bottomRowView: {
     marginTop: 5,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: 12,
-    color: 'rgb(150,150,150)'
+    color: 'rgb(150,150,150)',
   },
   pointText: {
     fontSize: 16,
     color: 'rgb(0,0,0)',
     fontWeight: 'bold',
-    marginRight: 15
+    marginRight: 15,
   },
 
   profile_cover_box: {
     width: '100%',
     backgroundColor: '#ccc',
-    height: 120
+    height: 120,
   },
   profile_cover: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   profile_avatar_box: {
     position: 'absolute',
@@ -486,18 +474,18 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   profile_avatar: {
     width: 76,
     height: 76,
-    borderRadius: 38
+    borderRadius: 38,
     // resizeMode: 'cover'
   },
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
 
   add_store_actions_box: {
@@ -506,57 +494,57 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   row: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   add_store_action_btn: {
     flex: 1,
     paddingVertical: 4,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     // width: ~~(Util.size.width / 4),
     borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    borderRightColor: '#ebebeb',
   },
   add_store_action_btn_box_balance: {
     flex: 1,
     borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    borderRightColor: '#ebebeb',
   },
   add_store_action_label: {
     fontSize: 14,
     color: '#404040',
-    marginTop: 4
+    marginTop: 4,
   },
   add_store_action_label_balance: {
     fontSize: 14,
     color: '#333333',
     marginTop: 4,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   add_store_action_content: {
     fontSize: 19,
     marginTop: 5,
     color: '#51A9FF',
     fontWeight: '800',
-    flex: 1
+    flex: 1,
   },
   tabStyle: {
     flex: 1,
     borderBottomColor: '#dddddd',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   activeTab: {
     borderBottomColor: DEFAULT_COLOR,
-    borderBottomWidth: 4
-  }
+    borderBottomWidth: 4,
+  },
 });
 
 export default withTranslation(['vndWallet', 'common'])(observer(VndWallet));

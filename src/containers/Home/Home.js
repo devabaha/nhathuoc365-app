@@ -178,10 +178,7 @@ class Home extends Component {
   };
 
   handlePressedSurplusNext = () => {
-    Actions.push(appConfig.routes.vndWallet, {
-      title: store.user_info.default_wallet.name,
-      wallet: store.user_info.default_wallet,
-    });
+    servicesHandler({type: SERVICES_TYPE.WALLET});
   };
 
   handlePressCommission = () => {

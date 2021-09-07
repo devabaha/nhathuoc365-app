@@ -455,7 +455,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.agencyInformationRegister);
       break;
 
- /**  REQUEST */
+    /**  REQUEST */
     /** List */
     case SERVICES_TYPE.REQUESTS:
       Actions.push(appConfig.routes.requests, {
@@ -474,9 +474,18 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** WALLET */
     case SERVICES_TYPE.WALLET:
+      const wallet = service.zone_code
+        ? store.user_info?.all_wallets?.length
+          ? store.user_info.all_wallets.find(
+              (wallet) => wallet.zone_code === service.zone_code,
+            )
+          : store.user_info?.default_wallet
+        : store.user_info?.default_wallet;
+console.log(wallet, service)
       Actions.push(appConfig.routes.vndWallet, {
-        title: service.name || store?.user_info?.name,
-        wallet: service.wallet || store?.user_info?.default_wallet,
+        title: service.name || wallet?.name,
+        wallet,
+        tabIndex: service.tabIndex,
       });
       break;
 

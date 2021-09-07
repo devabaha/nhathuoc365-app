@@ -61,7 +61,7 @@ export default class HorizontalInfoItem extends Component {
         <Text
           style={[
             styles.detailTitle,
-            {color: specialColor ? specialColor : 'black', height: undefined},
+            {color: specialColor ? specialColor : appConfig.colors.text, height: undefined, paddingVertical: 15},
             !!defaultValue && !value && {color: appConfig.colors.placeholder},
             detailTitleStyle,
             rightTextStyle,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     color: '#242424',
     paddingLeft: 0,
     textAlign: 'right',
-    paddingVertical: 0,
+    paddingVertical: 15,
   },
   columnViewContainer: {
     flexDirection: 'column',

@@ -70,13 +70,16 @@ class Header extends Component {
           {isMainUser && (
             <NavBarButton
               disabled={this.state.coverLoading}
-              containerStyle={[styles.cameraIconContainer, styles.coverCameraIconContainer]}
+              containerStyle={[
+                styles.cameraIconContainer,
+                styles.coverCameraIconContainer,
+              ]}
               iconStyle={styles.cameraIcon}
               iconName="camerao"
               onPress={this.onChangeCover}
             />
           )}
-          <View style={styles.coverBottomSpace}/>
+          <View style={styles.coverBottomSpace} />
           <View style={styles.avatarContainer}>
             <View
               onPress={this.props.onPressAvatar}
@@ -114,18 +117,14 @@ class Header extends Component {
         </ImageBackground>
 
         <Container row center style={styles.titleContainer}>
-          <View>
-            {!!this.props.premium && (
-              <PremiumIcon
-                premium={this.props.premium}
-                style={styles.premium}
-              />
-            )}
-            <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
-              {this.props.name}
-            </Text>
-          </View>
+          {!!this.props.premium && (
+            <PremiumIcon premium={this.props.premium} style={styles.premium} />
+          )}
+          <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
+            {this.props.name}
+          </Text>
         </Container>
+
         {!!this.props.quote && (
           <Text style={styles.subTitle}>{this.props.quote}</Text>
         )}
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     position: undefined,
-    height: appConfig.device.width / 2,
   },
   coverBottomSpace: {
     backgroundColor: '#fff',
@@ -230,6 +228,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     position: 'absolute',
     right: '100%',
+    top: 0
   },
   titleContainer: {
     marginTop: 10,
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
     color: '#333',
-    fontSize: 18,
+    fontSize: 24,
     letterSpacing: 1,
     marginHorizontal: 10,
   },
@@ -269,7 +268,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: 20,
-    fontSize: 16,
+    fontSize: 14,
     marginRight: 0,
     color: '#333',
   },
@@ -294,10 +293,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 5,
     bottom: 5,
-    backgroundColor: 'rgba(0,0,0,.3)',
+    backgroundColor: 'rgba(0,0,0,.6)',
   },
   coverCameraIconContainer: {
-    bottom: 5 + AVATAR_BORDER_RADIUS
+    bottom: AVATAR_BORDER_RADIUS,
   },
   cameraIcon: {
     color: '#eee',

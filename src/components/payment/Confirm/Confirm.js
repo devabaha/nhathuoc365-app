@@ -5,10 +5,10 @@ import {
   TouchableHighlight,
   StyleSheet,
   TextInput,
-  Clipboard,
   Keyboard,
   Alert,
 } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
@@ -23,7 +23,6 @@ import {USE_ONLINE} from 'app-packages/tickid-voucher';
 import EventTracker from '../../../helper/EventTracker';
 import {ANALYTICS_EVENTS_NAME} from '../../../constants';
 import CartItem from '../CartItem';
-import Tag from '../../Tag';
 import Loading from '../../Loading';
 import {
   CONFIG_KEY,
