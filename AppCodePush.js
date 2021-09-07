@@ -51,20 +51,22 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     marginTop: 20,
+    marginHorizontal: -15,
   },
   suggest: {
     color: '#333',
     fontSize: 13,
     fontWeight: '300',
     lineHeight: 18,
+    paddingHorizontal: 15,
   },
   noteContainer: {
     marginTop: 20,
-    marginHorizontal: -15,
     padding: 15,
     paddingVertical: 10,
     backgroundColor: '#f5f5f5',
-    borderRadius: 4
+    borderRadius: 4,
+    marginHorizontal: 15,
   },
   note: {
     color: '#242424',

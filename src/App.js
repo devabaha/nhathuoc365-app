@@ -323,8 +323,8 @@ class App extends Component {
       codePushUpdateProgress: 1,
       codePushUpdatePackage: null,
       codePushLocalPackage: null,
-      titleUpdateCodePushModal: this.titleUpdateCodePushModal,
-      descriptionUpdateCodePushModal: this.descriptionUpdateCodePushModal,
+      titleUpdateCodePushModal: '',
+      descriptionUpdateCodePushModal: '',
     };
   }
 
@@ -592,8 +592,14 @@ class App extends Component {
           showConfirmButton={false}
           customView={
             <AppCodePush
-              title={this.state.titleUpdateCodePushModal}
-              description={this.state.descriptionUpdateCodePushModal}
+              title={
+                this.state.titleUpdateCodePushModal ||
+                this.titleUpdateCodePushModal
+              }
+              description={
+                this.state.descriptionUpdateCodePushModal ||
+                this.descriptionUpdateCodePushModal
+              }
               progress={this.state.codePushUpdateProgress}
               onProgressComplete={this.handleCodePushProgressComplete}
               onPressConfirm={() => this.closeCodePushModal()}
