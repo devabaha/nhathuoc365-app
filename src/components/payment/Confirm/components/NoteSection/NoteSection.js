@@ -9,6 +9,7 @@ import SectionContainer from '../SectionContainer';
 const MIN_ADDRESS_HEIGHT = 50;
 const MAX_ADDRESS_HEIGHT = MIN_ADDRESS_HEIGHT * 4;
 const MAX_LENGTH = 250;
+const INPUT_HEIGHT = 60;
 
 const styles = StyleSheet.create({
   input_label_help: {
@@ -71,7 +72,7 @@ const NoteSection = ({
         placeholder: t('confirm.note.placeholder'),
       },
       textInputStyle: {
-        minHeight: 60,
+        height: INPUT_HEIGHT,
       },
       onSubmit: (note) => handleUpdateNote(note),
       refModal: (inst) => (refModalInput.current = inst),
