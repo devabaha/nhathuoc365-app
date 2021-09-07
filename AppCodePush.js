@@ -160,7 +160,7 @@ class AppCodePush extends Component {
             </Text>
           </View>
           <Button
-            // disabled={!!this.state.remainingTime}
+            disabled={!!this.state.remainingTime}
             title={
               confirmBtnTitle +
               (this.state.remainingTime ? ` (${this.state.remainingTime})` : '')
