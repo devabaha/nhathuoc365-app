@@ -320,13 +320,20 @@ class App extends Component {
       progress: null,
       appLanguage: props.i18n.language,
       isOpenCodePushModal: false,
-      codePushUpdateProgress: 0,
+      codePushUpdateProgress: 1,
       codePushUpdatePackage: null,
       codePushLocalPackage: null,
-      titleUpdateCodePushModal: 'Đã có bản cập nhật mới!',
-      descriptionUpdateCodePushModal:
-        'Hệ thống đang cập nhật.\r\nBạn vui lòng chờ trong giây lát...',
+      titleUpdateCodePushModal: this.titleUpdateCodePushModal,
+      descriptionUpdateCodePushModal: this.descriptionUpdateCodePushModal,
     };
+  }
+
+  get titleUpdateCodePushModal() {
+    return this.props.t('codePush.alert.hasUpdateTitle');
+  }
+
+  get descriptionUpdateCodePushModal() {
+    return this.props.t('codePush.alert.hasUpdateDescription');
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -416,81 +423,6 @@ class App extends Component {
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
-  codePushStatusDidChange(syncStatus) {
-    switch (syncStatus) {
-      case codePush.SyncStatus.CHECKING_FOR_UPDATE:
-        this.setState({descriptionUpdateCodePushModal: 'Kiểm tra cập nhât.'});
-        break;
-      case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-        this.setState({descriptionUpdateCodePushModal: 'Đang tải...'});
-        break;
-      case codePush.SyncStatus.AWAITING_USER_ACTION:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Chờ người dùng cho phép.',
-        });
-        break;
-      case codePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({descriptionUpdateCodePushModal: 'Đang cài đặt...'});
-        break;
-      case codePush.SyncStatus.UP_TO_DATE:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Cập nhật ứng dụng.',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UPDATE_IGNORED:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Bỏ qua cập nhật.',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UPDATE_INSTALLED:
-        this.setState({
-          descriptionUpdateCodePushModal:
-            'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UNKNOWN_ERROR:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Có lỗi xảy ra.',
-          progress: false,
-        });
-        break;
-    }
-  }
-
-  /** Update is downloaded silently, and applied on restart (recommended) */
-  sync() {
-    codePush.sync(
-      {},
-      this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this),
-    );
-  }
-
-  /** Update pops a confirmation dialog, and then immediately reboots the app */
-  syncImmediate() {
-    codePush.sync(
-      {
-        deploymentKey: CPDK[Platform.OS],
-        installMode: codePush.InstallMode.IMMEDIATE,
-        updateDialog: {
-          optionalIgnoreButtonLabel: 'Bỏ qua',
-          optionalInstallButtonLabel: 'Cập nhật',
-          mandatoryContinueButtonLabel: 'Cập nhật ngay',
-          mandatoryUpdateMessage:
-            'Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!',
-          optionalUpdateMessage:
-            'Đã có bản cập nhât mới. Bạn có muốn cài đặt không?',
-          title: 'Cập nhật ứng dụng',
-        },
-      },
-      this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this),
-    );
-  }
-
   async updateAppVersionsInfo(codePushVersion) {
     const data = {
       code_push_version: codePushVersion,
@@ -506,7 +438,7 @@ class App extends Component {
     });
   }
 
-  codePushSyncManually() {
+  codePushSyncManually = () => {
     codePush.checkForUpdate(CPDK[Platform.OS]).then((update) => {
       if (!update) {
         console.log('The app is up to date!');
@@ -516,7 +448,8 @@ class App extends Component {
           {
             isOpenCodePushModal: true,
             codePushUpdatePackage: update,
-            titleUpdateCodePushModal: 'Cập nhật ' + update.label,
+            titleUpdateCodePushModal:
+              this.props.t('update') + ' ' + update.label,
           },
           () => {
             this.codePushDownloadUpdate();
@@ -524,7 +457,7 @@ class App extends Component {
         );
       }
     });
-  }
+  };
 
   codePushDownloadDidProgress(progress) {
     this.setState({
@@ -552,13 +485,12 @@ class App extends Component {
           },
         );
         // setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
-        console.log(localPackage);
       })
       .catch((err) => {
         console.log('%cdownload_update_codepush', 'color:red', err);
         Alert.alert(
-          'Lỗi cập nhật',
-          'Tải cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          this.props.t('codePush.alert.failTitle'),
+          this.props.t('codePush.alert.failDescription'),
           [
             {
               text: 'OK',
@@ -569,9 +501,9 @@ class App extends Component {
       });
   }
 
-  codePushInstallUpdate(
+  codePushInstallUpdate = (
     codePushLocalPackage = this.state.codePushLocalPackage,
-  ) {
+  ) => {
     codePushLocalPackage
       .install(codePush.InstallMode.IMMEDIATE)
       .then(() => {
@@ -580,8 +512,8 @@ class App extends Component {
       .catch((err) => {
         console.log('%cinstall_update_codepush', 'color:red', err);
         Alert.alert(
-          'Lỗi cập nhật',
-          'Cài đặt cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          this.props.t('codePush.alert.failTitle'),
+          this.props.t('codePush.alert.failDescription'),
           [
             {
               text: 'OK',
@@ -590,9 +522,9 @@ class App extends Component {
           ],
         );
       });
-  }
+  };
 
-  handleCodePushProgressComplete() {
+  handleCodePushProgressComplete = () => {
     let intervalCheckingLocalPackage = null;
     intervalCheckingLocalPackage = setInterval(() => {
       if (this.state.codePushLocalPackage) {
@@ -602,15 +534,15 @@ class App extends Component {
         });
       }
     }, 500);
-  }
+  };
 
-  closeCodePushModal(callBack = () => {}) {
+  closeCodePushModal = (callBack = () => {}) => {
     this.setState({isOpenCodePushModal: false}, () => callBack());
-  }
+  };
 
-  setHeader(header) {
+  setHeader = (header) => {
     this.setState({header});
-  }
+  };
 
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
@@ -647,32 +579,27 @@ class App extends Component {
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
-          setHeader={this.setHeader.bind(this)}
+          setHeader={this.setHeader}
         />
         <Drawer />
         <FlashMessage icon={'auto'} />
-        {this.state.isOpenCodePushModal && (
-          <AwesomeAlert
-            useNativeDriver
-            show={this.state.isOpenCodePushModal}
-            closeOnTouchOutside={false}
-            closeOnHardwareBackPress={false}
-            showCancelButton={false}
-            showConfirmButton={false}
-            customView={
-              <AppCodePush
-                title={this.state.titleUpdateCodePushModal}
-                description={this.state.descriptionUpdateCodePushModal}
-                btnTitle="Cập nhật ngay"
-                showConfirmBtn={false}
-                progress={this.state.codePushUpdateProgress}
-                onProgressComplete={this.handleCodePushProgressComplete.bind(
-                  this,
-                )}
-              />
-            }
-          />
-        )}
+        <AwesomeAlert
+          useNativeDriver
+          show={this.state.isOpenCodePushModal}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={false}
+          customView={
+            <AppCodePush
+              title={this.state.titleUpdateCodePushModal}
+              description={this.state.descriptionUpdateCodePushModal}
+              progress={this.state.codePushUpdateProgress}
+              onProgressComplete={this.handleCodePushProgressComplete}
+              onPressConfirm={() => this.closeCodePushModal()}
+            />
+          }
+        />
       </View>
     );
   }
