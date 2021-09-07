@@ -481,10 +481,13 @@ class App extends Component {
             codePushLocalPackage: localPackage,
           },
           () => {
-            // this.codePushInstallUpdate(localPackage);
+            setTimeout(() => {
+              if (this.state.codePushLocalPackage) {
+                this.codePushInstallUpdate();
+              }
+            }, 5000);
           },
         );
-        // setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
       })
       .catch((err) => {
         console.log('%cdownload_update_codepush', 'color:red', err);
@@ -504,6 +507,8 @@ class App extends Component {
   codePushInstallUpdate = (
     codePushLocalPackage = this.state.codePushLocalPackage,
   ) => {
+    if (!codePushLocalPackage) return;
+
     codePushLocalPackage
       .install(codePush.InstallMode.IMMEDIATE)
       .then(() => {
