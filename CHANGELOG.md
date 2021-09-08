@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-e5mme0] discount_content in Payment/CartItem by [minhnguyenit14@gmail.com].
 - [CU-860k7x] Module social in Item by [minhnguyenit14@gmail.com].
 - [CU-e00p0r] API edit_user_note by [nguyenanhtuan191298@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com].
 ### Changed
 - [CU-fdnkbx] UI, flow of wallet by [minhnguyenit14@gmail.com].
 

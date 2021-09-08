@@ -1,4 +1,7 @@
 {
   "name": "Tên (Sdt) ",
-  "total_revenue": "Tổng doanh số"
+  "total_revenue": "Tổng doanh số",
+  "personal_orders": "Đơn cá nhân",
+  "total_invitation_orders": "Đơn giới thiệu",
+  "new_invitation_members": "Thành viên mới"
 }

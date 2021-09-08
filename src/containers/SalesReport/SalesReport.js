@@ -1,6 +1,6 @@
 import Store from 'app-store';
 import React, {memo, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native';
 import {Table, TableWrapper, Row} from 'react-native-table-component';
 import APIHandler from 'src/network/APIHandler';
 import {APIRequest} from 'src/network/Entity';
@@ -23,11 +23,16 @@ function SalesReport() {
   const [selectedMonth, setSelectedMonth] = useState();
   const [dataReport, setDataReport] = useState({});
   const [stats, setStats] = useState({});
-
+  const [reportRevenue, setReportRevenue] = useState({});
   const {t} = useTranslation('salesReport');
 
   const tableHead = [t('name'), t('total_revenue')];
 
+  const tableInvitationReport = [
+    'personal_orders',
+    'total_invitation_orders',
+    'new_invitation_members',
+  ];
   const getInvitedRevenueRequest = new APIRequest();
   const requests = [getInvitedRevenueRequest];
 
@@ -50,6 +55,7 @@ function SalesReport() {
             setStats(response.data.stats);
             setSelectedMonth(response?.data.month || []);
             setDataReport(formatInviter(response.data.revenue_inviter_users));
+            setReportRevenue(response.data.report_revenue_in_months || {});
           }
         } else {
           flashShowMessage({
@@ -101,6 +107,25 @@ function SalesReport() {
     });
   };
 
+  const renderColumnInvitation = ({item, index}) => {
+    return (
+      <View style={[styles.itemInvitation]}>
+        <Container flex center style={styles.invitationHeaderContainer}>
+          <Text style={styles.heading}>
+            {/* {index === 0 ? stats['total_revenue_title'] : t(item)} */}
+            {t(item)}
+          </Text>
+
+          {index > 0 && <View style={[styles.invitationSeparator]} />}
+        </Container>
+        <Container style={[styles.revenueValueContainer]}>
+          <Text style={styles.valueText} numberOfLines={2}>
+            {reportRevenue[t(item)]}
+          </Text>
+        </Container>
+      </View>
+    );
+  };
   useEffect(() => {
     getInvitedRevenue();
 
@@ -129,6 +154,23 @@ function SalesReport() {
           </Container>
         </Container>
       </Container>
+      {!isEmpty(reportRevenue) && (
+        <View>
+          <FlatList
+            contentContainerStyle={
+              styles.invitationRevenueReportContentContainer
+            }
+            data={tableInvitationReport}
+            keyExtractor={(i) => i}
+            renderItem={renderColumnInvitation}
+            numColumns={3}
+            scrollEnabled={false}
+          />
+          <Text style={styles.nextRevenueTitle}>
+            {/* {monthBonus.next_total_revenue_title} */}
+          </Text>
+        </View>
+      )}
 
       <ScrollView horizontal>
         <View>
@@ -241,6 +283,52 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
   },
 
+  invitationRevenueReportContentContainer: {
+    backgroundColor: '#fff',
+  },
+  itemInvitation: {
+    flex: 1,
+    justifyContent: 'center',
+    borderColor: '#888',
+  },
+  invitationHeaderContainer: {
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+  },
+  heading: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#333',
+    textTransform: 'uppercase',
+  },
+  invitationSeparator: {
+    position: 'absolute',
+    transform: [{rotate: '180deg'}],
+    bottom: -7,
+    left: -5,
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderBottomWidth: 7,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#f5f5f5',
+  },
+  revenueValueContainer: {
+    justifyContent: 'flex-end',
+    paddingHorizontal: 5,
+    paddingVertical: 15,
+  },
+  valueText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+  },
   tableHeadingText: {
     textAlign: 'center',
     color: '#fff',
