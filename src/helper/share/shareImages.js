@@ -24,6 +24,7 @@ export const shareImages = async (
     callbackSuccess();
 
     const extraOptions = {
+      ...(urls?.length > 1 ? {urls} : urls?.length === 1 ? {url: urls[0]} : {}),
       activityItemSources: [
         {
           // For using custom icon instead of default text icon at share preview when sharing with message.
@@ -47,11 +48,11 @@ export const shareImages = async (
 
     let result = await Share.open({
       title: title,
-      urls: urls || [],
       message: message,
       failOnCancel: false,
       ...extraOptions,
     });
+
     if (!!result && result.success) {
       console.log('share_successfully', result.message);
       //share successfully

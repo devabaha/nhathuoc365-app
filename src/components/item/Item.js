@@ -451,8 +451,8 @@ class Item extends Component {
       } else {
         this.handleCompletingPreparingPostForSaleData();
       }
-    } else if (!!product?.images?.length) {
-      this.handleSharingImages(product.images, product?.name, product?.url);
+    } else if (!!product?.img?.length) {
+      this.handleSharingImages(product.img, product?.name, product?.url);
     } else {
       this.handleCompletingPreparingPostForSaleData();
     }
@@ -918,7 +918,6 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
-        
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
@@ -1001,7 +1000,7 @@ class Item extends Component {
                     )}
                   </Text>
                 </Container>
-                
+
                 {isConfigActive(CONFIG_KEY.ENABLE_POST_FOR_SALE_KEY) &&
                   this.renderPostForSaleBtn(item)}
               </View>
@@ -1079,12 +1078,53 @@ class Item extends Component {
               </View>
             </View>
 
-            {item != null && (
+            {item != null && !this.state.loading && (
               <View style={[styles.block, styles.item_content_box]}>
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
               </View>
+            )}
+
+            {!!item.object && (
+              <ActionContainer
+                style={styles.actionContainer}
+                isLiked={getSocialLikeFlag(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                likeCount={getSocialLikeCount(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                commentsCount={getSocialCommentsCount(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                commentTitle={this.props.t('common:review')}
+                totalCommentsTitle={this.props.t('common:reviews')}
+                disableShare
+                // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+                onActionBarPress={(type) =>
+                  handleSocialActionBarPress(
+                    SOCIAL_DATA_TYPES.PRODUCT,
+                    type,
+                    productWithSocialDataFormat,
+                    true,
+                    extraSocialProps,
+                  )
+                }
+                hasInfoExtraBottom={false}
+                onPressTotalComments={() =>
+                  handleSocialActionBarPress(
+                    SOCIAL_DATA_TYPES.PRODUCT,
+                    SOCIAL_BUTTON_TYPES.COMMENT,
+                    productWithSocialDataFormat,
+                    false,
+                    extraSocialProps,
+                  )
+                }
+              />
             )}
 
             {!!item?.content && (
@@ -1145,48 +1185,7 @@ class Item extends Component {
           </Animated.ScrollView>
         </View>
 
-        {/* {this.renderCartFooter(item)} */}
-
-        {!!item.object && (
-          <ActionContainer
-            style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            likeCount={getSocialLikeCount(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            commentsCount={getSocialCommentsCount(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            commentTitle={this.props.t('common:review')}
-            totalCommentsTitle={this.props.t('common:reviews')}
-            disableShare
-            // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            onActionBarPress={(type) =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.PRODUCT,
-                type,
-                productWithSocialDataFormat,
-                true,
-                extraSocialProps,
-              )
-            }
-            hasInfoExtraBottom={false}
-            onPressTotalComments={() =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.PRODUCT,
-                SOCIAL_BUTTON_TYPES.COMMENT,
-                productWithSocialDataFormat,
-                false,
-                extraSocialProps,
-              )
-            }
-          />
-        )}
+        {this.renderCartFooter(item)}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1526,7 +1525,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
     paddingBottom: appConfig.device.bottomSpace,
-    ...elevationShadowStyle(7),
+    // ...elevationShadowStyle(7),
   },
 });
 
