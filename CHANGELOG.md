@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-e00p0r] API edit_user_note by [nguyenanhtuan191298@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-fdnkbx] UI, flow of wallet by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] Share 1 image crash by [minhnguyenit14@gmail.com].
 
 ## [r12.1.2] - 2021-09-03
 ### Added
