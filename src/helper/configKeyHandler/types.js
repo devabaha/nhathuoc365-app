@@ -34,4 +34,6 @@ export const CONFIG_KEY = {
   VIEW_COMMISSIONS_AT_HOMEPAGE: 'view_commissions_at_homepage',
 
   ENABLE_POST_FOR_SALE_KEY: 'enable_post_for_sale_key',
+
+  HIDE_PREMIUM_POINT_KEY: 'hide_premium_point_key',
 };
