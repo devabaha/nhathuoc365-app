@@ -58,9 +58,10 @@ import vi_salesReport from './vi/salesReport.json';
 import en_salesReport from './en/salesReport.json';
 import vi_progressTracking from './vi/progressTracking.json';
 import en_progressTracking from './en/progressTracking.json';
-
 import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
+import vi_request from './vi/request.json';
+import en_request from './en/request.json';
 
 export default {
   [languages.vi.value]: {
@@ -94,6 +95,7 @@ export default {
     social: vi_social,
     salesReport: vi_salesReport,
     progressTracking: vi_progressTracking,
+    request: vi_request,
   },
   [languages.en.value]: {
     common: en_common,
@@ -126,5 +128,6 @@ export default {
     social: en_social,
     salesReport: en_salesReport,
     progressTracking: en_progressTracking,
+    request: en_request,
   },
 };

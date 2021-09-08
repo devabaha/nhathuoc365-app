@@ -7,6 +7,9 @@
       "title": "Send Email",
       "message": "Invitation to join program {{appName}} Affiliate"
     },
+    "share": {
+      "title": "Share"
+    },
     "referralCode": {
       "title": "Referral code"
     }

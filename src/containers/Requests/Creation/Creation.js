@@ -39,16 +39,19 @@ const FORM_DATA = {
     label: 'Tiêu đề *',
     name: 'title',
     type: 'name',
+    required: true,
   },
   REQUEST_TYPE: {
     label: 'Loại phản ánh *',
     name: 'code_type',
     type: 'name',
+    required: true,
   },
   CONTENT: {
     label: 'Nội dung *',
     name: 'content',
     type: 'name',
+    required: true,
   },
   IMAGES: {
     label: 'Hình ảnh',
@@ -65,25 +68,68 @@ const validationSchema = Yup.object().shape({
 });
 
 class Creation extends Component {
+  static defaultProps = {
+    request: {},
+    onRefresh: () => {}
+  };
+
   state = {
     loading: true,
     requestTypes: [],
     selectedRequestType: {
-      value: '',
+      value: this.props.request?.id
+        ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+        : '',
     },
     formData: FORM_DATA,
     uploadImageLoading: false,
-    images: [],
+    images: this.initImages,
   };
   unmounted = false;
   refForm = React.createRef();
   takePicture = this.takePicture.bind(this);
 
+  get initImages() {
+    const images = this.props.request?.id
+      ? this.props.request[FORM_DATA.IMAGES.name]?.length
+        ? this.props.request[FORM_DATA.IMAGES.name].map((image) => ({
+            ...image,
+            url: image.url_image,
+          }))
+        : []
+      : [];
+    return images;
+  }
+
   get initialValues() {
     const values = {};
 
     Object.values(this.state.formData).forEach((value) => {
-      let itemValue = value.name === FORM_DATA.IMAGES.name ? [] : '';
+      let itemValue = '';
+      switch (value.name) {
+        case FORM_DATA.TITLE.name:
+          itemValue = this.props.request?.id
+            ? this.props.request[FORM_DATA.TITLE.name] || ''
+            : '';
+          break;
+        case FORM_DATA.REQUEST_TYPE.name:
+          itemValue = this.props.request?.id
+            ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+            : '';
+          break;
+        case FORM_DATA.CONTENT.name:
+          itemValue = this.props.request?.id
+            ? this.props.request[FORM_DATA.CONTENT.name] || ''
+            : '';
+          break;
+        case FORM_DATA.IMAGES.name:
+          itemValue = this.props.request?.id
+            ? this.props.request[FORM_DATA.IMAGES.name].map(
+                (image) => image.name,
+              ) || ''
+            : '';
+          break;
+      }
       values[value.name] = itemValue;
     });
     return values;
@@ -91,6 +137,14 @@ class Creation extends Component {
 
   componentDidMount() {
     this.getRequestTypes();
+
+    if (!this.props.title) {
+      setTimeout(() => {
+        Actions.refresh({
+          title: this.props.t('screen.requests.creationTitle'),
+        });
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -225,15 +279,23 @@ class Creation extends Component {
   onSubmit = async (data) => {
     this.setState({loading: true});
     const {t} = this.props;
-    console.log(data);
+    const apiHandler = this.props.request?.id
+      ? APIHandler.site_update_request(
+          this.props.siteId,
+          this.props.request.id,
+          data,
+        )
+      : APIHandler.site_request_room(
+          this.props.siteId,
+          this.props.roomId,
+          data,
+        );
     try {
-      const response = await APIHandler.site_request_room(
-        this.props.siteId,
-        this.props.roomId,
-        data,
-      );
+      const response = await apiHandler;
+
       if (this.unmounted) return;
       if (response?.status === STATUS_SUCCESS) {
+        this.props.onRefresh();
         Actions.pop();
         flashShowMessage({
           type: 'success',
@@ -261,9 +323,13 @@ class Creation extends Component {
     const imgIndex = images.findIndex((img) => img?.name === image?.name);
     if (imgIndex !== -1) {
       images.splice(imgIndex, 1);
-    }
 
-    this.setState({images});
+      this.handleSetValueFormData(
+        FORM_DATA.IMAGES.name,
+        images.map((image) => image.name),
+      );
+      this.setState({images});
+    }
   };
 
   handleChangeFormData(value, type) {
@@ -314,6 +380,12 @@ class Creation extends Component {
     });
   };
 
+  isEmptyRequiredData(formValues) {
+    return Object.values(this.state.formData)
+      .filter((data) => data.required)
+      .some((data) => !formValues[data.name]);
+  }
+
   onInputFocus = (type) => {
     switch (type) {
       case FORM_DATA.REQUEST_TYPE.name:
@@ -330,6 +402,7 @@ class Creation extends Component {
         case FORM_DATA.REQUEST_TYPE.name:
           return (
             <MyInputTouchable
+              key={index}
               label={label}
               name={name}
               type={type}
@@ -341,6 +414,7 @@ class Creation extends Component {
         case FORM_DATA.IMAGES.name:
           return (
             <Images
+              key={index}
               images={this.state.images}
               onOpenImageSelector={() =>
                 this.takePicture(FORM_DATA.IMAGES.name, values)
@@ -380,7 +454,9 @@ class Creation extends Component {
             validationSchema={validationSchema}
             innerRef={this.refForm}>
             {(props) => {
-              const disabled = !(props.isValid && props.dirty);
+              console.log(props.values)
+              const disabled =
+                this.isEmptyRequiredData(props.values) || !props.isValid || !props.dirty;
               return (
                 <>
                   <ScrollView
@@ -392,7 +468,9 @@ class Creation extends Component {
                   </ScrollView>
 
                   <Button
-                    title="Tạo phản ánh"
+                    title={
+                      this.props.request?.id ? 'Sửa yêu cầu' : 'Tạo yêu cầu'
+                    }
                     onPress={props.handleSubmit}
                     disabled={disabled}
                     btnContainerStyle={disabled && styles.btnDisabled}
@@ -465,7 +543,6 @@ export default withTranslation()(Creation);
 
 const MyInputTouchable = ({
   onPress,
-  key,
   label,
   name,
   type,

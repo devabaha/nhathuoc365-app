@@ -925,7 +925,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requestCreation}_1`}
                     component={RequestCreation}
-                    title={t('screen.requests.creationTitle')}
                     {...navBarConfig}
                     back
                   />

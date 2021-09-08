@@ -13,6 +13,7 @@ const Header = ({ title, subTitle, type }) => {
           contentStyle={styles.badgeContent}
           tailSpace={4}
           label={type}
+          backgroundColor={appConfig.colors.primary}
         />
       )}
       <Text style={styles.title}>{title}</Text>
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: -2
+    top: -2,
   },
   badgeContent: {
     fontSize: 12
