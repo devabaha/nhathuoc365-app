@@ -242,7 +242,7 @@
   "edit": "Edit",
   "copy": "Copy",
   "cancel": "Cancel",
-  "delete": "Xoá",
+  "delete": "Delete",
   "addImages": "Add Images",
   "addImagesDescription": "Tap to select images",
   "saved": "Saved",
@@ -255,5 +255,7 @@
   "loading": "Retrieving data...",
   "rate": "Rate",
   "review": "Review",
-  "reviews": "Reviews"
+  "reviews": "Reviews",
+  "showMore": "Show more",
+  "showLess": "Show less"
 }

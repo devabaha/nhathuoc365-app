@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [CU-fdnkbx] UI, flow of wallet by [minhnguyenit14@gmail.com].
 - [CU-f824fk] Request UI, flow by [minhnguyenit14@gmail.com].
+- [CU-ar3747] Use product_groups instead of related in Item by [minhnguyenit14@gmail.com].
 ### Fixed
 - [Android] Share 1 image crash by [minhnguyenit14@gmail.com].
 

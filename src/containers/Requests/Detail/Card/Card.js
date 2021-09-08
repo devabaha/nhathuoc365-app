@@ -163,8 +163,8 @@ class Card extends Component {
     } = this.props.request;
 
     const toggleValue = this.state.isExpanded
-      ? COLLAPSE_MESSAGE
-      : EXTEND_MESSAGE;
+      ? this.props.t('showLess')
+      : this.props.t('showMore');
 
     const showUpStyle = {
       position: this.state.heightCollapsable ? 'relative' : 'absolute',
