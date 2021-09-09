@@ -14,8 +14,8 @@ import NoResult from 'src/components/NoResult';
 import {isEmpty} from 'lodash';
 import {Actions} from 'react-native-router-flux';
 
-const baseUnit = appConfig.device.width / 2;
-const widthArr = [baseUnit, baseUnit];
+const baseUnit = 170;
+const widthArr = [baseUnit, baseUnit, baseUnit];
 
 function SalesReport() {
   const [loading, setLoading] = useState(true);
@@ -26,13 +26,15 @@ function SalesReport() {
   const [reportRevenue, setReportRevenue] = useState({});
   const {t} = useTranslation('salesReport');
 
-  const tableHead = [t('name'), t('total_revenue')];
+  const tableHead = [t('name'), t('member_orders_count'), t('total_revenue')];
 
-  const tableInvitationReport = [
+  const tableReferralReport = [
     'personal_orders',
-    'total_invitation_orders',
-    'new_invitation_members',
+    'total_referral_orders',
+    'new_referral_members',
   ];
+  const reportTitle = 'Doanh số giới thiệu';
+  
   const getInvitedRevenueRequest = new APIRequest();
   const requests = [getInvitedRevenueRequest];
 
@@ -89,7 +91,11 @@ function SalesReport() {
 
   const formatInviter = (datas) => {
     if (isEmpty(datas)) return [];
-    return datas.map((item) => [[`${item.name} - ${item.tel}`], [item.total]]);
+    return datas.map((item) =>
+      !!item.name
+        ? [[`${item.name} - ${item.tel}`], [item.count], [item.total]]
+        : [[item.tel], [item.count], [item.total]],
+    );
   };
 
   const handleSelectMonth = (month) => {
@@ -107,16 +113,16 @@ function SalesReport() {
     });
   };
 
-  const renderColumnInvitation = ({item, index}) => {
+  const renderColumnReferral = ({item, index}) => {
     return (
-      <View style={[styles.itemInvitation]}>
-        <Container flex center style={styles.invitationHeaderContainer}>
+      <View style={[styles.itemReferral]}>
+        <Container flex center style={styles.referralHeaderContainer}>
           <Text style={styles.heading}>
             {/* {index === 0 ? stats['total_revenue_title'] : t(item)} */}
             {t(item)}
           </Text>
 
-          {index > 0 && <View style={[styles.invitationSeparator]} />}
+          {index > 0 && <View style={[styles.referralSeparator]} />}
         </Container>
         <Container style={[styles.revenueValueContainer]}>
           <Text style={styles.valueText} numberOfLines={2}>
@@ -158,19 +164,18 @@ function SalesReport() {
         <View>
           <FlatList
             contentContainerStyle={
-              styles.invitationRevenueReportContentContainer
+              styles.referralRevenueReportContentContainer
             }
-            data={tableInvitationReport}
+            data={tableReferralReport}
             keyExtractor={(i) => i}
-            renderItem={renderColumnInvitation}
+            renderItem={renderColumnReferral}
             numColumns={3}
             scrollEnabled={false}
           />
-          <Text style={styles.nextRevenueTitle}>
-            {/* {monthBonus.next_total_revenue_title} */}
-          </Text>
         </View>
       )}
+
+      <Text style={styles.reportTitle}>{reportTitle}</Text>
 
       <ScrollView horizontal>
         <View>
@@ -283,15 +288,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
   },
 
-  invitationRevenueReportContentContainer: {
+  referralRevenueReportContentContainer: {
     backgroundColor: '#fff',
   },
-  itemInvitation: {
+  itemReferral: {
     flex: 1,
     justifyContent: 'center',
     borderColor: '#888',
   },
-  invitationHeaderContainer: {
+  referralHeaderContainer: {
     backgroundColor: '#f5f5f5',
     paddingHorizontal: 5,
     paddingVertical: 10,
@@ -302,7 +307,7 @@ const styles = StyleSheet.create({
     color: '#333',
     textTransform: 'uppercase',
   },
-  invitationSeparator: {
+  referralSeparator: {
     position: 'absolute',
     transform: [{rotate: '180deg'}],
     bottom: -7,
@@ -328,6 +333,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
+  },
+  reportTitle: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    fontSize: 20,
+    color: '#333',
+    fontWeight: 'bold',
   },
   tableHeadingText: {
     textAlign: 'center',
