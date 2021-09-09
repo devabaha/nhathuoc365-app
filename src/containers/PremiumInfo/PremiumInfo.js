@@ -22,7 +22,7 @@ import PremiumInfoSkeleton from './PremiumInfoSkeleton';
 import Button from 'react-native-button';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
-const isHidePointPremium = isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
+const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
 
 const premiums = [
   {
@@ -488,7 +488,7 @@ const Scene = React.memo(
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-        ListHeaderComponent={!isHidePointPremium && renderPremiumBenefitsHeader(premium)}
+        ListHeaderComponent={isShowPremiumPoint && renderPremiumBenefitsHeader(premium)}
         ListFooterComponent={
           <TouchableOpacity onPress={goToNews}>
             <Container row padding={15} style={styles.loyaltyContainer}>

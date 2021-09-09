@@ -38,7 +38,7 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
-const isHidePointPremium = isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY);
+const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY);
 
 class Account extends Component {
   constructor(props) {
@@ -119,7 +119,7 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        desc: !isHidePointPremium && premium_info,
+        desc: isShowPremiumPoint && premium_info,
         descStyle: {
           color: '#ccc',
         },
@@ -1013,7 +1013,7 @@ class Account extends Component {
     
     return (
       <View style={styles.rightPremiumContainer}>
-        {isShowPoint && !isHidePointPremium && (
+        {isShowPoint && isShowPremiumPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}
