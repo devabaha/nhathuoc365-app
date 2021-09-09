@@ -88,6 +88,7 @@ class Account extends Component {
     } = user_info;
     const isShowPremium =
       premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
+    const fb_domain = 'https://facebook.com/';
     const open_fb_page = store.open_fb_page;
 
     return [
@@ -503,7 +504,7 @@ class Account extends Component {
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => open_fb_page ? 
-        Communications.web('https://facebook.com/'+ open_fb_page) : {},
+        Communications.web(fb_domain + open_fb_page) : {},
         boxIconStyle: [
           styles.boxIconStyle,
           {
