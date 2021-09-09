@@ -221,7 +221,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.LIST_CHAT:
-      Actions.list_amazing_chat({
+      Actions.push(appConfig.routes.listChat, {
         titleStyle: {width: 220},
       });
       break;
@@ -481,7 +481,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
             )
           : store.user_info?.default_wallet
         : store.user_info?.default_wallet;
-console.log(wallet, service)
+      console.log(wallet, service);
       Actions.push(appConfig.routes.vndWallet, {
         title: service.name || wallet?.name,
         wallet,

@@ -365,6 +365,7 @@ class Config {
 
       personalProfile: 'personalProfile',
       editPersonalProfile: 'editPersonalProfile',
+      listChat: 'listChat',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
 

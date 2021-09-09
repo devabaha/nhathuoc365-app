@@ -1772,10 +1772,10 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="list_amazing_chat">
+                <Stack key={appConfig.routes.listChat}>
                   <Scene
                     hideNavBar={false}
-                    key="list_amazing_chat_1"
+                    key={`${appConfig.routes.listChat}_1`}
                     title="Danh sách Chat"
                     component={ListChat}
                     navBar={ListChatNavBar}
