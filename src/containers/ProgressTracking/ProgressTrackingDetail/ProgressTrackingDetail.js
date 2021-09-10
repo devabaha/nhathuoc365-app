@@ -241,7 +241,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
         }}
       />
 
-      {!!progressTrackingDetail?.object_id && (
+      {!!progressTrackingDetail?.room_id && (
         <CustomButton
           title={t('screen.requests.mainTitle')}
           onPress={goToRequests}
