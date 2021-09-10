@@ -22,8 +22,6 @@ import PremiumInfoSkeleton from './PremiumInfoSkeleton';
 import Button from 'react-native-button';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
-const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
-
 const premiums = [
   {
     id: 1,
@@ -450,6 +448,7 @@ const areEquals = (prevProps, nextProps) => {
 const Scene = React.memo(
   ({benefits, currentPremium, premium, handleRefresh, refreshing}) => {
     const userInfo = store.user_info || {};
+    const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
 
     const goToNews = () => {
       Actions.push(appConfig.routes.notifyDetail, {
