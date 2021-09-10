@@ -53,11 +53,14 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
+import ListProducts from '../Home/component/ListProducts';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ITEM_KEY = 'ItemKey';
-const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
-const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
-const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const WEBVIEW_HEIGHT_COLLAPSED = 300;
+const MIN_WEBVIEW_HEIGHT_TO_COLLAPSE = WEBVIEW_HEIGHT_COLLAPSED * 1.5;
+const WEBVIEW_COLLAPSED_MASK_HEIGHT = WEBVIEW_HEIGHT_COLLAPSED / 4;
 
 class Item extends Component {
   static defaultProps = {
@@ -81,6 +84,9 @@ class Item extends Component {
       preparePostForSaleDataLoading: false,
       like_flag: 0,
       scrollY: 0,
+
+      webviewContentHeight: undefined,
+      isWebviewContentCollapsed: undefined,
     };
 
     this.animatedScrollY = new Animated.Value(0);
@@ -97,7 +103,7 @@ class Item extends Component {
   }
 
   get product() {
-    return this.state.item_data || this.state.item;
+    return this.state.item_data || this.state.item || {};
   }
 
   get subActionColor() {
@@ -121,6 +127,10 @@ class Item extends Component {
 
   get isDisabledBuyingProduct() {
     return isOutOfStock(this.product);
+  }
+
+  get hasProductGroups() {
+    return this.product?.product_groups?.length;
   }
 
   isServiceProduct(product = {}) {
@@ -451,8 +461,8 @@ class Item extends Component {
       } else {
         this.handleCompletingPreparingPostForSaleData();
       }
-    } else if (!!product?.images?.length) {
-      this.handleSharingImages(product.images, product?.name, product?.url);
+    } else if (!!product?.img?.length) {
+      this.handleSharingImages(product.img, product?.name, product?.url);
     } else {
       this.handleCompletingPreparingPostForSaleData();
     }
@@ -649,6 +659,38 @@ class Item extends Component {
         });
     }
   }
+
+  handlePressProduct = (product) => {
+    Actions.push(appConfig.routes.item, {
+      title: product.name,
+      item: product,
+    });
+  };
+
+  handleShowAllGroupProduct = (group) => {
+    const service = {
+      type: SERVICES_TYPE.GROUP_PRODUCT,
+      title: group.title,
+      groupId: group.id,
+    };
+    servicesHandler(service);
+  };
+
+  handleWebviewContentLayout = (e) => {
+    if (!this.state.webviewContentHeight) {
+      this.setState({
+        webviewContentHeight: e.height,
+        isWebviewContentCollapsed:
+          e.height >= MIN_WEBVIEW_HEIGHT_TO_COLLAPSE ? true : undefined,
+      });
+    }
+  };
+
+  toggleCollapseWebviewContent = () => {
+    this.setState((prevState) => ({
+      isWebviewContentCollapsed: !prevState.isWebviewContentCollapsed,
+    }));
+  };
 
   renderPagination = (index, total, context, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
@@ -896,6 +938,28 @@ class Item extends Component {
     );
   };
 
+  renderWebviewContentCollapseBtn = () => {
+    return (
+      this.state.isWebviewContentCollapsed !== undefined && (
+        <TouchableOpacity onPress={this.toggleCollapseWebviewContent}>
+          <Container row center padding={15}>
+            <Text style={styles.webviewContentShowMoreTitle}>
+              {this.state.isWebviewContentCollapsed
+                ? this.props.t('common:showMore')
+                : this.props.t('common:showLess')}
+            </Text>
+            <Icon
+              name={
+                this.state.isWebviewContentCollapsed ? 'angle-down' : 'angle-up'
+              }
+              style={styles.webviewContentShowMoreIcon}
+            />
+          </Container>
+        </TouchableOpacity>
+      )
+    );
+  };
+
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
@@ -918,7 +982,6 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
-        
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
@@ -1001,7 +1064,7 @@ class Item extends Component {
                     )}
                   </Text>
                 </Container>
-                
+
                 {isConfigActive(CONFIG_KEY.ENABLE_POST_FOR_SALE_KEY) &&
                   this.renderPostForSaleBtn(item)}
               </View>
@@ -1079,7 +1142,7 @@ class Item extends Component {
               </View>
             </View>
 
-            {item != null && (
+            {item != null && !this.state.loading && (
               <View style={[styles.block, styles.item_content_box]}>
                 {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
@@ -1087,26 +1150,98 @@ class Item extends Component {
               </View>
             )}
 
-            {!!item?.content && (
-              <CustomAutoHeightWebview
-                ref={(inst) => (this.refWebview.current = inst)}
-                containerStyle={[styles.block, styles.item_content_text]}
-                content={item.content}
-                onGetInnerText={(innerText) =>
-                  this.handleGetInnerTextWebview(innerText, item)
+            {!!item.object && (
+              <ActionContainer
+                style={styles.actionContainer}
+                isLiked={getSocialLikeFlag(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                likeCount={getSocialLikeCount(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                commentsCount={getSocialCommentsCount(
+                  SOCIAL_DATA_TYPES.PRODUCT,
+                  productWithSocialDataFormat,
+                )}
+                commentTitle={this.props.t('common:review')}
+                totalCommentsTitle={this.props.t('common:reviews')}
+                disableShare
+                // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+                onActionBarPress={(type) =>
+                  handleSocialActionBarPress(
+                    SOCIAL_DATA_TYPES.PRODUCT,
+                    type,
+                    productWithSocialDataFormat,
+                    true,
+                    extraSocialProps,
+                  )
+                }
+                hasInfoExtraBottom={false}
+                onPressTotalComments={() =>
+                  handleSocialActionBarPress(
+                    SOCIAL_DATA_TYPES.PRODUCT,
+                    SOCIAL_BUTTON_TYPES.COMMENT,
+                    productWithSocialDataFormat,
+                    false,
+                    extraSocialProps,
+                  )
                 }
               />
             )}
 
+            {!!item?.content && (
+              <>
+                <View style={[styles.block, styles.item_content_text]}>
+                  <CustomAutoHeightWebview
+                    ref={(inst) => (this.refWebview.current = inst)}
+                    onSizeUpdated={this.handleWebviewContentLayout}
+                    containerStyle={
+                      this.state.isWebviewContentCollapsed !== undefined &&
+                      !!this.state.isWebviewContentCollapsed &&
+                      styles.webviewCollapsedContainer
+                    }
+                    content={item.content}
+                    onGetInnerText={(innerText) =>
+                      this.handleGetInnerTextWebview(innerText, item)
+                    }
+                  />
+                  {!!this.state.isWebviewContentCollapsed && (
+                    <LinearGradient
+                      style={styles.webviewCollapsedMask}
+                      colors={['rgba(255,255,255,.3)', 'rgba(255,255,255,1)']}
+                      locations={[0.2, 0.8]}
+                    />
+                  )}
+                </View>
+                {this.renderWebviewContentCollapseBtn()}
+              </>
+            )}
+
             <View style={styles.extraInfo}>
-              {!!item.related &&
-                item.related !== null &&
-                !isEmpty(item.related) && (
-                  <View style={[styles.newsWrapper]}>
-                    <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
-                    <ListStoreProduct products={item.related} />
-                  </View>
-                )}
+              {this.hasProductGroups ? (
+                this.product.product_groups.map((productGroup, index) => {
+                  let {id, products, title, display_type} = productGroup;
+                  return (
+                    <ListProducts
+                      containerStyle={{
+                        marginHorizontal: -15,
+                      }}
+                      key={id}
+                      type={display_type}
+                      data={products}
+                      title={title}
+                      onPressProduct={this.handlePressProduct}
+                      onShowAll={() =>
+                        this.handleShowAllGroupProduct(productGroup)
+                      }
+                    />
+                  );
+                })
+              ) : this.props.apiFetching ? (
+                <ListProductSkeleton />
+              ) : null}
               {item.news_linking !== null &&
                 !isEmpty(item.news_linking) &&
                 typeof item.news_linking === 'object' && (
@@ -1145,48 +1280,7 @@ class Item extends Component {
           </Animated.ScrollView>
         </View>
 
-        {/* {this.renderCartFooter(item)} */}
-
-        {!!item.object && (
-          <ActionContainer
-            style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            likeCount={getSocialLikeCount(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            commentsCount={getSocialCommentsCount(
-              SOCIAL_DATA_TYPES.PRODUCT,
-              productWithSocialDataFormat,
-            )}
-            commentTitle={this.props.t('common:review')}
-            totalCommentsTitle={this.props.t('common:reviews')}
-            disableShare
-            // disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            onActionBarPress={(type) =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.PRODUCT,
-                type,
-                productWithSocialDataFormat,
-                true,
-                extraSocialProps,
-              )
-            }
-            hasInfoExtraBottom={false}
-            onPressTotalComments={() =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.PRODUCT,
-                SOCIAL_BUTTON_TYPES.COMMENT,
-                productWithSocialDataFormat,
-                false,
-                extraSocialProps,
-              )
-            }
-          />
-        )}
+        {this.renderCartFooter(item)}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1526,7 +1620,27 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
     borderBottomWidth: 1,
     paddingBottom: appConfig.device.bottomSpace,
-    ...elevationShadowStyle(7),
+    // ...elevationShadowStyle(7),
+  },
+  
+  webviewCollapsedContainer: {
+    height: WEBVIEW_HEIGHT_COLLAPSED,
+    overflow: 'hidden',
+  },
+  webviewCollapsedMask: {
+    width: '100%',
+    height: WEBVIEW_COLLAPSED_MASK_HEIGHT,
+    position: 'absolute',
+    bottom: 0,
+  },
+  webviewContentShowMoreTitle: {
+    color: appConfig.colors.primary,
+    textAlign: 'center',
+  },
+  webviewContentShowMoreIcon: {
+    marginLeft: 5,
+    fontSize: 18,
+    color: appConfig.colors.primary,
   },
 });
 

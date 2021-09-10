@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
@@ -100,7 +101,8 @@ class OrdersItemComponent extends Component {
 
   goToBooking(order) {
     const product =
-      order.primary_product || (order.products && Object.values(order.products)[0]);
+      order.primary_product ||
+      (order.products && Object.values(order.products)[0]);
     if (!product) return;
 
     Actions.push(appConfig.routes.booking, {
@@ -334,11 +336,17 @@ class OrdersItemComponent extends Component {
           </View>
 
           <View style={[styles.orders_item_payment]}>
-            {item.user_note != null && (
-              <View style={styles.orders_item_row}>
+            {!!item.user_note && (
+              <View style={[styles.orders_item_row, styles.noteContainer]}>
+                <FontAwesome5Icon
+                  style={styles.orders_item_icon}
+                  name="pen-square"
+                  size={15}
+                  color="#999999"
+                />
+
                 <Text
                   style={[styles.orders_item_content_label, styles.note_label]}>
-                  {`${t('item.note')}: `}
                   <Text
                     style={[
                       styles.orders_item_content_value,
@@ -493,7 +501,12 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginLeft: 4,
   },
-  note_label: {},
+  noteContainer: {
+    marginTop: 5,
+  },
+  note_label: {
+    marginLeft: 8,
+  },
   note_value: {
     fontWeight: '300',
   },

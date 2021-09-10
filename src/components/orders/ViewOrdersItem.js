@@ -8,7 +8,6 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  Clipboard,
   Animated
 } from 'react-native';
 
@@ -16,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import EventTracker from '../../helper/EventTracker';
+import Clipboard from '@react-native-community/clipboard';
 
 class ViewOrdersItem extends Component {
   constructor(props) {

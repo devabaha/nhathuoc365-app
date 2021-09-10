@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Animated, Keyboard } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Keyboard} from 'react-native';
 
-import Reanimated, { Easing } from 'react-native-reanimated';
+import Reanimated, {Easing, Extrapolate} from 'react-native-reanimated';
 
 import appConfig from 'app-config';
 import Header from './Header';
@@ -16,10 +16,10 @@ class Card extends Component {
   state = {
     isExpanded: false,
     isKeyboardOpening: false,
-    animatedArrow: new Animated.Value(0),
+    animatedArrow: new Reanimated.Value(0),
     animatedAreaHeight: new Reanimated.Value(0),
     animatedVisible: new Reanimated.Value(0),
-    heightCollapsable: undefined
+    heightCollapsable: undefined,
   };
 
   componentDidMount() {
@@ -35,26 +35,25 @@ class Card extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.isExpanded !== this.state.isExpanded) {
       const config = {
-        damping: 15,
+        damping: 20,
         mass: 1,
-        stiffness: 150,
-        overshootClamping: true,
+        stiffness: 120,
+        // overshootClamping: true,
         restSpeedThreshold: 0.001,
         restDisplacementThreshold: 0.001,
         duration: 300,
         easing: Easing.quad,
-        useNativeDriver: true
       };
       const method = nextState.isExpanded ? 'spring' : 'timing';
 
       Reanimated[method](this.state.animatedAreaHeight, {
         toValue: nextState.isExpanded ? 1 : 0,
-        ...config
+        ...config,
       }).start();
 
-      Animated.spring(this.state.animatedArrow, {
+      Reanimated[method](this.state.animatedArrow, {
         toValue: nextState.isExpanded ? 1 : 0,
-        useNativeDriver: true
+        ...config,
       }).start();
     }
 
@@ -63,8 +62,20 @@ class Card extends Component {
     }
 
     if (
+      nextProps.forceUpdate !== this.props.forceUpdate &&
+      !!nextProps.forceUpdate
+    ) {
+      this.state.animatedVisible.setValue(0);
+      this.setState({
+        heightCollapsable: undefined,
+        // isExpanded: false,
+      });
+    }
+
+    if (
       nextProps.request !== this.props.request ||
-      nextProps.containerStyle !== this.props.containerStyle
+      nextProps.containerStyle !== this.props.containerStyle ||
+      nextProps.forceUpdate !== this.props.forceUpdate
     ) {
       return true;
     }
@@ -72,8 +83,8 @@ class Card extends Component {
     return false;
   }
 
-  handleShowKeyboard = e => {
-    const state = { ...this.state };
+  handleShowKeyboard = (e) => {
+    const state = {...this.state};
     state.isKeyboardOpening = true;
     // this.blurCard(0.5);
     if (this.state.isExpanded) {
@@ -82,9 +93,9 @@ class Card extends Component {
     this.setState(state);
   };
 
-  handleHideKeyboard = e => {
+  handleHideKeyboard = (e) => {
     if (this.state.isKeyboardOpening) {
-      this.setState({ isKeyboardOpening: false });
+      this.setState({isKeyboardOpening: false});
       // this.blurCard(1);
     }
   };
@@ -93,7 +104,7 @@ class Card extends Component {
     Reanimated.timing(this.state.animatedVisible, {
       toValue: value,
       duration: 200,
-      easing: Easing.quad
+      easing: Easing.quad,
     }).start();
   }
 
@@ -101,30 +112,30 @@ class Card extends Component {
     if (this.state.isKeyboardOpening && !this.state.isExpanded) {
       this.props.forceCloseKeyboard();
     }
-    this.setState({ isExpanded: !this.state.isExpanded });
+    this.setState({isExpanded: !this.state.isExpanded});
   };
 
-  handleLayoutAnimatedArea = e => {
+  handleLayoutAnimatedArea = (e) => {
     if (this.state.heightCollapsable === undefined) {
       this.props.onFinishLayout();
-      const { height } = e.nativeEvent.layout;
+      const {height} = e.nativeEvent.layout;
       this.setState(
         {
-          heightCollapsable: height
+          heightCollapsable: height,
         },
         () => {
           Reanimated.timing(this.state.animatedVisible, {
             toValue: 1,
             duration: 200,
             delay: 100,
-      easing: Easing.quad
+            easing: Easing.quad,
           }).start();
-        }
+        },
       );
     }
   };
 
-  handleConfirmChangeStatus = status => {
+  handleConfirmChangeStatus = (status) => {
     this.props.onUpdateStatus(status);
   };
 
@@ -145,79 +156,85 @@ class Card extends Component {
       textColor,
       user,
       room_code,
-      admin_name
+      admin_name,
+      object,
     } = this.props.request;
 
     const toggleValue = this.state.isExpanded
-      ? COLLAPSE_MESSAGE
-      : EXTEND_MESSAGE;
+      ? this.props.t('showLess')
+      : this.props.t('showMore');
 
     const showUpStyle = {
       position: this.state.heightCollapsable ? 'relative' : 'absolute',
-      opacity: this.state.animatedVisible
+      opacity: this.state.animatedVisible,
     };
     const animatedIconStyle = {
       transform: [
         {
           rotate: this.state.animatedArrow.interpolate({
             inputRange: [0, 1],
-            outputRange: ['0deg', '-180deg']
-          })
-        }
-      ]
+            outputRange: ['0deg', '-180deg'],
+          }),
+        },
+      ],
     };
 
     const animatedHeight = this.state.heightCollapsable && {
       overflow: 'hidden',
       height: this.state.animatedAreaHeight.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, this.state.heightCollapsable]
+        outputRange: [0, this.state.heightCollapsable],
+        extrapolateLeft: Extrapolate.CLAMP,
       }),
-      opacity: this.state.animatedAreaHeight
+      opacity: this.state.animatedAreaHeight,
     };
 
     const statusStyle = [
       {
         backgroundColor: bgColor,
         padding: 7,
-        color: '#fff'
+        color: '#fff',
       },
-      textColor && { color: textColor }
+      textColor && {color: textColor},
     ];
+
+    if (this.props.forceUpdate) return null;
 
     return (
       <>
         <Reanimated.View
           onLayout={this.onContainerLayout.bind(this)}
           style={[showUpStyle, this.props.containerStyle]}
-          pointerEvents="box-none"
-        >
+          pointerEvents="box-none">
           <View pointerEvents="box-none" style={[styles.container]}>
             <View
-              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
-            >
-              <Header type={request_type} title={title} subTitle={created} />
+              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
+              <Header
+                tagCode={object?.warranty_code}
+                tagName={object?.title}
+                type={request_type}
+                title={title}
+                subTitle={created}
+              />
             </View>
             <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
             <View
-              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
-            >
+              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
               <Reanimated.View
                 onLayout={this.handleLayoutAnimatedArea}
-                style={animatedHeight}
-              >
+                style={animatedHeight}>
                 <Row label="Nhân viên tiếp nhận" value={admin_name} />
                 {/* <Row label="Thời gian yêu cầu" value={created} /> */}
                 <Row
                   isColumn
                   label="Nội dung"
-                  labelStyle={{ marginBottom: 10 }}
+                  labelStyle={{marginBottom: 10}}
                   value={content}
                   valueContainerProps={{
                     bounces: false,
                     style: {
-                      height: 50
-                    }
+                      height: 50,
+                    },
                   }}
                   extraComponent={<Images images={images} />}
                   scrollable
@@ -249,12 +266,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    ...elevationShadowStyle(7)
+    ...elevationShadowStyle(7),
   },
   imagesValue: {
     alignSelf: 'center',
-    color: appConfig.colors.primary
-  }
+    color: appConfig.colors.primary,
+  },
 });
 
 export default withTranslation()(Card);

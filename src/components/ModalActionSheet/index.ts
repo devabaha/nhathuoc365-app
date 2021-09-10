@@ -6,5 +6,5 @@ export type ModalActionSheetProps = ActionSheetCustomProps & {
   cancelButtonIndex?: number;
   destructiveButtonIndex?: number;
 
-  onPress?: () => void;
+  onPress?: (actionIndex: number) => void;
 };

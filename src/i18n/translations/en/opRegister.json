@@ -17,7 +17,8 @@
     },
     "referCode": {
       "title": "Referral code",
-      "placeholder": "Enter the phone number of the referrer"
+      "placeholder": "Enter the phone number of the referrer",
+      "optional": "optional"
     },
     "province": {
       "title": "Province/City",

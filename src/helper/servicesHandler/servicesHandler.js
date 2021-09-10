@@ -221,7 +221,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.LIST_CHAT:
-      Actions.list_amazing_chat({
+      Actions.push(appConfig.routes.listChat, {
         titleStyle: {width: 220},
       });
       break;
@@ -455,28 +455,55 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.agencyInformationRegister);
       break;
 
- /**  REQUEST */
+    /**  REQUEST */
     /** List */
     case SERVICES_TYPE.REQUESTS:
       Actions.push(appConfig.routes.requests, {
         title: service.title,
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        objectType: service.object_type,
+        objectId: service.object_id,
+        object: service.object,
       });
       break;
-    /** CREATE */
+    /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
       Actions.push(appConfig.routes.requestCreation, {
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        request: service.request,
+        objectType: service.object_type,
+        objectId: service.object_id,
+        object: service.object,
+        onRefresh: service.onRefresh,
+      });
+      break;
+    /** Detail */
+    case SERVICES_TYPE.REQUEST_DETAIL:
+      Actions.push(appConfig.routes.requestDetail, {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        requestId: service.request_id,
+        title: service.title,
+        callbackReload: service.callbackReload,
       });
       break;
 
     /** WALLET */
     case SERVICES_TYPE.WALLET:
+      const wallet = service.zone_code
+        ? store.user_info?.all_wallets?.length
+          ? store.user_info.all_wallets.find(
+              (wallet) => wallet.zone_code === service.zone_code,
+            )
+          : store.user_info?.default_wallet
+        : store.user_info?.default_wallet;
+      console.log(wallet, service);
       Actions.push(appConfig.routes.vndWallet, {
-        title: service.name || store?.user_info?.name,
-        wallet: service.wallet || store?.user_info?.default_wallet,
+        title: service.name || wallet?.name,
+        wallet,
+        tabIndex: service.tabIndex,
       });
       break;
 

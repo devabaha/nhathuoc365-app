@@ -1,6 +1,7 @@
 export { default } from "./RightButtonNavBar";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { BUNDLE_ICON_SETS_NAME } from "src/constants";
+import { ModalActionSheetProps } from "../ModalActionSheet";
 
 export type RightButtonNavBar = "shopping_cart" | "chat" | "share";
 
@@ -23,4 +24,9 @@ export interface RightButtonNavBarProps {
 
   /** Download props */
   imageUrl?: string;
+
+  /** More props */
+  moreOptions?: Array<String>;
+  moreActionsProps?: ModalActionSheetProps;
+  onPressMoreAction?: (buttonIndex: number) => void;
 }

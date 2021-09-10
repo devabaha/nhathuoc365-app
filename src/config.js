@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.1.2';
+    return 'r12.1.3';
   }
 
   get appName() {
@@ -365,6 +365,7 @@ class Config {
 
       personalProfile: 'personalProfile',
       editPersonalProfile: 'editPersonalProfile',
+      listChat: 'listChat',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
 

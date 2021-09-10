@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Animated, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import appConfig from 'app-config';
 

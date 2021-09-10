@@ -38,6 +38,8 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
+const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY);
+
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -88,7 +90,7 @@ class Account extends Component {
     } = user_info;
     const isShowPremium =
       premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
-
+      
     return [
       {
         key: '-99',
@@ -105,7 +107,7 @@ class Account extends Component {
         iconColor: '#ffffff',
         iconType: 'MaterialCommunityIcons',
       },
-
+      
       {
         key: 'premium',
         icon: 'crown',
@@ -117,7 +119,7 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        desc: premium_info,
+        desc: isShowPremiumPoint && premium_info,
         descStyle: {
           color: '#ccc',
         },
@@ -164,11 +166,7 @@ class Account extends Component {
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          servicesHandler({
-            type: SERVICES_TYPE.WALLET,
-            name: default_wallet?.name,
-            wallet: default_wallet,
-          });
+          servicesHandler({type: SERVICES_TYPE.WALLET});
         },
         boxIconStyle: [
           styles.boxIconStyle,
@@ -939,8 +937,8 @@ class Account extends Component {
                   ? () =>
                       servicesHandler({
                         type: SERVICES_TYPE.WALLET,
-                        wallet,
                         name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => {}
               }
@@ -979,9 +977,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => Actions.view_ndt_list()
               }
@@ -1011,10 +1010,10 @@ class Account extends Component {
 
   renderRightPremium(point, unit) {
     const isShowPoint = point !== undefined && point !== null;
-
+    
     return (
       <View style={styles.rightPremiumContainer}>
-        {isShowPoint && (
+        {isShowPoint && isShowPremiumPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}

@@ -1,25 +1,28 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {
+  RefreshControl,
+  StyleSheet,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
-import {TabView, TabBar} from 'react-native-tab-view';
-import Button from 'react-native-button';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import appConfig from 'app-config';
 
 import {APIRequest} from 'src/network/Entity';
 
-import Loading from 'src/components/Loading';
 import NoResult from 'src/components/NoResult';
 import ProgressTrackingBar from 'src/components/ProgressTrackingBar';
 import ScreenWrapper from 'src/components/ScreenWrapper';
 import ProgressItem from '../ProgressItem';
-import Container from 'src/components/Layout/Container';
-import CustomPad from './CustomPad';
+import {default as CustomButton} from 'src/components/Button';
+import {Actions} from 'react-native-router-flux';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
-  trackingContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 15,
+  trackingWrapper: {
+    marginHorizontal: 15,
   },
 
   tabBarContainer: {
@@ -44,6 +47,15 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     height: 2,
   },
+
+  nav_right: {
+    paddingRight: 8,
+  },
+  nav_right_btn: {
+    paddingVertical: 1,
+    paddingHorizontal: 8,
+    paddingTop: appConfig.device.isAndroid ? 8 : 4,
+  },
 });
 
 const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
@@ -51,22 +63,21 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
   const isMounted = useIsMounted();
   const [getProgressTrackingDetailRequest] = useState(new APIRequest());
 
-  const ROUTE_KEY = 0;
-  const HISTORY_KEY = 1;
+  const HISTORY_KEY = 0;
+  const ROUTE_KEY = 1;
   const DEFAULT_ROUTES = [
-    {
-      key: ROUTE_KEY,
-      title: t('progressTracking:routeTitle'),
-    },
     {
       key: HISTORY_KEY,
       title: t('progressTracking:historyTitle'),
+      data: [],
+    },
+    {
+      key: ROUTE_KEY,
+      title: t('progressTracking:routeTitle'),
+      data: [],
     },
   ];
 
-  const jumpTo = useRef();
-
-  const [index, setIndex] = useState(indexProp);
   const [routes, setRoutes] = useState(DEFAULT_ROUTES);
 
   const [progressTrackingDetail, setProgressTrackingDetail] = useState({});
@@ -77,28 +88,38 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
     getProgressTrackingDetail();
   }, [getProgressTrackingDetail]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      Actions.refresh({
+        right: renderRightNavBar(),
+      });
+    });
+  }, [progressTrackingDetail]);
+
   const getProgressTrackingDetail = useCallback(async () => {
     getProgressTrackingDetailRequest.data = APIHandler.user_warranty_detail(id);
 
     try {
       const response = await getProgressTrackingDetailRequest.promise();
       if (!isMounted()) return;
-      console.log(response);
+
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
-            const updatedRoutes = DEFAULT_ROUTES.map((route, index) => {
+            const formattedRoutes = DEFAULT_ROUTES.map((route, index) => {
               const extraData =
                 (index === 0
-                  ? response.data?.route_detail?.route
-                  : response.data?.histories?.route) || [];
+                  ? response.data?.histories?.route
+                  : response.data?.route_detail?.route) || [];
 
               return {
-                route: extraData,
-                ...route,
+                key: index,
+                data: routesFormatter(extraData),
+                title: route.title,
               };
             });
-            const formattedRoutes = routesFormatter(updatedRoutes);
+            // const formattedRoutes = routesFormatter(updatedRoutes);
+            console.log(formattedRoutes);
 
             setProgressTrackingDetail(response.data);
             setRoutes(formattedRoutes);
@@ -130,20 +151,10 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
 
   const routesFormatter = (data = []) => {
     return data.map((item, index) => ({
-      key: index,
       ...item,
-      route: item.route.map((r) => ({
-        title: r.date_time,
-        description: r.content,
-      })),
+      title: item.date_time,
+      description: item.content,
     }));
-  };
-
-  const handleIndexChange = (index, isTabBarPress = false) => {
-    if (!!jumpTo.current && isTabBarPress) {
-      jumpTo.current(index);
-    }
-    setIndex(index);
   };
 
   const handleRefresh = () => {
@@ -151,72 +162,49 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
     getProgressTrackingDetail();
   };
 
-  const renderTabBarLabel = (props) => {
-    const {
-      route: {title, key},
-    } = props;
-    const focused = key === index;
-
-    return (
-      <Text
-        numberOfLines={2}
-        style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}>
-        {title}
-      </Text>
-    );
+  const goToRequestCreation = () => {
+    servicesHandler({
+      type: SERVICES_TYPE.CREATE_REQUEST,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
+      object_type: progressTrackingDetail.object_type,
+      object_id: progressTrackingDetail.object_id,
+      object: progressTrackingDetail.object,
+      onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
+    });
   };
 
-  const renderTabBar = (props) => {
-    if (!jumpTo.current) {
-      // use this function instead of default behavior (using index) when change index of tab bar to improve FPS.
-      jumpTo.current = props.jumpTo;
-    }
-    const tabWidth = appConfig.device.width / 2;
-    return (
-      <TabBar
-        {...props}
-        renderTabBarItem={(props) => {
-          return (
-            <Button
-              key={props.key}
-              onPress={() => handleIndexChange(props.route.key, true)}
-              containerStyle={{
-                minHeight: 48,
-                width: tabWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {renderTabBarLabel(props)}
-            </Button>
-          );
-        }}
-        indicatorStyle={styles.indicatorStyle}
-        tabStyle={{width: tabWidth}}
-        style={styles.tabBarContainer}
-        scrollEnabled
-      />
-    );
+  const goToRequests = () => {
+    servicesHandler({
+      type: SERVICES_TYPE.REQUESTS,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
+      object_type: progressTrackingDetail.object_type,
+      object_id: progressTrackingDetail.object_id,
+      object: progressTrackingDetail.object,
+    });
   };
 
-  const renderScene = ({route}) => {
-    const isReverse = route.key === ROUTE_KEY;
+  const goToRequestDetail = (request = {}) => {
+    servicesHandler({
+      type: SERVICES_TYPE.REQUEST_DETAIL,
+      site_id: progressTrackingDetail.site_id,
+      room_id: progressTrackingDetail.room_id,
+      request_id: request.id,
+    });
+  };
+
+  const renderRightNavBar = () => {
     return (
-      <ProgressTrackingBar
-        data={route?.route || []}
-        renderPad={(padDimensions) => {
-          return <CustomPad dimensions={padDimensions} isReverse={isReverse} />;
-        }}
-        listProps={{
-          contentContainerStyle: styles.trackingContainer,
-          ListEmptyComponent: renderEmpty(),
-          refreshControl: (
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={handleRefresh}
-            />
-          ),
-        }}
-      />
+      <View style={styles.nav_right}>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={goToRequestCreation}>
+          <View style={styles.nav_right_btn}>
+            <Icon name="plus" size={22} color="#ffffff" />
+          </View>
+        </TouchableHighlight>
+      </View>
     );
   };
 
@@ -230,7 +218,6 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
 
   return (
     <ScreenWrapper>
-      {isLoading && <Loading center />}
       <ProgressItem
         image={progressTrackingDetail.product?.image}
         title={progressTrackingDetail.product?.name}
@@ -239,21 +226,26 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
         endDate={progressTrackingDetail.end_date}
       />
 
-      {!!routes.length ? (
-        <TabView
-          navigationState={{
-            routes: routes,
-            index: index,
-          }}
-          renderTabBar={renderTabBar}
-          renderScene={renderScene}
-          onIndexChange={(index) => handleIndexChange(index)}
-          initialLayout={{width: appConfig.device.width}}
+      <ProgressTrackingBar
+        loading={isLoading}
+        data={routes}
+        trackWrapperStyle={styles.trackingWrapper}
+        listProps={{
+          ListEmptyComponent: renderEmpty(),
+          refreshControl: (
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
+          ),
+        }}
+      />
+
+      {!!progressTrackingDetail?.object_id && (
+        <CustomButton
+          title={t('screen.requests.mainTitle')}
+          onPress={goToRequests}
         />
-      ) : (
-        !isLoading && (
-          <NoResult iconName="note-multiple" message={t('noResult')} />
-        )
       )}
     </ScreenWrapper>
   );

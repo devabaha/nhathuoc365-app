@@ -411,6 +411,13 @@ class OpRegister extends Component {
       (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
       (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
 
+    const referCodeTitle =
+      t('data.referCode.title') +
+      ' ' +
+      (isConfigActive(CONFIG_KEY.NEED_REFERRAL_CODE_KEY)
+        ? '(*)'
+        : `(${t('data.referCode.optional')})`);
+
     return (
       <View style={styles.container}>
         {loading && <Loading center />}
@@ -459,7 +466,7 @@ class OpRegister extends Component {
             <>
               <View style={[styles.input_box, styles.referInputWrapper]}>
                 <Text style={[styles.input_label, styles.referInputLabel]}>
-                  {t('data.referCode.title')}
+                  {referCodeTitle}
                 </Text>
 
                 <View
@@ -617,8 +624,8 @@ const styles = StyleSheet.create({
   },
   inputIconContainer: {
     marginHorizontal: 15,
-    width: appConfig.device.isIOS ? 26: 28,
-    height: appConfig.device.isIOS ? 26: 28,
+    width: appConfig.device.isIOS ? 26 : 28,
+    height: appConfig.device.isIOS ? 26 : 28,
     borderWidth: 1,
     borderColor: appConfig.colors.primary,
     borderStyle: 'dashed',
@@ -734,8 +741,8 @@ const styles = StyleSheet.create({
     marginTop: -5,
   },
   referInput: {
-    textAlign: 'left'
-  }
+    textAlign: 'left',
+  },
 });
 
 export default withTranslation(['opRegister', 'common'])(observer(OpRegister));

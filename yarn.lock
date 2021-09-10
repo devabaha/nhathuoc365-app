@@ -1589,6 +1589,14 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-native-button@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-native-button/-/react-native-button-3.0.1.tgz#079cb4ddb6d69b310d6aa539ada4bae8aaa0cccc"
+  integrity sha512-USLDAsa0Ytlrj1k/vSVBhIQC5pW/Ka/xSqyu281G0T0oWtPKKxviN4coLj3sjtlplkN4IHRWC+Y57CCgXeV70A==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-calendars@^1.505.4":
   version "1.505.4"
   resolved "https://registry.yarnpkg.com/@types/react-native-calendars/-/react-native-calendars-1.505.4.tgz#d76a866623279b92e5883a2fdffd2e58efce5509"

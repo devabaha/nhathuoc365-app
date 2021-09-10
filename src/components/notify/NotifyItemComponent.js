@@ -12,9 +12,9 @@ import {
 import appConfig from 'app-config';
 
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {Container} from '../Layout';
 import Loading from '../Loading';
+import { getRelativeTime } from 'app-helper/social';
 
 class NotifyItemComponent extends Component {
   static defaultProps = {
@@ -86,29 +86,26 @@ class NotifyItemComponent extends Component {
 
             <View style={styles.store_result_item_content}>
               <View style={styles.store_result_item_content_box}>
-                <Text numberOfLines={2} style={styles.store_result_item_title}>
-                  {this.props.title}
-                </Text>
+                {!!this.props.title && (
+                  <Text
+                    numberOfLines={2}
+                    style={styles.store_result_item_title}>
+                    {this.props.title}
+                  </Text>
+                )}
+
+                {!!this.props.content && (
+                  <Text style={styles.store_result_item_desc}>
+                    {this.props.content}
+                  </Text>
+                )}
                 <Container row style={styles.subTitleContainer}>
                   <Text
                     numberOfLines={1}
                     style={styles.store_result_item_create}>
-                    <Icon name="map-marker" size={10} color="#666666" />
-                    {' ' + this.props.shopName + '    '}
-                  </Text>
-
-                  <Text
-                    numberOfLines={1}
-                    style={styles.store_result_item_create}>
-                    <Icon name="clock-o" size={10} color="#666666" />
-                    {' ' + this.props.created}
+                    {getRelativeTime(this.props.created)}
                   </Text>
                 </Container>
-                {!!this.props.content && (
-                  <Text numberOfLines={2} style={styles.store_result_item_desc}>
-                    {this.props.content}
-                  </Text>
-                )}
               </View>
             </View>
           </Animated.View>
@@ -161,12 +158,11 @@ const styles = StyleSheet.create({
   },
   store_result_item_create: {
     color: '#666666',
-    fontSize: 11,
+    fontSize: 12,
   },
   store_result_item_desc: {
-    marginTop: 8,
     color: '#333',
-    fontSize: 12,
+    fontWeight: '500'
   },
   store_result_item_time: {
     fontSize: 12,
@@ -176,7 +172,7 @@ const styles = StyleSheet.create({
 
   subTitleContainer: {
     flexWrap: 'wrap',
-    marginTop: 5,
+    marginTop: 10,
   },
   loadingWrapper: {
     backgroundColor: hexToRgbA('#ddd', 0.3),

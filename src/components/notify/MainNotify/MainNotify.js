@@ -252,7 +252,7 @@ class MainNotify extends Component {
       <NotifyItemComponent
         isRead={!!notify.open_flag}
         image={notify.image_url}
-        title={notify.title}
+        // title={notify.title}
         shopName={notify.shop_name}
         created={notify.created}
         content={notify.content}
