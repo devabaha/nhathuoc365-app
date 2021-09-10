@@ -10,6 +10,7 @@ import {Actions} from 'react-native-router-flux';
 import RightButtonNavBar from 'src/components/RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
 import {APIRequest} from 'src/network/Entity';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -43,6 +44,7 @@ class Detail extends Component {
 
     setTimeout(() =>
       Actions.refresh({
+        title: this.props.title || this.props.t('screen.requests.detailTitle'),
         onBack: () => {
           this.props.callbackReload();
           Actions.pop();
@@ -103,6 +105,8 @@ class Detail extends Component {
       );
     } catch (error) {
       console.log('get_request', error);
+      if (this.unmounted) return;
+
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
@@ -259,7 +263,6 @@ class Detail extends Component {
     try {
       const response = await this.updateStatusRequest.promise();
       if (this.unmounted) return;
-
       if (response?.status === STATUS_SUCCESS) {
         if (response.data) {
           this.setState({request: response.data.request});
@@ -289,10 +292,14 @@ class Detail extends Component {
 
   editRequest = () => {
     setTimeout(() =>
-      Actions.push(appConfig.routes.requestCreation, {
+      servicesHandler({
+        type: SERVICES_TYPE.CREATE_REQUEST,
         title: 'Sửa yêu cầu',
-        siteId: this.props.siteId,
+        site_id: this.props.siteId,
         request: this.state.request,
+        object_id: this.state.request?.object_id,
+        object_type: this.props.request?.object_type,
+        object: this.state.request?.object,
         onRefresh: () => {
           this.setState({loading: true, forceUpdate: true});
           this.getRequest();

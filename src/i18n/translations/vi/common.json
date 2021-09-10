@@ -277,5 +277,6 @@
       "mandatoryUpdateMessage": "Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!"
     },
     "runInBackground": "Chạy ngầm"
-  }
+  },
+  "optional": "không bắt buộc"
 }

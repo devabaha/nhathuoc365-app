@@ -277,5 +277,6 @@
       "mandatoryUpdateMessage": "New version is available. Please update to get the best experience!"
     },
     "runInBackground": "Run in background"
-  }
+  },
+  "optional": "optional"
 }

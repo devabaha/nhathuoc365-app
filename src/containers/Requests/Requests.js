@@ -5,7 +5,7 @@ import {
   FlatList,
   RefreshControl,
   View,
-  TouchableHighlight
+  TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Actions} from 'react-native-router-flux';
@@ -17,7 +17,7 @@ import Request from './Request';
 import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
-import { servicesHandler, SERVICES_TYPE } from 'src/helper/servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
 
 /**
  * A list of all request of this site
@@ -33,6 +33,7 @@ class Requests extends Component {
     loading: true,
     refreshing: false,
     requests: null,
+    object: undefined,
   };
   /**
    * @todo will true when component unmount
@@ -45,7 +46,7 @@ class Requests extends Component {
     setTimeout(() => {
       Actions.refresh({
         title: this.props.title || this.props.t('screen.requests.mainTitle'),
-        right: this.renderRight()
+        right: this.renderRight(),
       });
     });
   }
@@ -69,30 +70,45 @@ class Requests extends Component {
   }
 
   createRequest = () => {
-    Actions.push(appConfig.routes.requestCreation, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
-      onRefresh: this.onRefresh
+    servicesHandler({
+      type: SERVICES_TYPE.CREATE_REQUEST,
+      site_id: this.props.siteId,
+      room_id: this.props.roomId,
+      object_id: this.props.object_id || this.props.objectId,
+      object_type: this.props.object_type || this.props.objectType,
+      object: this.state.object || this.props.object,
+      onRefresh: (request) => {
+        this.getRequests();
+        setTimeout(() =>
+          servicesHandler({
+            type: SERVICES_TYPE.REQUEST_DETAIL,
+            site_id: this.props.siteId,
+            room_id: this.props.roomId,
+            request_id: request.id,
+          }),
+        );
+      },
     });
   };
 
   getRequests = async () => {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_requests_room(
         this.props.siteId,
-        this.props.roomId
+        this.props.roomId,
       );
 
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
-            requests: response.data.requests
+            requests: response.data.requests,
+            object: response.data.object,
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -100,37 +116,39 @@ class Requests extends Component {
       console.log('get_requests', error);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
       !this.unmounted &&
         this.setState({
           loading: false,
-          refreshing: false
+          refreshing: false,
         });
     }
   };
 
   handlePressRequest(request) {
-    Actions.push(appConfig.routes.requestDetail, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
-      requestId: request.id,
-      title: request.title || this.props.t('screen.requests.detailTitle'),
-      callbackReload: this.getRequests
+    servicesHandler({
+      type: SERVICES_TYPE.REQUEST_DETAIL,
+      site_id: this.props.siteId || this.props.site_id,
+      room_id: this.props.roomId || this.props.room_id,
+      request_id: request.id,
+      callbackReload: this.getRequests,
     });
   }
 
   onRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.getRequests();
   };
 
-  renderRequest = ({ item: request }) => {
+  renderRequest = ({item: request}) => {
     return (
       <Request
         wrapperStyle={styles.requestItemWrapper}
         containerStyle={styles.requestItemContainer}
+        tagCode={request.object?.warranty_code}
+        tagName={request.object?.title}
         title={request.title}
         subTitle={request.content}
         status={request.status}

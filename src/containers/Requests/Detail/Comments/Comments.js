@@ -88,9 +88,9 @@ class Comments extends Component {
 
   handleInputState = (isFocus) => {
     Reanimated.timing(this.animatedTop, {
-      toValue: isFocus ? -this.state.headerHeight/5 : 0,
+      toValue: isFocus ? -this.state.headerHeight / 5 : 0,
       duration: 300,
-      easing: Easing.quad
+      easing: Easing.quad,
       // useNativeDriver: false,
     }).start();
   };
@@ -122,7 +122,6 @@ class Comments extends Component {
             this.refTickidChat.onListViewPress();
           }
         }}
-
         forceUpdate={this.props.forceUpdate}
       />
     ) : (
@@ -142,11 +141,11 @@ class Comments extends Component {
           <TickidChat
             // Root props
             showAllUserName
-            renderEmpty={() => null}
+            renderEmpty={<View />}
             setHeader={this.props.setHeader}
             defaultStatusBarColor={appConfig.colors.primary}
             containerStyle={{backgroundColor: 'transparent'}}
-            placeholder="Nhập nội dung phản hồi..."
+            placeholder="Nhập nội dung..."
             // Refs
             ref={(inst) => (this.refTickidChat = inst)}
             refGiftedChat={(inst) => (this.refGiftedChat = inst)}

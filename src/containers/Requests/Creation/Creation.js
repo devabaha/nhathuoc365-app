@@ -26,6 +26,7 @@ import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import Loading from '../../../components/Loading';
 import Button from '../../../components/Button';
 import Images from './Images';
+import RequestTagTitle from '../Request/RequestTagTitle';
 
 const MyInput = compose(
   handleTextInput,
@@ -70,7 +71,8 @@ const validationSchema = Yup.object().shape({
 class Creation extends Component {
   static defaultProps = {
     request: {},
-    onRefresh: () => {}
+    extraSubmitData: {},
+    onRefresh: () => {},
   };
 
   state = {
@@ -108,22 +110,22 @@ class Creation extends Component {
       let itemValue = '';
       switch (value.name) {
         case FORM_DATA.TITLE.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.TITLE.name]
             ? this.props.request[FORM_DATA.TITLE.name] || ''
             : '';
           break;
         case FORM_DATA.REQUEST_TYPE.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.REQUEST_TYPE.name]
             ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
             : '';
           break;
         case FORM_DATA.CONTENT.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.CONTENT.name]
             ? this.props.request[FORM_DATA.CONTENT.name] || ''
             : '';
           break;
         case FORM_DATA.IMAGES.name:
-          itemValue = this.props.request?.id
+          itemValue = this.props.request?.[FORM_DATA.IMAGES.name]
             ? this.props.request[FORM_DATA.IMAGES.name].map(
                 (image) => image.name,
               ) || ''
@@ -241,6 +243,7 @@ class Creation extends Component {
         this.props.siteId,
         this.props.roomId,
       );
+
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = {...this.state};
@@ -276,8 +279,14 @@ class Creation extends Component {
     }
   }
 
-  onSubmit = async (data) => {
+  onSubmit = async (data = {}) => {
     this.setState({loading: true});
+    data = {
+      ...data,
+      object_type: this.props.objectType,
+      object_id: this.props.objectId,
+    };
+
     const {t} = this.props;
     const apiHandler = this.props.request?.id
       ? APIHandler.site_update_request(
@@ -287,7 +296,7 @@ class Creation extends Component {
         )
       : APIHandler.site_request_room(
           this.props.siteId,
-          this.props.roomId,
+          this.props.roomId || 0,
           data,
         );
     try {
@@ -295,7 +304,7 @@ class Creation extends Component {
 
       if (this.unmounted) return;
       if (response?.status === STATUS_SUCCESS) {
-        this.props.onRefresh();
+        this.props.onRefresh(response.data?.request);
         Actions.pop();
         flashShowMessage({
           type: 'success',
@@ -454,14 +463,20 @@ class Creation extends Component {
             validationSchema={validationSchema}
             innerRef={this.refForm}>
             {(props) => {
-              console.log(props.values)
               const disabled =
-                this.isEmptyRequiredData(props.values) || !props.isValid || !props.dirty;
+                this.isEmptyRequiredData(props.values) ||
+                !props.isValid ||
+                !props.dirty;
               return (
                 <>
                   <ScrollView
                     keyboardDismissMode="interactive"
                     keyboardShouldPersistTaps="handled">
+                    <RequestTagTitle
+                      code={this.props.object?.warranty_code}
+                      name={this.props.object?.title}
+                      containerStyle={styles.tagContainer}
+                    />
                     <Form style={styles.formContainer}>
                       {this.renderFormData(props)}
                     </Form>
@@ -496,6 +511,12 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingTop: 30,
+  },
+  tagContainer: {
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingBottom: 10,
+    backgroundColor: '#f7f7f7',
   },
   title: {
     fontSize: 20,
