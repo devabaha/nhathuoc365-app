@@ -14,8 +14,11 @@ import NoResult from 'src/components/NoResult';
 import {isEmpty} from 'lodash';
 import {Actions} from 'react-native-router-flux';
 
-const baseUnit = 170;
-const widthArr = [baseUnit, baseUnit, baseUnit];
+const dataReportBaseUnit = 170;
+const tableDataReportWidthArr = [dataReportBaseUnit, dataReportBaseUnit, dataReportBaseUnit];
+
+const newMembersBaseUnit = appConfig.device.width / 2
+const tableNewMemberWidthArr = [newMembersBaseUnit, newMembersBaseUnit]
 
 function SalesReport() {
   const [loading, setLoading] = useState(true);
@@ -24,9 +27,11 @@ function SalesReport() {
   const [dataReport, setDataReport] = useState({});
   const [stats, setStats] = useState({});
   const [reportRevenue, setReportRevenue] = useState({});
+  const [newReferralMembers, setNewReferralMembers] = useState([]);
   const {t} = useTranslation('salesReport');
 
-  const tableHead = [t('name'), t('member_orders_count'), t('total_revenue')];
+  const tableReportHead = [t('name'), t('member_orders_count'), t('total_revenue')];
+  const tableNewMembersHead = [t('name'), t('joiningDate')];
 
   const tableReferralReport = [
     'personal_orders',
@@ -34,12 +39,15 @@ function SalesReport() {
     'new_referral_members',
   ];
   const reportTitle = 'Doanh số giới thiệu';
-  
   const getInvitedRevenueRequest = new APIRequest();
   const requests = [getInvitedRevenueRequest];
 
   const hasRevenue = () => {
     return Array.isArray(dataReport) && dataReport.length !== 0;
+  };
+
+  const hasNewReferralMembers = () => {
+    return Array.isArray(newReferralMembers) && newReferralMembers.length !== 0;
   };
 
   const getInvitedRevenue = async (month) => {
@@ -49,7 +57,100 @@ function SalesReport() {
     }
     getInvitedRevenueRequest.data = APIHandler.user_invited_revenue(data);
     try {
-      const response = await getInvitedRevenueRequest.promise();
+      // const response = await getInvitedRevenueRequest.promise();
+      const response = {
+        status: 200,
+        message: 'Lấy thông tin thành công!',
+        data: {
+          month: '2021-09',
+          stats: {
+            total_cart: '4 đơn',
+            total_revenue: '0đ',
+          },
+          revenue_inviter_users: [
+            {
+              site_id: '2462',
+              user_id: '5694',
+              name: '',
+              tel: '0963225658',
+              count: '1',
+              total: '1.000.000.000đ',
+              created: '2021-07-16 14:36:54',
+            },
+            {
+              site_id: '2462',
+              user_id: '36091',
+              name: '',
+              tel: '0963909075',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-24 04:15:53',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+          ],
+          list_month: ['2021-09', '2021-08', '2021-07', '2021-05'],
+          list_invited_user_in_months: [
+            {
+              site_id: '2462',
+              user_id: '5694',
+              name: '',
+              tel: '0963225658',
+              count: '1',
+              total: '0đ',
+              created: '2021-07-16 14:36:54',
+            },
+            {
+              site_id: '2462',
+              user_id: '36091',
+              name: '',
+              tel: '0963909075',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-24 04:15:53',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+          ],
+          report_revenue_in_months: {
+            'Đơn cá nhân': '1 đơn',
+            'Đơn giới thiệu': '4 đơn',
+            'Thành viên mới': 0,
+          },
+        },
+      };
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -58,6 +159,9 @@ function SalesReport() {
             setSelectedMonth(response?.data.month || []);
             setDataReport(formatInviter(response.data.revenue_inviter_users));
             setReportRevenue(response.data.report_revenue_in_months || {});
+            setNewReferralMembers(
+              formatNewMembers(response.data.list_invited_user_in_months),
+            );
           }
         } else {
           flashShowMessage({
@@ -95,6 +199,15 @@ function SalesReport() {
       !!item.name
         ? [[`${item.name} - ${item.tel}`], [item.count], [item.total]]
         : [[item.tel], [item.count], [item.total]],
+    );
+  };
+
+  const formatNewMembers = (data) => {
+    if (isEmpty(data)) return [];
+    return data.map((item) =>
+      !!item.name
+        ? [[`${item.name} - ${item.tel}`], [item.created.slice(0,10)]]
+        : [[item.tel], [item.created.slice(0,10)]],
     );
   };
 
@@ -163,9 +276,7 @@ function SalesReport() {
       {!isEmpty(reportRevenue) && (
         <View>
           <FlatList
-            contentContainerStyle={
-              styles.referralRevenueReportContentContainer
-            }
+            contentContainerStyle={styles.referralRevenueReportContentContainer}
             data={tableReferralReport}
             keyExtractor={(i) => i}
             renderItem={renderColumnReferral}
@@ -181,9 +292,9 @@ function SalesReport() {
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
-              data={tableHead}
-              widthArr={widthArr}
-              style={styles.header}
+              data={tableReportHead}
+              widthArr={tableDataReportWidthArr}
+              style={styles.tableHeader}
               textStyle={styles.tableHeadingText}
             />
           </Table>
@@ -194,7 +305,7 @@ function SalesReport() {
                   <Row
                     key={index}
                     data={rowData}
-                    widthArr={widthArr}
+                    widthArr={tableDataReportWidthArr}
                     style={[
                       styles.row,
                       index % 2 && {backgroundColor: '#f5f5f5'},
@@ -207,6 +318,41 @@ function SalesReport() {
           )}
         </View>
       </ScrollView>
+
+      {hasNewReferralMembers() && (
+        <>
+          <Text style={styles.reportTitle}>Thành viên mới</Text>
+          <ScrollView horizontal>
+            <View>
+              <Table borderStyle={styles.tableBorder}>
+                <Row
+                  data={tableNewMembersHead}
+                  widthArr={tableNewMemberWidthArr}
+                  style={styles.tableHeader}
+                  textStyle={styles.tableHeadingText}
+                />
+              </Table>
+
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={styles.tableBorder}>
+                  {newReferralMembers.map((rowData, index) => (
+                    <Row
+                      key={index}
+                      data={rowData}
+                      widthArr={tableNewMemberWidthArr}
+                      style={[
+                        styles.row,
+                        index % 2 && {backgroundColor: '#f5f5f5'},
+                      ]}
+                      textStyle={styles.tableCellText}
+                    />
+                  ))}
+                </Table>
+              </ScrollView>
+            </View>
+          </ScrollView>
+        </>
+      )}
       {!loading && !hasRevenue() && (
         <View
           pointerEvents="none"
@@ -239,7 +385,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     backgroundColor: '#fff',
   },
-  header: {
+  tableHeader: {
     height: 50,
     backgroundColor: appConfig.colors.primary,
   },

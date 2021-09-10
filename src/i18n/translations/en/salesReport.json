@@ -4,5 +4,6 @@
   "member_orders_count": "Orders",
   "personal_orders": "Personal Orders",
   "total_referral_orders": "Referral Orders",
-  "new_referral_members": "New Referral Members"
+  "new_referral_members": "New Referral Members",
+  "joiningDate": "Joining Date"
 }
