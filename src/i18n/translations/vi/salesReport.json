@@ -1,5 +1,6 @@
 {
-  "name": "Tên - Số điện thoại",
+  "name": "Tên",
+  "phone": "Số điện thoại",
   "total_revenue": "Tổng doanh số",
   "member_orders_count": "Số đơn hàng",
   "personal_orders": "Đơn cá nhân",

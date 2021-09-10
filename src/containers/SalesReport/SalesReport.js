@@ -15,10 +15,19 @@ import {isEmpty} from 'lodash';
 import {Actions} from 'react-native-router-flux';
 
 const dataReportBaseUnit = 170;
-const tableDataReportWidthArr = [dataReportBaseUnit, dataReportBaseUnit, dataReportBaseUnit];
+const tableDataReportWidthArr = [
+  dataReportBaseUnit,
+  dataReportBaseUnit,
+  dataReportBaseUnit,
+  dataReportBaseUnit,
+];
 
-const newMembersBaseUnit = appConfig.device.width / 2
-const tableNewMemberWidthArr = [newMembersBaseUnit, newMembersBaseUnit]
+const newMembersBaseUnit = 170;
+const tableNewMemberWidthArr = [
+  newMembersBaseUnit,
+  newMembersBaseUnit,
+  newMembersBaseUnit,
+];
 
 function SalesReport() {
   const [loading, setLoading] = useState(true);
@@ -30,8 +39,13 @@ function SalesReport() {
   const [newReferralMembers, setNewReferralMembers] = useState([]);
   const {t} = useTranslation('salesReport');
 
-  const tableReportHead = [t('name'), t('member_orders_count'), t('total_revenue')];
-  const tableNewMembersHead = [t('name'), t('joiningDate')];
+  const tableReportHead = [
+    t('name'),
+    t('phone'),
+    t('member_orders_count'),
+    t('total_revenue'),
+  ];
+  const tableNewMembersHead = [t('name'), t('phone'), t('joiningDate')];
 
   const tableReferralReport = [
     'personal_orders',
@@ -57,7 +71,190 @@ function SalesReport() {
     }
     getInvitedRevenueRequest.data = APIHandler.user_invited_revenue(data);
     try {
-      const response = await getInvitedRevenueRequest.promise();
+      // const response = await getInvitedRevenueRequest.promise();
+      const response = {
+        status: 200,
+        message: 'Lấy thông tin thành công!',
+        data: {
+          month: '2021-09',
+          stats: {
+            total_cart: '4 đơn',
+            total_revenue: '0đ',
+          },
+          revenue_inviter_users: [
+            {
+              site_id: '2462',
+              user_id: '5694',
+              name: '',
+              tel: '0963225658',
+              count: '1',
+              total: '1.000.000.000đ',
+              created: '2021-07-16 14:36:54',
+            },
+            {
+              site_id: '2462',
+              user_id: '36091',
+              name: '',
+              tel: '0963909075',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-24 04:15:53',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+          ],
+          list_month: ['2021-09', '2021-08', '2021-07', '2021-05'],
+          list_invited_user_in_months: [
+            {
+              site_id: '2462',
+              user_id: '5694',
+              name: '',
+              tel: '0963225658',
+              count: '1',
+              total: '0đ',
+              created: '2021-07-16 14:36:54',
+            },
+            {
+              site_id: '2462',
+              user_id: '36091',
+              name: '',
+              tel: '0963909075',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-24 04:15:53',
+            },
+            {
+              site_id: '2462',
+              user_id: '85569',
+              name: null,
+              tel: '0336399118',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-20 02:36:34',
+            },
+            {
+              site_id: '2462',
+              user_id: '284093',
+              name: 'Vu',
+              tel: '0943945666',
+              count: '1',
+              total: '0đ',
+              created: '2021-08-14 09:20:19',
+            },
+          ],
+          report_revenue_in_months: {
+            'Đơn cá nhân': '1 đơn',
+            'Đơn giới thiệu': '4 đơn',
+            'Thành viên mới': 0,
+          },
+        },
+      };
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -102,20 +299,28 @@ function SalesReport() {
 
   const formatInviter = (datas) => {
     if (isEmpty(datas)) return [];
-    return datas.map((item) =>
-      !!item.name
-        ? [[`${item.name} - ${item.tel}`], [item.count], [item.total]]
-        : [[item.tel], [item.count], [item.total]],
-    );
+    return datas.map((item) => [
+      [item.name],
+      [item.tel],
+      [item.count],
+      [item.total],
+    ]);
   };
 
   const formatNewMembers = (data) => {
     if (isEmpty(data)) return [];
-    return data.map((item) =>
-      !!item.name
-        ? [[`${item.name} - ${item.tel}`], [item.created.slice(0,10)]]
-        : [[item.tel], [item.created.slice(0,10)]],
-    );
+
+    return data.map((item) => [
+      [item.name],
+      [item.tel],
+      [formatDate(item.created)],
+    ]);
+  };
+
+  const formatDate = (dateString) => {
+    let allDate = dateString.split(' ');
+    let thisDate = allDate[0].split('-');
+    return [thisDate[2], thisDate[1], thisDate[0]].join('-');
   };
 
   const handleSelectMonth = (month) => {
@@ -195,7 +400,7 @@ function SalesReport() {
 
       <Text style={styles.reportTitle}>{reportTitle}</Text>
 
-      <ScrollView horizontal>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
@@ -407,6 +612,7 @@ const styles = StyleSheet.create({
   },
   dataWrapper: {
     marginTop: -1,
+    maxHeight: appConfig.device.height / 4,
   },
   row: {
     height: 40,

@@ -1,5 +1,6 @@
 {
-  "name": "Name - phone ",
+  "name": "Name",
+  "phone": "Phone number",
   "total_revenue": "Total Revenue",
   "member_orders_count": "Orders",
   "personal_orders": "Personal Orders",
