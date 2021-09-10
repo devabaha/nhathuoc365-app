@@ -112,7 +112,7 @@ class Card extends Component {
     if (this.state.isKeyboardOpening && !this.state.isExpanded) {
       this.props.forceCloseKeyboard();
     }
-    this.setState({isExpanded: !this.state.isExpanded});
+    this.setState((prevState) => ({isExpanded: !prevState.isExpanded}));
   };
 
   handleLayoutAnimatedArea = (e) => {

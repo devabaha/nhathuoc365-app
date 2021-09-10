@@ -38,7 +38,7 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
-const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY);
+const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
 class Account extends Component {
   constructor(props) {
@@ -90,7 +90,11 @@ class Account extends Component {
     } = user_info;
     const isShowPremium =
       premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
-      
+    const facebookFanpage = getValueFromConfigKey(CONFIG_KEY.FACEBOOK_FANPAGE);
+    const isShowPremiumPoint = !isConfigActive(
+      CONFIG_KEY.HIDE_PREMIUM_POINT_KEY,
+    );
+
     return [
       {
         key: '-99',
@@ -107,7 +111,7 @@ class Account extends Component {
         iconColor: '#ffffff',
         iconType: 'MaterialCommunityIcons',
       },
-      
+
       {
         key: 'premium',
         icon: 'crown',
@@ -119,11 +123,15 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        desc: isShowPremiumPoint && premium_info,
+        desc:
+          !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY) && premium_info,
         descStyle: {
           color: '#ccc',
         },
-        rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
+        rightIcon: this.renderRightPremium(
+          isShowPremiumPoint ? premium_point : null,
+          premium_point_unit,
+        ),
         renderAfter: () =>
           this.renderProgressPremium(
             premium_point,
@@ -499,7 +507,9 @@ class Account extends Component {
         label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Communications.web(APP_FANPAGE),
+        onPress: () => {
+          Communications.web(FACEBOOK_DOMAIN + facebookFanpage);
+        },
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -508,6 +518,7 @@ class Account extends Component {
         ],
         iconColor: '#ffffff',
         marginTop: !isAdmin,
+        isHidden: !facebookFanpage,
       },
 
       {
@@ -1010,10 +1021,10 @@ class Account extends Component {
 
   renderRightPremium(point, unit) {
     const isShowPoint = point !== undefined && point !== null;
-    
+
     return (
       <View style={styles.rightPremiumContainer}>
-        {isShowPoint && isShowPremiumPoint && (
+        {isShowPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}

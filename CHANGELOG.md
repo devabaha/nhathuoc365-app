@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r12.1.3]
 ### Added
-- [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com].
+- [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-e5q6jn] config_key facebook_fanpage in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-e5mme0] discount_content in Payment/CartItem by [minhnguyenit14@gmail.com].
 - [CU-860k7x] Module social in Item by [minhnguyenit14@gmail.com].
 - [CU-e00p0r] API edit_user_note by [nguyenanhtuan191298@gmail.com] [minhnguyenit14@gmail.com].

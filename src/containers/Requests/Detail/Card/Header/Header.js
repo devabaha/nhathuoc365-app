@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
 
   tagContainer: {
-    marginBottom: 10,
+    marginBottom: 15,
   },
 });
 
