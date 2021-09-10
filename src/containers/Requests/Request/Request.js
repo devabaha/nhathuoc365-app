@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import Button from 'react-native-button';
 import {View, Text, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {NotiBadge} from '../../../components/Badges';
 import {Container} from 'src/components/Layout';
 
 import appConfig from 'app-config';
+import RequestTagTitle from './RequestTagTitle';
 
 class Request extends Component {
   state = {};
@@ -27,6 +28,18 @@ class Request extends Component {
                 {this.props.type}
               </Text>
             </View>
+
+            <RequestTagTitle
+              containerStyle={styles.tagContainer}
+              code={this.props.tagCode}
+              name={this.props.tagName}
+            />
+
+            {!!this.props.tagTitle && (
+              <Text numberOfLines={1} style={styles.tagTitle}>
+                {this.props.tagTitle}
+              </Text>
+            )}
             {!!this.props.title && (
               <Text numberOfLines={2} style={styles.title}>
                 {this.props.title}
@@ -35,7 +48,7 @@ class Request extends Component {
 
             {!!this.props.description && (
               <Text style={styles.description}>
-                <Icon name="clock" /> {this.props.description}
+                <FontAwesome5Icon name="clock" /> {this.props.description}
               </Text>
             )}
 
@@ -51,7 +64,7 @@ class Request extends Component {
           <Container row style={styles.block}>
             {!!this.props.adminName && (
               <View style={[styles.statusContainer, styles.adminContainer]}>
-                <Icon
+                <FontAwesome5Icon
                   name="user-tie"
                   style={[styles.admin, styles.adminIcon]}
                 />
@@ -95,10 +108,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     // ...elevationShadowStyle(5),
   },
+  tagContainer: {
+    marginBottom: 10,
+  },
   title: {
     ...appConfig.styles.typography.heading1,
     fontWeight: 'bold',
-    marginTop: 10,
     flex: 1,
     fontSize: 18,
   },
@@ -113,7 +128,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     color: '#888',
-    marginTop: 5,
+    marginTop: 7,
   },
   statusContainer: {
     borderRadius: 4,
@@ -138,7 +153,7 @@ const styles = StyleSheet.create({
   notiMessContainer: {
     right: -15,
     top: -15,
-    borderRadius: 4,
+    borderTopRightRadius: 4,
     width: 25,
     height: 20,
   },
@@ -165,9 +180,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignSelf: 'flex-start',
     marginLeft: -15,
-    paddingLeft: 15,
+    marginRight: 15,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
+    marginBottom: 10,
   },
   type: {
     color: appConfig.colors.white,

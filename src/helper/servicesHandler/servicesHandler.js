@@ -462,8 +462,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         title: service.title,
         siteId: service.site_id || store.store_id,
         roomId: service.room_id || service.channel_id || 0,
-        requestType: service.request_type,
+        objectType: service.object_type,
         objectId: service.object_id,
+        object: service.object,
       });
       break;
     /** Create */
@@ -472,14 +473,14 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         siteId: service.site_id || store.store_id,
         roomId: service.room_id || service.channel_id || 0,
         request: service.request,
-        requestType: service.request_type,
+        objectType: service.object_type,
         objectId: service.object_id,
+        object: service.object,
         onRefresh: service.onRefresh,
       });
       break;
     /** Detail */
     case SERVICES_TYPE.REQUEST_DETAIL:
-      console.log(service)
       Actions.push(appConfig.routes.requestDetail, {
         siteId: service.site_id,
         roomId: service.room_id,

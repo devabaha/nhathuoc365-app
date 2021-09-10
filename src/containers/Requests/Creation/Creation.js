@@ -26,6 +26,7 @@ import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import Loading from '../../../components/Loading';
 import Button from '../../../components/Button';
 import Images from './Images';
+import RequestTagTitle from '../Request/RequestTagTitle';
 
 const MyInput = compose(
   handleTextInput,
@@ -282,7 +283,7 @@ class Creation extends Component {
     this.setState({loading: true});
     data = {
       ...data,
-      request_type: this.props.requestType,
+      object_type: this.props.objectType,
       object_id: this.props.objectId,
     };
 
@@ -471,6 +472,11 @@ class Creation extends Component {
                   <ScrollView
                     keyboardDismissMode="interactive"
                     keyboardShouldPersistTaps="handled">
+                    <RequestTagTitle
+                      code={this.props.object?.warranty_code}
+                      name={this.props.object?.title}
+                      containerStyle={styles.tagContainer}
+                    />
                     <Form style={styles.formContainer}>
                       {this.renderFormData(props)}
                     </Form>
@@ -505,6 +511,12 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingTop: 30,
+  },
+  tagContainer: {
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingBottom: 10,
+    backgroundColor: '#f7f7f7',
   },
   title: {
     fontSize: 20,

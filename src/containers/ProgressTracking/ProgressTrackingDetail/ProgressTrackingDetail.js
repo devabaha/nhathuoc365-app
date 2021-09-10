@@ -102,7 +102,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
     try {
       const response = await getProgressTrackingDetailRequest.promise();
       if (!isMounted()) return;
-      console.log(response);
+
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -167,12 +167,9 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       type: SERVICES_TYPE.CREATE_REQUEST,
       site_id: progressTrackingDetail.site_id,
       room_id: progressTrackingDetail.room_id,
-      request: {
-        title: progressTrackingDetail.product?.name,
-        // content: progressTrackingDetail?.product?.name,
-      },
-      request_type: progressTrackingDetail.request_type,
-      object_id: progressTrackingDetail.id,
+      object_type: progressTrackingDetail.object_type,
+      object_id: progressTrackingDetail.object_id,
+      object: progressTrackingDetail.object,
       onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
     });
   };
@@ -182,8 +179,9 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       type: SERVICES_TYPE.REQUESTS,
       site_id: progressTrackingDetail.site_id,
       room_id: progressTrackingDetail.room_id,
-      request_type: progressTrackingDetail.request_type,
-      object_id: progressTrackingDetail.id,
+      object_type: progressTrackingDetail.object_type,
+      object_id: progressTrackingDetail.object_id,
+      object: progressTrackingDetail.object,
     });
   };
 
@@ -243,10 +241,12 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
         }}
       />
 
-      <CustomButton
-        title={t('screen.requests.mainTitle')}
-        onPress={goToRequests}
-      />
+      {!!progressTrackingDetail?.object_id && (
+        <CustomButton
+          title={t('screen.requests.mainTitle')}
+          onPress={goToRequests}
+        />
+      )}
     </ScreenWrapper>
   );
 };

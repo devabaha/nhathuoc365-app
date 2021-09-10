@@ -18,7 +18,6 @@ import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
 import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
-import {REQUEST_TYPE} from 'src/constants';
 
 /**
  * A list of all request of this site
@@ -34,6 +33,7 @@ class Requests extends Component {
     loading: true,
     refreshing: false,
     requests: null,
+    object: undefined,
   };
   /**
    * @todo will true when component unmount
@@ -75,7 +75,8 @@ class Requests extends Component {
       site_id: this.props.siteId,
       room_id: this.props.roomId,
       object_id: this.props.object_id || this.props.objectId,
-      request_type: this.props.request_type || this.props.requestType,
+      object_type: this.props.object_type || this.props.objectType,
+      object: this.state.object || this.props.object,
       onRefresh: (request) => {
         this.getRequests();
         setTimeout(() =>
@@ -102,6 +103,7 @@ class Requests extends Component {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
             requests: response.data.requests,
+            object: response.data.object,
           });
         } else {
           flashShowMessage({
@@ -145,6 +147,8 @@ class Requests extends Component {
       <Request
         wrapperStyle={styles.requestItemWrapper}
         containerStyle={styles.requestItemContainer}
+        tagCode={request.object?.warranty_code}
+        tagName={request.object?.title}
         title={request.title}
         subTitle={request.content}
         status={request.status}

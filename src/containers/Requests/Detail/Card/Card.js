@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Keyboard} from 'react-native';
 
-import Reanimated, {
-  Easing,
-  Extrapolate,
-} from 'react-native-reanimated';
+import Reanimated, {Easing, Extrapolate} from 'react-native-reanimated';
 
 import appConfig from 'app-config';
 import Header from './Header';
@@ -160,6 +157,7 @@ class Card extends Component {
       user,
       room_code,
       admin_name,
+      object,
     } = this.props.request;
 
     const toggleValue = this.state.isExpanded
@@ -211,7 +209,13 @@ class Card extends Component {
           <View pointerEvents="box-none" style={[styles.container]}>
             <View
               pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
-              <Header type={request_type} title={title} subTitle={created} />
+              <Header
+                tagCode={object?.warranty_code}
+                tagName={object?.title}
+                type={request_type}
+                title={title}
+                subTitle={created}
+              />
             </View>
             <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
             <View

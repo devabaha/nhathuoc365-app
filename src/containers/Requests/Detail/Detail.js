@@ -10,6 +10,7 @@ import {Actions} from 'react-native-router-flux';
 import RightButtonNavBar from 'src/components/RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
 import {APIRequest} from 'src/network/Entity';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -291,10 +292,14 @@ class Detail extends Component {
 
   editRequest = () => {
     setTimeout(() =>
-      Actions.push(appConfig.routes.requestCreation, {
+      servicesHandler({
+        type: SERVICES_TYPE.CREATE_REQUEST,
         title: 'Sửa yêu cầu',
-        siteId: this.props.siteId,
+        site_id: this.props.siteId,
         request: this.state.request,
+        object_id: this.state.request?.object_id,
+        object_type: this.props.request?.object_type,
+        object: this.state.request?.object,
         onRefresh: () => {
           this.setState({loading: true, forceUpdate: true});
           this.getRequest();
