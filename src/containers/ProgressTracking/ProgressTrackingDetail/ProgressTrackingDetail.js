@@ -169,7 +169,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       room_id: progressTrackingDetail.room_id,
       object_type: progressTrackingDetail.object_type,
       object_id: progressTrackingDetail.object_id,
-      object: progressTrackingDetail.object,
+      object: progressTrackingDetail,
       onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
     });
   };
@@ -181,7 +181,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       room_id: progressTrackingDetail.room_id,
       object_type: progressTrackingDetail.object_type,
       object_id: progressTrackingDetail.object_id,
-      object: progressTrackingDetail.object,
+      object: progressTrackingDetail,
     });
   };
 
