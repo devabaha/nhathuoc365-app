@@ -52,7 +52,7 @@ function SalesReport() {
     'total_referral_orders',
     'new_referral_members',
   ];
-  const reportTitle = 'Doanh số giới thiệu';
+  const reportTitle = 'Đơn hàng giới thiệu';
   const getInvitedRevenueRequest = new APIRequest();
   const requests = [getInvitedRevenueRequest];
 
@@ -250,7 +250,7 @@ function SalesReport() {
 
       {hasNewReferralMembers() && (
         <>
-          <Text style={styles.reportTitle}>Thành viên mới</Text>
+          <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
           <ScrollView horizontal>
             <View>
               <Table borderStyle={styles.tableBorder}>
