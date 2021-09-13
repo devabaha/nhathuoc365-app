@@ -127,17 +127,7 @@ function SalesReport() {
   const formatNewMembers = (data) => {
     if (isEmpty(data)) return [];
 
-    return data.map((item) => [
-      [item.name],
-      [item.tel],
-      [formatDate(item.created)],
-    ]);
-  };
-
-  const formatDate = (dateString) => {
-    let allDate = dateString.split(' ');
-    let thisDate = allDate[0].split('-');
-    return [thisDate[2], thisDate[1], thisDate[0]].join('-');
+    return data.map((item) => [[item.name], [item.tel], [item.created]]);
   };
 
   const handleSelectMonth = (month) => {
@@ -168,7 +158,7 @@ function SalesReport() {
         </Container>
         <Container style={[styles.revenueValueContainer]}>
           <Text style={styles.valueText} numberOfLines={2}>
-            {reportRevenue[t(item)]}
+            {reportRevenue[t(item)] || ' '}
           </Text>
         </Container>
       </View>
@@ -248,45 +238,54 @@ function SalesReport() {
         </View>
       </ScrollView>
 
-      {hasNewReferralMembers() && (
-        <>
-          <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
-          <ScrollView horizontal>
-            <View>
-              <Table borderStyle={styles.tableBorder}>
-                <Row
-                  data={tableNewMembersHead}
-                  widthArr={tableNewMemberWidthArr}
-                  style={styles.tableHeader}
-                  textStyle={styles.tableHeadingText}
-                />
-              </Table>
-
-              <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={styles.tableBorder}>
-                  {newReferralMembers.map((rowData, index) => (
-                    <Row
-                      key={index}
-                      data={rowData}
-                      widthArr={tableNewMemberWidthArr}
-                      style={[
-                        styles.row,
-                        index % 2 && {backgroundColor: '#f5f5f5'},
-                      ]}
-                      textStyle={styles.tableCellText}
-                    />
-                  ))}
-                </Table>
-              </ScrollView>
-            </View>
-          </ScrollView>
-        </>
-      )}
       {!loading && !hasRevenue() && (
-        <View
-          pointerEvents="none"
-          style={[StyleSheet.absoluteFill, styles.noResultContainer]}>
-          <NoResult message="Chưa có danh sách" />
+        <View pointerEvents="none" style={styles.noResultContainer}>
+          <NoResult
+            icon={<View />}
+            message="Chưa có danh sách"
+          />
+        </View>
+      )}
+
+      <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
+
+      <ScrollView horizontal>
+        <View>
+          <Table borderStyle={styles.tableBorder}>
+            <Row
+              data={tableNewMembersHead}
+              widthArr={tableNewMemberWidthArr}
+              style={styles.tableHeader}
+              textStyle={styles.tableHeadingText}
+            />
+          </Table>
+          {hasNewReferralMembers() && (
+            <ScrollView style={styles.dataWrapper}>
+              <Table borderStyle={styles.tableBorder}>
+                {newReferralMembers.map((rowData, index) => (
+                  <Row
+                    key={index}
+                    data={rowData}
+                    widthArr={tableNewMemberWidthArr}
+                    style={[
+                      styles.row,
+                      index % 2 && {backgroundColor: '#f5f5f5'},
+                    ]}
+                    textStyle={styles.tableCellText}
+                  />
+                ))}
+              </Table>
+            </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+
+      {!loading && !hasNewReferralMembers() && (
+        <View pointerEvents="none" style={styles.noResultContainer}>
+          <NoResult
+            icon={<View />}
+            message="Chưa có danh sách"
+          />
         </View>
       )}
     </ScreenWrapper>
@@ -441,7 +440,9 @@ const styles = StyleSheet.create({
     borderColor: '#888',
   },
   noResultContainer: {
-    marginTop: '50%',
+    width: '50%',
+    height: '25%',
+    alignSelf: 'center',
   },
 });
 
