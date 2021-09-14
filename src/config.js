@@ -352,7 +352,7 @@ class Config {
       // Gamification
       lotteryGame: 'lotteryGame',
       filterProduct: 'filterProduct',
-      salesReport: 'saleReport',
+      salesReport: 'salesReport',
       // Social
       social: 'social',
       socialGroup: 'socialGroup',
