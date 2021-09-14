@@ -329,7 +329,10 @@ class ItemAttribute extends PureComponent {
       });
 
       if (possible) {
-        if (!models[key].inventory) {
+        if (
+          !models[key].inventory &&
+          !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY)
+        ) {
           let viewData = [...this.state.viewData];
           viewData.forEach((vData, index) => {
             if (index.toString() === willDisabledAttrGroupIndex) {

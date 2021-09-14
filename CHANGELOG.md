@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-gnr5cn] Logic, suggest, note for codePush by [minhnguyenit14@gmail.com].
 ### Fixed
 - [Android] Share 1 image crash by [minhnguyenit14@gmail.com].
+- allow_site_sale_out_inventory_key not working with attributes product by [minhnguyenit14@gmail.com].
 
 ## [r12.1.2] - 2021-09-03
 ### Added
