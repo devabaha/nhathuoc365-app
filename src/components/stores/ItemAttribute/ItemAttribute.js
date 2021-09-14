@@ -59,7 +59,10 @@ class ItemAttribute extends PureComponent {
       data = data.map((attr, i) => {
         let disabled = false;
 
-        if (attrs.length === 1) {
+        if (
+          attrs.length === 1 &&
+          !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY)
+        ) {
           // disable if empty inventory ONLY IF product has only 1 attr.
           disabled = !!!Object.values(models).find(
             (model) => model.name === attr,
