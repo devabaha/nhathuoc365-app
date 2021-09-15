@@ -207,7 +207,7 @@ function SalesReport() {
 
       <Text style={styles.reportTitle}>{reportTitle}</Text>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal style={{minHeight: appConfig.device.height / 4}}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
@@ -239,17 +239,16 @@ function SalesReport() {
       </ScrollView>
 
       {!loading && !hasRevenue() && (
-        <View pointerEvents="none" style={styles.noResultContainer}>
-          <NoResult
-            icon={<View />}
-            message="Chưa có danh sách"
-          />
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, styles.noResultOrdersContainer]}>
+          <NoResult icon={<View />} message="Chưa có danh sách" />
         </View>
       )}
 
       <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
 
-      <ScrollView horizontal>
+      <ScrollView horizontal style={{minHeight: appConfig.device.height / 4}}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
@@ -281,11 +280,10 @@ function SalesReport() {
       </ScrollView>
 
       {!loading && !hasNewReferralMembers() && (
-        <View pointerEvents="none" style={styles.noResultContainer}>
-          <NoResult
-            icon={<View />}
-            message="Chưa có danh sách"
-          />
+        <View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, styles.noResultMembersContainer]}>
+          <NoResult icon={<View />} message="Chưa có danh sách" />
         </View>
       )}
     </ScreenWrapper>
@@ -439,10 +437,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#888',
   },
-  noResultContainer: {
-    width: '50%',
-    height: '25%',
-    alignSelf: 'center',
+  noResultOrdersContainer: {
+    height: '85%',
+  },
+  noResultMembersContainer: {
+    height: '175%',
   },
 });
 
