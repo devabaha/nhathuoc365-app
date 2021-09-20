@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Keyboard,
   AppState,
@@ -6,15 +6,17 @@ import {
   FlatList,
   StyleSheet,
   RefreshControl,
-  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import FastImage from 'react-native-fast-image';
-import Button from 'react-native-button';
+import {Actions} from 'react-native-router-flux';
 import {getPreciseDistance} from 'geolib';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import appConfig from 'app-config';
+import store from 'app-store';
+import {APIRequest} from '../../network/Entity';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -24,11 +26,7 @@ import {
   REQUEST_RESULT_TYPE,
 } from '../../helper/permissionHelper';
 import Loading from '../../components/Loading';
-import {APIRequest} from '../../network/Entity';
-import Container from '../../components/Layout/Container';
-import Communications from 'react-native-communications';
-
-import {openMap} from '../../helper/map';
+import StoreItem from './StoreItem';
 
 const styles = StyleSheet.create({
   image: {
@@ -116,11 +114,15 @@ const styles = StyleSheet.create({
 });
 
 const GPSListStore = () => {
-  const getListStoreRequest = new APIRequest();
-  const requests = [getListStoreRequest];
+  const {t} = useTranslation();
+
   const appState = useRef('active');
   const watchID = useRef('');
   const isUpdatedListStoreByPosition = useRef(false);
+
+  const [getListStoreRequest] = useState(new APIRequest());
+  const [setStoreRequest] = useState(new APIRequest());
+  const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(true);
@@ -161,6 +163,15 @@ const GPSListStore = () => {
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
     cancelRequests(requests);
+    if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
+      handlePressStore(
+        {
+          id: 0,
+          site_id: store?.store_data?.id,
+        },
+        true,
+      );
+    }
   };
 
   const getListStore = async (data) => {
@@ -272,6 +283,41 @@ const GPSListStore = () => {
     );
   };
 
+  const handlePressStore = useCallback(async (storeInfo, isBack) => {
+    !isBack && setLoading(true);
+    const data = {
+      store_id: storeInfo.id,
+    };
+    setStoreRequest.data = APIHandler.site_set_store(storeInfo.site_id, data);
+    try {
+      const response = await setStoreRequest.promise();
+      // console.log(response, data)
+      if (response?.status === STATUS_SUCCESS) {
+        store.setStoreData(response.data.site);
+
+        if (!isBack) {
+          await servicesHandler({
+            type: SERVICES_TYPE.OPEN_SHOP,
+            siteId: storeInfo.site_id,
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('api.error.message'),
+        });
+      }
+    } catch (error) {
+      console.log('set_store', error);
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+    } finally {
+      !isBack && setLoading(false);
+    }
+  }, []);
+
   const cancelModal = () => {
     closeModal();
   };
@@ -301,81 +347,27 @@ const GPSListStore = () => {
     getListStore();
   };
 
-  const handleCall = (phone) => {
-    if (phone && phone != '') {
-      Communications.phonecall(phone, true);
-    } else {
-      Alert.alert('Không thể liên lạc');
-    }
-  };
-
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
+
     return (
-      <Container row style={styles.storeContainer}>
-        <FastImage
-          source={{uri: store.image_url}}
-          style={[
-            styles.image,
-            !store.image_url && {backgroundColor: '#f5f5f5'},
-          ]}
+      <TouchableOpacity
+        activeOpacity={0.5}
+        disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}
+        onPress={() => handlePressStore(store)}>
+        <StoreItem
+          name={store.name}
+          image={store.image_url}
+          address={store.address}
+          phone={store.phone}
+          lat={store.lat}
+          lng={store.lng}
+          enableDistance
+          requestLocationLoading={requestLocationLoading}
+          distance={calculateDiffDistance(store.lng, store.lat)}
+          disabledDistanceStyle={disabledDistanceStyle}
         />
-
-        <Container flex centerVertical={false} style={styles.infoContainer}>
-          <Container centerVertical={false}>
-            <Text style={styles.title}>{store.name}</Text>
-            <Text style={styles.description}>{store.address}</Text>
-          </Container>
-
-          <Container flex row style={styles.mapInfoContainer}>
-            <Container
-              row
-              style={[styles.distanceContainer, disabledDistanceStyle]}>
-              {requestLocationLoading ? (
-                <Loading
-                  style={styles.distanceLoading}
-                  wrapperStyle={styles.distanceLoadingContainer}
-                  size="small"
-                />
-              ) : (
-                <Ionicons
-                  name="ios-navigate"
-                  style={[styles.distanceIcon, disabledDistanceStyle]}
-                />
-              )}
-              <Text style={[styles.distanceTxt, disabledDistanceStyle]}>
-                {calculateDiffDistance(store.lng, store.lat)}
-              </Text>
-            </Container>
-
-            <Container row>
-              {!!store.phone && (
-                <Container style={styles.btnWrapper}>
-                  <Button
-                    containerStyle={styles.openMapContainer}
-                    onPress={() => handleCall(store.phone)}>
-                    <Container row style={styles.openMapBtn}>
-                      <Ionicons name="call" style={styles.mapIcon} />
-                      <Text style={styles.openMapTxt}>Gọi</Text>
-                    </Container>
-                  </Button>
-                </Container>
-              )}
-
-              <Container style={styles.btnWrapper}>
-                <Button
-                  containerStyle={styles.openMapContainer}
-                  onPress={() => openMap(store.lat, store.lng)}>
-                  <Container row style={styles.openMapBtn}>
-                    <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                    <Text style={styles.openMapTxt}>Xem bản đồ</Text>
-                  </Container>
-                </Button>
-              </Container>
-            </Container>
-          </Container>
-        </Container>
-      </Container>
+      </TouchableOpacity>
     );
   };
 

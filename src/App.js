@@ -1123,7 +1123,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
-                    title={t('screen.gpsListStore.mainTitle')}
                     component={GPSListStore}
                     back
                   />

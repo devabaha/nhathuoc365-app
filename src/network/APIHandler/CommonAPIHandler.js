@@ -1044,12 +1044,14 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * edit user note
-   * 
-  */
+   *
+   */
   async edit_user_note(site_id, cart_id, data) {
-   const api = url_for(API.SITE_CART_EDIT_USER_NOTE + '/' + site_id + '/' + cart_id);
-   return await this.postAPI(api, data)
- }
+    const api = url_for(
+      API.SITE_CART_EDIT_USER_NOTE + '/' + site_id + '/' + cart_id,
+    );
+    return await this.postAPI(api, data);
+  }
 
   /**
    * @todo Lấy thông tin game đoán số
@@ -1505,7 +1507,7 @@ class CommonAPIHandler extends BaseHandler {
    * @param {{content: string}} data
    */
   async site_comment_request_room(site_id, room_id, request_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_COMMENT_REQUEST_ROOM +
         '/' +
         site_id +
@@ -1527,7 +1529,7 @@ class CommonAPIHandler extends BaseHandler {
    * @param {{status_id: number}} data
    */
   site_update_status_request_room(site_id, room_id, request_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_UPDATE_STATUS_REQUEST_ROOM +
         '/' +
         site_id +
@@ -1544,10 +1546,21 @@ class CommonAPIHandler extends BaseHandler {
    *
    */
   async site_update_request(site_id, request_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_UPDATE_REQUEST + '/' + site_id + '/' + request_id,
     );
     return await this.postAPI(api, data);
+  }
+
+  /**
+   * Cập nhật kho/ cửa hàng
+   *
+   *  @param {Object} data
+   *  @param {string} data.store_id
+   */
+  site_set_store(site_id, data) {
+    const api = url_for(API.SITE_SET_STORE, site_id);
+    return this.postCancelableAPI(api, data);
   }
 }
 
