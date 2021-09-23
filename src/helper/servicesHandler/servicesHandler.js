@@ -34,6 +34,8 @@ import {
  */
 export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service || !service.type) return;
+service.news_id = service.news.id;
+service.news = undefined;
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
@@ -188,8 +190,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({
-        title: service.news.title,
+        title: service.title || service.news?.title,
         data: service.news,
+        newsId: service.news_id
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
