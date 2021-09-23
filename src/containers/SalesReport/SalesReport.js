@@ -207,7 +207,7 @@ function SalesReport() {
 
       <Text style={styles.reportTitle}>{reportTitle}</Text>
 
-      <ScrollView horizontal style={{minHeight: appConfig.device.height / 4}}>
+      <ScrollView horizontal style={styles.referralOrdersContainer}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
@@ -241,14 +241,17 @@ function SalesReport() {
       {!loading && !hasRevenue() && (
         <View
           pointerEvents="none"
-          style={[StyleSheet.absoluteFill, styles.noResultOrdersContainer]}>
+          style={[
+            StyleSheet.absoluteFill,
+            {height: isEmpty(reportRevenue) ? '85 %' : '110%'},
+          ]}>
           <NoResult icon={<View />} message="Chưa có danh sách" />
         </View>
       )}
 
       <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
 
-      <ScrollView horizontal style={{minHeight: appConfig.device.height / 4}}>
+      <ScrollView horizontal style={styles.referralMembersContainer}>
         <View>
           <Table borderStyle={styles.tableBorder}>
             <Row
@@ -282,7 +285,10 @@ function SalesReport() {
       {!loading && !hasNewReferralMembers() && (
         <View
           pointerEvents="none"
-          style={[StyleSheet.absoluteFill, styles.noResultMembersContainer]}>
+          style={[
+            StyleSheet.absoluteFill,
+            {height: isEmpty(reportRevenue) ? '175%' : '185%'},
+          ]}>
           <NoResult icon={<View />} message="Chưa có danh sách" />
         </View>
       )}
@@ -437,11 +443,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#888',
   },
-  noResultOrdersContainer: {
-    height: '85%',
+  referralMembersContainer: {
+    minHeight: appConfig.device.height / 3,
   },
-  noResultMembersContainer: {
-    height: '175%',
+  referralOrdersContainer: {
+    minHeight: appConfig.device.height / 3.2,
   },
 });
 
