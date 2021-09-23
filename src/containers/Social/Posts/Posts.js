@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, RefreshControl, StyleSheet} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
+import {Actions} from 'react-native-router-flux';
+
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
@@ -57,6 +59,7 @@ const Posts = ({
 }) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
+  const moreActionOptions = [t('edit'), t('delete'), t('cancel')];
 
   const limit = useRef(limitProp);
   const page = useRef(1);
@@ -67,12 +70,14 @@ const Posts = ({
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [getPostsRequest] = useState(new APIRequest());
+  const [deletePostRequest] = useState(new APIRequest());
+  const [requests] = useState([getPostsRequest, deletePostRequest]);
 
   const [posts, setPosts] = useState(postsProp || []);
 
   useEffect(() => {
     setPosts(postsProp);
-  }, [postsProp])
+  }, [postsProp]);
 
   useEffect(() => {
     if (!postsProp) {
@@ -80,7 +85,7 @@ const Posts = ({
     }
 
     return () => {
-      cancelRequests([getPostsRequest]);
+      cancelRequests(requests);
       store.resetSocialPosts();
     };
   }, []);
@@ -215,7 +220,7 @@ const Posts = ({
     servicesHandler({
       type: SERVICES_TYPE.PERSONAL_PROFILE,
       isMainUser: user.user_id == store.user_info?.id,
-      userInfo: user
+      userInfo: user,
     });
   }, []);
 
@@ -261,6 +266,55 @@ const Posts = ({
     }
   };
 
+  const deletePost = useCallback(async (feedsId) => {
+    console.log(feedsId);
+    deletePostRequest.data = APIHandler.social_posts_delete(feedsId);
+    try {
+      const response = await deletePostRequest.promise();
+      console.log(response);
+      flashShowMessage({
+        type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+        message:
+          response?.status === STATUS_SUCCESS
+            ? response?.message || ''
+            : t('api.error.message'),
+      });
+    } catch (error) {
+      console.log('delete_post', error);
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+    }
+  }, []);
+
+  const handlePressMoreActionOption = useCallback((index, feedsId) => {
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        setTimeout(() => {
+          if (!isMounted()) return;
+          Actions.push(appConfig.routes.modalConfirm, {
+            message: t('social:postDeleteConfirmMessage'),
+            isConfirm: true,
+            yesTitle: t('delete'),
+            noTitle: t('cancel'),
+            yesConfirm: () => deletePost(feedsId),
+          });
+        }, 300);
+        break;
+    }
+  }, []);
+
+  const handlePressMoreActions = useCallback((feedsId) => {
+    Actions.push(appConfig.routes.modalActionSheet, {
+      options: moreActionOptions,
+      destructiveButtonIndex: 1,
+      onPress: (index) => handlePressMoreActionOption(index, feedsId),
+    });
+  }, []);
+
   const renderStatusText = (feeds) => (
     <ActionBarText
       title={feeds.accept_status || t('social:posting')}
@@ -305,6 +359,7 @@ const Posts = ({
               containerStyle={styles.feedsContainer}
               disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
               disableShare
+              showMoreActionsButton
               onPressGroup={() => handlePressGroup(group)}
               onPressUserName={() => handlePressUserName(user)}
               onPressAvatar={() => handlePressUserName(user)}
@@ -322,6 +377,7 @@ const Posts = ({
                   false,
                 )
               }
+              onPressMoreActions={() => handlePressMoreActions(feeds.id)}
             />
           );
         }}

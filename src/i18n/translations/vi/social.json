@@ -23,5 +23,6 @@
   "continuePostConfirm": "Tiếp tục sửa",
   "maxTotalPostImagesWarning": "Quá nhiều ảnh",
   "maxTotalPostImagesDescription": "Bạn chỉ có thể tải tối đa {{max}} ảnh.\r\nVui lòng chỉnh sửa lại để đăng bài viết này!",
-  "maxTotalPostImagesConfirm": "OK"
+  "maxTotalPostImagesConfirm": "OK",
+  "postDeleteConfirmMessage": "Bạn có chắc muốn xoá bài viết này?"
 }

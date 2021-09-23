@@ -1249,9 +1249,28 @@ class CommonAPIHandler extends BaseHandler {
    * @param {string} data.content
    * @param {array=} data.images
    */
-  social_create_post(data) {
-    const api = url_for(API.SOCIAL_CREATE_POST);
+  social_create_post(data, post_id = '') {
+    const api = url_for(API.SOCIAL_CREATE_POST, post_id);
     return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get info of post
+   *
+   */
+  social_posts_edit(post_id) {
+    const api = url_for(API.SOCIAL_POSTS_EDIT, post_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * delete post
+   *
+   */
+  social_posts_delete(post_id) {
+    const api = url_for(API.SOCIAL_POSTS_DELETE, post_id);
+    console.log(api)
+    return this.postCancelableAPI(api);
   }
 
   /**

@@ -1,23 +1,25 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import Container from 'src/components/Layout/Container';
-
-import Image from 'src/components/Image';
-import {getNewsFeedSize} from 'app-helper/image';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import appConfig from 'app-config';
 import {renderGridImages} from 'app-helper/social';
+import {getNewsFeedSize} from 'app-helper/image';
+
+import Container from 'src/components/Layout/Container';
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
 import TextPressable from 'src/components/TextPressable';
+import Image from 'src/components/Image';
 
 const CHARACTER_PER_LINE = 40;
 const LINE_HEIGHT = 21;
@@ -44,12 +46,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   userNameContainer: {
-    paddingRight: 15,
     flex: 1,
   },
   userName: {
     color: '#333',
     fontWeight: '600',
+    flex: 1,
   },
   description: {
     fontSize: 12,
@@ -102,6 +104,14 @@ const styles = StyleSheet.create({
     marginRight: 0,
     right: 0,
   },
+
+  moreContainer: {
+    marginLeft: 30,
+  },
+  moreIcon: {
+    fontSize: 18,
+    color: appConfig.colors.text,
+  },
 });
 
 const Post = ({
@@ -114,10 +124,12 @@ const Post = ({
   avatarUrl,
   userName,
   description,
+  showMoreActionsButton = false,
   onPress = () => {},
   onPressGroup = () => {},
   onPressUserName = () => {},
   onPressAvatar = () => {},
+  onPressMoreActions = () => {},
 }) => {
   const canExpandMessage = () => {
     if (content) {
@@ -166,6 +178,19 @@ const Post = ({
     );
   };
 
+  const renderMoreButton = () => {
+    return (
+      showMoreActionsButton && (
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          style={styles.moreContainer}
+          onPress={onPressMoreActions}>
+          <Ionicons name="ios-ellipsis-horizontal" style={styles.moreIcon} />
+        </TouchableOpacity>
+      )
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <Container centerVertical={false} style={styles.container}>
@@ -181,13 +206,17 @@ const Post = ({
             />
           </TouchableHighlight>
           <Container centerVertical={false} style={styles.userNameContainer}>
-            <Text style={styles.userName}>
-              <TextPressable onPress={onPressUserName}>
-                {userName}
-              </TextPressable>
+            <Container row>
+              <Text style={styles.userName}>
+                <TextPressable onPress={onPressUserName}>
+                  {userName}
+                </TextPressable>
 
-              {renderGroupName()}
-            </Text>
+                {renderGroupName()}
+              </Text>
+
+              {renderMoreButton()}
+            </Container>
             {!!description && (
               <Text style={styles.description}>{description}</Text>
             )}

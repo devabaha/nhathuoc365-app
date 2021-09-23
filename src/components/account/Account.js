@@ -396,7 +396,7 @@ class Account extends Component {
             backgroundColor: '#527c23',
           },
         ],
-        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
+        // isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
       },
       {
         key: 'warehouse',

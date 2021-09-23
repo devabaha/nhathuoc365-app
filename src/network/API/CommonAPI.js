@@ -505,6 +505,22 @@ class CommonAPI {
     return BaseAPI.socialDomain + 'posts/store';
   }
 
+  get SOCIAL_POSTS_EDIT() {
+    return BaseAPI.socialDomain + 'posts/edit';
+  }
+
+  get SOCIAL_POSTS_DELETE() {
+    return BaseAPI.socialDomain + 'posts/delete';
+  }
+
+  get SOCIAL_COMMENTS_EDIT() {
+    return BaseAPI.socialDomain + 'comments/edit';
+  }
+
+  get SOCIAL_COMMENTS_DELETE() {
+    return BaseAPI.socialDomain + 'comments/delete';
+  }
+
   get USER_LIST_WARRANTY() {
     return BaseAPI.apiDomain + 'apiUser/warrantys';
   }
