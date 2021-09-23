@@ -117,6 +117,7 @@ export const SERVICES_TYPE = {
   /** REQUESTS */
   REQUESTS: 'requests',
   CREATE_REQUEST: 'create_request',
+  REQUEST_DETAIL: 'request_detail',
 
   /** Wallet */
   WALLET: 'wallet'

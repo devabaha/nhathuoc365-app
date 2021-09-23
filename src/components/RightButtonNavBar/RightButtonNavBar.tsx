@@ -78,6 +78,10 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
           break;
         case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
           iconName = 'ios-download-outline';
+          break;
+        case RIGHT_BUTTON_TYPE.MORE:
+          iconName = 'ios-ellipsis-vertical';
+          break;
       }
     }
 
@@ -106,6 +110,10 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         break;
       case RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE:
         this.handlePressDownloadImage();
+        break;
+      case RIGHT_BUTTON_TYPE.MORE:
+        this.handlePressMore();
+        break;
     }
   }
 
@@ -180,6 +188,14 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   handlePressDownloadImage() {
     saveImage(this.props?.imageUrl);
   }
+
+  handlePressMore = () => {
+    Actions.push(appConfig.routes.modalActionSheet, {
+      options: this.props.moreOptions,
+      onPress: this.props.onPressMoreAction,
+      ...this.props.moreActionsProps
+    })
+  };
 
   updateNoti() {
     this.autoUpdateDisposer = autorun(() => {

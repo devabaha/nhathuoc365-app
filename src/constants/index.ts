@@ -97,3 +97,7 @@ export const MAX_DRAWER_WIDTH = 350;
 export const BASE_DRAWER_WIDTH = appConfig.device.width * 0.8;
 export const DRAWER_WIDTH =
   BASE_DRAWER_WIDTH > MAX_DRAWER_WIDTH ? MAX_DRAWER_WIDTH : BASE_DRAWER_WIDTH;
+
+export const REQUEST_TYPE = {
+  WARRANTY: 'warranty',
+};

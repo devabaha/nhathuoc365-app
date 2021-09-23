@@ -20,6 +20,7 @@ import {Actions} from 'react-native-router-flux';
 import Loading from '../../components/Loading';
 import PremiumInfoSkeleton from './PremiumInfoSkeleton';
 import Button from 'react-native-button';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 const premiums = [
   {
@@ -447,6 +448,7 @@ const areEquals = (prevProps, nextProps) => {
 const Scene = React.memo(
   ({benefits, currentPremium, premium, handleRefresh, refreshing}) => {
     const userInfo = store.user_info || {};
+    const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
 
     const goToNews = () => {
       Actions.push(appConfig.routes.notifyDetail, {
@@ -485,7 +487,7 @@ const Scene = React.memo(
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-        ListHeaderComponent={renderPremiumBenefitsHeader(premium)}
+        ListHeaderComponent={isShowPremiumPoint && renderPremiumBenefitsHeader(premium)}
         ListFooterComponent={
           <TouchableOpacity onPress={goToNews}>
             <Container row padding={15} style={styles.loyaltyContainer}>

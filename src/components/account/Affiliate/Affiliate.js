@@ -12,13 +12,14 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../../store/Store';
-import Communications from 'react-native-communications';
 
 //component
 import History from './History';
 import Info from './Info';
 import Loading from '../../Loading';
 import EventTracker from '../../../helper/EventTracker';
+import appConfig from 'app-config';
+import { share } from '../../../helper/share'
 
 class Affiliate extends Component {
   constructor(props) {
@@ -92,76 +93,55 @@ class Affiliate extends Component {
     return (
       <View>
         <View style={styles.add_store_actions_box}>
-          <TouchableHighlight
-            onPress={() =>
-              Communications.textWithoutEncoding(null, user_info.text_sms)
-            }
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="commenting" size={22} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('header.message.title')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-
-          <TouchableHighlight
-            onPress={() =>
-              Communications.email(
-                null,
-                null,
-                null,
-                t('header.email.message', { appName: APP_NAME_SHOW }),
-                user_info.text_sms
-              )
-            }
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="envelope-o" size={22} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('header.email.title')}
-              </Text>
-            </View>
-          </TouchableHighlight>
 
           <TouchableHighlight
             underlayColor="transparent"
-            style={styles.add_store_action_btn}
+            style={styles.add_store_action_btn, {flex: 1}}
           >
             <View
               style={[
                 styles.add_store_action_btn_box_balance,
-                { borderRightWidth: 0 }
+                { borderRightWidth: 0,}
               ]}
             >
               <Text
                 style={[
                   styles.add_store_action_label_balance,
                   {
-                    textAlign: 'left',
+                    // textAlign: 'center',
                     width: '100%',
-                    paddingHorizontal: 15
+                    paddingHorizontal: 22
                   }
                 ]}
               >
-                <Icon name="slideshare" size={16} />
+                {/* <Icon name="slideshare" size={16} /> */}
                 {t('header.referralCode.title')}
               </Text>
               <Text
                 style={[
                   styles.add_store_action_content,
                   {
-                    textAlign: 'right',
+                    // textAlign: 'center',
                     width: '100%',
-                    paddingHorizontal: 15
+                    paddingHorizontal: 22
                   }
                 ]}
               >
                 {user_info.username}
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() =>
+              share(null, user_info.text_sms)
+            }
+            underlayColor="transparent"
+            style={styles.add_store_action_btn}
+          >
+            <View style={styles.add_store_action_btn_box}>
+              <Icon name="share-alt" size={22} color="#333333" />
+              <Text style={styles.add_store_action_label}>
+                {t('header.share.title')}
               </Text>
             </View>
           </TouchableHighlight>
@@ -437,8 +417,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 4),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    borderLeftWidth: Util.pixel,
+    borderLeftColor: '#ebebeb'
   },
   add_store_action_btn_box_balance: {
     alignItems: 'center',
@@ -460,7 +440,7 @@ const styles = StyleSheet.create({
   add_store_action_content: {
     fontSize: 19,
     marginTop: 5,
-    color: '#51A9FF',
+    color: appConfig.colors.primary,
     fontWeight: '800'
   },
   tabStyle: {

@@ -4,6 +4,7 @@ export const CONFIG_KEY = {
   SELECT_STORE_KEY: 'choose_store_site_key',
 
   HIDE_PREMIUM_TAB_KEY: 'hide_premium_tab_key',
+  HIDE_PREMIUM_POINT_KEY: 'hide_premium_point_key',
 
   DISPLAY_NPP_REGISTER_KEY: 'display_npp_register_key',
   DISPLAY_COMMISSION_KEY: 'display_commission_key',
@@ -34,4 +35,8 @@ export const CONFIG_KEY = {
   VIEW_COMMISSIONS_AT_HOMEPAGE: 'view_commissions_at_homepage',
 
   ENABLE_POST_FOR_SALE_KEY: 'enable_post_for_sale_key',
+
+  NEED_REFERRAL_CODE_KEY: 'need_referral_code_key',
+
+  FACEBOOK_FANPAGE: 'facebook_fanpage',
 };

@@ -52,7 +52,8 @@ class Comments extends Component {
       nextProps.user !== this.props.user ||
       nextProps.request !== this.props.request ||
       nextProps.loading !== this.props.loading ||
-      nextProps.comments !== this.props.comments
+      nextProps.comments !== this.props.comments ||
+      nextProps.forceUpdate !== this.props.forceUpdate
     ) {
       return true;
     }
@@ -87,9 +88,9 @@ class Comments extends Component {
 
   handleInputState = (isFocus) => {
     Reanimated.timing(this.animatedTop, {
-      toValue: isFocus ? -this.state.headerHeight/5 : 0,
+      toValue: isFocus ? -this.state.headerHeight / 5 : 0,
       duration: 300,
-      easing: Easing.quad
+      easing: Easing.quad,
       // useNativeDriver: false,
     }).start();
   };
@@ -121,6 +122,7 @@ class Comments extends Component {
             this.refTickidChat.onListViewPress();
           }
         }}
+        forceUpdate={this.props.forceUpdate}
       />
     ) : (
       !this.props.loading && (
@@ -139,11 +141,11 @@ class Comments extends Component {
           <TickidChat
             // Root props
             showAllUserName
-            renderEmpty={() => null}
+            renderEmpty={<View />}
             setHeader={this.props.setHeader}
             defaultStatusBarColor={appConfig.colors.primary}
             containerStyle={{backgroundColor: 'transparent'}}
-            placeholder="Nhập nội dung phản hồi..."
+            placeholder="Nhập nội dung..."
             // Refs
             ref={(inst) => (this.refTickidChat = inst)}
             refGiftedChat={(inst) => (this.refGiftedChat = inst)}

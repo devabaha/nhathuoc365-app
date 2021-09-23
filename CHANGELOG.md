@@ -7,12 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+
+## [r12.1.3]
+### Added
+- [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-e5q6jn] config_key facebook_fanpage in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-e5mme0] discount_content in Payment/CartItem by [minhnguyenit14@gmail.com].
 - [CU-860k7x] Module social in Item by [minhnguyenit14@gmail.com].
 - [CU-e00p0r] API edit_user_note by [nguyenanhtuan191298@gmail.com] [minhnguyenit14@gmail.com].
-- [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-d388n6] Request in ProgressTrackingDetail by [minhnguyenit14@gmail.com].
+- [CU-gnr20a] Suffix for referCodeTitle by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-fdnkbx] UI, flow of wallet by [minhnguyenit14@gmail.com].
+- [CU-f824fk] Request UI, flow by [minhnguyenit14@gmail.com].
+- [CU-ar3747] Use product_groups instead of related in Item by [minhnguyenit14@gmail.com].
+- [CU-gnr5cn] Logic, suggest, note for codePush by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] Share 1 image crash by [minhnguyenit14@gmail.com].
+- allow_site_sale_out_inventory_key not working with attributes product by [minhnguyenit14@gmail.com].
 
 ## [r12.1.2] - 2021-09-03
 ### Added

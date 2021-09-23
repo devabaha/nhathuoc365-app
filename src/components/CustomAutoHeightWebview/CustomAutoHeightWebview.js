@@ -134,14 +134,14 @@ class CustomAutoHeightWebview extends Component {
 
   render() {
     return (
-      <View style={this.props.containerStyle}>
+      <View style={this.props.containerStyle} onLayout={this.props.onLayout}>
         <AutoHeightWebView
           ref={this.handleRefWebview}
           onShouldStartLoadWithRequest={(result) => {
             return true;
           }}
           style={[styles.webview, this.props.contentStyle]}
-          // onHeightUpdated={(height) => this.setState({height})}
+          onSizeUpdated={this.props.onSizeUpdated}
           source={{
             html: `${this.props.content}`,
           }}

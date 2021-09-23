@@ -34,6 +34,8 @@ import {
  */
 export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service || !service.type) return;
+service.news_id = service.news.id;
+service.news = undefined;
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
@@ -188,8 +190,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({
-        title: service.news.title,
+        title: service.title || service.news?.title,
         data: service.news,
+        newsId: service.news_id
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
@@ -221,7 +224,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.LIST_CHAT:
-      Actions.list_amazing_chat({
+      Actions.push(appConfig.routes.listChat, {
         titleStyle: {width: 220},
       });
       break;
@@ -460,15 +463,33 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.REQUESTS:
       Actions.push(appConfig.routes.requests, {
         title: service.title,
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        objectType: service.object_type,
+        objectId: service.object_id,
+        object: service.object,
       });
       break;
-    /** CREATE */
+    /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
       Actions.push(appConfig.routes.requestCreation, {
-        siteId: store.store_id,
-        roomId: service.room_id || service.channel_id,
+        siteId: service.site_id || store.store_id,
+        roomId: service.room_id || service.channel_id || 0,
+        request: service.request,
+        objectType: service.object_type,
+        objectId: service.object_id,
+        object: service.object,
+        onRefresh: service.onRefresh,
+      });
+      break;
+    /** Detail */
+    case SERVICES_TYPE.REQUEST_DETAIL:
+      Actions.push(appConfig.routes.requestDetail, {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        requestId: service.request_id,
+        title: service.title,
+        callbackReload: service.callbackReload,
       });
       break;
 
@@ -481,7 +502,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
             )
           : store.user_info?.default_wallet
         : store.user_info?.default_wallet;
-console.log(wallet, service)
+      console.log(wallet, service);
       Actions.push(appConfig.routes.vndWallet, {
         title: service.name || wallet?.name,
         wallet,

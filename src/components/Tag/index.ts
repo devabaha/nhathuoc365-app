@@ -9,5 +9,6 @@ export interface TagProps {
     containerStyle?: StyleProp<ViewStyle>,
     labelContainerStyle?: StyleProp<ViewStyle>,
     labelStyle?: StyleProp<ViewStyle>,
-    animate?: boolean
+    animate?: boolean,
+    padding?: number
 }

@@ -5,4 +5,5 @@ export const RIGHT_BUTTON_TYPE = {
   USER_CHAT: "user_chat",
   SHARE: "share",
   DOWNLOAD_IMAGE: "download_image",
+  MORE: 'more'
 };
