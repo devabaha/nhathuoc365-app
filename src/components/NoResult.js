@@ -8,18 +8,17 @@ const NoResult = ({
   icon = null,
   iconBundle = BUNDLE_ICON_SETS_NAME.MaterialCommunityIcons,
   iconName = 'file-remove',
-  message = "",
+  message = '',
+  contentContainerStyle = {},
   containerStyle = {},
-  textStyle = {}
+  textStyle = {},
 }) => {
   const Icon = BUNDLE_ICON_SETS[iconBundle];
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <View style={styles.wrapper}>
-        {icon || (
-          <Icon name={iconName} size={72} color={NO_RESULT_COLOR} />
-        )}
+      <View style={[styles.contentContainer, contentContainerStyle]}>
+        {icon || <Icon name={iconName} size={72} color={NO_RESULT_COLOR} />}
         <Text style={[styles.text, textStyle]}>{message}</Text>
       </View>
     </View>
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
     paddingVertical: '20%',
     paddingBottom: '35%',
   },
-  wrapper: {
+  contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },

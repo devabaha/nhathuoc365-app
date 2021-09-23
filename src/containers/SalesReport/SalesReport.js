@@ -35,24 +35,18 @@ function SalesReport() {
   const [selectedMonth, setSelectedMonth] = useState();
   const [dataReport, setDataReport] = useState({});
   const [stats, setStats] = useState({});
-  const [reportRevenue, setReportRevenue] = useState({});
+  const [reportRevenue, setReportRevenue] = useState([]);
   const [newReferralMembers, setNewReferralMembers] = useState([]);
   const {t} = useTranslation('salesReport');
 
   const tableReportHead = [
     t('name'),
     t('phone'),
-    t('member_orders_count'),
-    t('total_revenue'),
+    t('totalOrders'),
+    t('totalRevenue'),
   ];
   const tableNewMembersHead = [t('name'), t('phone'), t('joiningDate')];
 
-  const tableReferralReport = [
-    'personal_orders',
-    'total_referral_orders',
-    'new_referral_members',
-  ];
-  const reportTitle = 'Đơn hàng giới thiệu';
   const getInvitedRevenueRequest = new APIRequest();
   const requests = [getInvitedRevenueRequest];
 
@@ -79,7 +73,9 @@ function SalesReport() {
             setStats(response.data.stats);
             setSelectedMonth(response?.data.month || []);
             setDataReport(formatInviter(response.data.revenue_inviter_users));
-            setReportRevenue(response.data.report_revenue_in_months || {});
+            setReportRevenue(
+              formatReportRevenue(response.data.report_revenue_in_months),
+            );
             setNewReferralMembers(
               formatNewMembers(response.data.list_invited_user_in_months),
             );
@@ -107,6 +103,13 @@ function SalesReport() {
     }
   };
 
+  const formatReportRevenue = (reportRevenue = {}) => {
+    return Object.keys(reportRevenue).map((reportKey) => ({
+      title: reportKey,
+      value: reportRevenue[reportKey],
+    }));
+  };
+
   const formatMonths = (months) => {
     return months.map((month) => ({
       label: month,
@@ -114,9 +117,9 @@ function SalesReport() {
     }));
   };
 
-  const formatInviter = (datas) => {
-    if (isEmpty(datas)) return [];
-    return datas.map((item) => [
+  const formatInviter = (inviters) => {
+    if (isEmpty(inviters)) return [];
+    return inviters.map((item) => [
       [item.name],
       [item.tel],
       [item.count],
@@ -124,10 +127,10 @@ function SalesReport() {
     ]);
   };
 
-  const formatNewMembers = (data) => {
-    if (isEmpty(data)) return [];
+  const formatNewMembers = (newMembers) => {
+    if (isEmpty(newMembers)) return [];
 
-    return data.map((item) => [[item.name], [item.tel], [item.created]]);
+    return newMembers.map((item) => [[item.name], [item.tel], [item.created]]);
   };
 
   const handleSelectMonth = (month) => {
@@ -151,14 +154,14 @@ function SalesReport() {
         <Container flex center style={styles.referralHeaderContainer}>
           <Text style={styles.heading}>
             {/* {index === 0 ? stats['total_revenue_title'] : t(item)} */}
-            {t(item)}
+            {item.title}
           </Text>
 
           {index > 0 && <View style={[styles.referralSeparator]} />}
         </Container>
         <Container style={[styles.revenueValueContainer]}>
           <Text style={styles.valueText} numberOfLines={2}>
-            {reportRevenue[t(item)] || ' '}
+            {item.value}
           </Text>
         </Container>
       </View>
@@ -192,11 +195,11 @@ function SalesReport() {
           </Container>
         </Container>
       </Container>
-      {!isEmpty(reportRevenue) && (
+      {!!reportRevenue?.length && (
         <View>
           <FlatList
             contentContainerStyle={styles.referralRevenueReportContentContainer}
-            data={tableReferralReport}
+            data={reportRevenue}
             keyExtractor={(i) => i}
             renderItem={renderColumnReferral}
             numColumns={3}
@@ -205,93 +208,95 @@ function SalesReport() {
         </View>
       )}
 
-      <Text style={styles.reportTitle}>{reportTitle}</Text>
+      <Text style={styles.reportTitle}>{t('referralOrders')}</Text>
 
-      <ScrollView horizontal style={styles.referralOrdersContainer}>
-        <View>
-          <Table borderStyle={styles.tableBorder}>
-            <Row
-              data={tableReportHead}
-              widthArr={tableDataReportWidthArr}
-              style={styles.tableHeader}
-              textStyle={styles.tableHeadingText}
-            />
-          </Table>
-          {hasRevenue() && (
-            <ScrollView style={styles.dataWrapper}>
-              <Table borderStyle={styles.tableBorder}>
-                {dataReport.map((rowData, index) => (
-                  <Row
-                    key={index}
-                    data={rowData}
-                    widthArr={tableDataReportWidthArr}
-                    style={[
-                      styles.row,
-                      index % 2 && {backgroundColor: '#f5f5f5'},
-                    ]}
-                    textStyle={styles.tableCellText}
-                  />
-                ))}
-              </Table>
-            </ScrollView>
-          )}
-        </View>
-      </ScrollView>
+      <View style={styles.block}>
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.listContentContainer}>
+          <View>
+            <Table borderStyle={styles.tableBorder}>
+              <Row
+                data={tableReportHead}
+                widthArr={tableDataReportWidthArr}
+                style={styles.tableHeader}
+                textStyle={styles.tableHeadingText}
+              />
+            </Table>
+            {hasRevenue() && (
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={styles.tableBorder}>
+                  {dataReport.map((rowData, index) => (
+                    <Row
+                      key={index}
+                      data={rowData}
+                      widthArr={tableDataReportWidthArr}
+                      style={[
+                        styles.row,
+                        index % 2 && {backgroundColor: '#f5f5f5'},
+                      ]}
+                      textStyle={styles.tableCellText}
+                    />
+                  ))}
+                </Table>
+              </ScrollView>
+            )}
+          </View>
+        </ScrollView>
 
-      {!loading && !hasRevenue() && (
-        <View
-          pointerEvents="none"
-          style={[
-            StyleSheet.absoluteFill,
-            {height: isEmpty(reportRevenue) ? '85 %' : '110%'},
-          ]}>
-          <NoResult icon={<View />} message="Chưa có danh sách" />
-        </View>
-      )}
+        {!loading && !hasRevenue() && (
+          <NoResult
+            containerStyle={styles.noResultContainer}
+            icon={<View />}
+            message="Chưa có danh sách"
+          />
+        )}
+      </View>
 
-      <Text style={styles.reportTitle}>{t('new_referral_members')}</Text>
+      <Text style={styles.reportTitle}>{t('newReferralMembers')}</Text>
 
-      <ScrollView horizontal style={styles.referralMembersContainer}>
-        <View>
-          <Table borderStyle={styles.tableBorder}>
-            <Row
-              data={tableNewMembersHead}
-              widthArr={tableNewMemberWidthArr}
-              style={styles.tableHeader}
-              textStyle={styles.tableHeadingText}
-            />
-          </Table>
-          {hasNewReferralMembers() && (
-            <ScrollView style={styles.dataWrapper}>
-              <Table borderStyle={styles.tableBorder}>
-                {newReferralMembers.map((rowData, index) => (
-                  <Row
-                    key={index}
-                    data={rowData}
-                    widthArr={tableNewMemberWidthArr}
-                    style={[
-                      styles.row,
-                      index % 2 && {backgroundColor: '#f5f5f5'},
-                    ]}
-                    textStyle={styles.tableCellText}
-                  />
-                ))}
-              </Table>
-            </ScrollView>
-          )}
-        </View>
-      </ScrollView>
+      <View style={styles.block}>
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.listContentContainer}>
+          <View>
+            <Table borderStyle={styles.tableBorder}>
+              <Row
+                data={tableNewMembersHead}
+                widthArr={tableNewMemberWidthArr}
+                style={styles.tableHeader}
+                textStyle={styles.tableHeadingText}
+              />
+            </Table>
+            {hasNewReferralMembers() && (
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={styles.tableBorder}>
+                  {newReferralMembers.map((rowData, index) => (
+                    <Row
+                      key={index}
+                      data={rowData}
+                      widthArr={tableNewMemberWidthArr}
+                      style={[
+                        styles.row,
+                        index % 2 && {backgroundColor: '#f5f5f5'},
+                      ]}
+                      textStyle={styles.tableCellText}
+                    />
+                  ))}
+                </Table>
+              </ScrollView>
+            )}
+          </View>
+        </ScrollView>
 
-      {!loading && !hasNewReferralMembers() && (
-        <View
-          pointerEvents="none"
-          style={[
-            StyleSheet.absoluteFill,
-            {height: isEmpty(reportRevenue) ? '175%' : '185%'},
-          ]}>
-          <NoResult icon={<View />} message="Chưa có danh sách" />
-        </View>
-      )}
+        {!loading && !hasNewReferralMembers() && (
+          <NoResult
+            containerStyle={styles.noResultContainer}
+            icon={<View />}
+            message="Chưa có danh sách"
+          />
+        )}
+      </View>
     </ScreenWrapper>
   );
 }
@@ -429,13 +434,14 @@ const styles = StyleSheet.create({
   tableCellText: {
     textAlign: 'center',
     color: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   dataWrapper: {
     marginTop: -1,
-    maxHeight: appConfig.device.height / 4,
   },
   row: {
-    height: 40,
+    minHeight: 40,
     backgroundColor: '#fff',
   },
 
@@ -443,11 +449,18 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#888',
   },
-  referralMembersContainer: {
-    minHeight: appConfig.device.height / 3,
+
+  listContentContainer: {
+    flexGrow: 1,
   },
-  referralOrdersContainer: {
-    minHeight: appConfig.device.height / 3.2,
+  block: {
+    flex: 1,
+  },
+  noResultContainer: {
+    paddingBottom: 0,
+    paddingTop: 0,
+    position: 'absolute',
+    zIndex: -1,
   },
 });
 

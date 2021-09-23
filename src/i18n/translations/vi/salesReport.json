@@ -1,10 +1,9 @@
 {
   "name": "Tên",
   "phone": "Số điện thoại",
-  "total_revenue": "Tổng doanh số",
-  "member_orders_count": "Số đơn hàng",
-  "personal_orders": "Đơn cá nhân",
-  "total_referral_orders": "Đơn giới thiệu",
-  "new_referral_members": "Thành viên giới thiệu",
+  "totalRevenue": "Tổng doanh số",
+  "totalOrders": "Số đơn hàng",
+  "referralOrders": "Đơn hàng giới thiệu",
+  "newReferralMembers": "Thành viên giới thiệu",
   "joiningDate": "Ngày tham gia"
 }
