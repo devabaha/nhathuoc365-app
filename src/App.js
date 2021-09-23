@@ -167,7 +167,7 @@ import Transaction from './components/payment/Transaction';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
-import SalesReport from './containers/SalesReport/SalesReport';
+import SalesReport from './containers/SalesReport';
 import {
   FilterDrawer,
   ModalFilterProduct,

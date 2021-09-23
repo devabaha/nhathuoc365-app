@@ -55,7 +55,7 @@
       "desc": "Tra cứu hoa hồng theo tháng"
     },
     "salesReport": {
-      "label": "Báo cáo doanh số giới thiệu",
+      "label": "Báo cáo giới thiệu",
       "desc": "Doanh số của những người được giới thiệu"
     }
   },
