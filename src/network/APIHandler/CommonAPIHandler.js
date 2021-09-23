@@ -1269,7 +1269,6 @@ class CommonAPIHandler extends BaseHandler {
    */
   social_posts_delete(post_id) {
     const api = url_for(API.SOCIAL_POSTS_DELETE, post_id);
-    console.log(api)
     return this.postCancelableAPI(api);
   }
 
