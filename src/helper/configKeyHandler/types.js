@@ -39,4 +39,6 @@ export const CONFIG_KEY = {
   NEED_REFERRAL_CODE_KEY: 'need_referral_code_key',
 
   FACEBOOK_FANPAGE: 'facebook_fanpage',
+
+  OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
 };

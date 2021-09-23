@@ -219,4 +219,4 @@ Header.defaultProps = {
   notify: {},
 };
 
-export default withTranslation(['home', 'stores'])(Header);
+export default withTranslation(['home', 'stores'])(observer(Header));

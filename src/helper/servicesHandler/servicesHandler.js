@@ -14,6 +14,7 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
+import i18n from 'src/i18n';
 
 /**
  * A powerful handler for all app's services.
@@ -32,10 +33,13 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
+export const servicesHandler = (service, t, callBack = () => {}) => {
   if (!service || !service.type) return;
-service.news_id = service.news.id;
-service.news = undefined;
+  const commonT = i18n.getFixedT(undefined, 'common');
+  if (!t) {
+    t = commonT;
+  }
+
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
@@ -240,7 +244,7 @@ service.news = undefined;
         service.callback();
       }
 
-      APIHandler.site_info(service.siteId)
+      return APIHandler.site_info(service.siteId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
@@ -275,7 +279,9 @@ service.news = undefined;
         .finally(callBack);
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
-      Actions.push(appConfig.routes.gpsListStore);
+      Actions.push(appConfig.routes.gpsListStore, {
+        title: service.title || commonT('screen.gpsListStore.mainTitle'),
+      });
       break;
 
     /** COMMUNICATION */
