@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
-- [CU-kbhzen] Open store from gpsListStore by open_store_from_list_key by [minhnguyenit14@gmail.com.
+- [CU-kbhzen] Open store from gpsListStore by open_store_from_list_key by [minhnguyenit14@gmail.com].
 ### Fixed
 - Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
+- Lagging when auto play promotions by [minhnguyenit14@gmail.com].
 
 ## [r12.1.3]
 ### Added
