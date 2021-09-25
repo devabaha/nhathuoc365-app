@@ -131,7 +131,7 @@ export const handleSocialActionBarPress = (
   actionType,
   feeds,
   isCommentInputAutoFocus = true,
-  extraProps = {}
+  extraProps = {},
 ) => {
   switch (actionType) {
     case SOCIAL_BUTTON_TYPES.LIKE:
@@ -145,7 +145,7 @@ export const handleSocialActionBarPress = (
         object_id: feeds?.object_id || feeds?.id,
         site_id: feeds.site_id,
         autoFocus: isCommentInputAutoFocus,
-        ...extraProps
+        ...extraProps,
       });
       break;
     case SOCIAL_BUTTON_TYPES.SHARE:
@@ -161,8 +161,18 @@ export const getRelativeTime = (
   return moment(time, format).fromNow();
 };
 
-export const formatPostStoreData = (post) => {
+export const formatStoreSocialPosts = (posts, callback = () => {}) => {
+  const storePosts = {};
+  posts.forEach((post) => {
+    storePosts[post.id] = formatPostStoreData(post);
+    callback(post);
+  });
+  return storePosts;
+};
+
+export const formatPostStoreData = (post = {}) => {
   return {
+    ...post,
     like_count: post.like_count || 0,
     like_count_friendly: calculateLikeCountFriendly(post) || 0,
     share_count: post.share_count || 0,

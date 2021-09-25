@@ -8,7 +8,7 @@ import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {
-  formatPostStoreData,
+  formatStoreSocialPosts,
   getRelativeTime,
   getSocialLikeCount,
   getSocialLikeFlag,
@@ -75,8 +75,11 @@ const Posts = ({
 
   const [posts, setPosts] = useState(postsProp || []);
 
+  const [postReactionDisposers] = useState(new Map());
+
   useEffect(() => {
     setPosts(postsProp);
+    setStoreSocialPosts(postsProp || []);
   }, [postsProp]);
 
   useEffect(() => {
@@ -86,9 +89,35 @@ const Posts = ({
 
     return () => {
       cancelRequests(requests);
-      store.resetSocialPosts();
+      postReactionDisposers.forEach((disposer) => {
+        disposer();
+      });
+      // store.resetSocialPosts();
     };
   }, []);
+
+  const getPostReactionDisposer = (feedsId) => {
+    const disposer = postReactionDisposers.get(feedsId);
+    if (disposer) {
+      disposer();
+    }
+
+    return reaction(
+      () => store.socialPosts.get(feedsId),
+      (socialPost) => {
+        console.log(posts, socialPost, feedsId);
+        if (!socialPost) {
+          const newPosts = [...posts];
+          const feedsIndex = newPosts.findIndex((post) => post.id === feedsId);
+
+          if (feedsIndex !== -1) {
+            newPosts.splice(feedsIndex, 1);
+            setPosts(newPosts);
+          }
+        }
+      },
+    );
+  };
 
   const addPostingData = useCallback(
     (postingData, postsData = posts) => {
@@ -134,9 +163,13 @@ const Posts = ({
   }, [addPostingData, disablePostUpdating]);
 
   const setStoreSocialPosts = (posts) => {
-    const storePosts = {};
-    posts.forEach((post) => (storePosts[post.id] = formatPostStoreData(post)));
-    store.setSocialPosts(storePosts);
+    store.setSocialPosts(
+      formatStoreSocialPosts(posts, (post) => {
+        // if (!postReactionDisposers.get(post.id)) {
+        postReactionDisposers.set(post.id, getPostReactionDisposer(post.id));
+        // }
+      }),
+    );
   };
 
   const getPosts = useCallback(
@@ -227,7 +260,8 @@ const Posts = ({
   const onRefresh = () => {
     onRefreshProp();
     setRefreshing(true);
-    getPosts(1, page.current * limit.current, true);
+    page.current = 1;
+    getPosts(page.current, limit.current, true);
   };
 
   const handleLoadMore = () => {
@@ -261,59 +295,70 @@ const Posts = ({
     ) {
       setTimeout(() => {
         store.setSocialPostingData();
-        getPosts(1, page.current * limit.current, true);
+        page.current = 1;
+        getPosts(page.current, limit.current, true);
       }, 500);
     }
   };
 
-  const deletePost = useCallback(async (feedsId) => {
-    console.log(feedsId);
-    deletePostRequest.data = APIHandler.social_posts_delete(feedsId);
-    try {
-      const response = await deletePostRequest.promise();
-      console.log(response);
-      flashShowMessage({
-        type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
-        message:
-          response?.status === STATUS_SUCCESS
-            ? response?.message || ''
-            : t('api.error.message'),
-      });
-    } catch (error) {
-      console.log('delete_post', error);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-    }
-  }, []);
+  const deletePost = useCallback(
+    async (feedsId) => {
+      deletePostRequest.data = APIHandler.social_posts_delete(feedsId);
+      try {
+        const response = await deletePostRequest.promise();
+        if (response?.status === STATUS_SUCCESS) {
+          store.socialPosts.delete(feedsId);
+        }
+        flashShowMessage({
+          type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+          message:
+            response?.status === STATUS_SUCCESS
+              ? response?.message || ''
+              : t('api.error.message'),
+        });
+      } catch (error) {
+        console.log('delete_post', error);
+        flashShowMessage({
+          type: 'danger',
+          message: t('api.error.message'),
+        });
+      }
+    },
+    [posts],
+  );
 
-  const handlePressMoreActionOption = useCallback((index, feedsId) => {
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        setTimeout(() => {
-          if (!isMounted()) return;
-          Actions.push(appConfig.routes.modalConfirm, {
-            message: t('social:postDeleteConfirmMessage'),
-            isConfirm: true,
-            yesTitle: t('delete'),
-            noTitle: t('cancel'),
-            yesConfirm: () => deletePost(feedsId),
-          });
-        }, 300);
-        break;
-    }
-  }, []);
+  const handlePressMoreActionOption = useCallback(
+    (index, feedsId) => {
+      switch (index) {
+        case 0:
+          break;
+        case 1:
+          setTimeout(() => {
+            if (!isMounted()) return;
+            Actions.push(appConfig.routes.modalConfirm, {
+              message: t('social:postDeleteConfirmMessage'),
+              isConfirm: true,
+              yesTitle: t('delete'),
+              noTitle: t('cancel'),
+              yesConfirm: () => deletePost(feedsId),
+            });
+          }, 300);
+          break;
+      }
+    },
+    [deletePost],
+  );
 
-  const handlePressMoreActions = useCallback((feedsId) => {
-    Actions.push(appConfig.routes.modalActionSheet, {
-      options: moreActionOptions,
-      destructiveButtonIndex: 1,
-      onPress: (index) => handlePressMoreActionOption(index, feedsId),
-    });
-  }, []);
+  const handlePressMoreActions = useCallback(
+    (feedsId) => {
+      Actions.push(appConfig.routes.modalActionSheet, {
+        options: moreActionOptions,
+        destructiveButtonIndex: 1,
+        onPress: (index) => handlePressMoreActionOption(index, feedsId),
+      });
+    },
+    [handlePressMoreActionOption],
+  );
 
   const renderStatusText = (feeds) => (
     <ActionBarText
