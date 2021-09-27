@@ -295,6 +295,7 @@ class Config {
       // Store Location
       storeLocation: 'storeLocation',
       gpsStoreLocation: 'gpsStoreLocation',
+      rootGpsStoreLocation: 'rootGpsStoreLocation',
 
       // Modal
       modalPicker: 'modalPicker',

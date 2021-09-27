@@ -1886,6 +1886,17 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack
+                  key={appConfig.routes.rootGpsStoreLocation}
+                  panHandlers={null}>
+                  <Scene
+                    key={`${appConfig.routes.rootGpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
+                  />
+                </Stack>
+
                 <Stack key={appConfig.routes.gpsStoreLocation}>
                   <Scene
                     key={`${appConfig.routes.gpsStoreLocation}_1`}
