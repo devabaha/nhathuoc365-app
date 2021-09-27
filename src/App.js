@@ -1113,7 +1113,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.agencyInformationRegister}_1`}
                     {...navBarConfig}
-                    title={t('screen.agencyInformationRegister.mainTitle')}
                     component={AgencyInformationRegister}
                     back
                   />

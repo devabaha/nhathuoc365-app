@@ -411,12 +411,16 @@ class OpRegister extends Component {
       (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
       (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
 
-    const referCodeTitle =
-      t('data.referCode.title') +
-      ' ' +
-      (isConfigActive(CONFIG_KEY.NEED_REFERRAL_CODE_KEY)
-        ? '(*)'
-        : `(${t('data.referCode.optional')})`);
+    const referCodeTitle = (
+      <Text>
+        {t('data.referCode.title')}{' '}
+        {isConfigActive(CONFIG_KEY.NEED_REFERRAL_CODE_KEY) ? (
+          <Text style={styles.textRequired}>*</Text>
+        ) : (
+          `(${t('data.referCode.optional')})`
+        )}
+      </Text>
+    );
 
     return (
       <View style={styles.container}>
@@ -427,7 +431,9 @@ class OpRegister extends Component {
           }}
           keyboardShouldPersistTaps="handled">
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>{t('data.name.title')} (*)</Text>
+            <Text style={styles.input_label}>
+              {t('data.name.title')} <Text style={styles.textRequired}>*</Text>
+            </Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -742,6 +748,10 @@ const styles = StyleSheet.create({
   },
   referInput: {
     textAlign: 'left',
+  },
+
+  textRequired: {
+    color: appConfig.colors.status.danger,
   },
 });
 
