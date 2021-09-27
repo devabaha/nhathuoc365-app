@@ -11,7 +11,8 @@ import {
   ScrollView,
   Linking,
   AppState,
-  Keyboard
+  Keyboard,
+  TouchableOpacity
 } from 'react-native';
 import ModernList, { LIST_TYPE } from 'app-packages/tickid-modern-list';
 import Row from './Row';
@@ -19,6 +20,7 @@ import { Actions } from 'react-native-router-flux';
 import { debounce } from 'lodash';
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
+import {getPreciseDistance} from 'geolib';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import Loading from '../../components/Loading';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -26,6 +28,7 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import { APIRequest } from '../../network/Entity';
 import EventTracker from '../../helper/EventTracker';
+import StoreItem from '../GPSListStore/StoreItem';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -117,7 +120,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginRight: 10,
     color: '#fff'
-  }
+  },
+  disabledDistance: {
+    backgroundColor: '#f5f5f5',
+    color: '#aaa'
+  },
 });
 
 const LOCATION_PERMISSIONS_TYPE = {
@@ -145,7 +152,8 @@ class GPSStoreLocation extends Component {
     latitude: null,
     longitude: null,
     searchValue: '',
-    requestLocationErrorCode: 0
+    requestLocationErrorCode: 0,
+    isConnectGPS: false
   };
   getListGPSStoreRequest = new APIRequest();
   requests = [this.getListGPSStoreRequest];
@@ -174,7 +182,8 @@ class GPSStoreLocation extends Component {
     this.unmounted = true;
     cancelRequests(this.requests);
     AppState.removeEventListener('change', this.handleAppStateChange);
-    Geolocation.stopObserving();
+    // Geolocation.stopObserving();
+    Geolocation.clearWatch(this.watchID);
   }
 
   requestLocationPermission = () => {
@@ -204,6 +213,7 @@ class GPSStoreLocation extends Component {
           err => {
             this.requestLocationRetryable = true;
             this.selfTryRequestLocation(err, this.requestLocationPermission);
+            this.setState({isConnectGPS: false});
             console.log('watch_position', this.watchID, err);
           },
           { ...config }
@@ -274,7 +284,8 @@ class GPSStoreLocation extends Component {
             longitude,
             latitude,
             requestLocationErrorCode: 0,
-            requestLocationLoading: false
+            requestLocationLoading: false,
+            isConnectGPS: true
           },
           () => {
             this.getListGPSStore();
@@ -452,14 +463,28 @@ class GPSStoreLocation extends Component {
   };
 
   renderStore({ item: store }) {
+    console.log(store)
+    const disabledDistanceStyle =
+      !this.state.isConnectGPS && styles.disabledDistance;
+      
     return (
-      <Row
-        image={store.image}
-        title={store.name}
-        address={store.address}
-        distance={store.distance_view}
-        onPress={() => this.onStorePress(store)}
-      />
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => this.onStorePress(store)}>
+        <StoreItem
+          name={store.name}
+          image={store.image}
+          address={store.address}
+          phone={store.phone}
+          lat={store.lat}
+          lng={store.lng}
+          enableDistance
+          requestLocationLoading={this.state.requestLocationLoading}
+          distance={this.calculateDiffDistance(store.lng, store.lat)}
+          disabledDistanceStyle={disabledDistanceStyle}
+        />
+      </TouchableOpacity>
+      
     );
   }
 
@@ -509,6 +534,25 @@ class GPSStoreLocation extends Component {
 
   closeModal = () => {
     this.setState({ modalVisible: false });
+  };
+
+  calculateDiffDistance = (lng, lat) => {
+    console.log(lat, lng)
+    const latitude = this.state.latitude;
+    const longitude = this.state.longitude;
+    if (latitude && longitude) {
+      return (
+        <Text>
+          {getPreciseDistance(
+            {latitude, longitude},
+            {latitude: Number(lat), longitude: Number(lng)},
+            100,
+          ) / 1000}
+          <Text style={styles.distanceUnitTxt}>km</Text>
+        </Text>
+      );
+    }
+    return '-';
   };
 
   render() {
