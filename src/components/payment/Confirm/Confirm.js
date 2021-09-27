@@ -73,7 +73,6 @@ class Confirm extends Component {
       loading: false,
       isConfirming: false,
     };
-
     this.refs_confirm_page = React.createRef();
     this.unmounted = false;
     this.resetScrollToCoords = {x: 0, y: 0};
@@ -1196,8 +1195,8 @@ class Confirm extends Component {
             isPromotionSelectable={single}
             selectedVoucher={cart_data.user_voucher}
             siteId={cart_data.site_id}
+            voucherStatus={cart_data.voucher_status}
           />
-
           <CommissionsSection commissions={cart_data?.commissions} />
 
           <ActionButtonSection

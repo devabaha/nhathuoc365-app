@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-kbhzen] Open store from gpsListStore by open_store_from_list_key by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
 ### Fixed
 - Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
 - Lagging when auto play promotions by [minhnguyenit14@gmail.com].
