@@ -163,7 +163,8 @@
       "mainTitle": "Cộng đồng"
     },
     "createPost": {
-      "mainTitle": "Tạo bài viết"
+      "mainTitle": "Tạo bài viết",
+      "editTitle": "Sửa bài viết"
     },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
@@ -245,6 +246,7 @@
   "delete": "Xoá",
   "addImages": "Thêm ảnh",
   "addImagesDescription": "Chạm để thêm ảnh",
+  "save": "Lưu",
   "saved": "Đã lưu",
   "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
   "saveImageLabel": "Lưu ảnh",

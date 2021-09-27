@@ -24,6 +24,7 @@ import appConfig from 'app-config';
 import {reaction} from 'mobx';
 import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
 import PostsSkeleton from './PostsSkeleton';
+import {debounce} from 'lodash';
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -328,33 +329,40 @@ const Posts = ({
   );
 
   const handlePressMoreActionOption = useCallback(
-    (index, feedsId) => {
+    debounce((index, feeds) => {
+      if (!isMounted()) return;
+
       switch (index) {
         case 0:
+          servicesHandler({
+            type: SERVICES_TYPE.SOCIAL_CREATE_POST,
+            title: t('screen.createPost.editTitle'),
+            site_id: feeds.site_id,
+            group_id: feeds.group_id,
+            content: feeds.content,
+            images: feeds.images,
+          });
           break;
         case 1:
-          setTimeout(() => {
-            if (!isMounted()) return;
-            Actions.push(appConfig.routes.modalConfirm, {
-              message: t('social:postDeleteConfirmMessage'),
-              isConfirm: true,
-              yesTitle: t('delete'),
-              noTitle: t('cancel'),
-              yesConfirm: () => deletePost(feedsId),
-            });
-          }, 300);
+          Actions.push(appConfig.routes.modalConfirm, {
+            message: t('social:postDeleteConfirmMessage'),
+            isConfirm: true,
+            yesTitle: t('delete'),
+            noTitle: t('cancel'),
+            yesConfirm: () => deletePost(feeds.id),
+          });
           break;
       }
-    },
+    }, 300),
     [deletePost],
   );
 
   const handlePressMoreActions = useCallback(
-    (feedsId) => {
+    (feeds) => {
       Actions.push(appConfig.routes.modalActionSheet, {
         options: moreActionOptions,
         destructiveButtonIndex: 1,
-        onPress: (index) => handlePressMoreActionOption(index, feedsId),
+        onPress: (index) => handlePressMoreActionOption(index, feeds),
       });
     },
     [handlePressMoreActionOption],
@@ -422,7 +430,7 @@ const Posts = ({
                   false,
                 )
               }
-              onPressMoreActions={() => handlePressMoreActions(feeds.id)}
+              onPressMoreActions={() => handlePressMoreActions(feeds)}
             />
           );
         }}

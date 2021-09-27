@@ -82,11 +82,13 @@ const styles = StyleSheet.create({
 });
 
 const CreatePost = ({
-  group = {},
+  // group = {},
   groupId,
   siteId = store?.store_data?.id,
   avatar = store.user_info.img,
   title,
+  contentText: contentTextProp = '',
+  images: imagesProp = [],
   isOpenImagePicker: isOpenImagePickerProp = false,
 }) => {
   const {t} = useTranslation(['common', 'social']);
@@ -100,8 +102,8 @@ const CreatePost = ({
   const containerHeight = useRef(0);
   const canBack = useRef(false);
 
-  const [contentText, setContentText] = useState('');
-  const [images, setImages] = useState([]);
+  const [contentText, setContentText] = useState(contentTextProp || '');
+  const [images, setImages] = useState(imagesProp || []);
   const [isOpenImagePicker, setOpenImagePicker] = useState(
     isOpenImagePickerProp,
   );
@@ -137,7 +139,7 @@ const CreatePost = ({
         right: () => renderPostBtn(),
       }),
     );
-  }, [images, contentText, group]);
+  }, [images, contentText, groupId, siteId, contentTextProp, imagesProp]);
 
   useEffect(() => {
     const handlePop = () => {
@@ -188,7 +190,7 @@ const CreatePost = ({
     if (!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
     const postData = {
       id: new Date().getTime(),
-      group,
+      // group,
       user: store?.user_info
         ? {
             ...store.user_info,
@@ -215,6 +217,8 @@ const CreatePost = ({
       (!contentText && !images?.length) ||
       images.length > MAX_TOTAL_UPLOAD_IMAGES;
 
+    const isEditMode = !!contentTextProp || !!imagesProp;
+
     return (
       <TouchableOpacity
         onPress={handlePost}
@@ -225,7 +229,9 @@ const CreatePost = ({
             backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
           },
         ]}>
-        <Text style={styles.btnPost}>{t('social:post')}</Text>
+        <Text style={styles.btnPost}>
+          {isEditMode ? t('save') : t('social:post')}
+        </Text>
       </TouchableOpacity>
     );
   };

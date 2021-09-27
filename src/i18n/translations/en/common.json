@@ -163,7 +163,8 @@
       "mainTitle": "Social"
     },
     "createPost": {
-      "mainTitle": "Create post"
+      "mainTitle": "Create post",
+      "editTitle": "Edit post"
     },
     "listUserChat": {
       "mainTitle": "Messages"
@@ -245,6 +246,7 @@
   "delete": "Delete",
   "addImages": "Add Images",
   "addImagesDescription": "Tap to select images",
+  "save": "Save",
   "saved": "Saved",
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",

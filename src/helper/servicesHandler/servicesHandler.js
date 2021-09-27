@@ -196,7 +196,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       Actions.notify_item({
         title: service.title || service.news?.title,
         data: service.news,
-        newsId: service.news_id
+        newsId: service.news_id,
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
@@ -427,6 +427,19 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       Actions.push(appConfig.routes.socialGroup, {
         id: service.id,
         groupName: service.name,
+      });
+      break;
+    /** Social Create Post */
+    case SERVICES_TYPE.SOCIAL_CREATE_POST:
+      Actions.push(appConfig.routes.socialCreatePost, {
+        title: service.title || t('screen.createPost.mainTitle'),
+        group: service.group,
+        groupId: service.group_id,
+        siteId: service.site_id || store?.store_data?.id,
+        avatar: service.avatar || store?.user_info?.img,
+        contentText: service.content,
+        images: service.images,
+        isOpenImagePicker: service.isOpenImagePicker,
       });
       break;
 

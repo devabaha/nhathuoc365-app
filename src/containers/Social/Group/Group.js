@@ -13,6 +13,7 @@ import Image from 'src/components/Image';
 
 import {getNewsFeedSize} from '../../../helper/image';
 import GroupHeaderSkeleton from './GroupHeaderSkeleton';
+import { servicesHandler, SERVICES_TYPE } from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   titleContainer: {
@@ -161,12 +162,18 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
 
   const handlePressContent = useCallback(
     (isOpenImagePicker) => {
-      Actions.push(appConfig.routes.socialCreatePost, {
-        group: groupInfo,
-        groupId: groupInfo.id,
-        siteId: groupInfo.site_id,
+      servicesHandler({
+        type: SERVICES_TYPE.SOCIAL_CREATE_POST,
+        group_id: groupInfo.id,
+        site_id: groupInfo.site_id,
         isOpenImagePicker,
-      });
+      })
+      // Actions.push(appConfig.routes.socialCreatePost, {
+      //   // group: groupInfo,
+      //   groupId: groupInfo.id,
+      //   siteId: groupInfo.site_id,
+      //   isOpenImagePicker,
+      // });
     },
     [groupInfo],
   );
