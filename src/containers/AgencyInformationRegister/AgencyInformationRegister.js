@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, {Component, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,17 +6,17 @@ import {
   View,
   TouchableOpacity,
   Keyboard,
-  Image
+  Image,
 } from 'react-native';
-import { compose } from 'recompose';
-import { Formik } from 'formik';
+import {compose} from 'recompose';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {
   handleTextInput,
   withNextInputAutoFocusForm,
-  withNextInputAutoFocusInput
+  withNextInputAutoFocusInput,
 } from 'react-native-formik';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
@@ -28,7 +28,7 @@ import store from 'app-store';
 
 const MyInput = compose(
   handleTextInput,
-  withNextInputAutoFocusInput
+  withNextInputAutoFocusInput,
 )(FloatingLabelInput);
 
 const Form = withNextInputAutoFocusForm(View);
@@ -38,30 +38,30 @@ const FORM_DATA = {
     label: 'Email *',
     name: 'email',
     serverName: 'gold_member_email',
-    type: 'email'
+    type: 'email',
   },
   ID_CARD: {
     label: 'Số CMND *',
     name: 'id_card',
-    type: 'number'
+    type: 'number',
   },
   IMAGE_ID_CARD_FRONT: {
     label: 'Ảnh CMND (mặt trước) *',
     name: 'image_id_card_front',
     serverName: 'gold_member_image_id_card_front',
-    type: 'name'
+    type: 'name',
   },
   IMAGE_ID_CARD_BACK: {
     label: 'Ảnh CMND (mặt sau) *',
     name: 'image_id_card_back',
     serverName: 'gold_member_image_id_card_back',
-    type: 'name'
+    type: 'name',
   },
   BANK_ACCOUNT: {
     label:
       'Tài khoản ngân hàng (cú pháp: [số tk], [tên chủ tk], [tên ngân hàng]) *',
     name: 'bank_account',
-    type: 'name'
+    type: 'name',
   },
   // ADDRESS: {
   //   label: 'Địa chỉ kinh doanh *',
@@ -86,14 +86,23 @@ const EMAIL_REQUIRED = 'Vui lòng nhập đúng định dạng email';
 const validationSchema = Yup.object().shape({
   [FORM_DATA.EMAIL.name]: Yup.string()
     .required(REQUIRED_MESSAGE)
-    .email(EMAIL_REQUIRED),
-  [FORM_DATA.ID_CARD.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_BACK.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.BANK_ACCOUNT.name]: Yup.string().required(REQUIRED_MESSAGE),
-  // [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE),
-  // [FORM_DATA.EXPERT_ID.name]: Yup.string().required(REQUIRED_MESSAGE),
-  // [FORM_DATA.BRAND.name]: Yup.string().required(REQUIRED_MESSAGE)
+    .email(EMAIL_REQUIRED)
+    .nullable(REQUIRED_MESSAGE),
+  [FORM_DATA.ID_CARD.name]: Yup.string()
+    .required(REQUIRED_MESSAGE)
+    .nullable(REQUIRED_MESSAGE),
+  [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: Yup.string()
+    .required(REQUIRED_MESSAGE)
+    .nullable(REQUIRED_MESSAGE),
+  [FORM_DATA.IMAGE_ID_CARD_BACK.name]: Yup.string()
+    .required(REQUIRED_MESSAGE)
+    .nullable(REQUIRED_MESSAGE),
+  [FORM_DATA.BANK_ACCOUNT.name]: Yup.string()
+    .required(REQUIRED_MESSAGE)
+    .nullable(REQUIRED_MESSAGE),
+  // [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
+  // [FORM_DATA.EXPERT_ID.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
+  // [FORM_DATA.BRAND.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE)
 });
 
 class AgencyInformationRegister extends Component {
@@ -105,15 +114,15 @@ class AgencyInformationRegister extends Component {
     //   value: this.userInfo[FORM_DATA.EXPERT_ID.name]
     // },
     formData: FORM_DATA,
-    [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: this.userInfo[
-      FORM_DATA.IMAGE_ID_CARD_FRONT.serverName
+    [FORM_DATA.IMAGE_ID_CARD_FRONT?.name]: this.userInfo[
+      FORM_DATA.IMAGE_ID_CARD_FRONT?.serverName
     ],
-    [FORM_DATA.IMAGE_ID_CARD_BACK.name]: this.userInfo[
-      FORM_DATA.IMAGE_ID_CARD_BACK.serverName
+    [FORM_DATA.IMAGE_ID_CARD_BACK?.name]: this.userInfo[
+      FORM_DATA.IMAGE_ID_CARD_BACK?.serverName
     ],
     // address: this.userInfo[FORM_DATA.ADDRESS.serverName],
     latitude: this.userInfo.gold_member_latitude,
-    longitude: this.userInfo.gold_member_longitude
+    longitude: this.userInfo.gold_member_longitude,
   };
   unmounted = false;
   refForm = React.createRef();
@@ -121,9 +130,9 @@ class AgencyInformationRegister extends Component {
 
   get initialValues() {
     const values = {};
-    const { user_info } = store;
+    const {user_info} = store;
 
-    Object.values(this.state.formData).forEach(value => {
+    Object.values(this.state.formData).forEach((value) => {
       let itemValue = '';
       if (user_info) {
         itemValue = user_info[value.name];
@@ -153,11 +162,11 @@ class AgencyInformationRegister extends Component {
       rotation: 360,
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
     };
 
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {
         console.log(response.error);
       } else if (response.didCancel) {
@@ -176,70 +185,70 @@ class AgencyInformationRegister extends Component {
   uploadTempImage = (response, key) => {
     this.setState(
       {
-        loading: true
+        loading: true,
       },
       () => {
-        const { t } = this.props;
+        const {t} = this.props;
         const image = {
           name: 'image',
           filename: response.filename,
-          data: response.data
+          data: response.data,
         };
         // call api post my form data
         RNFetchBlob.fetch(
           'POST',
           APIHandler.url_user_upload_image(),
           {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           },
-          [image]
+          [image],
         )
-          .then(resp => {
+          .then((resp) => {
             if (!this.unmounted) {
-              const { data } = resp;
+              const {data} = resp;
               const response = JSON.parse(data);
               if (response.status == STATUS_SUCCESS && response.data) {
-                this.setState({ [key]: response.data.url });
+                this.setState({[key]: response.data.url});
                 this.handleSetValueFormData(key, response.data.name);
               } else {
                 flashShowMessage({
                   type: 'danger',
-                  message: response.message || t('common:api.error.message')
+                  message: response.message || t('common:api.error.message'),
                 });
               }
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('upload_id_card', error);
             flashShowMessage({
               type: 'danger',
-              message: t('common:api.error.message')
+              message: t('common:api.error.message'),
             });
           })
           .finally(() => {
-            !this.unmounted && this.setState({ loading: false });
+            !this.unmounted && this.setState({loading: false});
           });
-      }
+      },
     );
   };
 
   async getProfessions() {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.get_professions();
       if (!this.unmounted) {
         if (response.data && response.status === STATUS_SUCCESS) {
-          const state = { ...this.state };
-          const professions = response.data.professions.map(profession => ({
+          const state = {...this.state};
+          const professions = response.data.professions.map((profession) => ({
             ...profession,
             label: profession.name,
-            value: profession.id
+            value: profession.id,
           }));
           state.professions = professions;
 
           const selectedProfession = professions.find(
-            profession =>
-              profession.value === this.state.selectedProfession.value
+            (profession) =>
+              profession.value === this.state.selectedProfession.value,
           );
           if (selectedProfession) {
             state.selectedProfession = selectedProfession;
@@ -248,7 +257,7 @@ class AgencyInformationRegister extends Component {
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -256,20 +265,20 @@ class AgencyInformationRegister extends Component {
       console.log('get professions', error);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   }
 
-  onSubmit = async values => {
-    this.setState({ loading: true });
-    const { t } = this.props;
+  onSubmit = async (values) => {
+    this.setState({loading: true});
+    const {t} = this.props;
     const data = {
       // latitude: this.state.latitude,
       // longitude: this.state.longitude,
-      ...values
+      ...values,
     };
     try {
       const response = await APIHandler.user_gold_member_register(data);
@@ -280,12 +289,12 @@ class AgencyInformationRegister extends Component {
           Actions.pop();
           flashShowMessage({
             type: 'success',
-            message: response.message
+            message: response.message,
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -293,23 +302,23 @@ class AgencyInformationRegister extends Component {
       console.log('gold_member_register', err);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
   handleChangeFormData(value, type) {
-    const formData = { ...this.state.formData };
-    Object.keys(formData).forEach(key => {
+    const formData = {...this.state.formData};
+    Object.keys(formData).forEach((key) => {
       const data = formData[key];
       if (data.name === type) {
         data.value = value;
       }
     });
 
-    this.setState({ formData });
+    this.setState({formData});
   }
 
   handleSetValueFormData(key, value) {
@@ -324,13 +333,13 @@ class AgencyInformationRegister extends Component {
     }
   }
 
-  onSelectProfession = profession_id => {
+  onSelectProfession = (profession_id) => {
     const selectedProfession = this.state.professions.find(
-      profession => profession.id === profession_id
+      (profession) => profession.id === profession_id,
     );
     this.handleSetValueFormData(FORM_DATA.EXPERT_ID.name, profession_id);
     this.setState({
-      selectedProfession
+      selectedProfession,
     });
   };
 
@@ -344,7 +353,7 @@ class AgencyInformationRegister extends Component {
       selectedLabel: this.state.selectedProfession.name,
       selectedValue: this.state.selectedProfession.id,
       defaultValue: this.state.professions[0].id,
-      onClose: () => this.forceTouchFormData(FORM_DATA.EXPERT_ID.name)
+      onClose: () => this.forceTouchFormData(FORM_DATA.EXPERT_ID.name),
     });
   };
 
@@ -353,23 +362,23 @@ class AgencyInformationRegister extends Component {
 
     Actions.push(appConfig.routes.modalSearchPlaces, {
       onCloseModal: Actions.pop,
-      onPressItem: this.onSelectAddress
+      onPressItem: this.onSelectAddress,
     });
   };
 
-  onSelectAddress = ({ map_address }) => {
+  onSelectAddress = ({map_address}) => {
     this.handleSetValueFormData(
       FORM_DATA.ADDRESS.name,
-      map_address.description
+      map_address.description,
     );
     this.setState({
       address: map_address.description,
       latitude: map_address.lat,
-      longitude: map_address.lng
+      longitude: map_address.lng,
     });
   };
 
-  onInputFocus = type => {
+  onInputFocus = (type) => {
     switch (type) {
       // case FORM_DATA.EXPERT_ID.name:
       //   this.goToProfessionSelection();
@@ -380,9 +389,9 @@ class AgencyInformationRegister extends Component {
     }
   };
 
-  renderFormData({ values }) {
+  renderFormData({values}) {
     return Object.keys(FORM_DATA).map((key, index) => {
-      const { label, name, type } = FORM_DATA[key];
+      const {label, name, type} = FORM_DATA[key];
       let extraProps = null;
 
       switch (name) {
@@ -397,7 +406,7 @@ class AgencyInformationRegister extends Component {
         //       value={this.state.selectedProfession.name}
         //     />
         //   );
-        case FORM_DATA.IMAGE_ID_CARD_FRONT.name:
+        case FORM_DATA.IMAGE_ID_CARD_FRONT?.name:
           return (
             <MyInputTouchable
               key={index}
@@ -410,7 +419,7 @@ class AgencyInformationRegister extends Component {
               value={values[FORM_DATA.IMAGE_ID_CARD_FRONT.name]}
             />
           );
-        case FORM_DATA.IMAGE_ID_CARD_BACK.name:
+        case FORM_DATA.IMAGE_ID_CARD_BACK?.name:
           return (
             <MyInputTouchable
               key={index}
@@ -434,9 +443,9 @@ class AgencyInformationRegister extends Component {
         //       value={this.state.address}
         //     />
         //   );
-        case FORM_DATA.ID_CARD.name:
+        case FORM_DATA.ID_CARD?.name:
           extraProps = {
-            keyboardType: appConfig.device.isIOS ? 'number-pad' : 'numeric'
+            keyboardType: appConfig.device.isIOS ? 'number-pad' : 'numeric',
           };
         default:
           return (
@@ -461,16 +470,14 @@ class AgencyInformationRegister extends Component {
             initialValues={this.initialValues}
             onSubmit={this.onSubmit}
             validationSchema={validationSchema}
-            innerRef={this.refForm}
-          >
-            {props => {
+            innerRef={this.refForm}>
+            {(props) => {
               const disabled = !(props.isValid && props.dirty);
               return (
                 <>
                   <ScrollView
                     keyboardDismissMode="interactive"
-                    keyboardShouldPersistTaps="handled"
-                  >
+                    keyboardShouldPersistTaps="handled">
                     <Form style={styles.formContainer}>
                       {this.renderFormData(props)}
                     </Form>
@@ -496,20 +503,20 @@ class AgencyInformationRegister extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   wrapper: {
-    flex: 1
+    flex: 1,
   },
   formContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   title: {
     fontSize: 20,
     letterSpacing: 1,
     paddingHorizontal: 15,
     color: '#555',
-    marginBottom: 15
+    marginBottom: 15,
   },
   btn: {
     padding: 15,
@@ -518,15 +525,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 150
+    width: 150,
   },
   btnTitle: {
     color: '#fff',
     fontSize: 20,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   btnDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   imageContainer: {
     width: 50,
@@ -534,16 +541,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fcfcfc',
     marginRight: 10,
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   inputTouchableWrapper: {
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });
 
 export default withTranslation()(AgencyInformationRegister);
@@ -569,12 +576,12 @@ const MyInputTouchable = ({
           type={type}
           onFocus={onFocus}
           value={value}
-          containerStyle={{ flex: 1 }}
+          containerStyle={{flex: 1}}
           {...props}
         />
         {!!uri && (
           <View style={styles.imageContainer}>
-            <Image source={{ uri }} style={styles.image} />
+            <Image source={{uri}} style={styles.image} />
           </View>
         )}
       </View>

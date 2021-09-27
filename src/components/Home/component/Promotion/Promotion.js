@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent, Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -16,16 +16,16 @@ import Svg, {
   Defs,
   Mask,
   RadialGradient,
-  Rect,
   Stop,
   Use,
 } from 'react-native-svg';
+import Image from 'src/components/Image';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const PAGINATION_WIDTH = 10;
 const PAGINATION_SPACE = 8;
 
-class Promotion extends Component {
+class Promotion extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
     ratio: PropTypes.string,
@@ -36,7 +36,7 @@ class Promotion extends Component {
     data: [],
     ratio: '3:1',
     padding: 16,
-    containerSlideStyle: {}
+    containerSlideStyle: {},
   };
 
   constructor(props) {
@@ -55,7 +55,7 @@ class Promotion extends Component {
         <TouchableHighlight
           onPress={() => this.props.onPress(promotion, index)}
           underlayColor="transparent">
-          <CachedImage
+          <Image
             source={{uri: promotion.banner}}
             style={[
               styles.bannerImage,
@@ -115,9 +115,9 @@ class Promotion extends Component {
         ) : (
           <Animated.View
             style={{
-              width: PAGINATION_WIDTH+1,
-              height: PAGINATION_WIDTH+1,
-              borderRadius: (PAGINATION_WIDTH) / 2,
+              width: PAGINATION_WIDTH + 1,
+              height: PAGINATION_WIDTH + 1,
+              borderRadius: PAGINATION_WIDTH / 2,
               overflow: 'hidden',
               position: 'absolute',
 
@@ -128,10 +128,10 @@ class Promotion extends Component {
                 <RadialGradient
                   id="Gradient"
                   gradientUnits="userSpaceOnUse"
-                  cx={(PAGINATION_WIDTH) / 2}
-                  cy={(PAGINATION_WIDTH) / 2}
-                  rx={(PAGINATION_WIDTH) / 2}
-                  ry={(PAGINATION_WIDTH) / 2}>
+                  cx={PAGINATION_WIDTH / 2}
+                  cy={PAGINATION_WIDTH / 2}
+                  rx={PAGINATION_WIDTH / 2}
+                  ry={PAGINATION_WIDTH / 2}>
                   <Stop offset="0.3" stopColor="#fff" stopOpacity="0" />
                   <Stop offset="1" stopColor="#fff" stopOpacity="1" />
                 </RadialGradient>
@@ -143,9 +143,9 @@ class Promotion extends Component {
                   width="100%"
                   height="100%">
                   <Circle
-                    cx={(PAGINATION_WIDTH) / 2}
-                    cy={(PAGINATION_WIDTH) / 2}
-                    r={(PAGINATION_WIDTH+1) / 2}
+                    cx={PAGINATION_WIDTH / 2}
+                    cy={PAGINATION_WIDTH / 2}
+                    r={(PAGINATION_WIDTH + 1) / 2}
                     width="100%"
                     height="100%"
                     fill="url(#Gradient)"
@@ -155,7 +155,7 @@ class Promotion extends Component {
                   id="Text"
                   cx={(PAGINATION_WIDTH + 1) / 2}
                   cy={(PAGINATION_WIDTH + 1) / 2}
-                  r={(PAGINATION_WIDTH) / 2}
+                  r={PAGINATION_WIDTH / 2}
                   strokeWidth="4"
                   stroke="rgba(0,0,0,.2)"
                 />
@@ -186,20 +186,21 @@ class Promotion extends Component {
       width,
       height,
     };
-    
+
     return (
       <View style={[styles.container, this.props.containerStyle]}>
         <Swiper
           autoplay
+          key={this.props.data?.length}
           autoplayTimeout={5}
           backgroundColor="#fafafa"
-          removeClippedSubviews={false}
+          // removeClippedSubviews={false}
           renderPagination={this.renderPagination}
           onIndexChanged={this.onIndexChanged.bind(this)}
           containerStyle={{
             ...styles.slideContainerStyle,
             ...dimensionStyle,
-            ...this.props.containerStyle
+            ...this.props.containerStyle,
           }}
           style={styles.slideStyle}>
           {this.props.data.map((promotion, index) =>
@@ -215,14 +216,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     // shadow for ios
-    ...appConfig.styles.shadow
+    ...appConfig.styles.shadow,
   },
   slideContainerStyle: {
     position: 'relative',
     overflow: 'hidden',
     borderRadius: 8,
     // shadow for android
-    ...appConfig.styles.shadow
+    ...appConfig.styles.shadow,
   },
   slideStyle: {},
   bannerImage: {},

@@ -24,6 +24,7 @@ import NoResult from '../../../NoResult';
 
 const MIN_ITEM_WIDTH = 120;
 const ITEMS_PER_ROW = 2;
+const CATEGORY_DIMENSIONS = ((appConfig.device.width - 1) * 3) / 4 / ITEMS_PER_ROW;
 
 const styles = StyleSheet.create({
   container: {
@@ -115,15 +116,15 @@ class SubCategory extends Component<SubCategoryProps> {
 
   state = {
     categorySize: {
-      width: (appConfig.device.width * 3) / 4 / ITEMS_PER_ROW,
-      height: (appConfig.device.width * 3) / 4 / ITEMS_PER_ROW,
+      width: CATEGORY_DIMENSIONS,
+      height: CATEGORY_DIMENSIONS,
     },
     bannerLayout: {
       width: 0,
       height: 0,
     },
     subCategoriesWidth: 0,
-    itemsPerRow: 3,
+    itemsPerRow: ITEMS_PER_ROW,
   };
 
   shouldComponentUpdate(nextProps: SubCategoryProps, nextState: any) {
