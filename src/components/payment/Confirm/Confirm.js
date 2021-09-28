@@ -47,6 +47,7 @@ import {
 } from './components';
 import AddressSection from './components/AddressSection';
 import {debounce} from 'lodash';
+import POSSection from './components/POSSection';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1068,6 +1069,9 @@ class Confirm extends Component {
       (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
       (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
+    const POSCode =
+      cart_data.pos_details.pos_type + ' - ' + cart_data.pos_details.pos_code;
+
     const deliveryCode =
       cart_data.delivery_details &&
       (cart_data.delivery_details.ship_unit ||
@@ -1102,6 +1106,10 @@ class Confirm extends Component {
             paymentStatusCode={cart_data.payment_status}
             paymentStatusView={cart_data.payment_status_name}
           />
+
+          {!!cart_data?.pos_details && (
+            <POSSection code={POSCode} />
+          )}
 
           {!!cart_data?.delivery_details && (
             <DeliverySection

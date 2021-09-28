@@ -26,7 +26,8 @@
       "ordersCode": "Mã đơn hàng",
       "status": "Trạng thái",
       "recheck": "Thông tin này đã chính xác?",
-      "deliveryTitle": "Thông tin đơn giao vận"
+      "deliveryTitle": "Thông tin đơn giao vận",
+      "POSTitle" : "Thông tin hoá đơn bán hàng"
     },
     "address": {
       "title": "Địa chỉ giao hàng"
