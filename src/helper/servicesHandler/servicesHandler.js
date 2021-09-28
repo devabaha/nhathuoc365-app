@@ -435,6 +435,8 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         title: service.title || t('screen.createPost.mainTitle'),
         group: service.group,
         groupId: service.group_id,
+        editMode: service.editMode,
+        postId: service.post_id,
         siteId: service.site_id || store?.store_data?.id,
         avatar: service.avatar || store?.user_info?.img,
         contentText: service.content,

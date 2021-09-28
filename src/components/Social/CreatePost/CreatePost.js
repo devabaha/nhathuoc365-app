@@ -84,11 +84,13 @@ const styles = StyleSheet.create({
 const CreatePost = ({
   // group = {},
   groupId,
+  postId,
   siteId = store?.store_data?.id,
   avatar = store.user_info.img,
   title,
+  editMode,
   contentText: contentTextProp = '',
-  images: imagesProp = [],
+  images: imagesProp,
   isOpenImagePicker: isOpenImagePickerProp = false,
 }) => {
   const {t} = useTranslation(['common', 'social']);
@@ -113,6 +115,22 @@ const CreatePost = ({
   const [keyboardHeight, setKeyboardHeight] = useState(store.keyboardTop);
 
   useEffect(() => {
+    setTimeout(() => {
+      Actions.refresh({
+        right: () => renderPostBtn(),
+      });
+    });
+  }, [
+    images,
+    contentText,
+    groupId,
+    siteId,
+    contentTextProp,
+    imagesProp,
+    editMode,
+  ]);
+
+  useEffect(() => {
     if (!title) {
       Actions.refresh({
         title: t('screen.createPost.mainTitle'),
@@ -132,14 +150,6 @@ const CreatePost = ({
       disposer();
     };
   }, []);
-
-  useEffect(() => {
-    setTimeout(() =>
-      Actions.refresh({
-        right: () => renderPostBtn(),
-      }),
-    );
-  }, [images, contentText, groupId, siteId, contentTextProp, imagesProp]);
 
   useEffect(() => {
     const handlePop = () => {
@@ -188,28 +198,36 @@ const CreatePost = ({
 
   const handlePost = () => {
     if (!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
-    const postData = {
-      id: new Date().getTime(),
-      // group,
-      user: store?.user_info
-        ? {
-            ...store.user_info,
-            image: store.user_info.img,
-          }
-        : {},
-      created: new Date(),
-      group_id: groupId,
-      site_id: siteId,
-      content: contentText,
-    };
+    const postData = editMode
+      ? {
+          ...(store.socialPosts.get(postId) || {}),
+          content: contentText,
+        }
+      : {
+          id: new Date().getTime(),
+          // group,
+          user: store?.user_info
+            ? {
+                ...store.user_info,
+                image: store.user_info.img,
+              }
+            : {},
+          created: new Date(),
+          group_id: groupId,
+          site_id: siteId,
+          content: contentText,
+        };
 
     if (!!images?.length) {
       postData.images = images;
     }
     canBack.current = true;
     Actions.pop();
-
-    store.socialCreatePost(postData, t, formatPostStoreData);
+    if (editMode) {
+      store.socialCreatePost(postData, t, undefined, true);
+    } else {
+      store.socialCreatePost(postData, t, formatPostStoreData);
+    }
   };
 
   const renderPostBtn = () => {

@@ -98,7 +98,7 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
     Actions.refresh({
       renderTitle: renderTitle(),
     });
-  }, [groupInfo?.banner]);
+  }, [groupInfo?.banner, groupName, groupInfo?.name]);
 
   const renderTitle = () => {
     return (
@@ -110,7 +110,7 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
           />
         </View>
         <Text numberOfLines={2} style={styles.title}>
-          {groupName}
+          {groupInfo?.name || groupName}
         </Text>
       </Animated.View>
     );

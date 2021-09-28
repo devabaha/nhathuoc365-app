@@ -191,6 +191,16 @@ const Post = ({
     );
   };
 
+  const renderImages = useCallback(() => {
+    return (
+      !!images?.length && (
+        <Container style={styles.imagesContainer}>
+          {renderGridImages(images)}
+        </Container>
+      )
+    );
+  }, [images]);
+
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <Container centerVertical={false} style={styles.container}>
@@ -240,11 +250,7 @@ const Post = ({
             </Container>
           )}
 
-          {!!images?.length && (
-            <Container style={styles.imagesContainer}>
-              {renderGridImages(images)}
-            </Container>
-          )}
+          {renderImages()}
         </Container>
 
         <Container>
