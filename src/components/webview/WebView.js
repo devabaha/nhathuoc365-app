@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Proptypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
-import { WebView } from 'react-native-webview';
+import {View, StyleSheet, Linking, Alert} from 'react-native';
+import {WebView as RNWebView} from 'react-native-webview';
 
 import Loading from '../Loading';
 import EventTracker from '../../helper/EventTracker';
 
-export default class WebViewClass extends Component {
+class WebView extends Component {
   static propTypes = {
     url: Proptypes.string.isRequired,
     renderAfter: Proptypes.node,
-    showLoading: Proptypes.bool
+    showLoading: Proptypes.bool,
   };
 
   static defaultProps = {
-    showLoading: true
+    showLoading: true,
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      showLoading: false
+      showLoading: false,
     };
     this.eventTracker = new EventTracker();
   }
@@ -34,29 +34,43 @@ export default class WebViewClass extends Component {
     this.eventTracker.clearTracking();
   }
 
+  handleShouldStartLoadWithRequest = (request) => {
+    if (!request.url.startsWith('http') && /\w+:\/\//.test(request.url)) {
+      Linking.openURL(request.url).catch((error) => {
+        console.log('webview_linking_open_url', error);
+        Alert.alert(this.props.t('cantOpenLink'));
+      });
+    } else {
+      return request;
+    }
+  };
+
   onLoadStart() {
     this.props.showLoading &&
       this.setState({
-        showLoading: true
+        showLoading: true,
       });
   }
 
   onLoadEnd() {
     this.props.showLoading &&
       this.setState({
-        showLoading: false
+        showLoading: false,
       });
   }
 
   render() {
     return (
       <View style={[styles.container, this.props.style]}>
-        <WebView
+        <RNWebView
           onLoadStart={this.onLoadStart.bind(this)}
           onLoadEnd={this.onLoadEnd.bind(this)}
           onLoad={this.onLoadEnd.bind(this)}
-          source={{ uri: this.props.url }}
+          source={{uri: this.props.url}}
           style={styles.webView}
+          onMessage={() => {}}
+          originWhitelist={['*']}
+          onShouldStartLoadWithRequest={this.handleShouldStartLoadWithRequest}
         />
 
         {this.state.showLoading == true && <Loading center />}
@@ -72,10 +86,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
 
-    marginBottom: 0
+    marginBottom: 0,
   },
   webView: {
-    flex: 1
+    flex: 1,
   },
   loadingBox: {
     position: 'absolute',
@@ -85,11 +99,13 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#ebebeb',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingTitle: {
     fontSize: 14,
     marginTop: 4,
-    color: '#404040'
-  }
+    color: '#404040',
+  },
 });
+
+export default withTranslation()(WebView);
