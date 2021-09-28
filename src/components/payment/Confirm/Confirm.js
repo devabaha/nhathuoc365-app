@@ -1199,7 +1199,7 @@ class Confirm extends Component {
           />
           <CommissionsSection commissions={cart_data?.commissions} />
 
-          <ActionButtonSection
+          {/* <ActionButtonSection
             editable={is_ready && !this.isPaid}
             onEdit={this.confirmEditCart.bind(this, cart_data)}
             cancelable={is_ready}
@@ -1210,7 +1210,9 @@ class Confirm extends Component {
             onAddMore={this.goBackStores.bind(this, cart_data)}
             canFeedback={is_completed && cart_data.status > 1}
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
-          />
+          /> */}
+
+          <View style={styles.mt8}></View>
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (
