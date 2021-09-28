@@ -414,7 +414,7 @@ class OpRegister extends Component {
     const referCodeTitle = (
       <Text>
         {t('data.referCode.title')}{' '}
-        {isConfigActive(CONFIG_KEY.NEED_REFERRAL_CODE_KEY) ? (
+        {isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) ? (
           <Text style={styles.textRequired}>*</Text>
         ) : (
           `(${t('data.referCode.optional')})`
