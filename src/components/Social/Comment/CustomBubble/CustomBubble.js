@@ -240,12 +240,12 @@ class CustomBubble extends Component {
           },
         ]}>
         {!this.state.isShowFullMessage && (
-          <SeeMoreBtn 
-          title={this.props.seeMoreTitle}
-          lineHeight={LINE_HEIGHT}
-          bgColor={bgColor}
-          onPress={this.openFullMessage}
-          containerStyle={styles.btnShowFullMessageContainer}
+          <SeeMoreBtn
+            title={this.props.seeMoreTitle}
+            lineHeight={LINE_HEIGHT}
+            bgColor={bgColor}
+            onPress={this.openFullMessage}
+            containerStyle={styles.btnShowFullMessageContainer}
           />
           // <View style={styles.btnShowFullMessageContainer}>
           //   <TouchableOpacity
@@ -317,6 +317,9 @@ class CustomBubble extends Component {
             message: this.props.t('api.error.message'),
           });
         }}
+        onLongPress={() => {
+          props.onLongPress(undefined, props.currentMessage);
+        }}
       />
     );
   };
@@ -348,7 +351,7 @@ class CustomBubble extends Component {
       isHighlight,
       ...props
     } = this.props;
-    console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
+    // console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
 
     const hasText = props.currentMessage.text;
     const bgColor = hasText

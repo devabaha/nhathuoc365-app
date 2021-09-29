@@ -38,6 +38,7 @@ import TextPressable from 'src/components/TextPressable';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {RatingAccessory} from './Accessory';
 import {Container} from 'src/components/Layout';
+import {Actions} from 'react-native-router-flux';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -139,11 +140,24 @@ class Comment extends Component {
   getMessagesAPI = new APIRequest();
   getCommentsAPI = new APIRequest();
   postCommentAPI = new APIRequest();
+  deleteCommentAPI = new APIRequest();
   likeRequest = new APIRequest();
-  requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
+  requests = [
+    this.getCommentsAPI,
+    this.postCommentAPI,
+    this.deleteCommentAPI,
+    this.likeRequest,
+  ];
   uploadURL = APIHandler.url_user_upload_image();
 
   ratingValue = 0;
+
+  actionOptionForLongPressMessage = [
+    this.props.t('copy'),
+    this.props.t('edit'),
+    this.props.t('delete'),
+    this.props.t('cancel'),
+  ];
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -595,6 +609,18 @@ class Comment extends Component {
     }
   };
 
+  collapseComposer = () => {
+    if (this.refTickidChat && this.state.isKeyboardShowing) {
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
+    }
+  };
+
+  showComposer = () => {
+    if (this.refTickidChat && !this.state.isKeyboardShowing) {
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
+    }
+  };
+
   handlePressSend = () => {
     if (this.refTickidChat) {
       this.refTickidChat.handleSendMessage();
@@ -665,25 +691,25 @@ class Comment extends Component {
     }
   };
 
-  handleBubbleLongPress = (context, message) => {
-    if (message.content) {
-      const options = [this.props.t('copy'), this.props.t('cancel')];
-      const cancelButtonIndex = options.length - 1;
-      context.actionSheet().showActionSheetWithOptions(
-        {
-          options,
-          cancelButtonIndex,
-        },
-        (buttonIndex) => {
-          switch (buttonIndex) {
-            case 0:
-              Clipboard.setString(message.content);
-              break;
-          }
-        },
-      );
-    }
-  };
+  // handleBubbleLongPress = (context, message) => {
+  //   if (message.content) {
+  //     const options = [this.props.t('copy'), this.props.t('cancel')];
+  //     const cancelButtonIndex = options.length - 1;
+  //     context.actionSheet().showActionSheetWithOptions(
+  //       {
+  //         options,
+  //         cancelButtonIndex,
+  //       },
+  //       (buttonIndex) => {
+  //         switch (buttonIndex) {
+  //           case 0:
+  //             Clipboard.setString(message.content);
+  //             break;
+  //         }
+  //       },
+  //     );
+  //   }
+  // };
 
   handleCommentDidMount = (refComment, comment) => {
     if (!!comment && comment?.id === this.appendedComment.id) {
@@ -706,6 +732,105 @@ class Comment extends Component {
 
   handleChangeRating = (ratingValue) => {
     this.ratingValue = ratingValue;
+  };
+
+  handleBubbleLongPress = (context, message) => {
+    const isKeyboardShowing = this.state.isKeyboardShowing;
+    this.collapseComposer();
+    const options = !!message.text
+      ? this.actionOptionForLongPressMessage
+      : this.actionOptionForLongPressMessage.slice(1);
+    Actions.push(appConfig.routes.modalActionSheet, {
+      options,
+      destructiveButtonIndex: options.length - 2,
+      onPress: async (buttonIndex) => {
+        if (!!message.text) {
+          await this.handleBubbleMessageLongPress(buttonIndex, message);
+        } else {
+          await this.handleBubbleEmptyMessageLongPress(buttonIndex, message);
+        }
+        if (isKeyboardShowing) {
+          this.showComposer();
+        }
+      },
+    });
+  };
+
+  handleBubbleMessageLongPress = async (buttonIndex, message) => {
+    console.log(message);
+    switch (buttonIndex) {
+      case 0:
+        this.copyMessage(message.text);
+        break;
+      case 2:
+        await this.confirmDeleteComment(message.real_id);
+        break;
+    }
+  };
+
+  handleBubbleEmptyMessageLongPress = async (buttonIndex, message) => {
+    switch (buttonIndex) {
+      case 0:
+        break;
+      case 1:
+        await this.confirmDeleteComment(message.real_id);
+        break;
+    }
+  };
+
+  copyMessage = (text) => {
+    Clipboard.setString(text);
+  };
+
+  confirmDeleteComment = async (commentId) => {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        Actions.push(appConfig.routes.modalConfirm, {
+          message: this.props.t('social:commentDeleteConfirmMessage'),
+          isConfirm: true,
+          yesTitle: this.props.t('delete'),
+          noTitle: this.props.t('cancel'),
+          yesConfirm: async () => {
+            await this.deleteComment(commentId);
+            resolve();
+          },
+          noConfirm: resolve,
+        });
+      });
+    });
+  };
+
+  deleteComment = async (commentId) => {
+    this.deleteCommentAPI.data = APIHandler.social_comments_delete(commentId);
+
+    try {
+      const response = await this.deleteCommentAPI.promise();
+      console.log(response, commentId);
+      if (response?.status === STATUS_SUCCESS) {
+        const listComments = [...this.state.messages];
+        const commentIndex = listComments.findIndex(
+          (comment) => comment.real_id === commentId,
+        );
+        if (commentIndex !== -1) {
+          listComments.splice(commentIndex, 1);
+          this.setState({messages: listComments});
+        }
+      }
+      flashShowMessage({
+        type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+        message:
+          response?.status === STATUS_SUCCESS
+            ? response?.message
+            : response?.message || this.props.t('api.error.message'),
+      });
+    } catch (error) {
+      console.log('delete_comment', error);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('api.error.message'),
+      });
+    } finally {
+    }
   };
 
   renderInputToolbar = (props) => {
@@ -744,11 +869,15 @@ class Comment extends Component {
     const messageBottomTitleStyle = isError && styles.titleError;
     if (typeof props.currentMessage.id === 'string') {
     }
+
+    if (props.currentMessage.user_id === this.state.user.user_id) {
+      props.onLongPress = this.handleBubbleLongPress;
+    }
+
     return (
       <CustomMessage
         {...props}
         t={this.props.t}
-        onLongPress={this.handleBubbleLongPress}
         uploadURL={this.uploadURL}
         pendingMessage={pendingMessage}
         isPending={!!pendingMessage}

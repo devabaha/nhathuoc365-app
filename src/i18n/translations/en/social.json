@@ -24,5 +24,6 @@
   "maxTotalPostImagesWarning": "Too many photos",
   "maxTotalPostImagesDescription": "You can only upload {{max}} photo(s).\r\nPlease edit to able to post this content!",
   "maxTotalPostImagesConfirm": "OK",
-  "postDeleteConfirmMessage": "Are you sure to delete this post?"
+  "postDeleteConfirmMessage": "Are you sure to delete this post?",
+  "commentDeleteConfirmMessage": "Are you sure to delete this comment?"
 }

@@ -701,7 +701,7 @@ class TickidChat extends Component {
     }
   };
 
-  collapseComposer() {
+  collapseComposer = () => {
     this.setState({
       editable: !!this.state.text,
       showBackBtn: false,
@@ -710,7 +710,7 @@ class TickidChat extends Component {
       selectedType: COMPONENT_TYPE._NONE,
     });
     this.handleBlur();
-  }
+  };
 
   handleContainerLayout = (e) => {
     if (!this.getLayoutDidMount) {
@@ -816,6 +816,10 @@ class TickidChat extends Component {
   };
 
   handleBubbleLongPress = (context, message) => {
+    if (typeof this.props.onBubbleLongPress === 'function') {
+      this.props.onBubbleLongPress(context, message);
+      return;
+    }
     if (message.text) {
       this.handlePressComposerButton(this.state.selectedType);
       Actions.push(appConfig.routes.modalActionSheet, {
@@ -952,6 +956,11 @@ class TickidChat extends Component {
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}
         btnWidth={BTN_IMAGE_WIDTH}
+        onBlurInput={() => {
+          if (this.state.selectedType === COMPONENT_TYPE.EMOJI) {
+            this.collapseComposer();
+          }
+        }}
         {...props}
         editable={this.state.editable}
         onTyping={this.onTyping}

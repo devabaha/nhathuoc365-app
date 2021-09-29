@@ -1186,8 +1186,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {number} data.object_id id of object
    * @param {number=} data.comment_id id of object
    */
-  social_comment(data) {
-    const api = url_for(API.SOCIAL_COMMENT);
+  social_comment(data, comment_id = '') {
+    const api = url_for(API.SOCIAL_COMMENT, comment_id);
     return this.postCancelableAPI(api, data);
   }
 
@@ -1269,6 +1269,24 @@ class CommonAPIHandler extends BaseHandler {
    */
   social_posts_delete(post_id) {
     const api = url_for(API.SOCIAL_POSTS_DELETE, post_id);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
+   * get info of comment
+   *
+   */
+  social_comments_edit(comment_id) {
+    const api = url_for(API.SOCIAL_COMMENTS_EDIT, comment_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * delete comment
+   *
+   */
+  social_comments_delete(comment_id) {
+    const api = url_for(API.SOCIAL_COMMENTS_DELETE, comment_id);
     return this.postCancelableAPI(api);
   }
 

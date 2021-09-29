@@ -154,9 +154,9 @@ class ImageMessageChat extends Component {
   }
 
   handleViewImage() {
-      Actions.item_image_viewer({
-        images: [{url: this.props.lowQualityUri}],
-      })
+    Actions.item_image_viewer({
+      images: [{url: this.props.lowQualityUri}],
+    });
   }
 
   render() {
@@ -190,8 +190,8 @@ class ImageMessageChat extends Component {
         }>
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={this.handleViewImage.bind(this)}
-        >
+          onLongPress={this.props.onLongPress}
+          onPress={this.handleViewImage.bind(this)}>
           {/* <Lightbox
           springConfig={{overshootClamping: true}}
           onOpen={this.handleOpen.bind(this)}
