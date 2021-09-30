@@ -40,9 +40,10 @@ class WebView extends Component {
         console.log('webview_linking_open_url', error);
         Alert.alert(this.props.t('cantOpenLink'));
       });
-    } else {
-      return request;
+      return false;
     }
+
+    return true;
   };
 
   onLoadStart() {
