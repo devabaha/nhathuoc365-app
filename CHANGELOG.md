@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.1.4]
 ### Added
 - [CU-mdwa93] Short content product in Item by [lamah.dev@gmail.com].
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-kben7m] not_allow_edit_cart_key for preventing editing order by [kienluu612@gmail.com].
 ### Changed
 - [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
-- [CU-mkm5tx] Disable action button add more products in Confirm by [kienluu612@gmail.com].
+- [CU-mkm5tx] Hide action button add more products in Confirm by [kienluu612@gmail.com].
 ### Fixed
 - Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
 - Lagging when auto play promotions by [minhnguyenit14@gmail.com].

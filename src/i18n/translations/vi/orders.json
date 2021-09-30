@@ -27,7 +27,7 @@
       "status": "Trạng thái",
       "recheck": "Thông tin này đã chính xác?",
       "deliveryTitle": "Thông tin đơn giao vận",
-      "POSTitle" : "Thông tin hoá đơn bán hàng"
+      "POSTitle" : "Thông tin đơn POS"
     },
     "address": {
       "title": "Địa chỉ giao hàng"

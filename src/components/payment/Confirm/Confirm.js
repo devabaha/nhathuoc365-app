@@ -25,6 +25,7 @@ import {ANALYTICS_EVENTS_NAME} from '../../../constants';
 import CartItem from '../CartItem';
 import Loading from '../../Loading';
 import {
+  isConfigActive,
   CONFIG_KEY,
   getValueFromConfigKey,
 } from '../../../helper/configKeyHandler';
@@ -1064,7 +1065,9 @@ class Confirm extends Component {
     const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
     const cartType = cart_data.cart_type_name;
     const isAllowedEditCart =
-      is_ready && !this.isPaid && !store.store_data?.not_allow_edit_cart_key;
+      is_ready &&
+      !this.isPaid &&
+      !isConfigActive(CONFIG_KEY.NOT_ALLOW_EDIT_CART_KEY);
 
     const comboAddress =
       (address_data?.province_name || '') +
@@ -1072,7 +1075,12 @@ class Confirm extends Component {
       (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
     const POSCode =
-      cart_data.pos_details.pos_type + ' - ' + cart_data.pos_details.pos_code;
+      !!cart_data.pos_details &&
+      (cart_data.pos_details.pos_type || '') +
+        (cart_data.pos_details.pos_type && cart_data.pos_details.pos_code
+          ? ' - '
+          : '') +
+        (cart_data.pos_details.pos_code || '');
 
     const deliveryCode =
       cart_data.delivery_details &&
@@ -1109,9 +1117,7 @@ class Confirm extends Component {
             paymentStatusView={cart_data.payment_status_name}
           />
 
-          {!!cart_data?.pos_details && (
-            <POSSection code={POSCode} />
-          )}
+          {!!cart_data?.pos_details && <POSSection code={POSCode} />}
 
           {!!cart_data?.delivery_details && (
             <DeliverySection
@@ -1222,7 +1228,7 @@ class Confirm extends Component {
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
           />
 
-          <View style={styles.mt8}></View>
+          {is_paymenting && <View style={styles.mt8}></View>}
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (

@@ -41,4 +41,6 @@ export const CONFIG_KEY = {
   FACEBOOK_FANPAGE: 'facebook_fanpage',
 
   OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
+
+  NOT_ALLOW_EDIT_CART_KEY: 'not_allow_edit_cart_key',
 };
