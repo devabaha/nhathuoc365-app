@@ -1062,6 +1062,8 @@ class Confirm extends Component {
     const is_completed = cart_data.status >= CART_STATUS_COMPLETED;
     const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
     const cartType = cart_data.cart_type_name;
+    const isAllowedEditCart =
+      is_ready && !this.isPaid && !store.store_data?.not_allow_edit_cart_key;
 
     const comboAddress =
       (address_data?.province_name || '') +
@@ -1200,7 +1202,7 @@ class Confirm extends Component {
           <CommissionsSection commissions={cart_data?.commissions} />
 
           <ActionButtonSection
-            editable={is_ready && !this.isPaid}
+            editable={isAllowedEditCart}
             onEdit={this.confirmEditCart.bind(this, cart_data)}
             cancelable={is_ready}
             onCancel={this.confirmCancelCart.bind(this, cart_data)}
