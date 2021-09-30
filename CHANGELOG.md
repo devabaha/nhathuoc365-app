@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-m2hhc0] Use Linking to open any url not starting with "http" by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
+- [CU-j3m8x1] Check sale_in_stock in product when allow site sale out inventory by [lamah.dev@gmail.com].
 ### Fixed
 - Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
 - Lagging when auto play promotions by [minhnguyenit14@gmail.com].

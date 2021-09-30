@@ -184,3 +184,6 @@ global.CUSTOMER_VALID = {
   tre_em: {min: 0, max: 9},
   tre_so_sinh: {min: 0, max: 2}
 }
+
+global.SALE_IN_STOCK_PRODUCT = 0;
+global.NOT_SALE_IN_STOCK_PRODUCT = 1;
