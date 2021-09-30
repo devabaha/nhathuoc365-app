@@ -179,12 +179,15 @@ class OrdersItemComponent extends Component {
     var {item, t, index} = this.props;
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     const cartType = item.cart_type_name;
-    const deliveryCode =
-      item.delivery_details &&
-      (item.delivery_details.ship_unit || item.delivery_details.unit) +
-        ' - ' +
-        (item.delivery_details.ship_unit_id ||
-          item.delivery_details.booking_id);
+    // const POSCode =
+    //   item.pos_details &&
+    //   item.pos_details.pos_type + ' - ' + item.pos_details.pos_code;
+    // const deliveryCode =
+    //   item.delivery_details &&
+    //   (item.delivery_details.ship_unit || item.delivery_details.unit) +
+    //     ' - ' +
+    //     (item.delivery_details.ship_unit_id ||
+    //       item.delivery_details.booking_id);
 
     return (
       <TouchableHighlight
@@ -281,7 +284,21 @@ class OrdersItemComponent extends Component {
                 />
               )}
 
-              <View style={[styles.orders_item_time_box, styles.tagContainer]}>
+              {/* <View style={[styles.orders_item_time_box, styles.tagContainer]}>
+                {!!POSCode && (
+                  <Tag
+                    label={POSCode}
+                    fill={appConfig.colors.primary}
+                    animate={false}
+                    strokeWidth={0}
+                    labelStyle={styles.cartTypeLabel}
+                    labelContainerStyle={[
+                      styles.cartTypeLabelContainer,
+                      styles.tagsLabelContainer,
+                    ]}
+                  />
+                )}
+
                 {!!deliveryCode && (
                   <Tag
                     label={deliveryCode}
@@ -299,7 +316,7 @@ class OrdersItemComponent extends Component {
                     ]}
                   />
                 )}
-              </View>
+              </View> */}
 
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (

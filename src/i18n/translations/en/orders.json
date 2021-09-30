@@ -26,7 +26,8 @@
       "ordersCode": "Order code",
       "status": "Status",
       "recheck": "Is this information correct?",
-      "deliveryTitle": "Delivery infomation"
+      "deliveryTitle": "Delivery infomation",
+      "POSTitle" : "Receipt information"
     },
     "address": {
       "title": "Delivery address"
