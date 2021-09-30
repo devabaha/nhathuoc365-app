@@ -5,7 +5,8 @@ import {CART_PAYMENT_STATUS, CART_PAYMENT_TYPES} from 'src/constants/cart';
 export const isOutOfStock = (product = {}) => {
   return (
     !Number(product.inventory) &&
-    !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
+    !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
+    product.sale_in_stock !== 0 &&
     product.order_type !== ORDER_TYPES.BOOKING
   );
 };
