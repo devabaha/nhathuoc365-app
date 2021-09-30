@@ -1208,11 +1208,13 @@ class Confirm extends Component {
             onCancel={this.confirmCancelCart.bind(this, cart_data)}
             canReorder={can_reorder}
             onReorder={this.confirmCoppyCart.bind(this, cart_data)}
-            canAddMore={is_paymenting}
+            // canAddMore={is_paymenting}
             onAddMore={this.goBackStores.bind(this, cart_data)}
             canFeedback={is_completed && cart_data.status > 1}
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
           />
+
+          <View style={styles.mt8}></View>
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (

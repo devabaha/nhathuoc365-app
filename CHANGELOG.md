@@ -11,9 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-kbhzen] Open store from gpsListStore by open_store_from_list_key by [minhnguyenit14@gmail.com].
 - [CU-m2hhc0] Use Linking to open any url not starting with "http" by [minhnguyenit14@gmail.com].
+- [CU-kben7m] not_allow_edit_cart_key for preventing editing order by [kienluu612@gmail.com].
 ### Changed
 - [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
-- [CU-kben7m] Order is not allowed editing when synchronized with POS by [kienluu612@gmail.com].
+- [CU-mkm5tx] Disable action button add more products in Confirm by [kienluu612@gmail.com].
 ### Fixed
 - Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
 - Lagging when auto play promotions by [minhnguyenit14@gmail.com].
