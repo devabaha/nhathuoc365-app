@@ -121,6 +121,7 @@ const AndroidIcon = ({ size, colors, locations, premium, path }) => {
     return colors.map((color, index) => {
       return (
         <Stop
+          key={index}
           offset={String(locations[index])}
           stopColor={color}
           stopOpacity="1"

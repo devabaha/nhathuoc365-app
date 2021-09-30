@@ -618,16 +618,15 @@ class Store {
     this.isUpdateNotify = isUpdateNotify;
   }
 
-  @action logOut(userInfo) {
+  @action async logOut(userInfo) {
     this.setUserInfo(userInfo);
     this.resetCartData();
     this.setRefreshHomeChange(this.refresh_home_change + 1);
     this.setOrdersKeyChange(this.orders_key_change + 1);
     this.resetAsyncStorage();
 
-    const isFirebaseSignedIn = !!firebaseAuth().currentUser;
-    if (isFirebaseSignedIn) {
-      firebaseAuth().signOut();
+    if (!!firebaseAuth().currentUser) {
+      await firebaseAuth().signOut();
     }
   }
 
