@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lagging when auto play promotions by [minhnguyenit14@gmail.com].
 - [CU-j3d651] GPS list store location interface by [kienluu612@gmail.com].
 - [CU-j3fuac] Use title from service as a highest priority for agency_information_register type by [minhnguyenit14@gmail.com].
+- [Android] Doesn't log out firebase when log out app by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
 ## [r12.1.3]
 ### Added

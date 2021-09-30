@@ -54,7 +54,7 @@ class Account extends Component {
     };
     this.uploadFaceIDRequest = new APIRequest();
     this.requests = [this.uploadFaceIDRequest];
-    reaction(() => store.user_info, this.initial);
+    this.userInfoDisposer = reaction(() => store.user_info, this.initial);
     this.eventTracker = new EventTracker();
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
@@ -820,6 +820,7 @@ class Account extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.userInfoDisposer();
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
