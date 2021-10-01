@@ -25,6 +25,7 @@ import {ANALYTICS_EVENTS_NAME} from '../../../constants';
 import CartItem from '../CartItem';
 import Loading from '../../Loading';
 import {
+  isConfigActive,
   CONFIG_KEY,
   getValueFromConfigKey,
 } from '../../../helper/configKeyHandler';
@@ -47,6 +48,7 @@ import {
 } from './components';
 import AddressSection from './components/AddressSection';
 import {debounce} from 'lodash';
+import POSSection from './components/POSSection';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -73,7 +75,6 @@ class Confirm extends Component {
       loading: false,
       isConfirming: false,
     };
-
     this.refs_confirm_page = React.createRef();
     this.unmounted = false;
     this.resetScrollToCoords = {x: 0, y: 0};
@@ -1063,11 +1064,23 @@ class Confirm extends Component {
     const is_completed = cart_data.status >= CART_STATUS_COMPLETED;
     const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
     const cartType = cart_data.cart_type_name;
+    const isAllowedEditCart =
+      is_ready &&
+      !this.isPaid &&
+      !isConfigActive(CONFIG_KEY.NOT_ALLOW_EDIT_CART_KEY);
 
     const comboAddress =
       (address_data?.province_name || '') +
       (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
       (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
+
+    const POSCode =
+      !!cart_data.pos_details &&
+      (cart_data.pos_details.pos_type || '') +
+        (cart_data.pos_details.pos_type && cart_data.pos_details.pos_code
+          ? ' - '
+          : '') +
+        (cart_data.pos_details.pos_code || '');
 
     const deliveryCode =
       cart_data.delivery_details &&
@@ -1103,6 +1116,8 @@ class Confirm extends Component {
             paymentStatusCode={cart_data.payment_status}
             paymentStatusView={cart_data.payment_status_name}
           />
+
+          {!!cart_data?.pos_details && <POSSection code={POSCode} />}
 
           {!!cart_data?.delivery_details && (
             <DeliverySection
@@ -1196,22 +1211,24 @@ class Confirm extends Component {
             isPromotionSelectable={single}
             selectedVoucher={cart_data.user_voucher}
             siteId={cart_data.site_id}
+            voucherStatus={cart_data.voucher_status}
           />
-
           <CommissionsSection commissions={cart_data?.commissions} />
 
           <ActionButtonSection
-            editable={is_ready && !this.isPaid}
+            editable={isAllowedEditCart}
             onEdit={this.confirmEditCart.bind(this, cart_data)}
             cancelable={is_ready}
             onCancel={this.confirmCancelCart.bind(this, cart_data)}
             canReorder={can_reorder}
             onReorder={this.confirmCoppyCart.bind(this, cart_data)}
-            canAddMore={is_paymenting}
+            // canAddMore={is_paymenting}
             onAddMore={this.goBackStores.bind(this, cart_data)}
             canFeedback={is_completed && cart_data.status > 1}
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
           />
+
+          {is_paymenting && <View style={styles.mt8}></View>}
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (

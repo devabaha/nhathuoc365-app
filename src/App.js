@@ -167,7 +167,7 @@ import Transaction from './components/payment/Transaction';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
-import SalesReport from './containers/SalesReport/SalesReport';
+import SalesReport from './containers/SalesReport';
 import {
   FilterDrawer,
   ModalFilterProduct,
@@ -1113,7 +1113,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.agencyInformationRegister}_1`}
                     {...navBarConfig}
-                    title={t('screen.agencyInformationRegister.mainTitle')}
                     component={AgencyInformationRegister}
                     back
                   />
@@ -1123,7 +1122,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
-                    title={t('screen.gpsListStore.mainTitle')}
                     component={GPSListStore}
                     back
                   />
@@ -1884,6 +1882,17 @@ class RootRouter extends Component {
                     component={StoreLocation}
                     {...navBarConfig}
                     back
+                  />
+                </Stack>
+
+                <Stack
+                  key={appConfig.routes.rootGpsStoreLocation}
+                  panHandlers={null}>
+                  <Scene
+                    key={`${appConfig.routes.rootGpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
                   />
                 </Stack>
 

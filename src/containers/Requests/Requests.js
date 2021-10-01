@@ -27,8 +27,10 @@ import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
  */
 class Requests extends Component {
   static propTypes = {
-    siteId: PropTypes.string.isRequired,
+    siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
   };
+
   state = {
     loading: true,
     refreshing: false,

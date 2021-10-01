@@ -97,6 +97,9 @@ class CommonAPI {
   get SITE_GET_TREE_CATEGORIES() {
     return BaseAPI.apiDomain + 'apiSite/get_tree_categories';
   }
+  get SITE_SET_STORE() {
+    return BaseAPI.apiDomain + 'apiSite/set_store';
+  }
 
   // Item
   get SITE_PRODUCT() {

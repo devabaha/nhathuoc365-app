@@ -14,6 +14,7 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
+import i18n from 'src/i18n';
 
 /**
  * A powerful handler for all app's services.
@@ -32,8 +33,13 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
+export const servicesHandler = (service, t, callBack = () => {}) => {
   if (!service || !service.type) return;
+  const commonT = i18n.getFixedT(undefined, 'common');
+  if (!t) {
+    t = commonT;
+  }
+
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
@@ -188,8 +194,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({
-        title: service.news.title,
+        title: service.title || service.news?.title,
         data: service.news,
+        newsId: service.news_id,
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
@@ -237,7 +244,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         service.callback();
       }
 
-      APIHandler.site_info(service.siteId)
+      return APIHandler.site_info(service.siteId)
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
@@ -272,7 +279,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
-      Actions.push(appConfig.routes.gpsListStore);
+      Actions.push(appConfig.routes.gpsListStore, {
+        title: service.title || commonT('screen.gpsListStore.mainTitle'),
+      });
       break;
 
     /** COMMUNICATION */
@@ -452,7 +461,11 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** AGENCY INFORMATION REGISTER */
     case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
-      Actions.push(appConfig.routes.agencyInformationRegister);
+      Actions.push(appConfig.routes.agencyInformationRegister, {
+        title:
+          service.title ||
+          commonT('screen.agencyInformationRegister.mainTitle'),
+      });
       break;
 
     /**  REQUEST */

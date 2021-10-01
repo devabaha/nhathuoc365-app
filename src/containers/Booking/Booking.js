@@ -843,6 +843,7 @@ export class Booking extends Component {
             cashbackView={cashbackView}
             onUseVoucherOnlineSuccess={this.handleChangeVoucher}
             onRemoveVoucherOnlineSuccess={this.handleChangeVoucher}
+            voucherStatus={this.state.booking?.voucher_status}
           />
 
           <CommissionsSection commissions={this.state.booking?.commissions} />

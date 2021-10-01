@@ -47,6 +47,8 @@ class OpRegister extends Component {
     this.getUserCityRequest = new APIRequest();
     this.getWarehouseRequest = new APIRequest();
     this.requests = [this.getUserCityRequest, this.getWarehouseRequest];
+
+    this.unmounted = false;
   }
 
   get isActiveCity() {
@@ -77,6 +79,7 @@ class OpRegister extends Component {
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     cancelRequests(this.requests);
     this.eventTracker.clearTracking();
   }
@@ -116,7 +119,7 @@ class OpRegister extends Component {
     this._op_register(name, refer, city, birth, store_id);
   }
 
-  _op_register(name, refer, city, birth, store_id) {
+  _op_register = (name, refer, city, birth, store_id) => {
     //, password, refer
     const data = {name, refer, city, birth, store_id};
 
@@ -127,40 +130,32 @@ class OpRegister extends Component {
       async () => {
         try {
           const response = await APIHandler.user_op_register(data);
-          if (response && response.status == STATUS_SUCCESS) {
+          if (response?.status === STATUS_SUCCESS) {
             store.setUserInfo(response.data);
-            this.setState(
-              {
-                loading: false,
-              },
-              () => {
-                Actions.reset(appConfig.routes.sceneWrapper);
-              },
-            );
-          } else {
-            this.setState({
-              loading: false,
-            });
+            Actions.reset(appConfig.routes.sceneWrapper);
           }
 
-          if (response) {
-            flashShowMessage({
-              message: response.message,
-              type: response.status == STATUS_SUCCESS ? 'success' : 'danger',
-            });
-          }
+          flashShowMessage({
+            type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+            message:
+              response?.status === STATUS_SUCCESS
+                ? response?.message
+                : response?.message || this.props.t('common:api.error.message'),
+          });
         } catch (e) {
-          this.setState({
-            loading: false,
+          console.log('op_register', error);
+          flashShowMessage({
+            type: 'danger',
+            message: this.props.t('common:api.error.message'),
           });
         } finally {
-          this.setState({
-            loading: false,
-          });
+          if (this.unmounted) return;
+          
+          this.setState({loading: false});
         }
       },
     );
-  }
+  };
 
   async getCities() {
     this.setState({isCityLoading: true});
@@ -168,6 +163,7 @@ class OpRegister extends Component {
     try {
       this.getUserCityRequest.data = APIHandler.user_site_city();
       const response = await this.getUserCityRequest.promise();
+      if (this.unmounted) return;
 
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
@@ -199,6 +195,8 @@ class OpRegister extends Component {
         message: t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
+
       this.setState({isCityLoading: false});
     }
   }
@@ -209,6 +207,8 @@ class OpRegister extends Component {
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
+      if (this.unmounted) return;
+
       const listWarehouse =
         responseData?.stores?.map((store) => ({
           ...store,
@@ -236,6 +236,8 @@ class OpRegister extends Component {
         message: err.message || t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
+
       this.setState({isWarehouseLoading: false});
     }
   }
@@ -411,12 +413,16 @@ class OpRegister extends Component {
       (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
       (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
 
-    const referCodeTitle =
-      t('data.referCode.title') +
-      ' ' +
-      (isConfigActive(CONFIG_KEY.NEED_REFERRAL_CODE_KEY)
-        ? '(*)'
-        : `(${t('data.referCode.optional')})`);
+    const referCodeTitle = (
+      <Text>
+        {t('data.referCode.title')}{' '}
+        {isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) ? (
+          <Text style={styles.textRequired}>*</Text>
+        ) : (
+          `(${t('data.referCode.optional')})`
+        )}
+      </Text>
+    );
 
     return (
       <View style={styles.container}>
@@ -427,7 +433,9 @@ class OpRegister extends Component {
           }}
           keyboardShouldPersistTaps="handled">
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>{t('data.name.title')} (*)</Text>
+            <Text style={styles.input_label}>
+              {t('data.name.title')} <Text style={styles.textRequired}>*</Text>
+            </Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -742,6 +750,10 @@ const styles = StyleSheet.create({
   },
   referInput: {
     textAlign: 'left',
+  },
+
+  textRequired: {
+    color: appConfig.colors.status.danger,
   },
 });
 

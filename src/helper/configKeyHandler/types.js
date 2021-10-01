@@ -36,7 +36,11 @@ export const CONFIG_KEY = {
 
   ENABLE_POST_FOR_SALE_KEY: 'enable_post_for_sale_key',
 
-  NEED_REFERRAL_CODE_KEY: 'need_referral_code_key',
+  NEED_INVITE_ID_FLAG: 'need_invite_id_flag',
 
   FACEBOOK_FANPAGE: 'facebook_fanpage',
+
+  OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
+
+  NOT_ALLOW_EDIT_CART_KEY: 'not_allow_edit_cart_key',
 };
