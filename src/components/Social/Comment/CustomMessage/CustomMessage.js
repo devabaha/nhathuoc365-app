@@ -12,17 +12,21 @@ const styles = StyleSheet.create({
   error: {
     opacity: 0.6,
   },
+  disabled: {
+    opacity: 0.4,
+  },
 });
 
 const CustomMessage = ({
   // refMessage,
   // refContentMessage,
-  isError,
+  disabled,
   currentMessage,
   onLike,
   onReply,
   onDidMount,
   onLayout = () => {},
+  onActiveEditMode = () => {},
   ...props
 }) => {
   const refMessage = useRef();
@@ -45,6 +49,12 @@ const CustomMessage = ({
   useEffect(() => {
     setState({comment: currentMessage});
   }, [currentMessage]);
+
+  useEffect(() => {
+    if (!!props.isEditing) {
+      onActiveEditMode(refMessage.current);
+    }
+  }, [props.isEditing]);
 
   const handleLikeComment = () => {
     const currentLikeFlag = comment?.like_flag,
@@ -114,6 +124,7 @@ const CustomMessage = ({
         pendingMessage={bubbleProps.pendingMessage}
         loadingMessage={bubbleProps.loadingMessage}
         isError={bubbleProps.isError}
+        isEditing={bubbleProps.isEditing}
         messageBottomTitleStyle={bubbleProps.messageBottomTitleStyle}
         onPressBubbleBottom={handlePressBottomBubble}
         onSendImage={({image}) =>
@@ -125,7 +136,14 @@ const CustomMessage = ({
   };
 
   return (
-    <View ref={refMessage} onLayout={onLayout} style={isError && styles.error}>
+    <View
+      ref={refMessage}
+      onLayout={onLayout}
+      pointerEvents={disabled ? 'none' : 'auto'}
+      style={[
+        disabled && styles.disabled,
+        props.isError && !props.isEditing && styles.error,
+      ]}>
       <Message
         {...props}
         currentMessage={comment}
@@ -144,6 +162,8 @@ const CustomMessage = ({
             prevProps.isPending !== nextProps.isPending ||
             prevProps.pendingMessage !== nextProps.pendingMessage ||
             prevProps.isError !== nextProps.isError ||
+            prevProps.isEditing !== nextProps.isEditing ||
+            prevProps.disabled !== nextProps.disabled ||
             prevProps.loadingMessage !== nextProps.loadingMessage ||
             prevProps.messageBottomTitleStyle !==
               nextProps.messageBottomTitleStyle

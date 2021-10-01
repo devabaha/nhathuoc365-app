@@ -113,6 +113,7 @@ class Comment extends Component {
     previewImages: [],
     isUpdateForRendering: false,
     loading: true,
+    isEditingComment: false,
   };
 
   tempID = 0;
@@ -121,6 +122,7 @@ class Comment extends Component {
   offset = 0;
   loadMore = false;
   unmounted = false;
+  autoFocus = this.props.autoFocus;
   currentScrollPositionY = 0;
 
   refListMessages = null;
@@ -190,6 +192,10 @@ class Comment extends Component {
     this.giftedChatExtraProps.renderCustomView = this.renderUserName;
     this.giftedChatExtraProps.scrollToBottom = false;
     this.giftedChatExtraProps.maxComposerHeight = 60;
+    this.giftedChatExtraProps.minInputToolbarHeight = this.state
+      .isEditingComment
+      ? 0
+      : undefined;
 
     return this.giftedChatExtraProps;
   }
@@ -278,8 +284,10 @@ class Comment extends Component {
       console.log('get_comments', e);
     } finally {
       this.isLoadFirstTime = false;
+      this.autoFocus = false;
+
       if (!this.unmounted) {
-        this.setStater({loading: false});
+        this.setStater({loading: false, isEditingComment: false});
       }
     }
   };
@@ -468,20 +476,30 @@ class Comment extends Component {
     return [formattedMessage];
   }
 
-  updateCommentData = (id, comment, error = false) => {
+  updateCommentData = (id, comment, error, isEditing) => {
     const messages = [...this.state.messages];
     const index = messages.findIndex((m) => m.id === id);
     if (index !== -1) {
-      messages[index] = comment;
-      messages[index].error = error;
+      if (comment !== undefined) {
+        messages[index] = comment;
+      }
+
+      if (typeof error === 'boolean') {
+        messages[index].error = error;
+      }
+
+      if (typeof isEditing === 'boolean') {
+        messages[index].isEditing = isEditing;
+      }
+
       this.setStater({
         messages,
       });
     }
   };
 
-  _onSend = async (message) => {
-    if (!!message.image_info && !message.image) {
+  _onSend = async (message, commentId) => {
+    if (!!message.image_info && !message.image && !commentId) {
       this.updateCommentData(message.id, message, true);
       return;
     }
@@ -501,13 +519,13 @@ class Comment extends Component {
       data.image_width = message.image_info.width;
       data.image_height = message.image_info.height;
     }
+    let clientComment = message;
+    let error = true;
 
     try {
-      this.postCommentAPI.data = APIHandler.social_comment(data);
+      this.postCommentAPI.data = APIHandler.social_comment(data, commentId);
       const response = await this.postCommentAPI.promise();
       console.log(response, message, data);
-      let clientComment = message;
-      let error = true;
 
       this.collapseRating();
 
@@ -541,17 +559,17 @@ class Comment extends Component {
           message: this.props.t('common:api.error.message'),
         });
       }
-
-      this.updateCommentData(message.id, clientComment, error);
     } catch (e) {
       console.log('social_comment', e);
-      this.updateCommentData(message.id, message, true);
+      clientComment = message;
+      error = true;
 
       flashShowMessage({
         type: 'danger',
         message: this.props.t('common:api.error.message'),
       });
     } finally {
+      this.updateCommentData(message.id, clientComment, error);
     }
   };
 
@@ -580,14 +598,14 @@ class Comment extends Component {
     }
   };
 
-  listChatScrollToItemById(ref) {
+  listChatScrollToItemById(ref, extraOffset = 0) {
     if (this.refListMessages) {
       if (!ref) return;
 
       ref.measureLayout(
         findNodeHandle(this.refListMessages),
         (offsetX, offsetY) => {
-          const extraOffset =
+          extraOffset +=
             (!!this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
             (!!this.state.previewImages.length ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
@@ -749,7 +767,7 @@ class Comment extends Component {
         } else {
           await this.handleBubbleEmptyMessageLongPress(buttonIndex, message);
         }
-        if (isKeyboardShowing) {
+        if (isKeyboardShowing || this.state.isEditingComment) {
           this.showComposer();
         }
       },
@@ -757,13 +775,15 @@ class Comment extends Component {
   };
 
   handleBubbleMessageLongPress = async (buttonIndex, message) => {
-    console.log(message);
     switch (buttonIndex) {
       case 0:
         this.copyMessage(message.text);
         break;
+      case 1:
+        this.activeMessageEditMode(message.id);
+        break;
       case 2:
-        await this.confirmDeleteComment(message.real_id);
+        await this.confirmDeleteMessage(message.real_id);
         break;
     }
   };
@@ -771,9 +791,10 @@ class Comment extends Component {
   handleBubbleEmptyMessageLongPress = async (buttonIndex, message) => {
     switch (buttonIndex) {
       case 0:
+        this.activeMessageEditMode(message.id);
         break;
       case 1:
-        await this.confirmDeleteComment(message.real_id);
+        await this.confirmDeleteMessage(message.real_id);
         break;
     }
   };
@@ -782,7 +803,28 @@ class Comment extends Component {
     Clipboard.setString(text);
   };
 
-  confirmDeleteComment = async (commentId) => {
+  activeMessageEditMode = (commentId) => {
+    this.updateCommentData(commentId, undefined, undefined, true);
+  };
+
+  cancelEdit = (commentId) => {
+    this.collapseComposer();
+    this.updateCommentData(commentId, undefined, undefined, false);
+    this.setState({
+      isEditingComment: false,
+    });
+  };
+
+  handleCommentActiveEditMode = (refMessage) => {
+    this.clearComposer();
+
+    this.setState({isEditingComment: true}, () => {
+      this.refGiftedChat.resetInputToolbar();
+      this.listChatScrollToItemById(refMessage);
+    });
+  };
+
+  confirmDeleteMessage = async (commentId) => {
     await new Promise((resolve) => {
       setTimeout(() => {
         Actions.push(appConfig.routes.modalConfirm, {
@@ -798,6 +840,13 @@ class Comment extends Component {
         });
       });
     });
+  };
+
+  editComment = async (comment, text) => {
+    comment.text = text;
+    comment.content = text;
+    this.cancelEdit(comment.id);
+    this._onSend(comment, comment.real_id);
   };
 
   deleteComment = async (commentId) => {
@@ -845,15 +894,17 @@ class Comment extends Component {
         : replyingMention?.name);
 
     return (
-      <CustomInputToolbar
-        {...props}
-        accessoryStyle={styles.accessoryContainer}
-        previewImages={this.state.previewImages}
-        replyingName={replyingName}
-        replyingMentionName={replyingMention?.name}
-        onCancelReplying={this.handleCancelReplying}
-        onCancelPreviewImage={this.handleCancelPreviewImage}
-      />
+      !this.state.isEditingComment && (
+        <CustomInputToolbar
+          {...props}
+          accessoryStyle={styles.accessoryContainer}
+          previewImages={this.state.previewImages}
+          replyingName={replyingName}
+          replyingMentionName={replyingMention?.name}
+          onCancelReplying={this.handleCancelReplying}
+          onCancelPreviewImage={this.handleCancelPreviewImage}
+        />
+      )
     );
   };
 
@@ -861,6 +912,7 @@ class Comment extends Component {
     const isLoading = typeof props.currentMessage?.real_id !== 'number';
     const pendingMessage = props.currentMessage?.accept_status;
     const isError = props.currentMessage?.error;
+    const isEditing = props.currentMessage?.isEditing;
     const loadingMessage = isError
       ? this.props.t('social:errorPosting')
       : this.props.t('social:posting');
@@ -882,15 +934,20 @@ class Comment extends Component {
         pendingMessage={pendingMessage}
         isPending={!!pendingMessage}
         isError={isError}
+        isEditing={isEditing}
         messageBottomTitleStyle={messageBottomTitleStyle}
         seeMoreTitle={this.props.t('social:seeMore')}
         isHighlight={isHighlight}
         isLoading={isLoading}
+        disabled={this.state.isEditingComment && !isEditing}
         loadingMessage={loadingMessage}
         onLike={this.handleLikeComment}
         onReply={this.handleReply}
         onDidMount={this.handleCommentDidMount}
         onImageUploaded={this._onSend}
+        onActiveEditMode={this.handleCommentActiveEditMode}
+        onEdit={(text) => this.editComment(props.currentMessage, text)}
+        onCancelEdit={() => this.cancelEdit(props.currentMessage?.id)}
       />
     );
   };
@@ -1032,7 +1089,8 @@ class Comment extends Component {
       <>
         {this.state.loading && <Loading center />}
         <TickidChat
-          autoFocus={this.props.autoFocus}
+          blurWhenPressOutside={!this.state.isEditingComment}
+          autoFocus={this.autoFocus}
           isMultipleImagePicker={false}
           extraData={this.state.isUpdateForRendering}
           alwaysShowInput
@@ -1058,7 +1116,7 @@ class Comment extends Component {
           defaultStatusBarColor={appConfig.colors.primary}
           // Refs
           ref={(inst) => (this.refTickidChat = inst)}
-          refGiftedChat={(inst) => (this.refGiftedChat = inst)}
+          refGiftedChat={(_, inst) => (this.refGiftedChat = inst)}
           refListMessages={(inst) => {
             this.refListMessages = inst;
           }}

@@ -146,6 +146,7 @@ class Config {
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
       overlay: 'rgba(0,0,0,.6)',
+      disabled: '#ccc',
       highlight: {
         1: '#51B748',
       },

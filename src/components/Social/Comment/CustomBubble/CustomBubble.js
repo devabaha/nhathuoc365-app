@@ -1,18 +1,17 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, Animated} from 'react-native';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
 import {Bubble, MessageText} from 'react-native-gifted-chat';
-import LinearGradient from 'react-native-linear-gradient';
 
 import appConfig from 'app-config';
-import store from 'app-store';
 
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 import {getRelativeTime} from 'app-helper/social';
 import SeeMoreBtn from '../../SeeMoreBtn';
+import BubbleEditing from './BubbleEditing';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
@@ -35,7 +34,7 @@ const MIN_WIDTH_MESSAGE = 120;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingBottom: 10,
+    paddingBottom: 15,
   },
   container: {
     flex: 1,
@@ -247,24 +246,6 @@ class CustomBubble extends Component {
             onPress={this.openFullMessage}
             containerStyle={styles.btnShowFullMessageContainer}
           />
-          // <View style={styles.btnShowFullMessageContainer}>
-          //   <TouchableOpacity
-          //     hitSlop={HIT_SLOP}
-          //     activeOpacity={0.9}
-          //     onPress={this.openFullMessage}
-          //     style={styles.btnShowFullMessage}>
-          //     <LinearGradient
-          //       style={styles.maskShowFullMessage}
-          //       colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
-          //       locations={[0.75, 1]}
-          //       angle={-90}
-          //       useAngle
-          //     />
-          //     <Text style={styles.labelShowFulMessage}>
-          //       ... {this.props.seeMoreTitle}
-          //     </Text>
-          //   </TouchableOpacity>
-          // </View>
         )}
         <MessageText {...props} />
 
@@ -367,7 +348,13 @@ class CustomBubble extends Component {
       },
     };
 
-    return (
+    return props.isEditing ? (
+      <BubbleEditing
+        value={props.currentMessage.content}
+        onEdit={props.onEdit}
+        onCancel={props.onCancelEdit}
+      />
+    ) : (
       <View style={styles.wrapper}>
         <Animated.View style={[styles.container, this.animatedStyle]}>
           <Bubble
