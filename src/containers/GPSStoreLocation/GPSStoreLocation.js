@@ -1,24 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   RefreshControl,
   View,
-  TouchableHighlight,
   Alert,
   Text,
   FlatList,
-  ScrollView,
   Linking,
+  TextInput,
   AppState,
+  TouchableOpacity,
   Keyboard,
-  TouchableOpacity
 } from 'react-native';
-import ModernList, { LIST_TYPE } from 'app-packages/tickid-modern-list';
-import Row from './Row';
-import { Actions } from 'react-native-router-flux';
-import { debounce } from 'lodash';
-import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import {Actions} from 'react-native-router-flux';
+import {debounce} from 'lodash';
+import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
 import {getPreciseDistance} from 'geolib';
 import AndroidOpenSettings from 'react-native-android-open-settings';
@@ -26,134 +23,98 @@ import Loading from '../../components/Loading';
 import Modal from '../../components/account/Transfer/Payment/Modal';
 import appConfig from 'app-config';
 import store from 'app-store';
-import { APIRequest } from '../../network/Entity';
+import {APIRequest} from '../../network/Entity';
 import EventTracker from '../../helper/EventTracker';
+import Button from 'src/components/Button';
 import StoreItem from '../GPSListStore/StoreItem';
+import NoResult from 'src/components/NoResult';
 
 const styles = StyleSheet.create({
-  safeView: {
-    flex: 1,
-    backgroundColor: '#fff'
-  },
   container: {
-    // flex: 1,
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 15,
+    margin: 15,
+  },
+  contentContainer: {
     flexGrow: 1,
-    justifyContent: 'center'
   },
-  scrollContainer: {
-    flex: 1
+  welcomeMessageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 20,
+    marginTop: 10,
+    paddingHorizontal: 30,
   },
-  listContainer: {
-    backgroundColor: 'transparent',
-    flex: undefined
-  },
-  listHeader: {
-    paddingVertical: 0,
-    paddingHorizontal: 0
-  },
-  listBody: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 15,
-    flex: undefined
-  },
-  divider: {
-    marginHorizontal: 15,
-    height: 1,
-    backgroundColor: appConfig.colors.primary
-  },
-  title: {
-    fontWeight: '500',
-    fontSize: 20,
-    color: '#444',
-    letterSpacing: 1
-  },
-  subTitle: {
-    fontStyle: 'italic',
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 3
-  },
-  placeholder: {
-    fontWeight: '300',
-    fontStyle: 'italic'
-  },
-  disabled: {
-    backgroundColor: '#ccc'
-  },
-  item: {
-    backgroundColor: '#eee',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    margin: 5,
-    marginVertical: 8,
-    borderRadius: 4
-  },
-  itemText: {
+  modalText: {
+    color: '#555',
+    letterSpacing: 0.3,
     fontSize: 16,
-    color: '#333'
-  },
-  itemActive: {
-    backgroundColor: appConfig.colors.primary
-  },
-  itemTextActive: {
-    color: '#fff'
-  },
-  itemDisabled: {
-    backgroundColor: 'rgba(244,244,244,.3)'
-  },
-  itemTextDisabled: {
-    color: 'rgba(0,0,0,.3)'
-  },
-  headerText: {
-    color: '#666',
-    marginLeft: 30,
-    marginVertical: 7
-  },
-  emptyText: {
-    marginTop: 30,
-    width: '100%',
     textAlign: 'center',
-    fontStyle: 'italic',
-    color: '#666'
   },
-  btnIcon: {
+  deceptionModal: {
+    borderTopWidth: 3,
+    borderColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    padding: 15,
+  },
+  modalTextUserStyle: {
+    color: appConfig.colors.primary,
     fontSize: 20,
-    marginRight: 10,
-    color: '#fff'
+    fontWeight: 'bold',
+  },
+  createAppBtn: {
+    marginTop: 15,
   },
   disabledDistance: {
     backgroundColor: '#f5f5f5',
-    color: '#aaa'
+    color: '#aaa',
   },
 });
 
 const LOCATION_PERMISSIONS_TYPE = {
   CHECK: 'check-camera-permission',
-  REQUEST: 'request-camera-permission'
+  REQUEST: 'request-camera-permission',
 };
 
 const REQUEST_LOCATION_ERROR_TYPE = {
   NOT_GRANTED: 1,
   NOT_AVAILABLE: 2,
-  TIMEOUT: 3
+  TIMEOUT: 3,
 };
 
 const MAX_SELF_TRY_REQUEST_LOCATION_TIME = 2;
 
+const SEARCH_PLACE_HOLDER = 'Tìm kiếm cửa hàng...';
+const WELCOME_MESSAGE = 'Xin chào';
+const APP_CREATING_MESSAGE =
+  'Bạn hãy tạo App mới hoặc chọn App của bạn trong danh sách để trải nghiệm ngay nhé.';
+
 class GPSStoreLocation extends Component {
+  static defaultProps = {
+    back: true,
+    searchable: false,
+    appCreatable: false,
+  };
   state = {
     loading: true,
     refreshing: false,
     modalVisible: false,
     requestLocationLoading: true,
-    professions: null,
     permissionLocationGranted: null,
     stores: null,
     latitude: null,
     longitude: null,
     searchValue: '',
     requestLocationErrorCode: 0,
-    isConnectGPS: false
+    isConnectGPS: false,
   };
   getListGPSStoreRequest = new APIRequest();
   requests = [this.getListGPSStoreRequest];
@@ -170,11 +131,6 @@ class GPSStoreLocation extends Component {
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
     this.requestLocationPermission();
-    // setTimeout(() =>
-    //   Actions.refresh({
-    //     onChangeSearch: this.handleChangeSearch.bind(this),
-    //   })
-    // );
     this.eventTracker.logCurrentView();
   }
 
@@ -186,15 +142,19 @@ class GPSStoreLocation extends Component {
     Geolocation.clearWatch(this.watchID);
   }
 
+  handleChangeSearch = debounce((searchValue = '', loading = true) => {
+    this.setState({loading, searchValue});
+    this.getListGPSStore(searchValue);
+  }, 500);
+
   requestLocationPermission = () => {
     this.androidLocationPermissionRequesting = true;
-    this.callPermission(LOCATION_PERMISSIONS_TYPE.REQUEST, type => {
+    this.callPermission(LOCATION_PERMISSIONS_TYPE.REQUEST, (type) => {
       this.androidLocationPermissionRequesting = false;
       if (type === 0) {
         this.updateLocation();
       } else {
-        this.handleErrorLocationPermission({ code: type });
-        this.getListGPSStore();
+        this.handleErrorLocationPermission({code: type});
       }
     });
   };
@@ -202,30 +162,30 @@ class GPSStoreLocation extends Component {
   updateLocation = (timeout = 5000, loading = false) => {
     const config = {
       timeout,
-      enableHighAccuracy: appConfig.device.isIOS
+      enableHighAccuracy: appConfig.device.isIOS,
     };
     Geolocation.clearWatch(this.watchID);
     Geolocation.getCurrentPosition(
-      position => {
+      (position) => {
         console.log('geolocation', this.watchID, position);
         this.watchID = Geolocation.watchPosition(
-          position => this.handleSaveLocation(position),
-          err => {
+          (position) => this.handleSaveLocation(position),
+          (err) => {
             this.requestLocationRetryable = true;
             this.selfTryRequestLocation(err, this.requestLocationPermission);
             this.setState({isConnectGPS: false});
             console.log('watch_position', this.watchID, err);
           },
-          { ...config }
+          {...config},
         );
         this.handleSaveLocation(position, true);
       },
-      error => {
+      (error) => {
         console.log('update_location', error);
         this.requestLocationRetryable = true;
         this.selfTryRequestLocation(error, this.requestLocationPermission);
       },
-      config
+      config,
     );
   };
 
@@ -234,8 +194,9 @@ class GPSStoreLocation extends Component {
     this.setState({
       modalVisible: this.appState === 'active',
       requestLocationErrorCode: error.code,
-      requestLocationLoading: false
+      requestLocationLoading: false,
     });
+    this.getListGPSStore();
   }
 
   selfTryRequestLocation(error, callBack = () => {}) {
@@ -256,9 +217,9 @@ class GPSStoreLocation extends Component {
     this.selfTryRequestLocationTime++;
   }
 
-  handleAppStateChange = nextAppState => {
+  handleAppStateChange = (nextAppState) => {
     if (
-      this.appState.match(/inactive|background/) &&
+      !!this.appState.match(/inactive|background/) &&
       nextAppState === 'active' &&
       !this.state.loading &&
       !this.state.modalVisible &&
@@ -268,114 +229,60 @@ class GPSStoreLocation extends Component {
     ) {
       this.requestLocationRetryable = true;
       this.selfTryRequestLocationTime = 1;
-      this.setState({ requestLocationLoading: true });
-      this.updateLocation();
+      this.setState({requestLocationLoading: true}, () => {
+        this.updateLocation();
+      });
     }
     this.appState = nextAppState;
   };
 
   handleSaveLocation = debounce((position, loading = false) => {
     if (!this.unmounted) {
-      const { coords } = position;
+      const {coords} = position;
       if (coords) {
-        const { longitude, latitude } = coords;
+        const {longitude, latitude} = coords;
         this.setState(
           {
             longitude,
             latitude,
             requestLocationErrorCode: 0,
             requestLocationLoading: false,
-            isConnectGPS: true
+            isConnectGPS: true,
           },
           () => {
             this.getListGPSStore();
 
             // this.handleChangeSearch(this.state.searchValue, undefined, loading);
-          }
+          },
         );
       }
     }
   }, 500);
 
-  handleChangeSearch = debounce(
-    (searchValue = '', professionIds, loading = true) => {
-      this.searchable = true;
-      this.setState({ loading, searchValue });
-      this.searchExperts(searchValue, professionIds);
-    },
-    500
-  );
-
-  async getListGPSStore() {
-    const { t } = this.props;
+  async getListGPSStore(content = '') {
+    const {t} = this.props;
     const data = {
+      content,
       latitude: this.state.latitude,
-      longitude: this.state.longitude
+      longitude: this.state.longitude,
     };
     try {
       this.getListGPSStoreRequest.data = APIHandler.user_list_gps_store_location(
-        data
+        data,
       );
       const response = await this.getListGPSStoreRequest.promise();
       this.setState({
-        stores: response.data.stores || []
+        stores: response.data.stores || [],
       });
     } catch (error) {
       console.log('get_gps_store_location', error);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
-      this.setState({ loading: false, refreshing: false });
+      this.setState({loading: false, refreshing: false});
     }
-  }
-
-  searchExperts = async (content, professionIds) => {
-    const data = {
-      profession_ids:
-        this.profession_ids.length !== 0
-          ? this.profession_ids
-          : professionIds || [],
-      content,
-      latitude: String(this.state.latitude),
-      longitude: String(this.state.longitude)
-    };
-
-    const { t } = this.props;
-    try {
-      const response = await APIHandler.search_experts(data);
-      if (!this.unmounted && this.searchable) {
-        if (response.status === STATUS_SUCCESS && response.data) {
-          this.setState({
-            stores: response.data.stores.map(expert => ({
-              ...expert,
-              active: false
-            }))
-          });
-        } else {
-          this.setState({ stores: [] });
-        }
-      }
-    } catch (error) {
-      console.log('search stores', error);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message')
-      });
-    } finally {
-      !this.unmounted && this.setState({ loading: false, refreshing: false });
-    }
-  };
-
-  get activedItems() {
-    return this.state.professions
-      ? this.state.professions.filter(item => item.active)
-      : [];
-  }
-
-  get profession_ids() {
-    return this.activedItems.map(item => item.id);
   }
 
   async callPermission(type, callBack = () => {}) {
@@ -383,7 +290,7 @@ class GPSStoreLocation extends Component {
     callBack(permissionGranted);
   }
 
-  handleLocationPermission = async type => {
+  handleLocationPermission = async (type) => {
     const permissonLocationRequest = appConfig.device.isAndroid
       ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
@@ -403,12 +310,12 @@ class GPSStoreLocation extends Component {
       switch (result) {
         case RESULTS.UNAVAILABLE:
           console.log(
-            'This feature is not available (on this device / in this context)'
+            'This feature is not available (on this device / in this context)',
           );
           return REQUEST_LOCATION_ERROR_TYPE.NOT_AVAILABLE;
         case RESULTS.DENIED:
           console.log(
-            'The permission has not been requested / is denied but requestable'
+            'The permission has not been requested / is denied but requestable',
           );
           return REQUEST_LOCATION_ERROR_TYPE.NOT_GRANTED;
         case RESULTS.GRANTED:
@@ -425,24 +332,13 @@ class GPSStoreLocation extends Component {
     }
   };
 
-  handlePressProfession = profession => {
-    const professions = [...this.state.professions];
-    professions.forEach(item => {
-      if (item.name === profession.name) {
-        item.active = !profession.active;
-      }
-    });
-
-    this.setState({ professions }, () => {
-      this.handleChangeSearch(this.state.searchValue);
-    });
-  };
-
-  onStorePress = async location => {
+  onStorePress = async (location) => {
+    this.setState({loading: true});
     try {
       const response = await APIHandler.user_choose_store_location(
-        location.site_id
+        location.site_id,
       );
+      console.log('re', response);
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           store.resetCartData();
@@ -452,40 +348,17 @@ class GPSStoreLocation extends Component {
     } catch (err) {
       console.log('getLocations', err);
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
   onRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.getListGPSStore();
-    // this.handleChangeSearch(this.state.searchValue, undefined, false);
   };
 
-  renderStore({ item: store }) {
-    console.log(store)
-    const disabledDistanceStyle =
-      !this.state.isConnectGPS && styles.disabledDistance;
-      
-    return (
-      <TouchableOpacity
-        activeOpacity={0.5}
-        onPress={() => this.onStorePress(store)}>
-        <StoreItem
-          name={store.name}
-          image={store.image}
-          address={store.address}
-          phone={store.phone}
-          lat={store.lat}
-          lng={store.lng}
-          enableDistance
-          requestLocationLoading={this.state.requestLocationLoading}
-          distance={this.calculateDiffDistance(store.lng, store.lat)}
-          disabledDistanceStyle={disabledDistanceStyle}
-        />
-      </TouchableOpacity>
-      
-    );
+  onPressRegisterStore() {
+    Actions.push(appConfig.routes.registerStore);
   }
 
   handleLocationError = () => {
@@ -502,7 +375,7 @@ class GPSStoreLocation extends Component {
           : this.openSettingsAndroid(REQUEST_LOCATION_ERROR_TYPE.NOT_AVAILABLE);
         break;
       case REQUEST_LOCATION_ERROR_TYPE.TIMEOUT:
-        this.setState({ requestLocationLoading: true });
+        this.setState({requestLocationLoading: true});
         this.requestLocationPermission();
         break;
     }
@@ -510,7 +383,7 @@ class GPSStoreLocation extends Component {
 
   openSettingIOS(url) {
     Linking.canOpenURL(url)
-      .then(supported => {
+      .then((supported) => {
         if (!supported) {
           console.log("Can't handle settings url", url);
           Alert.alert('Không thể truy cập', 'Đường dẫn này không thể mở được.');
@@ -518,7 +391,7 @@ class GPSStoreLocation extends Component {
           Linking.openURL(url);
         }
       })
-      .catch(err => console.error('An error occurred', err));
+      .catch((err) => console.error('An error occurred', err));
   }
 
   openSettingsAndroid(type) {
@@ -533,11 +406,10 @@ class GPSStoreLocation extends Component {
   }
 
   closeModal = () => {
-    this.setState({ modalVisible: false });
+    this.setState({modalVisible: false});
   };
 
   calculateDiffDistance = (lng, lat) => {
-    console.log(lat, lng)
     const latitude = this.state.latitude;
     const longitude = this.state.longitude;
     if (latitude && longitude) {
@@ -555,6 +427,54 @@ class GPSStoreLocation extends Component {
     return '-';
   };
 
+  renderStore = ({item: store}) => {
+    const disabledDistanceStyle =
+      (!this.state.isConnectGPS || this.state.requestLocationErrorCode !== 0) &&
+      styles.disabledDistance;
+
+    return (
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => this.onStorePress(store)}>
+        <StoreItem
+          name={store.name}
+          image={store.image}
+          address={store.address}
+          phone={store.phone}
+          lat={store.lat}
+          lng={store.lng}
+          enableDistance
+          requestLocationLoading={this.state.requestLocationLoading}
+          distance={this.calculateDiffDistance(store.lng, store.lat)}
+          disabledDistanceStyle={disabledDistanceStyle}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  renderFooter = () => {
+    return (
+      !!this.props.appCreatable && (
+        <View style={styles.deceptionModal}>
+          <View style={styles.welcomeMessageContainer}>
+            <Text style={styles.modalText}>{WELCOME_MESSAGE}</Text>
+            <Text style={!!store.user_info.name && styles.modalTextUserStyle}>
+              {!!store.user_info.name ? ' ' + store.user_info.name : ''}!
+            </Text>
+          </View>
+
+          <Text style={styles.modalText}>{APP_CREATING_MESSAGE}</Text>
+          <View style={styles.createAppBtn}>
+            <Button
+              title="Tạo app"
+              onPress={this.onPressRegisterStore.bind(this)}
+            />
+          </View>
+        </View>
+      )
+    );
+  };
+
   render() {
     const title = 'Không truy cập được Vị trí';
     const content =
@@ -570,10 +490,8 @@ class GPSStoreLocation extends Component {
     const cancelText = 'Bỏ qua';
 
     return (
-      <>
-        {(this.state.loading || this.state.requestLocationLoading) && (
-          <Loading center />
-        )}
+      <View style={styles.container}>
+        {this.state.loading && <Loading center />}
         <Modal
           visible={this.state.modalVisible}
           title={title}
@@ -584,39 +502,38 @@ class GPSStoreLocation extends Component {
           onRequestClose={this.closeModal}
           onCancel={this.closeModal}
           onOk={this.handleLocationError}
-          contentStyle={{ paddingHorizontal: 15 }}
-          titleStyle={{ paddingHorizontal: 15 }}
+          contentStyle={{paddingHorizontal: 15}}
+          titleStyle={{paddingHorizontal: 15}}
         />
-        <ScrollView
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="handled"
-          style={styles.safeView}
-          contentContainerStyle={[styles.container]}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        >
-          <SafeAreaView style={styles.safeView}>
-            <View style={styles.scrollContainer}>
-              {!!this.state.stores && (
-                <FlatList
-                  keyboardShouldPersistTaps="handled"
-                  keyboardDismissMode="on-drag"
-                  data={this.state.stores}
-                  renderItem={this.renderStore.bind(this)}
-                  keyExtractor={(item, index) => index.toString()}
-                  ListEmptyComponent={
-                    <Text style={styles.emptyText}>Không có cửa hàng</Text>
-                  }
-                />
-              )}
-            </View>
-          </SafeAreaView>
-        </ScrollView>
-      </>
+
+        {!!this.props.searchable && (
+          <TextInput
+            onChangeText={this.handleChangeSearch}
+            style={styles.searchInput}
+            placeholder={SEARCH_PLACE_HOLDER}
+          />
+        )}
+        {!!this.state.stores && (
+          <FlatList
+            contentContainerStyle={styles.contentContainer}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            data={this.state.stores}
+            renderItem={this.renderStore}
+            ListFooterComponent={this.renderFooter}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={
+              <NoResult icon={<View />} message="Không có cửa hàng" />
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+          />
+        )}
+      </View>
     );
   }
 }
