@@ -143,6 +143,8 @@ class GPSStoreLocation extends Component {
   }
 
   handleChangeSearch = debounce((searchValue = '', loading = true) => {
+    if (this.unmounted) return;
+
     this.setState({loading, searchValue});
     this.getListGPSStore(searchValue);
   }, 500);
@@ -160,6 +162,8 @@ class GPSStoreLocation extends Component {
   };
 
   updateLocation = (timeout = 5000, loading = false) => {
+    if (this.unmounted) return;
+
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
@@ -168,9 +172,13 @@ class GPSStoreLocation extends Component {
     Geolocation.getCurrentPosition(
       (position) => {
         console.log('geolocation', this.watchID, position);
+        if (this.unmounted) return;
+
         this.watchID = Geolocation.watchPosition(
           (position) => this.handleSaveLocation(position),
           (err) => {
+            if (this.unmounted) return;
+
             this.requestLocationRetryable = true;
             this.selfTryRequestLocation(err, this.requestLocationPermission);
             this.setState({isConnectGPS: false});
@@ -182,6 +190,8 @@ class GPSStoreLocation extends Component {
       },
       (error) => {
         console.log('update_location', error);
+        if (this.unmounted) return;
+
         this.requestLocationRetryable = true;
         this.selfTryRequestLocation(error, this.requestLocationPermission);
       },
@@ -190,6 +200,8 @@ class GPSStoreLocation extends Component {
   };
 
   handleErrorLocationPermission(error) {
+    if (this.unmounted) return;
+
     Geolocation.clearWatch(this.watchID);
     this.setState({
       modalVisible: this.appState === 'active',
@@ -237,25 +249,25 @@ class GPSStoreLocation extends Component {
   };
 
   handleSaveLocation = debounce((position, loading = false) => {
-    if (!this.unmounted) {
-      const {coords} = position;
-      if (coords) {
-        const {longitude, latitude} = coords;
-        this.setState(
-          {
-            longitude,
-            latitude,
-            requestLocationErrorCode: 0,
-            requestLocationLoading: false,
-            isConnectGPS: true,
-          },
-          () => {
-            this.getListGPSStore();
+    if (this.unmounted) return;
+    
+    const {coords} = position;
+    if (coords) {
+      const {longitude, latitude} = coords;
+      this.setState(
+        {
+          longitude,
+          latitude,
+          requestLocationErrorCode: 0,
+          requestLocationLoading: false,
+          isConnectGPS: true,
+        },
+        () => {
+          this.getListGPSStore();
 
-            // this.handleChangeSearch(this.state.searchValue, undefined, loading);
-          },
-        );
-      }
+          // this.handleChangeSearch(this.state.searchValue, undefined, loading);
+        },
+      );
     }
   }, 500);
 
@@ -271,6 +283,8 @@ class GPSStoreLocation extends Component {
         data,
       );
       const response = await this.getListGPSStoreRequest.promise();
+      if (this.unmounted) return;
+
       this.setState({
         stores: response.data.stores || [],
       });
@@ -281,6 +295,8 @@ class GPSStoreLocation extends Component {
         message: t('api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
+
       this.setState({loading: false, refreshing: false});
     }
   }
