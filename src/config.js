@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.1.3';
+    return 'r12.1.4';
   }
 
   get appName() {
@@ -296,6 +296,7 @@ class Config {
       // Store Location
       storeLocation: 'storeLocation',
       gpsStoreLocation: 'gpsStoreLocation',
+      rootGpsStoreLocation: 'rootGpsStoreLocation',
 
       // Modal
       modalPicker: 'modalPicker',

@@ -1113,7 +1113,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.agencyInformationRegister}_1`}
                     {...navBarConfig}
-                    title={t('screen.agencyInformationRegister.mainTitle')}
                     component={AgencyInformationRegister}
                     back
                   />
@@ -1883,6 +1882,17 @@ class RootRouter extends Component {
                     component={StoreLocation}
                     {...navBarConfig}
                     back
+                  />
+                </Stack>
+
+                <Stack
+                  key={appConfig.routes.rootGpsStoreLocation}
+                  panHandlers={null}>
+                  <Scene
+                    key={`${appConfig.routes.rootGpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
                   />
                 </Stack>
 

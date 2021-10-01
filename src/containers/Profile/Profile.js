@@ -203,16 +203,12 @@ class Profile extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          store.setUserInfo(response.data);
-          store.resetCartData();
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-          store.setOrdersKeyChange(store.orders_key_change + 1);
-          store.resetAsyncStorage();
+          await store.logOut(response.data);
           flashShowMessage({
             message: t('account:signOut.successMessage'),
             type: 'info',
           });
-          setTimeout(() => Actions.reset(appConfig.routes.sceneWrapper));
+          Actions.reset(appConfig.routes.sceneWrapper);
           break;
         default:
           console.log('default');
@@ -220,9 +216,10 @@ class Profile extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({
-        loading: false,
-      });
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+        });
     }
   };
 

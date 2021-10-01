@@ -113,6 +113,10 @@ global.OBJECT_TYPE_KEY_CAMPAIGN = 'voucher_campaign';
 global.STATUS_VERIFYED = 1;
 global.CALLBACK_APP_UPDATING = 'CallBackUpdating';
 
+// voucher
+global.VOUCHER_STATUS_READY = 1;
+global.VOUCHER_STATUS_ERROR = 0;
+
 // cache
 global.STORE_CATEGORY_CACHE = 1000 * 60 * 5;
 global.STORE_CACHE = 1000 * 60 * 30;

@@ -280,5 +280,6 @@
     },
     "runInBackground": "Run in background"
   },
-  "optional": "optional"
+  "optional": "optional",
+  "cantOpenLink": "Can not open link!"
 }

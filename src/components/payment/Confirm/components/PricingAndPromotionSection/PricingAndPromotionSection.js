@@ -84,6 +84,9 @@ const styles = StyleSheet.create({
     marginRight: 5,
     top: appConfig.device.isAndroid ? 1 : 0,
   },
+  voucherIconError: {
+    color: appConfig.colors.status.warning
+  },
   promotionValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -111,6 +114,8 @@ const PricingAndPromotionSection = ({
 
   onUseVoucherOnlineSuccess,
   onRemoveVoucherOnlineSuccess,
+  voucherStatus,
+
 }) => {
   const {t} = useTranslation('orders');
 
@@ -264,10 +269,17 @@ const PricingAndPromotionSection = ({
               onPress={handleOpenVoucher}>
               {!!promotionName ? (
                 <View style={styles.promotionValueContainer}>
+                  {voucherStatus === VOUCHER_STATUS_ERROR ? (
+                  <MaterialCommunityIcons
+                    name="alert-circle"
+                    style={[styles.voucherIcon, styles.voucherIconError]}
+                  />
+                  ) : (
                   <MaterialCommunityIcons
                     name="check-circle"
                     style={styles.voucherIcon}
-                  />
+                  />  
+                  )}
                   <Text numberOfLines={2} style={[styles.addVoucherLabel]}>
                     {promotionName}
                   </Text>

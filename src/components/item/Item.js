@@ -1191,6 +1191,12 @@ class Item extends Component {
               />
             )}
 
+            {!!item?.short_content && (
+                <View style={[styles.block, styles.item_content_text, styles.shortContentBox]}>
+                 <Text style={styles.shortContentItem}>{item.short_content}</Text>
+                </View>
+            )}
+
             {!!item?.content && (
               <>
                 <View style={[styles.block, styles.item_content_text]}>
@@ -1641,6 +1647,14 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 18,
     color: appConfig.colors.primary,
+  },
+  shortContentBox: {
+    backgroundColor: '#f5f5f5',
+  },
+  shortContentItem: {
+     ...appConfig.styles.typography.text,
+    lineHeight: 24,
+    fontSize: 14,
   },
 });
 

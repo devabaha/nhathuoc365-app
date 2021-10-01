@@ -15,6 +15,7 @@ import {APIRequest} from '../../network/Entity';
 import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import firebaseAuth from '@react-native-firebase/auth';
 
 const styles = StyleSheet.create({
   container: {
@@ -98,8 +99,8 @@ class PhoneAuth extends Component {
       type === LOGIN_MODE.FIREBASE
     ) {
       type = LOGIN_MODE.CALL;
-    };
-    
+    }
+
     const {t} = this.props;
     Keyboard.dismiss();
     this.setState({isShowIndicator: true});
@@ -107,9 +108,13 @@ class PhoneAuth extends Component {
       this.state.phoneNumber,
       type,
       this.formatCountryCode(),
-      (response) => {
+      async (response) => {
         switch (this.phoneAuth.loginMode) {
           case LOGIN_MODE.FIREBASE:
+            if (!!firebaseAuth().currentUser) {
+              await firebaseAuth().signOut();
+            }
+            
             this.setState({
               confirmResult: response,
               message: '',

@@ -476,7 +476,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** AGENCY INFORMATION REGISTER */
     case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
-      Actions.push(appConfig.routes.agencyInformationRegister);
+      Actions.push(appConfig.routes.agencyInformationRegister, {
+        title:
+          service.title ||
+          commonT('screen.agencyInformationRegister.mainTitle'),
+      });
       break;
 
     /**  REQUEST */

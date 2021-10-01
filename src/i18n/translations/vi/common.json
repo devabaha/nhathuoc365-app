@@ -280,5 +280,6 @@
     },
     "runInBackground": "Chạy ngầm"
   },
-  "optional": "không bắt buộc"
+  "optional": "không bắt buộc",
+  "cantOpenLink": "Không mở được link!"
 }
