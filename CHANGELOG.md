@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-kben7m] not_allow_edit_cart_key for preventing editing order by [kienluu612@gmail.com].
 ### Changed
 - [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
-- [CU-mkm5tx] Disable action button add more products in Confirm by [kienluu612@gmail.com].
 - [CU-j3m8x1] Check sale_in_stock in product when allow site sale out inventory by [lamah.dev@gmail.com].
 - [CU-mkm5tx] Hide action button add more products in Confirm by [kienluu612@gmail.com].
 ### Fixed
