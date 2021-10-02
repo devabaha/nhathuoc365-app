@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -13,20 +13,14 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import appConfig from 'app-config';
-import {renderGridImages} from 'app-helper/social';
+import {LINE_HEIGHT_OF_CONTENT} from 'src/constants/social/post';
+import {isShowFullContent, renderGridImages} from 'app-helper/social';
 import {getNewsFeedSize} from 'app-helper/image';
 
 import Container from 'src/components/Layout/Container';
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
 import TextPressable from 'src/components/TextPressable';
 import Image from 'src/components/Image';
-
-const CHARACTER_PER_LINE = 40;
-const LINE_HEIGHT = 21;
-const MAX_LINE = 5;
-const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
-const MAX_COLLAPSED_HEIGHT =
-  LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? 0 : 10);
 
 const styles = StyleSheet.create({
   container: {},
@@ -88,6 +82,9 @@ const styles = StyleSheet.create({
   },
   content: {
     color: '#333',
+    alignSelf: 'flex-start',
+    fontSize: 15,
+    lineHeight: LINE_HEIGHT_OF_CONTENT,
   },
 
   imagesContainer: {
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   seeMoreContainer: {
-    bottom: 0,
+    bottom: 2,
     marginRight: 0,
     right: 0,
   },
@@ -131,36 +128,32 @@ const Post = ({
   onPressAvatar = () => {},
   onPressMoreActions = () => {},
 }) => {
-  const canExpandMessage = () => {
-    if (content) {
-      const numOfBreakIos = content.split('\r')?.length;
-      const numOfBreakAndroid = content.split('\n')?.length;
-      return (
-        content.length > MAX_LENGTH_TEXT ||
-        numOfBreakIos > MAX_LINE ||
-        numOfBreakAndroid > MAX_LINE
-      );
-    }
+  const truncatedContent = useRef('');
+  const canShowFullMessage = useRef(false);
+  const isShowFullPostContent = useCallback(() => {
+    return !isShowFullContent(
+      content,
+      (truncated) => (truncatedContent.current = truncated),
+    );
+  }, [content]);
 
-    return true;
-  };
+  const [isShowFullMessage, setShowFullMessage] = useState(
+    canShowFullMessage.current,
+  );
 
-  const [isShowFullMessage, setShowFullMessage] = useState(!canExpandMessage());
+  useEffect(() => {
+    canShowFullMessage.current = isShowFullPostContent();
+  }, [content]);
 
   const handleShowFullMessage = useCallback(() => {
     setShowFullMessage(true);
   }, []);
 
   const handleToggleExpandMessage = useCallback(() => {
-    if (canExpandMessage()) {
+    if (canShowFullMessage.current) {
       setShowFullMessage(!isShowFullMessage);
     }
   }, [isShowFullMessage, content]);
-
-  const contentContainerStyle = {
-    maxHeight: !isShowFullMessage ? MAX_COLLAPSED_HEIGHT : undefined,
-    overflow: 'hidden',
-  };
 
   const renderGroupName = () => {
     return !!group?.name ? (
@@ -235,13 +228,13 @@ const Post = ({
 
         <Container centerVertical={false}>
           {!!content && (
-            <Container
-              centerVertical={false}
-              style={[styles.contentContainer, contentContainerStyle]}>
+            <Container centerVertical={false} style={styles.contentContainer}>
               <TouchableWithoutFeedback onPress={handleToggleExpandMessage}>
-                <Text style={styles.content}>{content}</Text>
+                <Text selectable style={styles.content}>
+                  {isShowFullMessage ? content : truncatedContent.current}
+                </Text>
               </TouchableWithoutFeedback>
-              {!isShowFullMessage && (
+              {canShowFullMessage.current && !isShowFullMessage && (
                 <SeeMoreBtn
                   containerStyle={styles.seeMoreContainer}
                   onPress={handleShowFullMessage}

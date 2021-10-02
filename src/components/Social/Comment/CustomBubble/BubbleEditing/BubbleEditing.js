@@ -74,7 +74,7 @@ const BubbleEditing = ({value: valueProp, onEdit, onCancel}) => {
     onEdit(value);
   }, [value]);
 
-  const editDisabled = !value || value === valueProp;
+  const editDisabled = value === valueProp;
 
   return (
     <Container flex centerVertical={false}>

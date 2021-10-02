@@ -7,26 +7,28 @@ import {Bubble, MessageText} from 'react-native-gifted-chat';
 
 import appConfig from 'app-config';
 
-import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
-import {getRelativeTime} from 'app-helper/social';
+import {
+  LINE_HEIGHT_OF_CONTENT,
+  MAX_LINE_OF_CONTENT,
+} from 'src/constants/social/post';
+import {getRelativeTime, isShowFullContent} from 'app-helper/social';
+
 import SeeMoreBtn from '../../SeeMoreBtn';
 import BubbleEditing from './BubbleEditing';
+import TextPressable from 'src/components/TextPressable';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 
-const CHARACTER_PER_LINE = 40;
-const LINE_HEIGHT = 21;
-const MAX_LINE = 8;
-const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
 const MAX_COLLAPSED_HEIGHT =
-  LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? LINE_HEIGHT : 10);
+  LINE_HEIGHT_OF_CONTENT * MAX_LINE_OF_CONTENT +
+  (appConfig.device.isIOS ? LINE_HEIGHT_OF_CONTENT : 10);
 
 const SHOW_FULL_MESSAGE_TOP_SPACING =
   MAX_COLLAPSED_HEIGHT -
-  LINE_HEIGHT -
-  (appConfig.device.isIOS ? LINE_HEIGHT : 10) +
+  LINE_HEIGHT_OF_CONTENT -
+  (appConfig.device.isIOS ? LINE_HEIGHT_OF_CONTENT : 10) +
   5.5;
 
 const MIN_WIDTH_MESSAGE = 120;
@@ -60,19 +62,14 @@ const styles = StyleSheet.create({
     height: undefined,
   },
   btnShowFullMessageContainer: {
-    position: 'absolute',
-    minWidth: MIN_WIDTH_MESSAGE,
-    width: '100%',
-    alignItems: 'flex-end',
     top: SHOW_FULL_MESSAGE_TOP_SPACING,
     zIndex: 1,
   },
-  btnShowFullMessage: {
-    right: 0,
-    borderBottomRightRadius: 15,
+  btnShowFullMessageTitle: {
+    paddingRight: 12,
   },
   text: {
-    lineHeight: LINE_HEIGHT,
+    lineHeight: LINE_HEIGHT_OF_CONTENT,
     color: '#242424',
     fontSize: 15,
   },
@@ -80,7 +77,7 @@ const styles = StyleSheet.create({
     color: '#777',
     paddingLeft: 20,
     paddingRight: 15,
-    lineHeight: LINE_HEIGHT,
+    lineHeight: LINE_HEIGHT_OF_CONTENT,
   },
   maskShowFullMessage: {
     height: '100%',
@@ -88,29 +85,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   messageTextContainer: {
+    minWidth: MIN_WIDTH_MESSAGE,
     marginTop: -3,
     overflow: 'hidden',
   },
 
-  containerMention: {
-    marginRight: 0,
-  },
-  contentMention: {
-    flex: 0,
-    bottom: -3,
-    marginRight: 7,
-  },
   titleMention: {
     fontWeight: '500',
-    fontSize: 15,
     color: appConfig.colors.primary,
-  },
-  maskMention: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.28),
-    width: '110%',
-    height: '110%',
-    left: '-5%',
-    top: '-5%',
   },
 
   maskMessageAndroid: {
@@ -136,24 +118,28 @@ class CustomBubble extends Component {
   };
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
+  content = this.props.currentMessage?.content;
+  truncatedContent = '';
 
   state = {
-    isShowFullMessage: this.isShowFullMessage,
+    isShowFullMessage: isShowFullContent(
+      this.props?.currentMessage?.content,
+      (truncatedContent) => (this.truncatedContent = truncatedContent),
+    ),
   };
 
-  get isShowFullMessage() {
-    const currentMessage = this.props?.currentMessage?.content;
-    if (currentMessage) {
-      const numOfBreakIos = currentMessage.split('\r')?.length;
-      const numOfBreakAndroid = currentMessage.split('\n')?.length;
-
-      return (
-        currentMessage.length <= MAX_LENGTH_TEXT &&
-        numOfBreakIos <= MAX_LINE &&
-        numOfBreakAndroid <= MAX_LINE
-      );
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.currentMessage?.content !== this.content) {
+      this.content = nextProps.currentMessage?.content;
+      this.setState({
+        isShowFullMessage: isShowFullContent(
+          nextProps.currentMessage.content,
+          (truncatedContent) => {
+            this.truncatedContent = truncatedContent;
+          },
+        ),
+      });
     }
-
     return true;
   }
 
@@ -207,58 +193,41 @@ class CustomBubble extends Component {
   renderMessageText = (props, bgColor) => {
     props.customTextStyle = styles.text;
 
+    let content = !this.state.isShowFullMessage
+      ? this.truncatedContent
+      : props.currentMessage.content;
+
+    if (!this.state.isShowFullMessage) {
+      content = <Text style={styles.text}>{content}</Text>;
+    }
+
     if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
-      props.currentMessage.text = (
+      content = (
         <>
-          <Text>
-            <ActionBtn
-              title={props.currentMessage.reply.name}
-              style={styles.containerMention}
-              contentStyle={styles.contentMention}
-              titleStyle={styles.titleMention}
-              maskStyle={styles.maskMention}
-              onPress={() => {}}
-            />
-          </Text>
-          <Text style={styles.text}>{props.currentMessage.content}</Text>
+          <TextPressable
+            onPress={this.props.onPressRepliedUserName}
+            style={styles.titleMention}>
+            {props.currentMessage?.reply?.name}
+          </TextPressable>{' '}
+          <Text style={styles.text}>{content}</Text>
         </>
       );
     }
+    props.currentMessage.text = content;
 
     return (
-      <View
-        style={[
-          styles.messageTextContainer,
-          {
-            maxHeight: this.state.isShowFullMessage
-              ? undefined
-              : MAX_COLLAPSED_HEIGHT,
-            minWidth: this.state.isShowFullMessage
-              ? undefined
-              : MIN_WIDTH_MESSAGE,
-          },
-        ]}>
+      <View style={styles.messageTextContainer}>
         {!this.state.isShowFullMessage && (
           <SeeMoreBtn
             title={this.props.seeMoreTitle}
-            lineHeight={LINE_HEIGHT}
+            lineHeight={LINE_HEIGHT_OF_CONTENT}
             bgColor={bgColor}
             onPress={this.openFullMessage}
             containerStyle={styles.btnShowFullMessageContainer}
+            titleStyle={styles.btnShowFullMessageTitle}
           />
         )}
-        <MessageText {...props} />
-
-        {appConfig.device.isAndroid && (
-          <View
-            style={[
-              styles.maskMessageAndroid,
-              {
-                backgroundColor: bgColor,
-              },
-            ]}
-          />
-        )}
+        <MessageText {...props} currentMessage={{...props.currentMessage}} />
       </View>
     );
   };
@@ -362,6 +331,9 @@ class CustomBubble extends Component {
             renderMessageText={(props) =>
               this.renderMessageText(props, bgColor)
             }
+            touchableProps={{
+              onPress: () => props.onLongPress(undefined, props.currentMessage),
+            }}
             wrapperStyle={wrapperStyle}
             containerStyle={bubbleContainerStyle}
           />

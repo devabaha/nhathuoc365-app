@@ -102,6 +102,7 @@ class Comment extends Component {
     user_name: store.user_info?.name,
     user_avatar: store.user_info?.img,
     accessoryTypes: [],
+    disabledEditComment: false,
   };
 
   state = {
@@ -154,11 +155,15 @@ class Comment extends Component {
 
   ratingValue = 0;
 
+  editTitle = this.props.t('edit');
+  copyTitle = this.props.t('copy');
+  deleteTitle = this.props.t('delete');
+  cancelTitle = this.props.t('cancel');
   actionOptionForLongPressMessage = [
-    this.props.t('copy'),
-    this.props.t('edit'),
-    this.props.t('delete'),
-    this.props.t('cancel'),
+    this.editTitle,
+    this.copyTitle,
+    this.deleteTitle,
+    this.cancelTitle,
   ];
 
   handleKeyboardDidShow = () => {
@@ -287,6 +292,9 @@ class Comment extends Component {
       this.autoFocus = false;
 
       if (!this.unmounted) {
+        if (this.state.isEditingComment) {
+          this.collapseComposer();
+        }
         this.setStater({loading: false, isEditingComment: false});
       }
     }
@@ -329,7 +337,7 @@ class Comment extends Component {
     let newMessages = [...this.state.messages];
     if (!this.state.replyingComment.id) {
       messages.forEach((message) => {
-        if (message.user._id !== this.state.user_id || isAppendDirectly) {
+        if (message.user._id !== this.state.user?.user_id || isAppendDirectly) {
           newMessages.unshift(message);
         }
       });
@@ -598,23 +606,28 @@ class Comment extends Component {
     }
   };
 
-  listChatScrollToItemById(ref, extraOffset = 0) {
+  listChatScrollToItemById(ref, timeout = 0) {
     if (this.refListMessages) {
       if (!ref) return;
 
       ref.measureLayout(
         findNodeHandle(this.refListMessages),
         (offsetX, offsetY) => {
-          extraOffset +=
+          const extraOffset =
             (!!this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
             (!!this.state.previewImages.length ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
           if (offsetY <= extraOffset && this.currentScrollPositionY === 0) {
             setTimeout(() => this.handleMomentumScrollEnd(), 200);
           } else {
-            this.refListMessages.scrollToOffset({
-              offset: offsetY - extraOffset,
-            });
+            setTimeout(
+              () =>
+                this.refListMessages &&
+                this.refListMessages.scrollToOffset({
+                  offset: offsetY - extraOffset,
+                }),
+              timeout,
+            );
           }
         },
       );
@@ -709,26 +722,6 @@ class Comment extends Component {
     }
   };
 
-  // handleBubbleLongPress = (context, message) => {
-  //   if (message.content) {
-  //     const options = [this.props.t('copy'), this.props.t('cancel')];
-  //     const cancelButtonIndex = options.length - 1;
-  //     context.actionSheet().showActionSheetWithOptions(
-  //       {
-  //         options,
-  //         cancelButtonIndex,
-  //       },
-  //       (buttonIndex) => {
-  //         switch (buttonIndex) {
-  //           case 0:
-  //             Clipboard.setString(message.content);
-  //             break;
-  //         }
-  //       },
-  //     );
-  //   }
-  // };
-
   handleCommentDidMount = (refComment, comment) => {
     if (!!comment && comment?.id === this.appendedComment.id) {
       setTimeout(() => this.listChatScrollToItemById(refComment));
@@ -752,21 +745,39 @@ class Comment extends Component {
     this.ratingValue = ratingValue;
   };
 
+  getLongPressActionOptions = (message) => {
+    const options = [...this.actionOptionForLongPressMessage];
+    const removeOptions = new Map();
+    if (!message.text) {
+      removeOptions.set(this.copyTitle, this.copyTitle);
+    }
+
+    if (message.user_id !== this.state.user?.user_id) {
+      removeOptions.set(this.editTitle, this.editTitle);
+      removeOptions.set(this.deleteTitle, this.deleteTitle);
+    }
+
+    if (this.props.disabledEditComment) {
+      removeOptions.set(this.editTitle, this.editTitle);
+    }
+
+    removeOptions.forEach((option) =>
+      options.splice(options.indexOf(option), 1),
+    );
+
+    return [options, options.indexOf(this.deleteTitle)];
+  };
+
   handleBubbleLongPress = (context, message) => {
     const isKeyboardShowing = this.state.isKeyboardShowing;
     this.collapseComposer();
-    const options = !!message.text
-      ? this.actionOptionForLongPressMessage
-      : this.actionOptionForLongPressMessage.slice(1);
+    const [options, destructiveButtonIndex] = this.getLongPressActionOptions(message);
+
     Actions.push(appConfig.routes.modalActionSheet, {
       options,
-      destructiveButtonIndex: options.length - 2,
+      destructiveButtonIndex,
       onPress: async (buttonIndex) => {
-        if (!!message.text) {
-          await this.handleBubbleMessageLongPress(buttonIndex, message);
-        } else {
-          await this.handleBubbleEmptyMessageLongPress(buttonIndex, message);
-        }
+        await this.handleBubbleMessageLongPress(options, buttonIndex, message);
         if (isKeyboardShowing || this.state.isEditingComment) {
           this.showComposer();
         }
@@ -774,26 +785,21 @@ class Comment extends Component {
     });
   };
 
-  handleBubbleMessageLongPress = async (buttonIndex, message) => {
-    switch (buttonIndex) {
-      case 0:
-        this.copyMessage(message.text);
-        break;
-      case 1:
-        this.activeMessageEditMode(message.id);
-        break;
-      case 2:
-        await this.confirmDeleteMessage(message.real_id);
-        break;
-    }
-  };
+  handleBubbleMessageLongPress = async (
+    options = this.actionOptionForLongPressMessage,
+    buttonIndex,
+    message,
+  ) => {
+    const buttonValue = options.find((_, index) => index === buttonIndex);
 
-  handleBubbleEmptyMessageLongPress = async (buttonIndex, message) => {
-    switch (buttonIndex) {
-      case 0:
+    switch (buttonValue) {
+      case this.editTitle:
         this.activeMessageEditMode(message.id);
         break;
-      case 1:
+      case this.copyTitle:
+        this.copyMessage(message.content);
+        break;
+      case this.deleteTitle:
         await this.confirmDeleteMessage(message.real_id);
         break;
     }
@@ -820,7 +826,7 @@ class Comment extends Component {
 
     this.setState({isEditingComment: true}, () => {
       this.refGiftedChat.resetInputToolbar();
-      this.listChatScrollToItemById(refMessage);
+      this.listChatScrollToItemById(refMessage, 500);
     });
   };
 
@@ -922,10 +928,6 @@ class Comment extends Component {
     if (typeof props.currentMessage.id === 'string') {
     }
 
-    if (props.currentMessage.user_id === this.state.user.user_id) {
-      props.onLongPress = this.handleBubbleLongPress;
-    }
-
     return (
       <CustomMessage
         {...props}
@@ -948,6 +950,9 @@ class Comment extends Component {
         onActiveEditMode={this.handleCommentActiveEditMode}
         onEdit={(text) => this.editComment(props.currentMessage, text)}
         onCancelEdit={() => this.cancelEdit(props.currentMessage?.id)}
+        onPressRepliedUserName={() =>
+          this.handlePressUserName(props.currentMessage?.reply?.id)
+        }
       />
     );
   };
@@ -1097,6 +1102,7 @@ class Comment extends Component {
           mixSend={this.handleMixSend}
           handlePickedImages={this.handleAddImageToComposer}
           onKeyPress={this.handleKeyPress}
+          onBubbleLongPress={this.handleBubbleLongPress}
           placeholder={this.props.placeholder}
           renderEmpty={
             !this.state.loading ? (
