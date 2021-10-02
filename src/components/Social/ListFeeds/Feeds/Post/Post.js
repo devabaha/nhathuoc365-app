@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   seeMoreContainer: {
-    bottom: 2,
+    bottom: 0.5,
     marginRight: 0,
     right: 0,
   },
