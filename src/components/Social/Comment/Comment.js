@@ -155,11 +155,13 @@ class Comment extends Component {
 
   ratingValue = 0;
 
+  replyTitle = this.props.t('social:reply');
   editTitle = this.props.t('edit');
   copyTitle = this.props.t('copy');
   deleteTitle = this.props.t('delete');
   cancelTitle = this.props.t('cancel');
   actionOptionForLongPressMessage = [
+    this.replyTitle,
     this.editTitle,
     this.copyTitle,
     this.deleteTitle,
@@ -682,6 +684,8 @@ class Comment extends Component {
   };
 
   handleReply = (refComment, refContentComment, comment) => {
+    if (this.unmounted) return;
+
     this.isPressingReply = true;
     this.setStater(
       {
@@ -691,7 +695,7 @@ class Comment extends Component {
         this.refReplyContentMessage = refContentComment;
         if (this.refTickidChat) {
           let timeout = 0;
-          if (!this.state.isKeyboardShowing) {
+          if (!this.state.isKeyboardShowing && this.refTickidChat) {
             this.refReplyMessage = refComment;
             this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
             timeout = 100;
@@ -718,7 +722,7 @@ class Comment extends Component {
       !this.isReplyingYourSelf() &&
       !this.refTickidChat?.state?.text
     ) {
-      this.setStater({replyingComment: {}});
+      this.handleCancelReplying();
     }
   };
 
@@ -768,17 +772,29 @@ class Comment extends Component {
     return [options, options.indexOf(this.deleteTitle)];
   };
 
-  handleBubbleLongPress = (context, message) => {
+  handleBubbleLongPress = (context, message, refMessage, refContentMessage) => {
     const isKeyboardShowing = this.state.isKeyboardShowing;
+    const [options, destructiveButtonIndex] = this.getLongPressActionOptions(
+      message,
+    );
+    if (options.length === 1 && options.includes(this.cancelTitle)) {
+      return;
+    }
     this.collapseComposer();
-    const [options, destructiveButtonIndex] = this.getLongPressActionOptions(message);
 
     Actions.push(appConfig.routes.modalActionSheet, {
       options,
       destructiveButtonIndex,
       onPress: async (buttonIndex) => {
-        await this.handleBubbleMessageLongPress(options, buttonIndex, message);
-        if (isKeyboardShowing || this.state.isEditingComment) {
+        const isReshowKeyboard = await this.handleBubbleMessageLongPress(
+          options,
+          buttonIndex,
+          message,
+          refMessage,
+          refContentMessage,
+          isKeyboardShowing,
+        );
+        if (isKeyboardShowing || isReshowKeyboard) {
           this.showComposer();
         }
       },
@@ -789,19 +805,30 @@ class Comment extends Component {
     options = this.actionOptionForLongPressMessage,
     buttonIndex,
     message,
+    refMessage,
+    refContentMessage,
+    isKeyboardShowing,
   ) => {
     const buttonValue = options.find((_, index) => index === buttonIndex);
 
     switch (buttonValue) {
+      case this.replyTitle:
+        setTimeout(
+          () => this.handleReply(refMessage, refContentMessage, message),
+          isKeyboardShowing ? 700 : 0,
+        );
+        break;
       case this.editTitle:
         this.activeMessageEditMode(message.id);
-        break;
+        return true;
       case this.copyTitle:
         this.copyMessage(message.content);
         break;
       case this.deleteTitle:
         await this.confirmDeleteMessage(message.real_id);
         break;
+      default:
+        return false;
     }
   };
 
@@ -825,8 +852,10 @@ class Comment extends Component {
     this.clearComposer();
 
     this.setState({isEditingComment: true}, () => {
-      this.refGiftedChat.resetInputToolbar();
-      this.listChatScrollToItemById(refMessage, 500);
+      this.refGiftedChat && this.refGiftedChat.resetInputToolbar();
+      setTimeout(() => {
+        this.listChatScrollToItemById(refMessage, 500);
+      });
     });
   };
 
@@ -906,6 +935,7 @@ class Comment extends Component {
           accessoryStyle={styles.accessoryContainer}
           previewImages={this.state.previewImages}
           replyingName={replyingName}
+          replyingUserId={replyingMention?.user_id}
           replyingMentionName={replyingMention?.name}
           onCancelReplying={this.handleCancelReplying}
           onCancelPreviewImage={this.handleCancelPreviewImage}
@@ -953,6 +983,7 @@ class Comment extends Component {
         onPressRepliedUserName={() =>
           this.handlePressUserName(props.currentMessage?.reply?.id)
         }
+        onCustomBubbleLongPress={this.handleBubbleLongPress}
       />
     );
   };
@@ -1102,7 +1133,6 @@ class Comment extends Component {
           mixSend={this.handleMixSend}
           handlePickedImages={this.handleAddImageToComposer}
           onKeyPress={this.handleKeyPress}
-          onBubbleLongPress={this.handleBubbleLongPress}
           placeholder={this.props.placeholder}
           renderEmpty={
             !this.state.loading ? (

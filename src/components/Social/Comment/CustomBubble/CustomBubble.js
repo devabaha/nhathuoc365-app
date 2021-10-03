@@ -115,6 +115,7 @@ class CustomBubble extends Component {
   static defaultProps = {
     seeMoreTitle: 'Xem thêm',
     isUpdate: true,
+    onCustomBubbleLongPress: () => {}
   };
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
@@ -268,7 +269,7 @@ class CustomBubble extends Component {
           });
         }}
         onLongPress={() => {
-          props.onLongPress(undefined, props.currentMessage);
+          props.onCustomBubbleLongPress(undefined, props.currentMessage);
         }}
       />
     );
@@ -332,8 +333,9 @@ class CustomBubble extends Component {
               this.renderMessageText(props, bgColor)
             }
             touchableProps={{
-              onPress: () => props.onLongPress(undefined, props.currentMessage),
+              onPress: () => props.onCustomBubbleLongPress(undefined, props.currentMessage),
             }}
+            onLongPress={props.onCustomBubbleLongPress}
             wrapperStyle={wrapperStyle}
             containerStyle={bubbleContainerStyle}
           />

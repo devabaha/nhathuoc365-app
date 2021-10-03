@@ -27,6 +27,7 @@ const CustomMessage = ({
   onDidMount,
   onLayout = () => {},
   onActiveEditMode = () => {},
+  onCustomBubbleLongPress = () => {},
   ...props
 }) => {
   const refMessage = useRef();
@@ -126,11 +127,19 @@ const CustomMessage = ({
         isError={bubbleProps.isError}
         isEditing={bubbleProps.isEditing}
         messageBottomTitleStyle={bubbleProps.messageBottomTitleStyle}
+        uploadURL={bubbleProps.uploadURL}
         onPressBubbleBottom={handlePressBottomBubble}
         onSendImage={({image}) =>
           bubbleProps.onImageUploaded({...bubbleProps.currentMessage, image})
         }
-        uploadURL={bubbleProps.uploadURL}
+        onCustomBubbleLongPress={(context, message) => {
+          onCustomBubbleLongPress(
+            context,
+            message,
+            refMessage.current,
+            refContentMessage.current,
+          );
+        }}
       />
     );
   };
