@@ -978,6 +978,7 @@ class Item extends Component {
     const extraSocialProps = {
       accessoryTypes: [ACCESSORY_TYPE.RATING],
       placeholder: this.props.t('placeholderRating'),
+      disableEditComment: true,
     };
 
     return (
@@ -1192,9 +1193,16 @@ class Item extends Component {
             )}
 
             {!!item?.short_content && (
-                <View style={[styles.block, styles.item_content_text, styles.shortContentBox]}>
-                 <Text style={styles.shortContentItem}>{item.short_content}</Text>
-                </View>
+              <View
+                style={[
+                  styles.block,
+                  styles.item_content_text,
+                  styles.shortContentBox,
+                ]}>
+                <Text style={styles.shortContentItem}>
+                  {item.short_content}
+                </Text>
+              </View>
             )}
 
             {!!item?.content && (
@@ -1628,7 +1636,7 @@ const styles = StyleSheet.create({
     paddingBottom: appConfig.device.bottomSpace,
     // ...elevationShadowStyle(7),
   },
-  
+
   webviewCollapsedContainer: {
     height: WEBVIEW_HEIGHT_COLLAPSED,
     overflow: 'hidden',
@@ -1652,7 +1660,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   shortContentItem: {
-     ...appConfig.styles.typography.text,
+    ...appConfig.styles.typography.text,
     lineHeight: 24,
     fontSize: 14,
   },

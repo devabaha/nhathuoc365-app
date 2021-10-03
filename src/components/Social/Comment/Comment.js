@@ -102,7 +102,7 @@ class Comment extends Component {
     user_name: store.user_info?.name,
     user_avatar: store.user_info?.img,
     accessoryTypes: [],
-    disabledEditComment: false,
+    disableEditComment: false,
   };
 
   state = {
@@ -757,7 +757,7 @@ class Comment extends Component {
       removeOptions.set(this.deleteTitle, this.deleteTitle);
     }
 
-    if (this.props.disabledEditComment) {
+    if (this.props.disableEditComment) {
       removeOptions.set(this.editTitle, this.editTitle);
     }
 
