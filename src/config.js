@@ -37,8 +37,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'testproductkeyZUNFr',
+      secretKey: '7jVctestproductkeyZUNFrZAfBpl',
     };
   }
 
@@ -117,7 +117,7 @@ class Config {
         [CART_STATUS_PROCESSING]: '#986d60',
         [CART_STATUS_DELIVERY]: '#EEAA21',
         [CART_STATUS_COMPLETED]: '#06d6a0',
-        [CART_STATUS_CLOSED]: '#aaa',
+        [CART_STATUS_CLOSED]: '#aaaaaa',
       },
       paymentStatus: {
         [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
@@ -125,7 +125,7 @@ class Config {
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
       membership: {
-        standard: ['#333', '#ccc'],
+        standard: ['#333333', '#cccccc'],
         gold: ['#d99b2d', '#FFCF40'],
         platinum: ['#a1a3a6', '#d8dadb'],
         diamond: ['#723dc6', '#d1a0f6'],
@@ -139,9 +139,9 @@ class Config {
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
       primary: this.primaryColor,
-      white: '#fff',
-      black: '#000',
-      text: '#333',
+      white: '#ffffff',
+      black: '#000000',
+      text: '#333333',
       cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',

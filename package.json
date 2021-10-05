@@ -11,6 +11,7 @@
     "postinstall": "bash setup"
   },
   "dependencies": {
+    "react-native-vnpay-merchant": "file:react-native-vnpay-merchant",
     "@alessiocancian/react-native-actionsheet": "^3.0.3",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/art": "^1.2.0",

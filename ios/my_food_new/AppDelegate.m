@@ -18,6 +18,8 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
+#import <CallAppSDK/CallAppInterface.h>
+
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
@@ -96,6 +98,8 @@ static void InitializeFlipper(UIApplication *application) {
   }];
   //--end
   
+  [CallAppInterface setHomeViewController:self.window.rootViewController];
+
   return YES;
 }
 
@@ -105,6 +109,14 @@ static void InitializeFlipper(UIApplication *application) {
     }
     return YES;
 }
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url sourceApplication: (NSString *)sourceApplication annotation:(id)annotation {
+    if([url.scheme isEqualToString:@"vn.abahaglobal"]) {
+      return YES;
+    }
+    return YES;
+}
+
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
     return [RNBranch continueUserActivity:userActivity];

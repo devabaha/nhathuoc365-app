@@ -30,7 +30,8 @@ import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
 import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
-import { saveImage } from 'app-helper/image';
+import {saveImage} from 'app-helper/image';
+import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
 
 const styles = StyleSheet.create({
   container: {
@@ -169,6 +170,7 @@ const Transaction = ({
 }) => {
   const {t} = useTranslation();
 
+  const vnPayMerchant = useRef(new VNPayMerchant());
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isPaid, setPaid] = useState(false);
@@ -210,7 +212,7 @@ const Transaction = ({
       );
       try {
         const response = await checkPaymentStatusRequest.promise();
-        // console.log(response, siteId, cartId);
+        console.log(response, siteId, cartId);
         if (isUnMounted) return;
 
         if (response) {
@@ -380,10 +382,16 @@ const Transaction = ({
     (url = transactionData?.url) => {
       if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
         if (url) {
-          Actions.push(appConfig.routes.modalWebview, {
-            title: t('screen.transaction.mainTitle'),
-            url,
+          vnPayMerchant.current.show({
+            paymentUrl: url,
+            tmn_code: JSON.parse(
+              store?.store_data?.config_vnpay_payment || '{}',
+            )?.terminal_id,
           });
+          // Actions.push(appConfig.routes.modalWebview, {
+          //   title: t('screen.transaction.mainTitle'),
+          //   url,
+          // });
         } else {
           Alert.alert('Chưa có link thanh toán');
         }
