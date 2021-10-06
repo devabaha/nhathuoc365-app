@@ -11,10 +11,11 @@ const eventEmitter = new NativeEventEmitter(VnpayMerchantModule);
 const VNPAY_MERCHANT_PAYMENT_BACK_EVENT_NAME = 'PaymentBack';
 
 class VNPayMerchant {
-  subscription = null;
-  // listener = (e) => {
-  //   console.log('vnpay_merchant_payment_back', e);
-  // };
+  listener = (e) => {
+    console.log('vnpay_merchant_payment_back', e);
+
+    this.removeListener();
+  };
 
   constructor(listener = this.listener) {
     this.removeListener();
@@ -24,20 +25,15 @@ class VNPayMerchant {
   addListener(listener = this.listener) {
     this.listener = listener;
     console.log('vnpay_merchant_add_listener');
-    this.subscription = eventEmitter.addListener(
+    eventEmitter.addListener(
       VNPAY_MERCHANT_PAYMENT_BACK_EVENT_NAME,
-      (e) => {
-        console.log('vnpay_merchant_payment_back', e);
-      },
+      this.listener,
     );
   }
 
   removeListener() {
-    // if (this.subscription) {
     console.log('vnpay_merchant_remove_listener');
-    // eventEmitter.removeSubscription(this.subscription);
     eventEmitter.removeAllListeners(VNPAY_MERCHANT_PAYMENT_BACK_EVENT_NAME);
-    // }
   }
 
   show(option = {}) {
@@ -54,19 +50,6 @@ class VNPayMerchant {
       tmn_code: 'GOGREEN1',
       ...option,
     });
-    console.log(JSON.stringify({
-      isSandbox: true,
-      //   paymentUrl
-      scheme: 'vn.abahaglobal',
-      // backAlert: 'Back test?',
-      title: 'Thanh toán VNPAY',
-      titleColor: appConfig.colors.text,
-      beginColor: appConfig.colors.white,
-      endColor: appConfig.colors.white,
-      iconBackName: 'close',
-      tmn_code: 'GOGREEN1',
-      ...option,
-    }))
   }
 }
 

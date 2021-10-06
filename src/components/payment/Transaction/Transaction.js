@@ -170,7 +170,6 @@ const Transaction = ({
 }) => {
   const {t} = useTranslation();
 
-  const vnPayMerchant = useRef();
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isPaid, setPaid] = useState(false);
@@ -192,14 +191,6 @@ const Transaction = ({
   const refQRCode = useRef();
 
   const isActiveWebview = () => !transactionData?.data_qrcode && !isPaid;
-
-  useEffect(() => {
-    vnPayMerchant.current = new VNPayMerchant();
-
-    return () => {
-      vnPayMerchant.current && vnPayMerchant.current.removeListener();
-    };
-  }, []);
 
   useEffect(() => {
     getTransactionData(true);
@@ -390,13 +381,13 @@ const Transaction = ({
     (url = transactionData?.url) => {
       if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
         if (url) {
-          vnPayMerchant.current &&
-            vnPayMerchant.current.show({
-              paymentUrl: url,
-              tmn_code: JSON.parse(
-                store?.store_data?.config_vnpay_payment || '{}',
-              )?.terminal_id,
-            });
+          const vnPayMerchant = new VNPayMerchant();
+          vnPayMerchant.show({
+            paymentUrl: url,
+            tmn_code: JSON.parse(
+              store?.store_data?.config_vnpay_payment || '{}',
+            )?.terminal_id,
+          });
           // Actions.push(appConfig.routes.modalWebview, {
           //   title: t('screen.transaction.mainTitle'),
           //   url,
