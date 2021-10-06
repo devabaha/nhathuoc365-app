@@ -170,7 +170,7 @@ const Transaction = ({
 }) => {
   const {t} = useTranslation();
 
-  const vnPayMerchant = useRef(new VNPayMerchant());
+  const vnPayMerchant = useRef();
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isPaid, setPaid] = useState(false);
@@ -194,6 +194,14 @@ const Transaction = ({
   const isActiveWebview = () => !transactionData?.data_qrcode && !isPaid;
 
   useEffect(() => {
+    vnPayMerchant.current = new VNPayMerchant();
+
+    return () => {
+      vnPayMerchant.current && vnPayMerchant.current.removeListener();
+    };
+  }, []);
+
+  useEffect(() => {
     getTransactionData(true);
 
     return () => {
@@ -212,7 +220,7 @@ const Transaction = ({
       );
       try {
         const response = await checkPaymentStatusRequest.promise();
-        console.log(response, siteId, cartId);
+        // console.log(response, siteId, cartId);
         if (isUnMounted) return;
 
         if (response) {
@@ -274,7 +282,7 @@ const Transaction = ({
     );
     try {
       const response = await getTransactionDataRequest.promise();
-      console.log(response, siteId, cartId);
+      // console.log(response, siteId, cartId);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -382,12 +390,13 @@ const Transaction = ({
     (url = transactionData?.url) => {
       if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
         if (url) {
-          vnPayMerchant.current.show({
-            paymentUrl: url,
-            tmn_code: JSON.parse(
-              store?.store_data?.config_vnpay_payment || '{}',
-            )?.terminal_id,
-          });
+          vnPayMerchant.current &&
+            vnPayMerchant.current.show({
+              paymentUrl: url,
+              tmn_code: JSON.parse(
+                store?.store_data?.config_vnpay_payment || '{}',
+              )?.terminal_id,
+            });
           // Actions.push(appConfig.routes.modalWebview, {
           //   title: t('screen.transaction.mainTitle'),
           //   url,
