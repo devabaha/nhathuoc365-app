@@ -40,6 +40,7 @@ RCT_EXPORT_METHOD(show:(NSString *)scheme
         
         [CallAppInterface setHomeViewController:self.window1.rootViewController];
         [CallAppInterface setSchemes:scheme];
+        [CallAppInterface setEnableBackAction:YES];
         [CallAppInterface setIsSandbox:isSandbox];
         [CallAppInterface setAppBackAlert:backAlert];
         [CallAppInterface showPushPaymentwithPaymentURL:paymentUrl
