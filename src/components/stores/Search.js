@@ -209,17 +209,7 @@ class Search extends Component {
       });
   }
 
-  onSearch = debounce((keyword) => {
-    if (keyword == null || keyword == '') {
-      this.setState({
-        search_data: null,
-        loading: false,
-        noResult: false,
-      });
-
-      return;
-    }
-
+  onSearch = debounce((keyword, callback = () => {}) => {
     keyword = keyword.trim();
 
     this.setState(
@@ -239,7 +229,10 @@ class Search extends Component {
               this.setState({
                 search_data: response.data,
                 noResult: false,
-                header_title: `— Kết quả cho "${keyword}" —`,
+                header_title:
+                  keyword == null || keyword == ''
+                    ? null
+                    : `— Kết quả cho "${keyword}" —`,
               });
             }
           } else {
@@ -257,6 +250,7 @@ class Search extends Component {
           //   this.onSearch.bind(this, keyword)
           // );
         } finally {
+          callback();
           !this.unmounted &&
             this.setState({
               loading: false,
@@ -383,7 +377,7 @@ class Search extends Component {
         categories,
         selectedCategory: category,
       });
-      this.onSearch(this.state.searchValue);
+      this.onSearch(this.state.searchValue, () => this.collapseCategories());
     }
   };
 
@@ -406,6 +400,7 @@ class Search extends Component {
       duration: 300,
     }).start();
     this.categoriesCollapsed = !this.categoriesCollapsed;
+    Keyboard.dismiss();
   };
 
   _confirmRemoveCartItem(item) {
@@ -511,6 +506,37 @@ class Search extends Component {
       <>
         <SafeAreaView style={styles.container}>
           {loading && <Indicator />}
+
+          {this.state.categories.length !== 0 && (
+            <ModernList
+              containerStyle={[
+                styles.listCategoriesContainer,
+                animatedCategoriesBodyStyle,
+              ]}
+              scrollEnabled={false}
+              headerTitle={
+                this.state.selectedCategory.name
+                  ? this.state.selectedCategory.name
+                  : 'Chọn danh mục'
+              }
+              mainKey="name"
+              data={this.state.categories}
+              onPressItem={this.handlePressCategory}
+              onHeaderPress={this.collapseCategories}
+              bodyWrapperStyle={animatedCategoriesStyle}
+              onBodyLayout={this.handleCategoriesLayout}
+              activeStyle={{backgroundColor: DEFAULT_COLOR}}
+              activeTextStyle={{color: '#fff'}}
+              type={LIST_TYPE.TAG}
+              headerRightComponent={
+                <CollapseIcon
+                  onPress={this.collapseCategories}
+                  style={animatedIconStyle}
+                />
+              }
+            />
+          )}
+
           {search_data != null ? (
             <FlatList
               keyboardShouldPersistTaps="handled"
@@ -542,32 +568,6 @@ class Search extends Component {
               keyboardShouldPersistTaps="always">
               {this.state.noResult && (
                 <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
-              )}
-              {this.state.categories.length !== 0 && (
-                <ModernList
-                  containerStyle={[
-                    {
-                      marginBottom: 15,
-                    },
-                    animatedCategoriesBodyStyle,
-                  ]}
-                  scrollEnabled={false}
-                  headerTitle="Danh mục"
-                  mainKey="name"
-                  data={this.state.categories}
-                  onPressItem={this.handlePressCategory}
-                  bodyWrapperStyle={animatedCategoriesStyle}
-                  onBodyLayout={this.handleCategoriesLayout}
-                  activeStyle={{backgroundColor: DEFAULT_COLOR}}
-                  activeTextStyle={{color: '#fff'}}
-                  type={LIST_TYPE.TAG}
-                  headerRightComponent={
-                    <CollapseIcon
-                      onPress={this.collapseCategories}
-                      style={animatedIconStyle}
-                    />
-                  }
-                />
               )}
               {history != null &&
                 (() => {
@@ -775,6 +775,9 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: DEFAULT_COLOR,
   },
+  listCategoriesContainer: {
+    marginBottom: 15,
+  },
   noResult: {
     textAlign: 'center',
     paddingVertical: 15,
@@ -801,7 +804,7 @@ const CollapseIcon = (props) => (
     activeOpacity={0.6}
     onPress={props.onPress}>
     <AnimatedIcon
-      name="caret-down"
+      name="caret-up"
       style={[styles.collapseIcon, props.style]}
     />
   </TouchableOpacity>

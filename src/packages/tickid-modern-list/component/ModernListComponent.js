@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import NormalList from './NormalList';
 import TagList from './TagList';
 import { LIST_TYPE } from '../constants';
@@ -10,13 +10,16 @@ class ModernListComponent extends Component {
 
   renderHeader() {
     return (
-      <View style={[styles.headerContent]}>
+      <TouchableOpacity
+        style={[styles.headerContent]}
+        disabled={!this.props.onHeaderPress}
+        onPress={this.props.onHeaderPress}>
         {this.props.headerLeftComponent}
         <Text style={[styles.headerTitle, this.props.headerTitleStyle]}>
           {this.props.headerTitle}
         </Text>
         {this.props.headerRightComponent}
-      </View>
+      </TouchableOpacity>
     );
   }
 
