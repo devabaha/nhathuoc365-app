@@ -1074,13 +1074,7 @@ class Confirm extends Component {
       (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
       (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
-    const POSCode =
-      !!cart_data.pos_details &&
-      (cart_data.pos_details.pos_type || '') +
-        (cart_data.pos_details.pos_type && cart_data.pos_details.pos_code
-          ? ' - '
-          : '') +
-        (cart_data.pos_details.pos_code || '');
+    const POSCode = cart_data?.pos_details;
 
     const deliveryCode =
       cart_data.delivery_details &&
