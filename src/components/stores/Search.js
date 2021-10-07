@@ -224,6 +224,8 @@ class Search extends Component {
             type: this.props.type,
           });
 
+          if (this.unmounted) return;
+
           if (response && response.status == STATUS_SUCCESS) {
             if (response.data) {
               this.setState({
@@ -234,6 +236,9 @@ class Search extends Component {
                     ? null
                     : `— Kết quả cho "${keyword}" —`,
               });
+              if (!this.categoriesCollapsed) {
+                this.collapseCategories();
+              }
             }
           } else {
             this.getHistory();
@@ -377,7 +382,11 @@ class Search extends Component {
         categories,
         selectedCategory: category,
       });
-      this.onSearch(this.state.searchValue, () => this.collapseCategories());
+      this.onSearch(this.state.searchValue, () => {
+        if (!this.categoriesCollapsed) {
+          this.collapseCategories();
+        }
+      });
     }
   };
 
@@ -803,10 +812,7 @@ const CollapseIcon = (props) => (
     hitSlop={HIT_SLOP}
     activeOpacity={0.6}
     onPress={props.onPress}>
-    <AnimatedIcon
-      name="caret-up"
-      style={[styles.collapseIcon, props.style]}
-    />
+    <AnimatedIcon name="caret-up" style={[styles.collapseIcon, props.style]} />
   </TouchableOpacity>
 );
 
