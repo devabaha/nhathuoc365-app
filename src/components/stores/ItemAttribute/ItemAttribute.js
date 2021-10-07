@@ -426,6 +426,7 @@ class ItemAttribute extends PureComponent {
   }
 
   render() {
+    console.log("item", this.state.product.models)
     const {t} = this.props;
     const numberSelectedAttrs = this.getNumberSelectedAttrs(
       this.state.selectedAttrs,
