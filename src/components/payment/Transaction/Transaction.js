@@ -132,7 +132,11 @@ const styles = StyleSheet.create({
 
   btnContainer: {
     backgroundColor: '#fff',
-    ...elevationShadowStyle(7),
+    backgroundColor: '#fff',
+    ...(appConfig.device.isIOS && elevationShadowStyle(7)),
+    paddingVertical: 10,
+    borderTopWidth: appConfig.device.isAndroid ? appConfig.device.pixel : 0,
+    borderColor: appConfig.colors.border,
   },
   confirmBtn: {
     flex: 1,
