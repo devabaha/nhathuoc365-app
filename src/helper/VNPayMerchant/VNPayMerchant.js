@@ -1,8 +1,9 @@
+import {NativeEventEmitter} from 'react-native';
 import {
   default as RNVnpayMerchant,
   VnpayMerchantModule,
 } from 'react-native-vnpay-merchant';
-import {NativeEventEmitter} from 'react-native';
+import i18next from 'i18next';
 
 import appConfig from 'app-config';
 
@@ -18,7 +19,6 @@ class VNPayMerchant {
   };
 
   constructor(listener = this.listener) {
-    this.removeListener();
     this.addListener(listener);
   }
 
@@ -37,17 +37,18 @@ class VNPayMerchant {
   }
 
   show(option = {}) {
+    const t = i18next.getFixedT(undefined, 'payment');
     RNVnpayMerchant.show({
       isSandbox: true,
-      //   paymentUrl
       scheme: 'vn.abahaglobal',
-      // backAlert: 'Back test?',
-      title: 'Thanh toán VNPAY',
+      backAlert: t('transaction.cancelPaymentFlowConfirmMessage'),
+      title: t('transaction.vnpayTitle'),
       titleColor: appConfig.colors.text,
       beginColor: appConfig.colors.white,
       endColor: appConfig.colors.white,
       iconBackName: 'close',
-      tmn_code: 'GOGREEN1',
+      //   paymentUrl
+      // tmn_code: 'GOGREEN1',
       ...option,
     });
   }

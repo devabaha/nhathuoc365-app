@@ -29,9 +29,9 @@ import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
-import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
 import {saveImage} from 'app-helper/image';
 import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
+import {PAYMENT_METHOD_GATEWAY} from 'src/constants/payment/types';
 
 const styles = StyleSheet.create({
   container: {
@@ -172,7 +172,7 @@ const Transaction = ({
   cartId = store?.cart_data?.id,
   onPop = () => {},
 }) => {
-  const {t} = useTranslation();
+  const {t} = useTranslation(['common', 'payment']);
 
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -223,17 +223,18 @@ const Transaction = ({
             if (response.data) {
               switch (response.data.status) {
                 case CART_PAYMENT_STATUS.PAID:
-                  if (
-                    Actions.currentScene ===
-                    `${appConfig.routes.modalWebview}_1`
-                  ) {
-                    Actions.pop();
-                  }
                   setPaid(true);
                   break;
                 case CART_PAYMENT_STATUS.CANCEL:
                   setError(true);
                   break;
+              }
+
+              if (
+                !!response.data?.close_payment &&
+                Actions.currentScene === `${appConfig.routes.modalWebview}_1`
+              ) {
+                Actions.pop();
               }
             }
             setError(false);
@@ -287,7 +288,7 @@ const Transaction = ({
               response.data.url &&
               isOpenTransaction
             ) {
-              handleOpenTransaction(response.data.url);
+              handleOpenTransaction(response.data);
             }
           }
         } else {
@@ -382,23 +383,28 @@ const Transaction = ({
   };
 
   const handleOpenTransaction = useCallback(
-    (url = transactionData?.url) => {
-      if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
-        if (url) {
-          const vnPayMerchant = new VNPayMerchant();
-          vnPayMerchant.show({
-            paymentUrl: url,
-            tmn_code: JSON.parse(
-              store?.store_data?.config_vnpay_payment || '{}',
-            )?.terminal_id,
-          });
-          // Actions.push(appConfig.routes.modalWebview, {
-          //   title: t('screen.transaction.mainTitle'),
-          //   url,
-          // });
-        } else {
-          Alert.alert('Chưa có link thanh toán');
+    (transData = transactionData) => {
+      if (transData.url) {
+        switch (transData?.payment_method?.gateway) {
+          case PAYMENT_METHOD_GATEWAY.VNPAY:
+            const vnPayMerchant = new VNPayMerchant();
+            vnPayMerchant.show({
+              isSandbox: !!transData.isSandbox,
+              paymentUrl: transData.url,
+              tmn_code: JSON.parse(
+                store?.store_data?.config_vnpay_payment || '{}',
+              )?.terminal_id,
+            });
+            break;
+          default:
+            Actions.push(appConfig.routes.modalWebview, {
+              title: t('screen.transaction.mainTitle'),
+              url: transData.url,
+            });
+            break;
         }
+      } else {
+        Alert.alert(t('transaction.noPaymentInformation'));
       }
     },
     [transactionData],
