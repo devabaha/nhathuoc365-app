@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 10,
     flexWrap: 'wrap',
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });
 
 export default TagList;

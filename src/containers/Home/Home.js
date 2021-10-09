@@ -323,7 +323,6 @@ class Home extends Component {
             categories: null,
             category_id: 0,
             category_name: '',
-            categoriesCollapsed: true,
           });
         } else {
           flashShowMessage({
