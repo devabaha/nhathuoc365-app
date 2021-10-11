@@ -132,7 +132,6 @@ const ModalComboLocation = ({
       // have to wait to item in list rendered.
       setTimeout(
         () => refList.current && refList.current.scrollToIndex({index}),
-        300,
       );
     }
   };
