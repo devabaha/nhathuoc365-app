@@ -175,6 +175,9 @@
       "mainTitle": "Danh sách yêu cầu",
       "detailTitle": "Chi tiết yêu cầu",
       "creationTitle": "Tạo yêu cầu"
+    },
+    "listSite": {
+      "mainTitle": "Danh sách cửa hàng"
     }
   },
 

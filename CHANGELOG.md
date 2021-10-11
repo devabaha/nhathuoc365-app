@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Reopen ListSite by [minhnguyenit14@gmail.com].
 ### Fixed
 - [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
+- [CU-1mtfept] Not showing data when auto scrolling to the selected item by [minhnguyenit14@gmail.com].
 
 ## [r12.1.4]
 ### Added

@@ -175,6 +175,9 @@
       "mainTitle": "Request list",
       "detailTitle": "Request detail",
       "creationTitle": "Create a request"
+    },
+    "listSite": {
+      "mainTitle": "List of store"
     }
   },
 
