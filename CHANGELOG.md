@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- [CU-1mkte7j] Experience when searching products by [kienluu612@gmail.com].
+- [CU-1mkte7j] UX in stores/Search by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 
 ## [r12.1.4]
 ### Added
