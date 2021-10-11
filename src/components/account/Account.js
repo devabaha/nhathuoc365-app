@@ -37,6 +37,7 @@ import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {openLink} from 'app-helper';
 
 const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
@@ -511,7 +512,7 @@ class Account extends Component {
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Communications.web(FACEBOOK_DOMAIN + facebookFanpage);
+          openLink(FACEBOOK_DOMAIN + facebookFanpage);
         },
         boxIconStyle: [
           styles.boxIconStyle,
