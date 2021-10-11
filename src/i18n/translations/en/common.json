@@ -262,6 +262,7 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "update": "Update",
+  "agree": "OK",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",

@@ -21,6 +21,12 @@
     "brands": "Nhãn hiệu",
     "origin": "Xuất xứ"
   },
+  "wholesale": {
+    "title": "Giá bán buôn/ sỉ",
+    "quantity": "Số lượng",
+    "unitPrice": "Đơn giá",
+    "value": "Giá còn {{price}} khi mua {{quantity}} sản phẩm"
+  },
   "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
   "goToStore": "Vào cửa hàng",
   "copyContent": "Đã sao chép nội dung bài viết sản phẩm",
