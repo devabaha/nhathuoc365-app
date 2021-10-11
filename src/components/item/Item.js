@@ -56,6 +56,7 @@ import {
 import ListProducts from '../Home/component/ListProducts';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import LinearGradient from 'react-native-linear-gradient';
+import ModalWholesale from './ModalWholesale';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -94,6 +95,7 @@ class Item extends Component {
     this.eventTracker = new EventTracker();
     this.refPopupConfirmCartType = React.createRef();
     this.refWebview = React.createRef();
+    this.refModalWholesale = React.createRef();
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -686,6 +688,12 @@ class Item extends Component {
     }
   };
 
+  handleWholesalePress = () => {
+    if (this.refModalWholesale.current) {
+      this.refModalWholesale.current.open();
+    }
+  };
+
   toggleCollapseWebviewContent = () => {
     this.setState((prevState) => ({
       isWebviewContentCollapsed: !prevState.isWebviewContentCollapsed,
@@ -867,6 +875,34 @@ class Item extends Component {
       )
     );
   }
+
+  renderWholesaleInfo = (product) => {
+    if (!product?.detail_price_steps?.length) return;
+
+    const {t} = this.props;
+
+    const wholesaleValue = t('wholesale.value', {
+      price: product.detail_price_steps[0].unit_price,
+      quantity: product?.detail_price_steps[0].quantity,
+    });
+
+    return (
+      <View style={styles.wholesaleContainer}>
+        <View style={[styles.item_content_item, styles.item_content_item_left]}>
+          <Text style={styles.item_content_item_title}>
+            {t('wholesale.title')}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={this.handleWholesalePress}
+          style={[styles.item_content_item, styles.item_content_item_right]}>
+          <Text style={styles.item_content_item_value}>{wholesaleValue}</Text>
+          <Icon name="angle-right" style={styles.wholesaleRightIcon} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   renderBtnProductStamps = () => {
     return (
@@ -1143,11 +1179,15 @@ class Item extends Component {
             </View>
 
             {item != null && !this.state.loading && (
-              <View style={[styles.block, styles.item_content_box]}>
-                {this.renderBtnProductStamps()}
-                {this.renderNoticeMessage(item)}
-                {this.renderDetailInfo(item)}
-              </View>
+              <>
+                {this.renderWholesaleInfo(item)}
+
+                <View style={[styles.block, styles.item_content_box]}>
+                  {this.renderBtnProductStamps()}
+                  {this.renderNoticeMessage(item)}
+                  {this.renderDetailInfo(item)}
+                </View>
+              </>
             )}
 
             {!!item.object && (
@@ -1192,9 +1232,16 @@ class Item extends Component {
             )}
 
             {!!item?.short_content && (
-                <View style={[styles.block, styles.item_content_text, styles.shortContentBox]}>
-                 <Text style={styles.shortContentItem}>{item.short_content}</Text>
-                </View>
+              <View
+                style={[
+                  styles.block,
+                  styles.item_content_text,
+                  styles.shortContentBox,
+                ]}>
+                <Text style={styles.shortContentItem}>
+                  {item.short_content}
+                </Text>
+              </View>
             )}
 
             {!!item?.content && (
@@ -1299,6 +1346,11 @@ class Item extends Component {
             }
           }}
           yesConfirm={this._removeCartItem.bind(this)}
+        />
+
+        <ModalWholesale
+          data={item.detail_price_steps || []}
+          innerRef={(inst) => (this.refModalWholesale.current = inst)}
         />
       </View>
     );
@@ -1628,7 +1680,7 @@ const styles = StyleSheet.create({
     paddingBottom: appConfig.device.bottomSpace,
     // ...elevationShadowStyle(7),
   },
-  
+
   webviewCollapsedContainer: {
     height: WEBVIEW_HEIGHT_COLLAPSED,
     overflow: 'hidden',
@@ -1648,11 +1700,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: appConfig.colors.primary,
   },
+
+  wholesaleContainer: {
+    flexDirection: 'row',
+    padding: 15,
+    borderColor: '#eee',
+    borderBottomWidth: 1,
+    width: appConfig.device.width,
+    alignItems: 'center',
+  },
+  wholesaleRightIcon: {
+    color: '#ccc',
+    fontSize: 26,
+    paddingLeft: 10,
+  },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
   },
   shortContentItem: {
-     ...appConfig.styles.typography.text,
+    ...appConfig.styles.typography.text,
     lineHeight: 24,
     fontSize: 14,
   },
