@@ -11,7 +11,10 @@ import appConfig from 'app-config';
 import moment from 'moment';
 
 import {getPostGridImagesType, renderGridImages} from './post';
-import { MAX_LENGTH_CONTENT, MAX_LINE_OF_CONTENT } from 'src/constants/social/post';
+import {
+  MAX_LENGTH_CONTENT,
+  MAX_LINE_OF_CONTENT,
+} from 'src/constants/social/post';
 
 export {getPostGridImagesType, renderGridImages};
 
@@ -189,7 +192,7 @@ export const isShowFullContent = (
   maxLine = MAX_LINE_OF_CONTENT,
 ) => {
   const splitter = '\n';
-  let truncatedContent = content;
+  let truncatedContent = '';
   let numOfBreak = 0;
 
   if (content) {
@@ -206,7 +209,7 @@ export const isShowFullContent = (
     }
   }
 
-  callback(truncatedContent);
+  callback(truncatedContent || content);
 
   return !content || (content.length <= maxLength && numOfBreak <= maxLine);
 };

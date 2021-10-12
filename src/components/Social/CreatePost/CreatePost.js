@@ -49,17 +49,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  input: {
-    backgroundColor: '#fff',
-    fontSize: 16,
-    padding: 15,
-  },
-  inputClone: {
-    position: 'absolute',
-    opacity: 0,
-    width: '100%',
-  },
-
   overImagesContainer: {
     position: 'absolute',
     backgroundColor: 'rgba(0,0,0,.7)',
@@ -372,7 +361,7 @@ const CreatePost = ({
         onScrollBeginDrag={handleScrollBeginDrag}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}>
-        <View>
+        <View style={{flex: 1}}>
           <PleasePost
             title={store.user_info.name}
             avatar={avatar}
@@ -385,7 +374,12 @@ const CreatePost = ({
             value={contentText}
             onChangeText={setContentText}
             onContentLayout={handleInputCloneLayout}
-            style={styles.block}
+            style={[
+              styles.block,
+              {
+                flex: images?.length ? undefined : 1,
+              },
+            ]}
           />
           <TouchableOpacity onPress={goToEditImages} style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
