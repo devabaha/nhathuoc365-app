@@ -212,11 +212,7 @@ class NetWorkInfo extends Component {
     const isLiveServer = store.baseDomains[0] === LIVE_API_DOMAIN;
     let domains = [...store.baseDomains];
     if (!isLiveServer) {
-      return (
-        <DomainWatermark
-          domains={domains.concat(domains).concat(domains).concat(domains)}
-        />
-      );
+      return <DomainWatermark domains={domains} />;
     }
 
     return null;
