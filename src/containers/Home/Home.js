@@ -211,7 +211,7 @@ class Home extends Component {
   handleShowAllSites = () => {
     // store.setSelectedTab(appConfig.routes.customerCardWallet);
     servicesHandler({
-      type: SERVICES_TYPE.LIST_SITE,
+      type: SERVICES_TYPE.GPS_LIST_SITE,
     });
   };
 

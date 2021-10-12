@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = () => {
+const GPSListStore = ({type = 'store'}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
@@ -122,6 +122,8 @@ const GPSListStore = () => {
 
   const [getListStoreRequest] = useState(new APIRequest());
   const [setStoreRequest] = useState(new APIRequest());
+  // const [getListSiteRequest] = useState(new APIRequest());
+
   const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -174,16 +176,45 @@ const GPSListStore = () => {
     }
   };
 
+  // const getListSite = async (keyword = '') => {
+  //   try {
+  //     const response = await APIHandler.user_get_favor_sites(keyword);
+  //     if (response.status === STATUS_SUCCESS && response.data) {
+  //       setListStore(response.data.sites);
+  //       console.log(response.data);
+  //     } else {
+  //       flashShowMessage({
+  //         type: 'danger',
+  //         message: response.message,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log('gpsListSite', error);
+  //     // store.addApiQueue('customer_card_wallet', this.getFavors);
+  //   } finally {
+  //     setLoading(false);
+  //     setRefreshing(false);
+  //   }
+  // };
+
   const getListStore = async (data) => {
+    console.log('faklsfdksfjajfajl;ds');
     if (latitude !== undefined && longitude !== undefined) {
       data = {
         lat: latitude,
         lng: longitude,
       };
     }
-    getListStoreRequest.data = APIHandler.user_site_store(data);
+    getListStoreRequest.data =
+      type == 'store'
+        ? APIHandler.user_site_store(data)
+        : APIHandler.user_get_favor_sites(data);
+    // getListSiteRequest = APIHandler.user_get_favor_sites(data);
     try {
-      const responseData = await getListStoreRequest.promise();
+      const responseData =
+        // type == 'store'
+        await getListStoreRequest.promise();
+      // : await getListSiteRequest.promise();
       setListStore(responseData?.stores || []);
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
@@ -318,6 +349,14 @@ const GPSListStore = () => {
     }
   }, []);
 
+  const handlePressSite = useCallback((site) => {
+    servicesHandler({
+      ...site,
+      siteId: site.id,
+      type: SERVICES_TYPE.OPEN_SHOP,
+    });
+  }, []);
+
   const cancelModal = () => {
     closeModal();
   };
@@ -350,7 +389,7 @@ const GPSListStore = () => {
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
 
-    return (
+    return type == 'store' ? (
       <TouchableOpacity
         activeOpacity={0.5}
         disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}
@@ -360,6 +399,23 @@ const GPSListStore = () => {
           image={store.image_url}
           address={store.address}
           phone={store.phone}
+          lat={store.lat}
+          lng={store.lng}
+          enableDistance
+          requestLocationLoading={requestLocationLoading}
+          distance={calculateDiffDistance(store.lng, store.lat)}
+          disabledDistanceStyle={disabledDistanceStyle}
+        />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => handlePressSite(store)}>
+        <StoreItem
+          name={store.name}
+          image={store.image_url}
+          address={store.address}
+          phone={store.tel}
           lat={store.lat}
           lng={store.lng}
           enableDistance
