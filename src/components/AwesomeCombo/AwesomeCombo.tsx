@@ -34,6 +34,7 @@ import Animated, {
   timing,
   eq,
   concat,
+  Extrapolate,
 } from 'react-native-reanimated';
 import AwesomeComboItem from './AwesomeComboItem';
 import appConfig from 'app-config';
@@ -80,6 +81,12 @@ type AwesomeComboProps = {
    */
   parentRef: MutableRefObject<any>;
   position: AwesomeComboPosition;
+  renderCustomItem: (
+    item: AwesomeComboItem,
+    onPress: Function,
+    index: number,
+    data: Array<AwesomeComboItem>,
+  ) => React.ReactNode;
   onSelect: (item: AwesomeComboItem) => void;
   onClose: () => void;
 };
@@ -124,6 +131,7 @@ function AwesomeCombo({
   show = false,
   parentRef,
   position = {x: 0, y: 0, width: undefined},
+  renderCustomItem,
   onSelect,
   onClose = () => {},
 }: AwesomeComboProps) {
@@ -186,7 +194,9 @@ function AwesomeCombo({
   );
 
   function renderItem(item: AwesomeComboItem, index: number) {
-    return (
+    return renderCustomItem ? (
+      renderCustomItem(item, () => onSelect(item), index, data)
+    ) : (
       <AwesomeComboItem
         key={index}
         title={item.title}
@@ -227,7 +237,7 @@ function AwesomeCombo({
             });
           } else {
             setContainerPosition({
-              x: x,
+              x: pageX,
               y: pageY + height,
               width,
             });
@@ -236,7 +246,7 @@ function AwesomeCombo({
       );
     }
   }
-  // return null;
+
   return (
     visible && (
       <>
@@ -259,7 +269,8 @@ function AwesomeCombo({
               styles.container,
               {
                 width: containerPosition.width,
-                opacity: animatedOpacity,
+                opacity:
+                  containerPosition.width !== undefined ? animatedOpacity : 0,
                 // transform: [{translateX: animatedTranslateX}],
               },
             ]}>

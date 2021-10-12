@@ -9,7 +9,9 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
+import equal from 'deep-equal';
 import {Actions} from 'react-native-router-flux';
+import {TouchableOpacity as RNTouchableOpacity} from 'react-native-gesture-handler';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -30,25 +32,106 @@ import BaseAPI, {
 import AwesomeCombo from 'src/components/AwesomeCombo';
 import Button from 'src/components/Button';
 import DomainInput from './components/DomainInput';
+import DomainTag from './components/DomainTag';
+import {Container} from 'src/components/Layout';
+
+const DOMAIN_ATTRIBUTE = {
+  API_DOMAIN: {
+    domainParamName: 'domainName',
+    isShowSelectorParamName: 'isShowAPIDomainSelector',
+    iconName: 'api',
+    color: appConfig.colors.primary,
+  },
+  IMAGE_DOMAIN: {
+    domainParamName: 'imageDomainName',
+    isShowSelectorParamName: 'isShowImageDomainSelector',
+    iconName: 'image',
+    color: appConfig.colors.primary,
+  },
+  SOCIAL_DOMAIN: {
+    domainParamName: 'socialDomainName',
+    isShowSelectorParamName: 'isShowSocialDomainSelector',
+    iconName: 'supervised-user-circle',
+    color: appConfig.colors.primary,
+  },
+};
 
 const DOMAIN_TYPE = {
-  API_DOMAIN: 'domainName',
-  IMAGE_DOMAIN: 'imageDomainName',
-  SOCIAL_DOMAIN: 'socialDomainName',
-};
-const IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME = {
-  API_DOMAIN: 'isShowAPIDomainSelector',
-  IMAGE_DOMAIN: 'isShowImageDomainSelector',
-  SOCIAL_DOMAIN: 'isShowSocialDomainSelector',
+  LIVE: {
+    label: 'live',
+    color: appConfig.colors.status.success,
+  },
+  DEV: {
+    label: 'dev',
+    color: appConfig.colors.status.danger,
+  },
+  SPRINT_DEV: {
+    label: 'sprint_dev',
+    color: appConfig.colors.status.warning,
+  },
+  PRE_RELEASE: {
+    label: 'pre-release',
+    color: appConfig.colors.status.info,
+  },
+  UNKNOWN: {
+    label: 'unknown',
+    color: appConfig.colors.disabled,
+  },
 };
 
-const DOMAIN_STORAGE_KEY = 'dynamic_domain_2020_11_24-minh_nguyen';
-const IMAGE_DOMAIN_STORAGE_KEY = 'dynamic_image_domain_2020_10_12-minh_nguyen';
-const SOCIAL_DOMAIN_STORAGE_KEY =
-  'dynamic_social_domain_2020_10_12-minh_nguyen';
+const API_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+  {
+    title: SPRINT_DEV_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.SPRINT_DEV,
+  },
+  {
+    title: PRE_RELEASE_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.PRE_RELEASE,
+  },
+];
+const IMAGE_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_IMAGE_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_IMAGE_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+];
+const SOCIAL_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_SOCIAL_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_SOCIAL_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+];
+
+const DOMAIN_STORAGE_KEY = 'dynamic_domain_2021_10_12-minh_nguyen';
+const MAX_SAVED_DOMAIN = 5;
 const NOTES = [
-  `• Nhập "hs " để gõ nhanh "https://"`,
-  `• Nhập "ht " để gõ nhanh "http://"`,
+  `Nhập "hs " để gõ nhanh "https://".`,
+  `Nhập "ht " để gõ nhanh "http://".`,
+  `Nếu bỏ trống image/ social domain thì hệ thống sẽ tự lựa chọn dựa theo theo api domain đã chọn:\r\n- Api domain là live domain -> image/ social domain sử dụng live domain.\r\n- Api domain không phải live domain -> image/ social domain sử dụng dev domain.`,
   //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
 ];
 
@@ -147,19 +230,26 @@ const styles = StyleSheet.create({
   historyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: 10,
     marginHorizontal: -15,
     paddingHorizontal: 15,
   },
+  domainLocalStorageIcon: {
+    fontSize: 16,
+    marginRight: 10,
+  },
   domainTxt: {
     fontWeight: '300',
     letterSpacing: 0.5,
+    flex: 1,
   },
   icon: {
-    marginLeft: 15,
     fontSize: 16,
     color: appConfig.colors.primary,
+    marginLeft: 15,
+  },
+  iconDanger: {
+    color: appConfig.colors.status.danger,
   },
   comboBtnContainer: {
     flexDirection: 'row',
@@ -191,6 +281,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#888',
   },
+  domainItemSelectorWrapper: {
+    borderColor: appConfig.colors.border,
+  },
+  domainItemSelectorContainer: {
+    paddingVertical: 10,
+    marginHorizontal: 5,
+  },
 });
 
 class DomainSelector extends Component {
@@ -200,40 +297,28 @@ class DomainSelector extends Component {
   };
 
   state = {
-    [DOMAIN_TYPE.API_DOMAIN]: '',
-    domainNames: [],
-    [DOMAIN_TYPE.IMAGE_DOMAIN]: '',
-    [DOMAIN_TYPE.SOCIAL_DOMAIN]: '',
+    [DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName]: '',
+    localStorageDomains: [],
+    [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName]: '',
+    [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]: '',
     isSaveChecked: true,
-    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]: false,
-    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]: false,
-    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]: false,
+    [DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]: false,
+    [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]: false,
+    [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]: false,
   };
   refAPIDomainInput = React.createRef();
   refImageDomainInput = React.createRef();
   refSocialDomainInput = React.createRef();
-  apiDomainOptions = [
-    {title: LIVE_API_DOMAIN},
-    {title: DEV_API_DOMAIN},
-    {title: SPRINT_DEV_API_DOMAIN},
-    {title: PRE_RELEASE_API_DOMAIN},
-  ];
-  imageDomainOptions = [{title: DEV_IMAGE_DOMAIN}, {title: LIVE_IMAGE_DOMAIN}];
-  socialDomainOptions = [
-    {title: DEV_SOCIAL_DOMAIN},
-    {title: LIVE_SOCIAL_DOMAIN},
-  ];
 
   get isDisabled() {
-    return !this.state.domainName;
+    return !this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName];
   }
 
-  isDomainNameExisted(domainName = this.state.domainName) {
-    domainName = this.domainNameFormatted(domainName);
-    return this.state.domainNames.includes(domainName);
+  isDomainExisted(domain) {
+    return !!this.state.localStorageDomains.find((d) => equal(d, domain));
   }
 
-  domainNameFormatted(domainName = this.state.domainName) {
+  formatDomainName(domainName) {
     const lastChar = domainName.substring(domainName.length - 1);
     if (lastChar !== '/') {
       domainName += '/';
@@ -243,15 +328,19 @@ class DomainSelector extends Component {
   }
 
   componentDidMount() {
+    // AsyncStorage.removeItem(DOMAIN_STORAGE_KEY)
+    //   .then((res) => console.log('hjk', res))
+    //   .catch((ab) => console.log('adf', ab));
     this.loadDomain();
   }
 
   handleSelectAPIDomain = (key, domain) => {
+    this.closeDomainSelector();
     this.onChangeDomainName(key, domain.title);
   };
 
   async loadDomain() {
-    let domainNames = await AsyncStorage.getItem(
+    let localStorageDomains = await AsyncStorage.getItem(
       DOMAIN_STORAGE_KEY,
       (error, result) => {
         if (error) {
@@ -259,32 +348,58 @@ class DomainSelector extends Component {
         }
       },
     );
-    if (domainNames) {
-      domainNames = JSON.parse(domainNames);
+    if (localStorageDomains) {
+      localStorageDomains = JSON.parse(localStorageDomains);
+      if (Array.isArray(localStorageDomains)) {
+        const autoSelectedAPIDomainName =
+          localStorageDomains.find(
+            (domain) =>
+              domain.domainParamName ===
+              DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+          )?.title || '';
 
-      if (Array.isArray(domainNames)) {
-        const autoSelectedDomainName = domainNames[0];
-        this.setState({domainNames});
-        this.onChangeDomainName(autoSelectedDomainName);
+        this.setState({localStorageDomains});
+        this.onChangeDomainName(
+          DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+          autoSelectedAPIDomainName,
+        );
       }
     }
   }
 
-  saveDomain(domainName) {
-    let domainNames = this.state.domainNames;
-    domainNames.unshift(domainName);
-    domainNames = domainNames.splice(0, 3);
+  prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain) {
+    const isApiDomainExisted = this.isDomainExisted(apiDomain);
+    const isImageDomainExisted = imageDomain
+      ? this.isDomainExisted(imageDomain)
+      : true;
+    const isSocialDomainExisted = socialDomain
+      ? this.isDomainExisted(socialDomain)
+      : true;
 
-    this.setState({domainNames, domainName});
+    let localStorageDomains = [...this.state.localStorageDomains];
 
-    AsyncStorage.setItem(
-      DOMAIN_STORAGE_KEY,
-      JSON.stringify(domainNames),
-      (err) => {
-        console.log('%cerror_save_domain', 'color:red', err);
-      },
-    );
+    if (!isSocialDomainExisted) {
+      localStorageDomains.unshift(socialDomain);
+    }
+    if (!isImageDomainExisted) {
+      localStorageDomains.unshift(imageDomain);
+    }
+    if (!isApiDomainExisted) {
+      localStorageDomains.unshift(apiDomain);
+    }
+
+    localStorageDomains = localStorageDomains.splice(0, MAX_SAVED_DOMAIN);
+
+    this.saveDomain(localStorageDomains);
   }
+
+  saveDomain = (domains) => {
+    this.setState({localStorageDomains: domains});
+
+    AsyncStorage.setItem(DOMAIN_STORAGE_KEY, JSON.stringify(domains), (err) => {
+      err && console.log('%cerror_save_domain', 'color:red', err);
+    });
+  };
 
   onChangeDomainName(key, domainName = '') {
     const lastChar = domainName.substring(domainName.length - 1);
@@ -309,24 +424,84 @@ class DomainSelector extends Component {
 
   ignoreDomainChanging() {
     store.setIgnoreChangeDomain(true);
-    this.applyDomain(BaseAPI.apiDomain);
+    this.applyDomain(LIVE_API_DOMAIN);
   }
 
   changeDomain() {
     if (this.isDisabled) return;
     Keyboard.dismiss();
 
-    const domainName = this.domainNameFormatted();
+    const apiDomainName = this.formatDomainName(
+      this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName],
+    );
+    const isAPIDomainLive = apiDomainName === LIVE_API_DOMAIN;
+    const imageDomainName = this.state[
+      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName
+    ]
+      ? this.formatDomainName(
+          this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName],
+        )
+      : isAPIDomainLive
+      ? LIVE_IMAGE_DOMAIN
+      : DEV_IMAGE_DOMAIN;
+    const socialDomainName = this.state[
+      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
+    ]
+      ? this.formatDomainName(
+          this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName],
+        )
+      : isAPIDomainLive
+      ? LIVE_SOCIAL_DOMAIN
+      : DEV_SOCIAL_DOMAIN;
 
-    if (this.state.isSaveChecked && !this.isDomainNameExisted()) {
-      this.saveDomain(domainName);
+    const apiDomain = API_DOMAIN_OPTIONS.find(
+      (domain) => domain.title === apiDomainName,
+    ) || {
+      title: apiDomainName,
+      ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+      tag: DOMAIN_TYPE.UNKNOWN,
+    };
+
+    const imageDomain = this.state[
+      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName
+    ]
+      ? IMAGE_DOMAIN_OPTIONS.find(
+          (domain) => domain.title === imageDomainName,
+        ) || {
+          title: imageDomainName,
+          ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+          tag: DOMAIN_TYPE.UNKNOWN,
+        }
+      : undefined;
+
+    const socialDomain = this.state[
+      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
+    ]
+      ? SOCIAL_DOMAIN_OPTIONS.find(
+          (domain) => domain.title === socialDomainName,
+        ) || {
+          title: socialDomainName,
+          ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+          tag: DOMAIN_TYPE.UNKNOWN,
+        }
+      : undefined;
+
+    if (this.state.isSaveChecked) {
+      this.prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain);
     }
 
-    this.applyDomain(domainName);
+    this.applyDomain(apiDomainName, imageDomainName, socialDomainName);
   }
 
-  applyDomain(domainName) {
-    BaseAPI.updateAPIDomain = domainName;
+  applyDomain(apiDomainName, imageDomainName, socialDomainName) {
+    BaseAPI.updateAPIDomain = apiDomainName;
+    if (imageDomainName) {
+      BaseAPI.updateImageDomain = imageDomainName;
+    }
+    if (socialDomainName) {
+      BaseAPI.updateSocialDomain = socialDomainName;
+    }
+
     Actions.reset(appConfig.routes.sceneWrapper);
   }
 
@@ -336,32 +511,106 @@ class DomainSelector extends Component {
     }));
   }
 
-  closeAPISelector = () => {
+  getDomainTag = (domainParamName) => {
+    let domain,
+      listDomainOptions = [];
+    switch (domainParamName) {
+      case DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName:
+        listDomainOptions = API_DOMAIN_OPTIONS;
+        break;
+      case DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName:
+        listDomainOptions = IMAGE_DOMAIN_OPTIONS;
+        break;
+      case DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName:
+        listDomainOptions = SOCIAL_DOMAIN_OPTIONS;
+        break;
+    }
+    domain = this.state[domainParamName]
+      ? listDomainOptions.find(
+          (domain) =>
+            domain.title === this.state[domainParamName] ||
+            domain.title.slice(0, domain.title.length - 1) ===
+              this.state[domainParamName],
+        )
+      : undefined;
+
+    return (
+      domain?.tag ||
+      (this.state[domainParamName] ? DOMAIN_TYPE.UNKNOWN : undefined)
+    );
+  };
+
+  closeDomainSelector = () => {
     this.setState({
-      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]: false,
-      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]: false,
-      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]: false,
+      [DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]: false,
+      [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]: false,
+      [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]: false,
     });
   };
 
+  deleteDomainFromLocalStorage = (domain) => {
+    const localStorageDomains = [...this.state.localStorageDomains];
+    localStorageDomains.splice(
+      localStorageDomains.findIndex((d) => equal(d, domain)),
+      1,
+    );
+    this.saveDomain(localStorageDomains);
+  };
+
   renderHistoryItem() {
-    if (this.state.domainNames.length === 0) {
+    if (this.state.localStorageDomains.length === 0) {
       return <Text style={styles.noHistory}>Chưa nhập gì :)</Text>;
     }
-    return this.state.domainNames.map((domainName, index) => {
-      const isSelected = this.state.domainName === domainName;
+    return this.state.localStorageDomains.map((domain, index) => {
+      const isSelected = this.state[domain.domainParamName] === domain.title;
       const extraStyle = isSelected
         ? {
-            backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+            backgroundColor: hexToRgbA(
+              domain.color || appConfig.colors.primary,
+              0.1,
+            ),
           }
         : {};
+      const extraIconStyle = {
+        color: hexToRgbA(domain.color || appConfig.colors.primary, 0.6),
+      };
+
       return (
         <TouchableOpacity
           key={index}
-          onPress={() => this.onChangeDomainName(domainName)}>
+          onPress={() =>
+            this.onChangeDomainName(domain.domainParamName, domain.title)
+          }>
           <View style={[styles.historyContainer, extraStyle]}>
-            <Text style={styles.domainTxt}>{domainName}</Text>
-            {isSelected && <MaterialIcons name="check" style={styles.icon} />}
+            {!!domain.iconName && (
+              <MaterialIcons
+                name={domain.iconName}
+                style={[styles.domainLocalStorageIcon, extraIconStyle]}
+              />
+            )}
+            <Text style={styles.domainTxt}>{domain.title}</Text>
+            {!!domain?.tag && (
+              <DomainTag
+                label={domain.tag.label}
+                containerStyle={{
+                  backgroundColor: domain.tag.color,
+                }}
+              />
+            )}
+            {isSelected ? (
+              <MaterialIcons
+                name="check"
+                style={[styles.icon, extraIconStyle]}
+              />
+            ) : (
+              <TouchableOpacity
+                onPress={() => this.deleteDomainFromLocalStorage(domain)}>
+                <MaterialIcons
+                  name="delete"
+                  style={[styles.icon, styles.iconDanger]}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
       );
@@ -377,7 +626,7 @@ class DomainSelector extends Component {
           </View>
           <View style={styles.historyDescriptionContainer}>
             <Text style={styles.historyDescription}>
-              Chỉ lưu 3 kết quả gần nhất!
+              Chỉ lưu {MAX_SAVED_DOMAIN} kết quả gần nhất!
             </Text>
             <View style={styles.dash} />
           </View>
@@ -399,13 +648,40 @@ class DomainSelector extends Component {
           </View>
         </View>
         {NOTES.map((note, index) => (
-          <Text key={index} style={styles.note}>
-            {note}
-          </Text>
+          <Container key={index} row centerVertical={false}>
+            <Text style={styles.note}>•{` `}</Text>
+            <Text style={styles.note}>{note}</Text>
+          </Container>
         ))}
       </View>
     );
   }
+
+  renderDomainItemSelector = (domain, onPress, index, domains) => {
+    return (
+      <View
+        key={index}
+        style={[
+          styles.domainItemSelectorWrapper,
+          {
+            borderBottomWidth:
+              index !== domains.length - 1 ? appConfig.device.pixel : 0,
+          },
+        ]}>
+        <RNTouchableOpacity
+          onPress={onPress}
+          style={styles.domainItemSelectorContainer}>
+          <Container row centerVertical={false}>
+            <Text style={styles.domainTxt}>{domain.title}</Text>
+            <DomainTag
+              label={domain?.tag?.label}
+              containerStyle={{backgroundColor: domain?.tag?.color}}
+            />
+          </Container>
+        </RNTouchableOpacity>
+      </View>
+    );
+  };
 
   render() {
     return (
@@ -438,57 +714,96 @@ class DomainSelector extends Component {
 
                 <DomainInput
                   innerRef={this.refAPIDomainInput}
-                  value={this.state[DOMAIN_TYPE.API_DOMAIN]}
-                  placeholder="Nhập domain..."
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.API_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.API_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                  )}
+                  placeholder="api domain"
                   containerStyle={styles.domainInput}
                   onChangeText={(value) =>
-                    this.onChangeDomainName(DOMAIN_TYPE.API_DOMAIN, value)
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                      value,
+                    )
                   }
                   onSubmitEditing={this.changeDomain.bind(this)}
                   onClearText={() =>
-                    this.onChangeDomainName(DOMAIN_TYPE.API_DOMAIN, '')
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                      '',
+                    )
                   }
                   onPressShowMore={() =>
                     this.handleShowMoreAPIDomain(
-                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN,
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName,
                     )
                   }
                 />
 
                 <DomainInput
                   innerRef={this.refImageDomainInput}
-                  value={this.state[DOMAIN_TYPE.IMAGE_DOMAIN]}
-                  placeholder="Nhập image domain..."
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+                  )}
+                  placeholder="image domain (optional)"
                   containerStyle={styles.domainInput}
                   onChangeText={(value) =>
-                    this.onChangeDomainName(DOMAIN_TYPE.IMAGE_DOMAIN, value)
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+                      value,
+                    )
                   }
                   onSubmitEditing={this.changeDomain.bind(this)}
                   onClearText={() =>
-                    this.onChangeDomainName(DOMAIN_TYPE.IMAGE_DOMAIN, '')
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+                      '',
+                    )
                   }
                   onPressShowMore={() =>
                     this.handleShowMoreAPIDomain(
-                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN,
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName,
                     )
                   }
                 />
 
                 <DomainInput
                   innerRef={this.refSocialDomainInput}
-                  value={this.state[DOMAIN_TYPE.SOCIAL_DOMAIN]}
-                  placeholder="Nhập social domain..."
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                  )}
+                  placeholder="social domain (optional)"
                   containerStyle={styles.domainInput}
                   onChangeText={(value) =>
-                    this.onChangeDomainName(DOMAIN_TYPE.SOCIAL_DOMAIN, value)
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                      value,
+                    )
                   }
                   onSubmitEditing={this.changeDomain.bind(this)}
                   onClearText={() =>
-                    this.onChangeDomainName(DOMAIN_TYPE.SOCIAL_DOMAIN, '')
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                      '',
+                    )
                   }
                   onPressShowMore={() =>
                     this.handleShowMoreAPIDomain(
-                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN,
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName,
                     )
                   }
                 />
@@ -536,39 +851,46 @@ class DomainSelector extends Component {
 
         <AwesomeCombo
           parentRef={this.refAPIDomainInput}
-          data={this.apiDomainOptions}
-          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]}
+          data={API_DOMAIN_OPTIONS}
+          show={this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]}
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
-              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN,
+              DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
               domain,
             )
           }
-          onClose={this.closeAPISelector}
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
         />
         <AwesomeCombo
           parentRef={this.refImageDomainInput}
-          data={this.imageDomainOptions}
-          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]}
+          data={IMAGE_DOMAIN_OPTIONS}
+          show={
+            this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]
+          }
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
-              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN,
+              DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
               domain,
             )
           }
-          onClose={this.closeAPISelector}
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
         />
         <AwesomeCombo
           parentRef={this.refSocialDomainInput}
-          data={this.socialDomainOptions}
-          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]}
+          data={SOCIAL_DOMAIN_OPTIONS}
+          show={
+            this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]
+          }
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
-              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN,
+              DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
               domain,
             )
           }
-          onClose={this.closeAPISelector}
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
         />
       </>
     );

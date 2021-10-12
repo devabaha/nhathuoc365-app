@@ -603,9 +603,12 @@ class Store {
     this.ignoreChangeDomain = ignoreChangeDomain;
   }
 
-  @observable apiDomain = '';
-  @action setBaseAPIDomain(apiDomain) {
-    this.apiDomain = apiDomain;
+  @observable baseDomains = [];
+  @action setBaseDomains(domains) {
+    this.baseDomains = domains;
+  }
+  @action updateBaseDomain(index, domain) {
+    this.baseDomains[index] = domain;
   }
 
   @observable isUpdateOrders = false;
