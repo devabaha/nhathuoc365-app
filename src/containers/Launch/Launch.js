@@ -49,14 +49,14 @@ class Launch extends Component {
   };
 
   handleTestDevice(isTestDevice) {
-    if (
-      !store.ignoreChangeDomain &&
-      isTestDevice &&
-      BaseAPI.apiDomain === LIVE_API_DOMAIN
-    ) {
+    // if (
+    //   !store.ignoreChangeDomain &&
+    //   isTestDevice &&
+    //   BaseAPI.apiDomain === LIVE_API_DOMAIN
+    // ) {
       Actions.replace(appConfig.routes.domainSelector);
       return true;
-    }
+    // }
     return false;
   }
 

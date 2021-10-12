@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,38 +7,71 @@ import {
   Text,
   ScrollView,
   Keyboard,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import Button from '../../components/Button';
-import appConfig from 'app-config';
 import store from 'app-store';
-import BaseAPI from '../../network/API/BaseAPI';
+import appConfig from 'app-config';
+import BaseAPI, {
+  DEV_API_DOMAIN,
+  SPRINT_DEV_API_DOMAIN,
+  PRE_RELEASE_API_DOMAIN,
+  DEV_IMAGE_DOMAIN,
+  LIVE_IMAGE_DOMAIN,
+  DEV_SOCIAL_DOMAIN,
+  LIVE_SOCIAL_DOMAIN,
+  LIVE_API_DOMAIN,
+} from 'src/network/API/BaseAPI';
+
+import AwesomeCombo from 'src/components/AwesomeCombo';
+import Button from 'src/components/Button';
+import DomainInput from './components/DomainInput';
+
+const DOMAIN_TYPE = {
+  API_DOMAIN: 'domainName',
+  IMAGE_DOMAIN: 'imageDomainName',
+  SOCIAL_DOMAIN: 'socialDomainName',
+};
+const IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME = {
+  API_DOMAIN: 'isShowAPIDomainSelector',
+  IMAGE_DOMAIN: 'isShowImageDomainSelector',
+  SOCIAL_DOMAIN: 'isShowSocialDomainSelector',
+};
+
+const DOMAIN_STORAGE_KEY = 'dynamic_domain_2020_11_24-minh_nguyen';
+const IMAGE_DOMAIN_STORAGE_KEY = 'dynamic_image_domain_2020_10_12-minh_nguyen';
+const SOCIAL_DOMAIN_STORAGE_KEY =
+  'dynamic_social_domain_2020_10_12-minh_nguyen';
+const NOTES = [
+  `• Nhập "hs " để gõ nhanh "https://"`,
+  `• Nhập "ht " để gõ nhanh "http://"`,
+  //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
+];
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   iconBackWrapper: {
     // left: 10,
     position: 'absolute',
-    zIndex: 9999
+    zIndex: 9999,
   },
   iconBackContainer: {
-    padding: 15
+    padding: 15,
   },
   iconBack: {
     fontSize: 30,
-    color: '#555'
+    color: '#555',
   },
   mainContent: {
     flex: 1,
-    padding: 15
+    padding: 15,
   },
   heading: {
     textAlign: 'center',
@@ -48,74 +81,59 @@ const styles = StyleSheet.create({
     marginTop: '7%',
     letterSpacing: 8,
     left: 4,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   subHeading: {
     color: '#888',
     textAlign: 'center',
     marginTop: 5,
     marginBottom: '7%',
-    textTransform: 'lowercase'
+    textTransform: 'lowercase',
   },
-  textInput: {
-    paddingVertical: appConfig.device.isIOS ? 15 : 7,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: appConfig.colors.primary,
-    backgroundColor: '#fafafa',
-    flex: 1
-  },
-  closeIconContainer: {
-    position: 'absolute',
-    right: 0,
-    marginHorizontal: 10,
-    padding: 5,
-    borderRadius: 15,
-    backgroundColor: '#ededed'
+  domainInput: {
+    marginBottom: 10,
   },
   saveContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
     marginBottom: 5,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   saveTxt: {
-    color: '#666'
+    color: '#666',
   },
   saveIconContainer: {
-    marginLeft: 10
+    marginLeft: 10,
   },
   saveIcon: {
     fontSize: 20,
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
   },
   historyHeadingContainer: {
     marginTop: 10,
-    marginBottom: 15
+    marginBottom: 15,
   },
   historyDescriptionContainer: {
     marginTop: 5,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   historyDescription: {
     fontSize: 12,
     fontWeight: '300',
-    marginRight: 15
+    marginRight: 15,
   },
   noHistory: {
     textAlign: 'right',
     fontStyle: 'italic',
     marginRight: 15,
     color: '#888',
-    letterSpacing: 1.3
+    letterSpacing: 1.3,
   },
   dash: {
     flex: 1,
     height: 0.5,
-    backgroundColor: '#242424'
+    backgroundColor: '#242424',
   },
   historyHeading: {
     color: '#555',
@@ -124,7 +142,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textTransform: 'uppercase',
     letterSpacing: 2.2,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   historyContainer: {
     flexDirection: 'row',
@@ -132,62 +150,79 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     marginHorizontal: -15,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   domainTxt: {
     fontWeight: '300',
-    letterSpacing: 0.5
+    letterSpacing: 0.5,
   },
   icon: {
     marginLeft: 15,
     fontSize: 16,
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
   },
   comboBtnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    ...elevationShadowStyle(24, 0, 0, 0.5, appConfig.colors.primary)
+    ...elevationShadowStyle(24, 0, 0, 0.5, appConfig.colors.primary),
   },
   ignoreContainer: {
     width: undefined,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   ignoreBtn: {
     width: undefined,
     paddingHorizontal: 10,
     marginRight: -15,
-    backgroundColor: '#999'
+    backgroundColor: '#999',
   },
   btnContainer: {
     paddingVertical: 15,
-    flex: 1
+    flex: 1,
   },
   noteContainer: {
-    marginTop: 10
+    marginTop: 10,
   },
   noteHeading: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   note: {
     marginTop: 5,
-    color: '#888'
-  }
+    color: '#888',
+  },
 });
 
-const DOMAIN_STORAGE_KEY = 'dynamic_domain_2020_11_24-minh_nguyen';
-const NOTES = [
-  `• Nhập "hs " để gõ nhanh "https://"`,
-  `• Nhập "ht " để gõ nhanh "http://"`
-  //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
-];
-
 class DomainSelector extends Component {
-  state = {
-    domainName: '',
-    domainNames: [],
-    isSaveChecked: true
+  getShowSelectorParamName = (domainType) => {
+    domainType = domainType.charAt(0).toUpperCase() + domainType.slice(1);
+    return `isShow${domainType}Selector`;
   };
+
+  state = {
+    [DOMAIN_TYPE.API_DOMAIN]: '',
+    domainNames: [],
+    [DOMAIN_TYPE.IMAGE_DOMAIN]: '',
+    [DOMAIN_TYPE.SOCIAL_DOMAIN]: '',
+    isSaveChecked: true,
+    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]: false,
+    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]: false,
+    [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]: false,
+  };
+  refAPIDomainInput = React.createRef();
+  refImageDomainInput = React.createRef();
+  refSocialDomainInput = React.createRef();
+  apiDomainOptions = [
+    {title: LIVE_API_DOMAIN},
+    {title: DEV_API_DOMAIN},
+    {title: SPRINT_DEV_API_DOMAIN},
+    {title: PRE_RELEASE_API_DOMAIN},
+  ];
+  imageDomainOptions = [{title: DEV_IMAGE_DOMAIN}, {title: LIVE_IMAGE_DOMAIN}];
+  socialDomainOptions = [
+    {title: DEV_SOCIAL_DOMAIN},
+    {title: LIVE_SOCIAL_DOMAIN},
+  ];
 
   get isDisabled() {
     return !this.state.domainName;
@@ -211,6 +246,10 @@ class DomainSelector extends Component {
     this.loadDomain();
   }
 
+  handleSelectAPIDomain = (key, domain) => {
+    this.onChangeDomainName(key, domain.title);
+  };
+
   async loadDomain() {
     let domainNames = await AsyncStorage.getItem(
       DOMAIN_STORAGE_KEY,
@@ -218,14 +257,14 @@ class DomainSelector extends Component {
         if (error) {
           console.log('%cerror_load_domain', 'color:red', error);
         }
-      }
+      },
     );
     if (domainNames) {
       domainNames = JSON.parse(domainNames);
 
       if (Array.isArray(domainNames)) {
         const autoSelectedDomainName = domainNames[0];
-        this.setState({ domainNames });
+        this.setState({domainNames});
         this.onChangeDomainName(autoSelectedDomainName);
       }
     }
@@ -236,18 +275,18 @@ class DomainSelector extends Component {
     domainNames.unshift(domainName);
     domainNames = domainNames.splice(0, 3);
 
-    this.setState({ domainNames, domainName });
+    this.setState({domainNames, domainName});
 
     AsyncStorage.setItem(
       DOMAIN_STORAGE_KEY,
       JSON.stringify(domainNames),
-      err => {
+      (err) => {
         console.log('%cerror_save_domain', 'color:red', err);
-      }
+      },
     );
   }
 
-  onChangeDomainName(domainName = '') {
+  onChangeDomainName(key, domainName = '') {
     const lastChar = domainName.substring(domainName.length - 1);
     if (lastChar === ' ') {
       if (this.state.domainName.toLocaleLowerCase() === 'ht') {
@@ -258,9 +297,15 @@ class DomainSelector extends Component {
     }
 
     this.setState({
-      domainName
+      [key]: domainName,
     });
   }
+
+  handleShowMoreAPIDomain = (key) => {
+    this.setState((prevState) => ({
+      [key]: !prevState[key],
+    }));
+  };
 
   ignoreDomainChanging() {
     store.setIgnoreChangeDomain(true);
@@ -286,10 +331,18 @@ class DomainSelector extends Component {
   }
 
   checkSave() {
-    this.setState(prevState => ({
-      isSaveChecked: !prevState.isSaveChecked
+    this.setState((prevState) => ({
+      isSaveChecked: !prevState.isSaveChecked,
     }));
   }
+
+  closeAPISelector = () => {
+    this.setState({
+      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]: false,
+      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]: false,
+      [IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]: false,
+    });
+  };
 
   renderHistoryItem() {
     if (this.state.domainNames.length === 0) {
@@ -299,17 +352,16 @@ class DomainSelector extends Component {
       const isSelected = this.state.domainName === domainName;
       const extraStyle = isSelected
         ? {
-            backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1)
+            backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
           }
         : {};
       return (
         <TouchableOpacity
           key={index}
-          onPress={() => this.onChangeDomainName(domainName)}
-        >
+          onPress={() => this.onChangeDomainName(domainName)}>
           <View style={[styles.historyContainer, extraStyle]}>
             <Text style={styles.domainTxt}>{domainName}</Text>
-            {isSelected && <Icon name="check" style={styles.icon} />}
+            {isSelected && <MaterialIcons name="check" style={styles.icon} />}
           </View>
         </TouchableOpacity>
       );
@@ -357,91 +409,168 @@ class DomainSelector extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {this.props.back && (
-          <SafeAreaView style={styles.iconBackWrapper}>
-            <TouchableOpacity
-              style={styles.iconBackContainer}
-              onPress={Actions.pop}
-            >
-              <Icon name="keyboard-backspace" style={styles.iconBack} />
-            </TouchableOpacity>
-          </SafeAreaView>
-        )}
+      <>
+        <View style={styles.container}>
+          {this.props.back && (
+            <SafeAreaView style={styles.iconBackWrapper}>
+              <TouchableOpacity
+                style={styles.iconBackContainer}
+                onPress={Actions.pop}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  style={styles.iconBack}
+                />
+              </TouchableOpacity>
+            </SafeAreaView>
+          )}
 
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive"
-          bounces={false}
-          contentContainerStyle={{ flexGrow: 1 }}
-        >
-          <SafeAreaView style={styles.container}>
-            <View style={styles.mainContent}>
-              <Text style={styles.heading}>Domains</Text>
-              <Text style={styles.subHeading}>
-                Change API - change your life
-              </Text>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            bounces={false}
+            contentContainerStyle={{flexGrow: 1}}>
+            <SafeAreaView style={styles.container}>
+              <View style={styles.mainContent}>
+                <Text style={styles.heading}>Domains</Text>
+                <Text style={styles.subHeading}>
+                  Change API - change your life
+                </Text>
 
-              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                <TextInput
-                  style={styles.textInput}
-                  onChangeText={this.onChangeDomainName.bind(this)}
-                  onSubmitEditing={this.changeDomain.bind(this)}
-                  value={this.state.domainName}
+                <DomainInput
+                  innerRef={this.refAPIDomainInput}
+                  value={this.state[DOMAIN_TYPE.API_DOMAIN]}
                   placeholder="Nhập domain..."
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(DOMAIN_TYPE.API_DOMAIN, value)
+                  }
+                  onSubmitEditing={this.changeDomain.bind(this)}
+                  onClearText={() =>
+                    this.onChangeDomainName(DOMAIN_TYPE.API_DOMAIN, '')
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN,
+                    )
+                  }
                 />
 
-                {!this.isDisabled && (
-                  <TouchableOpacity
-                    onPress={() => this.onChangeDomainName()}
-                    style={styles.closeIconContainer}
-                  >
-                    <Icon name="close" />
-                  </TouchableOpacity>
-                )}
+                <DomainInput
+                  innerRef={this.refImageDomainInput}
+                  value={this.state[DOMAIN_TYPE.IMAGE_DOMAIN]}
+                  placeholder="Nhập image domain..."
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(DOMAIN_TYPE.IMAGE_DOMAIN, value)
+                  }
+                  onSubmitEditing={this.changeDomain.bind(this)}
+                  onClearText={() =>
+                    this.onChangeDomainName(DOMAIN_TYPE.IMAGE_DOMAIN, '')
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN,
+                    )
+                  }
+                />
+
+                <DomainInput
+                  innerRef={this.refSocialDomainInput}
+                  value={this.state[DOMAIN_TYPE.SOCIAL_DOMAIN]}
+                  placeholder="Nhập social domain..."
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(DOMAIN_TYPE.SOCIAL_DOMAIN, value)
+                  }
+                  onSubmitEditing={this.changeDomain.bind(this)}
+                  onClearText={() =>
+                    this.onChangeDomainName(DOMAIN_TYPE.SOCIAL_DOMAIN, '')
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN,
+                    )
+                  }
+                />
+
+                <TouchableOpacity
+                  onPress={this.checkSave.bind(this)}
+                  style={styles.saveContainer}>
+                  <Text style={styles.saveTxt}>Lưu lại nhé?</Text>
+                  <View style={styles.saveIconContainer}>
+                    {this.state.isSaveChecked ? (
+                      <MaterialIcons name="check-box" style={styles.saveIcon} />
+                    ) : (
+                      <MaterialIcons
+                        name="check-box-outline-blank"
+                        style={styles.saveIcon}
+                      />
+                    )}
+                  </View>
+                </TouchableOpacity>
+
+                <Text>{this.state.suggestedDomain}</Text>
+
+                {this.renderHistory()}
+                {this.renderNote()}
               </View>
+            </SafeAreaView>
+          </ScrollView>
 
-              <TouchableOpacity
-                onPress={this.checkSave.bind(this)}
-                style={styles.saveContainer}
-              >
-                <Text style={styles.saveTxt}>Lưu lại nhé?</Text>
-                <View style={styles.saveIconContainer}>
-                  {this.state.isSaveChecked ? (
-                    <Icon name="check-box" style={styles.saveIcon} />
-                  ) : (
-                    <Icon
-                      name="check-box-outline-blank"
-                      style={styles.saveIcon}
-                    />
-                  )}
-                </View>
-              </TouchableOpacity>
-
-              <Text>{this.state.suggestedDomain}</Text>
-
-              {this.renderHistory()}
-              {this.renderNote()}
-            </View>
-          </SafeAreaView>
-        </ScrollView>
-
-        <View style={styles.comboBtnContainer}>
-          <Button
-            containerStyle={styles.ignoreContainer}
-            btnContainerStyle={styles.ignoreBtn}
-            title="Bỏ qua"
-            onPress={this.ignoreDomainChanging.bind(this)}
-          />
-          <Button
-            containerStyle={styles.btnContainer}
-            title="Thay đổi"
-            disabled={this.isDisabled}
-            onPress={this.changeDomain.bind(this)}
-          />
+          <View style={styles.comboBtnContainer}>
+            <Button
+              containerStyle={styles.ignoreContainer}
+              btnContainerStyle={styles.ignoreBtn}
+              title="Bỏ qua"
+              onPress={this.ignoreDomainChanging.bind(this)}
+            />
+            <Button
+              containerStyle={styles.btnContainer}
+              title="Thay đổi"
+              disabled={this.isDisabled}
+              onPress={this.changeDomain.bind(this)}
+            />
+          </View>
+          {appConfig.device.isIOS && <KeyboardSpacer />}
         </View>
-        {appConfig.device.isIOS && <KeyboardSpacer />}
-      </View>
+
+        <AwesomeCombo
+          parentRef={this.refAPIDomainInput}
+          data={this.apiDomainOptions}
+          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN]}
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.API_DOMAIN,
+              domain,
+            )
+          }
+          onClose={this.closeAPISelector}
+        />
+        <AwesomeCombo
+          parentRef={this.refImageDomainInput}
+          data={this.imageDomainOptions}
+          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN]}
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.IMAGE_DOMAIN,
+              domain,
+            )
+          }
+          onClose={this.closeAPISelector}
+        />
+        <AwesomeCombo
+          parentRef={this.refSocialDomainInput}
+          data={this.socialDomainOptions}
+          show={this.state[IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN]}
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              IS_SHOW_DOMAIN_SELECTOR_PARAM_NAME.SOCIAL_DOMAIN,
+              domain,
+            )
+          }
+          onClose={this.closeAPISelector}
+        />
+      </>
     );
   }
 }
