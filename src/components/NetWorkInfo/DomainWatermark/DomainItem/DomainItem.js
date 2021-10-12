@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Animated, {Easing, useValue} from 'react-native-reanimated';
 
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -11,13 +11,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'rgba(0,0,0,1)',
     borderRadius: 10,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
     opacity: 0.2,
+    maxHeight: CONTAINER_HEIGHT,
+  },
+  contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    maxHeight: CONTAINER_HEIGHT,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
   },
   label: {
     letterSpacing: 1,
@@ -74,15 +76,18 @@ const DomainItem = ({
         },
         containerStyle,
       ]}>
-      <Text style={styles.label}>{title}</Text>
-      {!!onPress && (
-        <TouchableOpacity
-          hitSlop={HIT_SLOP}
-          style={styles.iconContainer}
-          onPress={onPress}>
-          <AntDesignIcon name={iconName} style={styles.label} />
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        hitSlop={HIT_SLOP}
+        disabled={!onPress}
+        style={styles.contentContainer}
+        onPress={onPress}>
+        <Text style={styles.label}>{title}</Text>
+        {!!onPress && (
+          <View style={styles.iconContainer}>
+            <AntDesignIcon name={iconName} style={styles.label} />
+          </View>
+        )}
+      </TouchableOpacity>
     </Animated.View>
   );
 };
