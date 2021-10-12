@@ -248,8 +248,8 @@ const styles = StyleSheet.create({
     color: appConfig.colors.primary,
     marginLeft: 15,
   },
-  iconDanger: {
-    color: appConfig.colors.status.danger,
+  iconDelete: {
+    color: appConfig.colors.status.other,
   },
   comboBtnContainer: {
     flexDirection: 'row',
@@ -328,10 +328,8 @@ class DomainSelector extends Component {
   }
 
   componentDidMount() {
-    // AsyncStorage.removeItem(DOMAIN_STORAGE_KEY)
-    //   .then((res) => console.log('hjk', res))
-    //   .catch((ab) => console.log('adf', ab));
     this.loadDomain();
+    store.setIgnoreChangeDomain(false);
   }
 
   handleSelectAPIDomain = (key, domain) => {
@@ -486,13 +484,8 @@ class DomainSelector extends Component {
         }
       : undefined;
 
-    if (
-      this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName] ||
-      this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]
-    ) {
-      store.setIgnoreChangeDomain(true);
-    }
-    
+    store.setIgnoreChangeDomain(true);
+
     if (this.state.isSaveChecked) {
       this.prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain);
     }
@@ -614,7 +607,7 @@ class DomainSelector extends Component {
                 onPress={() => this.deleteDomainFromLocalStorage(domain)}>
                 <MaterialIcons
                   name="delete"
-                  style={[styles.icon, styles.iconDanger]}
+                  style={[styles.icon, styles.iconDelete]}
                 />
               </TouchableOpacity>
             )}
