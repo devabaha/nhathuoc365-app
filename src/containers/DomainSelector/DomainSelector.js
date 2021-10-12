@@ -486,6 +486,13 @@ class DomainSelector extends Component {
         }
       : undefined;
 
+    if (
+      this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName] ||
+      this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]
+    ) {
+      store.setIgnoreChangeDomain(true);
+    }
+    
     if (this.state.isSaveChecked) {
       this.prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain);
     }
