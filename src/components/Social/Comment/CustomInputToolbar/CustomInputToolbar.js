@@ -191,12 +191,13 @@ class CustomInputToolbar extends Component {
   render() {
     const {t} = this.props;
     const replyingName = this.props.replyingName;
+    const replyingUserId = this.props.replyingUserId;
     const replyingMentionName = this.props.replyingMentionName;
     const previewImages =
       !!this.props.previewImages?.length && this.props.previewImages;
-    const hasReplyingContent = replyingName || previewImages;
+    const hasReplyingContent = replyingUserId || previewImages;
     const top =
-      (!!replyingName ? -39 : 0) -
+      (!!replyingUserId ? -39 : 0) -
       (!!previewImages ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
     return (
@@ -214,7 +215,7 @@ class CustomInputToolbar extends Component {
                     centerVertical={false}>
                     <View style={styles.separator} />
                     <View style={styles.mainContentContainer}>
-                      {!!replyingName && (
+                      {!!replyingUserId && (
                         <>
                           <Container row style={styles.replyingContainer}>
                             <Text

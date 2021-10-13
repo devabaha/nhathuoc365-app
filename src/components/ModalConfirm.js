@@ -82,6 +82,7 @@ const ModalConfirm = ({
       type={type}
       isConfirm={isConfirm}
       yesTitle={yesTitle}
+      noTitle={noTitle}
       titleStyle={titleStyle}
       noConfirm={handleNoConfirm}
       yesConfirm={handleYesConfirm}

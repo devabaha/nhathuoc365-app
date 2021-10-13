@@ -81,6 +81,7 @@ class TickidChat extends Component {
     showAllUserName: PropTypes.bool,
     showMainUserName: PropTypes.bool,
     useModalGallery: PropTypes.bool,
+    blurWhenPressOutside: PropTypes.bool,
     listHeaderComponent: PropTypes.node,
     listFooterComponent: PropTypes.node,
     renderEmpty: PropTypes.any,
@@ -138,6 +139,7 @@ class TickidChat extends Component {
     showAllUserName: false,
     showMainUserName: false,
     useModalGallery: !isIos,
+    blurWhenPressOutside: true,
     listFooterComponent: null,
     listHeaderComponent: null,
     renderEmpty: null,
@@ -203,6 +205,7 @@ class TickidChat extends Component {
     isFullscreenGestureMode: false,
   };
 
+  refGiftedChat = React.createRef();
   refMasterToolBar = React.createRef();
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
@@ -267,6 +270,7 @@ class TickidChat extends Component {
         this.props.renderMessageFullControl ||
       nextProps.isMultipleImagePicker !== this.props.isMultipleImagePicker ||
       nextProps.alwaysShowInput !== this.props.alwaysShowInput ||
+      nextProps.blurWhenPressOutside !== this.props.blurWhenPressOutside ||
       nextProps.pinList !== this.props.pinList ||
       nextProps.pinNotify !== this.props.pinNotify ||
       nextProps.pinListNotify !== this.props.pinListNotify ||
@@ -290,7 +294,7 @@ class TickidChat extends Component {
   }
 
   componentDidMount() {
-    this.props.refGiftedChat(GiftedChat);
+    this.props.refGiftedChat(GiftedChat, this.refGiftedChat.current);
     //merge with masterToolBar
     if (this.refMasterToolBar.current) {
       const refsImageGallery = this.refMasterToolBar.current.getComponentRef(
@@ -694,14 +698,14 @@ class TickidChat extends Component {
 
   onListViewPress = (e) => {
     if (
-      this.state.selectedType !== COMPONENT_TYPE._NONE ||
-      this.state.editable
+      this.props.blurWhenPressOutside &&
+      (this.state.selectedType !== COMPONENT_TYPE._NONE || this.state.editable)
     ) {
       this.collapseComposer();
     }
   };
 
-  collapseComposer() {
+  collapseComposer = () => {
     this.setState({
       editable: !!this.state.text,
       showBackBtn: false,
@@ -710,7 +714,7 @@ class TickidChat extends Component {
       selectedType: COMPONENT_TYPE._NONE,
     });
     this.handleBlur();
-  }
+  };
 
   handleContainerLayout = (e) => {
     if (!this.getLayoutDidMount) {
@@ -816,6 +820,10 @@ class TickidChat extends Component {
   };
 
   handleBubbleLongPress = (context, message) => {
+    if (typeof this.props.onBubbleLongPress === 'function') {
+      this.props.onBubbleLongPress(context, message);
+      return;
+    }
     if (message.text) {
       this.handlePressComposerButton(this.state.selectedType);
       Actions.push(appConfig.routes.modalActionSheet, {
@@ -952,6 +960,11 @@ class TickidChat extends Component {
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}
         btnWidth={BTN_IMAGE_WIDTH}
+        onBlurInput={() => {
+          if (this.state.selectedType === COMPONENT_TYPE.EMOJI) {
+            this.collapseComposer();
+          }
+        }}
         {...props}
         editable={this.state.editable}
         onTyping={this.onTyping}
@@ -1342,6 +1355,7 @@ class TickidChat extends Component {
                 },
               ]}>
               <GiftedChat
+                ref={this.refGiftedChat}
                 renderAvatar={this.renderAvatar}
                 renderDay={this.renderDay}
                 renderMessage={this.renderMessage}

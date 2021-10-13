@@ -38,6 +38,7 @@ import TextPressable from 'src/components/TextPressable';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {RatingAccessory} from './Accessory';
 import {Container} from 'src/components/Layout';
+import {Actions} from 'react-native-router-flux';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -101,6 +102,7 @@ class Comment extends Component {
     user_name: store.user_info?.name,
     user_avatar: store.user_info?.img,
     accessoryTypes: [],
+    disableEditComment: false,
   };
 
   state = {
@@ -112,6 +114,7 @@ class Comment extends Component {
     previewImages: [],
     isUpdateForRendering: false,
     loading: true,
+    isEditingComment: false,
   };
 
   tempID = 0;
@@ -120,6 +123,7 @@ class Comment extends Component {
   offset = 0;
   loadMore = false;
   unmounted = false;
+  autoFocus = this.props.autoFocus;
   currentScrollPositionY = 0;
 
   refListMessages = null;
@@ -139,11 +143,30 @@ class Comment extends Component {
   getMessagesAPI = new APIRequest();
   getCommentsAPI = new APIRequest();
   postCommentAPI = new APIRequest();
+  deleteCommentAPI = new APIRequest();
   likeRequest = new APIRequest();
-  requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
+  requests = [
+    this.getCommentsAPI,
+    this.postCommentAPI,
+    this.deleteCommentAPI,
+    this.likeRequest,
+  ];
   uploadURL = APIHandler.url_user_upload_image();
 
   ratingValue = 0;
+
+  replyTitle = this.props.t('social:reply');
+  editTitle = this.props.t('edit');
+  copyTitle = this.props.t('copy');
+  deleteTitle = this.props.t('delete');
+  cancelTitle = this.props.t('cancel');
+  actionOptionForLongPressMessage = [
+    this.replyTitle,
+    this.editTitle,
+    this.copyTitle,
+    this.deleteTitle,
+    this.cancelTitle,
+  ];
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -176,6 +199,10 @@ class Comment extends Component {
     this.giftedChatExtraProps.renderCustomView = this.renderUserName;
     this.giftedChatExtraProps.scrollToBottom = false;
     this.giftedChatExtraProps.maxComposerHeight = 60;
+    this.giftedChatExtraProps.minInputToolbarHeight = this.state
+      .isEditingComment
+      ? 0
+      : undefined;
 
     return this.giftedChatExtraProps;
   }
@@ -264,8 +291,13 @@ class Comment extends Component {
       console.log('get_comments', e);
     } finally {
       this.isLoadFirstTime = false;
+      this.autoFocus = false;
+
       if (!this.unmounted) {
-        this.setStater({loading: false});
+        if (this.state.isEditingComment) {
+          this.collapseComposer();
+        }
+        this.setStater({loading: false, isEditingComment: false});
       }
     }
   };
@@ -307,7 +339,7 @@ class Comment extends Component {
     let newMessages = [...this.state.messages];
     if (!this.state.replyingComment.id) {
       messages.forEach((message) => {
-        if (message.user._id !== this.state.user_id || isAppendDirectly) {
+        if (message.user._id !== this.state.user?.user_id || isAppendDirectly) {
           newMessages.unshift(message);
         }
       });
@@ -454,20 +486,30 @@ class Comment extends Component {
     return [formattedMessage];
   }
 
-  updateCommentData = (id, comment, error = false) => {
+  updateCommentData = (id, comment, error, isEditing) => {
     const messages = [...this.state.messages];
     const index = messages.findIndex((m) => m.id === id);
     if (index !== -1) {
-      messages[index] = comment;
-      messages[index].error = error;
+      if (comment !== undefined) {
+        messages[index] = comment;
+      }
+
+      if (typeof error === 'boolean') {
+        messages[index].error = error;
+      }
+
+      if (typeof isEditing === 'boolean') {
+        messages[index].isEditing = isEditing;
+      }
+
       this.setStater({
         messages,
       });
     }
   };
 
-  _onSend = async (message) => {
-    if (!!message.image_info && !message.image) {
+  _onSend = async (message, commentId) => {
+    if (!!message.image_info && !message.image && !commentId) {
       this.updateCommentData(message.id, message, true);
       return;
     }
@@ -487,13 +529,13 @@ class Comment extends Component {
       data.image_width = message.image_info.width;
       data.image_height = message.image_info.height;
     }
+    let clientComment = message;
+    let error = true;
 
     try {
-      this.postCommentAPI.data = APIHandler.social_comment(data);
+      this.postCommentAPI.data = APIHandler.social_comment(data, commentId);
       const response = await this.postCommentAPI.promise();
       console.log(response, message, data);
-      let clientComment = message;
-      let error = true;
 
       this.collapseRating();
 
@@ -527,17 +569,17 @@ class Comment extends Component {
           message: this.props.t('common:api.error.message'),
         });
       }
-
-      this.updateCommentData(message.id, clientComment, error);
     } catch (e) {
       console.log('social_comment', e);
-      this.updateCommentData(message.id, message, true);
+      clientComment = message;
+      error = true;
 
       flashShowMessage({
         type: 'danger',
         message: this.props.t('common:api.error.message'),
       });
     } finally {
+      this.updateCommentData(message.id, clientComment, error);
     }
   };
 
@@ -566,7 +608,7 @@ class Comment extends Component {
     }
   };
 
-  listChatScrollToItemById(ref) {
+  listChatScrollToItemById(ref, timeout = 0) {
     if (this.refListMessages) {
       if (!ref) return;
 
@@ -580,9 +622,14 @@ class Comment extends Component {
           if (offsetY <= extraOffset && this.currentScrollPositionY === 0) {
             setTimeout(() => this.handleMomentumScrollEnd(), 200);
           } else {
-            this.refListMessages.scrollToOffset({
-              offset: offsetY - extraOffset,
-            });
+            setTimeout(
+              () =>
+                this.refListMessages &&
+                this.refListMessages.scrollToOffset({
+                  offset: offsetY - extraOffset,
+                }),
+              timeout,
+            );
           }
         },
       );
@@ -592,6 +639,18 @@ class Comment extends Component {
   handlePressGallery = () => {
     if (this.refTickidChat) {
       this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.GALLERY);
+    }
+  };
+
+  collapseComposer = () => {
+    if (this.refTickidChat && this.state.isKeyboardShowing) {
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
+    }
+  };
+
+  showComposer = () => {
+    if (this.refTickidChat && !this.state.isKeyboardShowing) {
+      this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
     }
   };
 
@@ -625,6 +684,8 @@ class Comment extends Component {
   };
 
   handleReply = (refComment, refContentComment, comment) => {
+    if (this.unmounted) return;
+
     this.isPressingReply = true;
     this.setStater(
       {
@@ -634,7 +695,7 @@ class Comment extends Component {
         this.refReplyContentMessage = refContentComment;
         if (this.refTickidChat) {
           let timeout = 0;
-          if (!this.state.isKeyboardShowing) {
+          if (!this.state.isKeyboardShowing && this.refTickidChat) {
             this.refReplyMessage = refComment;
             this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
             timeout = 100;
@@ -661,27 +722,7 @@ class Comment extends Component {
       !this.isReplyingYourSelf() &&
       !this.refTickidChat?.state?.text
     ) {
-      this.setStater({replyingComment: {}});
-    }
-  };
-
-  handleBubbleLongPress = (context, message) => {
-    if (message.content) {
-      const options = [this.props.t('copy'), this.props.t('cancel')];
-      const cancelButtonIndex = options.length - 1;
-      context.actionSheet().showActionSheetWithOptions(
-        {
-          options,
-          cancelButtonIndex,
-        },
-        (buttonIndex) => {
-          switch (buttonIndex) {
-            case 0:
-              Clipboard.setString(message.content);
-              break;
-          }
-        },
-      );
+      this.handleCancelReplying();
     }
   };
 
@@ -708,6 +749,174 @@ class Comment extends Component {
     this.ratingValue = ratingValue;
   };
 
+  getLongPressActionOptions = (message) => {
+    const options = [...this.actionOptionForLongPressMessage];
+    const removeOptions = new Map();
+    if (!message.text) {
+      removeOptions.set(this.copyTitle, this.copyTitle);
+    }
+
+    if (message.user_id !== this.state.user?.user_id) {
+      removeOptions.set(this.editTitle, this.editTitle);
+      removeOptions.set(this.deleteTitle, this.deleteTitle);
+    }
+
+    if (this.props.disableEditComment) {
+      removeOptions.set(this.editTitle, this.editTitle);
+    }
+
+    removeOptions.forEach((option) =>
+      options.splice(options.indexOf(option), 1),
+    );
+
+    return [options, options.indexOf(this.deleteTitle)];
+  };
+
+  handleBubbleLongPress = (context, message, refMessage, refContentMessage) => {
+    const isKeyboardShowing = this.state.isKeyboardShowing;
+    const [options, destructiveButtonIndex] = this.getLongPressActionOptions(
+      message,
+    );
+    if (options.length === 1 && options.includes(this.cancelTitle)) {
+      return;
+    }
+    this.collapseComposer();
+
+    Actions.push(appConfig.routes.modalActionSheet, {
+      options,
+      destructiveButtonIndex,
+      onPress: async (buttonIndex) => {
+        const isReshowKeyboard = await this.handleBubbleMessageLongPress(
+          options,
+          buttonIndex,
+          message,
+          refMessage,
+          refContentMessage,
+          isKeyboardShowing,
+        );
+        if (isKeyboardShowing || isReshowKeyboard) {
+          this.showComposer();
+        }
+      },
+    });
+  };
+
+  handleBubbleMessageLongPress = async (
+    options = this.actionOptionForLongPressMessage,
+    buttonIndex,
+    message,
+    refMessage,
+    refContentMessage,
+    isKeyboardShowing,
+  ) => {
+    const buttonValue = options.find((_, index) => index === buttonIndex);
+
+    switch (buttonValue) {
+      case this.replyTitle:
+        setTimeout(
+          () => this.handleReply(refMessage, refContentMessage, message),
+          isKeyboardShowing ? 700 : 0,
+        );
+        break;
+      case this.editTitle:
+        this.activeMessageEditMode(message.id);
+        return true;
+      case this.copyTitle:
+        this.copyMessage(message.content);
+        break;
+      case this.deleteTitle:
+        await this.confirmDeleteMessage(message.real_id);
+        break;
+      default:
+        return false;
+    }
+  };
+
+  copyMessage = (text) => {
+    Clipboard.setString(text);
+  };
+
+  activeMessageEditMode = (commentId) => {
+    this.updateCommentData(commentId, undefined, undefined, true);
+  };
+
+  cancelEdit = (commentId) => {
+    this.collapseComposer();
+    this.updateCommentData(commentId, undefined, undefined, false);
+    this.setState({
+      isEditingComment: false,
+    });
+  };
+
+  handleCommentActiveEditMode = (refMessage) => {
+    this.clearComposer();
+
+    this.setState({isEditingComment: true}, () => {
+      this.refGiftedChat && this.refGiftedChat.resetInputToolbar();
+      setTimeout(() => {
+        this.listChatScrollToItemById(refMessage, 500);
+      });
+    });
+  };
+
+  confirmDeleteMessage = async (commentId) => {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        Actions.push(appConfig.routes.modalConfirm, {
+          message: this.props.t('social:commentDeleteConfirmMessage'),
+          isConfirm: true,
+          yesTitle: this.props.t('delete'),
+          noTitle: this.props.t('cancel'),
+          yesConfirm: async () => {
+            await this.deleteComment(commentId);
+            resolve();
+          },
+          noConfirm: resolve,
+        });
+      });
+    });
+  };
+
+  editComment = async (comment, text) => {
+    comment.text = text;
+    comment.content = text;
+    this.cancelEdit(comment.id);
+    this._onSend(comment, comment.real_id);
+  };
+
+  deleteComment = async (commentId) => {
+    this.deleteCommentAPI.data = APIHandler.social_comments_delete(commentId);
+
+    try {
+      const response = await this.deleteCommentAPI.promise();
+      console.log(response, commentId);
+      if (response?.status === STATUS_SUCCESS) {
+        const listComments = [...this.state.messages];
+        const commentIndex = listComments.findIndex(
+          (comment) => comment.real_id === commentId,
+        );
+        if (commentIndex !== -1) {
+          listComments.splice(commentIndex, 1);
+          this.setState({messages: listComments});
+        }
+      }
+      flashShowMessage({
+        type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+        message:
+          response?.status === STATUS_SUCCESS
+            ? response?.message
+            : response?.message || this.props.t('api.error.message'),
+      });
+    } catch (error) {
+      console.log('delete_comment', error);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('api.error.message'),
+      });
+    } finally {
+    }
+  };
+
   renderInputToolbar = (props) => {
     const replyingMention = this.state.replyingComment?.user;
     const isReplyingYourSelf = this.isReplyingYourSelf(
@@ -720,15 +929,18 @@ class Comment extends Component {
         : replyingMention?.name);
 
     return (
-      <CustomInputToolbar
-        {...props}
-        accessoryStyle={styles.accessoryContainer}
-        previewImages={this.state.previewImages}
-        replyingName={replyingName}
-        replyingMentionName={replyingMention?.name}
-        onCancelReplying={this.handleCancelReplying}
-        onCancelPreviewImage={this.handleCancelPreviewImage}
-      />
+      !this.state.isEditingComment && (
+        <CustomInputToolbar
+          {...props}
+          accessoryStyle={styles.accessoryContainer}
+          previewImages={this.state.previewImages}
+          replyingName={replyingName}
+          replyingUserId={replyingMention?.user_id}
+          replyingMentionName={replyingMention?.name}
+          onCancelReplying={this.handleCancelReplying}
+          onCancelPreviewImage={this.handleCancelPreviewImage}
+        />
+      )
     );
   };
 
@@ -736,6 +948,7 @@ class Comment extends Component {
     const isLoading = typeof props.currentMessage?.real_id !== 'number';
     const pendingMessage = props.currentMessage?.accept_status;
     const isError = props.currentMessage?.error;
+    const isEditing = props.currentMessage?.isEditing;
     const loadingMessage = isError
       ? this.props.t('social:errorPosting')
       : this.props.t('social:posting');
@@ -744,24 +957,33 @@ class Comment extends Component {
     const messageBottomTitleStyle = isError && styles.titleError;
     if (typeof props.currentMessage.id === 'string') {
     }
+
     return (
       <CustomMessage
         {...props}
         t={this.props.t}
-        onLongPress={this.handleBubbleLongPress}
         uploadURL={this.uploadURL}
         pendingMessage={pendingMessage}
         isPending={!!pendingMessage}
         isError={isError}
+        isEditing={isEditing}
         messageBottomTitleStyle={messageBottomTitleStyle}
         seeMoreTitle={this.props.t('social:seeMore')}
         isHighlight={isHighlight}
         isLoading={isLoading}
+        disabled={this.state.isEditingComment && !isEditing}
         loadingMessage={loadingMessage}
         onLike={this.handleLikeComment}
         onReply={this.handleReply}
         onDidMount={this.handleCommentDidMount}
         onImageUploaded={this._onSend}
+        onActiveEditMode={this.handleCommentActiveEditMode}
+        onEdit={(text) => this.editComment(props.currentMessage, text)}
+        onCancelEdit={() => this.cancelEdit(props.currentMessage?.id)}
+        onPressRepliedUserName={() =>
+          this.handlePressUserName(props.currentMessage?.reply?.id)
+        }
+        onCustomBubbleLongPress={this.handleBubbleLongPress}
       />
     );
   };
@@ -903,7 +1125,8 @@ class Comment extends Component {
       <>
         {this.state.loading && <Loading center />}
         <TickidChat
-          autoFocus={this.props.autoFocus}
+          blurWhenPressOutside={!this.state.isEditingComment}
+          autoFocus={this.autoFocus}
           isMultipleImagePicker={false}
           extraData={this.state.isUpdateForRendering}
           alwaysShowInput
@@ -929,7 +1152,7 @@ class Comment extends Component {
           defaultStatusBarColor={appConfig.colors.primary}
           // Refs
           ref={(inst) => (this.refTickidChat = inst)}
-          refGiftedChat={(inst) => (this.refGiftedChat = inst)}
+          refGiftedChat={(_, inst) => (this.refGiftedChat = inst)}
           refListMessages={(inst) => {
             this.refListMessages = inst;
           }}

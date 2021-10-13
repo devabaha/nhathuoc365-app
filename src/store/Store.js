@@ -129,21 +129,21 @@ class Store {
           }
           const {user, account_menu, ...notifies} = response.data;
           this.initConfigRadaModule(user);
-          if (!equal(user, this.user_info)) {
+          if (!equal(user, toJS(this.user_info))) {
             this.setUserInfo(user);
           }
 
-          if (!equal(account_menu, this.accountMenu)) {
+          if (!equal(account_menu, toJS(this.accountMenu))) {
             this.setAccountMenu(account_menu);
           }
 
-          if (!equal(notifies, this.notify)) {
+          if (!equal(notifies, toJS(this.notify))) {
             this.setNotify(notifies);
           }
         })();
       }
     } catch (error) {
-      console.log(error);
+      console.log('store_get_notify', error);
     } finally {
       this.getNotifyFlag = true;
     }
@@ -683,6 +683,7 @@ class Store {
     formatPostStoreData = (data) => {
       return data;
     },
+    editMode = false,
   ) {
     this.setSocialPostingData({...data, progress: 0});
     this.updateSocialPost(data.id, formatPostStoreData(data));
@@ -704,6 +705,7 @@ class Store {
       try {
         const response = await APIHandler.social_create_post(
           postParams,
+          editMode ? data.id : '',
         ).promise();
 
         if (response) {
@@ -742,13 +744,22 @@ class Store {
 
     if (data?.images?.length) {
       let imagesProgress = [];
-      let images = Array.from({length: data.images.length});
+      const listUploadImage = data.images.filter((image) => !!image.uri);
+      const listNotUploadImage = data.images.map((image) => {
+        return !image.uploadPath && !image.path ? image : undefined;
+      });
+
+      if (!listUploadImage.length) {
+        postData({...data, images: data.images});
+        return;
+      }
+      let images = Array.from({length: listUploadImage.length});
       let totalUploaded = 0;
       const requests = uploadImages(
         APIHandler.url_user_upload_image(),
-        data.images,
+        listUploadImage,
         (progress, image, index) => {
-          imagesProgress[index] = progress * (100 / data.images.length);
+          imagesProgress[index] = progress * (100 / listUploadImage.length);
           this.setSocialPostingData({
             ...this.socialPostingData,
             progress: imagesProgress.reduce(
@@ -766,9 +777,14 @@ class Store {
             height: image.height,
           };
 
-          if (totalUploaded === data.images.length) {
+          if (totalUploaded === listUploadImage.length) {
             if (images.every((image) => !!image?.name)) {
-              postData({...data, images});
+              listNotUploadImage.forEach((img, index) => {
+                if (img === undefined) {
+                  listNotUploadImage[index] = images.splice(0, 1)[0];
+                }
+              });
+              postData({...data, images: listNotUploadImage});
             } else {
               this.setSocialPostingData({
                 ...this.socialPostingData,

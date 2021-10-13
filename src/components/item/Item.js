@@ -1014,6 +1014,7 @@ class Item extends Component {
     const extraSocialProps = {
       accessoryTypes: [ACCESSORY_TYPE.RATING],
       placeholder: this.props.t('placeholderRating'),
+      disableEditComment: true,
     };
 
     return (
