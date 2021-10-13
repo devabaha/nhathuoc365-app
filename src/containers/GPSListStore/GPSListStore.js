@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = ({type = 'store'}) => {
+const GPSListStore = ({type = GPS_STORE}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
@@ -176,29 +176,7 @@ const GPSListStore = ({type = 'store'}) => {
     }
   };
 
-  // const getListSite = async (keyword = '') => {
-  //   try {
-  //     const response = await APIHandler.user_get_favor_sites(keyword);
-  //     if (response.status === STATUS_SUCCESS && response.data) {
-  //       setListStore(response.data.sites);
-  //       console.log(response.data);
-  //     } else {
-  //       flashShowMessage({
-  //         type: 'danger',
-  //         message: response.message,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log('gpsListSite', error);
-  //     // store.addApiQueue('customer_card_wallet', this.getFavors);
-  //   } finally {
-  //     setLoading(false);
-  //     setRefreshing(false);
-  //   }
-  // };
-
   const getListStore = async (data) => {
-    console.log('faklsfdksfjajfajl;ds');
     if (latitude !== undefined && longitude !== undefined) {
       data = {
         lat: latitude,
@@ -206,16 +184,15 @@ const GPSListStore = ({type = 'store'}) => {
       };
     }
     getListStoreRequest.data =
-      type == 'store'
+      type == GPS_STORE
         ? APIHandler.user_site_store(data)
-        : APIHandler.user_get_favor_sites(data);
+        : APIHandler.user_get_favor_sites();
     // getListSiteRequest = APIHandler.user_get_favor_sites(data);
     try {
-      const responseData =
-        // type == 'store'
-        await getListStoreRequest.promise();
-      // : await getListSiteRequest.promise();
-      setListStore(responseData?.stores || []);
+      const responseData = await getListStoreRequest.promise();
+      type == GPS_STORE
+        ? setListStore(responseData?.stores || [])
+        : setListStore(responseData?.data.sites || []);
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -389,7 +366,7 @@ const GPSListStore = ({type = 'store'}) => {
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
 
-    return type == 'store' ? (
+    return type == GPS_STORE ? (
       <TouchableOpacity
         activeOpacity={0.5}
         disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}

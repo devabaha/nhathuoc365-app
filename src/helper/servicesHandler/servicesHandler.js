@@ -281,13 +281,13 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.GPS_LIST_STORE:
       Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: 'store'
+        type: GPS_STORE,
       });
       break;
     case SERVICES_TYPE.GPS_LIST_SITE:
       Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: 'site'
+        type: GPS_SITE,
       });
       break;
 
