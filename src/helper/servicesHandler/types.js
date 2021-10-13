@@ -101,6 +101,7 @@ export const SERVICES_TYPE = {
   /** SOCIAL */
   SOCIAL: 'social',
   SOCIAL_GROUP: 'social_group',
+  SOCIAL_CREATE_POST: 'social_create_post',
 
   /** PROGRESS TRACKING */
   LIST_PROGRESS_TRACKING: 'list_progress_tracking',

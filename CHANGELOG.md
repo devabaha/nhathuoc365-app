@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 - Reopen ListSite by [minhnguyenit14@gmail.com].
 ### Fixed

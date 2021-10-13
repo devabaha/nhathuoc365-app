@@ -158,7 +158,7 @@ const XSMAX_HEIGHT = 896;
 const PAD_WIDTH = 768;
 const PAD_HEIGHT = 1024;
 const { height: D_HEIGHT, width: D_WIDTH } = Dimensions.get('window');
-global.HIT_SLOP = { tight: 10, left: 10, top: 10, bottom: 10 };
+global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
 
 global.isIPhoneX = (() => {
   if (Platform.OS === 'web') return false;

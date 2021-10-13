@@ -19,6 +19,7 @@ import {APIRequest} from '../../network/Entity';
 
 import {COMBO_LOCATION_TYPE, LOCATION_HEIGHT} from './constants';
 import {debounce} from 'lodash';
+import useIsMounted from 'react-is-mounted-hook';
 
 const styles = StyleSheet.create({
   container: {
@@ -49,6 +50,7 @@ const ModalComboLocation = ({
   onSelectDistrict,
   onSelectWards,
 }: ModalComboAddressProps) => {
+  const isMounted = useIsMounted();
   const getDefaultLocation = () => {
     let id: any = '';
     switch (type) {
@@ -71,6 +73,7 @@ const ModalComboLocation = ({
   const refList = useRef<any>();
 
   const [isLoading, setLoading] = useState(true);
+  const [canListBounce, setListBounce] = useState(false);
 
   const [locations, setLocations] = useState([]);
   const [listProvince, setListProvince] = useState([]);
@@ -130,9 +133,15 @@ const ModalComboLocation = ({
 
     if (refList.current && index !== -1) {
       // have to wait to item in list rendered.
-      setTimeout(
-        () => refList.current && refList.current.scrollToIndex({index}),
-      );
+      setTimeout(() => {
+        if (!isMounted()) return;
+
+        refList.current && refList.current.scrollToIndex({index});
+        setTimeout(() => {
+          if (!isMounted()) return;
+          setListBounce(true);
+        }, 200);
+      }, 300);
     }
   };
 
@@ -334,6 +343,7 @@ const ModalComboLocation = ({
       <Search value={searchValue} onChangeText={onChangeSearch} />
       <FlatList
         ref={refList}
+        bounces={canListBounce}
         contentContainerStyle={styles.contentContainer}
         data={!!searchLocations.length ? searchLocations : locations}
         renderItem={renderLocation}

@@ -146,7 +146,7 @@ const ModalEditImages = ({
       <Container centerVertical={false}>
         <Image
           canTouch
-          source={{uri: image.uri}}
+          source={{uri: image.url || image.uri}}
           containerStyle={{
             width: appConfig.device.width,
             height: appConfig.device.width / getImageRatio(image),
