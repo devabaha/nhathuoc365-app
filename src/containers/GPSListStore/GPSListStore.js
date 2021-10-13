@@ -122,7 +122,6 @@ const GPSListStore = ({type = GPS_STORE}) => {
 
   const [getListStoreRequest] = useState(new APIRequest());
   const [setStoreRequest] = useState(new APIRequest());
-  // const [getListSiteRequest] = useState(new APIRequest());
 
   const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
@@ -187,7 +186,6 @@ const GPSListStore = ({type = GPS_STORE}) => {
       type == GPS_STORE
         ? APIHandler.user_site_store(data)
         : APIHandler.user_get_favor_sites();
-    // getListSiteRequest = APIHandler.user_get_favor_sites(data);
     try {
       const responseData = await getListStoreRequest.promise();
       type == GPS_STORE
