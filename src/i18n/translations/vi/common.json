@@ -176,6 +176,9 @@
       "mainTitle": "Danh sách yêu cầu",
       "detailTitle": "Chi tiết yêu cầu",
       "creationTitle": "Tạo yêu cầu"
+    },
+    "listSite": {
+      "mainTitle": "Danh sách cửa hàng"
     }
   },
 
@@ -261,6 +264,7 @@
   "showMore": "Xem thêm",
   "showLess": "Thu gọn",
   "update": "Cập nhật",
+  "agree": "Đồng ý",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",

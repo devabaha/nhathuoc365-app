@@ -121,5 +121,7 @@ export const SERVICES_TYPE = {
   REQUEST_DETAIL: 'request_detail',
 
   /** Wallet */
-  WALLET: 'wallet'
+  WALLET: 'wallet',
+
+  LIST_SITE: 'list_site'
 };

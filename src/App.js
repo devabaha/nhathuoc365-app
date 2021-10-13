@@ -848,6 +848,16 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ CUSTOMER CARD WALLET ================ */}
+                <Stack key={appConfig.routes.customerCardWallet}>
+                  <Scene
+                    key={`${appConfig.routes.customerCardWallet}_1`}
+                    component={CustomerCardWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ REQUESTS ================ */}
                 <Stack key={appConfig.routes.requests}>
                   <Scene

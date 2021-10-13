@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
+- [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- Reopen ListSite by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
+- [CU-1mtfept] Not showing data when auto scrolling to the selected item by [minhnguyenit14@gmail.com].
 
 ## [r12.1.4]
 ### Added

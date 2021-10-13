@@ -21,6 +21,12 @@
     "brands": "Brands",
     "origin": "Origin"
   },
+  "wholesale": {
+    "title": "Wholesale price",
+    "quantity": "Quantity",
+    "unitPrice": "Unit price",
+    "value": "Price only {{price}} when buying {{quantity}} product(s)"
+  },
   "relatedItems": "PRODUCTS OF THE SAME TYPE",
   "goToStore": "Go to store",
   "copyContent": "Copied product article content",

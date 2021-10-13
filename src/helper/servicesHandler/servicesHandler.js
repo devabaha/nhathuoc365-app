@@ -534,6 +534,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         tabIndex: service.tabIndex,
       });
       break;
+    case SERVICES_TYPE.LIST_SITE:
+      Actions.push(appConfig.routes.customerCardWallet, {
+        title: service.title || commonT('screen.listSite.mainTitle'),
+      });
+      break;
 
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [

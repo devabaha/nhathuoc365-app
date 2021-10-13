@@ -1,45 +1,41 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
   Animated,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
-import config from 'app-config';
+import appConfig from 'app-config';
 
 export default class Customer extends Component {
   static propTypes = {
     onSelected: PropTypes.func,
     nguoi_lon: PropTypes.number,
     tre_em: PropTypes.number,
-    tre_so_sinh: PropTypes.number
-  }
+    tre_so_sinh: PropTypes.number,
+  };
 
   static defaultProps = {
-    onSelected: value => value
-  }
+    onSelected: (value) => value,
+  };
 
   constructor(props) {
-      super(props);
+    super(props);
 
-      var {
-        nguoi_lon,
-        tre_em,
-        tre_so_sinh
-      } = props;
+    var {nguoi_lon, tre_em, tre_so_sinh} = props;
 
-      this.state = {
-        opacity: new Animated.Value(0),
-        bottom: new Animated.Value(-100),
-        nguoi_lon: nguoi_lon || 0,
-        tre_em: tre_em || 0,
-        tre_so_sinh: tre_so_sinh || 0
-      }
+    this.state = {
+      opacity: new Animated.Value(0),
+      bottom: new Animated.Value(-100),
+      nguoi_lon: nguoi_lon || 0,
+      tre_em: tre_em || 0,
+      tre_so_sinh: tre_so_sinh || 0,
+    };
   }
 
   componentDidMount() {
@@ -64,7 +60,7 @@ export default class Customer extends Component {
       duration: 250,
       toValue: 0,
     }).start(Actions.pop);
-  }
+  };
 
   _valid = (key, prefix) => {
     var pers = this.state[key];
@@ -80,20 +76,16 @@ export default class Customer extends Component {
     } else {
       console.warn('Error prefix _valid func');
     }
-  }
+  };
 
   _onSave() {
     if (this.props.onSelected) {
-      var {
-        nguoi_lon,
-        tre_em,
-        tre_so_sinh
-      } = this.state;
+      var {nguoi_lon, tre_em, tre_so_sinh} = this.state;
 
       this.props.onSelected({
         nguoi_lon,
         tre_em,
-        tre_so_sinh
+        tre_so_sinh,
       });
     }
 
@@ -101,24 +93,25 @@ export default class Customer extends Component {
   }
 
   render() {
-
-    var {
-      nguoi_lon,
-      tre_em,
-      tre_so_sinh
-    } = this.state;
+    var {nguoi_lon, tre_em, tre_so_sinh} = this.state;
 
     return (
-      <Animated.View style={[styles.container, {
-        opacity: this.state.opacity,
-        bottom: this.state.bottom,
-        // onPress: Alert.alert('abc')
-      }]}>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            opacity: this.state.opacity,
+            bottom: this.state.bottom,
+            // onPress: Alert.alert('abc')
+          },
+        ]}>
         <View style={styles.headerBackdrop}>
-          <TouchableOpacity style={styles.headerClose} onPress={this._onClose}/>
+          <TouchableOpacity
+            style={styles.headerClose}
+            onPress={this._onClose}
+          />
 
           <View style={styles.headerContent}>
-
             <View style={styles.header}>
               <Text style={styles.title}>Hành khách</Text>
               <View style={styles.leftNav}>
@@ -127,15 +120,23 @@ export default class Customer extends Component {
                     style={styles.btnClose}
                     onPress={this._onClose}
                     underlayColor="transparent">
-                    <Icon name="ios-close" size={38} color="rgba(255,255,255,.6)" />
+                    <Icon
+                      name="ios-close"
+                      size={38}
+                      color="rgba(255,255,255,.6)"
+                    />
                   </TouchableHighlight>
                 </View>
               </View>
             </View>
 
-            <View style={[styles.headerRows, {
-              marginTop: 20
-            }]}>
+            <View
+              style={[
+                styles.headerRows,
+                {
+                  marginTop: 20,
+                },
+              ]}>
               <View style={styles.leftContent}>
                 <Text style={styles.labelRow}>Người lớn</Text>
                 <Text style={styles.subLabel}>Trên 12 tuổi</Text>
@@ -148,13 +149,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      nguoi_lon: nguoi_lon > 0 ? --nguoi_lon : 0
+                      nguoi_lon: nguoi_lon > 0 ? --nguoi_lon : 0,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-remove" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-remove"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
 
@@ -166,13 +172,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      nguoi_lon: ++nguoi_lon
+                      nguoi_lon: ++nguoi_lon,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-add" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-add"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
               </View>
@@ -191,13 +202,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      tre_em: tre_em > 0 ? --tre_em : 0
+                      tre_em: tre_em > 0 ? --tre_em : 0,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-remove" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-remove"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
 
@@ -209,13 +225,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      tre_em: ++tre_em
+                      tre_em: ++tre_em,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-add" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-add"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
               </View>
@@ -234,13 +255,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      tre_so_sinh: tre_so_sinh > 0 ? --tre_so_sinh : 0
+                      tre_so_sinh: tre_so_sinh > 0 ? --tre_so_sinh : 0,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-remove" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-remove"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
 
@@ -252,13 +278,18 @@ export default class Customer extends Component {
                       return;
                     }
                     this.setState({
-                      tre_so_sinh: ++tre_so_sinh
+                      tre_so_sinh: ++tre_so_sinh,
                     });
                   }}
                   style={styles.actionButtonBox}
                   underlayColor="transparent">
                   <View style={styles.actionButton}>
-                    <Icon style={styles.btnActionIcon} name="ios-add" size={26} color={DEFAULT_COLOR} />
+                    <Icon
+                      style={styles.btnActionIcon}
+                      name="ios-add"
+                      size={26}
+                      color={DEFAULT_COLOR}
+                    />
                   </View>
                 </TouchableHighlight>
               </View>
@@ -273,10 +304,9 @@ export default class Customer extends Component {
                 </View>
               </TouchableHighlight>
             </View>
-
           </View>
         </View>
-      </Animated.View >
+      </Animated.View>
     );
   }
 }
@@ -300,7 +330,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#828287'
+    borderBottomColor: '#828287',
   },
   headerContent: {
     position: 'absolute',
@@ -310,15 +340,15 @@ const styles = StyleSheet.create({
     height: 360,
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   headerClose: {
-    width:'100%',
-    height:'100%',
+    width: '100%',
+    height: '100%',
   },
   headerBackdrop: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   leftNav: {
     position: 'absolute',
@@ -326,19 +356,19 @@ const styles = StyleSheet.create({
     height: '100%',
     width: 60,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   btnClose: {
-    padding: 8
+    padding: 8,
   },
   btnTitle: {
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   title: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   headerRows: {
@@ -346,7 +376,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8
+    marginTop: 8,
   },
   actionButton: {
     width: 30,
@@ -355,26 +385,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 15,
     backgroundColor: '#f1f1f1',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   actionButtonBox: {
-    padding: 8
+    padding: 8,
   },
 
   leftContent: {
     width: '50%',
     height: '100%',
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   labelRow: {
     fontSize: 16,
     color: '#000000',
-    marginTop: 8
+    marginTop: 8,
   },
   subLabel: {
     fontSize: 12,
     color: '#999999',
-    marginTop: 4
+    marginTop: 4,
   },
 
   rightContent: {
@@ -383,33 +413,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: '4%'
+    paddingHorizontal: '4%',
   },
   textQuantity: {
     color: '#404040',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   boxBtnSearch: {
     width: Util.size.width,
     alignItems: 'center',
-    marginTop: 40
+    marginTop: 40,
   },
   btnSearchContent: {
     width: Util.size.width * 0.916,
     height: Util.size.width * 0.916 * 0.1515,
-    backgroundColor: config._primaryColor,
+    backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5
+    borderRadius: 5,
   },
   textBtnSearch: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   btnActionIcon: {
-    marginTop: isIOS ? 2 : 0
-  }
+    marginTop: isIOS ? 2 : 0,
+  },
 });

@@ -176,6 +176,9 @@
       "mainTitle": "Request list",
       "detailTitle": "Request detail",
       "creationTitle": "Create a request"
+    },
+    "listSite": {
+      "mainTitle": "List of store"
     }
   },
 
@@ -261,6 +264,7 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "update": "Update",
+  "agree": "OK",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
