@@ -126,7 +126,7 @@ const SOCIAL_DOMAIN_OPTIONS = [
   },
 ];
 
-const DOMAIN_STORAGE_KEY = 'dynamic_domain_2021_10_12-minh_nguyen';
+const DOMAIN_STORAGE_KEY = 'dynamic_domain_2021_10_13-minh_nguyen';
 const MAX_SAVED_DOMAIN = 5;
 const NOTES = [
   `Nhập "hs " để gõ nhanh "https://".`,
@@ -314,8 +314,19 @@ class DomainSelector extends Component {
     return !this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName];
   }
 
+  isEqualDomainData(domain1 = {}, domain2 = {}) {
+    const domain1Temp = {...domain1};
+    const domain2Temp = {...domain2};
+    delete domain1Temp.selected;
+    delete domain2Temp.selected;
+
+    return equal(domain1Temp, domain2Temp);
+  }
+
   isDomainExisted(domain) {
-    return !!this.state.localStorageDomains.find((d) => equal(d, domain));
+    return !!this.state.localStorageDomains.find((d) =>
+      this.isEqualDomainData(d, domain),
+    );
   }
 
   formatDomainName(domainName) {
@@ -346,17 +357,19 @@ class DomainSelector extends Component {
         }
       },
     );
+
     if (localStorageDomains) {
       localStorageDomains = JSON.parse(localStorageDomains);
       if (Array.isArray(localStorageDomains)) {
         const autoSelectedAPIDomainName =
           localStorageDomains.find(
             (domain) =>
+              domain.selected &&
               domain.domainParamName ===
-              DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
           )?.title || '';
 
-        this.setState({localStorageDomains});
+          this.setState({localStorageDomains});
         this.onChangeDomainName(
           DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
           autoSelectedAPIDomainName,
@@ -365,33 +378,61 @@ class DomainSelector extends Component {
     }
   }
 
-  prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain) {
+  updateSelectedLocalStorageDomain = (localStorageDomains, domain) => {
+    const domainIndex = localStorageDomains.findIndex(
+      (d) => d.title === domain.title,
+    );
+    localStorageDomains[domainIndex].selected = true;
+    return localStorageDomains;
+  };
+
+  saveDomain(apiDomain, imageDomain, socialDomain) {
     const isApiDomainExisted = this.isDomainExisted(apiDomain);
     const isImageDomainExisted = imageDomain
       ? this.isDomainExisted(imageDomain)
-      : true;
+      : undefined;
     const isSocialDomainExisted = socialDomain
       ? this.isDomainExisted(socialDomain)
-      : true;
+      : undefined;
 
     let localStorageDomains = [...this.state.localStorageDomains];
+    localStorageDomains.forEach((domain) => (domain.selected = false));
 
-    if (!isSocialDomainExisted) {
-      localStorageDomains.unshift(socialDomain);
+    if (isSocialDomainExisted !== undefined) {
+      if (isSocialDomainExisted) {
+        localStorageDomains = this.updateSelectedLocalStorageDomain(
+          localStorageDomains,
+          socialDomain,
+        );
+      } else {
+        localStorageDomains.unshift(socialDomain);
+      }
     }
-    if (!isImageDomainExisted) {
-      localStorageDomains.unshift(imageDomain);
+    if (isImageDomainExisted !== undefined) {
+      if (isImageDomainExisted) {
+        localStorageDomains = this.updateSelectedLocalStorageDomain(
+          localStorageDomains,
+          imageDomain,
+        );
+      } else {
+        localStorageDomains.unshift(imageDomain);
+      }
     }
-    if (!isApiDomainExisted) {
+    if (isApiDomainExisted) {
+      localStorageDomains = this.updateSelectedLocalStorageDomain(
+        localStorageDomains,
+        apiDomain,
+      );
+    } else {
       localStorageDomains.unshift(apiDomain);
     }
 
     localStorageDomains = localStorageDomains.splice(0, MAX_SAVED_DOMAIN);
 
-    this.saveDomain(localStorageDomains);
+    this.saveDomainToLocalStorage(localStorageDomains);
   }
 
-  saveDomain = (domains) => {
+  saveDomainToLocalStorage = (domains) => {
     this.setState({localStorageDomains: domains});
 
     AsyncStorage.setItem(DOMAIN_STORAGE_KEY, JSON.stringify(domains), (err) => {
@@ -459,6 +500,7 @@ class DomainSelector extends Component {
       ...DOMAIN_ATTRIBUTE.API_DOMAIN,
       tag: DOMAIN_TYPE.UNKNOWN,
     };
+    apiDomain && (apiDomain.selected = true);
 
     const imageDomain = this.state[
       DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName
@@ -471,6 +513,7 @@ class DomainSelector extends Component {
           tag: DOMAIN_TYPE.UNKNOWN,
         }
       : undefined;
+    imageDomain && (imageDomain.selected = true);
 
     const socialDomain = this.state[
       DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
@@ -483,11 +526,12 @@ class DomainSelector extends Component {
           tag: DOMAIN_TYPE.UNKNOWN,
         }
       : undefined;
+    socialDomain && (socialDomain.selected = true);
 
     store.setIgnoreChangeDomain(true);
 
     if (this.state.isSaveChecked) {
-      this.prepareBeforeSaveDomain(apiDomain, imageDomain, socialDomain);
+      this.saveDomain(apiDomain, imageDomain, socialDomain);
     }
 
     this.applyDomain(apiDomainName, imageDomainName, socialDomainName);
@@ -550,11 +594,14 @@ class DomainSelector extends Component {
 
   deleteDomainFromLocalStorage = (domain) => {
     const localStorageDomains = [...this.state.localStorageDomains];
-    localStorageDomains.splice(
-      localStorageDomains.findIndex((d) => equal(d, domain)),
-      1,
+    const deleteIndex = localStorageDomains.findIndex((d) =>
+      this.isEqualDomainData(d, domain),
     );
-    this.saveDomain(localStorageDomains);
+
+    if (deleteIndex !== -1) {
+      localStorageDomains.splice(deleteIndex, 1);
+      this.saveDomainToLocalStorage(localStorageDomains);
+    }
   };
 
   renderHistoryItem() {
@@ -562,7 +609,8 @@ class DomainSelector extends Component {
       return <Text style={styles.noHistory}>Chưa nhập gì :)</Text>;
     }
     return this.state.localStorageDomains.map((domain, index) => {
-      const isSelected = this.state[domain.domainParamName] === domain.title;
+      const isSelected =
+        domain?.title && this.state[domain.domainParamName] === domain.title;
       const extraStyle = isSelected
         ? {
             backgroundColor: hexToRgbA(
@@ -604,6 +652,7 @@ class DomainSelector extends Component {
               />
             ) : (
               <TouchableOpacity
+                hitSlop={HIT_SLOP}
                 onPress={() => this.deleteDomainFromLocalStorage(domain)}>
                 <MaterialIcons
                   name="delete"
@@ -626,7 +675,7 @@ class DomainSelector extends Component {
           </View>
           <View style={styles.historyDescriptionContainer}>
             <Text style={styles.historyDescription}>
-              Chỉ lưu {MAX_SAVED_DOMAIN} kết quả gần nhất!
+              Chỉ lưu {MAX_SAVED_DOMAIN} dữ liệu gần nhất!
             </Text>
             <View style={styles.dash} />
           </View>
