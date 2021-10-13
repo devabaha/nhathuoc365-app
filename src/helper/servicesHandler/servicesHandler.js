@@ -429,6 +429,21 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         groupName: service.name,
       });
       break;
+    /** Social Create Post */
+    case SERVICES_TYPE.SOCIAL_CREATE_POST:
+      Actions.push(appConfig.routes.socialCreatePost, {
+        title: service.title || t('screen.createPost.mainTitle'),
+        group: service.group,
+        groupId: service.group_id,
+        editMode: service.editMode,
+        postId: service.post_id,
+        siteId: service.site_id || store?.store_data?.id,
+        avatar: service.avatar || store?.user_info?.img,
+        contentText: service.content,
+        images: service.images,
+        isOpenImagePicker: service.isOpenImagePicker,
+      });
+      break;
 
     /** PROGRESS TRACKING */
     /** LIST */

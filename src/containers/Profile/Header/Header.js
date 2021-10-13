@@ -66,7 +66,6 @@ class Header extends Component {
           source={{uri: this.props.cover}}
           style={[styles.wrapper]}
           imageStyle={styles.imageWrapper}>
-
           {isMainUser && (
             <NavBarButton
               disabled={this.state.coverLoading}
@@ -116,13 +115,18 @@ class Header extends Component {
           </View>
         </ImageBackground>
 
-        <Container row center style={styles.titleContainer}>
-          {!!this.props.premium && (
-            <PremiumIcon premium={this.props.premium} style={styles.premium} />
-          )}
-          <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
-            {this.props.name}
-          </Text>
+        <Container center style={styles.titleContainer}>
+          <View>
+            {!!this.props.premium && (
+              <PremiumIcon
+                premium={this.props.premium}
+                style={styles.premium}
+              />
+            )}
+            <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
+              {this.props.name}
+            </Text>
+          </View>
         </Container>
 
         {!!this.props.quote && (
@@ -220,15 +224,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,.6)',
   },
   premium: {
-    // backgroundColor: '#eee',
     width: PREMIUM_DIMENSIONS,
     height: PREMIUM_DIMENSIONS,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: PREMIUM_DIMENSIONS / 2,
     position: 'absolute',
-    right: '100%',
-    top: 0
+    left: -PREMIUM_DIMENSIONS*1.2,
+    top: 0,
   },
   titleContainer: {
     marginTop: 10,
@@ -240,7 +243,6 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 24,
     letterSpacing: 1,
-    marginHorizontal: 10,
   },
   noHeaderInfo: {
     marginBottom: 15,
