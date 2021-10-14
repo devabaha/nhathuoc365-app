@@ -102,7 +102,7 @@ export const REQUEST_TYPE = {
   WARRANTY: 'warranty',
 };
 
-export const GPS_TYPE = {
+export const GPS_LIST_TYPE = {
   GPS_SITE: 'gps_site',
   GPS_STORE: 'gps_store',
 };

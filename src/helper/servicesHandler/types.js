@@ -123,6 +123,4 @@ export const SERVICES_TYPE = {
 
   /** Wallet */
   WALLET: 'wallet',
-
-  LIST_SITE: 'list_site',
 };
