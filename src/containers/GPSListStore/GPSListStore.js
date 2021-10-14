@@ -149,7 +149,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
       ? 'Thử lại'
       : 'Cài đặt';
   const cancelText = 'Bỏ qua';
-  let unmounted = false;
 
   useEffect(() => {
     didMount();
@@ -164,7 +163,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   };
 
   const unMount = () => {
-    unmounted = true;
     Geolocation.clearWatch(watchID.current);
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
@@ -197,9 +195,9 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           : (await APIHandler.user_get_favor_sites())?.data;
 
       setListStore(
-        type === GPS_LIST_TYPE.GPS_LIST_STORE
+        (type === GPS_LIST_TYPE.GPS_LIST_STORE
           ? responseData?.stores
-          : responseData?.sites || [],
+          : responseData?.sites) || [],
       );
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
