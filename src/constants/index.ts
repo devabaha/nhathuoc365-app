@@ -103,6 +103,6 @@ export const REQUEST_TYPE = {
 };
 
 export const GPS_LIST_TYPE = {
-  GPS_SITE: 'gps_site',
-  GPS_STORE: 'gps_store',
+  GPS_LIST_SITE: 'gps_list_site',
+  GPS_LIST_STORE: 'gps_list_store',
 };

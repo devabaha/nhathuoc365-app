@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = ({type = GPS_LIST_TYPE.GPS_STORE}) => {
+const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
@@ -192,13 +192,15 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_STORE}) => {
     getListStoreRequest.data = APIHandler.user_site_store(data);
     try {
       const responseData =
-        type === GPS_LIST_TYPE.GPS_STORE
+        type === GPS_LIST_TYPE.GPS_LIST_STORE
           ? await getListStoreRequest.promise()
           : (await APIHandler.user_get_favor_sites())?.data;
 
-      type === GPS_LIST_TYPE.GPS_STORE
-        ? setListStore(responseData?.stores || [])
-        : setListStore(responseData?.sites || []);
+      setListStore(
+        type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? responseData?.stores
+          : responseData?.sites || [],
+      );
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -375,12 +377,12 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_STORE}) => {
       <TouchableOpacity
         activeOpacity={0.5}
         disabled={
-          type === GPS_LIST_TYPE.GPS_STORE
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
             ? !isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)
             : false
         }
         onPress={
-          type === GPS_LIST_TYPE.GPS_STORE
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
             ? () => handlePressStore(store)
             : () => handlePressSite(store)
         }>
