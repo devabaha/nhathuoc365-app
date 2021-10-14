@@ -11,12 +11,14 @@ import {
 import Geolocation from '@react-native-community/geolocation';
 import {Actions} from 'react-native-router-flux';
 import {getPreciseDistance} from 'geolib';
+import useIsMounted from 'react-is-mounted-hook';
 
 import appConfig from 'app-config';
 import store from 'app-store';
 import {APIRequest} from '../../network/Entity';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {GPS_LIST_TYPE} from 'src/constants';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -113,15 +115,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = () => {
+const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
   const watchID = useRef('');
   const isUpdatedListStoreByPosition = useRef(false);
+  const isMounted = useIsMounted();
 
   const [getListStoreRequest] = useState(new APIRequest());
   const [setStoreRequest] = useState(new APIRequest());
+
   const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -181,10 +185,20 @@ const GPSListStore = () => {
         lng: longitude,
       };
     }
+    if (!isMounted()) return;
+
     getListStoreRequest.data = APIHandler.user_site_store(data);
     try {
-      const responseData = await getListStoreRequest.promise();
-      setListStore(responseData?.stores || []);
+      const responseData =
+        type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? await getListStoreRequest.promise()
+          : (await APIHandler.user_get_favor_sites())?.data;
+
+      setListStore(
+        (type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? responseData?.stores
+          : responseData?.sites) || [],
+      );
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -318,6 +332,13 @@ const GPSListStore = () => {
     }
   }, []);
 
+  const handlePressSite = useCallback((site) => {
+    servicesHandler({
+      siteId: site.id,
+      type: SERVICES_TYPE.OPEN_SHOP,
+    });
+  }, []);
+
   const cancelModal = () => {
     closeModal();
   };
@@ -353,8 +374,16 @@ const GPSListStore = () => {
     return (
       <TouchableOpacity
         activeOpacity={0.5}
-        disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}
-        onPress={() => handlePressStore(store)}>
+        disabled={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? !isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)
+            : false
+        }
+        onPress={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? () => handlePressStore(store)
+            : () => handlePressSite(store)
+        }>
         <StoreItem
           name={store.name}
           image={store.image_url}
