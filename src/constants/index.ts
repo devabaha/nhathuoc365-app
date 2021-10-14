@@ -101,3 +101,8 @@ export const DRAWER_WIDTH =
 export const REQUEST_TYPE = {
   WARRANTY: 'warranty',
 };
+
+export const GPS_LIST_TYPE = {
+  GPS_LIST_SITE: 'gps_list_site',
+  GPS_LIST_STORE: 'gps_list_store',
+};
