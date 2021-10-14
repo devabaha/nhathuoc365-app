@@ -17,6 +17,7 @@ import store from 'app-store';
 import {APIRequest} from '../../network/Entity';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {GPS_TYPE} from 'src/constants';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = ({type = GPS_STORE}) => {
+const GPSListStore = ({type = GPS_TYPE.GPS_STORE}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
@@ -146,6 +147,7 @@ const GPSListStore = ({type = GPS_STORE}) => {
       ? 'Thử lại'
       : 'Cài đặt';
   const cancelText = 'Bỏ qua';
+  let unmounted = false;
 
   useEffect(() => {
     didMount();
@@ -160,6 +162,7 @@ const GPSListStore = ({type = GPS_STORE}) => {
   };
 
   const unMount = () => {
+    unmounted = true;
     Geolocation.clearWatch(watchID.current);
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
@@ -182,13 +185,16 @@ const GPSListStore = ({type = GPS_STORE}) => {
         lng: longitude,
       };
     }
-    getListStoreRequest.data =
-      type == GPS_STORE
-        ? APIHandler.user_site_store(data)
-        : APIHandler.user_get_favor_sites();
+    if (unmounted) return;
+    let responseData;
+
+    getListStoreRequest.data = APIHandler.user_site_store(data);
     try {
-      const responseData = await getListStoreRequest.promise();
-      type == GPS_STORE
+      type === GPS_TYPE.GPS_STORE
+        ? (responseData = await getListStoreRequest.promise())
+        : (responseData = await APIHandler.user_get_favor_sites());
+
+      type === GPS_TYPE.GPS_STORE
         ? setListStore(responseData?.stores || [])
         : setListStore(responseData?.data.sites || []);
     } catch (error) {
@@ -364,7 +370,7 @@ const GPSListStore = ({type = GPS_STORE}) => {
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
 
-    return type == GPS_STORE ? (
+    return type === GPS_TYPE.GPS_STORE ? (
       <TouchableOpacity
         activeOpacity={0.5}
         disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}

@@ -13,7 +13,7 @@ import {
   Text,
 } from 'react-native';
 import Animated, {Easing} from 'react-native-reanimated';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -506,10 +506,8 @@ class Home extends Component {
                       subTitle={item.address}
                       titleStyle={styles.siteTitleContent}
                       subTitleStyle={styles.siteSubtitleContent}
-                      siteLatitude={item.lat}
-                      siteLongtitude={item.lng}
                       iconSubTitle={
-                        <Icon
+                        <Ionicons
                           name="ios-location-sharp"
                           style={styles.siteIcon}
                         />

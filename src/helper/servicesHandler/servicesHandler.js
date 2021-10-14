@@ -5,6 +5,7 @@ import Communications from 'react-native-communications';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
+import {GPS_TYPE} from 'src/constants'
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -281,13 +282,13 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.GPS_LIST_STORE:
       Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: GPS_STORE,
+        type: GPS_TYPE.GPS_STORE,
       });
       break;
     case SERVICES_TYPE.GPS_LIST_SITE:
       Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: GPS_SITE,
+        type: GPS_TYPE.GPS_SITE,
       });
       break;
 

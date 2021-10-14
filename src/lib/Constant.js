@@ -147,10 +147,6 @@ global.EMAIL_SUPPORT = 'hi@tickid.vn';
 global.APP_FANPAGE = 'http://fanpage.tickid.vn';
 global.APP_INFO = 'http://tickid.vn';
 
-// GPS STORE
-global.GPS_STORE = 'gps_store';
-global.GPS_SITE = 'gps_site';
-
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
 const XSMAX_WIDTH = 414;

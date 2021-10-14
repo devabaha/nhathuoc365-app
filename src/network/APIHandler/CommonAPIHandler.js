@@ -611,9 +611,9 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Lấy dữ liệu ví thẻ khách hàng
    */
-  user_get_favor_sites() {
-    const api = url_for(API.USER_GET_FAVOR_SITES);
-    return this.getCancelableAPI(api);
+  async user_get_favor_sites() {
+    var api = url_for(API.USER_GET_FAVOR_SITES);
+    return await this.getAPI(api);
   }
 
   /**
