@@ -334,7 +334,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_STORE}) => {
 
   const handlePressSite = useCallback((site) => {
     servicesHandler({
-      ...site,
       siteId: site.id,
       type: SERVICES_TYPE.OPEN_SHOP,
     });
