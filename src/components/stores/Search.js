@@ -55,6 +55,8 @@ class Search extends Component {
       bodyCategoriesHeight: null,
     };
 
+    this.refList = React.createRef();
+
     this.animatedCategoriesShowUp = new Animated.Value(
       props.categoriesCollapsed ? 0 : 1,
     );
@@ -213,7 +215,6 @@ class Search extends Component {
 
   onSearch = debounce((keyword) => {
     keyword = keyword.trim();
-    this.isSearched = true;
 
     this.setState(
       {
@@ -235,14 +236,20 @@ class Search extends Component {
                 search_data: response.data,
                 noResult: false,
                 searchValue: keyword,
-                header_title:
-                  keyword == null || keyword == ''
-                    ? null
-                    : `— Kết quả cho "${keyword}" —`,
               });
+
               if (!this.categoriesCollapsed) {
                 this.collapseCategories();
               }
+
+              this.refList.current &&
+                this.refList.current.scrollToOffset({offset: 0});
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message:
+                  response?.message || this.props.t('common:api.error.message'),
+              });
             }
           } else {
             this.getHistory();
@@ -251,25 +258,30 @@ class Search extends Component {
               search_data: null,
               noResult: true,
             });
+
+            flashShowMessage({
+              type: 'danger',
+              message:
+                response?.message || this.props.t('common:api.error.message'),
+            });
           }
         } catch (e) {
           console.log(e + ' search_product');
-          // store.addApiQueue(
-          //   'search_product',
-          //   this.onSearch.bind(this, keyword)
-          // );
+          flashShowMessage({
+            type: 'danger',
+            message: this.props.t('common:api.error.message'),
+          });
         } finally {
           if (this.unmounted) return;
 
-          if (!this.categoriesCollapsed) {
-            this.collapseCategories();
-            if (this.refListResult.current) {
-              this.refListResult.current.scrollToOffset({y: 0});
-            }
-          }
           this.setState({
+            header_title:
+              keyword == null || keyword == ''
+                ? null
+                : `— Kết quả cho "${keyword}" —`,
             loading: false,
           });
+          this.isSearched = true;
         }
       },
     );
@@ -583,16 +595,12 @@ class Search extends Component {
 
   renderEmpty = () => {
     return (
-      !this.state.loading && (
-        <NoResult
-          iconName={this.isSearched ? undefined : 'magnify'}
-          message={
-            this.isSearched
-              ? this.props.t('common:noResult')
-              : 'Nhập để tìm kiếm'
-          }
-        />
-      )
+      <NoResult
+        iconName={this.isSearched ? undefined : 'magnify'}
+        message={
+          this.isSearched ? this.props.t('common:noResult') : 'Nhập để tìm kiếm'
+        }
+      />
     );
   };
 
@@ -605,11 +613,9 @@ class Search extends Component {
           {loading && <Indicator />}
 
           <FlatList
-            ref={this.refListResult}
+            ref={this.refList}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
-            ListHeaderComponent={this.renderHeader()}
-            ListEmptyComponent={this.renderEmpty()}
             data={search_data || []}
             contentContainerStyle={styles.listProductContentContainer}
             renderItem={({item, index}) => (
@@ -623,6 +629,8 @@ class Search extends Component {
             )}
             keyExtractor={(item) => item.id}
             numColumns={2}
+            ListHeaderComponent={this.renderHeader()}
+            ListEmptyComponent={this.renderEmpty()}
           />
 
           <PopupConfirm
