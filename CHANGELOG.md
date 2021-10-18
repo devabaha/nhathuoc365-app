@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
+- [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
 ### Fixed
 - [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
 - [CU-1mtfept] Not showing data when auto scrolling to the selected item by [minhnguyenit14@gmail.com].
