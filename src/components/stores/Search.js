@@ -255,8 +255,8 @@ class Search extends Component {
           }
 
           this.setState({
-            search_data: response.data || null,
-            noResult: !!response.data,
+            search_data: response?.data || null,
+            noResult: !!!response?.data,
             searchValue: keyword,
           });
         } catch (e) {
