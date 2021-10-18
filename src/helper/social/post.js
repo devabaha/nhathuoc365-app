@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 
 import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
 
@@ -10,7 +10,7 @@ import {
   GridV2,
   GridV2o,
   GridH2o,
-} from '../../components/Social';
+} from 'src/components/Social/ListFeeds/Feeds/Post/GridImage';
 
 export const getImageRatio = (image = {width: 1, height: 1}) => {
   return (image.width || 1) / (image.height || 1);
