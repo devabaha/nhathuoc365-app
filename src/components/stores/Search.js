@@ -244,19 +244,8 @@ class Search extends Component {
                   response?.message || this.props.t('common:api.error.message'),
               });
             }
-
-            this.setState({
-              search_data: response.data || null,
-              noResult: !!response.data,
-              searchValue: keyword,
-            });
           } else {
             this.getHistory();
-
-            this.setState({
-              search_data: null,
-              noResult: true,
-            });
 
             flashShowMessage({
               type: 'danger',
@@ -264,6 +253,12 @@ class Search extends Component {
                 response?.message || this.props.t('common:api.error.message'),
             });
           }
+
+          this.setState({
+            search_data: response.data || null,
+            noResult: !!response.data,
+            searchValue: keyword,
+          });
         } catch (e) {
           console.log(e + ' search_product');
           flashShowMessage({
