@@ -230,12 +230,6 @@ class Search extends Component {
           if (this.unmounted) return;
 
           if (response && response.status == STATUS_SUCCESS) {
-            this.setState({
-              search_data: response.data || null,
-              noResult: !!response.data,
-              searchValue: keyword,
-            });
-
             if (response.data) {
               if (!this.categoriesCollapsed) {
                 this.collapseCategories();
@@ -250,6 +244,12 @@ class Search extends Component {
                   response?.message || this.props.t('common:api.error.message'),
               });
             }
+
+            this.setState({
+              search_data: response.data || null,
+              noResult: !!response.data,
+              searchValue: keyword,
+            });
           } else {
             this.getHistory();
 
@@ -610,7 +610,7 @@ class Search extends Component {
             ref={this.refList}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
-            data={search_data}
+            data={search_data || []}
             contentContainerStyle={styles.listProductContentContainer}
             renderItem={({item, index}) => (
               <Items
