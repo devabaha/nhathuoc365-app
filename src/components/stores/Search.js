@@ -227,17 +227,16 @@ class Search extends Component {
             category_id: this.state.selectedCategory.id,
             type: this.props.type,
           });
-          console.log(response);
           if (this.unmounted) return;
 
           if (response && response.status == STATUS_SUCCESS) {
-            if (response.data) {
-              this.setState({
-                search_data: response.data,
-                noResult: false,
-                searchValue: keyword,
-              });
+            this.setState({
+              search_data: response.data || null,
+              noResult: !!response.data,
+              searchValue: keyword,
+            });
 
+            if (response.data) {
               if (!this.categoriesCollapsed) {
                 this.collapseCategories();
               }
@@ -245,10 +244,6 @@ class Search extends Component {
               this.refList.current &&
                 this.refList.current.scrollToOffset({offset: 0});
             } else {
-              this.setState({
-                search_data: null,
-                noResult: true,
-              });
               flashShowMessage({
                 type: 'danger',
                 message:
@@ -279,10 +274,7 @@ class Search extends Component {
           if (this.unmounted) return;
 
           this.setState({
-            header_title:
-              keyword == null || keyword == ''
-                ? null
-                : `— Kết quả cho "${keyword}" —`,
+            header_title: !keyword ? null : `— Kết quả cho "${keyword}" —`,
             loading: false,
           });
           this.isSearched = true;
@@ -610,34 +602,30 @@ class Search extends Component {
 
   render() {
     const {loading, search_data, history, buying_idx} = this.state;
-    console.log(search_data);
     return (
       <>
         <SafeAreaView style={styles.container}>
           {loading && <Indicator />}
-          {this.renderHeader()}
-          {search_data != null ? (
-            <FlatList
-              ref={this.refList}
-              keyboardShouldPersistTaps="handled"
-              keyboardDismissMode="on-drag"
-              data={search_data}
-              contentContainerStyle={styles.listProductContentContainer}
-              renderItem={({item, index}) => (
-                <Items
-                  item={item}
-                  index={index}
-                  buying_idx={buying_idx}
-                  onPress={this._goItem.bind(this, item)}
-                  buyPress={this._updateHistory.bind(this, item)}
-                />
-              )}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-            />
-          ) : (
-            this.renderEmpty()
-          )}
+          <FlatList
+            ref={this.refList}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            data={search_data}
+            contentContainerStyle={styles.listProductContentContainer}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                buying_idx={buying_idx}
+                onPress={this._goItem.bind(this, item)}
+                buyPress={this._updateHistory.bind(this, item)}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            ListHeaderComponent={this.renderHeader()}
+            ListEmptyComponent={this.renderEmpty()}
+          />
 
           <PopupConfirm
             ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
