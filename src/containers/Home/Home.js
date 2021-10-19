@@ -11,7 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
-import {showDrawer} from 'src/components/Drawer';
+import {formatStoreSocialPosts} from 'app-helper/social';
 
 class Home extends Component {
   constructor(props) {
@@ -82,7 +82,7 @@ class Home extends Component {
         console.log(response.data);
         action(() => {
           store.setStoreData(response.data.site);
-          store.setAppData(response.data.app);
+          // store.setAppData(response.data.app);
           store.setPackageOptions(response.data.package_options || {});
         })();
 
@@ -121,10 +121,14 @@ class Home extends Component {
           product_groups: response.data.product_groups,
           news_categories: response.data.news_categories,
           product_categories: response.data.product_categorys,
+          social_posts: response.data.social_posts,
         }));
 
         this.executeDeepLink();
         this.getCartData();
+        if (response.data?.social_posts?.length) {
+          // store.resetSocialPosts();
+        }
       }
     } catch (error) {
       console.log(error);
@@ -184,10 +188,11 @@ class Home extends Component {
   };
 
   handlePressedSurplusNext = () => {
-    Actions.push(appConfig.routes.vndWallet, {
-      title: store.user_info.default_wallet.name,
-      wallet: store.user_info.default_wallet,
-    });
+    servicesHandler({type: SERVICES_TYPE.WALLET});
+  };
+
+  handlePressCommission = () => {
+    Actions.push(appConfig.routes.commissionIncomeStatement);
   };
 
   handlePromotionPressed = (item) => {
@@ -212,11 +217,13 @@ class Home extends Component {
       servicesHandler(service, t, callBack);
     }
   }
-  
+
   handleShowAllSites = () => {
-    store.setSelectedTab(appConfig.routes.customerCardWallet);
-    Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
-  }
+    // store.setSelectedTab(appConfig.routes.customerCardWallet);
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_SITE,
+    });
+  };
 
   handleShowAllGroupProduct = (group) => {
     const service = {
@@ -294,16 +301,23 @@ class Home extends Component {
     }
   };
 
+  goToSocial = () => {
+    servicesHandler({
+      type: SERVICES_TYPE.SOCIAL,
+      siteId: store?.store_data?.id,
+    });
+  };
+
   getStore(id, onSuccess = () => {}, onFail = () => {}, onFinally = () => {}) {
-    const { t } = this.props;
+    const {t} = this.props;
     APIHandler.site_info(id)
-      .then(response => {
+      .then((response) => {
         if (response) {
           onSuccess(response);
         } else {
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         }
       })
@@ -314,39 +328,43 @@ class Home extends Component {
   productOpening;
 
   handlePressProduct = (product, callBack) => {
-    const service = {
-      type: SERVICES_TYPE.PRODUCT_DETAIL,
-      siteId: product.site_id,
-      productId: product.id,
-    };
-    servicesHandler(service, this.props.t, callBack);
+    // const service = {
+    //   type: SERVICES_TYPE.PRODUCT_DETAIL,
+    //   siteId: product.site_id,
+    //   productId: product.id,
+    // };
+    // servicesHandler(service, this.props.t, callBack);
+    Actions.push(appConfig.routes.item, {
+      title: product.name,
+      item: product,
+    });
   };
 
   goToSearch = () => {
-    const { t } = this.props;
-    this.setState({ storeFetching: true });
+    const {t} = this.props;
+    this.setState({storeFetching: true});
 
     this.getStore(
       store.store_id || appConfig.defaultSiteId,
-      response => {
+      (response) => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);
           Actions.push(appConfig.routes.searchStore, {
             categories: null,
             category_id: 0,
-            category_name: ''
+            category_name: '',
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message')
+            message: response.message || t('common:api.error.message'),
           });
         }
       },
-      error => {},
+      (error) => {},
       () => {
-        setTimeout(() => this.setState({ storeFetching: false }), 400);
-      }
+        setTimeout(() => this.setState({storeFetching: false}), 400);
+      },
     );
   };
 
@@ -395,12 +413,15 @@ class Home extends Component {
         onPressNewItem={this.handlePressNewItem}
         onPressRoomNews={this.handlePressRoomNews}
         onPressNoti={this.handlePressButtonChat}
+        onPressCommission={this.handlePressCommission}
+        goToSocial={this.goToSocial}
         refreshing={this.state.refreshing}
         groups={this.state.product_groups}
         product_groups={this.state.product_groups}
         goToSearch={this.goToSearch}
         news_categories={this.state.news_categories}
         product_categories={this.state.product_categories}
+        social_posts={this.state.social_posts}
       />
     );
   }

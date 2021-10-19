@@ -25,7 +25,9 @@
       "title": "Thông tin đơn hàng",
       "ordersCode": "Mã đơn hàng",
       "status": "Trạng thái",
-      "recheck": "Thông tin này đã chính xác?"
+      "recheck": "Thông tin này đã chính xác?",
+      "deliveryTitle": "Thông tin đơn giao vận",
+      "POSTitle" : "Thông tin đơn POS"
     },
     "address": {
       "title": "Địa chỉ giao hàng"
@@ -36,9 +38,20 @@
     },
     "note": {
       "title": "Ghi chú",
-      "description": "(Thời gian giao hàng, ghi chú khác)",
+      "description": "Thời gian giao hàng, ghi chú khác",
       "placeholder": "Nhập ghi chú của bạn tại đây",
       "noNote": "Không có ghi chú"
+    },
+    "date": {
+      "title": "Ngày",
+      "unselected": "Chưa chọn"
+    },
+    "time": {
+      "title": "Thời gian"
+    },
+    "store": {
+      "title": "Cửa hàng",
+      "unselected": "Chưa chọn"
     },
     "items": {
       "selected": "Mặt hàng đã chọn",
@@ -75,6 +88,7 @@
       }
     },
     "confirmOrder": "Tiếp tục",
+    "confirmTitle": "Xác nhận",
     "feedback": "Phản ánh & đánh giá",
     "addMoreItems": "Chọn thêm mặt hàng",
     "reorder": "Đặt lại",

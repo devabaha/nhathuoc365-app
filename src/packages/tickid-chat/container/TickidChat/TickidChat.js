@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Text,
   Dimensions,
+  Linking,
 } from 'react-native';
 import {
   GiftedChat,
@@ -28,6 +29,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
+import Communications from 'react-native-communications';
+import Clipboard from '@react-native-community/clipboard';
 import {setStater} from '../../helper';
 import {
   WIDTH,
@@ -47,17 +50,38 @@ import {
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
 import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
+import {Actions} from 'react-native-router-flux';
+import appConfig from 'app-config';
 
+export const PATTERNS = {
+  /**
+   * Segments/Features:
+   *  - http/https support https?
+   *  - auto-detecting loose domains if preceded by `www.`
+   *  - Localized & Long top-level domains \.(xn--)?[a-z0-9-]{2,20}\b
+   *  - Allowed query parameters & values, it's two blocks of matchers
+   *    ([-a-zA-Z0-9@:%_\+,.~#?&\/=]*[-a-zA-Z0-9@:%_\+~#?&\/=])*
+   *    - First block is [-a-zA-Z0-9@:%_\+\[\],.~#?&\/=]* -- this matches parameter names & values (including commas, dots, opening & closing brackets)
+   *    - The first block must be followed by a closing block [-a-zA-Z0-9@:%_\+\]~#?&\/=] -- this doesn't match commas, dots, and opening brackets
+   */
+  URL: /(https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.(xn--)?[a-z0-9-]{2,20}\b([-a-zA-Z0-9@:%_\+\[\],.~#?&\/=]*[-a-zA-Z0-9@:%_\+\]~#?&\/=])*/i,
+  PHONE: /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,7}/,
+  EMAIL: /\S+@\S+\.\S+/,
+  NUMBER: /\d{6,}/g,
+  WWW_URL: /^www\./i,
+};
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
 const MAX_PIN = 9;
 const defaultListener = () => {};
+
 class TickidChat extends Component {
   static propTypes = {
     showAllUserName: PropTypes.bool,
     showMainUserName: PropTypes.bool,
     useModalGallery: PropTypes.bool,
+    blurWhenPressOutside: PropTypes.bool,
     listHeaderComponent: PropTypes.node,
     listFooterComponent: PropTypes.node,
     renderEmpty: PropTypes.any,
@@ -117,6 +141,7 @@ class TickidChat extends Component {
     showAllUserName: false,
     showMainUserName: false,
     useModalGallery: !isIos,
+    blurWhenPressOutside: true,
     listFooterComponent: null,
     listHeaderComponent: null,
     renderEmpty: null,
@@ -184,9 +209,11 @@ class TickidChat extends Component {
     isFullscreenGestureMode: false,
   };
 
+  refGiftedChat = React.createRef();
   refMasterToolBar = React.createRef();
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
+  refListMessages = React.createRef();
   refInput = React.createRef();
   unmounted = false;
   animatedShowUpValue = 0;
@@ -198,6 +225,16 @@ class TickidChat extends Component {
     onPinPress: this.props.onPinPress,
   };
   getLayoutDidMount = false;
+  actionOptionForNumeric = [
+    this.props.t('call'),
+    this.props.t('sendSMS'),
+    this.props.t('copy'),
+    this.props.t('cancel'),
+  ];
+  actionOptionForLongPressMessage = [
+    this.props.t('copy'),
+    this.props.t('cancel'),
+  ];
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -237,6 +274,7 @@ class TickidChat extends Component {
         this.props.renderMessageFullControl ||
       nextProps.isMultipleImagePicker !== this.props.isMultipleImagePicker ||
       nextProps.alwaysShowInput !== this.props.alwaysShowInput ||
+      nextProps.blurWhenPressOutside !== this.props.blurWhenPressOutside ||
       nextProps.pinList !== this.props.pinList ||
       nextProps.pinNotify !== this.props.pinNotify ||
       nextProps.pinListNotify !== this.props.pinListNotify ||
@@ -260,7 +298,7 @@ class TickidChat extends Component {
   }
 
   componentDidMount() {
-    this.props.refGiftedChat(GiftedChat);
+    this.props.refGiftedChat(GiftedChat, this.refGiftedChat.current);
     //merge with masterToolBar
     if (this.refMasterToolBar.current) {
       const refsImageGallery = this.refMasterToolBar.current.getComponentRef(
@@ -390,7 +428,6 @@ class TickidChat extends Component {
 
     if (this.refInput.current) {
       this.refInput.current.blur();
-      this.setState({editable: false});
     }
   };
 
@@ -668,27 +705,23 @@ class TickidChat extends Component {
 
   onListViewPress = (e) => {
     if (
-      this.state.selectedType !== COMPONENT_TYPE._NONE ||
-      this.state.editable
+      this.props.blurWhenPressOutside &&
+      (this.state.selectedType !== COMPONENT_TYPE._NONE || this.state.editable)
     ) {
       this.collapseComposer();
     }
   };
 
-  collapseComposer() {
-    this.setState(
-      {
-        editable: !!this.state.text,
-        showBackBtn: false,
-        showSendBtn: !!this.state.text,
-        showToolBar: false,
-        selectedType: COMPONENT_TYPE._NONE,
-      },
-      () => {
-        setTimeout(() => this.handleBlur(), 100);
-      },
-    );
-  }
+  collapseComposer = () => {
+    this.setState({
+      editable: !!this.state.text,
+      showBackBtn: false,
+      showSendBtn: !!this.state.text,
+      showToolBar: false,
+      selectedType: COMPONENT_TYPE._NONE,
+    });
+    this.handleBlur();
+  };
 
   handleContainerLayout = (e) => {
     if (!this.getLayoutDidMount) {
@@ -737,6 +770,93 @@ class TickidChat extends Component {
       this.setState({isFullscreenGestureMode: true});
     } else {
       this.setState({isFullscreenGestureMode: false});
+    }
+  };
+
+  handleParsePatterns = (linkStyle) => [
+    {
+      pattern: PATTERNS.URL,
+      style: linkStyle,
+      onPress: this.handlePressURL,
+    },
+    {
+      pattern: PATTERNS.NUMBER,
+      style: linkStyle,
+      onPress: this.handlePressNumber,
+    },
+  ];
+
+  handlePressNumber = (number) => {
+    this.handlePressComposerButton(this.state.selectedType);
+    Actions.push(appConfig.routes.modalActionSheet, {
+      title: number,
+      options: this.actionOptionForNumeric,
+      onPress: (index) => this.handlePressChatNumberActionOption(number, index),
+    });
+  };
+
+  handlePressChatNumberActionOption = (number, index) => {
+    switch (index) {
+      case 0:
+        Communications.phonecall(number, true);
+        break;
+      case 1:
+        Communications.text(number);
+        break;
+      case 2:
+        Clipboard.setString(number);
+        setTimeout(() => Toast.show(this.props.t('copied')));
+        break;
+      default:
+        break;
+    }
+  };
+
+  handlePressURL = (url) => {
+    if (PATTERNS.WWW_URL.test(url)) {
+      this.handlePressURL(`http://${url}`);
+    } else {
+      Linking.canOpenURL(url).then((supported) => {
+        if (!supported) {
+          console.error('No handler for URL:', url);
+        } else {
+          // Linking.openURL(url);
+          Actions.push(appConfig.routes.modalWebview, {
+            url: url,
+            title: url,
+          });
+        }
+      });
+    }
+  };
+
+  handleBubbleLongPress = (context, message) => {
+    if (typeof this.props.onBubbleLongPress === 'function') {
+      this.props.onBubbleLongPress(context, message);
+      return;
+    }
+    if (message.text) {
+      this.handlePressComposerButton(this.state.selectedType);
+      Actions.push(appConfig.routes.modalActionSheet, {
+        options: this.actionOptionForLongPressMessage,
+        onPress: (buttonIndex) => {
+          switch (buttonIndex) {
+            case 0:
+              Clipboard.setString(message.text);
+              setTimeout(() => Toast.show(this.props.t('copied')));
+              break;
+          }
+        },
+      });
+    }
+  };
+
+  handleScrollToBottom = () => {
+    if (this.refListMessages.current) {
+      this.refListMessages.current.scrollToOffset({
+        offset: 0,
+        animated: true,
+      });
     }
   };
 
@@ -846,10 +966,16 @@ class TickidChat extends Component {
         onFocusInput={() =>
           this.handlePressComposerButton(COMPONENT_TYPE.EMOJI, true)
         }
+        autoFocus={this.props.autoFocus}
         refInput={this.refInput}
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}
         btnWidth={BTN_IMAGE_WIDTH}
+        onBlurInput={() => {
+          if (this.state.selectedType === COMPONENT_TYPE.EMOJI) {
+            this.collapseComposer();
+          }
+        }}
         {...props}
         editable={this.state.editable}
         onTyping={this.onTyping}
@@ -864,43 +990,8 @@ class TickidChat extends Component {
     if (typeof this.props.renderInputToolbar === 'function') {
       return this.props.renderInputToolbar(props);
     }
-    return (
-      <InputToolbar {...props} />
-      // <View
-      //   onLayout={this.handleInputToolbarLayout}
-      //   style={styles.inputToolbar}>
-      //   {this.renderLeftComposer()}
-      //   {this.renderComposer()}
-      //   {this.renderSend()}
-      // </View>
-    );
+    return <InputToolbar {...props} />;
   };
-
-  // renderFooter() {
-  //   return this.state.uploadImages.length !== 0 ? (
-  //     <View style={styles.footerStyle}>
-  //       {this.state.uploadImages.map(image => (
-  //         <ImageUploading
-  //           key={image.id}
-  //           image={image}
-  //           uploadURL={this.props.uploadURL}
-  //           onUploadedSuccess={response => {
-  //             this.props.onUploadedImage(response);
-  //             let uploadImages = [...this.state.uploadImages];
-  //             uploadImages.splice(
-  //               uploadImages.findIndex(img => img.id === image.id),
-  //               1
-  //             );
-  //             this.setState({ uploadImages });
-  //           }}
-  //           onUploadedFail={err => {
-  //             console.log(err);
-  //           }}
-  //         />
-  //       ))}
-  //     </View>
-  //   ) : null;
-  // }
 
   renderSend = (props) => {
     if (typeof this.props.renderSend === 'function') {
@@ -1183,7 +1274,11 @@ class TickidChat extends Component {
   };
 
   renderScrollBottomComponent = () => {
-    return <IconAntDesign name="arrowdown" color="#404040" size={20} />;
+    return (
+      <TouchableOpacity hitSlop={HIT_SLOP} onPress={this.handleScrollToBottom}>
+        <IconAntDesign name="arrowdown" color="#404040" size={20} />
+      </TouchableOpacity>
+    );
   };
 
   renderDay = (props) => {
@@ -1271,6 +1366,7 @@ class TickidChat extends Component {
                 },
               ]}>
               <GiftedChat
+                ref={this.refGiftedChat}
                 renderAvatar={this.renderAvatar}
                 renderDay={this.renderDay}
                 renderMessage={this.renderMessage}
@@ -1281,12 +1377,14 @@ class TickidChat extends Component {
                 renderInputToolbar={this.renderInputToolbar}
                 renderBubble={this.renderBubble}
                 renderTime={this.renderTime}
+                renderAccessory={this.props.renderAccessory}
                 // renderChatFooter={this.renderFooter.bind(this)}
                 keyboardShouldPersistTaps={'always'}
                 messages={this.props.messages}
                 // onSend={this.handleSendMessage}
                 // alwaysShowSend={true}
                 isKeyboardInternallyHandled={!isIos}
+                onLongPress={this.handleBubbleLongPress}
                 listViewProps={{
                   contentContainerStyle: [
                     styles.giftedChatContainer,
@@ -1311,12 +1409,17 @@ class TickidChat extends Component {
                   renderScrollComponent: this.props.renderScrollComponent,
                   // onScroll: this.props.onListScroll,
                   onLayout: this.props.onListLayout,
-                  ref: this.props.refListMessages,
+                  ref: (inst) => {
+                    this.refListMessages.current = inst;
+                    this.props.refListMessages(inst);
+                  },
                   onScrollToIndexFailed: (e) => console.log(e),
                   ...this.props.listChatProps,
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
+                scrollToBottomStyle={{right: 15}}
+                parsePatterns={this.handleParsePatterns}
                 {...this.props.giftedChatProps}
               />
             </Animated.View>
@@ -1474,7 +1577,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TickidChat;
+export default withTranslation('common', {withRef: true})(TickidChat);
 
 export const EmptyChat = ({
   onPress,

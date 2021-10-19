@@ -7,6 +7,9 @@
       "title": "Gửi Email",
       "message": "Lời mời tham gia chương trình {{appName}} Affiliate"
     },
+    "share": {
+      "title": "Chia sẻ"
+    },
     "referralCode": {
       "title": "Mã giới thiệu"
     }

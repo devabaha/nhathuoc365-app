@@ -39,17 +39,18 @@ const Tag = ({
     fill,
     strokeColor,
     label = "",
-    strokeWidth: propsStrokeWidth,
+    strokeWidth: propsStrokeWidth = 0,
     containerStyle = {},
     labelContainerStyle = {},
     labelStyle = {},
-    animate
+    animate = false,
+    padding: paddingProps = 5,
 }: TagProps) => {
     let counter = 0;
     let refPath = null;
     const PathComponent = animate ? AnimatedPath : Path;
 
-    const [padding, setPadding] = useState(5);
+    const [padding, setPadding] = useState(paddingProps);
     const [containerHeight, setContainerHeight] = useState(0);
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);

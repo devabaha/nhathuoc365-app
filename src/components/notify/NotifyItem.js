@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import AutoHeightWebView from 'react-native-autoheight-webview';
 import ListHeader from '../stores/ListHeader';
 import Items from '../stores/Items';
 import CartFooter from '../cart/CartFooter';
@@ -32,6 +31,7 @@ import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import Loading from '../Loading';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -43,6 +43,7 @@ class NotifyItem extends Component {
       item_data: null,
       refreshing: false,
     };
+    this.unmounted = false;
     this.eventTracker = new EventTracker();
   }
 
@@ -60,6 +61,7 @@ class NotifyItem extends Component {
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     this.eventTracker.clearTracking();
   }
 
@@ -68,7 +70,7 @@ class NotifyItem extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.data.id != nextProps.data.id) {
+    if (this.props.data?.id != nextProps.data?.id) {
       this.setState(
         {
           loading: true,
@@ -83,12 +85,15 @@ class NotifyItem extends Component {
   }
 
   async _getData(delay) {
+    const newsId = this.props.newsId || this.state.item.id;
+
     try {
-      var response = await APIHandler.user_news(this.state.item.id);
+      const response = await APIHandler.user_news(newsId);
+      if (this.unmounted) return;
 
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
-          store.updateSocialNews(this.state.item.id, {
+          store.updateSocialNews(newsId, {
             like_count: response.data.like_count || 0,
             like_flag: response.data.like_flag || 0,
             share_count: response.data.share_count || 0,
@@ -109,8 +114,6 @@ class NotifyItem extends Component {
           this.setState(
             {
               item_data: response.data,
-              refreshing: false,
-              loading: false,
             },
             () =>
               Actions.refresh({
@@ -121,6 +124,12 @@ class NotifyItem extends Component {
       }
     } catch (e) {
       console.log(e + ' user_news');
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          refreshing: false,
+          loading: false,
+        });
     }
   }
 
@@ -131,6 +140,7 @@ class NotifyItem extends Component {
   }
 
   renderRightButton() {
+    return null;
     return (
       <Container row style={styles.rightButtonNavBarContainer}>
         <RightButtonNavBar type={RIGHT_BUTTON_TYPE.SHOPPING_CART} />
@@ -205,6 +215,9 @@ class NotifyItem extends Component {
     var {item, item_data} = this.state;
     const {t} = this.props;
 
+    const shopName = this.getHeaderInfo('shop_name');
+    const created = this.getHeaderInfo('created');
+
     return (
       <View style={styles.container}>
         {this.state.loading && <Loading center />}
@@ -235,12 +248,21 @@ class NotifyItem extends Component {
               </Text>
 
               <View style={styles.notify_time_box}>
-                <Text style={styles.notify_time}>
-                  <Icon name="map-marker" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('shop_name') + '    '}
-                  <Icon name="clock-o" size={11} color="#8B8B8B" />
-                  {'  ' + this.getHeaderInfo('created')}
-                </Text>
+                <Container row>
+                  {!!shopName && (
+                    <Container row style={styles.notifyBlock}>
+                      <Icon name="map-marker" style={styles.icon} />
+                      <Text style={styles.notify_time}>{shopName}</Text>
+                    </Container>
+                  )}
+
+                  {!!created && (
+                    <Container row style={styles.notifyBlock}>
+                      <Icon name="clock-o" style={styles.icon} />
+                      <Text style={styles.notify_time}>{created}</Text>
+                    </Container>
+                  )}
+                </Container>
               </View>
 
               {!!this.getHeaderInfo('short_content') && (
@@ -254,41 +276,11 @@ class NotifyItem extends Component {
 
             {
               item_data != null ? (
-                <AutoHeightWebView
-                  onShouldStartLoadWithRequest={(result) => {
-                    return true;
-                  }}
-                  style={{
-                    marginTop: 15,
-                    marginHorizontal: 15,
-                    width: appConfig.device.width - 30,
-                  }}
-                  onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item_data.content}}
-                  zoomable={false}
-                  scrollEnabled={false}
-                  viewportContent={'width=device-width, user-scalable=no'}
-                  customStyle={`
-                  * {
-                    font-family: 'system font';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
-                    font-size: 16px;
-                    line-height: 24px;
-                    color: #404040;
-                  }
-                  img {
-                    max-width: 100% !important;
-                    height: auto !important;
-                  }`}
+                <CustomAutoHeightWebview
+                  contentStyle={styles.webview}
+                  content={item_data.content}
                 />
               ) : null
-              // <Indicator size="small" />
             }
           </View>
 
@@ -302,37 +294,6 @@ class NotifyItem extends Component {
                   products={item_data.related}
                 />
               </>
-
-              // <FlatList
-              //   onEndReached={(num) => {}}
-              //   onEndReachedThreshold={0}
-              //   style={[styles.items_box]}
-              // ListHeaderComponent={() => (
-              //   <ListHeader title={`—  ${t('relatedItems')}  —`} />
-              // )}
-              //   data={item_data.related}
-              //   renderItem={({item, index}) => (
-              //     <Items
-              //       item={item}
-              //       index={index}
-              //       onPress={this._goItem.bind(this, item)}
-              //       containerStyle={{
-              //         width: appConfig.device.width / 2 - 20,
-              //       }}
-              //       imageStyle={{
-              //         width: appConfig.device.width / 2 - 30,
-              //         height: appConfig.device.width / 2 - 30,
-              //       }}
-              //     />
-              //   )}
-              //   horizontal={true}
-              //   keyExtractor={(item) => item.id}
-              //   style={{overflow: 'visible'}}
-              //   contentContainerStyle={{
-              //     paddingHorizontal: 5,
-              //     paddingVertical: 20,
-              //   }}
-              // />
             )}
         </ScrollView>
 
@@ -357,26 +318,12 @@ class NotifyItem extends Component {
             onPressTotalComments={() =>
               handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.NEWS,
+                SOCIAL_BUTTON_TYPES.COMMENT,
                 item_data,
-              )}
-              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-              onActionBarPress={(type) =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  type,
-                  item_data,
-                )
-              }
-              hasInfoExtraBottom={false}
-              onPressTotalComments={() =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  SOCIAL_BUTTON_TYPES.COMMENT,
-                  item_data,
-                  false,
-                )
-              }
-            />
+                false,
+              )
+            }
+          />
         )}
 
         {/* {item_data != null && item_data.related && (
@@ -481,6 +428,19 @@ const styles = StyleSheet.create({
 
   listStoreProductContainer: {
     paddingTop: 0,
+  },
+  webview: {
+    marginTop: 15,
+    marginHorizontal: 15,
+  },
+
+  notifyBlock: {
+    marginRight: 15,
+  },
+  icon: {
+    marginRight: 5,
+    color: '#8B8B8B',
+    fontSize: 11,
   },
 });
 

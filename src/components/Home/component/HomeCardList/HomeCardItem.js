@@ -49,11 +49,11 @@ class HomeCardItem extends Component {
             )}
           </ImageBackground>
           <View style={[styles.titleWrapper, props.textWrapperStyle]}>
-            <Text numberOfLines={2} style={styles.title}>
+            <Text numberOfLines={2} style={[styles.title, props.titleStyle]}>
               {props.title}
             </Text>
             {!!props.subTitle && (
-              <Text style={styles.subTitle}>
+              <Text style={[styles.subTitle, props.subTitleStyle]}>
                 {this.props.iconSubTitle}
                 {!!this.props.iconSubTitle && ` `}
                 <Text style={styles.specialSubTitle}>

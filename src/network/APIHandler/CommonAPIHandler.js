@@ -357,6 +357,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Danh sách địa chỉ cửa hàng
+   */
+  site_address(site_id, data) {
+    var api = url_for(API.SITE_ADDRESS + '/' + site_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    * Thêm/sửa địa chỉ
    */
   async site_add_address(site_id, address_id, data) {
@@ -661,10 +669,21 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * Lấy danh sách thông báo
+   *
+   * @param {Object} data
+   * @param {number} data.page
    */
-  async user_notice() {
-    var api = url_for(API.USER_NOTICE);
-    return await this.getAPI(api);
+  user_notice(data) {
+    const api = url_for(API.USER_NOTICE);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * Đánh dấu đã đọc 1 thông báo
+   */
+  user_read_notice(notice_id) {
+    const api = url_for(API.USER_READ_NOTICE, notice_id);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -994,8 +1013,8 @@ class CommonAPIHandler extends BaseHandler {
    * @todo get products by group
    *
    */
-  site_group_product(siteId, groupId) {
-    const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId);
+  site_group_product(siteId, groupId, pageIndex) {
+    const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId, pageIndex);
     return this.getCancelableAPI(api, true);
   }
 
@@ -1038,6 +1057,17 @@ class CommonAPIHandler extends BaseHandler {
   user_invited_revenue(data) {
     const api = url_for(API.USER_INVITED_REVENUE);
     return this.postCancelableAPI(api, data, true);
+  }
+
+  /**
+   * edit user note
+   *
+   */
+  async edit_user_note(site_id, cart_id, data) {
+    const api = url_for(
+      API.SITE_CART_EDIT_USER_NOTE + '/' + site_id + '/' + cart_id,
+    );
+    return await this.postAPI(api, data);
   }
 
   /**
@@ -1173,8 +1203,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {number} data.object_id id of object
    * @param {number=} data.comment_id id of object
    */
-  social_comment(data) {
-    const api = url_for(API.SOCIAL_COMMENT);
+  social_comment(data, comment_id = '') {
+    const api = url_for(API.SOCIAL_COMMENT, comment_id);
     return this.postCancelableAPI(api, data);
   }
 
@@ -1236,9 +1266,45 @@ class CommonAPIHandler extends BaseHandler {
    * @param {string} data.content
    * @param {array=} data.images
    */
-  social_create_post(data) {
-    const api = url_for(API.SOCIAL_CREATE_POST);
+  social_create_post(data, post_id = '') {
+    const api = url_for(API.SOCIAL_CREATE_POST, post_id);
     return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get info of post
+   *
+   */
+  social_posts_edit(post_id) {
+    const api = url_for(API.SOCIAL_POSTS_EDIT, post_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * delete post
+   *
+   */
+  social_posts_delete(post_id) {
+    const api = url_for(API.SOCIAL_POSTS_DELETE, post_id);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
+   * get info of comment
+   *
+   */
+  social_comments_edit(comment_id) {
+    const api = url_for(API.SOCIAL_COMMENTS_EDIT, comment_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * delete comment
+   *
+   */
+  social_comments_delete(comment_id) {
+    const api = url_for(API.SOCIAL_COMMENTS_DELETE, comment_id);
+    return this.postCancelableAPI(api);
   }
 
   /**
@@ -1255,6 +1321,299 @@ class CommonAPIHandler extends BaseHandler {
   user_warranty_detail(id) {
     const api = url_for(API.USER_WARRANTY_DETAIL + '/' + id);
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * Upload ảnh profile cho user
+   */
+  async user_upload_image(data) {
+    var api = url_for(API.USER_UPLOAD_IMAGE);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Xóa ảnh profile cho user
+   */
+  async user_delete_image(data) {
+    var api = url_for(API.USER_DELETE_IMAGE);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Upload ảnh cover cho user
+   */
+  async user_upload_image_cover(data) {
+    var api = url_for(API.USER_UPLOAD_IMAGE_COVER);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách các lĩnh vực
+   */
+  async get_professions() {
+    var api = url_for(API.USER_PROFESSIONS);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Lấy danh sách các Gold Member theo lĩnh vực
+   */
+  async search_experts(data) {
+    var api = url_for(API.USER_SEARCH_EXPERTS);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Tạo cuộc hội thoại
+   */
+  async user_create_conversation(data) {
+    var api = url_for(API.USER_CREATE_CONVERSATION);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách hội thoại user chat
+   */
+  user_list_conversation(data = {}) {
+    const cancelInstance = this.getCancelInstance();
+
+    var api = url_for(API.USER_LIST_CONVERSATION);
+    return [
+      cancelInstance,
+      () =>
+        this.postAPI(api, data, {
+          cancelToken: cancelInstance.token,
+        }),
+    ];
+  }
+
+  /**
+   * Lấy nội dung tin nhắn user chat
+   */
+  user_list_chat_conversation(conversation_id, last_message_id) {
+    const cancelInstance = this.getCancelInstance();
+
+    const api = url_for(
+      API.USER_LIST_CHAT_CONVERSATION +
+        '/' +
+        conversation_id +
+        '/' +
+        last_message_id,
+    );
+    return [
+      cancelInstance,
+      () =>
+        this.getAPI(api, {
+          cancelToken: cancelInstance.token,
+        }),
+    ];
+  }
+
+  /**
+   * Gửi user chat
+   */
+  async user_send_message(conversation_id, data) {
+    var api = url_for(API.USER_SEND_MESSAGE + '/' + conversation_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách thành viên được giới thiệu
+   */
+  async site_list_invite(store_id, user_id) {
+    var api = url_for(API.SITE_LIST_INVITE + '/' + store_id + '/' + user_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Lấy profile
+   */
+  async site_user_profile(store_id, user_id) {
+    var api = url_for(API.SITE_USER_PROFILE + '/' + store_id + '/' + user_id);
+    return await this.getAPI(api);
+  }
+
+  // tìm vé máy may
+  async search_airport(data) {
+    var api = url_for(API.SITE_SEARCH_AIRPORT);
+    return await this.postAPI(api, data);
+  }
+
+  // Booking
+  /**
+   * @todo Lấy block thời gian booking theo ngày đã chọn
+   *
+   * @param {Object=} data
+   * @param {string=} data.date
+   */
+  booking_get_booking_times(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_GET_BOOKING_TIMES, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo Lấy dữ liệu mặc định booking
+   *
+   * @param {Object} data
+   * @param {string} data.id productId
+   */
+  booking_store(site_id, data) {
+    const api = url_for(API.BOOKING_STORE, site_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo Cập nhật dữ liệu booking
+   *
+   * @param {Object} data
+   * @param {string} data.model
+   * @param {number} data.quantity
+   * @param {string} data.address_id
+   * @param {string} data.time datetime (yyyy-mm-dd hh:mm)
+   */
+  booking_update(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_UPDATE, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo booking
+   *
+   * @param {Object} data
+   * @param {string} data.user_note
+   */
+  booking_order(site_id, booking_id, data) {
+    const api = url_for(API.BOOKING_ORDER, site_id, booking_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo Hiển thị đơn đã booking
+   */
+  booking_show(site_id, booking_id) {
+    const api = url_for(API.BOOKING_SHOW, site_id, booking_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * @todo Huỷ đơn đã booking
+   */
+  booking_cancel(site_id, booking_id) {
+    const api = url_for(API.BOOKING_CANCEL, site_id, booking_id);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
+   * @todo lấy danh sách yêu cầu
+   */
+  async site_requests_room(site_id, room_id) {
+    const api = url_for(API.SITE_REQUESTS_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * @todo Tạo yêu cầu
+   */
+  async site_request_room(site_id, room_id, data) {
+    const api = url_for(API.SITE_REQUEST_ROOM + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * @todo lấy danh sách loại yêu cầu
+   */
+  async site_request_types_room(site_id, room_id) {
+    const api = url_for(
+      API.SITE_REQUEST_TYPES_ROOM + '/' + site_id + '/' + room_id,
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin chi tiết yêu cầu
+   *
+   * @method
+   * @param {string} site_id
+   * @param {string} room_id
+   * @param {string} request_id
+   */
+  async site_detail_request_room(site_id, room_id, request_id) {
+    const api = url_for(
+      API.SITE_DETAIL_REQUEST_ROOM +
+        '/' +
+        site_id +
+        '/' +
+        room_id +
+        '/' +
+        request_id,
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Gửi comment yêu cầu
+   *
+   * @method
+   * @param {string} site_id
+   * @param {string} room_id
+   * @param {string} request_id
+   * @param {{content: string}} data
+   */
+  async site_comment_request_room(site_id, room_id, request_id, data) {
+    const api = url_for(
+      API.SITE_COMMENT_REQUEST_ROOM +
+        '/' +
+        site_id +
+        '/' +
+        room_id +
+        '/' +
+        request_id,
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Cập nhật trạng thái yêu cầu
+   *
+   * @method
+   * @param {string} site_id
+   * @param {string} room_id
+   * @param {string} request_id
+   * @param {{status_id: number}} data
+   */
+  site_update_status_request_room(site_id, room_id, request_id, data) {
+    const api = url_for(
+      API.SITE_UPDATE_STATUS_REQUEST_ROOM +
+        '/' +
+        site_id +
+        '/' +
+        room_id +
+        '/' +
+        request_id,
+    );
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * Cập nhật yêu cầu
+   *
+   */
+  async site_update_request(site_id, request_id, data) {
+    const api = url_for(
+      API.SITE_UPDATE_REQUEST + '/' + site_id + '/' + request_id,
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Cập nhật kho/ cửa hàng
+   *
+   *  @param {Object} data
+   *  @param {string} data.store_id
+   */
+  site_set_store(site_id, data) {
+    const api = url_for(API.SITE_SET_STORE, site_id);
+    return this.postCancelableAPI(api, data);
   }
 }
 

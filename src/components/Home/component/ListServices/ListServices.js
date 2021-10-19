@@ -335,6 +335,7 @@ class ListServices extends Component {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           onLayout={this.handleLayoutHorizontalContainer.bind(this)}
+          contentContainerStyle={this.props.contentContainerStyle}
           onScroll={event([
             {
               nativeEvent: {

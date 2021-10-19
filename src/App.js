@@ -108,7 +108,7 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking,
+  Booking as RadaBooking,
   OrderHistory,
 } from '@tickid/tickid-rada';
 import {
@@ -141,38 +141,35 @@ import {servicesHandler, SERVICES_TYPE} from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
-import Building, { ListBuilding } from './containers/Building';
+import Building, {ListBuilding} from './containers/Building';
 import Room from './containers/Room';
-import Requests, {
-  RequestDetail,
-  RequestCreation
-} from './containers/Requests';
+import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import Bills from './containers/Bills';
 import SupplierStore from './components/stores/SupplierStore';
 import {
   BillsPaymentMethod,
   BillsPaymentList,
-  BillsTransferInfo
+  BillsTransferInfo,
 } from './containers/Bills/Payment';
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
-import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
+import {MultiTaskView} from './components/MultiTaskView/MultiTaskView';
 import {
   CustomerSearchingBeeLand,
   ListBeeLand,
   OrderManagementBeeLand,
-  ProjectBeeLand
+  ProjectBeeLand,
 } from './containers/BeeLand';
-import { ListRoom } from './containers/Room';
+import {ListRoom} from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
 import ProjectProductBeeLand from './containers/BeeLand/ProjectProductBeeLand';
 import {
   ConfirmBookingBeeLand,
   CustomerInfoBeeLand,
-  DepositPaymentBeeLand
+  DepositPaymentBeeLand,
 } from './containers/BeeLand/Booking/';
-import { ProfileBeeLand } from './containers/BeeLand/CustomerProfile';
+import {ProfileBeeLand} from './containers/BeeLand/CustomerProfile';
 
 import CameraView from './components/CameraView/CameraView';
 import {CaptureFaceID} from './containers/IView';
@@ -200,7 +197,7 @@ import Transaction from './components/payment/Transaction';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
-import SalesReport from './containers/SalesReport/SalesReport';
+import SalesReport from './containers/SalesReport';
 import {
   FilterDrawer,
   ModalFilterProduct,
@@ -214,6 +211,27 @@ import SVGAccount from './images/home/account.svg';
 import ProgressTracking, {
   ProgressTrackingDetail,
 } from './containers/ProgressTracking';
+import Profile from './containers/Profile';
+import EditPersonalProfile from './containers/EditProfile';
+import {
+  ListUserChat,
+  ListUserChatNavBar,
+  SearchUserChat,
+  SearchUserChatNavBar,
+  UserChat as AmazingUserChat,
+} from './components/amazingUserChat';
+
+import ListAddressStore from './containers/ListAddressStore';
+import AirlineTicket from './containers/AirlineTicket';
+import DatePicker from './containers/AirlineTicket/DatePicker';
+import Place from './containers/AirlineTicket/Place';
+import Customer from './containers/AirlineTicket/Customer';
+import Result from './containers/AirlineTicket/Result';
+import PlaceNavBar from './containers/AirlineTicket/Place/PlaceNavBar';
+import Booking from './containers/Booking';
+import ModalCalendar from './components/ModalCalendar';
+import MainNotify from './components/notify/MainNotify';
+import ModalActionSheet from './components/ModalActionSheet';
 
 /**
  * Not allow font scaling
@@ -223,6 +241,7 @@ Text.defaultProps.allowFontScaling = false;
 if (TextInput.defaultProps == null) TextInput.defaultProps = {};
 TextInput.defaultProps.allowFontScaling = false;
 TextInput.defaultProps.placeholderTextColor = appConfig.colors.placeholder;
+TextInput.defaultProps.underlineColorAndroid = 'transparent';
 /**
  * Initializes config for Phone Card module
  */
@@ -330,13 +349,20 @@ class App extends Component {
       progress: null,
       appLanguage: props.i18n.language,
       isOpenCodePushModal: false,
-      codePushUpdateProgress: 0,
+      codePushUpdateProgress: 1,
       codePushUpdatePackage: null,
       codePushLocalPackage: null,
-      titleUpdateCodePushModal: 'Đã có bản cập nhật mới!',
-      descriptionUpdateCodePushModal:
-        'Hệ thống đang cập nhật.\r\nBạn vui lòng chờ trong giây lát...',
+      titleUpdateCodePushModal: '',
+      descriptionUpdateCodePushModal: '',
     };
+  }
+
+  get titleUpdateCodePushModal() {
+    return this.props.t('codePush.alert.hasUpdateTitle');
+  }
+
+  get descriptionUpdateCodePushModal() {
+    return this.props.t('codePush.alert.hasUpdateDescription');
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -426,81 +452,6 @@ class App extends Component {
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
-  codePushStatusDidChange(syncStatus) {
-    switch (syncStatus) {
-      case codePush.SyncStatus.CHECKING_FOR_UPDATE:
-        this.setState({descriptionUpdateCodePushModal: 'Kiểm tra cập nhât.'});
-        break;
-      case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-        this.setState({descriptionUpdateCodePushModal: 'Đang tải...'});
-        break;
-      case codePush.SyncStatus.AWAITING_USER_ACTION:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Chờ người dùng cho phép.',
-        });
-        break;
-      case codePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({descriptionUpdateCodePushModal: 'Đang cài đặt...'});
-        break;
-      case codePush.SyncStatus.UP_TO_DATE:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Cập nhật ứng dụng.',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UPDATE_IGNORED:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Bỏ qua cập nhật.',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UPDATE_INSTALLED:
-        this.setState({
-          descriptionUpdateCodePushModal:
-            'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
-          progress: false,
-        });
-        break;
-      case codePush.SyncStatus.UNKNOWN_ERROR:
-        this.setState({
-          descriptionUpdateCodePushModal: 'Có lỗi xảy ra.',
-          progress: false,
-        });
-        break;
-    }
-  }
-
-  /** Update is downloaded silently, and applied on restart (recommended) */
-  sync() {
-    codePush.sync(
-      {},
-      this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this),
-    );
-  }
-
-  /** Update pops a confirmation dialog, and then immediately reboots the app */
-  syncImmediate() {
-    codePush.sync(
-      {
-        deploymentKey: CPDK[Platform.OS],
-        installMode: codePush.InstallMode.IMMEDIATE,
-        updateDialog: {
-          optionalIgnoreButtonLabel: 'Bỏ qua',
-          optionalInstallButtonLabel: 'Cập nhật',
-          mandatoryContinueButtonLabel: 'Cập nhật ngay',
-          mandatoryUpdateMessage:
-            'Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!',
-          optionalUpdateMessage:
-            'Đã có bản cập nhât mới. Bạn có muốn cài đặt không?',
-          title: 'Cập nhật ứng dụng',
-        },
-      },
-      this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this),
-    );
-  }
-
   async updateAppVersionsInfo(codePushVersion) {
     const data = {
       code_push_version: codePushVersion,
@@ -516,7 +467,7 @@ class App extends Component {
     });
   }
 
-  codePushSyncManually() {
+  codePushSyncManually = () => {
     codePush.checkForUpdate(CPDK[Platform.OS]).then((update) => {
       if (!update) {
         console.log('The app is up to date!');
@@ -526,7 +477,8 @@ class App extends Component {
           {
             isOpenCodePushModal: true,
             codePushUpdatePackage: update,
-            titleUpdateCodePushModal: 'Cập nhật ' + update.label,
+            titleUpdateCodePushModal:
+              this.props.t('update') + ' ' + update.label,
           },
           () => {
             this.codePushDownloadUpdate();
@@ -534,7 +486,7 @@ class App extends Component {
         );
       }
     });
-  }
+  };
 
   codePushDownloadDidProgress(progress) {
     this.setState({
@@ -558,17 +510,19 @@ class App extends Component {
             codePushLocalPackage: localPackage,
           },
           () => {
-            // this.codePushInstallUpdate(localPackage);
+            setTimeout(() => {
+              if (this.state.codePushLocalPackage) {
+                this.codePushInstallUpdate();
+              }
+            }, 5000);
           },
         );
-        // setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
-        console.log(localPackage);
       })
       .catch((err) => {
         console.log('%cdownload_update_codepush', 'color:red', err);
         Alert.alert(
-          'Lỗi cập nhật',
-          'Tải cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          this.props.t('codePush.alert.failTitle'),
+          this.props.t('codePush.alert.failDescription'),
           [
             {
               text: 'OK',
@@ -579,9 +533,11 @@ class App extends Component {
       });
   }
 
-  codePushInstallUpdate(
+  codePushInstallUpdate = (
     codePushLocalPackage = this.state.codePushLocalPackage,
-  ) {
+  ) => {
+    if (!codePushLocalPackage) return;
+
     codePushLocalPackage
       .install(codePush.InstallMode.IMMEDIATE)
       .then(() => {
@@ -590,8 +546,8 @@ class App extends Component {
       .catch((err) => {
         console.log('%cinstall_update_codepush', 'color:red', err);
         Alert.alert(
-          'Lỗi cập nhật',
-          'Cài đặt cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          this.props.t('codePush.alert.failTitle'),
+          this.props.t('codePush.alert.failDescription'),
           [
             {
               text: 'OK',
@@ -600,9 +556,9 @@ class App extends Component {
           ],
         );
       });
-  }
+  };
 
-  handleCodePushProgressComplete() {
+  handleCodePushProgressComplete = () => {
     let intervalCheckingLocalPackage = null;
     intervalCheckingLocalPackage = setInterval(() => {
       if (this.state.codePushLocalPackage) {
@@ -612,15 +568,15 @@ class App extends Component {
         });
       }
     }, 500);
-  }
+  };
 
-  closeCodePushModal(callBack = () => {}) {
+  closeCodePushModal = (callBack = () => {}) => {
     this.setState({isOpenCodePushModal: false}, () => callBack());
-  }
+  };
 
-  setHeader(header) {
+  setHeader = (header) => {
     this.setState({header});
-  }
+  };
 
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
@@ -650,7 +606,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{ overflow: 'scroll', flex: 1 }}>
+      <View style={{overflow: 'scroll', flex: 1}}>
         {/* <MultiTaskView /> */}
         {/* <ProjectProductBeeLand /> */}
         {this.state.header}
@@ -658,32 +614,33 @@ class App extends Component {
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
-          setHeader={this.setHeader.bind(this)}
+          setHeader={this.setHeader}
         />
         <Drawer />
         <FlashMessage icon={'auto'} />
-        {this.state.isOpenCodePushModal && (
-          <AwesomeAlert
-            useNativeDriver
-            show={this.state.isOpenCodePushModal}
-            closeOnTouchOutside={false}
-            closeOnHardwareBackPress={false}
-            showCancelButton={false}
-            showConfirmButton={false}
-            customView={
-              <AppCodePush
-                title={this.state.titleUpdateCodePushModal}
-                description={this.state.descriptionUpdateCodePushModal}
-                btnTitle="Cập nhật ngay"
-                showConfirmBtn={false}
-                progress={this.state.codePushUpdateProgress}
-                onProgressComplete={this.handleCodePushProgressComplete.bind(
-                  this,
-                )}
-              />
-            }
-          />
-        )}
+        <AwesomeAlert
+          useNativeDriver
+          show={this.state.isOpenCodePushModal}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={false}
+          customView={
+            <AppCodePush
+              title={
+                this.state.titleUpdateCodePushModal ||
+                this.titleUpdateCodePushModal
+              }
+              description={
+                this.state.descriptionUpdateCodePushModal ||
+                this.descriptionUpdateCodePushModal
+              }
+              progress={this.state.codePushUpdateProgress}
+              onProgressComplete={this.handleCodePushProgressComplete}
+              onPressConfirm={() => this.closeCodePushModal()}
+            />
+          }
+        />
       </View>
     );
   }
@@ -736,8 +693,8 @@ class RootRouter extends Component {
   state = {
     tabVisible: {
       [appConfig.routes.roomTab]: true,
-      [appConfig.routes.listBeeLand]: false
-    }
+      [appConfig.routes.listBeeLand]: false,
+    },
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -805,9 +762,8 @@ class RootRouter extends Component {
                   tabBarStyle={styles.tabBarStyle}
                   activeBackgroundColor="#ffffff"
                   inactiveBackgroundColor="#ffffff"
-                  tabBarOnPress={props => handleTabBarOnPress({ ...props, t })}
-                  {...navBarConfig}
-                >
+                  tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
+                  {...navBarConfig}>
                   {/* ================ Tab 1 ================ */}
                   {this.state.tabVisible[appConfig.routes.roomTab] && (
                     <Stack
@@ -815,8 +771,7 @@ class RootRouter extends Component {
                       icon={TabIcon}
                       iconLabel={t('appTab.tab1.title')}
                       iconName="sofa"
-                      iconSize={24}
-                    >
+                      iconSize={24}>
                       <Scene
                         key={`${appConfig.routes.roomTab}_1`}
                         title="HomeID"
@@ -848,8 +803,7 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab2.title')}
                     iconName="home-assistant"
                     iconSize={24}
-                    initial
-                  >
+                    initial>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
                       component={HomeContainer}
@@ -860,8 +814,7 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   {/* <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    icon={FoodHubCartButton}>
                     <Scene component={() => null} />
                   </Stack> */}
 
@@ -874,8 +827,7 @@ class RootRouter extends Component {
                       icon={TabIcon}
                       iconLabel={t('appTab.tab3.title')}
                       iconName="office-building"
-                      iconSize={24}
-                    >
+                      iconSize={24}>
                       <Scene
                         key={`${appConfig.routes.listBeeLand}_1`}
                         title={t('screen.listBeeLand.mainTitle')}
@@ -883,9 +835,52 @@ class RootRouter extends Component {
                       />
                     </Stack>
                   )}
+                  {/* <Stack
+                    key={appConfig.routes.mainNotify}
+                    icon={TabIcon}
+                    iconSize={20}
+                    iconLabel={t('appTab.tab3.title')}
+                    iconName="bell"
+                    notifyKey="notify_list_notice">
+                    <Scene
+                      key={`${appConfig.routes.mainNotify}_1`}
+                      title={t('appTab.tab3.title')}
+                      component={MainNotify}
+                      onEnter={() => {
+                        store.setUpdateNotify(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateNotify(false);
+                      }}
+                    />
+                  </Stack> */}
 
                   {/**
                    ************************ Tab 4 ************************
+                   */}
+                  {/* <Stack
+                    key={appConfig.routes.ordersTab}
+                    icon={TabIcon}
+                    iconSize={24}
+                    iconLabel={t('appTab.tab4.title')}
+                    iconName="cart"
+                    notifyKey="notify_cart"
+                    iconSVG={SVGOrders}>
+                    <Scene
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title={t('screen.orders.mainTitle')}
+                      component={Orders}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
+                    />
+                  </Stack> */}
+
+                  {/**
+                   ************************ Tab 5 ************************
                    */}
                   <Stack
                     key={appConfig.routes.accountTab}
@@ -913,6 +908,164 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ CUSTOMER CARD WALLET ================ */}
+                <Stack key={appConfig.routes.customerCardWallet}>
+                  <Scene
+                    key={`${appConfig.routes.customerCardWallet}_1`}
+                    component={CustomerCardWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUESTS ================ */}
+                <Stack key={appConfig.routes.requests}>
+                  <Scene
+                    key={`${appConfig.routes.requests}_1`}
+                    component={Requests}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST CREATION ================ */}
+                <Stack key={appConfig.routes.requestCreation}>
+                  <Scene
+                    key={`${appConfig.routes.requestCreation}_1`}
+                    component={RequestCreation}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST DETAIL ================ */}
+                <Stack key={appConfig.routes.requestDetail}>
+                  <Scene
+                    key={`${appConfig.routes.requestDetail}_1`}
+                    component={RequestDetail}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BOOKING ================ */}
+                <Stack key={appConfig.routes.booking}>
+                  <Scene
+                    key={`${appConfig.routes.booking}_1`}
+                    title={t('screen.booking.mainTitle')}
+                    component={Booking}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET RESULT ================ */}
+                <Stack key={appConfig.routes.result}>
+                  <Scene
+                    key={`${appConfig.routes.result}_1`}
+                    component={Result}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET PLACE ================ */}
+                <Stack key={appConfig.routes.place}>
+                  <Scene
+                    key={`${appConfig.routes.place}_1`}
+                    component={Place}
+                    navBar={({onChangeText}) => (
+                      <PlaceNavBar {...{onChangeText}} />
+                    )}
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET DATEPICKER ================ */}
+                <Stack key={appConfig.routes.datePicker}>
+                  <Scene
+                    modal={true}
+                    panHandlers={null}
+                    title="Chọn ngày"
+                    {...navBarConfig}
+                    key={`${appConfig.routes.datePicker}_1`}
+                    component={DatePicker}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AIRLINE TICKET ================ */}
+                <Stack key={appConfig.routes.airlineTicket}>
+                  <Scene
+                    title="Tìm chuyến bay"
+                    key={`${appConfig.routes.airlineTicket}_1`}
+                    component={AirlineTicket}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ PROFILE ================ */}
+                <Stack key={appConfig.routes.personalProfile}>
+                  <Scene
+                    key={`${appConfig.routes.personalProfile}_1`}
+                    component={Profile}
+                    hideNavBar
+                    back
+                  />
+                </Stack>
+
+                {/* ================ EDIT PROFILE ================ */}
+                <Stack key={appConfig.routes.editPersonalProfile}>
+                  <Scene
+                    key={`${appConfig.routes.editPersonalProfile}_1`}
+                    component={EditPersonalProfile}
+                    title={t('screen.account.editAccountTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ LIST USER CHAT ================ */}
+                <Stack key={appConfig.routes.listUserChat}>
+                  <Scene
+                    key={`${appConfig.routes.listUserChat}_1`}
+                    title={t('screen.listUserChat.mainTitle')}
+                    component={ListUserChat}
+                    navBar={ListUserChatNavBar}
+                    {...navBarConfig}
+                    back
+                  />
+                  <Scene
+                    key={appConfig.routes.searchUserChat}
+                    component={SearchUserChat}
+                    navBar={SearchUserChatNavBar}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ AMAZING USER CHAT ================ */}
+                <Stack key={appConfig.routes.amazingUserChat}>
+                  <Scene
+                    key={`${appConfig.routes.amazingUserChat}_1`}
+                    component={AmazingUserChat}
+                    setHeader={this.setHeader.bind(this)}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ LIST ADDRESS STORE ================ */}
+                <Stack key={appConfig.routes.listAddressStore}>
+                  <Scene
+                    key={`${appConfig.routes.listAddressStore}_1`}
+                    {...navBarConfig}
+                    title={t('screen.gpsListStore.mainTitle')}
+                    component={ListAddressStore}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ LIST PROGRESS TRACKING ================ */}
                 <Stack key={appConfig.routes.listProgressTracking}>
@@ -1031,7 +1184,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.agencyInformationRegister}_1`}
                     {...navBarConfig}
-                    title={t('screen.agencyInformationRegister.mainTitle')}
                     component={AgencyInformationRegister}
                     back
                   />
@@ -1041,7 +1193,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
-                    title={t('screen.gpsListStore.mainTitle')}
                     component={GPSListStore}
                     back
                   />
@@ -1084,7 +1235,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                
+
                 {/* ================ CAPTURE FACEID ================ */}
                 <Stack key={appConfig.routes.captureFaceID}>
                   <Scene
@@ -1151,7 +1302,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requests}_1`}
                     component={Requests}
-                    title={t('screen.requests.mainTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1162,7 +1312,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requestCreation}_1`}
                     component={RequestCreation}
-                    title={t('screen.requests.creationTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1173,7 +1322,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.requestDetail}_1`}
                     component={RequestDetail}
-                    // title={t('screen.requests.detailTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1282,6 +1430,22 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.registerStore}_1`}
                     title={t('screen.registerStore.mainTitle')}
                     component={RegisterStore}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.ordersTab}>
+                  <Scene
+                    key={`${appConfig.routes.ordersTab}_1`}
+                    title={t('screen.orders.mainTitle')}
+                    component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1558,9 +1722,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="item_image_viewer">
+                <Stack key={appConfig.routes.itemImageViewer}>
                   <Scene
-                    key="item_image_viewer_1"
+                    key={`${appConfig.routes.itemImageViewer}_1`}
                     direction="vertical"
                     hideNavBar
                     component={ItemImageViewer}
@@ -1691,6 +1855,12 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.storeOrders}_1`}
                     component={StoreOrders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1727,9 +1897,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="vnd_wallet">
+                <Stack key={appConfig.routes.vndWallet}>
                   <Scene
-                    key="vnd_wallet_1"
+                    key={`${appConfig.routes.vndWallet}_1`}
                     component={VndWallet}
                     {...navBarConfig}
                     back
@@ -1825,7 +1995,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.detailHistoryPayment}>
                   <Scene
                     key={`${appConfig.routes.detailHistoryPayment}_1`}
-                    title="Tích điểm"
                     component={DetailHistoryPayment}
                     {...navBarConfig}
                     back
@@ -1871,11 +2040,11 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="list_amazing_chat">
+                <Stack key={appConfig.routes.listChat}>
                   <Scene
                     hideNavBar={false}
-                    key="list_amazing_chat_1"
-                    title="Chat với Cửa hàng"
+                    key={`${appConfig.routes.listChat}_1`}
+                    title="Danh sách Chat"
                     component={ListChat}
                     // navBar={ListChatNavBar}
                     {...navBarConfig}
@@ -1942,7 +2111,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.tickidRadaBooking}>
                   <Scene
                     key="tickidRadaBooking1"
-                    component={Booking}
+                    component={RadaBooking}
                     {...whiteNavBarConfig}
                     back
                   />
@@ -1984,6 +2153,17 @@ class RootRouter extends Component {
                     component={StoreLocation}
                     {...navBarConfig}
                     back
+                  />
+                </Stack>
+
+                <Stack
+                  key={appConfig.routes.rootGpsStoreLocation}
+                  panHandlers={null}>
+                  <Scene
+                    key={`${appConfig.routes.rootGpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
                   />
                 </Stack>
 
@@ -2094,6 +2274,12 @@ class RootRouter extends Component {
                 component={ItemAttribute}
               />
 
+              {/* ================ MODAL CALENDAR ================ */}
+              <Stack
+                key={appConfig.routes.modalCalendar}
+                component={ModalCalendar}
+              />
+
               {/* ================ MODAL PICKER ================ */}
               <Stack
                 key={appConfig.routes.modalPicker}
@@ -2133,6 +2319,12 @@ class RootRouter extends Component {
                 component={ModalConfirm}
               />
 
+              {/* ================ MODAL ACTION SHEET ================ */}
+              <Stack
+                key={appConfig.routes.modalActionSheet}
+                component={ModalActionSheet}
+              />
+
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
                 key={appConfig.routes.countryPicker}
@@ -2149,6 +2341,12 @@ class RootRouter extends Component {
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
+              {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
+              <Stack
+                key={appConfig.routes.customer}
+                component={Customer}
+                hideNavBar
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -2160,6 +2358,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -2169,6 +2368,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -2179,6 +2379,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -2190,6 +2391,7 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene

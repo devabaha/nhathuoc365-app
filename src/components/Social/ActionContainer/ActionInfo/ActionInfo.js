@@ -39,6 +39,7 @@ const FLOATING_ICONS = [
 const ActionInfo = ({
   totalReaction,
   totalComments,
+  totalCommentsTitle,
   isLiked,
   disableComment,
   hasInfoExtraBottom = true,
@@ -77,7 +78,7 @@ const ActionInfo = ({
         <Pressable style={styles.end} onPress={onPressTotalComments}>
           <Container row style={styles.block}>
             <Text style={styles.text}>
-              {totalComments} {t('comment')}
+              {totalComments} {totalCommentsTitle || t('comments')}
             </Text>
           </Container>
         </Pressable>

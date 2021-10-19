@@ -11,7 +11,7 @@ import {
 
 import HorizontalInfoItem from './HorizontalInfoItem';
 import {Actions} from 'react-native-router-flux';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareSectionList} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 import {isEmpty} from 'lodash';
 import Loading from '../Loading';
@@ -55,14 +55,25 @@ class EditProfile extends Component {
           {
             id: 'ho_ten',
             title: this.props.t('sections.fullName.title'),
-            value: store.user_info.name,
+            value: store.user_info.name || '',
             input: true,
+            defaultValue: '..........',
+          },
+          {
+            id: 'quote',
+            title: this.props.t('sections.quote.title'),
+            value: this.props.user_info.quote || '',
+            input: true,
+            multiline: true,
+            columnView: true,
+            defaultValue: '..........',
           },
           {
             id: 'so_dien_thoai',
             title: this.props.t('sections.phoneNumber.title'),
-            value: store.user_info.tel,
+            value: store.user_info.tel || '',
             disable: true,
+            defaultValue: '..........',
           },
         ],
       },
@@ -72,22 +83,37 @@ class EditProfile extends Component {
           {
             id: 'ngay_sinh',
             title: this.props.t('sections.birthdate.title'),
-            value: store.user_info.birth,
+            value: store.user_info.birth || '',
             defaultValue: this.props.t('sections.birthdate.defaultValue'),
             select: true,
           },
           {
             id: 'gioi_tinh',
             title: this.props.t('sections.gender.title'),
-            value: store.user_info.gender,
+            value: store.user_info.gender || '',
             defaultValue: this.props.t('sections.gender.defaultValue'),
             select: true,
           },
           {
             id: 'email',
             title: this.props.t('sections.email.title'),
-            value: store.user_info.email,
+            value: store.user_info.email || '',
             input: true,
+            defaultValue: '..........',
+          },
+          {
+            id: 'facebook',
+            title: this.props.t('sections.facebook.title'),
+            value: this.props.user_info.facebook || '',
+            input: true,
+            defaultValue: '..........',
+          },
+          {
+            id: 'youtube',
+            title: this.props.t('sections.youtube.title'),
+            value: this.props.user_info.youtube || '',
+            input: true,
+            defaultValue: '..........',
           },
         ],
       },
@@ -97,13 +123,35 @@ class EditProfile extends Component {
           {
             id: 'dia_chi',
             title: this.props.t('sections.address.title'),
-            value: store.user_info.address,
+            value: store.user_info.address || '',
             input: true,
+            inputProps: {scrollEnabled: false},
+            // mapField: true,
+            // map_address: true,
+            columnView: true,
+            multiline: true,
+            param: 'address',
+            defaultValue: '..........',
           },
           {
             id: 'thanh_pho',
-            title: this.props.t('sections.city.title'),
+            title: this.props.t('sections.city.title') || '',
             select: true,
+          },
+        ],
+      },
+      {
+        id: 'id_section_4',
+        data: [
+          {
+            id: 'intro',
+            title: this.props.t('sections.intro.title'),
+            value: this.props.user_info.intro || '',
+            input: true,
+            inputProps: {scrollEnabled: false},
+            columnView: true,
+            multiline: true,
+            defaultValue: '..........',
           },
         ],
       },
@@ -139,6 +187,10 @@ class EditProfile extends Component {
     let address = '';
     let gender = '';
     let city = '';
+    let quote = '';
+    let intro = '';
+    let facebook = '';
+    let youtube = '';
     let errorMessage = '';
     const {user_info: userInfo} = store;
     const {t} = this.props;
@@ -157,6 +209,14 @@ class EditProfile extends Component {
           address = item.value;
         } else if (item.id === 'thanh_pho') {
           city = this.state.provinceSelected.id;
+        } else if (item.id === 'quote') {
+          quote = item.value;
+        } else if (item.id === 'intro') {
+          intro = item.value;
+        } else if (item.id === 'facebook') {
+          facebook = item.value;
+        } else if (item.id === 'youtube') {
+          youtube = item.value;
         }
       });
     });
@@ -167,7 +227,11 @@ class EditProfile extends Component {
       address === userInfo.address &&
       gender === userInfo.gender &&
       birth === userInfo.birth &&
-      city === userInfo.city
+      (!!city ? city === userInfo.city : true) &&
+      quote === this.props.user_info.quote &&
+      intro === this.props.user_info.intro &&
+      facebook === this.props.user_info.facebook &&
+      youtube === this.props.user_info.youtube
     ) {
       flashShowMessage({
         type: 'info',
@@ -196,6 +260,10 @@ class EditProfile extends Component {
       address,
       gender,
       city,
+      quote,
+      intro,
+      facebook,
+      youtube,
     };
 
     this.setState({loading: true}, async () => {
@@ -204,6 +272,7 @@ class EditProfile extends Component {
         this.setState({loading: false});
 
         if (response && response.status == STATUS_SUCCESS) {
+          this.props.refresh();
           Actions.pop();
         }
 
@@ -295,6 +364,7 @@ class EditProfile extends Component {
   };
 
   _renderItems = ({item, index, section}) => {
+    let extraProps = {};
     if (item.id === 'thanh_pho') {
       const disable = !this.state.cities || this.state.cities.length === 0;
       item.value =
@@ -305,12 +375,24 @@ class EditProfile extends Component {
       item.disable = disable;
       item.select = !disable;
     }
+
+    if (
+      item.id === 'email' ||
+      item.id === 'facebook' ||
+      item.id === 'youtube'
+    ) {
+      extraProps = {
+        inputProps: {autoCapitalize: 'none'},
+      };
+    }
+
     return (
       <HorizontalInfoItem
         data={item}
         onChangeInputValue={this._onChangeInputValue}
         onSelectedValue={this._onSelectedValue}
         onSelectedDate={this._onSelectedDate}
+        {...extraProps}
       />
     );
   };
@@ -362,31 +444,37 @@ class EditProfile extends Component {
     const {t} = this.props;
 
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <SectionList
+      <>
+        <KeyboardAwareSectionList
+          extraHeight={300}
           style={{flex: 1}}
+          initialNumToRender={20}
           renderItem={this._renderItems}
           SectionSeparatorComponent={this._renderSectionSeparator}
           ItemSeparatorComponent={this._renderItemSeparator}
           sections={this.state.sections}
           keyExtractor={(item, index) => `${item.title}-${index}`}
         />
+
+        <Button
+          containerStyle={[
+            styles.btnContainer,
+            {
+              bottom: store.keyboardTop || appConfig.device.bottomSpace,
+            },
+          ]}
+          title={t('saveChanges')}
+          onPress={this._onSaveProfile}
+        />
         <ActionSheet
           ref={(ref) => (this.actionSheet = ref)}
           options={this.GENDER_LIST}
           cancelButtonIndex={this.GENDER_LIST.length - 1}
-          destructiveButtonIndex={this.GENDER_LIST.length - 1}
-          // onPress={(index) => {
-          //   if(index !== this.GENDER_LIST.length -1){
-          //     this._onChangeGender(this.GENDER_LIST[index]
-          //     )}
-          // }}
           onPress={this._onChangeGender}
         />
         {this.state.loading && <Loading center />}
-        <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
-        {appConfig.device.isIOS && <KeyboardSpacer />}
-      </SafeAreaView>
+        {/* {appConfig.device.isIOS && <KeyboardSpacer />} */}
+      </>
     );
   }
 }
@@ -397,7 +485,7 @@ const styles = StyleSheet.create({
 
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#EFEFF4',
+    backgroundColor: appConfig.colors.sceneBackground,
   },
 
   separatorSection: {
@@ -427,6 +515,10 @@ const styles = StyleSheet.create({
 
   mainScroll: {
     flex: 1,
+  },
+
+  btnContainer: {
+    backgroundColor: appConfig.colors.sceneBackground,
   },
 });
 

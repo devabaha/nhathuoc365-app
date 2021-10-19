@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,17 +6,17 @@ import {
   View,
   TouchableOpacity,
   Keyboard,
-  Image
+  Image,
 } from 'react-native';
-import { compose } from 'recompose';
-import { Formik } from 'formik';
+import {compose} from 'recompose';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {
   handleTextInput,
   withNextInputAutoFocusForm,
-  withNextInputAutoFocusInput
+  withNextInputAutoFocusInput,
 } from 'react-native-formik';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
 import ImagePicker from 'react-native-image-picker';
@@ -26,9 +26,10 @@ import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import Loading from '../../../components/Loading';
 import Button from '../../../components/Button';
 import Images from './Images';
+import RequestTagTitle from '../Request/RequestTagTitle';
 
 const MyInput = compose(
-  handleTextInput
+  handleTextInput,
   // withNextInputAutoFocusInput
 )(FloatingLabelInput);
 
@@ -38,52 +39,99 @@ const FORM_DATA = {
   TITLE: {
     label: 'Tiêu đề *',
     name: 'title',
-    type: 'name'
+    type: 'name',
+    required: true,
   },
   REQUEST_TYPE: {
     label: 'Loại phản ánh *',
     name: 'code_type',
-    type: 'name'
+    type: 'name',
+    required: true,
   },
   CONTENT: {
     label: 'Nội dung *',
     name: 'content',
-    type: 'name'
+    type: 'name',
+    required: true,
   },
   IMAGES: {
     label: 'Hình ảnh',
     name: 'images',
-    type: 'name'
-  }
+    type: 'name',
+  },
 };
 
 const REQUIRED_MESSAGE = 'Vui lòng nhập trường này';
 const validationSchema = Yup.object().shape({
   [FORM_DATA.TITLE.name]: Yup.string().required(REQUIRED_MESSAGE),
   [FORM_DATA.REQUEST_TYPE.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.CONTENT.name]: Yup.string().required(REQUIRED_MESSAGE)
+  [FORM_DATA.CONTENT.name]: Yup.string().required(REQUIRED_MESSAGE),
 });
 
 class Creation extends Component {
+  static defaultProps = {
+    request: {},
+    extraSubmitData: {},
+    onRefresh: () => {},
+  };
+
   state = {
     loading: true,
     requestTypes: [],
     selectedRequestType: {
-      value: ''
+      value: this.props.request?.id
+        ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+        : '',
     },
     formData: FORM_DATA,
     uploadImageLoading: false,
-    images: []
+    images: this.initImages,
   };
   unmounted = false;
   refForm = React.createRef();
   takePicture = this.takePicture.bind(this);
 
+  get initImages() {
+    const images = this.props.request?.id
+      ? this.props.request[FORM_DATA.IMAGES.name]?.length
+        ? this.props.request[FORM_DATA.IMAGES.name].map((image) => ({
+            ...image,
+            url: image.url_image,
+          }))
+        : []
+      : [];
+    return images;
+  }
+
   get initialValues() {
     const values = {};
 
-    Object.values(this.state.formData).forEach(value => {
-      let itemValue = value.name === FORM_DATA.IMAGES.name ? [] : '';
+    Object.values(this.state.formData).forEach((value) => {
+      let itemValue = '';
+      switch (value.name) {
+        case FORM_DATA.TITLE.name:
+          itemValue = this.props.request?.[FORM_DATA.TITLE.name]
+            ? this.props.request[FORM_DATA.TITLE.name] || ''
+            : '';
+          break;
+        case FORM_DATA.REQUEST_TYPE.name:
+          itemValue = this.props.request?.[FORM_DATA.REQUEST_TYPE.name]
+            ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+            : '';
+          break;
+        case FORM_DATA.CONTENT.name:
+          itemValue = this.props.request?.[FORM_DATA.CONTENT.name]
+            ? this.props.request[FORM_DATA.CONTENT.name] || ''
+            : '';
+          break;
+        case FORM_DATA.IMAGES.name:
+          itemValue = this.props.request?.[FORM_DATA.IMAGES.name]
+            ? this.props.request[FORM_DATA.IMAGES.name].map(
+                (image) => image.name,
+              ) || ''
+            : '';
+          break;
+      }
       values[value.name] = itemValue;
     });
     return values;
@@ -91,6 +139,14 @@ class Creation extends Component {
 
   componentDidMount() {
     this.getRequestTypes();
+
+    if (!this.props.title) {
+      setTimeout(() => {
+        Actions.refresh({
+          title: this.props.t('screen.requests.creationTitle'),
+        });
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -98,7 +154,7 @@ class Creation extends Component {
   }
 
   takePicture(key, values) {
-    this.setState({ uploadImageLoading: true });
+    this.setState({uploadImageLoading: true});
     const options = {
       title: 'Tải ảnh phản ánh',
       cancelButtonTitle: 'Hủy',
@@ -107,23 +163,23 @@ class Creation extends Component {
       rotation: 360,
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
     };
 
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {
         console.log(response.error);
-        !this.unmounted && this.setState({ uploadImageLoading: false });
+        !this.unmounted && this.setState({uploadImageLoading: false});
       } else if (response.didCancel) {
         console.log(response);
-        !this.unmounted && this.setState({ uploadImageLoading: false });
+        !this.unmounted && this.setState({uploadImageLoading: false});
       } else {
         // console.log(response);
         if (!response.filename) {
           response.filename = `${new Date().getTime()}`;
         }
-        this.uploadTempImage(response, image => {
+        this.uploadTempImage(response, (image) => {
           const imageValues = [...values[key]];
           imageValues.push(image.name);
           this.handleSetValueFormData(key, imageValues);
@@ -133,72 +189,73 @@ class Creation extends Component {
   }
 
   uploadTempImage = (response, callBack) => {
-    const { t } = this.props;
+    const {t} = this.props;
     const image = {
       name: 'image',
       filename: response.filename,
-      data: response.data
+      data: response.data,
     };
     // call api post my form data
     RNFetchBlob.fetch(
       'POST',
       APIHandler.url_user_upload_image(),
       {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
       },
-      [image]
+      [image],
     )
-      .then(resp => {
+      .then((resp) => {
         if (!this.unmounted) {
-          const { data } = resp;
+          const {data} = resp;
           const response = JSON.parse(data);
           if (response.status == STATUS_SUCCESS && response.data) {
             const images = [...this.state.images];
             images.push(response.data);
-            this.setState({ images });
+            this.setState({images});
             callBack(response.data);
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || t('common:api.error.message')
+              message: response.message || t('common:api.error.message'),
             });
           }
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('upload_id_card', error);
         flashShowMessage({
           type: 'danger',
-          message: t('common:api.error.message')
+          message: t('common:api.error.message'),
         });
       })
       .finally(() => {
         !this.unmounted &&
           this.setState({
-            uploadImageLoading: false
+            uploadImageLoading: false,
           });
       });
   };
 
   async getRequestTypes() {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_request_types_room(
         this.props.siteId,
-        this.props.roomId
+        this.props.roomId,
       );
+
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
-          const state = { ...this.state };
-          const requestTypes = response.data.request_types.map(type => ({
+          const state = {...this.state};
+          const requestTypes = response.data.request_types.map((type) => ({
             ...type,
             label: type.title,
-            value: type.id
+            value: type.id,
           }));
           state.requestTypes = requestTypes;
 
           const selectedRequestType = requestTypes.find(
-            type => type.value === this.state.selectedRequestType.value
+            (type) => type.value === this.state.selectedRequestType.value,
           );
           if (selectedRequestType) {
             state.selectedRequestType = selectedRequestType;
@@ -207,7 +264,7 @@ class Creation extends Component {
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -215,60 +272,85 @@ class Creation extends Component {
       console.log('get_request_types', error);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   }
 
-  onSubmit = async data => {
-    this.setState({ loading: true });
-    const { t } = this.props;
-    console.log(data);
+  onSubmit = async (data = {}) => {
+    this.setState({loading: true});
+    data = {
+      ...data,
+      object_type: this.props.objectType,
+      object_id: this.props.objectId,
+    };
+
+    const {t} = this.props;
+    const apiHandler = this.props.request?.id
+      ? APIHandler.site_update_request(
+          this.props.siteId,
+          this.props.request.id,
+          data,
+        )
+      : APIHandler.site_request_room(
+          this.props.siteId,
+          this.props.roomId || 0,
+          data,
+        );
     try {
-      const response = await APIHandler.site_request_room(
-        this.props.siteId,
-        this.props.roomId,
-        data
-      );
-      console.log(response);
-      if (!this.unmounted && response) {
-        if (response.status === STATUS_SUCCESS) {
-          this.props.onRefresh();
-          Actions.pop();
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message')
-          });
-        }
+      const response = await apiHandler;
+
+      if (this.unmounted) return;
+      if (response?.status === STATUS_SUCCESS) {
+        this.props.onRefresh(response.data?.request);
+        Actions.pop();
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || t('api.error.message'),
+        });
       }
     } catch (err) {
       console.log('create_request_room', err);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
+    }
+  };
+
+  handleDeleteImage = (image) => {
+    const images = [...this.state.images];
+    const imgIndex = images.findIndex((img) => img?.name === image?.name);
+    if (imgIndex !== -1) {
+      images.splice(imgIndex, 1);
+
+      this.handleSetValueFormData(
+        FORM_DATA.IMAGES.name,
+        images.map((image) => image.name),
+      );
+      this.setState({images});
     }
   };
 
   handleChangeFormData(value, type) {
-    const formData = { ...this.state.formData };
-    Object.keys(formData).forEach(key => {
+    const formData = {...this.state.formData};
+    Object.keys(formData).forEach((key) => {
       const data = formData[key];
       if (data.name === type) {
         data.value = value;
       }
     });
 
-    this.setState({ formData });
+    this.setState({formData});
   }
 
   handleSetValueFormData(key, value) {
@@ -283,18 +365,20 @@ class Creation extends Component {
     }
   }
 
-  onSelectRequestType = type_id => {
+  onSelectRequestType = (type_id) => {
     const selectedRequestType = this.state.requestTypes.find(
-      type => type.id === type_id
+      (type) => type.id === type_id,
     );
     this.handleSetValueFormData(FORM_DATA.REQUEST_TYPE.name, type_id);
     this.setState({
-      selectedRequestType
+      selectedRequestType,
     });
   };
 
   goToRequestTypeSelection = () => {
     Keyboard.dismiss();
+
+    if (!this.state.requestTypes?.length) return;
 
     Actions.push(appConfig.routes.modalPicker, {
       data: this.state.requestTypes,
@@ -303,11 +387,17 @@ class Creation extends Component {
       selectedLabel: this.state.selectedRequestType.title,
       selectedValue: this.state.selectedRequestType.id,
       defaultValue: this.state.requestTypes[0].id,
-      onClose: () => this.forceTouchFormData(FORM_DATA.REQUEST_TYPE.name)
+      onClose: () => this.forceTouchFormData(FORM_DATA.REQUEST_TYPE.name),
     });
   };
 
-  onInputFocus = type => {
+  isEmptyRequiredData(formValues) {
+    return Object.values(this.state.formData)
+      .filter((data) => data.required)
+      .some((data) => !formValues[data.name]);
+  }
+
+  onInputFocus = (type) => {
     switch (type) {
       case FORM_DATA.REQUEST_TYPE.name:
         this.goToRequestTypeSelection();
@@ -315,14 +405,15 @@ class Creation extends Component {
     }
   };
 
-  renderFormData({ values }) {
+  renderFormData({values}) {
     return Object.keys(FORM_DATA).map((key, index) => {
-      const { label, name, type } = FORM_DATA[key];
+      const {label, name, type} = FORM_DATA[key];
       let extraProps = null;
       switch (name) {
         case FORM_DATA.REQUEST_TYPE.name:
           return (
             <MyInputTouchable
+              key={index}
               label={label}
               name={name}
               type={type}
@@ -334,18 +425,20 @@ class Creation extends Component {
         case FORM_DATA.IMAGES.name:
           return (
             <Images
+              key={index}
               images={this.state.images}
               onOpenImageSelector={() =>
                 this.takePicture(FORM_DATA.IMAGES.name, values)
               }
+              onDelete={this.handleDeleteImage}
               uploadImageLoading={this.state.uploadImageLoading}
             />
           );
         case FORM_DATA.CONTENT.name:
           extraProps = {
             multiline: true,
-            inputContainerStyle: { height: 60 },
-            inputStyle: { paddingBottom: 10 }
+            inputContainerStyle: {height: 60},
+            inputStyle: {paddingBottom: 10},
           };
         default:
           return (
@@ -370,23 +463,31 @@ class Creation extends Component {
             initialValues={this.initialValues}
             onSubmit={this.onSubmit}
             validationSchema={validationSchema}
-            innerRef={this.refForm}
-          >
-            {props => {
-              const disabled = !(props.isValid && props.dirty);
+            innerRef={this.refForm}>
+            {(props) => {
+              const disabled =
+                this.isEmptyRequiredData(props.values) ||
+                !props.isValid ||
+                !props.dirty;
               return (
                 <>
                   <ScrollView
                     keyboardDismissMode="interactive"
-                    keyboardShouldPersistTaps="handled"
-                  >
+                    keyboardShouldPersistTaps="handled">
+                    <RequestTagTitle
+                      code={this.props.object?.warranty_code}
+                      name={this.props.object?.title}
+                      containerStyle={styles.tagContainer}
+                    />
                     <Form style={styles.formContainer}>
                       {this.renderFormData(props)}
                     </Form>
                   </ScrollView>
 
                   <Button
-                    title="Tạo phản ánh"
+                    title={
+                      this.props.request?.id ? 'Sửa yêu cầu' : 'Tạo yêu cầu'
+                    }
                     onPress={props.handleSubmit}
                     disabled={disabled}
                     btnContainerStyle={disabled && styles.btnDisabled}
@@ -405,20 +506,26 @@ class Creation extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   wrapper: {
-    flex: 1
+    flex: 1,
   },
   formContainer: {
-    paddingTop: 30
+    paddingTop: 30,
+  },
+  tagContainer: {
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingBottom: 10,
+    backgroundColor: '#f7f7f7',
   },
   title: {
     fontSize: 20,
     letterSpacing: 1,
     paddingHorizontal: 15,
     color: '#555',
-    marginBottom: 15
+    marginBottom: 15,
   },
   btn: {
     padding: 15,
@@ -427,15 +534,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 150
+    width: 150,
   },
   btnTitle: {
     color: '#fff',
     fontSize: 20,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   btnDisabled: {
-    backgroundColor: '#ccc'
+    backgroundColor: '#ccc',
   },
   imageContainer: {
     width: 50,
@@ -443,23 +550,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fcfcfc',
     marginRight: 10,
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   inputTouchableWrapper: {
-    flexDirection: 'row'
-  }
+    flexDirection: 'row',
+  },
 });
 
 export default withTranslation()(Creation);
 
 const MyInputTouchable = ({
   onPress,
-  key,
   label,
   name,
   type,
@@ -478,12 +584,12 @@ const MyInputTouchable = ({
           type={type}
           onFocus={onFocus}
           value={value}
-          containerStyle={[{ flex: 1 }]}
+          containerStyle={[{flex: 1}]}
           {...props}
         />
         {!!uri && (
           <View style={styles.imageContainer}>
-            <Image source={{ uri }} style={styles.image} />
+            <Image source={{uri}} style={styles.image} />
           </View>
         )}
       </View>

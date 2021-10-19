@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import CreditCardTabButton from './CreditCardTabButton';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
 import store from 'app-store';
+import {NotiBadge} from '../Badges';
+import {BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME} from 'src/constants';
 
 class TabIcon extends Component {
   static propTypes = {
+    iconBundle: PropTypes.string,
     focused: PropTypes.bool,
     label: PropTypes.string,
     iconLabel: PropTypes.string,
@@ -16,6 +19,7 @@ class TabIcon extends Component {
   };
 
   static defaultProps = {
+    iconBundle: BUNDLE_ICON_SETS_NAME.MaterialCommunityIcons,
     focused: false,
     label: '',
     iconLabel: '',
@@ -44,9 +48,8 @@ class TabIcon extends Component {
           numberOfLines={1}
           style={[
             this.props.focused ? styles.labelSelected : styles.label,
-            styles.labelDefault
-          ]}
-        >
+            styles.labelDefault,
+          ]}>
           {this.props.iconLabel}
         </Text>
       </View>
@@ -67,12 +70,14 @@ class TabIcon extends Component {
   renderIcon() {
     const SVGIcon = this.props.iconSVG;
     const SVGIconSize = this.props.iconSVGSize || 18;
+
+    const Icon = BUNDLE_ICON_SETS[this.props.iconBundle];
     return (
       <View
         style={[
           styles.iconBox,
           appConfig.device.isIOS ? {paddingTop: 3} : null,
-          { opacity: this.props.special ? 0 : 1 }
+          {opacity: this.props.special ? 0 : 1},
         ]}>
         {!!SVGIcon ? (
           <SVGIcon
@@ -95,15 +100,18 @@ class TabIcon extends Component {
 
   renderNotifyCount(isSpecial = false) {
     const notifyCount = store.notify[this.props.notifyKey];
-
-    if (notifyCount) {
-      return (
-        <View style={[styles.notifyWrapper, isSpecial && styles.specialNotify]}>
-          <Text style={styles.notifyText}>{notifyCount}</Text>
-        </View>
-      );
-    }
-    return null;
+    return (
+      <NotiBadge
+        containerStyle={[
+          styles.notifyWrapper,
+          isSpecial && styles.specialNotify,
+        ]}
+        labelStyle={styles.notifyLabel}
+        label={notifyCount}
+        show={!!notifyCount}
+        animation={!!notifyCount}
+      />
+    );
   }
 
   render() {
@@ -143,29 +151,20 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
   },
+
   notifyWrapper: {
-    position: 'absolute',
-    zIndex: 1,
-    minWidth: 17,
-    paddingHorizontal: 2,
-    height: 17,
-    backgroundColor: 'red',
-    top: 0,
-    right: -7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8
+    right: 0,
+    top: 4,
+    minWidth: 16,
+    height: 16,
   },
   specialNotify: {
-    right: -5
+    right: -5,
   },
-  notifyText: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
+  notifyLabel: {
+    fontSize: 12,
   },
-  specialLabel: {}
+  specialLabel: {},
 });
 
 export default observer(TabIcon);

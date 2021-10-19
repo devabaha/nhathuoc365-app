@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [b12.1.5] - 2021-10-19
+- [r12.1.5]
+
 ## [b12.0.1] - 2021-06-22
 - [r12.0.1]
 
@@ -33,6 +36,158 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
+
+-----------------------------------------------------
+
+## [r12.1.5]
+### Added
+- [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
+- [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
+### Changed
+- [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
+- [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
+- [CU-1mkte7j] UX in stores/Search by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- Upgrade DomainSelector by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
+- [CU-1mtfept] Not showing data when auto scrolling to the selected item in ModalLocation by [minhnguyenit14@gmail.com].
+- Creating address is duplicated in CreateAddress by [lamah.dev@gmail.com].
+
+## [r12.1.4]
+### Added
+- [CU-mdwa93] Short content product in Item by [lamah.dev@gmail.com].
+- [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-kbhzen] Open store from gpsListStore by open_store_from_list_key by [minhnguyenit14@gmail.com].
+- [CU-m2fhv6] POSSection in Confirm by [kienluu612@gmail.com].
+- [CU-m2hhc0] Use Linking to open any url not starting with "http" by [minhnguyenit14@gmail.com].
+- [CU-kben7m] not_allow_edit_cart_key for preventing editing order by [kienluu612@gmail.com].
+### Changed
+- [CU-j3g2g4] Check voucher status icon in Confirm by [lamah.dev@gmail.com].
+- [CU-j3m8x1] Check sale_in_stock in product when allow site sale out inventory by [lamah.dev@gmail.com].
+- [CU-mkm5tx] Hide action button add more products in Confirm by [kienluu612@gmail.com].
+### Fixed
+- Not show all child categories in menu MultiLevelCategory of FIX_3_LEVEL type by [minhnguyenit14@gmail.com].
+- Lagging when auto play promotions by [minhnguyenit14@gmail.com].
+- [CU-j3d651] GPS list store location interface by [kienluu612@gmail.com].
+- [CU-j3fuac] Use title from service as a highest priority for agency_information_register type by [minhnguyenit14@gmail.com].
+- [Android] Doesn't log out firebase when log out app by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
+
+## [r12.1.3]
+### Added
+- [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-e5q6jn] config_key facebook_fanpage in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-e5mme0] discount_content in Payment/CartItem by [minhnguyenit14@gmail.com].
+- [CU-860k7x] Module social in Item by [minhnguyenit14@gmail.com].
+- [CU-e00p0r] API edit_user_note by [nguyenanhtuan191298@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-d388n6] Request in ProgressTrackingDetail by [minhnguyenit14@gmail.com].
+- [CU-gnr20a] Suffix for referCodeTitle by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-fdnkbx] UI, flow of wallet by [minhnguyenit14@gmail.com].
+- [CU-f824fk] Request UI, flow by [minhnguyenit14@gmail.com].
+- [CU-ar3747] Use product_groups instead of related in Item by [minhnguyenit14@gmail.com].
+- [CU-gnr5cn] Logic, suggest, note for codePush by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] Share 1 image crash by [minhnguyenit14@gmail.com].
+- allow_site_sale_out_inventory_key not working with attributes product by [minhnguyenit14@gmail.com].
+
+## [r12.1.2] - 2021-09-03
+### Added
+- react-native-video, react-native-youtube-iframe by [minhnguyenit14@gmail.com].
+- [CU-a43cgf] Post for sale button for collaborator by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- LocationTracker by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] resource android:attr/lStar not found by [minhnguyenit14@gmail.com].
+- Regex url fail because of priority of number regex by [minhnguyenit14@gmail.com].
+
+## [r12.1.1] - 2021-08-20
+### Added
+- [CU-cquwh3] Function Requests in serviceHandler by [lamah.dev@gmail.com].
+- [CU-bv7k11] Scan QR code button when enter invitation code by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-adx916] Module booking by [minhnguyenit14@gmail.com].
+- [CU-aty6rq] LoadMore to show missing products in GroupProduct by [nguyenanhtuan191298@gmail.com].
+- [CU-9227a2][CU-bng0v8] Notifications in tab bar by [minhnguyenit14@gmail.com].
+- [CU-anxf53] Copy button when press long array numbers in GiftedChat view  by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- voucher_campaign_detail in servicesHandler by [minhnguyenit14@gmail.com].
+- [CU-cqx6x5] Avatar Image of ItemAttribute is not changed while choosing only 1 attribute by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-1d7nt7u] Fix display error when loadmore in store by [kienluu612@gmail.com].
+- categoriesCollapsed to init show/ hide categories in Search by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-akxhu3] Zoom image in chat screen by [lamah.dev@gmail.com].
+- [CU-ar0bbd] Prevent buying when product is out of stock by [minhnguyenit14@gmail.com].
+- [CU-akz4up] Using product's attrs, models instead of calling to api to get them by [minhnguyenit14@gmail.com].
+- [Android] compileSdkVersion, targetSdkVersion, buildToolsVersion by [minhnguyenit14@gmail.com].
+- Use Profile for Account detail by [minhnguyenit14@gmail.com].
+- [CU-cqx6x5] Use ItemImageViewer to display Gallery in Profile by [minhnguyenit14@gmail.com].
+- Integrate EditPersonalProfile to EditProfile by [minhnguyenit14@gmail.com].
+- Refactor Profile by [minhnguyenit14@gmail.com].
+- Integrate GroupProduct to Store (with Search, Filter) by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-bnknw5] View not-ordering orders when there is no address in cart_data by [lamah.dev@gmail.com].
+- Low performance because of using ScrollView in CategoryScreen by [minhnguyenit14@gmail.com].
+- Social Posts in home is being updated when current user create new post by [minhnguyenit14@gmail.com].
+- [Android] Image doesn't show up in Gallery after saveImage by [minhnguyenit14@gmail.com].
+
+## [r12.0.6] - 2021-07-28
+### Added
+- Key show commission instead of points wallet in Account and Home by [lamah.dev@gmail.com].
+- Show brand and unit name production in ProductItem by [nguyenanhtuan191298@gmail.com].
+### Changed
+- Update premium-level display logic by [kienluu612@gmail.com].
+- Login firebase mode can be disabled from server by disable_google_firebase_otp_key.
+### Fixed
+- Showing load more button in CategoryScreen by [lamah.dev@gmail.com].
+- Menu multi category performance.
+- [Trying] Sometime, at some android devices, crash app because of rn-fetch-blob
+
+## [r12.0.5] - 2021-07-13
+### Added
+- Integrated air ticket search by [lamah.dev@gmail.com].
+- PersonalProfile and UserChat from skv.
+### Changed
+- Update image button download mechanism and back button in item ImageViewer by [kienluu612@gmail.com].
+- Only use has_attr for checking product's attributes.
+- Handle onclick of <a> tag and window.open event of react-native-auto-height-webview.
+### Fixed
+- Fix layout renderFooterActionBtn() in CartItem when text content too long by [nguyenanhtuan191298@gmail.com].
+- Delay setState OrderCart data.
+### Changed
+- Format voucher point in VoucherItem and VoucherDetail by [nguyenanhtuan191298@gmail.com].
+
+## [r12.0.4] - 2021-07-09
+### Added
+- Voucher number and barcode in MyVoucherDetail by [lamah.dev@gmail.com].
+- Adding function pick up at the store by [lamah.dev@gmail.com] [nguyenanhtuan191298@gmail.com].
+- StoreInfo section in Confirm.
+- Cherry color to config by [nguyenanhtuan191298@gmail.com].
+### Changed
+- update openMap to take origin location to make direction.
+### Fixed
+- discount_percent in isDiscount of ItemAttribute screen is not convert to boolean.
+
+## [r12.0.3] - 2021-07-06
+### Added
+- social_posts in Home.
+- site_content_key in Account screen by [kienluu612@gmail.com].
+- Add commission value for ProductItem and Item by [nguyenanhtuan191298@gmail.com].
+### Changed
+- Logic of dropShipPrice will be depended on fix_dropship_price_key.
+### Fixed
+- Fix UX for ProductItem: prevent multiple taps at a product by [kienluu612@gmail.com].
+- Clip NotiBadge in ListService.
+- Like icon is the same even status changed.
+
+## [r12.0.2] - 2021-06-30
+### Added
+- Adding delivery code in order detail by [kienluu612@gmail.com].
+### Changed
+- Rating default five stars by [nguyenanhtuan191298@gmail.com].
+- Change function open map to common function by [kienluu612@gmail.com].
+- Update isWalletAddress regex.
+### Fixed
+- Fix phone card in android by [lamah.dev@gmail.com].
+- PrimaryActions duplicate key.
+- Invalid vouchers not reload data.
 
 ## [r12.0.1] - 2021-06-21
 ### Added

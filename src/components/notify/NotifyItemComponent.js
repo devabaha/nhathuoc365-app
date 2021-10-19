@@ -1,101 +1,115 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image,
-  Animated
+  Animated,
 } from 'react-native';
 
+import appConfig from 'app-config';
+
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Container} from '../Layout';
+import Loading from '../Loading';
+import { getRelativeTime } from 'app-helper/social';
 
-export default class NotifyItemComponent extends Component {
-  constructor(props) {
-    super(props);
+class NotifyItemComponent extends Component {
+  static defaultProps = {
+    onPress: () => {},
+  };
 
-    this.state = {};
-    this.animatedValue = new Animated.Value(0);
-  }
+  state = {
+    isRead: this.props.isRead,
+    loading: false,
+  };
 
-  componentDidMount() {
-    Animated.timing(this.animatedValue, {
-      toValue: 150,
-      duration: 3000
-    }).start();
-  }
-
-  _goNoticeDetail(item) {
-    switch (item.page) {
-      case 'orders_item':
-        Actions.orders_item({
-          title: '#...',
-          passProps: {
-            notice_data: item
-          }
-        });
-        break;
-      case 'coin_wallet':
-        Actions.coin_wallet();
-        break;
-      case 'voucher':
-        Actions.voucher();
-        break;
-      case 'mission':
-        Actions.mission();
-        break;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) {
+      return true;
     }
+
+    if (
+      nextProps.image !== this.props.image ||
+      nextProps.title !== this.props.title ||
+      nextProps.shopName !== this.props.shopName ||
+      nextProps.created !== this.props.created ||
+      nextProps.content !== this.props.content
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
-  render() {
-    var { item } = this.props;
-
-    const interpolateColor = this.animatedValue.interpolate({
-      inputRange: [0, 150],
-      outputRange: [hexToRgbA(DEFAULT_COLOR, 0.6), 'rgb(255, 255, 255)']
-    });
-
-    const animatedStyle = {
-      backgroundColor: interpolateColor
+  handlePressNotify = () => {
+    const service = {
+      callback: () => this.setState({loading: true}),
     };
 
+    this.props.onPress(service, () => {
+      this.setState({loading: false});
+    });
+
+    setTimeout(() => this.setState({isRead: true}), 1000);
+  };
+
+  render() {
     return (
       <TouchableHighlight
-        underlayColor="transparent"
-        onPress={this._goNoticeDetail.bind(this, item)}
-      >
-        <Animated.View
-          style={[
-            styles.store_result_item,
-            item.read_flag == 0 ? styles.store_result_item_active : null,
-            item.read_flag == 0 ? animatedStyle : null
-          ]}
-        >
-          <View style={styles.store_result_item_image_box}>
-            <CachedImage
-              mutable
-              style={styles.store_result_item_image}
-              source={{ uri: item.image_url }}
-            />
-          </View>
-
-          <View style={styles.store_result_item_content}>
-            <View style={styles.store_result_item_content_box}>
-              <Text style={styles.store_result_item_title}>{item.title}</Text>
-              <Text style={styles.store_result_item_create}>
-                <Icon name="map-marker" size={10} color="#666666" />
-                {' ' + item.shop_name + '    '}
-                <Icon name="clock-o" size={10} color="#666666" />
-                {' ' + item.created}
-              </Text>
-              <Text style={styles.store_result_item_desc}>{item.content}</Text>
+        disabled={this.state.loading}
+        underlayColor="#ddd"
+        onPress={this.handlePressNotify}
+        style={this.state.isRead == 0 && styles.store_result_item_active}>
+        <>
+          {this.state.loading && (
+            <Loading center size="small" wrapperStyle={styles.loadingWrapper} />
+          )}
+          <Animated.View style={[styles.store_result_item]}>
+            {this.state.isRead == 0 && (
+              <Animated.View
+                style={{
+                  ...StyleSheet.absoluteFillObject,
+                  backgroundColor: hexToRgbA(appConfig.colors.primary, 0.15),
+                }}
+              />
+            )}
+            <View style={styles.store_result_item_image_box}>
+              <CachedImage
+                mutable
+                style={styles.store_result_item_image}
+                source={{uri: this.props.image}}
+              />
             </View>
-          </View>
-        </Animated.View>
+
+            <View style={styles.store_result_item_content}>
+              <View style={styles.store_result_item_content_box}>
+                {!!this.props.title && (
+                  <Text
+                    numberOfLines={2}
+                    style={styles.store_result_item_title}>
+                    {this.props.title}
+                  </Text>
+                )}
+
+                {!!this.props.content && (
+                  <Text style={styles.store_result_item_desc}>
+                    {this.props.content}
+                  </Text>
+                )}
+                <Container row style={styles.subTitleContainer}>
+                  <Text
+                    numberOfLines={1}
+                    style={styles.store_result_item_create}>
+                    {getRelativeTime(this.props.created)}
+                  </Text>
+                </Container>
+              </View>
+            </View>
+          </Animated.View>
+        </>
       </TouchableHighlight>
     );
   }
@@ -103,61 +117,70 @@ export default class NotifyItemComponent extends Component {
 
 const styles = StyleSheet.create({
   stores_result_box: {
-    // marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   store_result_item: {
-    backgroundColor: '#ffffff',
-    paddingTop: 4,
-    paddingBottom: 10,
+    paddingVertical: 15,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    minHeight: 104
   },
   store_result_item_active: {
-    backgroundColor: '#f1f1f1'
+    backgroundColor: '#f1f1f1',
   },
   store_result_item_image_box: {
-    backgroundColor: '#ebebeb',
-    width: 80,
-    height: 80,
-    marginTop: 8
+    // backgroundColor: '#fff',
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    overflow: 'hidden',
+    marginRight: 15,
+    borderColor: '#ccc',
+    borderWidth: 0.5,
   },
   store_result_item_image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   store_result_item_content: {
-    flex: 1
+    flex: 1,
+    alignSelf: 'center',
   },
   store_result_item_content_box: {
-    flex: 1,
-    paddingLeft: 15
+    // flex: 1,
   },
   store_result_item_title: {
     fontSize: 14,
-    color: '#000000',
-    fontWeight: '500',
-    lineHeight: isIOS ? 16 : 18,
-    marginTop: 8
+    color: '#333',
+    fontWeight: '600',
   },
   store_result_item_create: {
     color: '#666666',
-    fontSize: 10,
-    marginTop: 2
+    fontSize: 12,
   },
   store_result_item_desc: {
-    marginTop: 6,
-    color: '#404040',
-    fontSize: 12,
-    lineHeight: isIOS ? 16 : 18
+    color: '#333',
+    fontWeight: '500'
   },
   store_result_item_time: {
     fontSize: 12,
     color: '#666666',
-    marginLeft: 4
-  }
+    marginLeft: 4,
+  },
+
+  subTitleContainer: {
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  loadingWrapper: {
+    backgroundColor: hexToRgbA('#ddd', 0.3),
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 10,
+    paddingRight: 10,
+  },
 });
+
+export default NotifyItemComponent;

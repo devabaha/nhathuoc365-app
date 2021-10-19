@@ -67,11 +67,6 @@ function ModalInput({
 
   function getFormattedText() {
     return valueExecutor ? valueExecutor(text) : text;
-    return value === undefined
-      ? valueExecutor
-        ? valueExecutor(text)
-        : text
-      : value;
   }
 
   function handleRef(ref) {

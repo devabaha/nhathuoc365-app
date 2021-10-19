@@ -87,7 +87,7 @@ global.isLinkTickID = (s) => {
 };
 
 global.isWalletAddress = (address) => {
-  return /^(0x)[0-9a-fA-F]{40}$/.test(address);
+  return /^(0x|0y|0z)[0-9a-fA-F]{40}$/.test(address);
 };
 
 global.isWalletAddressWithZoneCode = (str) => {
@@ -585,3 +585,42 @@ global.hapticFeedBack = (type = 'impactLight', opt = options) => {
 global.getNumberOnly = (text) => {
   return text.replace(REGEX_NUMBER_ONLY, '');
 };
+
+global.dateHandler = function(date = new Date()) {
+  var d=new Date(date);
+
+  var s=d.getSeconds();
+
+  var m=d.getMinutes();
+
+  var h=d.getHours();
+
+  var day=d.getDay();
+
+  var date=d.getDate();
+
+  var month=d.getMonth();
+
+  var year=d.getFullYear();
+
+  var days=new Array("Chủ nhật","Thứ hai","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7");
+
+  var months=new Array("1","2","3","4","5","6","7","8","9","10","11","12");
+
+  var month_2 = months[month] < 10 ? ('0' + months[month]) : months[month];
+  var date_2 = date < 10 ? ('0' + date) : date;
+
+  return {
+    date: `${date_2}${month_2}${year}`,
+    dateString: days[day] + ", " + date + " tháng " + months[month] + " " + year,
+    current: `${year}-${month_2}-${date_2}`,
+  };
+}
+
+global.normalizeNotify = (notify = '') => {
+  if (isNaN(notify) || !!!notify) {
+    return notify;
+  }
+  return notify > 9 ? '9+' : notify + '';
+};
+

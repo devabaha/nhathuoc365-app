@@ -15,7 +15,6 @@ import store from '../../store/Store';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
-import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -61,8 +60,6 @@ class Stores extends Component {
       loading: true,
       refreshingCate: false,
       category_nav_index: 0,
-      categories_data: null,
-      selected_category: {id: 0, name: ''},
       // scrollY: new Animated.Value(0),
       moreOptions: [],
       flatListHeight: undefined,
@@ -72,6 +69,13 @@ class Stores extends Component {
       },
 
       filterProductHeight: 0,
+      categories_data: props.categoriesData || null,
+      selected_category: props.categoriesData?.length
+        ? props.categoriesData[0]
+        : {id: 0, name: ''},
+      categoriesPosition: [],
+      filterParams: {},
+      valueSort: {},
     };
     this.unmounted = false;
     this.flatListPagesHeight = [];
@@ -138,13 +142,6 @@ class Stores extends Component {
       expires: null,
     });
 
-    setTimeout(() => {
-      const {t} = this.props;
-      Actions.refresh({
-        title: '',
-        // right: this._renderRightButton(),
-      });
-    });
     this.eventTracker.logCurrentView();
     this.disposer = reaction(
       () => store.selectedFilter,
@@ -196,7 +193,7 @@ class Stores extends Component {
     this.start_time = time();
 
     // get categories navigator
-    this._getCategoriesNavFromServer();
+    !this.props.categoriesData && this._getCategoriesNavFromServer();
 
     // update order information
     this._getCart();
@@ -234,6 +231,7 @@ class Stores extends Component {
     this.setState(
       {
         categories_data: response.data.categories,
+        selected_category: response.data.categories[0],
         promotions: response.data.promotions,
         moreOptions: response.data.more_options,
       },
@@ -296,10 +294,10 @@ class Stores extends Component {
   _renderRightButton() {
     return (
       <View style={[styles.right_btn_box]}>
-        {/* <RightButtonOrders tel={store.store_data.tel} /> */}
         <Button
           onPress={() => {
             Actions.push(appConfig.routes.searchStore, {
+              type: this.props.type,
               categories: this.state.categories_data,
               category_id: this.state.selected_category.id,
               category_name:
@@ -597,34 +595,34 @@ class Stores extends Component {
           unreadChat={unreadChat}
         />
 
-        <Animated.View
-          style={[
-            styles.categories_nav,
-            {
-              zIndex: 2,
-              transform: [
-                {
-                  translateY: interpolate(this.scrollY, {
-                    inputRange: [
-                      0,
-                      1,
-                      BANNER_ABSOLUTE_HEIGHT -
-                        NAV_BAR_HEIGHT -
-                        STATUS_BAR_HEIGHT,
+        {this.state.categories_data != null
+          ? this.state.categories_data.length > 1 && (
+              <Animated.View
+                style={[
+                  styles.categories_nav,
+                  {
+                    zIndex: 2,
+                    transform: [
+                      {
+                        translateY: interpolate(this.scrollY, {
+                          inputRange: [
+                            0,
+                            1,
+                            BANNER_ABSOLUTE_HEIGHT -
+                              NAV_BAR_HEIGHT -
+                              STATUS_BAR_HEIGHT,
+                          ],
+                          outputRange: [
+                            BANNER_VIEW_HEIGHT,
+                            BANNER_VIEW_HEIGHT,
+                            NAV_BAR_HEIGHT,
+                          ],
+                          extrapolate: 'clamp',
+                        }),
+                      },
                     ],
-                    outputRange: [
-                      BANNER_VIEW_HEIGHT,
-                      BANNER_VIEW_HEIGHT,
-                      NAV_BAR_HEIGHT,
-                    ],
-                    extrapolate: 'clamp',
-                  }),
-                },
-              ],
-            },
-          ]}>
-          {this.state.categories_data != null
-            ? this.state.categories_data.length > 1 && (
+                  },
+                ]}>
                 <View style={styles.categories_nav_container}>
                   <FlatList
                     showsHorizontalScrollIndicator={false}
@@ -676,9 +674,9 @@ class Stores extends Component {
                     animatedContentOffsetY={this.animatedContentOffsetY}
                   />
                 </View>
-              )
-            : this.isGetFullStore && <CategoriesSkeleton />}
-        </Animated.View>
+              </Animated.View>
+            )
+          : this.isGetFullStore && <CategoriesSkeleton />}
 
         <Animated.ScrollView
           ref={this.refScrollView}
@@ -721,65 +719,54 @@ class Stores extends Component {
             }}
           />
 
-          <Animated.View style={[styles.container]}>
-            {this.state.categories_data != null ? (
-              <FlatList
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                ref={(ref) => (this.refs_category_screen = ref)}
-                onScrollToIndexFailed={() => {}}
-                data={this.state.categories_data}
-                extraData={this.state.category_nav_index}
-                keyExtractor={(item) => `${item.id}`}
-                horizontal={true}
-                pagingEnabled
-                onMomentumScrollEnd={this._onScrollEnd.bind(this)}
-                style={{
-                  width: Util.size.width,
-                }}
-                contentContainerStyle={{height: this.state.flatListHeight}}
-                getItemLayout={(data, index) => {
-                  return {
-                    length: Util.size.width,
-                    offset: Util.size.width * index,
-                    index,
-                  };
-                }}
-                renderItem={({item, index}) => {
-                  const isAutoLoad =
-                    (this.state.category_nav_index - 1 >= 0 &&
-                      index === this.state.category_nav_index - 1) ||
-                    (this.state.category_nav_index + 1 <=
-                      this.state.categories_data.length - 1 &&
-                      index === this.state.category_nav_index + 1);
+          <Animated.View style={styles.container}>
+            <FlatList
+              scrollEnabled={this.state.categories_data?.length > 1}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ref={(ref) => (this.refs_category_screen = ref)}
+              onScrollToIndexFailed={() => {}}
+              data={this.state.categories_data || []}
+              extraData={this.state.category_nav_index}
+              keyExtractor={(item) => `${item.id}`}
+              horizontal
+              pagingEnabled
+              onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+              style={{
+                width: Util.size.width,
+              }}
+              getItemLayout={(data, index) => {
+                return {
+                  length: Util.size.width,
+                  offset: Util.size.width * index,
+                  index,
+                };
+              }}
+              renderItem={({item, index}) => {
+                const isAutoLoad =
+                  (this.state.category_nav_index - 1 >= 0 &&
+                    index === this.state.category_nav_index - 1) ||
+                  (this.state.category_nav_index + 1 <=
+                    this.state.categories_data.length - 1 &&
+                    index === this.state.category_nav_index + 1);
 
-                  return (
-                    <CategoryScreen
-                      containerStyle={{flex: undefined}}
-                      ref={(inst) => (this.refCategories[index] = inst)}
-                      scrollEnabled={false}
-                      activeRefreshControl={appConfig.device.isIOS}
-                      refreshing={
-                        index === this.state.category_nav_index &&
-                        this.state.refreshingCate
-                      }
-                      item={item}
-                      index={index}
-                      cate_index={this.state.category_nav_index}
-                      isAutoLoad={isAutoLoad}
-                      that={this}
-                      onLayout={(e) =>
-                        this.handleLayoutFlatListContent(e, index)
-                      }
-                      onRefreshEnd={this._onRefreshCateEnd}
-                      minHeight={appConfig.device.height / 2}
-                    />
-                  );
-                }}
-              />
-            ) : null
-            // <ListStoreProductSkeleton />
-            }
+                return (
+                  <CategoryScreen
+                    ref={(inst) => (this.refCategories[index] = inst)}
+                    scrollEnabled={false}
+                    item={item}
+                    type={this.props.type}
+                    index={index}
+                    cate_index={this.state.category_nav_index}
+                    isAutoLoad={isAutoLoad}
+                    promotions={this.state.promotions}
+                    animatedScrollY={this.animatedScrollY}
+                    animatedContentOffsetY={this.animatedContentOffsetY}
+                    paramsFilter={this.state.filterParams}
+                  />
+                );
+              }}
+            />
           </Animated.View>
         </Animated.ScrollView>
         {/* 
@@ -802,7 +789,7 @@ class Stores extends Component {
           otherClose={false}
         /> */}
 
-        {store.cart_fly_show && (
+        {/* {store.cart_fly_show && (
           <View
             style={{
               position: 'absolute',
@@ -825,7 +812,7 @@ class Stores extends Component {
               />
             )}
           </View>
-        )}
+        )} */}
       </SafeAreaView>
     );
   }

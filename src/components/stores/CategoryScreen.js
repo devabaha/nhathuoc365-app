@@ -51,7 +51,7 @@ class CategoryScreen extends Component {
     };
 
     this.unmounted = false;
-    this.paramsFilter = undefined;
+    this.paramsFilter = {};
     this.getProductsRequest = new APIRequest();
     this.requests = [this.getProductsRequest];
     this.page = 0;
@@ -71,9 +71,12 @@ class CategoryScreen extends Component {
     var {item, index} = this.props;
     this.start_time = 0;
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
-    if (index == 0 || index == 1) {
+    if (index == 0) {
       this._getItemByCateId(item.id);
     } else {
+      if (index == 1) {
+        this._getItemByCateIdFromServer(item.id);
+      }
       Events.on(keyAutoLoad, keyAutoLoad, () => {
         // setTimeout(() => {
         //   console.log(
@@ -178,8 +181,7 @@ class CategoryScreen extends Component {
             // delay append data
             setTimeout(() => {
               layoutAnimation();
-              this.page = 1;
-
+              // this.page = 1;
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
@@ -222,17 +224,21 @@ class CategoryScreen extends Component {
     } else {
       this.page = 0;
     }
+    let params = !isEmpty(paramsFilter) ? paramsFilter : {};
+    if (this.props.type) {
+      params = {...params, type: this.props.type};
+    }
+
     try {
       this.getProductsRequest.data = APIHandler.site_category_product_by_filter(
         site_id,
         category_id,
         this.page,
-        !isEmpty(paramsFilter) ? paramsFilter : undefined,
+        params,
       );
       const response = await this.getProductsRequest.promise();
       if (this.unmounted) return;
 
-      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
@@ -244,7 +250,10 @@ class CategoryScreen extends Component {
               : response.data;
             this.setState({
               items_data:
-                response.data.length >= STORES_LOAD_MORE
+                response.data.length >=
+                (this.page == 0
+                  ? FIRST_PAGE_STORES_LOAD_MORE
+                  : STORES_LOAD_MORE)
                   ? [...items_data, {id: -1, type: 'loadMore'}]
                   : items_data,
               items_data_bak: items_data,
@@ -311,117 +320,101 @@ class CategoryScreen extends Component {
     return (
       <>
         <View style={[styles.containerScreen, this.props.containerStyle]}>
-          <Animated.ScrollView
-            scrollEnabled={this.props.scrollEnabled}
-            contentContainerStyle={{
-              flexGrow: 1,
-              paddingBottom: store.cart_data ?0: appConfig.device.bottomSpace
-            }}
-            scrollEventThrottle={16}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-            onScrollBeginDrag={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: this.props.animatedContentOffsetY,
-                    },
-                  },
-                },
-              ],
-              {
-                useNativeDriver: true,
-              },
-            )}
-            onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: this.props.animatedScrollY,
-                    },
-                  },
-                },
-              ],
-              {
-                useNativeDriver: true,
-              },
-            )}>
-            {this.state.isAll &&
-              this.state.promotions &&
-              this.state.promotions.length > 0 && (
-                <Swiper
-                  style={{
-                    marginVertical: 8,
-                  }}
-                  width={Util.size.width}
-                  height={Util.size.width * 0.96 * (50 / 320) + 16}
-                  autoplayTimeout={3}
-                  showsPagination={false}
-                  horizontal
-                  autoplay>
-                  {this.state.promotions.map((banner, i) => {
-                    return (
-                      <View
-                        key={i}
-                        style={{
-                          width: Util.size.width,
-                          alignItems: 'center',
-                        }}>
-                        <CachedImage
-                          source={{uri: banner.banner}}
+          <ListStoreProduct
+            useList={this.props.scrollEnabled}
+            products={items_data}
+            onPressLoadMore={this._loadMore}
+            listProps={{
+              numColumns: 2,
+              ListHeaderComponent: this.state.isAll &&
+                this.state.promotions &&
+                this.state.promotions.length > 0 && (
+                  <Swiper
+                    style={{
+                      marginVertical: 8,
+                    }}
+                    width={Util.size.width}
+                    height={Util.size.width * 0.96 * (50 / 320) + 16}
+                    autoplayTimeout={3}
+                    showsPagination={false}
+                    horizontal
+                    autoplay>
+                    {this.state.promotions.map((banner, i) => {
+                      return (
+                        <View
+                          key={i}
                           style={{
-                            width: Util.size.width * 0.96,
-                            height: Util.size.width * 0.96 * (50 / 320),
-                          }}
-                        />
-                      </View>
-                    );
-                  })}
-                </Swiper>
-              )}
+                            width: Util.size.width,
+                            alignItems: 'center',
+                          }}>
+                          <CachedImage
+                            source={{uri: banner.banner}}
+                            style={{
+                              width: Util.size.width * 0.96,
+                              height: Util.size.width * 0.96 * (50 / 320),
+                            }}
+                          />
+                        </View>
+                      );
+                    })}
+                  </Swiper>
+                ),
 
-            {/* <ListHeader title={header_title} /> */}
-
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                paddingTop: 20,
-                paddingBottom: 5,
-              }}>
-              {items_data !== null
-                ? items_data.map((item, index) => (
-                    <Items
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onPress={
-                        item.type != 'loadMore'
-                          ? this._goItem.bind(this, item)
-                          : this._loadMore
-                      }
+              ListEmptyComponent: (
+                <View style={[styles.containerScreen]}>
+                  {fetched && (
+                    <NoResult
+                      iconName="cart-off"
+                      message={`${t('noProduct')} :(`}
                     />
-                  ))
-                : null}
-            </View> */}
-            <ListStoreProduct products={items_data} onPressLoadMore={this._loadMore}/>
-            {items_data == null ? (
-              <View style={[styles.containerScreen]}>
-                {fetched && (
-                  <NoResult
-                    iconName="cart-off"
-                    message={`${t('noProduct')} :(`}
-                  />
-                )}
-              </View>
-            ) : null}
-          </Animated.ScrollView>
+                  )}
+                </View>
+              ),
+
+              contentContainerStyle: {
+                flexGrow: 1,
+                // paddingTop: 15,
+                paddingBottom: store.cart_data
+                  ? 5
+                  : appConfig.device.bottomSpace,
+              },
+              scrollEventThrottle: 16,
+              refreshControl: (
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh.bind(this)}
+                />
+              ),
+              onScrollBeginDrag: Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: this.props.animatedContentOffsetY,
+                      },
+                    },
+                  },
+                ],
+                {
+                  useNativeDriver: true,
+                },
+              ),
+              onScroll: Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        y: this.props.animatedScrollY,
+                      },
+                    },
+                  },
+                ],
+                {
+                  useNativeDriver: true,
+                },
+              ),
+            }}
+          />
         </View>
         <ListStoreProductSkeleton loading={this.state.loading} />
       </>

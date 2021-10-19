@@ -36,6 +36,10 @@ import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {openLink} from 'app-helper';
+
+const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
 class Account extends Component {
   constructor(props) {
@@ -51,7 +55,7 @@ class Account extends Component {
     };
     this.uploadFaceIDRequest = new APIRequest();
     this.requests = [this.uploadFaceIDRequest];
-    reaction(() => store.user_info, this.initial);
+    this.userInfoDisposer = reaction(() => store.user_info, this.initial);
     this.eventTracker = new EventTracker();
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
@@ -71,6 +75,7 @@ class Account extends Component {
       : '';
     const user_info = store.user_info || {};
     const default_wallet = user_info.default_wallet || {};
+    const revenue_commissions = user_info.revenue_commissions || {};
     const {
       premium,
       premium_name,
@@ -86,6 +91,10 @@ class Account extends Component {
     } = user_info;
     const isShowPremium =
       premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
+    const facebookFanpage = getValueFromConfigKey(CONFIG_KEY.FACEBOOK_FANPAGE);
+    const isShowPremiumPoint = !isConfigActive(
+      CONFIG_KEY.HIDE_PREMIUM_POINT_KEY,
+    );
 
     return [
       {
@@ -115,11 +124,15 @@ class Account extends Component {
             color: premium_color,
           },
         ],
-        desc: premium_info,
+        desc:
+          !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY) && premium_info,
         descStyle: {
           color: '#ccc',
         },
-        rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
+        rightIcon: this.renderRightPremium(
+          isShowPremiumPoint ? premium_point : null,
+          premium_point_unit,
+        ),
         renderAfter: () =>
           this.renderProgressPremium(
             premium_point,
@@ -156,13 +169,13 @@ class Account extends Component {
             </Text>
           </Text>
         ),
-        isHidden: !user_info.default_wallet,
+        isHidden:
+          !user_info.default_wallet ||
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Actions.push(appConfig.routes.vndWallet, {
-            title: default_wallet.name,
-            wallet: default_wallet,
-          });
+          servicesHandler({type: SERVICES_TYPE.WALLET});
         },
         boxIconStyle: [
           styles.boxIconStyle,
@@ -173,6 +186,51 @@ class Account extends Component {
         iconColor: '#fff',
         iconType: default_wallet.iconType,
         marginTop: isShowPremium,
+      },
+
+      {
+        key: 'revenue_commissions',
+        icon: 'clipboard',
+        iconColor: '#FFFFFF',
+        size: 22,
+        iconSize: 14,
+        marginTop: 10,
+        labelProps: {
+          numberOfLines: 1,
+        },
+        desProps: {
+          numberOfLines: 1,
+        },
+        label: (
+          <>
+            {!!revenue_commissions?.this_month_commissions?.title &&
+              `${revenue_commissions.this_month_commissions.title}: `}
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.this_month_commissions?.value}
+            </Text>
+          </>
+        ),
+        desc: (
+          <>
+            {!!revenue_commissions?.last_month_commissions?.title &&
+              `${revenue_commissions.last_month_commissions.title}: `}
+            <Text style={styles.commissionValue}>
+              {revenue_commissions?.last_month_commissions?.value}
+            </Text>
+          </>
+        ),
+
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#FD6D61',
+          },
+        ],
+        isHidden:
+          !user_info.revenue_commissions ||
+          !isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
       },
 
       {
@@ -254,6 +312,28 @@ class Account extends Component {
         ],
       },
       {
+        key: 'orders',
+        label: t('options.orders.label'),
+        desc: t('options.orders.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="cart"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: appConfig.colors.status.success,
+          },
+        ],
+        iconColor: '#ffffff',
+      },
+      {
         key: 'vouchers',
         isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
         label: t('options.myVoucher.label'),
@@ -310,7 +390,10 @@ class Account extends Component {
         label: t('options.agencyInformationRegister.label'),
         desc: t('options.agencyInformationRegister.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.agencyInformationRegister),
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.AGENCY_INFORMATION_REGISTER,
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -491,17 +574,17 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage
+            onSelect: this.handleConfirmChangeAppLanguage,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189'
-          }
+            backgroundColor: '#175189',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: true
+        marginTop: true,
       },
 
       {
@@ -751,6 +834,7 @@ class Account extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.userInfoDisposer();
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
@@ -837,8 +921,13 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    Actions.push(appConfig.routes.profileDetail, {
-      userInfo: store.user_info,
+    // Actions.push(appConfig.routes.profileDetail, {
+    //   userInfo: store.user_info,
+    // });
+    servicesHandler({
+      type: SERVICES_TYPE.PERSONAL_PROFILE,
+      isMainUser: true,
+      title: store.user_info?.name,
     });
   };
 
@@ -872,9 +961,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => {}
               }
@@ -913,9 +1003,10 @@ class Account extends Component {
               onPress={
                 wallet.address
                   ? () =>
-                      Actions.push(appConfig.routes.vndWallet, {
-                        title: wallet.name,
-                        wallet: wallet,
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        name: wallet.name,
+                        zone_code: wallet.zone_code,
                       })
                   : () => Actions.view_ndt_list()
               }
@@ -997,6 +1088,7 @@ class Account extends Component {
       store.user_info != null && store.user_info.username != null;
     const {avatar_loading, logout_loading} = this.state;
     const {t} = this.props;
+    const siteContentValue = getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY);
 
     return (
       <View style={styles.container}>
@@ -1020,13 +1112,14 @@ class Account extends Component {
                 underlayColor="rgba(255,255,255,.7)">
                 <>
                   <TouchableHighlight
+                    disabled={!!avatar_loading}
                     onPress={this.onTapAvatar.bind(this)}
                     style={[
                       styles.profile_avatar_box,
                       styles.profile_avatar_box_container,
                     ]}
-                    underlayColor="transparent">
-                    <>
+                    underlayColor="rgba(0,0,0,.3)">
+                    <View>
                       <View style={styles.profile_avatar_box}>
                         {avatar_loading ? (
                           <View style={{width: '100%', height: '100%'}}>
@@ -1064,7 +1157,7 @@ class Account extends Component {
                           ]}
                         />
                       )} */}
-                    </>
+                    </View>
                   </TouchableHighlight>
 
                   <View
@@ -1172,11 +1265,19 @@ class Account extends Component {
           {this.options && (
             <SelectionList
               useList={false}
-              containerStyle={{
-                paddingVertical: 8,
-                marginBottom: 10,
-              }}
+              containerStyle={styles.listOptionsContainer}
               data={this.options}
+            />
+          )}
+
+          {!!siteContentValue && (
+            <CustomAutoHeightWebview
+              content={siteContentValue}
+              containerStyle={styles.footerSiteContainer}
+              contentStyle={styles.footerSiteContent}
+              customStyle={`body {
+                overflow-x: hidden;
+              }`}
             />
           )}
         </ScrollView>
@@ -1208,12 +1309,12 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   profile_avatar_box_container: {
+    backgroundColor: '#f0f0f0',
     marginRight: 15,
   },
   profile_avatar_box: {
     width: 60,
     height: 60,
-    backgroundColor: '#f0f0f0',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1456,6 +1557,26 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     elevation: 4,
+  },
+  footerSiteContainer: {
+    paddingVertical: 12,
+    borderColor: appConfig.colors.primary,
+    borderTopWidth: 3,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+  },
+  footerSiteContent: {
+    width: appConfig.device.width - 24,
+  },
+  listOptionsContainer: {
+    paddingVertical: 8,
+  },
+  viewRevenueCommissions: {
+    flexDirection: 'row',
+    marginBottom: appConfig.device.isIOS ? -7 : 0,
+  },
+  commissionValue: {
+    color: appConfig.colors.primary,
   },
 });
 

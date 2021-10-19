@@ -13,7 +13,7 @@ import Animated, {
   block,
   Extrapolate
 } from 'react-native-reanimated';
-import { useValue, useClock, loop, timing } from 'react-native-redash/lib/module/v1';
+import { useValue, useClock, loop, timing } from 'react-native-redash';
 
 const AnimatedImageBackground = Animated.createAnimatedComponent(
   ImageBackground

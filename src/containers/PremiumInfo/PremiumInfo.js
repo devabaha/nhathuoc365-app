@@ -20,6 +20,7 @@ import {Actions} from 'react-native-router-flux';
 import Loading from '../../components/Loading';
 import PremiumInfoSkeleton from './PremiumInfoSkeleton';
 import Button from 'react-native-button';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 const premiums = [
   {
@@ -230,6 +231,7 @@ class PremiumInfo extends Component {
   static defaultProps = {
     indexTab: 0,
     siteId: '',
+    currentPremiumId: undefined,
   };
 
   state = {
@@ -241,6 +243,10 @@ class PremiumInfo extends Component {
   };
   getPremiumsRequest = new APIRequest();
   requests = [];
+
+  get currentPremiumId() {
+    return this.props.currentPremiumId || store.user_info?.premium || 0;
+  }
 
   componentDidMount() {
     this.getPremiums();
@@ -259,7 +265,12 @@ class PremiumInfo extends Component {
       const response = await this.getPremiumsRequest.promise();
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          const routes = this.routesFormatter(response.data.premiums);
+          const routes = this.routesFormatter(
+            response.data.premiums.filter(
+              (premium) =>
+                premium.view_flag == 1 || premium.id === this.currentPremiumId,
+            ),
+          );
           const currentPremium = routes.find((route) => !!route.active) || {
             id: this.state.index,
           };
@@ -338,9 +349,11 @@ class PremiumInfo extends Component {
   }
 
   renderTabBarLabel(props) {
-    const {route: {title, key}} = props;
+    const {
+      route: {title, key},
+    } = props;
     const focused = key === this.state.index;
-    
+
     return (
       <Text
         numberOfLines={2}
@@ -362,6 +375,7 @@ class PremiumInfo extends Component {
         renderTabBarItem={(props) => {
           return (
             <Button
+              key={props.route.key}
               onPress={() => this.setState({index: props.route.key})}
               containerStyle={{
                 minHeight: 48,
@@ -434,6 +448,7 @@ const areEquals = (prevProps, nextProps) => {
 const Scene = React.memo(
   ({benefits, currentPremium, premium, handleRefresh, refreshing}) => {
     const userInfo = store.user_info || {};
+    const isShowPremiumPoint = !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY)
 
     const goToNews = () => {
       Actions.push(appConfig.routes.notifyDetail, {
@@ -472,7 +487,7 @@ const Scene = React.memo(
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-        ListHeaderComponent={renderPremiumBenefitsHeader(premium)}
+        ListHeaderComponent={isShowPremiumPoint && renderPremiumBenefitsHeader(premium)}
         ListFooterComponent={
           <TouchableOpacity onPress={goToNews}>
             <Container row padding={15} style={styles.loyaltyContainer}>

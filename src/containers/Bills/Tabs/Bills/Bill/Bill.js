@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     padding: 3,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5
+    marginBottom: 5,
   },
   index: {
     fontSize: 12,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     marginTop: -15,
     paddingHorizontal: 15,
     paddingTop: 15,
-    flex: 1
+    flex: 1,
   },
   title: {
     color: '#333',

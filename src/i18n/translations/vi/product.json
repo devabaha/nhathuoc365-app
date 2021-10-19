@@ -1,8 +1,11 @@
 {
   "shopTitle": {
     "preOrder": "Đặt trước",
+    "dropShip": "Giao hộ",
     "buy": "Mua ngay",
-    "book": "Đặt ngay"
+    "book": "Đặt ngay",
+    "postForSale": "Đăng bán",
+    "outOfStock": "Tạm hết hàng"
   },
   "attr": {
     "notChooseAttrYet": "Chưa chọn thuộc tính",
@@ -18,6 +21,14 @@
     "brands": "Nhãn hiệu",
     "origin": "Xuất xứ"
   },
+  "wholesale": {
+    "title": "Giá bán buôn/ sỉ",
+    "quantity": "Số lượng",
+    "unitPrice": "Đơn giá",
+    "value": "Giá còn {{price}} khi mua {{quantity}} sản phẩm"
+  },
   "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
-  "goToStore": "Vào cửa hàng"
+  "goToStore": "Vào cửa hàng",
+  "copyContent": "Đã sao chép nội dung bài viết sản phẩm",
+  "placeholderRating": "Nhập đánh giá của bạn..."
 }

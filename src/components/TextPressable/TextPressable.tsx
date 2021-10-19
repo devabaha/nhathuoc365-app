@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
 import {TextPressableProps} from '.';
 
 import appConfig from 'app-config';
@@ -24,13 +24,15 @@ const TextPressable = ({children, ...textProps}: TextPressableProps) => {
 
   return (
     <TouchableWithoutFeedback
+      //@ts-ignore
+      hitSlop={HIT_SLOP}
       onLongPress={handleLongPress}
       delayLongPress={100}
       onPressOut={handlePressOut}>
       <Text
         suppressHighlighting
-        style={isHighlight && styles.highlight}
-        {...textProps}>
+        {...textProps}
+        style={[isHighlight && styles.highlight, textProps.style]}>
         {children}
       </Text>
     </TouchableWithoutFeedback>

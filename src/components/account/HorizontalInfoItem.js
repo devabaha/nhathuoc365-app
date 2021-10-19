@@ -9,9 +9,11 @@ import {
 
 import {isEmpty, isFunction} from 'lodash';
 import DatePicker from 'react-native-datepicker';
+// import DatePicker from '@react-native-community/datetimepicker';
 import appConfig from 'app-config';
 import {Actions} from 'react-native-router-flux';
 import Loading from '../Loading';
+import {Container} from '../Layout';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
@@ -59,7 +61,7 @@ export default class HorizontalInfoItem extends Component {
         <Text
           style={[
             styles.detailTitle,
-            {color: specialColor ? specialColor : 'black', height: undefined},
+            {color: specialColor ? specialColor : appConfig.colors.text, height: undefined, paddingVertical: 15},
             !!defaultValue && !value && {color: appConfig.colors.placeholder},
             detailTitleStyle,
             rightTextStyle,
@@ -104,6 +106,7 @@ export default class HorizontalInfoItem extends Component {
             <DatePicker
               style={{justifyContent: 'center'}}
               date={value || this.state.selectedDate}
+              // value={new Date(value || this.state.selectedDate)}
               mode="date"
               placeholder={defaultValue}
               format="YYYY-MM-DD"
@@ -142,12 +145,14 @@ export default class HorizontalInfoItem extends Component {
       } else {
         return (
           <TouchableOpacity
-            style={styles.btnSelect}
-            onPress={this._onSelectValue}>
+            onPress={this._onSelectValue}
+            style={styles.btnSelect}>
             <Text
               style={{
                 fontSize: 14,
                 color: isEmpty(value) ? appConfig.colors.placeholder : 'black',
+                ...styles.btnSelectTitle,
+                ...detailTitleStyle,
                 ...rightTextStyle,
               }}
               {...inputProps}>
@@ -193,6 +198,8 @@ export default class HorizontalInfoItem extends Component {
         rightTextStyle,
         titleStyle,
         containerStyle: dataContainerStyle,
+        isLink,
+        leftTitle
       },
       containerStyle,
       inputProps,
@@ -202,7 +209,10 @@ export default class HorizontalInfoItem extends Component {
 
     const extraContainerStyle = columnView && styles.columnViewContainer;
     const extraTitleStyle = columnView && styles.columnViewTitle;
-    const extraDetailTitleStyle = columnView && styles.columnViewValue;
+    const extraDetailTitleStyle = {
+      ...(isLink && styles.link),
+      ...(columnView && styles.columnViewValue),
+    };
 
     return (
       <View
@@ -217,7 +227,12 @@ export default class HorizontalInfoItem extends Component {
           containerStyle,
           dataContainerStyle,
         ]}>
-        <Text style={[styles.title, extraTitleStyle, titleStyle]}>{title}</Text>
+        <Container row>
+          {leftTitle}
+          <Text style={[styles.title, extraTitleStyle, titleStyle]}>
+            {title}
+          </Text>
+        </Container>
         {renderRight
           ? renderRight()
           : this._renderRightView(
@@ -251,25 +266,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
     textAlign: 'left',
-    flex: 0.5,
+    marginRight: 30,
   },
 
   detailTitle: {
-    flex: 0.5,
+    flex: 1,
     height: '100%',
     fontSize: 14,
     color: '#242424',
     paddingLeft: 0,
     textAlign: 'right',
     paddingVertical: 0,
+    textAlignVertical: 'center',
   },
 
   btnSelect: {
-    flex: 0.6,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-end',
     paddingVertical: 15,
     marginVertical: -15,
+  },
+  btnSelectTitle: {
+    fontSize: 14,
+    color: '#242424',
+    paddingLeft: 0,
+    textAlign: 'right',
+    paddingVertical: 15,
   },
   columnViewContainer: {
     flexDirection: 'column',
@@ -300,5 +323,10 @@ const styles = StyleSheet.create({
   },
   loading: {
     padding: 0,
+  },
+
+  link: {
+    color: appConfig.colors.primary,
+    textDecorationLine: 'underline',
   },
 });

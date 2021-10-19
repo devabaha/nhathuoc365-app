@@ -1,4 +1,9 @@
 {
-  "name": "Tên (Sdt) ",
-  "total_revenue": "Tổng doanh số"
+  "name": "Tên",
+  "phone": "Số điện thoại",
+  "totalRevenue": "Tổng doanh số",
+  "totalOrders": "Số đơn hàng",
+  "referralOrders": "Đơn hàng giới thiệu",
+  "newReferralMembers": "Thành viên giới thiệu",
+  "joiningDate": "Ngày tham gia"
 }

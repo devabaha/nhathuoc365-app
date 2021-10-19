@@ -1,20 +1,24 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Keyboard,
   AppState,
   Text,
   FlatList,
   StyleSheet,
-  Linking,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import FastImage from 'react-native-fast-image';
-import Button from 'react-native-button';
+import {Actions} from 'react-native-router-flux';
 import {getPreciseDistance} from 'geolib';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import useIsMounted from 'react-is-mounted-hook';
 
 import appConfig from 'app-config';
+import store from 'app-store';
+import {APIRequest} from '../../network/Entity';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {GPS_LIST_TYPE} from 'src/constants';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -24,15 +28,7 @@ import {
   REQUEST_RESULT_TYPE,
 } from '../../helper/permissionHelper';
 import Loading from '../../components/Loading';
-import {APIRequest} from '../../network/Entity';
-import Container from '../../components/Layout/Container';
-
-const APPLE_MAPS_SCHEME = 'maps://';
-const APPLE_MAPS_LINKING_URL = 'https://maps.apple.com/?dirflg=d&daddr=';
-
-const GOOGLE_MAPS_SCHEME = 'comgooglemaps://';
-const GOOGLE_MAPS_LINKING_URL =
-  'https://www.google.com/maps/dir/?api=1&travelmode=bike&destination=';
+import StoreItem from './StoreItem';
 
 const styles = StyleSheet.create({
   image: {
@@ -96,10 +92,10 @@ const styles = StyleSheet.create({
   distanceUnitTxt: {
     fontSize: 9,
   },
-  openMapWrapper: {
+  btnWrapper: {
     overflow: 'hidden',
     borderRadius: 15,
-    marginLeft: 15,
+    marginLeft: 10,
   },
   openMapContainer: {
     backgroundColor: appConfig.colors.primary,
@@ -119,12 +115,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = () => {
-  const getListStoreRequest = new APIRequest();
-  const requests = [getListStoreRequest];
+const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
+  const {t} = useTranslation();
+
   const appState = useRef('active');
   const watchID = useRef('');
   const isUpdatedListStoreByPosition = useRef(false);
+  const isMounted = useIsMounted();
+
+  const [getListStoreRequest] = useState(new APIRequest());
+  const [setStoreRequest] = useState(new APIRequest());
+
+  const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setLoading] = useState(true);
@@ -165,6 +167,15 @@ const GPSListStore = () => {
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
     cancelRequests(requests);
+    if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
+      handlePressStore(
+        {
+          id: 0,
+          site_id: store?.store_data?.id,
+        },
+        true,
+      );
+    }
   };
 
   const getListStore = async (data) => {
@@ -174,10 +185,20 @@ const GPSListStore = () => {
         lng: longitude,
       };
     }
+    if (!isMounted()) return;
+
     getListStoreRequest.data = APIHandler.user_site_store(data);
     try {
-      const responseData = await getListStoreRequest.promise();
-      setListStore(responseData?.stores || []);
+      const responseData =
+        type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? await getListStoreRequest.promise()
+          : (await APIHandler.user_get_favor_sites())?.data;
+
+      setListStore(
+        (type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? responseData?.stores
+          : responseData?.sites) || [],
+      );
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -213,7 +234,7 @@ const GPSListStore = () => {
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setRequestLocationErrorCode(result);
           setGotoSetting(false);
-          updateLocation();
+          updateLocation(undefined, result);
         } else {
           handleErrorLocationPermission({code: result});
           !listStore?.length && getListStore();
@@ -222,7 +243,11 @@ const GPSListStore = () => {
     );
   };
 
-  const updateLocation = (timeout = 5000) => {
+  const updateLocation = (
+    timeout = 5000,
+    errorCode = requestLocationErrorCode,
+  ) => {
+    if (errorCode !== REQUEST_RESULT_TYPE.GRANTED) return;
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
@@ -272,6 +297,48 @@ const GPSListStore = () => {
     );
   };
 
+  const handlePressStore = useCallback(async (storeInfo, isBack) => {
+    !isBack && setLoading(true);
+    const data = {
+      store_id: storeInfo.id,
+    };
+    setStoreRequest.data = APIHandler.site_set_store(storeInfo.site_id, data);
+    try {
+      const response = await setStoreRequest.promise();
+      // console.log(response, data)
+      if (response?.status === STATUS_SUCCESS) {
+        store.setStoreData(response.data.site);
+
+        if (!isBack) {
+          await servicesHandler({
+            type: SERVICES_TYPE.OPEN_SHOP,
+            siteId: storeInfo.site_id,
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('api.error.message'),
+        });
+      }
+    } catch (error) {
+      console.log('set_store', error);
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+    } finally {
+      !isBack && setLoading(false);
+    }
+  }, []);
+
+  const handlePressSite = useCallback((site) => {
+    servicesHandler({
+      siteId: site.id,
+      type: SERVICES_TYPE.OPEN_SHOP,
+    });
+  }, []);
+
   const cancelModal = () => {
     closeModal();
   };
@@ -296,51 +363,6 @@ const GPSListStore = () => {
     return '-';
   };
 
-  const openAppleMap = (lat, lng) => {
-    const ll = `${lat},${lng}`;
-    const url = APPLE_MAPS_LINKING_URL + ll;
-    Linking.openURL(url).catch((err) => {
-      console.log('%cerr_open_apple_maps_app', 'color:red', err);
-    });
-  };
-
-  const openGoogleMap = (lat, lng) => {
-    const ll = `${lat},${lng}`;
-    const url = GOOGLE_MAPS_LINKING_URL + ll;
-    Linking.openURL(url).catch((err) => {
-      console.log('%cerr_open_google_maps_app', 'color:red', err);
-    });
-  };
-
-  const openMap = (lat, lng) => {
-    // check if device installed google maps app.
-    Linking.canOpenURL(GOOGLE_MAPS_SCHEME)
-      .then((res) => {
-        if (res) {
-          // open google maps app
-          openGoogleMap(lat, lng);
-        } else {
-          // check if device installed apple maps app.
-          Linking.canOpenURL(APPLE_MAPS_SCHEME)
-            .then((res) => {
-              if (res) {
-                // open apple maps app
-                openAppleMap(lat, lng);
-              } else {
-                // open google maps web
-                openGoogleMap(lat, lng);
-              }
-            })
-            .catch((err) => {
-              console.log('%cerr_CAN_open_apple_maps_app', 'color:red', err);
-            });
-        }
-      })
-      .catch((err) => {
-        console.log('%cerr_CAN_open_google_maps_app', 'color:red', err);
-      });
-  };
-
   const onRefresh = () => {
     setRefreshing(true);
     getListStore();
@@ -348,56 +370,33 @@ const GPSListStore = () => {
 
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
+
     return (
-      <Container row style={styles.storeContainer}>
-        <FastImage
-          source={{uri: store.image_url}}
-          style={[
-            styles.image,
-            !store.image_url && {backgroundColor: '#f5f5f5'},
-          ]}
+      <TouchableOpacity
+        activeOpacity={0.5}
+        disabled={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? !isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)
+            : false
+        }
+        onPress={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? () => handlePressStore(store)
+            : () => handlePressSite(store)
+        }>
+        <StoreItem
+          name={store.name}
+          image={store.image_url}
+          address={store.address}
+          phone={store.phone}
+          lat={store.lat}
+          lng={store.lng}
+          enableDistance
+          requestLocationLoading={requestLocationLoading}
+          distance={calculateDiffDistance(store.lng, store.lat)}
+          disabledDistanceStyle={disabledDistanceStyle}
         />
-
-        <Container flex centerVertical={false} style={styles.infoContainer}>
-          <Container centerVertical={false}>
-            <Text style={styles.title}>{store.name}</Text>
-            <Text style={styles.description}>{store.address}</Text>
-          </Container>
-
-          <Container flex row style={styles.mapInfoContainer}>
-            <Container
-              row
-              style={[styles.distanceContainer, disabledDistanceStyle]}>
-              {requestLocationLoading ? (
-                <Loading
-                  style={styles.distanceLoading}
-                  wrapperStyle={styles.distanceLoadingContainer}
-                  size="small"
-                />
-              ) : (
-                <Ionicons
-                  name="ios-navigate"
-                  style={[styles.distanceIcon, disabledDistanceStyle]}
-                />
-              )}
-              <Text style={[styles.distanceTxt, disabledDistanceStyle]}>
-                {calculateDiffDistance(store.lng, store.lat)}
-              </Text>
-            </Container>
-
-            <Container style={styles.openMapWrapper}>
-              <Button
-                containerStyle={styles.openMapContainer}
-                onPress={() => openMap(store.lat, store.lng)}>
-                <Container row style={styles.openMapBtn}>
-                  <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>Xem bản đồ</Text>
-                </Container>
-              </Button>
-            </Container>
-          </Container>
-        </Container>
-      </Container>
+      </TouchableOpacity>
     );
   };
 

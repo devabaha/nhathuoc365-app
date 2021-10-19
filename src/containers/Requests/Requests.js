@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   FlatList,
   RefreshControl,
   View,
-  TouchableHighlight
+  TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 import appConfig from 'app-config';
@@ -17,7 +17,7 @@ import Request from './Request';
 import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
-import { servicesHandler, SERVICES_TYPE } from 'src/helper/servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
 
 /**
  * A list of all request of this site
@@ -27,12 +27,15 @@ import { servicesHandler, SERVICES_TYPE } from 'src/helper/servicesHandler';
  */
 class Requests extends Component {
   static propTypes = {
-    siteId: PropTypes.string.isRequired
-  }
+    siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
+  };
+
   state = {
     loading: true,
     refreshing: false,
-    requests: null
+    requests: null,
+    object: undefined,
   };
   /**
    * @todo will true when component unmount
@@ -44,7 +47,8 @@ class Requests extends Component {
     this.getRequests();
     setTimeout(() => {
       Actions.refresh({
-        right: this.renderRight()
+        title: this.props.title || this.props.t('screen.requests.mainTitle'),
+        right: this.renderRight(),
       });
     });
   }
@@ -58,8 +62,7 @@ class Requests extends Component {
       <View style={styles.nav_right}>
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={this.createRequest}
-        >
+          onPress={this.createRequest}>
           <View style={styles.nav_right_btn}>
             <Icon name="plus" size={22} color="#ffffff" />
           </View>
@@ -69,30 +72,45 @@ class Requests extends Component {
   }
 
   createRequest = () => {
-    Actions.push(appConfig.routes.requestCreation, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
-      onRefresh: this.onRefresh
+    servicesHandler({
+      type: SERVICES_TYPE.CREATE_REQUEST,
+      site_id: this.props.siteId,
+      room_id: this.props.roomId,
+      object_id: this.props.object_id || this.props.objectId,
+      object_type: this.props.object_type || this.props.objectType,
+      object: this.state.object || this.props.object,
+      onRefresh: (request) => {
+        this.getRequests();
+        setTimeout(() =>
+          servicesHandler({
+            type: SERVICES_TYPE.REQUEST_DETAIL,
+            site_id: this.props.siteId,
+            room_id: this.props.roomId,
+            request_id: request.id,
+          }),
+        );
+      },
     });
   };
 
   getRequests = async () => {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_requests_room(
         this.props.siteId,
-        this.props.roomId
+        this.props.roomId,
       );
 
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
-            requests: response.data.requests
+            requests: response.data.requests,
+            object: response.data.object,
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('api.error.message')
+            message: response.message || t('api.error.message'),
           });
         }
       }
@@ -100,43 +118,43 @@ class Requests extends Component {
       console.log('get_requests', error);
       flashShowMessage({
         type: 'danger',
-        message: t('api.error.message')
+        message: t('api.error.message'),
       });
     } finally {
       !this.unmounted &&
         this.setState({
           loading: false,
-          refreshing: false
+          refreshing: false,
         });
     }
   };
 
   handlePressRequest(request) {
-    const service = {
+    servicesHandler({
       type: SERVICES_TYPE.BEEHOME_REQUEST,
-      site_id: this.props.siteId,
-      room_id: this.props.roomId,
+      site_id: this.props.siteId || this.props.site_id,
+      room_id: this.props.roomId || this.props.room_id,
       request_id: request.id,
-      title: request.title || this.props.t('screen.requests.detailTitle'),
-      callbackReload: this.getRequests
-    };
-    servicesHandler(service);
+      callbackReload: this.getRequests,
+    });
   }
 
   onRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.getRequests();
   };
 
-  renderRequest = ({ item: request }) => {
+  renderRequest = ({item: request}) => {
     return (
       <Request
         wrapperStyle={styles.requestItemWrapper}
         containerStyle={styles.requestItemContainer}
+        tagCode={request.object?.warranty_code}
+        tagName={request.object?.title}
         title={request.title}
         subTitle={request.content}
         status={request.status}
-        adminName={request.admin_name}
+        adminName={request.admin_id && request.admin_name}
         bgColor={request.color}
         textColor={request.textColor}
         description={request.created}
@@ -180,31 +198,31 @@ class Requests extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   nav_right: {
-    paddingRight: 8
+    paddingRight: 8,
   },
   nav_right_btn: {
     paddingVertical: 1,
     paddingHorizontal: 8,
-    paddingTop: appConfig.device.isAndroid ? 8 : 4
+    paddingTop: appConfig.device.isAndroid ? 8 : 4,
   },
   content: {
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   requestItemWrapper: {
     flex: 1,
     marginRight: 16,
     marginBottom: 15,
-    width: undefined
+    width: undefined,
   },
   requestItemContainer: {},
   icon: {
     fontSize: 18,
     color: '#fff',
-    marginRight: 7
-  }
+    marginRight: 7,
+  },
 });
 
 export default withTranslation()(Requests);
@@ -213,7 +231,7 @@ export default withTranslation()(Requests);
  * Component for no requests display
  */
 const NoResultComp = (
-  <View style={{ marginTop: '50%' }}>
+  <View style={{marginTop: '50%'}}>
     <NoResult message="Danh sách yêu cầu đang trống" />
   </View>
 );

@@ -9,6 +9,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Animated, {Easing} from 'react-native-reanimated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -29,6 +30,7 @@ import {
   getPackageOptionValue,
   PACKAGE_OPTIONS_TYPE,
 } from '../../helper/packageOptionsHandler';
+import Posts from 'src/containers/Social/Posts';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -70,6 +72,7 @@ class Home extends Component {
     apiFetching: PropTypes.bool,
     onActionPress: PropTypes.func,
     onSurplusNext: PropTypes.func,
+    onPressCommission: PropTypes.func,
     onPromotionPressed: PropTypes.func,
     onVoucherPressed: PropTypes.func,
     onShowAllVouchers: PropTypes.func,
@@ -109,6 +112,7 @@ class Home extends Component {
     apiFetching: false,
     onActionPress: defaultListener,
     onSurplusNext: defaultListener,
+    onPressCommission: defaultListener,
     onPromotionPressed: defaultListener,
     onVoucherPressed: defaultListener,
     onShowAllVouchers: defaultListener,
@@ -190,6 +194,10 @@ class Home extends Component {
     return (
       Array.isArray(this.props.room_news) && this.props.room_news.length > 0
     );
+  }
+  
+  get hasSocialPosts() {
+    return this.props.social_posts?.length > 0;
   }
 
   get hasNewsGroups() {
@@ -446,6 +454,7 @@ class Home extends Component {
                   }
                   onPressItem={this.props.onActionPress}
                   onSurplusNext={this.props.onSurplusNext}
+                  onPressCommission={this.props.onPressCommission}
                 />
               ) : (
                 this.hasPromotion && (
@@ -466,7 +475,8 @@ class Home extends Component {
                 type={this.props.listServiceType}
                 itemsPerRow={this.props.listServiceItemsPerRow}
                 onItemPress={this.props.onPressService}
-                containerStyle={[styles.servicesBlock]}
+                containerStyle={styles.servicesBlock}
+                contentContainerStyle={styles.servicesContent}
               />
             ) : this.props.apiFetching ? (
               <ListServiceSkeleton />
@@ -565,6 +575,15 @@ class Home extends Component {
                       imageUrl={item.image_url}
                       onPress={() => this.props.onPressSiteItem(item)}
                       last={this.props.sites.length - 1 === index}
+                      subTitle={item.address}
+                      titleStyle={styles.siteTitleContent}
+                      subTitleStyle={styles.siteSubtitleContent}
+                      iconSubTitle={
+                        <Ionicons
+                          name="ios-location-sharp"
+                          style={styles.siteIcon}
+                        />
+                      }
                     />
                   )}
                 </HomeCardList>
@@ -612,6 +631,21 @@ class Home extends Component {
               ) : this.props.apiFetching ? (
                 <ListProductSkeleton />
               ) : null}
+
+              {!!this.hasSocialPosts && (
+                <HomeCardList
+                  onShowAll={this.props.goToSocial}
+                  title={t('common:screen.social.mainTitle')}
+                  contentContainerStyle={styles.socialPostContainer}
+                  renderContent={() => (
+                    <Posts
+                      disablePostUpdating
+                      disableLoadMore
+                      posts={this.props.social_posts}
+                    />
+                  )}
+                />
+              )}
 
               {this.hasNewsGroups ? (
                 this.props.news_categories.map((newsGroup, index) => {
@@ -712,6 +746,10 @@ let styles = StyleSheet.create({
 
   servicesBlock: {
     paddingBottom: 10,
+    marginTop: -20,
+  },
+  servicesContent: {
+    paddingTop: 20,
   },
   promotionBlock: {
     marginTop: 10,
@@ -719,6 +757,22 @@ let styles = StyleSheet.create({
   },
   block: {
     marginBottom: 20,
+  },
+
+  socialPostContainer: {
+    flex: 1,
+    paddingHorizontal: 0,
+    marginBottom: -15,
+  },
+  siteTitleContent: {
+    fontWeight: '500',
+  },
+  siteSubtitleContent: {
+    color: '#666',
+  },
+  siteIcon: {
+    fontSize: 15,
+    color: '#000',
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);

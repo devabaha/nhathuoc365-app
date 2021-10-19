@@ -31,6 +31,10 @@ const END_DEG = new Animated.Value(Math.PI);
 const STORE_SEARCH_KEY = 'STORE-SEARCH';
 
 class Search extends Component {
+  static defaultProps = {
+    categoriesCollapsed: true,
+  };
+
   constructor(props) {
     super(props);
 
@@ -44,14 +48,25 @@ class Search extends Component {
       searchValue: '',
       categories: this.categories,
       selectedCategory: this.selectedCategory,
-      animatedCategories: new Animated.Value(0),
+      isFinishedCategoriesShowUp: false,
+      animatedCategories: new Animated.Value(
+        !!props.categoriesCollapsed ? 1 : 0,
+      ),
       bodyCategoriesHeight: null,
     };
 
+    this.refList = React.createRef();
+
+    this.animatedCategoriesShowUp = new Animated.Value(
+      props.categoriesCollapsed ? 0 : 1,
+    );
+
+    this.refListResult = React.createRef();
     this.onSearch = this.onSearch.bind(this);
     this.getHistory = this.getHistory.bind(this);
     this.unmounted = false;
-    this.categoriesCollapsed = false;
+    this.categoriesCollapsed = !!this.props.categoriesCollapsed;
+    this.isSearched = false;
 
     this.eventTracker = new EventTracker();
   }
@@ -74,7 +89,7 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    const { t } = this.props;
+    const {t} = this.props;
     return `${name && `${name} - `}${store.store_data.name || 'cửa hàng'}`;
   }
 
@@ -89,7 +104,6 @@ class Search extends Component {
       this.props.category_id !== 0 ? this.props.category_name : '',
     );
     if (keyword) {
-      this.setState({loading: true});
       this.onSearch(keyword);
     }
     setTimeout(() => {
@@ -142,7 +156,7 @@ class Search extends Component {
     try {
       const response = await APIHandler.site_info(
         store.store_id,
-        this.props.categoryId
+        this.props.categoryId,
       );
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -152,20 +166,23 @@ class Search extends Component {
     } catch (e) {
       console.log(e + ' site_info');
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+        });
     }
   };
 
   parseDataCategories(response) {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.props.categoryId) {
       response.data.categories.unshift({
         id: 0,
         name: t('tabs.store.title'),
-        active: true
+        active: true,
       });
     }
-    this.setState({ categories: response.data.categories });
+    this.setState({categories: response.data.categories});
   }
 
   getHistory(categoryId = this.state.selectedCategory.id) {
@@ -197,16 +214,6 @@ class Search extends Component {
   }
 
   onSearch = debounce((keyword) => {
-    if (keyword == null || keyword == '') {
-      this.setState({
-        search_data: null,
-        loading: false,
-        noResult: false,
-      });
-
-      return;
-    }
-
     keyword = keyword.trim();
 
     this.setState(
@@ -218,35 +225,54 @@ class Search extends Component {
           const response = await APIHandler.search_product(store.store_id, {
             search: keyword,
             category_id: this.state.selectedCategory.id,
+            type: this.props.type,
           });
+          if (this.unmounted) return;
 
           if (response && response.status == STATUS_SUCCESS) {
             if (response.data) {
-              this.setState({
-                search_data: response.data,
-                noResult: false,
-                header_title: `— Kết quả cho "${keyword}" —`,
+              if (!this.categoriesCollapsed) {
+                this.collapseCategories();
+              }
+
+              this.refList.current &&
+                this.refList.current.scrollToOffset({offset: 0});
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message:
+                  response?.message || this.props.t('common:api.error.message'),
               });
             }
           } else {
             this.getHistory();
 
-            this.setState({
-              search_data: null,
-              noResult: true,
+            flashShowMessage({
+              type: 'danger',
+              message:
+                response?.message || this.props.t('common:api.error.message'),
             });
           }
+
+          this.setState({
+            search_data: response?.data || null,
+            noResult: !!!response?.data,
+            searchValue: keyword,
+          });
         } catch (e) {
           console.log(e + ' search_product');
-          // store.addApiQueue(
-          //   'search_product',
-          //   this.onSearch.bind(this, keyword)
-          // );
+          flashShowMessage({
+            type: 'danger',
+            message: this.props.t('common:api.error.message'),
+          });
         } finally {
-          !this.unmounted &&
-            this.setState({
-              loading: false,
-            });
+          if (this.unmounted) return;
+
+          this.setState({
+            header_title: !keyword ? null : `— Kết quả cho "${keyword}" —`,
+            loading: false,
+          });
+          this.isSearched = true;
         }
       },
     );
@@ -373,9 +399,25 @@ class Search extends Component {
     }
   };
 
+  updateCategoriesLayout = debounce((bodyCategoriesHeight) => {
+    if (this.unmounted) return;
+
+    this.setState({bodyCategoriesHeight}, () => {
+      Animated.timing(this.animatedCategoriesShowUp, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.quad,
+      }).start(({finished}) => {
+        if (finished && !this.unmounted) {
+          this.setState({isFinishedCategoriesShowUp: true});
+        }
+      });
+    });
+  }, 500);
+
   handleCategoriesLayout = (e) => {
-    if (!this.state.bodyCategoriesHeight) {
-      this.setState({bodyCategoriesHeight: e.nativeEvent.layout.height});
+    if (!this.state.bodyCategoriesHeight && this.state.categories?.length) {
+      this.updateCategoriesLayout(e.nativeEvent.layout.height);
     }
   };
 
@@ -386,208 +428,8 @@ class Search extends Component {
       duration: 300,
     }).start();
     this.categoriesCollapsed = !this.categoriesCollapsed;
+    Keyboard.dismiss();
   };
-
-  render() {
-    const {loading, search_data, history, buying_idx} = this.state;
-
-    const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
-    const MAX_HEIGHT_CATEGORIES =
-      this.state.bodyCategoriesHeight &&
-      new Animated.Value(this.state.bodyCategoriesHeight);
-
-    const animatedIconStyle = {
-      transform: [
-        {
-          rotate: interpolate(this.state.animatedCategories, {
-            inputRange: [0, 1],
-            outputRange: [START_DEG, END_DEG],
-          }),
-        },
-      ],
-    };
-    const animatedCategoriesStyle = this.state.bodyCategoriesHeight && {
-      height: interpolate(this.state.animatedCategories, {
-        inputRange: [0, 1],
-        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES],
-      }),
-    };
-    // show loading
-    if (loading) {
-      return <Indicator />;
-    }
-
-    return (
-      <>
-        <SafeAreaView style={styles.container}>
-          {search_data != null ? (
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              keyboardDismissMode="on-drag"
-              onEndReached={(num) => {}}
-              onEndReachedThreshold={0}
-              style={[styles.items_box]}
-              ListHeaderComponent={() => (
-                <ListHeader title={this.state.header_title} />
-              )}
-              data={search_data}
-              extraData={this.state}
-              renderItem={({item, index}) => (
-                <Items
-                  item={item}
-                  index={index}
-                  buying_idx={buying_idx}
-                  onPress={this._goItem.bind(this, item)}
-                  buyPress={this._updateHistory.bind(this, item)}
-                />
-              )}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-            />
-          ) : (
-            <ScrollView
-              contentContainerStyle={{flexGrow: 1}}
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="always">
-              {this.state.noResult && (
-                <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
-              )}
-              {this.state.categories.length !== 0 && (
-                <ModernList
-                  containerStyle={{marginBottom: 15}}
-                  scrollEnabled={false}
-                  headerTitle="Danh mục"
-                  mainKey="name"
-                  data={this.state.categories}
-                  onPressItem={this.handlePressCategory}
-                  bodyWrapperStyle={animatedCategoriesStyle}
-                  onBodyLayout={this.handleCategoriesLayout}
-                  activeStyle={{backgroundColor: DEFAULT_COLOR}}
-                  activeTextStyle={{color: '#fff'}}
-                  type={LIST_TYPE.TAG}
-                  headerRightComponent={
-                    <CollapseIcon
-                      onPress={this.collapseCategories}
-                      style={animatedIconStyle}
-                    />
-                  }
-                />
-              )}
-              {history != null &&
-                (() => {
-                  let data = Object.assign([], history);
-                  data = data.reverse();
-
-                  return (
-                    <ModernList
-                      headerTitle="Lịch sử tìm kiếm"
-                      mainKey="name"
-                      data={data}
-                      onPressItem={(item) => this._onTouchHistory(item)}
-                      headerRightComponent={
-                        <RemoveBtn onPress={this.removeHistory} />
-                      }
-                    />
-                  );
-                  // return (
-                  //   <ScrollView
-                  //     style={[
-                  //       styles.items_box,
-                  //       {
-                  //         marginBottom: store.keyboardTop
-                  //       }
-                  //     ]}
-                  //     keyboardShouldPersistTaps="handled"
-                  //     keyboardDismissMode="on-drag"
-                  //   >
-                  //     <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
-
-                  //     {data.map((item, index) => {
-                  //       return (
-                  //         <TouchableHighlight
-                  //           key={index}
-                  //           underlayColor="transparent"
-                  //           onPress={this._onTouchHistory.bind(this, item)}
-                  //           style={styles.seach_history}
-                  //         >
-                  //           <View style={styles.seach_history_box}>
-                  //             <View style={styles.seach_history_name_box}>
-                  //               <Text style={styles.seach_history_name}>
-                  //                 {item.name}
-                  //               </Text>
-                  //             </View>
-
-                  //             <TouchableHighlight
-                  //               underlayColor="transparent"
-                  //               onPress={this._insertName.bind(this, item)}
-                  //               style={styles.seach_history_expand}
-                  //             >
-                  //               <Icon name="expand" size={14} color="#999999" />
-                  //             </TouchableHighlight>
-                  //           </View>
-                  //         </TouchableHighlight>
-                  //       );
-                  //     })}
-                  //   </ScrollView>
-                  // );
-                })()}
-              {!this.state.history &&
-                !this.state.noResult &&
-                !this.state.loading &&
-                !this.state.searchValue && (
-                  <NoResult iconName="magnify" message="Nhập để tìm kiếm" />
-                )}
-            </ScrollView>
-          )}
-
-          <PopupConfirm
-            ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
-            title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
-            height={110}
-            noConfirm={() => {
-              if (this.refs_modal_delete_cart_item) {
-                this.refs_modal_delete_cart_item.close();
-              }
-            }}
-            yesConfirm={this._removeCartItem.bind(this)}
-            otherClose={false}
-          />
-
-          {store.cart_fly_show && (
-            <View
-              style={{
-                position: 'absolute',
-                top: store.cart_fly_position.py,
-                left: store.cart_fly_position.px,
-                width: store.cart_fly_position.width,
-                height: store.cart_fly_position.height,
-                zIndex: 999,
-                borderWidth: 1,
-                borderColor: DEFAULT_COLOR,
-                overflow: 'hidden',
-              }}>
-              {store.cart_fly_image && (
-                <CachedImage
-                  style={{
-                    width: store.cart_fly_position.width,
-                    height: store.cart_fly_position.height,
-                  }}
-                  source={store.cart_fly_image}
-                />
-              )}
-            </View>
-          )}
-        </SafeAreaView>
-
-        {search_data != null && store.keyboardTop == 0 && (
-          <CartFooter
-            prefix="search"
-            confirmRemove={this._confirmRemoveCartItem.bind(this)}
-          />
-        )}
-      </>
-    );
-  }
 
   _confirmRemoveCartItem(item) {
     this.cartItemConfirmRemove = item;
@@ -644,6 +486,190 @@ class Search extends Component {
       store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
+
+  renderHeader = () => {
+    return (
+      <>
+        {this.renderCategoriesSelector()}
+        {this.renderHistory()}
+        <ListHeader
+          containerStyle={{
+            marginTop: this.state.header_title ? 0 : 5,
+            marginBottom: this.state.header_title ? 0 : 15,
+          }}
+          title={this.state.header_title}
+        />
+      </>
+    );
+  };
+
+  renderCategoriesSelector = () => {
+    const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
+    const MAX_HEIGHT_CATEGORIES =
+      this.state.bodyCategoriesHeight &&
+      new Animated.Value(this.state.bodyCategoriesHeight);
+
+    const animatedIconStyle = {
+      transform: [
+        {
+          rotate: interpolate(this.state.animatedCategories, {
+            inputRange: [0, 1],
+            outputRange: [START_DEG, END_DEG],
+          }),
+        },
+      ],
+    };
+    const animatedCategoriesBodyStyle = {
+      position: this.state.isFinishedCategoriesShowUp ? undefined : 'absolute',
+      opacity: this.animatedCategoriesShowUp,
+
+      ...(this.state.bodyCategoriesHeight && {
+        height: interpolate(this.state.animatedCategories, {
+          inputRange: [0, 1],
+          outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES],
+        }),
+      }),
+    };
+
+    const animatedCategoriesStyle = {};
+
+    return (
+      // this.state.categories.length !== 0 && (
+      <ModernList
+        containerStyle={[
+          styles.listCategoriesContainer,
+          animatedCategoriesStyle,
+        ]}
+        scrollEnabled={false}
+        headerTitle={
+          this.state.selectedCategory.name
+            ? this.state.selectedCategory.name
+            : 'Chọn danh mục'
+        }
+        mainKey="name"
+        data={this.state.categories}
+        onPressItem={this.handlePressCategory}
+        onHeaderPress={this.collapseCategories}
+        bodyWrapperStyle={animatedCategoriesBodyStyle}
+        onBodyLayout={this.handleCategoriesLayout}
+        activeStyle={{backgroundColor: DEFAULT_COLOR}}
+        activeTextStyle={{color: '#fff'}}
+        type={LIST_TYPE.TAG}
+        headerRightComponent={
+          <CollapseIcon
+            onPress={this.collapseCategories}
+            style={animatedIconStyle}
+          />
+        }
+      />
+    );
+    // );
+  };
+
+  renderHistory = () => {
+    if (this.state.history === null) return;
+    let data = [...this.state.history];
+    data = data.reverse();
+
+    return (
+      <ModernList
+        headerTitle="Lịch sử tìm kiếm"
+        mainKey="name"
+        data={data}
+        onPressItem={(item) => this._onTouchHistory(item)}
+        containerStyle={{marginTop: 10}}
+        scrollEnabled={false}
+        headerRightComponent={<RemoveBtn onPress={this.removeHistory} />}
+      />
+    );
+  };
+
+  renderEmpty = () => {
+    return (
+      <NoResult
+        iconName={this.isSearched ? undefined : 'magnify'}
+        message={
+          this.isSearched ? this.props.t('common:noResult') : 'Nhập để tìm kiếm'
+        }
+      />
+    );
+  };
+
+  render() {
+    const {loading, search_data, history, buying_idx} = this.state;
+    return (
+      <>
+        <SafeAreaView style={styles.container}>
+          {loading && <Indicator />}
+          <FlatList
+            ref={this.refList}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            data={search_data || []}
+            contentContainerStyle={styles.listProductContentContainer}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                buying_idx={buying_idx}
+                onPress={this._goItem.bind(this, item)}
+                buyPress={this._updateHistory.bind(this, item)}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            ListHeaderComponent={this.renderHeader()}
+            ListEmptyComponent={this.renderEmpty()}
+          />
+
+          <PopupConfirm
+            ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
+            title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+            height={110}
+            noConfirm={() => {
+              if (this.refs_modal_delete_cart_item) {
+                this.refs_modal_delete_cart_item.close();
+              }
+            }}
+            yesConfirm={this._removeCartItem.bind(this)}
+            otherClose={false}
+          />
+
+          {store.cart_fly_show && (
+            <View
+              style={{
+                position: 'absolute',
+                top: store.cart_fly_position.py,
+                left: store.cart_fly_position.px,
+                width: store.cart_fly_position.width,
+                height: store.cart_fly_position.height,
+                zIndex: 999,
+                borderWidth: 1,
+                borderColor: DEFAULT_COLOR,
+                overflow: 'hidden',
+              }}>
+              {store.cart_fly_image && (
+                <CachedImage
+                  style={{
+                    width: store.cart_fly_position.width,
+                    height: store.cart_fly_position.height,
+                  }}
+                  source={store.cart_fly_image}
+                />
+              )}
+            </View>
+          )}
+        </SafeAreaView>
+
+        {search_data != null && store.keyboardTop == 0 && (
+          <CartFooter
+            prefix="search"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+          />
+        )}
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -677,7 +703,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    marginBottom: 0,
   },
   right_btn_add_store: {
     paddingVertical: 1,
@@ -706,7 +731,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  items_box: {},
+  items_box: {
+    marginTop: 15,
+  },
 
   categories_nav: {
     backgroundColor: '#ffffff',
@@ -735,6 +762,13 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: DEFAULT_COLOR,
   },
+  listCategoriesContainer: {},
+  listHistoryContainer: {
+    paddingBottom: 15,
+  },
+  listProductContentContainer: {
+    flexGrow: 1,
+  },
   noResult: {
     textAlign: 'center',
     paddingVertical: 15,
@@ -752,7 +786,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('stores')(observer(Search));
+export default withTranslation(['stores', 'common'])(observer(Search));
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const CollapseIcon = (props) => (
@@ -760,10 +794,7 @@ const CollapseIcon = (props) => (
     hitSlop={HIT_SLOP}
     activeOpacity={0.6}
     onPress={props.onPress}>
-    <AnimatedIcon
-      name="caret-down"
-      style={[styles.collapseIcon, props.style]}
-    />
+    <AnimatedIcon name="caret-up" style={[styles.collapseIcon, props.style]} />
   </TouchableOpacity>
 );
 

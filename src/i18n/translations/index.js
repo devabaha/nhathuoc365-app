@@ -1,4 +1,4 @@
-import { languages } from '../constants';
+import {languages} from '../constants';
 // vi
 import vi_common from './vi/common.json';
 import vi_account from './vi/account.json';
@@ -27,6 +27,10 @@ import vi_resetPassword from './vi/resetPassword.json';
 import vi_cardWallet from './vi/cardWallet.json';
 import vi_rateApp from './vi/rateApp.json';
 import vi_commissionIncomeStatement from './vi/commissionIncomeStatement.json';
+import vi_social from './vi/social.json';
+import vi_salesReport from './vi/salesReport.json';
+import vi_progressTracking from './vi/progressTracking.json';
+import vi_request from './vi/request.json';
 
 // en
 import en_common from './en/common.json';
@@ -56,12 +60,10 @@ import en_resetPassword from './en/resetPassword.json';
 import en_cardWallet from './en/cardWallet.json';
 import en_rateApp from './en/rateApp.json';
 import en_commissionIncomeStatement from './en/commissionIncomeStatement.json';
-import vi_social from './vi/social.json';
 import en_social from './en/social.json';
-import vi_salesReport from './vi/salesReport.json';
 import en_salesReport from './en/salesReport.json';
-import vi_progressTracking from './vi/progressTracking.json';
 import en_progressTracking from './en/progressTracking.json';
+import en_request from './en/request.json';
 
 // zh
 import zh_common from './zh/common.json';
@@ -124,6 +126,7 @@ export default {
     social: vi_social,
     salesReport: vi_salesReport,
     progressTracking: vi_progressTracking,
+    request: vi_request,
   },
   [languages.en.value]: {
     common: en_common,
@@ -156,6 +159,7 @@ export default {
     social: en_social,
     salesReport: en_salesReport,
     progressTracking: en_progressTracking,
+    request: en_request,
   },
   [languages.zh.value]: {
     common: zh_common,
@@ -184,9 +188,9 @@ export default {
     resetPassword: zh_resetPassword,
     cardWallet: zh_cardWallet,
 
-    rateApp: en_rateApp,
-    commissionIncomeStatement: en_commissionIncomeStatement,
+    rateApp: zh_rateApp,
+    commissionIncomeStatement: zh_commissionIncomeStatement,
     social: en_social,
     salesReport: en_salesReport,
-  }
+  },
 };

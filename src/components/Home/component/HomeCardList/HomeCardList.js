@@ -4,16 +4,22 @@ import Button from 'react-native-button';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 
 import appConfig from 'app-config';
+class HomeCardList extends Component {
+  render() {
+    const props = this.props;
+    const {t} = props;
 
-function HomeCardList({horizontal = true, ...props}) {
-  const {t} = useTranslation('home');
-  return (
-    <View
-      onLayout={props.onLayout}
-      style={[styles.container, props.containerStyle]}>
-      {!!props.title && (
-        <View style={[styles.content, props.headerStyle]}>
-          <Text style={styles.title}>{props.title}</Text>
+    const contentContainerStyle = [
+      styles.listContentContainer,
+      this.props.contentContainerStyle,
+    ];
+
+    return (
+      <View
+        onLayout={props.onLayout}
+        style={[styles.container, props.containerStyle]}>
+        <View style={styles.content}>
+          {!!props.title && <Text style={styles.title}>{props.title}</Text>}
 
           {props.onShowAll ? (
             <Button
@@ -26,25 +32,28 @@ function HomeCardList({horizontal = true, ...props}) {
             <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
           )}
         </View>
-      )}
 
-      <Animated.FlatList
-        horizontal={horizontal}
-        data={props.data}
-        showsHorizontalScrollIndicator={false}
-        renderItem={props.children}
-        keyExtractor={(item, index) => index.toString()}
-        refreshControl={props.refreshControl}
-        style={[appConfig.device.isIOS && styles.listContainer]}
-        contentContainerStyle={[
-          styles.listContentContainer,
-          props.contentContainerStyle,
-        ]}
-        {...props.flatListProps}
-      />
-      {props.extraComponent}
-    </View>
-  );
+        {typeof this.props.renderContent === 'function' ? (
+          <View style={contentContainerStyle}>
+            {this.props.renderContent()}
+          </View>
+        ) : (
+          <Animated.FlatList
+            horizontal={props.horizontal}
+            data={props.data}
+            showsHorizontalScrollIndicator={false}
+            renderItem={props.children}
+            keyExtractor={(item, index) => index.toString()}
+            style={styles.listContainer}
+            contentContainerStyle={contentContainerStyle}
+            refreshControl={props.refreshControl}
+            {...props.flatListProps}
+          />
+        )}
+        {props.extraComponent}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -91,6 +100,7 @@ HomeCardList.defaultProps = {
   data: [],
   onShowAll: defaultListener,
   children: defaultListener,
+  horizontal: true,
 };
 
 export default withTranslation('home')(HomeCardList);

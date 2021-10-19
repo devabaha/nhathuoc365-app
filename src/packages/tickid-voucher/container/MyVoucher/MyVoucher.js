@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
-import { USE_ONLINE, showMessage } from '../../constants';
+import {USE_ONLINE, showMessage} from '../../constants';
 import BaseContainer from '../BaseContainer';
-import { internalFetch } from '../../helper/apiFetch';
+import {internalFetch} from '../../helper/apiFetch';
 import MyVoucherComponent from '../../component/MyVoucher';
 import CampaignEntity from '../../entity/CampaignEntity';
 import store from 'app-store';
@@ -17,7 +17,8 @@ class MyVoucher extends BaseContainer {
     from: PropTypes.oneOf(['home']),
     siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onUseVoucherOnlineSuccess: PropTypes.func,
-    onUseVoucherOnlineFailure: PropTypes.func
+    onUseVoucherOnlineFailure: PropTypes.func,
+    forceReload: PropTypes.func,
   };
 
   static defaultProps = {
@@ -25,7 +26,8 @@ class MyVoucher extends BaseContainer {
     from: undefined,
     siteId: '',
     onUseVoucherOnlineSuccess: defaultFn,
-    onUseVoucherOnlineFailure: defaultFn
+    onUseVoucherOnlineFailure: defaultFn,
+    forceReload: defaultFn,
   };
 
   get isFromHome() {
@@ -38,7 +40,7 @@ class MyVoucher extends BaseContainer {
     this.state = {
       refreshing: false,
       apiFetching: false,
-      campaigns: []
+      campaigns: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -57,19 +59,27 @@ class MyVoucher extends BaseContainer {
     this.eventTracker.clearTracking();
   }
 
-  handlePressVoucher = voucher => {
+  handleScanVoucherFail = () => {
+    this.props.forceReload();
+        this.getMyVouchers();
+  }
+
+  handlePressVoucher = (voucher) => {
     config.route.push(config.routes.voucherDetail, {
       voucherId: voucher.data.id,
       from: this.props.from,
       title: voucher.data.title,
+      orderId: this.props.orderId,
+      orderType: this.props.orderType,
       isUseOnlineMode: this.isUseOnlineMode,
       onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
-      onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure
+      onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure,
+      forceReload: this.handleScanVoucherFail
     });
   };
 
   handlePressEnterVoucher = (isEnterCode = false) => {
-    const { t } = this.props;
+    const {t} = this.props;
     config.route.push(config.routes.voucherScanner, {
       placeholder: t('scan.enterVoucher'),
       topContentText: t('scan.description'),
@@ -79,20 +89,21 @@ class MyVoucher extends BaseContainer {
       },
       isEnterCode,
       onCloseEnterCode: () => {
-        if(isEnterCode){
+        if (isEnterCode) {
           config.route.pop();
         }
-      }
+      },
+      onScanVoucherFail: this.handleScanVoucherFail
     });
   };
 
   getMyVouchers = async (showLoading = true, siteId = null) => {
     if (showLoading) {
       this.setState({
-        apiFetching: true
+        apiFetching: true,
       });
     }
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const url = siteId
         ? config.rest.myVouchersBySiteId(siteId)
@@ -100,30 +111,30 @@ class MyVoucher extends BaseContainer {
       const response = await internalFetch(url);
       if (response.status === config.httpCode.success) {
         const campaigns = response.data.campaigns.map(
-          campaign => new CampaignEntity(campaign)
+          (campaign) => new CampaignEntity(campaign),
         );
 
         if (store.deep_link_data) {
           const campaign = campaigns.find(
-            campaign => campaign.data.id === store.deep_link_data.id
+            (campaign) => campaign.data.id === store.deep_link_data.id,
           );
           if (campaign) {
             this.handlePressVoucher(campaign);
           } else {
             showMessage({
               type: 'danger',
-              message: t('api.error.notFound')
+              message: t('api.error.notFound'),
             });
           }
         }
-        this.setState({ campaigns });
+        this.setState({campaigns});
       }
     } catch (error) {
       console.log(error);
     } finally {
       this.setState({
         refreshing: false,
-        apiFetching: false
+        apiFetching: false,
       });
 
       store.setDeepLinkData(null);
@@ -131,7 +142,7 @@ class MyVoucher extends BaseContainer {
   };
 
   handleOnRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     setTimeout(() => {
       const showLoading = false;
@@ -141,28 +152,28 @@ class MyVoucher extends BaseContainer {
 
   useVoucherFetching;
 
-  handlePressUseOnline = async voucher => {
+  handlePressUseOnline = async (voucher) => {
     if (this.useVoucherFetching) return;
     this.useVoucherFetching = true;
 
     this.setState({
-      apiFetching: true
+      apiFetching: true,
     });
 
     try {
       const response = await internalFetch(
-        config.rest.useVoucherOnline(this.props.siteId, voucher.data.id)
+        config.rest.useVoucherOnline(this.props.siteId, voucher.data.id, this.props.orderId, this.props.orderType),
       );
       if (response.status === config.httpCode.success) {
         showMessage({
           type: 'success',
-          message: response.message
+          message: response.message,
         });
         this.props.onUseVoucherOnlineSuccess(response.data);
       } else {
         showMessage({
           type: 'danger',
-          message: response.message
+          message: response.message,
         });
         this.props.onUseVoucherOnlineFailure(response);
       }
@@ -172,7 +183,7 @@ class MyVoucher extends BaseContainer {
       this.useVoucherFetching = false;
       this.setState({
         refreshing: false,
-        apiFetching: false
+        apiFetching: false,
       });
     }
   };
@@ -189,7 +200,6 @@ class MyVoucher extends BaseContainer {
         refreshing={this.state.refreshing}
         apiFetching={this.state.apiFetching}
         isUseOnlineMode={this.isUseOnlineMode}
-
         onPressEnterCode={() => this.handlePressEnterVoucher(true)}
       />
     );

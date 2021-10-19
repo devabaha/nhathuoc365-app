@@ -198,13 +198,28 @@
       "paymentTitle": "Thanh toán"
     },
     "salesReport": {
-      "mainTitle": "Báo cáo doanh số giới thiệu"
+      "mainTitle": "Báo cáo giới thiệu"
     },
     "social": {
       "mainTitle": "Cộng đồng"
     },
     "createPost": {
-      "mainTitle": "Tạo bài viết"
+      "mainTitle": "Tạo bài viết",
+      "editTitle": "Sửa bài viết"
+    },
+    "listUserChat": {
+      "mainTitle": "Tin nhắn"
+    },
+    "booking": {
+      "mainTitle": "Đặt lịch"
+    },
+    "requests": {
+      "mainTitle": "Danh sách yêu cầu",
+      "detailTitle": "Chi tiết yêu cầu",
+      "creationTitle": "Tạo yêu cầu"
+    },
+    "listSite": {
+      "mainTitle": "Danh sách cửa hàng"
     }
   },
 
@@ -269,12 +284,47 @@
     }
   },
 
+  "edit": "Sửa",
   "copy": "Sao chép",
   "cancel": "Huỷ",
+  "delete": "Xoá",
   "addImages": "Thêm ảnh",
   "addImagesDescription": "Chạm để thêm ảnh",
+  "save": "Lưu",
   "saved": "Đã lưu",
   "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
   "saveImageLabel": "Lưu ảnh",
-  "noResult": "Chưa có dữ liệu"
+  "noResult": "Chưa có dữ liệu",
+  "call": "Gọi điện",
+  "sendSMS": "Nhắn tin",
+  "copied": "Đã sao chép",
+  "loading": "Đang lấy dữ liệu...",
+  "rate": "Xếp hạng",
+  "review": "Đánh giá",
+  "reviews": "Đánh giá",
+  "showMore": "Xem thêm",
+  "showLess": "Thu gọn",
+  "update": "Cập nhật",
+  "agree": "Đồng ý",
+  "codePush": {
+    "alert": {
+      "hasUpdateTitle": "Đã có bản cập nhật mới!",
+      "hasUpdateDescription": "Hệ thống đang cập nhật.\r\nVui lòng chờ trong giây lát...",
+      "failTitle": "Cập nhật thất bại",
+      "failDescription": "Vui lòng thử lại sau!",
+      "suggestMessage": "Nếu quá trình tải bị chậm, bạn hãy thử những cách sau:\r\n\r\n• Thoát, tắt hẳn ứng dụng -> kiểm tra kết nối mạng, có thể thử sử dụng dữ liệu cá nhân (4G/5G/...) thay cho wifi -> Mở lại ứng dụng.\r\n\r\n• Chọn {{btnTitle}} để tiếp tục sử dụng phiên bản hiện tại trong khi ứng dụng thực hiện nâng cấp dưới nền.",
+      "noteMessage": "* Ứng dụng sẽ khởi động lại khi bản cập nhật được cài đặt."
+    },
+    "update": {
+      "title": "Cập nhật ứng dụng",
+      "optionalUpdateMessage": "Đã có bản cập nhât mới. Bạn có muốn cài đặt không?",
+      "optionalIgnoreButtonLabel": "Bỏ qua",
+      "optionalInstallButtonLabel": "Cập nhật",
+      "mandatoryContinueButtonLabel": "Cập nhật ngay",
+      "mandatoryUpdateMessage": "Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!"
+    },
+    "runInBackground": "Chạy ngầm"
+  },
+  "optional": "không bắt buộc",
+  "cantOpenLink": "Không mở được link!"
 }

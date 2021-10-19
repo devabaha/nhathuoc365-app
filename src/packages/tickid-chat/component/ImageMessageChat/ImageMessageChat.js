@@ -9,11 +9,13 @@ import {
   TouchableOpacity,
   Text,
   ViewPropTypes,
+  TouchableHighlight,
 } from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import {getBase64Image, setStater} from '../../helper';
+import {Actions} from 'react-native-router-flux';
 // import FastImage from 'react-native-fast-image';
 // import { isIos } from '../../constants';
 
@@ -151,6 +153,12 @@ class ImageMessageChat extends Component {
     this.setState({isOpenLightBox: false});
   }
 
+  handleViewImage() {
+    Actions.item_image_viewer({
+      images: [{url: this.props.lowQualityUri}],
+    });
+  }
+
   render() {
     const lowQualityUri = this.props.lowQualityUri;
     const highQualityUri =
@@ -180,10 +188,14 @@ class ImageMessageChat extends Component {
             ? 'auto'
             : 'none'
         }>
-        <Lightbox
+        <TouchableHighlight
+          underlayColor="transparent"
+          onLongPress={this.props.onLongPress}
+          onPress={this.handleViewImage.bind(this)}>
+          {/* <Lightbox
           springConfig={{overshootClamping: true}}
           onOpen={this.handleOpen.bind(this)}
-          willClose={this.handleWillClose.bind(this)}>
+          willClose={this.handleWillClose.bind(this)}> */}
           <Image
             resizeMode={this.state.isOpenLightBox ? 'contain' : 'cover'}
             source={{
@@ -191,7 +203,8 @@ class ImageMessageChat extends Component {
             }}
             style={[{width: '100%', height: '100%'}, this.props.imageStyle]}
           />
-        </Lightbox>
+          {/* </Lightbox> */}
+        </TouchableHighlight>
 
         {!!this.props.image &&
           this.state.uploadStatus === UPLOAD_STATUS_TYPE.UPLOADING && (

@@ -2,7 +2,7 @@ import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
 import {CART_TYPES} from 'src/constants/cart';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -23,12 +23,15 @@ class CTAProduct {
   }
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
-  goToSchedule = (product) => {
-    Actions.push(appConfig.routes.productSchedule, {
+  goToBooking = (product) => {
+    Actions.push(appConfig.routes.booking, {
       productId: product.id,
+      siteId: product.site_id,
+      attrs: product.attrs,
+      models: product.models,
     });
   };
 
@@ -68,12 +71,12 @@ class CTAProduct {
 
   handlePressMainActionBtnProduct = (product, cartType) => {
     this.actionFunctionName = 'handlePressMainActionBtnProduct';
-    switch (product.product_type) {
-      case PRODUCT_TYPES.NORMAL:
+    switch (product.order_type) {
+      case ORDER_TYPES.NORMAL:
         this.handleBuy(product, cartType, this._addCart);
         break;
-      case PRODUCT_TYPES.SERVICE:
-        this.goToSchedule(product);
+      case ORDER_TYPES.BOOKING:
+        this.goToBooking(product);
         break;
       default:
         this.handleBuy(product, cartType, this._addCart);
@@ -135,7 +138,7 @@ class CTAProduct {
         itemId: product.id,
         product,
         onSubmit: (...args) => {
-          Actions.pop();
+          // Actions.pop();
 
           callBack(product, ...args);
         },
@@ -181,7 +184,11 @@ class CTAProduct {
           );
 
           if (response && response.status == STATUS_SUCCESS) {
-            if (!this.context.unmounted && response.data.attrs) {
+            if (
+              !this.context.unmounted &&
+              //  && response.data.attrs
+              response.data.has_attr
+            ) {
               Actions.push(appConfig.routes.itemAttribute, {
                 itemId: item.id,
                 onSubmit: (quantity, modal_key) =>

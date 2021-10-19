@@ -111,7 +111,7 @@ class ListProducts extends Component {
 
   render() {
     return this.hasProducts ? (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.containerStyle]}>
         <View style={styles.headingWrapper}>
           <Text numberOfLines={2} style={styles.heading}>
             {this.props.title}

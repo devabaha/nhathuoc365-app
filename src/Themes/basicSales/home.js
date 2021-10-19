@@ -1,11 +1,11 @@
-import React from 'react';
+// import React from 'react';
 import {StyleSheet} from 'react-native';
-import {SvgXml} from 'react-native-svg';
+// import {SvgXml} from 'react-native-svg';
 
 import SVGCart from '../../images/home/cart.svg';
 import SVGSearch from '../../images/home/search.svg';
 import SVGMessage from '../../images/home/message.svg';
-import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
+import {ASSETS_TYPE} from '../constants';
 import appConfig from 'app-config';
 
 export const home = {

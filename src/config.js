@@ -4,7 +4,11 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
-import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
+import {
+  CART_PAYMENT_STATUS,
+  CART_TYPES,
+  DELIVERY_STATUS_CODE,
+} from './constants/cart';
 
 class Config {
   constructor() {
@@ -12,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'b12.0.1';
+    return 'b12.1.5';
   }
 
   get appName() {
@@ -87,8 +91,9 @@ class Config {
         other: '#073b4c',
       },
       cartType: {
-        cart: '#B0C0F0',
-        dropship: '#FF9F1C',
+        [CART_TYPES.NORMAL]: '#B0C0F0',
+        [CART_TYPES.DROP_SHIP]: '#FF9F1C',
+        [CART_TYPES.BOOKING]: '#53917E',
       },
       delivery: {
         [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
@@ -119,6 +124,12 @@ class Config {
         [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
+      membership: {
+        standard: ['#333', '#ccc'],
+        gold: ['#d99b2d', '#FFCF40'],
+        platinum: ['#a1a3a6', '#d8dadb'],
+        diamond: ['#723dc6', '#d1a0f6'],
+      },
       typography: {
         text: '#2B2B2B',
         secondary: '#A0A0A0',
@@ -131,13 +142,21 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
+      cherry: '#da3560',
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
+      overlay: 'rgba(0,0,0,.6)',
+      disabled: '#ccc',
       highlight: {
         1: '#51B748',
       },
       action: {
         1: '#126DEA',
+      },
+
+      brand: {
+        facebook: '#4267B2',
+        youtube: '#FF0000',
       },
     };
   }
@@ -206,6 +225,8 @@ class Config {
       ordersTab: 'ordersTab',
       deepLinkOrdersTab: 'deepLinkOrdersTab',
 
+      mainNotify: 'mainNotify',
+      news: 'news',
       vndWallet: 'vnd_wallet',
       payWallet: 'pay_wallet',
       transfer: 'transfer',
@@ -256,7 +277,8 @@ class Config {
       // end routes of Voucher module **
 
       // Routes of Order
-      orders: 'Orders',
+      orders: 'orders',
+      ordersDetail: 'orders_item',
       paymentConfirm: 'paymentConfirm',
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',
@@ -275,6 +297,7 @@ class Config {
       // Store Location
       storeLocation: 'storeLocation',
       gpsStoreLocation: 'gpsStoreLocation',
+      rootGpsStoreLocation: 'rootGpsStoreLocation',
 
       // Modal
       modalPicker: 'modalPicker',
@@ -289,6 +312,8 @@ class Config {
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
       modalEditImages: 'modalEditImages',
+      modalCalendar: 'modalCalendar',
+      modalActionSheet: 'modalActionSheet',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -360,7 +385,7 @@ class Config {
       // Gamification
       lotteryGame: 'lotteryGame',
       filterProduct: 'filterProduct',
-      salesReport: 'saleReport',
+      salesReport: 'salesReport',
       // Social
       social: 'social',
       socialGroup: 'socialGroup',
@@ -369,7 +394,30 @@ class Config {
       webview: 'webview',
 
       listProgressTracking: 'listProgressTracking',
-      progressTrackingDetail: 'progressTrackingDetail'
+      progressTrackingDetail: 'progressTrackingDetail',
+
+      personalProfile: 'personalProfile',
+      editPersonalProfile: 'editPersonalProfile',
+      listChat: 'listChat',
+      listUserChat: 'listUserChat',
+      amazingUserChat: 'amazingUserChat',
+
+      listAddressStore: 'listAddressStore',
+
+      itemImageViewer: 'item_image_viewer',
+
+      airlineTicket: 'airlineTicket',
+      datePicker: 'datePicker',
+      place: 'place',
+      customer: 'customer',
+      result: 'result',
+
+      booking: 'booking',
+
+      // Requests
+      requests: 'requests',
+      requestDetail: 'requestDetail',
+      requestCreation: 'requestCreation',
     };
   }
 }

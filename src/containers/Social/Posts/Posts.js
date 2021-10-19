@@ -1,12 +1,14 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, RefreshControl, StyleSheet} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
+import {Actions} from 'react-native-router-flux';
+
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {
-  formatPostStoreData,
+  formatStoreSocialPosts,
   getRelativeTime,
   getSocialLikeCount,
   getSocialLikeFlag,
@@ -22,10 +24,12 @@ import appConfig from 'app-config';
 import {reaction, toJS} from 'mobx';
 import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
 import PostsSkeleton from './PostsSkeleton';
+import {debounce} from 'lodash';
+import equal from 'deep-equal';
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   loadMore: {
     position: 'relative',
@@ -45,35 +49,92 @@ const styles = StyleSheet.create({
 
 const Posts = ({
   groupId,
+  posts: postsProp,
   siteId = store.store_data?.id,
+  disableLoadMore = false,
+  disablePostUpdating = false,
   refreshControl,
+  limit: limitProp = 10,
   onScroll = () => {},
   onRefresh: onRefreshProp = () => {},
   ListHeaderComponent,
 }) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
+  const moreActionOptions = [t('edit'), t('delete'), t('cancel')];
 
-  const limit = useRef(10);
+  const limit = useRef(limitProp);
   const page = useRef(1);
   const canLoadMore = useRef(true);
 
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(!postsProp);
   const [isLoadMore, setLoadMore] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [getPostsRequest] = useState(new APIRequest());
+  const [deletePostRequest] = useState(new APIRequest());
+  const [requests] = useState([getPostsRequest, deletePostRequest]);
 
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(postsProp || []);
+
+  const postReactionDisposers = useRef(new Map());
+
+  const postsAlternative = useRef(posts || []);
 
   useEffect(() => {
-    getPosts();
+    setPosts(postsProp);
+    setStoreSocialPosts(postsProp || []);
+  }, [postsProp]);
+
+  useEffect(() => {
+    postsAlternative.current = posts || [];
+  }, [posts]);
+
+  useEffect(() => {
+    if (!postsProp) {
+      getPosts();
+    }
 
     return () => {
-      cancelRequests([getPostsRequest]);
-      store.resetSocialPosts();
+      cancelRequests(requests);
+      postReactionDisposers.current.forEach((disposer) => {
+        disposer();
+      });
+      postReactionDisposers.current.clear();
     };
   }, []);
+
+  const getPostReactionDisposer = (feedsId) => {
+    const disposer = postReactionDisposers.current.get(feedsId);
+    if (disposer) {
+      disposer();
+    }
+
+    return reaction(
+      () => store.socialPosts.get(feedsId),
+      (socialPost) => {
+        const newPosts = [...postsAlternative.current];
+        const feedsIndex = newPosts.findIndex((post) => post.id === feedsId);
+        if (feedsIndex === -1) return;
+
+        if (!socialPost) {
+          newPosts.splice(feedsIndex, 1);
+        } else {
+          const socialPostInJSFormat = toJS(socialPost);
+          Object.keys(newPosts[feedsIndex]).forEach((key) => {
+            if (
+              socialPost[key] !== undefined &&
+              !equal(newPosts[feedsIndex][key], socialPostInJSFormat[key])
+            ) {
+              newPosts[feedsIndex][key] = socialPostInJSFormat[key];
+            }
+          });
+        }
+
+        setPosts(newPosts);
+      },
+    );
+  };
 
   const addPostingData = useCallback(
     (postingData, postsData = posts) => {
@@ -92,7 +153,12 @@ const Posts = ({
   );
 
   useEffect(() => {
-    const disposer = reaction(
+    let disposer = () => {};
+    if (disablePostUpdating) {
+      disposer();
+      return;
+    }
+    disposer = reaction(
       () => store.socialPostingData,
       (postingData) => {
         if (postingData?.id) {
@@ -111,12 +177,19 @@ const Posts = ({
     return () => {
       disposer();
     };
-  }, [addPostingData]);
+  }, [addPostingData, disablePostUpdating]);
 
   const setStoreSocialPosts = (posts) => {
-    const storePosts = {};
-    posts.forEach((post) => (storePosts[post.id] = formatPostStoreData(post)));
-    store.setSocialPosts(storePosts);
+    store.setSocialPosts(
+      formatStoreSocialPosts(posts, (post) => {
+        if (!postReactionDisposers.current.get(post.id)) {
+          postReactionDisposers.current.set(
+            post.id,
+            getPostReactionDisposer(post.id),
+          );
+        }
+      }),
+    );
   };
 
   const getPosts = useCallback(
@@ -135,7 +208,7 @@ const Posts = ({
 
       try {
         const response = await getPostsRequest.promise();
-        // console.log('abc', response, data);
+        console.log('abc', response, data);
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {
@@ -145,14 +218,14 @@ const Posts = ({
                 page.current = page.current > 1 ? page.current - 1 : 1;
               } else {
                 canLoadMore.current = true;
-              }
 
-              if (!isRefresh && !!posts?.length) {
-                listPost = [...posts].concat(listPost);
-              }
+                if (!isRefresh && !!posts?.length) {
+                  listPost = [...posts].concat(listPost);
+                }
 
-              setStoreSocialPosts(listPost);
-              setPosts(listPost);
+                setStoreSocialPosts(listPost);
+                setPosts(listPost);
+              }
             }
           } else {
             flashShowMessage({
@@ -184,7 +257,7 @@ const Posts = ({
         }
       }
     },
-    [siteId, groupId, posts],
+    [siteId, groupId, posts, limitProp],
   );
 
   const handlePressGroup = useCallback((group) => {
@@ -195,46 +268,128 @@ const Posts = ({
     });
   }, []);
 
-  const onRefresh = () => {
+  const handlePressUserName = useCallback((user) => {
+    user.id = user.user_id;
+    servicesHandler({
+      type: SERVICES_TYPE.PERSONAL_PROFILE,
+      isMainUser: user.user_id == store.user_info?.id,
+      userInfo: user,
+    });
+  }, []);
+
+  const onRefresh = useCallback(() => {
     onRefreshProp();
     setRefreshing(true);
-    getPosts(1, page.current * limit.current, true);
-  };
+    page.current = 1;
+    getPosts(page.current, limit.current, true);
+  }, []);
 
-  const handleLoadMore = () => {
-    if (!canLoadMore.current || !posts?.length || isLoadMore) return;
+  const handleLoadMore = useCallback(() => {
+    if (disableLoadMore || !canLoadMore.current || !posts?.length || isLoadMore)
+      return;
 
     setLoadMore(true);
     page.current++;
     getPosts(page.current);
-  };
+  }, [posts, isLoadMore]);
 
-  const handleScrollEnd = (e) => {
-    const {
-      contentOffset: {y},
-      contentSize: {height},
-    } = e.nativeEvent;
+  const handleScrollEnd = useCallback(
+    (e) => {
+      const {
+        contentOffset: {y},
+        contentSize: {height},
+      } = e.nativeEvent;
 
-    if (!canLoadMore.current && !isLoadMore && y / height <= 0.6) {
-      canLoadMore.current = true;
-    }
-  };
+      if (!canLoadMore.current && !isLoadMore && y / height <= 0.6) {
+        canLoadMore.current = true;
+      }
+    },
+    [isLoadMore],
+  );
 
   const handleActionBarPress = useCallback((type, feeds) => {
     handleSocialActionBarPress(SOCIAL_DATA_TYPES.POST, type, feeds);
   }, []);
 
-  const handlePostingComplete = () => {
+  const handlePostingComplete = useCallback(() => {
     if (
       store.socialPostingData.progress === 100 ||
       store.socialPostingData.error
     ) {
       setTimeout(() => {
         store.setSocialPostingData();
-        getPosts(1, page.current * limit.current, true);
+        page.current = 1;
+        getPosts(page.current, limit.current, true);
       }, 500);
     }
-  };
+  }, []);
+
+  const deletePost = useCallback(
+    async (feedsId) => {
+      deletePostRequest.data = APIHandler.social_posts_delete(feedsId);
+      try {
+        const response = await deletePostRequest.promise();
+        if (response?.status === STATUS_SUCCESS) {
+          store.socialPosts.delete(feedsId);
+        }
+        flashShowMessage({
+          type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+          message:
+            response?.status === STATUS_SUCCESS
+              ? response?.message || ''
+              : t('api.error.message'),
+        });
+      } catch (error) {
+        console.log('delete_post', error);
+        flashShowMessage({
+          type: 'danger',
+          message: t('api.error.message'),
+        });
+      }
+    },
+    [posts],
+  );
+
+  const handlePressMoreActionOption = useCallback(
+    debounce((index, feeds) => {
+      if (!isMounted()) return;
+      switch (index) {
+        case 0:
+          servicesHandler({
+            type: SERVICES_TYPE.SOCIAL_CREATE_POST,
+            title: t('screen.createPost.editTitle'),
+            editMode: true,
+            site_id: feeds.site_id,
+            group_id: feeds.group_id,
+            post_id: feeds.id,
+            content: feeds.content,
+            images: feeds.images,
+          });
+          break;
+        case 1:
+          Actions.push(appConfig.routes.modalConfirm, {
+            message: t('social:postDeleteConfirmMessage'),
+            isConfirm: true,
+            yesTitle: t('delete'),
+            noTitle: t('cancel'),
+            yesConfirm: () => deletePost(feeds.id),
+          });
+          break;
+      }
+    }, 300),
+    [deletePost],
+  );
+
+  const handlePressMoreActions = useCallback(
+    (feeds) => {
+      Actions.push(appConfig.routes.modalActionSheet, {
+        options: moreActionOptions,
+        destructiveButtonIndex: 1,
+        onPress: (index) => handlePressMoreActionOption(index, feeds),
+      });
+    },
+    [handlePressMoreActionOption],
+  );
 
   const renderStatusText = (feeds) => (
     <ActionBarText
@@ -250,6 +405,7 @@ const Posts = ({
 
   const renderPost = ({item: feeds, index}) => {
     const group = feeds.group_id != groupId ? feeds.group : undefined;
+    const user = feeds?.user;
 
     return (
       <Observer>
@@ -279,7 +435,10 @@ const Posts = ({
               containerStyle={styles.feedsContainer}
               disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
               disableShare
+              showMoreActionsButton={user.user_id == store.user_info?.id}
               onPressGroup={() => handlePressGroup(group)}
+              onPressUserName={() => handlePressUserName(user)}
+              onPressAvatar={() => handlePressUserName(user)}
               renderActionBar={
                 !!feeds.accept_status || progress !== undefined
                   ? () => renderStatusText(feeds)
@@ -294,6 +453,7 @@ const Posts = ({
                   false,
                 )
               }
+              onPressMoreActions={() => handlePressMoreActions(feeds)}
             />
           );
         }}

@@ -204,7 +204,22 @@
       "mainTitle": "Social"
     },
     "createPost": {
-      "mainTitle": "Create post"
+      "mainTitle": "Create post",
+      "editTitle": "Edit post"
+    },
+    "listUserChat": {
+      "mainTitle": "Messages"
+    },
+    "booking": {
+      "mainTitle": "Booking"
+    },
+    "requests": {
+      "mainTitle": "Request list",
+      "detailTitle": "Request detail",
+      "creationTitle": "Create a request"
+    },
+    "listSite": {
+      "mainTitle": "List of store"
     }
   },
 
@@ -269,12 +284,47 @@
     }
   },
 
+  "edit": "Edit",
   "copy": "Copy",
   "cancel": "Cancel",
+  "delete": "Delete",
   "addImages": "Add Images",
   "addImagesDescription": "Tap to select images",
+  "save": "Save",
   "saved": "Saved",
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",
-  "noResult": "No data yet"
+  "noResult": "No data yet",
+  "call": "Call",
+  "sendSMS": "SMS",
+  "copied": "Copied",
+  "loading": "Retrieving data...",
+  "rate": "Rate",
+  "review": "Review",
+  "reviews": "Reviews",
+  "showMore": "Show more",
+  "showLess": "Show less",
+  "update": "Update",
+  "agree": "OK",
+  "codePush": {
+    "alert": {
+      "hasUpdateTitle": "New update available!",
+      "hasUpdateDescription": "We are updating.\r\nPlease wait a second...",
+      "failTitle": "Update failed",
+      "failDescription": "Please try again later!",
+      "suggestMessage": "If the download is slow, try the following:\r\n\r\n• Exit completely the app -> check the network connection, maybe try using cellular data (4G/5G/... ) instead of wifi -> Reopen the app.\r\n\r\n• Press {{btnTitle}} to continue using the current version while the app performs the upgrade in background.",
+      "noteMessage": "* The application will be restarted after the update installed."
+    },
+    "update": {
+      "title": "New update",
+      "optionalUpdateMessage": "New version is available. Do you want to update?",
+      "optionalIgnoreButtonLabel": "Later",
+      "optionalInstallButtonLabel": "Update",
+      "mandatoryContinueButtonLabel": "Update now",
+      "mandatoryUpdateMessage": "New version is available. Please update to get the best experience!"
+    },
+    "runInBackground": "Run in background"
+  },
+  "optional": "optional",
+  "cantOpenLink": "Can not open link!"
 }

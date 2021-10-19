@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Modal as ModalRN
+  Modal as ModalRN,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import appConfig from 'app-config';
@@ -15,6 +15,7 @@ const defaultListener = () => {};
 class Modal extends Component {
   static propTypes = {
     visible: PropTypes.bool,
+    otherClose: PropTypes.bool,
     title: PropTypes.string,
     content: PropTypes.string,
     okText: PropTypes.string,
@@ -23,11 +24,12 @@ class Modal extends Component {
     onRequestClose: PropTypes.func,
     onOk: PropTypes.func,
     titleStyle: PropTypes.any,
-    contentStyle: PropTypes.any
+    contentStyle: PropTypes.any,
   };
 
   static defaultProps = {
     visible: false,
+    otherClose: false,
     title: '',
     content: '',
     okText: '',
@@ -36,7 +38,7 @@ class Modal extends Component {
     onRequestClose: defaultListener,
     onOk: defaultListener,
     titleStyle: {},
-    contentStyle: {}
+    contentStyle: {},
   };
 
   state = {};
@@ -47,12 +49,11 @@ class Modal extends Component {
         animationType="fade"
         transparent
         visible={this.props.visible}
-        onRequestClose={this.props.onRequestClose}
-      >
+        onRequestClose={this.props.onRequestClose}>
         <TouchableWithoutFeedback
+          disabled={!!this.props.otherClose}
           style={styles.wrapper}
-          onPress={this.props.onRequestClose}
-        >
+          onPress={this.props.onRequestClose}>
           <View style={[styles.wrapper, styles.fullCenter, styles.background]}>
             <View style={styles.modal}>
               <View style={[styles.container]}>
@@ -69,8 +70,7 @@ class Modal extends Component {
                   {!!this.props.cancelText && (
                     <TouchableOpacity
                       style={[styles.btn]}
-                      onPress={this.props.onCancel}
-                    >
+                      onPress={this.props.onCancel}>
                       <Text style={styles.cancelText}>
                         {this.props.cancelText}
                       </Text>
@@ -78,8 +78,7 @@ class Modal extends Component {
                   )}
                   <TouchableOpacity
                     style={[styles.btn]}
-                    onPress={this.props.onOk}
-                  >
+                    onPress={this.props.onOk}>
                     <Text style={styles.okText}>{this.props.okText}</Text>
                   </TouchableOpacity>
                 </View>
@@ -95,36 +94,36 @@ class Modal extends Component {
 const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   background: {
-    backgroundColor: 'rgba(0,0,0,.6)'
+    backgroundColor: 'rgba(0,0,0,.6)',
   },
   fullCenter: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modal: {
     justifyContent: 'center',
     width: '90%',
     backgroundColor: 'white',
     borderRadius: 15,
-    padding: 15
+    padding: 15,
   },
   container: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   textContainer: {
-    width: '100%'
+    width: '100%',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginVertical: 15,
-    color: '#404040'
+    color: '#404040',
   },
   content: {
-    fontSize: 18
+    fontSize: 18,
   },
   footer: {
     width: '100%',
@@ -132,20 +131,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    marginTop: 40
+    marginTop: 40,
   },
   btn: {
     paddingVertical: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   cancelText: {
     color: '#a9a9a9',
-    fontSize: 18
+    fontSize: 18,
   },
   okText: {
     color: appConfig.colors.primary,
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 });
 
 export default Modal;

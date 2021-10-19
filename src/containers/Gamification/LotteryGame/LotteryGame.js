@@ -15,6 +15,7 @@ import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
 import { GAME_TYPE } from '../constants';
+import { Actions } from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   container: {

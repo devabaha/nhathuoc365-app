@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,38 +7,154 @@ import {
   Text,
   ScrollView,
   Keyboard,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import equal from 'deep-equal';
+import {Actions} from 'react-native-router-flux';
+import {TouchableOpacity as RNTouchableOpacity} from 'react-native-gesture-handler';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import Button from '../../components/Button';
-import appConfig from 'app-config';
 import store from 'app-store';
-import BaseAPI from '../../network/API/BaseAPI';
+import appConfig from 'app-config';
+import BaseAPI, {
+  DEV_API_DOMAIN,
+  SPRINT_DEV_API_DOMAIN,
+  PRE_RELEASE_API_DOMAIN,
+  DEV_IMAGE_DOMAIN,
+  LIVE_IMAGE_DOMAIN,
+  DEV_SOCIAL_DOMAIN,
+  LIVE_SOCIAL_DOMAIN,
+  LIVE_API_DOMAIN,
+} from 'src/network/API/BaseAPI';
+
+import AwesomeCombo from 'src/components/AwesomeCombo';
+import Button from 'src/components/Button';
+import DomainInput from './components/DomainInput';
+import DomainTag from './components/DomainTag';
+import {Container} from 'src/components/Layout';
+
+const DOMAIN_ATTRIBUTE = {
+  API_DOMAIN: {
+    domainParamName: 'domainName',
+    isShowSelectorParamName: 'isShowAPIDomainSelector',
+    iconName: 'api',
+    color: appConfig.colors.primary,
+  },
+  IMAGE_DOMAIN: {
+    domainParamName: 'imageDomainName',
+    isShowSelectorParamName: 'isShowImageDomainSelector',
+    iconName: 'image',
+    color: appConfig.colors.primary,
+  },
+  SOCIAL_DOMAIN: {
+    domainParamName: 'socialDomainName',
+    isShowSelectorParamName: 'isShowSocialDomainSelector',
+    iconName: 'supervised-user-circle',
+    color: appConfig.colors.primary,
+  },
+};
+
+const DOMAIN_TYPE = {
+  LIVE: {
+    label: 'live',
+    color: appConfig.colors.status.success,
+  },
+  DEV: {
+    label: 'dev',
+    color: appConfig.colors.status.danger,
+  },
+  SPRINT_DEV: {
+    label: 'sprint_dev',
+    color: appConfig.colors.status.warning,
+  },
+  PRE_RELEASE: {
+    label: 'pre-release',
+    color: appConfig.colors.status.info,
+  },
+  UNKNOWN: {
+    label: 'unknown',
+    color: appConfig.colors.disabled,
+  },
+};
+
+const API_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+  {
+    title: SPRINT_DEV_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.SPRINT_DEV,
+  },
+  {
+    title: PRE_RELEASE_API_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+    tag: DOMAIN_TYPE.PRE_RELEASE,
+  },
+];
+const IMAGE_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_IMAGE_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_IMAGE_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+];
+const SOCIAL_DOMAIN_OPTIONS = [
+  {
+    title: LIVE_SOCIAL_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+    tag: DOMAIN_TYPE.LIVE,
+  },
+  {
+    title: DEV_SOCIAL_DOMAIN,
+    ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+    tag: DOMAIN_TYPE.DEV,
+  },
+];
+
+const DOMAIN_STORAGE_KEY = 'dynamic_domain_2021_10_13-minh_nguyen';
+const MAX_SAVED_DOMAIN = 5;
+const NOTES = [
+  `Nhập "hs " để gõ nhanh "https://".`,
+  `Nhập "ht " để gõ nhanh "http://".`,
+  `Nếu bỏ trống image/ social domain thì hệ thống sẽ tự lựa chọn dựa theo theo api domain đã chọn:\r\n- Api domain là live domain -> image/ social domain sử dụng live domain.\r\n- Api domain không phải live domain -> image/ social domain sử dụng dev domain.`,
+  //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
+];
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   iconBackWrapper: {
     // left: 10,
     position: 'absolute',
-    zIndex: 9999
+    zIndex: 9999,
   },
   iconBackContainer: {
-    padding: 15
+    padding: 15,
   },
   iconBack: {
     fontSize: 30,
-    color: '#555'
+    color: '#555',
   },
   mainContent: {
     flex: 1,
-    padding: 15
+    padding: 15,
   },
   heading: {
     textAlign: 'center',
@@ -48,74 +164,59 @@ const styles = StyleSheet.create({
     marginTop: '7%',
     letterSpacing: 8,
     left: 4,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   subHeading: {
     color: '#888',
     textAlign: 'center',
     marginTop: 5,
     marginBottom: '7%',
-    textTransform: 'lowercase'
+    textTransform: 'lowercase',
   },
-  textInput: {
-    paddingVertical: appConfig.device.isIOS ? 15 : 7,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: appConfig.colors.primary,
-    backgroundColor: '#fafafa',
-    flex: 1
-  },
-  closeIconContainer: {
-    position: 'absolute',
-    right: 0,
-    marginHorizontal: 10,
-    padding: 5,
-    borderRadius: 15,
-    backgroundColor: '#ededed'
+  domainInput: {
+    marginBottom: 10,
   },
   saveContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
     marginBottom: 5,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   saveTxt: {
-    color: '#666'
+    color: '#666',
   },
   saveIconContainer: {
-    marginLeft: 10
+    marginLeft: 10,
   },
   saveIcon: {
     fontSize: 20,
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
   },
   historyHeadingContainer: {
     marginTop: 10,
-    marginBottom: 15
+    marginBottom: 15,
   },
   historyDescriptionContainer: {
     marginTop: 5,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   historyDescription: {
     fontSize: 12,
     fontWeight: '300',
-    marginRight: 15
+    marginRight: 15,
   },
   noHistory: {
     textAlign: 'right',
     fontStyle: 'italic',
     marginRight: 15,
     color: '#888',
-    letterSpacing: 1.3
+    letterSpacing: 1.3,
   },
   dash: {
     flex: 1,
     height: 0.5,
-    backgroundColor: '#242424'
+    backgroundColor: '#242424',
   },
   historyHeading: {
     color: '#555',
@@ -124,81 +225,111 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textTransform: 'uppercase',
     letterSpacing: 2.2,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   historyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: 10,
     marginHorizontal: -15,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+  },
+  domainLocalStorageIcon: {
+    fontSize: 16,
+    marginRight: 10,
   },
   domainTxt: {
     fontWeight: '300',
-    letterSpacing: 0.5
+    letterSpacing: 0.5,
+    flex: 1,
   },
   icon: {
-    marginLeft: 15,
     fontSize: 16,
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
+    marginLeft: 15,
+  },
+  iconDelete: {
+    color: appConfig.colors.status.other,
   },
   comboBtnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    ...elevationShadowStyle(24, 0, 0, 0.5, appConfig.colors.primary)
+    ...elevationShadowStyle(24, 0, 0, 0.5, appConfig.colors.primary),
   },
   ignoreContainer: {
     width: undefined,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   ignoreBtn: {
     width: undefined,
     paddingHorizontal: 10,
     marginRight: -15,
-    backgroundColor: '#999'
+    backgroundColor: '#999',
   },
   btnContainer: {
     paddingVertical: 15,
-    flex: 1
+    flex: 1,
   },
   noteContainer: {
-    marginTop: 10
+    marginTop: 10,
   },
   noteHeading: {
-    marginBottom: 10
+    marginBottom: 10,
   },
   note: {
     marginTop: 5,
-    color: '#888'
-  }
+    color: '#888',
+  },
+  domainItemSelectorWrapper: {
+    borderColor: appConfig.colors.border,
+  },
+  domainItemSelectorContainer: {
+    paddingVertical: 10,
+    marginHorizontal: 5,
+  },
 });
 
-const DOMAIN_STORAGE_KEY = 'dynamic_domain_2020_11_24-minh_nguyen';
-const NOTES = [
-  `• Nhập "hs " để gõ nhanh "https://"`,
-  `• Nhập "ht " để gõ nhanh "http://"`
-  //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
-];
-
 class DomainSelector extends Component {
-  state = {
-    domainName: '',
-    domainNames: [],
-    isSaveChecked: true
+  getShowSelectorParamName = (domainType) => {
+    domainType = domainType.charAt(0).toUpperCase() + domainType.slice(1);
+    return `isShow${domainType}Selector`;
   };
 
+  state = {
+    [DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName]: '',
+    localStorageDomains: [],
+    [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName]: '',
+    [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]: '',
+    isSaveChecked: true,
+    [DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]: false,
+    [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]: false,
+    [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]: false,
+  };
+  refAPIDomainInput = React.createRef();
+  refImageDomainInput = React.createRef();
+  refSocialDomainInput = React.createRef();
+
   get isDisabled() {
-    return !this.state.domainName;
+    return !this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName];
   }
 
-  isDomainNameExisted(domainName = this.state.domainName) {
-    domainName = this.domainNameFormatted(domainName);
-    return this.state.domainNames.includes(domainName);
+  isEqualDomainData(domain1 = {}, domain2 = {}) {
+    const domain1Temp = {...domain1};
+    const domain2Temp = {...domain2};
+    delete domain1Temp.selected;
+    delete domain2Temp.selected;
+
+    return equal(domain1Temp, domain2Temp);
   }
 
-  domainNameFormatted(domainName = this.state.domainName) {
+  isDomainExisted(domain) {
+    return !!this.state.localStorageDomains.find((d) =>
+      this.isEqualDomainData(d, domain),
+    );
+  }
+
+  formatDomainName(domainName) {
     const lastChar = domainName.substring(domainName.length - 1);
     if (lastChar !== '/') {
       domainName += '/';
@@ -209,45 +340,107 @@ class DomainSelector extends Component {
 
   componentDidMount() {
     this.loadDomain();
+    store.setIgnoreChangeDomain(false);
   }
 
+  handleSelectAPIDomain = (key, domain) => {
+    this.closeDomainSelector();
+    this.onChangeDomainName(key, domain.title);
+  };
+
   async loadDomain() {
-    let domainNames = await AsyncStorage.getItem(
+    let localStorageDomains = await AsyncStorage.getItem(
       DOMAIN_STORAGE_KEY,
       (error, result) => {
         if (error) {
           console.log('%cerror_load_domain', 'color:red', error);
         }
-      }
+      },
     );
-    if (domainNames) {
-      domainNames = JSON.parse(domainNames);
 
-      if (Array.isArray(domainNames)) {
-        const autoSelectedDomainName = domainNames[0];
-        this.setState({ domainNames });
-        this.onChangeDomainName(autoSelectedDomainName);
+    if (localStorageDomains) {
+      localStorageDomains = JSON.parse(localStorageDomains);
+      if (Array.isArray(localStorageDomains)) {
+        const autoSelectedAPIDomainName =
+          localStorageDomains.find(
+            (domain) =>
+              domain.selected &&
+              domain.domainParamName ===
+                DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+          )?.title || '';
+
+        this.setState({localStorageDomains});
+        this.onChangeDomainName(
+          DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+          autoSelectedAPIDomainName,
+        );
       }
     }
   }
 
-  saveDomain(domainName) {
-    let domainNames = this.state.domainNames;
-    domainNames.unshift(domainName);
-    domainNames = domainNames.splice(0, 3);
-
-    this.setState({ domainNames, domainName });
-
-    AsyncStorage.setItem(
-      DOMAIN_STORAGE_KEY,
-      JSON.stringify(domainNames),
-      err => {
-        console.log('%cerror_save_domain', 'color:red', err);
-      }
+  updateSelectedLocalStorageDomain = (localStorageDomains, domain) => {
+    const domainIndex = localStorageDomains.findIndex(
+      (d) => d.title === domain.title,
     );
+    localStorageDomains[domainIndex].selected = true;
+    return localStorageDomains;
+  };
+
+  saveDomain(apiDomain, imageDomain, socialDomain) {
+    const isApiDomainExisted = this.isDomainExisted(apiDomain);
+    const isImageDomainExisted = imageDomain
+      ? this.isDomainExisted(imageDomain)
+      : undefined;
+    const isSocialDomainExisted = socialDomain
+      ? this.isDomainExisted(socialDomain)
+      : undefined;
+
+    let localStorageDomains = [...this.state.localStorageDomains];
+    localStorageDomains.forEach((domain) => (domain.selected = false));
+
+    if (isSocialDomainExisted !== undefined) {
+      if (isSocialDomainExisted) {
+        localStorageDomains = this.updateSelectedLocalStorageDomain(
+          localStorageDomains,
+          socialDomain,
+        );
+      } else {
+        localStorageDomains.unshift(socialDomain);
+      }
+    }
+    if (isImageDomainExisted !== undefined) {
+      if (isImageDomainExisted) {
+        localStorageDomains = this.updateSelectedLocalStorageDomain(
+          localStorageDomains,
+          imageDomain,
+        );
+      } else {
+        localStorageDomains.unshift(imageDomain);
+      }
+    }
+    if (isApiDomainExisted) {
+      localStorageDomains = this.updateSelectedLocalStorageDomain(
+        localStorageDomains,
+        apiDomain,
+      );
+    } else {
+      localStorageDomains.unshift(apiDomain);
+    }
+
+    localStorageDomains = localStorageDomains.splice(0, MAX_SAVED_DOMAIN);
+
+    this.saveDomainToLocalStorage(localStorageDomains);
   }
 
-  onChangeDomainName(domainName = '') {
+  saveDomainToLocalStorage = (domains) => {
+    this.setState({localStorageDomains: domains});
+
+    AsyncStorage.setItem(DOMAIN_STORAGE_KEY, JSON.stringify(domains), (err) => {
+      err && console.log('%cerror_save_domain', 'color:red', err);
+    });
+  };
+
+  onChangeDomainName(key, domainName = '') {
     const lastChar = domainName.substring(domainName.length - 1);
     if (lastChar === ' ') {
       if (this.state.domainName.toLocaleLowerCase() === 'ht') {
@@ -258,58 +451,215 @@ class DomainSelector extends Component {
     }
 
     this.setState({
-      domainName
+      [key]: domainName,
     });
   }
 
+  handleShowMoreAPIDomain = (key) => {
+    this.setState((prevState) => ({
+      [key]: !prevState[key],
+    }));
+  };
+
   ignoreDomainChanging() {
     store.setIgnoreChangeDomain(true);
-    this.applyDomain(BaseAPI.apiDomain);
+    this.applyDomain(LIVE_API_DOMAIN);
   }
 
   changeDomain() {
     if (this.isDisabled) return;
     Keyboard.dismiss();
 
-    const domainName = this.domainNameFormatted();
+    const apiDomainName = this.formatDomainName(
+      this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName],
+    );
+    const isAPIDomainLive = apiDomainName === LIVE_API_DOMAIN;
+    const imageDomainName = this.state[
+      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName
+    ]
+      ? this.formatDomainName(
+          this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName],
+        )
+      : isAPIDomainLive
+      ? LIVE_IMAGE_DOMAIN
+      : DEV_IMAGE_DOMAIN;
+    const socialDomainName = this.state[
+      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
+    ]
+      ? this.formatDomainName(
+          this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName],
+        )
+      : isAPIDomainLive
+      ? LIVE_SOCIAL_DOMAIN
+      : DEV_SOCIAL_DOMAIN;
 
-    if (this.state.isSaveChecked && !this.isDomainNameExisted()) {
-      this.saveDomain(domainName);
+    const apiDomain = API_DOMAIN_OPTIONS.find(
+      (domain) => domain.title === apiDomainName,
+    ) || {
+      title: apiDomainName,
+      ...DOMAIN_ATTRIBUTE.API_DOMAIN,
+      tag: DOMAIN_TYPE.UNKNOWN,
+    };
+    apiDomain && (apiDomain.selected = true);
+
+    const imageDomain = this.state[
+      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName
+    ]
+      ? IMAGE_DOMAIN_OPTIONS.find(
+          (domain) => domain.title === imageDomainName,
+        ) || {
+          title: imageDomainName,
+          ...DOMAIN_ATTRIBUTE.IMAGE_DOMAIN,
+          tag: DOMAIN_TYPE.UNKNOWN,
+        }
+      : undefined;
+    imageDomain && (imageDomain.selected = true);
+
+    const socialDomain = this.state[
+      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
+    ]
+      ? SOCIAL_DOMAIN_OPTIONS.find(
+          (domain) => domain.title === socialDomainName,
+        ) || {
+          title: socialDomainName,
+          ...DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN,
+          tag: DOMAIN_TYPE.UNKNOWN,
+        }
+      : undefined;
+    socialDomain && (socialDomain.selected = true);
+
+    store.setIgnoreChangeDomain(true);
+
+    if (this.state.isSaveChecked) {
+      this.saveDomain(apiDomain, imageDomain, socialDomain);
     }
 
-    this.applyDomain(domainName);
+    this.applyDomain(apiDomainName, imageDomainName, socialDomainName);
   }
 
-  applyDomain(domainName) {
-    BaseAPI.updateAPIDomain = domainName;
+  applyDomain(apiDomainName, imageDomainName, socialDomainName) {
+    BaseAPI.updateAPIDomain = apiDomainName;
+    if (imageDomainName) {
+      BaseAPI.updateImageDomain = imageDomainName;
+    }
+    if (socialDomainName) {
+      BaseAPI.updateSocialDomain = socialDomainName;
+    }
+
     Actions.reset(appConfig.routes.sceneWrapper);
   }
 
   checkSave() {
-    this.setState(prevState => ({
-      isSaveChecked: !prevState.isSaveChecked
+    this.setState((prevState) => ({
+      isSaveChecked: !prevState.isSaveChecked,
     }));
   }
 
+  getDomainTag = (domainParamName) => {
+    let domain,
+      listDomainOptions = [];
+    switch (domainParamName) {
+      case DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName:
+        listDomainOptions = API_DOMAIN_OPTIONS;
+        break;
+      case DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName:
+        listDomainOptions = IMAGE_DOMAIN_OPTIONS;
+        break;
+      case DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName:
+        listDomainOptions = SOCIAL_DOMAIN_OPTIONS;
+        break;
+    }
+    domain = this.state[domainParamName]
+      ? listDomainOptions.find(
+          (domain) =>
+            domain.title === this.state[domainParamName] ||
+            domain.title.slice(0, domain.title.length - 1) ===
+              this.state[domainParamName],
+        )
+      : undefined;
+
+    return (
+      domain?.tag ||
+      (this.state[domainParamName] ? DOMAIN_TYPE.UNKNOWN : undefined)
+    );
+  };
+
+  closeDomainSelector = () => {
+    this.setState({
+      [DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]: false,
+      [DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]: false,
+      [DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]: false,
+    });
+  };
+
+  deleteDomainFromLocalStorage = (domain) => {
+    const localStorageDomains = [...this.state.localStorageDomains];
+    const deleteIndex = localStorageDomains.findIndex((d) =>
+      this.isEqualDomainData(d, domain),
+    );
+
+    if (deleteIndex !== -1) {
+      localStorageDomains.splice(deleteIndex, 1);
+      this.saveDomainToLocalStorage(localStorageDomains);
+    }
+  };
+
   renderHistoryItem() {
-    if (this.state.domainNames.length === 0) {
+    if (this.state.localStorageDomains.length === 0) {
       return <Text style={styles.noHistory}>Chưa nhập gì :)</Text>;
     }
-    return this.state.domainNames.map((domainName, index) => {
-      const isSelected = this.state.domainName === domainName;
+    return this.state.localStorageDomains.map((domain, index) => {
+      const isSelected =
+        domain?.title && this.state[domain.domainParamName] === domain.title;
       const extraStyle = isSelected
         ? {
-            backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1)
+            backgroundColor: hexToRgbA(
+              domain.color || appConfig.colors.primary,
+              0.1,
+            ),
           }
         : {};
+      const extraIconStyle = {
+        color: hexToRgbA(domain.color || appConfig.colors.primary, 0.6),
+      };
+
       return (
         <TouchableOpacity
           key={index}
-          onPress={() => this.onChangeDomainName(domainName)}
-        >
+          onPress={() =>
+            this.onChangeDomainName(domain.domainParamName, domain.title)
+          }>
           <View style={[styles.historyContainer, extraStyle]}>
-            <Text style={styles.domainTxt}>{domainName}</Text>
-            {isSelected && <Icon name="check" style={styles.icon} />}
+            {!!domain.iconName && (
+              <MaterialIcons
+                name={domain.iconName}
+                style={[styles.domainLocalStorageIcon, extraIconStyle]}
+              />
+            )}
+            <Text style={styles.domainTxt}>{domain.title}</Text>
+            {!!domain?.tag && (
+              <DomainTag
+                label={domain.tag.label}
+                containerStyle={{
+                  backgroundColor: domain.tag.color,
+                }}
+              />
+            )}
+            {isSelected ? (
+              <MaterialIcons
+                name="check"
+                style={[styles.icon, extraIconStyle]}
+              />
+            ) : (
+              <TouchableOpacity
+                hitSlop={HIT_SLOP}
+                onPress={() => this.deleteDomainFromLocalStorage(domain)}>
+                <MaterialIcons
+                  name="delete"
+                  style={[styles.icon, styles.iconDelete]}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
       );
@@ -325,7 +675,7 @@ class DomainSelector extends Component {
           </View>
           <View style={styles.historyDescriptionContainer}>
             <Text style={styles.historyDescription}>
-              Chỉ lưu 3 kết quả gần nhất!
+              Chỉ lưu {MAX_SAVED_DOMAIN} dữ liệu gần nhất!
             </Text>
             <View style={styles.dash} />
           </View>
@@ -347,101 +697,254 @@ class DomainSelector extends Component {
           </View>
         </View>
         {NOTES.map((note, index) => (
-          <Text key={index} style={styles.note}>
-            {note}
-          </Text>
+          <Container key={index} row centerVertical={false}>
+            <Text style={styles.note}>•{` `}</Text>
+            <Text style={styles.note}>{note}</Text>
+          </Container>
         ))}
       </View>
     );
   }
 
+  renderDomainItemSelector = (domain, onPress, index, domains) => {
+    return (
+      <View
+        key={index}
+        style={[
+          styles.domainItemSelectorWrapper,
+          {
+            borderBottomWidth:
+              index !== domains.length - 1 ? appConfig.device.pixel : 0,
+          },
+        ]}>
+        <RNTouchableOpacity
+          onPress={onPress}
+          style={styles.domainItemSelectorContainer}>
+          <Container row centerVertical={false}>
+            <Text style={styles.domainTxt}>{domain.title}</Text>
+            <DomainTag
+              label={domain?.tag?.label}
+              containerStyle={{backgroundColor: domain?.tag?.color}}
+            />
+          </Container>
+        </RNTouchableOpacity>
+      </View>
+    );
+  };
+
   render() {
     return (
-      <View style={styles.container}>
-        {this.props.back && (
-          <SafeAreaView style={styles.iconBackWrapper}>
-            <TouchableOpacity
-              style={styles.iconBackContainer}
-              onPress={Actions.pop}
-            >
-              <Icon name="keyboard-backspace" style={styles.iconBack} />
-            </TouchableOpacity>
-          </SafeAreaView>
-        )}
+      <>
+        <View style={styles.container}>
+          {this.props.back && (
+            <SafeAreaView style={styles.iconBackWrapper}>
+              <TouchableOpacity
+                style={styles.iconBackContainer}
+                onPress={Actions.pop}>
+                <MaterialIcons
+                  name="keyboard-backspace"
+                  style={styles.iconBack}
+                />
+              </TouchableOpacity>
+            </SafeAreaView>
+          )}
 
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive"
-          bounces={false}
-          contentContainerStyle={{ flexGrow: 1 }}
-        >
-          <SafeAreaView style={styles.container}>
-            <View style={styles.mainContent}>
-              <Text style={styles.heading}>Domains</Text>
-              <Text style={styles.subHeading}>
-                Change API - change your life
-              </Text>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            bounces={false}
+            contentContainerStyle={{flexGrow: 1}}>
+            <SafeAreaView style={styles.container}>
+              <View style={styles.mainContent}>
+                <Text style={styles.heading}>Domains</Text>
+                <Text style={styles.subHeading}>
+                  Change API - change your life
+                </Text>
 
-              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                <TextInput
-                  style={styles.textInput}
-                  onChangeText={this.onChangeDomainName.bind(this)}
+                <DomainInput
+                  innerRef={this.refAPIDomainInput}
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.API_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.API_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                  )}
+                  placeholder="api domain"
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                      value,
+                    )
+                  }
                   onSubmitEditing={this.changeDomain.bind(this)}
-                  value={this.state.domainName}
-                  placeholder="Nhập domain..."
+                  onClearText={() =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+                      '',
+                    )
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName,
+                    )
+                  }
                 />
 
-                {!this.isDisabled && (
-                  <TouchableOpacity
-                    onPress={() => this.onChangeDomainName()}
-                    style={styles.closeIconContainer}
-                  >
-                    <Icon name="close" />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <TouchableOpacity
-                onPress={this.checkSave.bind(this)}
-                style={styles.saveContainer}
-              >
-                <Text style={styles.saveTxt}>Lưu lại nhé?</Text>
-                <View style={styles.saveIconContainer}>
-                  {this.state.isSaveChecked ? (
-                    <Icon name="check-box" style={styles.saveIcon} />
-                  ) : (
-                    <Icon
-                      name="check-box-outline-blank"
-                      style={styles.saveIcon}
-                    />
+                <DomainInput
+                  innerRef={this.refImageDomainInput}
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
                   )}
-                </View>
-              </TouchableOpacity>
+                  placeholder="image domain (optional)"
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+                      value,
+                    )
+                  }
+                  onSubmitEditing={this.changeDomain.bind(this)}
+                  onClearText={() =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+                      '',
+                    )
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName,
+                    )
+                  }
+                />
 
-              <Text>{this.state.suggestedDomain}</Text>
+                <DomainInput
+                  innerRef={this.refSocialDomainInput}
+                  value={
+                    this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName]
+                  }
+                  iconName={DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.iconName}
+                  iconColor={DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.color}
+                  tag={this.getDomainTag(
+                    DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                  )}
+                  placeholder="social domain (optional)"
+                  containerStyle={styles.domainInput}
+                  onChangeText={(value) =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                      value,
+                    )
+                  }
+                  onSubmitEditing={this.changeDomain.bind(this)}
+                  onClearText={() =>
+                    this.onChangeDomainName(
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+                      '',
+                    )
+                  }
+                  onPressShowMore={() =>
+                    this.handleShowMoreAPIDomain(
+                      DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName,
+                    )
+                  }
+                />
 
-              {this.renderHistory()}
-              {this.renderNote()}
-            </View>
-          </SafeAreaView>
-        </ScrollView>
+                <TouchableOpacity
+                  onPress={this.checkSave.bind(this)}
+                  style={styles.saveContainer}>
+                  <Text style={styles.saveTxt}>Lưu lại nhé?</Text>
+                  <View style={styles.saveIconContainer}>
+                    {this.state.isSaveChecked ? (
+                      <MaterialIcons name="check-box" style={styles.saveIcon} />
+                    ) : (
+                      <MaterialIcons
+                        name="check-box-outline-blank"
+                        style={styles.saveIcon}
+                      />
+                    )}
+                  </View>
+                </TouchableOpacity>
 
-        <View style={styles.comboBtnContainer}>
-          <Button
-            containerStyle={styles.ignoreContainer}
-            btnContainerStyle={styles.ignoreBtn}
-            title="Bỏ qua"
-            onPress={this.ignoreDomainChanging.bind(this)}
-          />
-          <Button
-            containerStyle={styles.btnContainer}
-            title="Thay đổi"
-            disabled={this.isDisabled}
-            onPress={this.changeDomain.bind(this)}
-          />
+                <Text>{this.state.suggestedDomain}</Text>
+
+                {this.renderHistory()}
+                {this.renderNote()}
+              </View>
+            </SafeAreaView>
+          </ScrollView>
+
+          <View style={styles.comboBtnContainer}>
+            <Button
+              containerStyle={styles.ignoreContainer}
+              btnContainerStyle={styles.ignoreBtn}
+              title="Bỏ qua"
+              onPress={this.ignoreDomainChanging.bind(this)}
+            />
+            <Button
+              containerStyle={styles.btnContainer}
+              title="Thay đổi"
+              disabled={this.isDisabled}
+              onPress={this.changeDomain.bind(this)}
+            />
+          </View>
+          {appConfig.device.isIOS && <KeyboardSpacer />}
         </View>
-        {appConfig.device.isIOS && <KeyboardSpacer />}
-      </View>
+
+        <AwesomeCombo
+          parentRef={this.refAPIDomainInput}
+          data={API_DOMAIN_OPTIONS}
+          show={this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]}
+          useParentWidth
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
+              domain,
+            )
+          }
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
+        />
+        <AwesomeCombo
+          parentRef={this.refImageDomainInput}
+          data={IMAGE_DOMAIN_OPTIONS}
+          show={
+            this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]
+          }
+          useParentWidth
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
+              domain,
+            )
+          }
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
+        />
+        <AwesomeCombo
+          parentRef={this.refSocialDomainInput}
+          data={SOCIAL_DOMAIN_OPTIONS}
+          show={
+            this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]
+          }
+          useParentWidth
+          onSelect={(domain) =>
+            this.handleSelectAPIDomain(
+              DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,
+              domain,
+            )
+          }
+          onClose={this.closeDomainSelector}
+          renderCustomItem={this.renderDomainItemSelector}
+        />
+      </>
     );
   }
 }

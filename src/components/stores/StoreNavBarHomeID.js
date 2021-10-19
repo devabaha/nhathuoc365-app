@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import {
@@ -9,17 +9,17 @@ import {
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { ifIphoneX } from 'react-native-iphone-x-helper';
+import {Actions} from 'react-native-router-flux';
+import {ifIphoneX} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
 import RightButtonOrders from '../RightButtonOrders';
 import AwesomeCombo from '../AwesomeCombo';
 import store from 'app-store';
-import { servicesHandler } from '../../helper/servicesHandler';
+import {servicesHandler} from '../../helper/servicesHandler';
 
 const defaultListener = () => {};
 class StoreNavBarHomeID extends Component {
@@ -28,7 +28,7 @@ class StoreNavBarHomeID extends Component {
     onSearch: PropTypes.func,
     onClearText: PropTypes.func,
     placeholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
@@ -36,11 +36,11 @@ class StoreNavBarHomeID extends Component {
     onSearch: defaultListener,
     onClearText: defaultListener,
     placeholder: '',
-    searchValue: ''
+    searchValue: '',
   };
 
   state = {
-    showMoreCombo: false
+    showMoreCombo: false,
   };
   moreBtnRef = React.createRef();
 
@@ -49,12 +49,12 @@ class StoreNavBarHomeID extends Component {
   }
 
   onToggleMore = () => {
-    this.setState(prevState => ({
-      showMoreCombo: !prevState.showMoreCombo
+    this.setState((prevState) => ({
+      showMoreCombo: !prevState.showMoreCombo,
     }));
   };
 
-  handleSelectMoreOption = option => {
+  handleSelectMoreOption = (option) => {
     servicesHandler(option.service);
     this.onToggleMore();
   };
@@ -82,9 +82,8 @@ class StoreNavBarHomeID extends Component {
           }}
           background={TouchableNativeFeedback.Ripple(pressColor, true)}
           accessible
-          accessibilityComponentType="button"
-        >
-          <View style={[styles.cancelButton, { borderRadius: 20 }]}>
+          accessibilityComponentType="button">
+          <View style={[styles.cancelButton, {borderRadius: 20}]}>
             <BackIcon
               size={iconSize}
               color="#fff"
@@ -101,8 +100,7 @@ class StoreNavBarHomeID extends Component {
         onPress={() => {
           Actions.pop();
           this.props.onCancel();
-        }}
-      >
+        }}>
         <BackIcon
           size={iconSize}
           color="#fff"
@@ -119,13 +117,11 @@ class StoreNavBarHomeID extends Component {
         hitSlop={HIT_SLOP}
         onPress={this.props.onPressSearch}
         underlayColor="rgba(0,0,0,.6)"
-        style={styles.searchWrapper}
-      >
+        style={styles.searchWrapper}>
         <View
           pointerEvents="none"
-          style={{ flexDirection: 'row', alignItems: 'center' }}
-        >
-          <View style={{ paddingBottom: 2, alignItems: 'center' }}>
+          style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{paddingBottom: 2, alignItems: 'center'}}>
             <Icon
               size={20}
               color="#ccc"
@@ -177,6 +173,7 @@ class StoreNavBarHomeID extends Component {
             data={this.props.moreOptions}
             show={this.state.showMoreCombo}
             onSelect={this.handleSelectMoreOption}
+            onClose={this.onToggleMore}
           />
         )}
       </>
@@ -188,24 +185,24 @@ const styles = StyleSheet.create({
   wrapper: {
     zIndex: 999,
     width: '100%',
-    position: appConfig.device.isIOS ? 'relative' : 'absolute'
+    position: appConfig.device.isIOS ? 'relative' : 'absolute',
   },
   container: {
     position: appConfig.device.isIOS ? 'absolute' : 'relative',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cancelButton: {
     justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   cancelText: {
     fontSize: 16,
-    color: '#fff'
+    color: '#fff',
   },
   searchIcon: {
     position: 'relative',
-    top: 2
+    top: 2,
   },
   clearWrapper: {
     width: 20,
@@ -214,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#666',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8
+    marginRight: 8,
   },
   searchWrapper: {
     zIndex: 999,
@@ -234,30 +231,30 @@ const styles = StyleSheet.create({
     ...ifIphoneX(
       {
         marginTop: 4,
-        marginBottom: 8
+        marginBottom: 8,
       },
       {
-        marginVertical: Platform.OS === 'ios' ? 6 : 8
-      }
-    )
+        marginVertical: Platform.OS === 'ios' ? 6 : 8,
+      },
+    ),
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
     paddingVertical: 2,
     alignSelf: 'flex-end',
-    color: appConfig.colors.white
+    color: appConfig.colors.white,
   },
   right_btn_box: {
     flexDirection: 'row',
-    marginHorizontal: 15
+    marginHorizontal: 15,
   },
   iconMore: {
     fontSize: 22,
     color: '#fff',
     ...elevationShadowStyle(7),
-    marginLeft: 10
-  }
+    marginLeft: 10,
+  },
 });
 
 export default withTranslation('stores')(StoreNavBarHomeID);

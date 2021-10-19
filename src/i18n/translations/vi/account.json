@@ -8,6 +8,10 @@
       "label": "Địa chỉ của tôi",
       "desc": "Quản lý địa chỉ nhận hàng"
     },
+    "orders": {
+      "label": "Đơn hàng của tôi",
+      "desc": "Quản lý đơn hàng"
+    },
     "myVoucher": {
       "label": "Mã giảm giá của tôi",
       "desc": "Quản lý các mã giảm giá được nhận"
@@ -51,16 +55,16 @@
       "desc": "Tra cứu hoa hồng theo tháng"
     },
     "salesReport": {
-      "label": "Báo cáo doanh số giới thiệu",
+      "label": "Báo cáo giới thiệu",
       "desc": "Doanh số của những người được giới thiệu"
     }
   },
   "avatarPicker": {
-    "title": "Cập nhật ảnh đại diện tài khoản",
+    "title": "Thay đổi ảnh đại diện",
     "cancelTitle": "Huỷ bỏ",
     "takePhotoTitle": "Chụp ảnh",
     "chooseFromLibraryTitle": "Chọn ảnh từ thư viện",
-    "messageUpdateSuccessfully": "Thay ảnh đại diện thành công."
+    "messageUpdateSuccessfully": "Thay đổi ảnh đại diện thành công."
   },
   "signIn": "Đăng nhập",
   "referralCode": "Mã giới thiệu",

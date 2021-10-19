@@ -17,9 +17,11 @@ import Themes from 'src/Themes';
 import Indicator from 'src/components/Indicator';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
+import {debounce} from 'lodash';
+import {isOutOfStock} from 'app-helper/product';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -38,6 +40,7 @@ class ProductItem extends PureComponent {
     onPress: PropTypes.func,
     last: PropTypes.bool,
     horizontal: PropTypes.bool,
+    item: PropTypes.object,
   };
 
   static defaultProps = {
@@ -57,19 +60,23 @@ class ProductItem extends PureComponent {
   unmounted = false;
 
   isServiceProduct(product = {}) {
-    return product.product_type === PRODUCT_TYPES.SERVICE;
+    return product.order_type === ORDER_TYPES.BOOKING;
   }
 
-  handlePress = () => {
-    if (!!this.props.selfRequest) {
-      this.setState({
-        loading: true,
-      });
-      this.handleSelfRequest();
-    } else {
-      this.props.onPress();
-    }
-  };
+  handlePress = debounce(
+    () => {
+      if (!!this.props.selfRequest) {
+        this.setState({
+          loading: true,
+        });
+        this.handleSelfRequest();
+      } else {
+        this.props.onPress();
+      }
+    },
+    500,
+    {leading: true, trailing: false},
+  );
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
@@ -96,13 +103,22 @@ class ProductItem extends PureComponent {
             this.props.renderContent()
           ) : (
             <>
-              <FastImage
-                source={{
-                  uri: this.props.image,
-                }}
-                style={[styles.image, extraImageStyle]}
-                resizeMode="cover"
-              />
+              <View>
+                <FastImage
+                  source={{
+                    uri: this.props.image,
+                  }}
+                  style={[styles.image, extraImageStyle]}
+                  resizeMode="cover"
+                />
+                {!!item.brand && (
+                  <View style={styles.brandTagContainer}>
+                    <Text numberOfLines={1} style={styles.brandTag}>
+                      {item.brand}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
               {this.props.discount_percent > 0 && (
                 <DiscountBadge
@@ -119,39 +135,65 @@ class ProductItem extends PureComponent {
 
                 <View style={styles.priceWrapper}>
                   <View style={styles.priceContainer}>
-                    {this.props.discount_percent > 0 && (
-                      <Text style={styles.discount}>
-                        <Text style={styles.deletedTitle}>
-                          {this.props.discount_view}
-                        </Text>
-                        / {this.props.unit_name}
+                    {!!this.props.item.commission_value && (
+                      <Text style={styles.commissionText} numberOfLines={1}>
+                        {this.props.item.commission_value_view}
                       </Text>
                     )}
 
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      {this.props.discount_percent > 0 && (
+                        <Text style={styles.discount}>
+                          <Text style={styles.deletedTitle}>
+                            {this.props.discount_view}
+                          </Text>
+                          {/* / {this.props.unit_name} */}
+                        </Text>
+                      )}
+                    </View>
                     <View style={[styles.priceBox]}>
                       <Text style={[styles.price]}>
                         {this.props.price_view}
+                        {!!item.unit_name && (
+                          <View>
+                            <Text style={styles.unitName}>
+                              {'/ ' + item.unit_name_view}
+                            </Text>
+                          </View>
+                        )}
                       </Text>
 
                       <TouchableOpacity
+                        disabled={isOutOfStock(item)}
                         style={styles.item_add_cart_box}
-                        onPress={this.handlePressActionBtnProduct}>
-                        {this.state.buying ? (
-                          <View
-                            style={{
-                              width: 20,
-                              height: 20,
-                            }}>
+                        onPress={this.handlePressActionBtnProduct}
+                        hitSlop={HIT_SLOP}>
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          {this.state.buying ? (
                             <Indicator size="small" />
-                          </View>
-                        ) : this.isServiceProduct(item) ? (
-                          <Icon name="calendar-plus-o" style={styles.icon} />
-                        ) : (
-                          <MaterialIcons
-                            name="add-shopping-cart"
-                            style={styles.icon}
-                          />
-                        )}
+                          ) : this.isServiceProduct(item) ? (
+                            <Icon name="calendar-plus-o" style={styles.icon} />
+                          ) : (
+                            <MaterialIcons
+                              name="add-shopping-cart"
+                              style={[
+                                styles.icon,
+                                isOutOfStock(item) && styles.iconDisabled,
+                              ]}
+                            />
+                          )}
+                        </View>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -177,7 +219,7 @@ let styles = StyleSheet.create({
     width: WIDTH_ITEM,
   },
   containerHorizontal: {
-    width: HORIZONTAL_WIDTH_ITEM
+    width: HORIZONTAL_WIDTH_ITEM,
   },
   wrapper: {
     flex: 1,
@@ -212,7 +254,11 @@ let styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
+  commissionText: {
+    color: appConfig.colors.cherry,
+  },
   discount: {
+    marginTop: 4,
     ...appConfig.styles.typography.secondary,
   },
   priceBox: {
@@ -222,6 +268,8 @@ let styles = StyleSheet.create({
   },
   price: {
     flex: 1,
+    flexWrap: 'wrap',
+    paddingRight: 5,
     ...appConfig.styles.typography.heading3,
     color: appConfig.colors.primary,
   },
@@ -255,13 +303,43 @@ let styles = StyleSheet.create({
   deletedTitle: {
     textDecorationLine: 'line-through',
   },
-
   icon: {
     fontSize: 20,
     color: appConfig.colors.highlight[1],
+  },
+  iconDisabled: {
+    color: '#ddd',
+  },
+  brandTagContainer: {
+    position: 'absolute',
+    bottom: -5,
+    right: 0,
+    backgroundColor: '#fff',
+    paddingVertical: 2,
+    paddingHorizontal: 5,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
+    maxWidth: WIDTH_ITEM * 0.8,
+    borderWidth: appConfig.device.pixel,
+    borderRightWidth: 0,
+    borderBottomWidth: 1.2,
+    borderColor: '#ddd',
+    borderBottomColor: '#ddd',
+  },
+  brandTag: {
+    color: appConfig.colors.primary,
+    fontWeight: '500',
+    fontSize: 12,
+  },
+  unitName: {
+    fontSize: 11,
+    color: '#888',
+    marginTop: appConfig.device.isIOS ? 2 : 0,
+    top: appConfig.device.isAndroid ? 2 : undefined,
+    lineHeight: appConfig.device.isAndroid ? 11 : undefined,
   },
 });
 
 styles = Themes.mergeStyles(styles, productItemStyle);
 
-export default ProductItem;
+export default withTranslation('product')(ProductItem);

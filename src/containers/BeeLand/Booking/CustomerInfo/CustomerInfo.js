@@ -11,7 +11,7 @@ import FormCustomer from './FormCustomer';
 import { CUSTOMER_INFO_FORM_DATA } from './constants';
 import { Actions } from 'react-native-router-flux';
 import { getProgressDataActivedComponent } from '../helper';
-import { useValue, timing } from 'react-native-redash/lib/module/v1';
+import { useValue, timing } from 'react-native-redash';
 
 const styles = StyleSheet.create({
   container: {

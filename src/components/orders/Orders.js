@@ -6,9 +6,9 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  ScrollView,
+  StatusBar
 } from 'react-native';
-import {autorun, reaction} from 'mobx';
+import {reaction} from 'mobx';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
@@ -16,7 +16,6 @@ import {Actions} from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
-import {StatusBar} from 'react-native';
 
 class Orders extends Component {
   constructor(props) {
@@ -34,7 +33,7 @@ class Orders extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
-    this.autoUpdateDisposer = () => {};
+    this.autoUpdateDisposer = null;
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
@@ -42,8 +41,7 @@ class Orders extends Component {
   }
 
   componentDidMount() {
-    // this._getData();
-    this.forceUpdateOrders();
+    this._getData();
 
     store.is_stay_orders = true;
     store.parentTab = `${appConfig.routes.newsTab}_1`;
@@ -53,7 +51,7 @@ class Orders extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
-    this.autoUpdateDisposer();
+    this.autoUpdateDisposer && this.autoUpdateDisposer();
   }
 
   UNSAFE_componentWillReceiveProps() {
@@ -102,7 +100,6 @@ class Orders extends Component {
   async _getData(delay, noScroll = false) {
     const {t} = this.props;
 
-    store.setUpdateOrders(false);
     appConfig.device.isIOS &&
       StatusBar.setNetworkActivityIndicatorVisible(true);
     try {
@@ -127,11 +124,9 @@ class Orders extends Component {
           }
         }
 
-        setTimeout(() => {
+        // setTimeout(() => {
           this.setState({
             data: response.data,
-            refreshing: false,
-            loading: false,
             empty: false,
             finish: true,
           });
@@ -139,23 +134,30 @@ class Orders extends Component {
           if (!noScroll) {
             this._scrollToTop(0);
           }
-        }, delay || 0);
+        // }, delay || 0);
       } else {
         setTimeout(() => {
           this.setState({
-            loading: false,
             data: null,
-            refreshing: false,
           });
         }, delay || 0);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      store.getNoitify();
+    store.setUpdateOrders(false);
+    store.getNotify();
       store.setDeepLinkData(null);
+
       appConfig.device.isIOS &&
         StatusBar.setNetworkActivityIndicatorVisible(false);
+
+      this.setState({
+        loading: false,
+        refreshing: false,
+      });
+
+     !this.autoUpdateDisposer && this.forceUpdateOrders();
     }
   }
 
@@ -305,11 +307,16 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
-    this.autoUpdateDisposer = autorun(() => {
-      if (store.isUpdateOrders && !this.state.refreshing) {
-        setTimeout(() => this._getData(0, true));
-      }
-    });
+    if(this.autoUpdateDisposer) return;
+
+    this.autoUpdateDisposer = reaction(
+      () => store.isUpdateOrders,
+      (isUpdateOrders) => {
+        if (isUpdateOrders && !this.state.refreshing) {
+          setTimeout(() => this._getData(0, true));
+        }
+      },
+    );
   }
 
   render() {
@@ -322,42 +329,19 @@ class Orders extends Component {
 
     return (
       <View style={styles.container}>
-        {/* <ScrollView
-          scrollEventThrottle={16}
-          onScroll={event => {
-            this.setState({
-              scrollTop: event.nativeEvent.contentOffset.y
-            });
-          }}
-          ref={ref => (this.refs_orders = ref)}
-          // renderSectionHeader={({section}) => (
-          //   <View style={styles.cart_section_box}>
-          //     <CachedImage mutable style={styles.cart_section_image} source={{uri: section.image}} />
-          //     <Text style={styles.cart_section_title}>{section.key}</Text>
-          //   </View>
-          // )}
-          onEndReached={num => {}}
-          onEndReachedThreshold={0}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-        >
-          {data != null ? ( */}
         <FlatList
-          ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+          scrollIndicatorInsets={{right: 0.01}}
           style={styles.items_box}
-          contentContainerStyle={{flexGrow: 1}}
+          contentContainerStyle={{flexGrow: 1, paddingBottom: appConfig.device.bottomSpace}}
           data={data || []}
           extraData={this.state}
+          // ItemSeparatorComponent={() => <View style={styles.separator}></View>}
           ListEmptyComponent={
             <View style={styles.empty_box}>
               <Icon
                 name="shopping-basket"
                 size={32}
-                color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+                color={hexToRgbA(appConfig.colors.primary, 0.6)}
               />
               <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
 
@@ -393,30 +377,6 @@ class Orders extends Component {
             />
           }
         />
-        {/* ) : (
-            <View style={styles.empty_box}>
-              <Icon
-                name="shopping-basket"
-                size={32}
-                color={hexToRgbA(DEFAULT_COLOR, 0.6)}
-              />
-              <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
-
-              <TouchableHighlight
-                onPress={() => {
-                  Actions.jump(appConfig.routes.homeTab);
-                }}
-                underlayColor="transparent"
-              >
-                <View style={styles.empty_box_btn}>
-                  <Text style={styles.empty_box_btn_title}>
-                    {t('encourageMessage')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            </View>
-          )}
-        </ScrollView> */}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_cancel_cart = ref)}
@@ -482,7 +442,7 @@ const styles = StyleSheet.create({
 
   separator: {
     width: '100%',
-    height: Util.pixel,
+    height: appConfig.device.pixel,
     backgroundColor: '#dddddd',
   },
   items_box: {
@@ -500,15 +460,15 @@ const styles = StyleSheet.create({
     color: '#404040',
   },
   empty_box_btn: {
-    borderWidth: Util.pixel,
-    borderColor: DEFAULT_COLOR,
+    borderWidth: appConfig.device.pixel,
+    borderColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 12,
     borderRadius: 5,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: appConfig.colors.primary,
   },
   empty_box_btn_title: {
     color: '#ffffff',

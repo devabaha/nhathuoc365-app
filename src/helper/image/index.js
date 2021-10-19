@@ -1,11 +1,13 @@
 import ImageCropPicker from 'react-native-image-crop-picker';
 import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
+
 import {IMAGE_RATIOS} from 'src/constants/image';
-import RNFetchBlob from 'rn-fetch-blob';
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
-import {handleSaveImage} from './handleSaveImage';
+import {saveImage} from './imageSavingHandler';
+import {downloadImage} from './imageDownloadingHandler';
 
 export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   return {
@@ -173,4 +175,4 @@ export const normalizePostImageData = async (image) => {
   return imageData;
 };
 
-export {handleSaveImage};
+export {saveImage, downloadImage};

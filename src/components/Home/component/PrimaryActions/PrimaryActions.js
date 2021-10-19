@@ -12,6 +12,8 @@ import {
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
 import AntDesignIcon from 'react-native-vector-icons/SimpleLineIcons';
+import { CONFIG_KEY, isConfigActive } from '../../../../helper/configKeyHandler';
+import store from 'app-store';
 
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
@@ -32,8 +34,14 @@ class PrimaryActions extends Component {
       PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS,
     );
   }
+
+  get isActiveCommissions() {
+    return isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
+  }
+
   render() {
     const props = this.props;
+    const revenue_commissions = store.user_info.revenue_commissions;
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
@@ -63,28 +71,44 @@ class PrimaryActions extends Component {
               </View>
             {/* ) : null} */}
 
-            <Button
-              containerStyle={styles.surplusContainer}
-              onPress={() => props.onSurplusNext()}>
-              <View style={styles.walletInfoWrapper}>
-                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+            {!this.isActiveCommissions ? (
+              <Button
+                containerStyle={styles.surplusContainer}
+                onPress={() => props.onSurplusNext()}>
+                <View style={styles.walletInfoWrapper}>
+                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
 
-                <View style={styles.walletLabelRight}>
-                  <Text style={styles.surplus}>{props.surplus}</Text>
+                  <View style={styles.walletLabelRight}>
+                    <Text style={styles.surplus}>{props.surplus}</Text>
+                  </View>
+                  
+                  <View style={styles.iconNextWrapper}>
+                    <AntDesignIcon name="arrow-right" style={styles.iconNext} />
+                      {/* <Image style={styles.iconNext} source={imageIconNext} /> */}
+                  </View>
                 </View>
-
-                <View style={styles.iconNextWrapper}>
-                <AntDesignIcon name="arrow-right" style={styles.iconNext}/>
-                  {/* <Image style={styles.iconNext} source={imageIconNext} /> */}
+              </Button>
+            ) : (
+              <Button
+                containerStyle={styles.surplusContainer}
+                onPress={() => props.onPressCommission()}>
+                <View style={styles.walletInfoWrapper}>
+                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+                  <View style={styles.walletLabelRight}>
+                    <Text style={styles.surplus}>{revenue_commissions?.this_month_commissions.value}</Text>
+                  </View>
+                  <View style={styles.iconNextWrapper}>
+                    <AntDesignIcon name="arrow-right" style={styles.iconNext} />
+                  </View>
                 </View>
-              </View>
-            </Button>
+              </Button>
+            )}
           </View>
           {this.isActivePrimaryActions && props.primaryActions && (
             <View style={styles.walletAction}>
-              {props.primaryActions.map((action) => (
+              {props.primaryActions.map((action, index) => (
                 <Button
-                  key={action.type}
+                  key={index}
                   onPress={() => props.onPressItem(action)}
                   containerStyle={styles.actionButton}>
                   <View style={styles.actionWrapper}>
@@ -119,6 +143,7 @@ const defaultListener = () => {};
 PrimaryActions.propTypes = {
   surplus: PropTypes.string,
   onSurplusNext: PropTypes.func,
+  onPressCommission: PropTypes.func,
   onPressItem: PropTypes.func,
   primaryActions: PropTypes.array,
 };
@@ -126,6 +151,7 @@ PrimaryActions.propTypes = {
 PrimaryActions.defaultProps = {
   surplus: '1,000,000đ',
   onSurplusNext: defaultListener,
+  onPressCommission: defaultListener,
   onPressItem: defaultListener,
 };
 
@@ -226,6 +252,7 @@ const styles = StyleSheet.create({
   actionTitle: {
     marginTop: 10,
     ...appConfig.styles.typography.sub,
+    textAlign: 'center'
   },
 });
 

@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
+  block: {
+    marginBottom: 5,
+  },
+
   btnPostContainer: {
     padding: 10,
     paddingVertical: 5,
@@ -37,22 +41,11 @@ const styles = StyleSheet.create({
     right: 12,
   },
   btnPost: {
-    color: '#fff', 
-    fontSize: 16
+    color: '#fff',
+    fontSize: 16,
   },
 
   extraListBottom: {
-    width: '100%',
-  },
-
-  input: {
-    backgroundColor: '#fff',
-    fontSize: 16,
-    padding: 15,
-  },
-  inputClone: {
-    position: 'absolute',
-    opacity: 0,
     width: '100%',
   },
 
@@ -78,11 +71,15 @@ const styles = StyleSheet.create({
 });
 
 const CreatePost = ({
-  group = {},
+  // group = {},
   groupId,
+  postId,
   siteId = store?.store_data?.id,
   avatar = store.user_info.img,
   title,
+  editMode,
+  contentText: contentTextProp = '',
+  images: imagesProp,
   isOpenImagePicker: isOpenImagePickerProp = false,
 }) => {
   const {t} = useTranslation(['common', 'social']);
@@ -96,8 +93,8 @@ const CreatePost = ({
   const containerHeight = useRef(0);
   const canBack = useRef(false);
 
-  const [contentText, setContentText] = useState('');
-  const [images, setImages] = useState([]);
+  const [contentText, setContentText] = useState(contentTextProp || '');
+  const [images, setImages] = useState(imagesProp || []);
   const [isOpenImagePicker, setOpenImagePicker] = useState(
     isOpenImagePickerProp,
   );
@@ -105,6 +102,22 @@ const CreatePost = ({
   const [editable, setEditable] = useState(true);
 
   const [keyboardHeight, setKeyboardHeight] = useState(store.keyboardTop);
+
+  useEffect(() => {
+    setTimeout(() => {
+      Actions.refresh({
+        right: () => renderPostBtn(),
+      });
+    });
+  }, [
+    images,
+    contentText,
+    groupId,
+    siteId,
+    contentTextProp,
+    imagesProp,
+    editMode,
+  ]);
 
   useEffect(() => {
     if (!title) {
@@ -126,14 +139,6 @@ const CreatePost = ({
       disposer();
     };
   }, []);
-
-  useEffect(() => {
-    setTimeout(() =>
-      Actions.refresh({
-        right: () => renderPostBtn(),
-      }),
-    );
-  }, [images, contentText, group]);
 
   useEffect(() => {
     const handlePop = () => {
@@ -181,35 +186,45 @@ const CreatePost = ({
   }, [clearRequests, contentText, images]);
 
   const handlePost = () => {
-    if(!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
-    const postData = {
-      id: new Date().getTime(),
-      group,
-      user: store?.user_info
-        ? {
-            ...store.user_info,
-            image: store.user_info.img,
-          }
-        : {},
-      created: new Date(),
-      group_id: groupId,
-      site_id: siteId,
-      content: contentText,
-    };
+    if (!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
+    const postData = editMode
+      ? {
+          ...(store.socialPosts.get(postId) || {}),
+          content: contentText,
+        }
+      : {
+          id: new Date().getTime(),
+          // group,
+          user: store?.user_info
+            ? {
+                ...store.user_info,
+                image: store.user_info.img,
+              }
+            : {},
+          created: new Date(),
+          group_id: groupId,
+          site_id: siteId,
+          content: contentText,
+        };
 
     if (!!images?.length) {
       postData.images = images;
     }
     canBack.current = true;
     Actions.pop();
-
-    store.socialCreatePost(postData, t, formatPostStoreData);
+    if (editMode) {
+      store.socialCreatePost(postData, t, undefined, true);
+    } else {
+      store.socialCreatePost(postData, t, formatPostStoreData);
+    }
   };
 
   const renderPostBtn = () => {
     const isDisabled =
       (!contentText && !images?.length) ||
       images.length > MAX_TOTAL_UPLOAD_IMAGES;
+
+    const isEditMode = !!contentTextProp || !!imagesProp;
 
     return (
       <TouchableOpacity
@@ -221,7 +236,9 @@ const CreatePost = ({
             backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
           },
         ]}>
-        <Text style={styles.btnPost}>{t('social:post')}</Text>
+        <Text style={styles.btnPost}>
+          {isEditMode ? t('save') : t('social:post')}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -344,7 +361,7 @@ const CreatePost = ({
         onScrollBeginDrag={handleScrollBeginDrag}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}>
-        <View>
+        <View style={{flex: 1}}>
           <PleasePost
             title={store.user_info.name}
             avatar={avatar}
@@ -357,8 +374,14 @@ const CreatePost = ({
             value={contentText}
             onChangeText={setContentText}
             onContentLayout={handleInputCloneLayout}
+            style={[
+              styles.block,
+              {
+                flex: images?.length ? undefined : 1,
+              },
+            ]}
           />
-          <TouchableOpacity onPress={goToEditImages} style={{marginBottom: 15}}>
+          <TouchableOpacity onPress={goToEditImages} style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
             {renderOveImagesMessage()}
           </TouchableOpacity>

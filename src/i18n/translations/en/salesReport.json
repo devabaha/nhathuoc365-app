@@ -1,4 +1,9 @@
 {
-  "name": "Name (phone) ",
-  "total_revenue": "Total Revenue"
+  "name": "Name",
+  "phone": "Phone number",
+  "totalRevenue": "Total Revenue",
+  "totalOrders": "Orders",
+  "referralOrders": "Referral Orders",
+  "newReferralMembers": "Referral Members",
+  "joiningDate": "Joining Date"
 }

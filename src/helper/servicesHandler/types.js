@@ -41,6 +41,7 @@ export const SERVICES_TYPE = {
   MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER_DETAIL: 'my_voucher_detail',
   VOUCHER_DETAIL: 'voucher_detail',
+  VOUCHER_CAMPAIGN_DETAIL: 'voucher_campaign_detail',
 
   /** TRANSACTION */
   TRANSACTION: 'TRANSACTION_TYPE',
@@ -69,10 +70,12 @@ export const SERVICES_TYPE = {
   /** CHAT */
   CHAT_NOTI: 'chat_noti',
   LIST_CHAT: 'list_chat',
+  LIST_USER_CHAT: 'list_user_chat',
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
   GPS_LIST_STORE: 'gps_list_store',
+  GPS_LIST_SITE: 'gps_list_site',
 
   /** COMMUNICATION */
   CALL: 'call',
@@ -112,8 +115,26 @@ export const SERVICES_TYPE = {
   /** SOCIAL */
   SOCIAL: 'social',
   SOCIAL_GROUP: 'social_group',
+  SOCIAL_CREATE_POST: 'social_create_post',
 
   /** PROGRESS TRACKING */
   LIST_PROGRESS_TRACKING: 'list_progress_tracking',
   PROGRESS_TRACKING_DETAIL: 'progress_tracking_detail',
+
+  /** PROFILE */
+  PERSONAL_PROFILE: 'personal_profile',
+
+  /** AIRLINE TICKET */
+  AIRLINE_TICKET: 'airline_ticket',
+
+  /** AGENCY INFORMATION REGISTER */
+  AGENCY_INFORMATION_REGISTER: 'agency_information_register',
+
+  /** REQUESTS */
+  REQUESTS: 'requests',
+  CREATE_REQUEST: 'create_request',
+  REQUEST_DETAIL: 'request_detail',
+
+  /** Wallet */
+  WALLET: 'wallet',
 };

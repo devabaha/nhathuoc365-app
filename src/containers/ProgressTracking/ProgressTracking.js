@@ -38,7 +38,7 @@ const ProgressTracking = () => {
     try {
       const response = await getListProgressItemRequest.promise();
       if (!isMounted()) return;
-      console.log(response);
+
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {

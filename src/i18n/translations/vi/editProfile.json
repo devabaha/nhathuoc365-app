@@ -1,5 +1,8 @@
 {
   "sections": {
+    "quote": {
+      "title": "Quote"
+    },
     "fullName": {
       "title": "Họ & tên"
     },
@@ -26,6 +29,15 @@
     },
     "city": {
       "title": "Tỉnh/Thành phố"
+    },
+    "facebook": {
+      "title": "Facebook"
+    },
+    "youtube": {
+      "title": "Youtube"
+    },
+    "intro": {
+      "title": "Giới thiệu"
     }
   },
 
@@ -34,5 +46,12 @@
   "noChangeMessage": "Không có thông tin nào được thay đổi",
   "invalidEmailMessage": "Email của bạn không đúng định dạng",
 
-  "saveChanges": "Lưu thay đổi"
+  "saveChanges": "Lưu thay đổi",
+  "coverPicker": {
+    "title": "Thay đổi ảnh bìa",
+    "cancelTitle": "Huỷ bỏ",
+    "takePhotoTitle": "Chụp ảnh",
+    "chooseFromLibraryTitle": "Chọn ảnh từ thư viện",
+    "messageUpdateSuccessfully": "Thay đổi ảnh bìa thành công."
+  }
 }

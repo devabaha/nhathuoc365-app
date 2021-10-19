@@ -111,6 +111,10 @@ global.OBJECT_TYPE_KEY_CAMPAIGN = 'voucher_campaign';
 global.STATUS_VERIFYED = 1;
 global.CALLBACK_APP_UPDATING = 'CallBackUpdating';
 
+// voucher
+global.VOUCHER_STATUS_READY = 1;
+global.VOUCHER_STATUS_ERROR = 0;
+
 // cache
 global.STORE_CATEGORY_CACHE = 1000 * 60 * 5;
 global.STORE_CACHE = 1000 * 60 * 30;
@@ -120,6 +124,7 @@ global.STORAGE_INTRO_KEY = 'KeyStoreIntro';
 global.STORAGE_REF_KEY = 'KeyRefIntro';
 
 // stores
+global.FIRST_PAGE_STORES_LOAD_MORE = 31;
 global.STORES_LOAD_MORE = 30;
 global.STORE_DEMO_CODE = 'FH';
 global.KEY_EVENTS_STORE = 'KeyEventStore';
@@ -149,7 +154,7 @@ const XSMAX_HEIGHT = 896;
 const PAD_WIDTH = 768;
 const PAD_HEIGHT = 1024;
 const { height: D_HEIGHT, width: D_WIDTH } = Dimensions.get('window');
-global.HIT_SLOP = { tight: 10, left: 10, top: 10, bottom: 10 };
+global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
 
 global.isIPhoneX = (() => {
   if (Platform.OS === 'web') return false;
@@ -170,3 +175,16 @@ global.PAYMENT_METHOD_TYPES = {
 };
 
 global.REGEX_NUMBER_ONLY = /(?!\d+|-)\D*/g;
+
+global.MEMBERSHIP_TYPE = {
+  STANDARD: 0,
+  GOLD: 1,
+  PLATINUM: 2,
+  DIAMOND: 3
+};
+
+global.CUSTOMER_VALID = {
+  nguoi_lon: {min: 1, max: 9},
+  tre_em: {min: 0, max: 9},
+  tre_so_sinh: {min: 0, max: 2}
+}

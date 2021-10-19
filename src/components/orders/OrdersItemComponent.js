@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
 import {CART_TYPES} from 'src/constants/cart';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -87,19 +89,45 @@ class OrdersItemComponent extends Component {
     //     }
     //   })();
     // } else {
-    this._goOrdersItem(item);
+    switch (item.cart_type) {
+      case CART_TYPES.BOOKING:
+        this.goToBooking(item);
+        break;
+      default:
+        this._goOrdersItem(item);
+    }
     // }
+  }
+
+  goToBooking(order) {
+    const product =
+      order.primary_product ||
+      (order.products && Object.values(order.products)[0]);
+    if (!product) return;
+
+    Actions.push(appConfig.routes.booking, {
+      bookingId: order.id,
+      siteId: order.site_id,
+      attrs: product.attrs,
+      models: product.models,
+    });
   }
 
   _goOrdersItem(item) {
     if (this.props.disableGoDetail) return;
     store.setStoreData(item.site);
     // store.setCartData(item);
-    if (item.address_id != 0) {
+    if (item.address_id != 0 || item.status != CART_STATUS_ORDERING) {
       Actions.push(appConfig.routes.paymentConfirm, {
         goConfirm: true,
         data: item,
         from_page: 'orders_item',
+      });
+    } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
+      Actions.push(appConfig.routes.myAddress, {
+        redirect: 'confirm',
+        goBack: true,
+        isVisibleStoreAddress: true,
       });
     } else {
       Actions.create_address({
@@ -133,9 +161,12 @@ class OrdersItemComponent extends Component {
       case CART_TYPES.DROP_SHIP:
         iconName = 'truck';
         break;
+      case CART_TYPES.BOOKING:
+        iconName = 'calendar';
+        break;
     }
     return (
-      <Icon
+      <FontAwesomeIcon
         style={styles.orders_item_icon}
         name={iconName}
         size={16}
@@ -148,12 +179,15 @@ class OrdersItemComponent extends Component {
     var {item, t, index} = this.props;
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     const cartType = item.cart_type_name;
-    const deliveryCode =
-      item.delivery_details &&
-      (item.delivery_details.ship_unit || item.delivery_details.unit) +
-        ' - ' +
-        (item.delivery_details.ship_unit_id ||
-          item.delivery_details.booking_id);
+    // const POSCode =
+    //   item.pos_details &&
+    //   item.pos_details.pos_type + ' - ' + item.pos_details.pos_code;
+    // const deliveryCode =
+    //   item.delivery_details &&
+    //   (item.delivery_details.ship_unit || item.delivery_details.unit) +
+    //     ' - ' +
+    //     (item.delivery_details.ship_unit_id ||
+    //       item.delivery_details.booking_id);
 
     return (
       <TouchableHighlight
@@ -218,7 +252,7 @@ class OrdersItemComponent extends Component {
             <View style={styles.orders_item_content}>
               {item.orders_time != null && item.orders_time != '' && (
                 <View style={styles.orders_item_time_box}>
-                  <Icon
+                  <FontAwesomeIcon
                     style={styles.orders_item_icon}
                     name="clock-o"
                     size={12}
@@ -250,7 +284,21 @@ class OrdersItemComponent extends Component {
                 />
               )}
 
-              <View style={[styles.orders_item_time_box, styles.tagContainer]}>
+              {/* <View style={[styles.orders_item_time_box, styles.tagContainer]}>
+                {!!POSCode && (
+                  <Tag
+                    label={POSCode}
+                    fill={appConfig.colors.primary}
+                    animate={false}
+                    strokeWidth={0}
+                    labelStyle={styles.cartTypeLabel}
+                    labelContainerStyle={[
+                      styles.cartTypeLabelContainer,
+                      styles.tagsLabelContainer,
+                    ]}
+                  />
+                )}
+
                 {!!deliveryCode && (
                   <Tag
                     label={deliveryCode}
@@ -268,7 +316,7 @@ class OrdersItemComponent extends Component {
                     ]}
                   />
                 )}
-              </View>
+              </View> */}
 
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (
@@ -305,11 +353,17 @@ class OrdersItemComponent extends Component {
           </View>
 
           <View style={[styles.orders_item_payment]}>
-            {item.user_note != null && (
-              <View style={styles.orders_item_row}>
+            {!!item.user_note && (
+              <View style={[styles.orders_item_row, styles.noteContainer]}>
+                <FontAwesome5Icon
+                  style={styles.orders_item_icon}
+                  name="pen-square"
+                  size={15}
+                  color="#999999"
+                />
+
                 <Text
                   style={[styles.orders_item_content_label, styles.note_label]}>
-                  {`${t('item.note')}: `}
                   <Text
                     style={[
                       styles.orders_item_content_value,
@@ -464,7 +518,12 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginLeft: 4,
   },
-  note_label: {},
+  noteContainer: {
+    marginTop: 5,
+  },
+  note_label: {
+    marginLeft: 8,
+  },
   note_value: {
     fontWeight: '300',
   },
@@ -543,7 +602,11 @@ const ActionButton = React.memo(({title, onGoToStore}) => {
         onPress={onGoToStore}
         style={actionBtnStyles.btnContainer}>
         <Text style={actionBtnStyles.btnTitle}>
-          {title} <Icon name="angle-right" style={actionBtnStyles.btnTitle} />
+          {title}{' '}
+          <FontAwesomeIcon
+            name="angle-right"
+            style={actionBtnStyles.btnTitle}
+          />
         </Text>
       </TouchableHighlight>
     </View>

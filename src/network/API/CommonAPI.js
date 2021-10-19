@@ -97,6 +97,9 @@ class CommonAPI {
   get SITE_GET_TREE_CATEGORIES() {
     return BaseAPI.apiDomain + 'apiSite/get_tree_categories';
   }
+  get SITE_SET_STORE() {
+    return BaseAPI.apiDomain + 'apiSite/set_store';
+  }
 
   // Item
   get SITE_PRODUCT() {
@@ -148,6 +151,9 @@ class CommonAPI {
   }
   get SITE_CART_CANCELING() {
     return BaseAPI.apiDomain + 'apiCart/cancel';
+  }
+  get SITE_CART_EDIT_USER_NOTE() {
+    return BaseAPI.apiDomain + 'apiCart/edit_user_note';
   }
   get SITE_CART_ADDING() {
     return BaseAPI.apiDomain + 'apiSite/cartadding';
@@ -202,14 +208,17 @@ class CommonAPI {
   get USER_ADD_ADDRESS() {
     return BaseAPI.apiDomain + 'apiUser/add_address';
   }
+  get USER_DELETE_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/delete_address';
+  }
   get SITE_ADD_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/add_address';
   }
   get SITE_CART_ADDRESS() {
     return BaseAPI.apiDomain + 'apiSite/cartaddress';
   }
-  get USER_DELETE_ADDRESS() {
-    return BaseAPI.apiDomain + 'apiUser/delete_address';
+  get SITE_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiSite/address';
   }
 
   // Orders
@@ -267,6 +276,9 @@ class CommonAPI {
   // Notices
   get USER_NOTICE() {
     return BaseAPI.apiDomain + 'apiUser/notice';
+  }
+  get USER_READ_NOTICE() {
+    return BaseAPI.apiDomain + 'apiUser/read_notice';
   }
 
   // Notify
@@ -499,12 +511,108 @@ class CommonAPI {
     return BaseAPI.socialDomain + 'posts/store';
   }
 
+  get SOCIAL_POSTS_EDIT() {
+    return BaseAPI.socialDomain + 'posts/edit';
+  }
+
+  get SOCIAL_POSTS_DELETE() {
+    return BaseAPI.socialDomain + 'posts/delete';
+  }
+
+  get SOCIAL_COMMENTS_EDIT() {
+    return BaseAPI.socialDomain + 'comments/edit';
+  }
+
+  get SOCIAL_COMMENTS_DELETE() {
+    return BaseAPI.socialDomain + 'comments/delete';
+  }
+
   get USER_LIST_WARRANTY() {
     return BaseAPI.apiDomain + 'apiUser/warrantys';
   }
 
   get USER_WARRANTY_DETAIL() {
     return BaseAPI.apiDomain + 'apiUser/warranty_detail';
+  }
+
+  get USER_CREATE_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/create_conversation';
+  }
+
+  get USER_LIST_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_conversation';
+  }
+
+  get USER_LIST_CHAT_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiUser/list_chat_conversation';
+  }
+
+  get USER_SEND_MESSAGE() {
+    return BaseAPI.apiDomain + 'apiUser/send';
+  }
+
+  get SITE_USER_PROFILE() {
+    return BaseAPI.apiDomain + 'apiSite/user_profile';
+  }
+
+  get USER_UPLOAD_IMAGE() {
+    return BaseAPI.apiDomain + 'apiUser/upload_image';
+  }
+
+  get USER_DELETE_IMAGE() {
+    return BaseAPI.apiDomain + 'apiUser/delete_user_image';
+  }
+
+  get USER_UPLOAD_IMAGE_COVER() {
+    return BaseAPI.apiDomain + 'apiUser/upload_image_cover';
+  }
+
+  // Booking
+  get BOOKING_SHOW() {
+    return BaseAPI.apiDomain + 'apiBooking/show';
+  }
+
+  get BOOKING_GET_BOOKING_TIMES() {
+    return BaseAPI.apiDomain + 'apiBooking/get_booking_times';
+  }
+
+  get BOOKING_STORE() {
+    return BaseAPI.apiDomain + 'apiBooking/store';
+  }
+
+  get BOOKING_UPDATE() {
+    return BaseAPI.apiDomain + 'apiBooking/update';
+  }
+
+  get BOOKING_ORDER() {
+    return BaseAPI.apiDomain + 'apiBooking/order';
+  }
+
+  get BOOKING_CANCEL() {
+    return BaseAPI.apiDomain + 'apiBooking/cancel';
+  }
+
+  // Request
+  get SITE_REQUESTS_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_requests_room';
+  }
+  get SITE_REQUEST_TYPES_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_request_types_room';
+  }
+  get SITE_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/create_request_room';
+  }
+  get SITE_COMMENT_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/create_comment_request_room';
+  }
+  get SITE_DETAIL_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/get_detail_request_room';
+  }
+  get SITE_UPDATE_STATUS_REQUEST_ROOM() {
+    return BaseAPI.apiDomain + 'apiSite/update_status_request_room';
+  }
+  get SITE_UPDATE_REQUEST() {
+    return BaseAPI.apiDomain + 'apiSite/update_request';
   }
 }
 

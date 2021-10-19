@@ -1,7 +1,7 @@
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import store from '../store';
-import { servicesHandler, SERVICES_TYPE } from './servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from './servicesHandler';
 
 const touchedTabs = {};
 let productOpening = false;
@@ -15,10 +15,10 @@ function handleTabBarOnPress(props) {
 
       const service = {
         type: SERVICES_TYPE.OPEN_SHOP,
-        siteId: store.store_id || appConfig.defaultSiteId
+        siteId: store.store_id || appConfig.defaultSiteId,
       };
       servicesHandler(service, null, () => {
-        productOpening = false;
+        setTimeout(() => (productOpening = false), 500);
       });
 
       // APIHandler.site_info(store.store_id || appConfig.defaultSiteId)

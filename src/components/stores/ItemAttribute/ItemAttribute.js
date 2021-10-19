@@ -4,28 +4,27 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Animated,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
   Easing,
   SafeAreaView,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import store from 'app-store';
 import appConfig from 'app-config';
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import ModernList, {LIST_TYPE} from 'app-packages/tickid-modern-list';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NumberSelection from './NumberSelection';
-import Button from '../Button';
+import NumberSelection from '../NumberSelection';
+import Button from 'src/components/Button';
 import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import EventTracker from '../../helper/EventTracker';
-import DropShip from '../item/DropShip';
+import EventTracker from 'src/helper/EventTracker';
+import DropShip from '../../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import {PRODUCT_TYPES} from 'src/constants';
+import {ORDER_TYPES} from 'src/constants';
+import ProductInfo from './ProductInfo';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -36,97 +35,14 @@ const DISABLE_KEY = 'disabled';
 const MIN_QUANTITY = 1;
 
 class ItemAttribute extends PureComponent {
-  static propTypes = {};
-
-  static defaultProps = {};
-
-  state = {
+  static defaultProps = {
     product: {},
-    loading: false,
-    animateAvoidKeyboard: new Animated.Value(0),
-    viewData: [],
-    models: [],
-    selectedAttrs: [],
-    selectedModel: {},
-    selectedModelKey: '',
-    quantity: MIN_QUANTITY,
-    dropShipPrice: 0,
-  };
-  refModal = React.createRef();
-  unmounted = false;
-  eventTracker = new EventTracker();
-
-  get isDropShip() {
-    return this.props.isDropShip;
-  }
-
-  get hasAttrs() {
-    return Array.isArray(this.state.models) && this.state.models.length > 0;
-  }
-
-  componentDidMount() {
-    this.getAttrs();
-    this.eventTracker.logCurrentView();
-  }
-
-  componentWillUnmount() {
-    this.unmounted = true;
-    this.eventTracker.clearTracking();
-  }
-
-  getAttrs = async () => {
-    this.setState({loading: true});
-
-    try {
-      const response = await APIHandler.site_product_attrs(
-        store.store_data.id,
-        this.props.itemId,
-      );
-
-      if (!this.unmounted) {
-        if (response && response.status == STATUS_SUCCESS) {
-          if (response.data) {
-            if (response.data.product) {
-              this.setState({product: response.data.product});
-            }
-
-            if (response.data.models) {
-              this.setState({models: response.data.models});
-            }
-
-            if (response.data.attrs) {
-              const {viewData, selectedAttrs} = this.getBaseData(
-                response.data.attrs,
-                response.data.models,
-              );
-              this.setState({viewData, selectedAttrs}, () => {
-                const hasOnlyOneOption =
-                  Object.keys(response.data.attrs)?.length === 1 &&
-                  Object.values(response.data.attrs)[0]?.length === 1;
-
-                if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
-                  this.handlePressProductAttr(this.state.viewData[0].data[0]);
-                }
-              });
-            }
-          } else {
-            if (this.isDropShip) {
-              this.setState({product: this.props.product});
-            } else {
-              this.props.onSubmit();
-              Actions.pop();
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e + ' site_product_attrs');
-    } finally {
-      !this.unmounted && this.setState({loading: false});
-    }
   };
 
-  getBaseData = (attrs, models) => {
+  getBaseData = (attrs = {}, models = {}) => {
+    attrs || (attrs = {});
+    models || (models = {});
+
     const viewData = [];
     const selectedAttrs = [];
     attrs = Object.entries(attrs);
@@ -143,7 +59,11 @@ class ItemAttribute extends PureComponent {
       data = data.map((attr, i) => {
         let disabled = false;
 
-        if (attrs.length === 1) {
+        if (
+          attrs.length === 1 &&
+          (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
+            !!(this.state?.product || this.props.product)?.sale_in_stock)
+        ) {
           // disable if empty inventory ONLY IF product has only 1 attr.
           disabled = !!!Object.values(models).find(
             (model) => model.name === attr,
@@ -169,6 +89,129 @@ class ItemAttribute extends PureComponent {
     return {viewData, selectedAttrs};
   };
 
+  get initBaseData() {
+    return this.getBaseData(
+      this.props.product?.attrs,
+      this.props.product?.models,
+    );
+  }
+
+  state = {
+    product: this.props.product,
+    loading: false,
+    viewData: this.initBaseData.viewData,
+    models: this.props.product?.models || {},
+    selectedAttrs: this.initBaseData.selectedAttrs,
+    selectedModel: {},
+    selectedModelKey: '',
+    quantity: MIN_QUANTITY,
+    dropShipPrice: 0,
+
+    rawAttrs: {},
+    rawModels: [],
+  };
+  refModal = React.createRef();
+  unmounted = false;
+  eventTracker = new EventTracker();
+
+  get isDropShip() {
+    return this.props.isDropShip;
+  }
+
+  get hasAttrs() {
+    return Object.keys(this.state.models || {})?.length > 0;
+  }
+
+  get isDiscount() {
+    return this.hasAttrs
+      ? this.state.selectedModel?.price_before_discount !==
+          this.state.selectedModel?.price
+      : !!this.state.product?.discount_percent;
+  }
+
+  get listPrice() {
+    return this.hasAttrs
+      ? this.state.selectedModel?.origin_price || 0
+      : this.state?.product?.origin_price;
+  }
+
+  get dropShipPrice() {
+    return this.isDropShip && isConfigActive(CONFIG_KEY.FIX_DROPSHIP_PRICE_KEY)
+      ? this.listPrice
+      : this.state.dropShipPrice;
+  }
+
+  componentDidMount() {
+    !this.hasAttrs && !this.isDropShip && this.getAttrs();
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+    this.eventTracker.clearTracking();
+  }
+
+  getAttrs = async () => {
+    this.setState({loading: true});
+
+    try {
+      const response = await APIHandler.site_product_attrs(
+        store.store_data.id,
+        this.props.itemId,
+      );
+      console.log(response);
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          if (response.data) {
+            if (response.data.product) {
+              this.setState({product: response.data.product});
+            }
+
+            if (response.data.models) {
+              this.setState({models: response.data.models});
+            }
+
+            if (response.data.attrs) {
+              const {viewData, selectedAttrs} = this.getBaseData(
+                response.data.attrs,
+                response.data.models,
+              );
+
+              this.setState(
+                {
+                  viewData,
+                  selectedAttrs,
+                  rawAttrs: response.data.attrs,
+                  rawModels: response.data.models,
+                },
+                () => {
+                  const hasOnlyOneOption =
+                    Object.keys(response.data.attrs)?.length === 1 &&
+                    Object.values(response.data.attrs)[0]?.length === 1;
+
+                  if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+                    this.handlePressProductAttr(this.state.viewData[0].data[0]);
+                  }
+                },
+              );
+            }
+          } else {
+            if (this.isDropShip) {
+              this.setState({product: this.props.product});
+            } else {
+              this.props.onSubmit();
+              Actions.pop();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e + ' site_product_attrs');
+    } finally {
+      !this.unmounted && this.setState({loading: false});
+    }
+  };
+
   getSelectedAttrsViewData(numberSelectedAttrs) {
     return this.state.selectedAttrs.map((sAttr, index) =>
       sAttr.value
@@ -178,7 +221,28 @@ class ItemAttribute extends PureComponent {
   }
 
   getNumberSelectedAttrs(selectedAttrs) {
-    return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '').length;
+    return selectedAttrs.filter((sAttr) => sAttr[ATTR_KEY] !== '')?.length || 0;
+  }
+
+  getInfoBySelectedAttrs() {
+    const numberSelectedAttrs = this.getNumberSelectedAttrs(
+      this.state.selectedAttrs,
+    );
+    let modelIncludedAttrs = {};
+    if (numberSelectedAttrs) {
+      const selectedAttrsInModelFormat = this.getSelectedAttrsViewData(
+        numberSelectedAttrs,
+      );
+
+      modelIncludedAttrs =
+        Object.values(this.state.models || {}).find((model) => {
+          return selectedAttrsInModelFormat.every(
+            (attr) => model.name && model.name.includes(attr),
+          );
+        }) || {};
+    }
+
+    return {...modelIncludedAttrs};
   }
 
   handlePressProductAttr = (attr) => {
@@ -269,7 +333,11 @@ class ItemAttribute extends PureComponent {
       });
 
       if (possible) {
-        if (!models[key].inventory) {
+        if (
+          !models[key].inventory &&
+          (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
+            !!this.state.product?.sale_in_stock)
+        ) {
           let viewData = [...this.state.viewData];
           viewData.forEach((vData, index) => {
             if (index.toString() === willDisabledAttrGroupIndex) {
@@ -332,7 +400,7 @@ class ItemAttribute extends PureComponent {
     this.props.onSubmit(
       this.state.quantity,
       this.state.selectedModelKey,
-      this.state.dropShipPrice,
+      this.dropShipPrice,
     );
     this.handleClose();
   };
@@ -364,10 +432,10 @@ class ItemAttribute extends PureComponent {
     const numberSelectedAttrs = this.getNumberSelectedAttrs(
       this.state.selectedAttrs,
     );
+
     const disabled =
       (this.isDropShip &&
-        this.state.selectedModel &&
-        this.state.selectedModel.price_in_number > this.state.dropShipPrice) ||
+        this.state.selectedModel?.price_in_number > this.dropShipPrice) ||
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
@@ -377,31 +445,36 @@ class ItemAttribute extends PureComponent {
       disabled,
     };
 
+    const infoByAttrs = this.getInfoBySelectedAttrs();
+
     const imageUri = this.state.selectedModel.image
       ? this.state.selectedModel.image
-      : this.state.product.image;
+      : infoByAttrs.image
+      ? infoByAttrs.image
+      : this.state.product?.image;
 
     const isDropShipDisabled =
-      this.state.models.length !== 0 &&
-      !Object.keys(this.state.selectedModel).length;
+      this.hasAttrs && !Object.keys(this.state.selectedModel).length;
 
-    const priceDropShip =
-      this.state.models.length !== 0
+    const discountPrice = this.hasAttrs
+      ? this.state.selectedModel?.price_before_discount_view
+      : this.state.product?.discount_view;
+
+    const priceDropShip = this.hasAttrs
+      ? this.state.selectedModel.price_in_number
         ? this.state.selectedModel.price_in_number
-          ? this.state.selectedModel.price_in_number
-          : 0
-        : this.state.product?.price || 0;
+        : 0
+      : this.state.product?.price || 0;
 
-    const priceDropShipView =
-      this.state.models.length !== 0
-        ? this.state.selectedModel.price
-          ? this.state.selectedModel.price
-          : '-'
-        : this.state.product?.price_view || '-';
+    const priceDropShipView = this.hasAttrs
+      ? this.state.selectedModel.price
+        ? this.state.selectedModel.price_view
+        : '-'
+      : this.state.product?.price_view || '-';
 
     const price =
-      (this.state.selectedModel.price
-        ? this.state.selectedModel.price
+      (typeof this.state.selectedModel.price === 'number'
+        ? this.state.selectedModel.price_view
         : this.state.product.total_price_view) ||
       (this.isDropShip && this.state.product.price_view);
 
@@ -426,7 +499,10 @@ class ItemAttribute extends PureComponent {
 
     const isInventoryVisible =
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      this.state.product?.product_type !== PRODUCT_TYPES.SERVICE;
+      this.state.product?.order_type !== ORDER_TYPES.BOOKING;
+
+    const unitName =
+      this.state.product?.unit_name && this.state.product?.unit_name_view;
 
     return this.state.loading ? (
       <Loading loading />
@@ -435,52 +511,29 @@ class ItemAttribute extends PureComponent {
         ref={this.refModal}
         isOpen
         position="top"
-        onClosed={() => Actions.pop()}
+        onClosed={Actions.pop}
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <SafeAreaView style={[styles.safeView]}>
+        <View style={[styles.safeView]}>
           <TouchableWithoutFeedback onPress={this.handleClose}>
             <View style={{flex: 1}} />
           </TouchableWithoutFeedback>
 
-          <Animated.View style={[styles.optionListContainer]}>
+          <View style={[styles.optionListContainer]}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <View style={styles.header}>
-                <View
-                  style={[
-                    styles.imgContainer,
-                    imageUri || {
-                      backgroundColor: '#eee',
-                    },
-                  ]}>
-                  <CachedImage
-                    mutable
-                    source={{uri: imageUri}}
-                    style={styles.image}
-                  />
-                </View>
-                <View style={styles.info}>
-                  <View>
-                    <Text numberOfLines={2} style={styles.title}>
-                      {title}
-                    </Text>
-                    <Text numberOfLines={1} style={styles.note}>
-                      {subTitle}
-                    </Text>
-                  </View>
-                  <View>
-                    <Text style={styles.highlight}>{price}</Text>
-                    <Text style={styles.note}>
-                      {isInventoryVisible && (
-                        <>
-                          {`${t('attr.stock')}:`} <Text>{inventory}</Text>
-                        </>
-                      )}
-                    </Text>
-                  </View>
-                </View>
-              </View>
+              <ProductInfo
+                imageUri={imageUri}
+                title={title}
+                subTitle={subTitle}
+                discountPrice={
+                  this.isDiscount && !!discountPrice && discountPrice
+                }
+                price={price}
+                unitName={unitName}
+                inventory={isInventoryVisible && inventory}
+                headerStyle={{paddingTop: 35}}
+              />
             </TouchableWithoutFeedback>
 
             <TouchableOpacity
@@ -499,7 +552,9 @@ class ItemAttribute extends PureComponent {
               // keyboardDismissMode="on-drag"
               onStartShouldSetResponder={() => true}>
               {/* <View onStartShouldSetResponder={() => true}> */}
+
               {this.renderOptions()}
+
               {this.isDropShip && (
                 <DropShip
                   disabled={isDropShipDisabled}
@@ -508,6 +563,7 @@ class ItemAttribute extends PureComponent {
                   quantity={this.state.quantity}
                   min={MIN_QUANTITY}
                   max={maxQuantity}
+                  listPrice={this.listPrice}
                   onChangeNewPrice={(dropShipPrice) => {
                     this.setState({dropShipPrice});
                   }}
@@ -565,10 +621,10 @@ class ItemAttribute extends PureComponent {
               onPress={this.handleSubmit}
               {...btnProps}
             />
-          </Animated.View>
+          </View>
 
-          {appConfig.device.isIOS && <KeyboardSpacer />}
-        </SafeAreaView>
+          {appConfig.device.isIOS && <KeyboardSpacer topSpacing={15} />}
+        </View>
       </Modal>
     );
   }
@@ -645,9 +701,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: appConfig.device.isIOS ? 2 : -2,
   },
+  description: {
+    color: '#888',
+    fontSize: 14,
+    fontWeight: '400',
+  },
   note: {
     color: '#888',
     fontSize: 14,
+  },
+  deleteText: {
+    textDecorationLine: 'line-through',
+    marginTop: 4,
+    marginBottom: appConfig.device.isIOS ? 2 : 0,
   },
   separate: {
     height: 0.5,

@@ -5,23 +5,22 @@ import {
   Text,
   Image,
   ScrollView,
-  Dimensions,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import HTML from 'react-native-render-html';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
 import SiteEntity from '../../entity/SiteEntity';
 import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
 import styles from './styles';
+import Barcode from 'react-native-barcode-builder';
 
-const screenWidth = Dimensions.get('screen').width;
+const defaultListener = () => { };
 
-const defaultListener = () => {};
+const BARCODE_FORMAT = 'CODE128';
 
 class VoucherDetail extends Component {
   static propTypes = {
@@ -38,10 +37,10 @@ class VoucherDetail extends Component {
     canUseNow: PropTypes.bool,
     showLoading: PropTypes.bool,
     isUseOnlineMode: PropTypes.bool,
-    campaignPoint: PropTypes.number,
+    campaignPoint: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
-    addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+    addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   };
 
   static defaultProps = {
@@ -61,14 +60,14 @@ class VoucherDetail extends Component {
     campaignPoint: 0,
     campaign: undefined,
     addresses: undefined,
-    site: undefined
+    site: undefined,
   };
-
+  
   get totalPlaces() {
     let totalPlaces = 0;
     const addresses = Object.values(this.props.addresses);
     if (addresses.length > 0) {
-      addresses.forEach(places => (totalPlaces += places.length));
+      addresses.forEach((places) => (totalPlaces += places.length));
     }
     return totalPlaces;
   }
@@ -87,16 +86,14 @@ class VoucherDetail extends Component {
       <Accordion
         showChevron
         expandMultiple
-        containerStyle={styles.addressAccordion}
-      >
-        {Object.keys(this.props.addresses).map(provinceName => {
+        containerStyle={styles.addressAccordion}>
+        {Object.keys(this.props.addresses).map((provinceName) => {
           const places = this.props.addresses[provinceName];
           return (
             <Panel
               title={`${provinceName} (${places.length})`}
-              key={provinceName}
-            >
-              {places.map(place => (
+              key={provinceName}>
+              {places.map((place) => (
                 <AddressItem
                   key={place.data.id}
                   title={place.data.name}
@@ -110,7 +107,7 @@ class VoucherDetail extends Component {
                   onPressLocation={() =>
                     this.props.onPressAddressLocation({
                       latitude: place.data.latitude,
-                      longitude: place.data.longitude
+                      longitude: place.data.longitude,
                     })
                   }
                 />
@@ -129,8 +126,7 @@ class VoucherDetail extends Component {
         <Button
           containerStyle={[styles.getVoucherBtn, styles.removeVoucherBtn]}
           style={styles.getVoucherTitle}
-          onPress={this.props.onRemoveVoucherOnline}
-        >
+          onPress={this.props.onRemoveVoucherOnline}>
           {t('detail.useLater')}
         </Button>
       );
@@ -147,13 +143,12 @@ class VoucherDetail extends Component {
             } else {
               this.props.onGetVoucher(this.props.campaign);
             }
-          }}
-        >
+          }}>
           {this.props.canUseNow
             ? t('detail.useNow')
             : this.canBuyCampaign
-            ? t('detail.redeem')
-            : t('detail.getVoucher')}
+              ? t('detail.redeem')
+              : t('detail.getVoucher')}
         </Button>
       );
     }
@@ -162,19 +157,19 @@ class VoucherDetail extends Component {
   render() {
     const { t } = this.props;
     const campaign = this.props.campaign || { data: {} };
+
     const tabs = [
       <Tab
         key={1}
         heading={t('detail.tabs.information.title')}
         containerStyle={{
-          paddingBottom: 12
-        }}
-      >
+          paddingBottom: 12,
+        }}>
         <HTML
           html={campaign.data.content || '<span></span>'}
           computeEmbeddedMaxWidth={(availableWidth) => availableWidth - 32}
         />
-      </Tab>
+      </Tab>,
     ];
 
     if (this.hasAddress) {
@@ -190,7 +185,7 @@ class VoucherDetail extends Component {
           </View>
 
           {this.renderAddresses()}
-        </Tab>
+        </Tab>,
       );
     }
 
@@ -205,8 +200,7 @@ class VoucherDetail extends Component {
               refreshing={this.props.refreshing}
               onRefresh={this.props.onRefresh}
             />
-          }
-        >
+          }>
           <View style={styles.container}>
             <View style={styles.topImageWrapper}>
               <Image
@@ -222,15 +216,14 @@ class VoucherDetail extends Component {
               </View>
             </View>
 
-            <View style={[styles.row, styles.headerWrapper]}>
+            <View style={[styles.row, styles.headerWrapper, styles.contentWrapper]}>
               <Text style={styles.heading}>{campaign.data.title}</Text>
 
               <View
                 style={[
                   styles.exprireWrapper,
-                  this.canBuyCampaign && styles.canBuyCampaign
-                ]}
-              >
+                  this.canBuyCampaign && styles.canBuyCampaign,
+                ]}>
                 {this.canBuyCampaign ? (
                   <Fragment>
                     <View style={styles.voucherField}>
@@ -263,6 +256,19 @@ class VoucherDetail extends Component {
               </View>
             </View>
 
+            {!!campaign?.data?.code &&
+              <View style={[styles.contentWrapper, styles.barcodeContainer]}>
+                <Barcode
+                  width={2}
+                  height={60}
+                  value={campaign.data.code}
+                  format={BARCODE_FORMAT}
+                  lineColor={'#333'}
+                />
+                <View style={styles.containerCodeNumber}>
+                  <Text style={styles.codeNumber}>{campaign.data.code}</Text>
+                </View>
+              </View>}
             <View style={styles.contentWrapper}>
               <Tabs>{tabs}</Tabs>
             </View>

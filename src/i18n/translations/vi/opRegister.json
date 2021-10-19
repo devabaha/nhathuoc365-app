@@ -17,7 +17,8 @@
     },
     "referCode": {
       "title": "Mã giới thiệu",
-      "placeholder": "Điền số điện thoại người giới thiệu"
+      "placeholder": "Điền số điện thoại người giới thiệu",
+      "optional": "nếu có"
     },
     "province": {
       "title": "Tỉnh/Thành phố",

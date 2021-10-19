@@ -25,7 +25,9 @@
       "title": "Order information",
       "ordersCode": "Order code",
       "status": "Status",
-      "recheck": "Is this information correct??"
+      "recheck": "Is this information correct?",
+      "deliveryTitle": "Delivery information",
+      "POSTitle" : "POS information"
     },
     "address": {
       "title": "Delivery address"
@@ -39,6 +41,17 @@
       "description": "Delivery time, other notes",
       "placeholder": "Enter your note here",
       "noNote": "There are no notes"
+    },
+    "date": {
+      "title": "Date",
+      "unselected": "Unselected"
+    },
+    "time": {
+      "title": "Time"
+    },
+    "store": {
+      "title": "Store",
+      "unselected": "Unselected"
     },
     "items": {
       "selected": "Selected item(s)",
@@ -75,7 +88,8 @@
       }
     },
     "confirmOrder": "Continue",
-    "feedback": "Feedback",
+    "confirmTitle": "Confirm",
+    "feedback": "Feedback & rating",
     "addMoreItems": "Choose more items",
     "reorder": "Reorder",
     "edit": "Edit",

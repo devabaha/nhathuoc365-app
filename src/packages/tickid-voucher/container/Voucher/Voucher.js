@@ -48,13 +48,15 @@ class Voucher extends BaseContainer {
     config.route.push(config.routes.voucherDetail, {
       campaignId: campaign.data.id,
       from: this.props.from,
-      title: campaign.data.title
+      title: campaign.data.title,
+      forceReload: this.getListCampaigns
     });
   };
 
   handlePressMyVoucher = () => {
     config.route.push(config.routes.myVoucher, {
-      from: this.props.from
+      from: this.props.from,
+      forceReload: this.getListCampaigns
     });
   };
 

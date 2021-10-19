@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 
 import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
 
@@ -10,7 +10,7 @@ import {
   GridV2,
   GridV2o,
   GridH2o,
-} from '../../components/Social';
+} from 'src/components/Social/ListFeeds/Feeds/Post/GridImage';
 
 export const getImageRatio = (image = {width: 1, height: 1}) => {
   return (image.width || 1) / (image.height || 1);
@@ -61,10 +61,8 @@ export const getPostGridImagesType = (images = []) => {
 };
 
 export const renderGridImages = (images) => {
-  const gridType = useMemo(() => {
-    return getPostGridImagesType(images);
-  }, [images]);
-// console.log(images, gridType)
+  const gridType = getPostGridImagesType(images);
+
   switch (gridType) {
     case GRID_IMAGES_LAYOUT_TYPES.VERTICAL_2_ONLY:
       return <GridV2o images={images} />;

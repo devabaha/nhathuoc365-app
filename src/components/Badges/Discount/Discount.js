@@ -10,11 +10,15 @@ class Discount extends Component {
     tailSpace: 0,
     containerStyle: {},
     contentContainerStyle: {},
+    backgroundColor: appConfig.colors.sale,
   };
   state = {};
   render() {
     const extraStyle = {
       [this.props.right ? 'right' : 'left']: -this.props.tailSpace,
+    };
+    const extraContainerStyle = {
+      backgroundColor: this.props.backgroundColor,
     };
     const tailStyle = {
       borderTopWidth: this.props.tailSpace,
@@ -23,13 +27,20 @@ class Discount extends Component {
       borderRightColor: 'transparent',
       bottom: -this.props.tailSpace,
       [this.props.right ? 'right' : 'left']: 0,
+      borderTopColor: LightenColor(this.props.backgroundColor, -30),
     };
 
     return (
       <View style={[styles.container, extraStyle, this.props.containerStyle]}>
         <View
-          style={[styles.content_wrapper, this.props.contentContainerStyle]}>
-          <Text style={[styles.content, this.props.contentStyle]}>{this.props.label}</Text>
+          style={[
+            styles.content_wrapper,
+            extraContainerStyle,
+            this.props.contentContainerStyle,
+          ]}>
+          <Text style={[styles.content, this.props.contentStyle]}>
+            {this.props.label}
+          </Text>
         </View>
         <View style={[styles.tail, tailStyle]} />
       </View>
@@ -45,11 +56,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content_wrapper: {
-    backgroundColor: appConfig.colors.sale,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   content: {
     color: '#fff',
@@ -60,7 +70,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: 0,
     height: 0,
-    borderTopColor: LightenColor(appConfig.colors.sale, -30),
     borderLeftColor: 'transparent',
   },
 });

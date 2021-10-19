@@ -9,7 +9,7 @@ import {
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
+import {initialize as initializeRadaModule} from '@tickid/tickid-rada';
 import firebaseAnalytics from '@react-native-firebase/analytics';
 import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
@@ -65,7 +65,7 @@ class Store {
     clearInterval(this._timeGetNotify);
     this._timeGetNotify = setInterval(() => {
       if (this.getNotifyFlag) {
-        this.getNoitify();
+        this.getNotify();
       }
     }, DELAY_UPDATE_NOTICE);
 
@@ -91,10 +91,11 @@ class Store {
     }
   }
 
-  getNoitify = async () => {
+  getNotify = async () => {
     this.getNotifyFlag = false;
     try {
       const response = await APIHandler.user_notify();
+
       if (response.status === STATUS_LOGIN_FAIL) {
         const isExecuteLogout = !this.logoutExceptionScene.includes(
           Actions.currentScene,
@@ -126,19 +127,23 @@ class Store {
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
-          const {user, ...notifies} = response.data;
+          const {user, account_menu, ...notifies} = response.data;
           this.initConfigRadaModule(user);
-          if (!equal(user, this.user_info)) {
+          if (!equal(user, toJS(this.user_info))) {
             this.setUserInfo(user);
           }
 
-          if (!equal(notifies, this.notify)) {
+          if (!equal(account_menu, toJS(this.accountMenu))) {
+            this.setAccountMenu(account_menu);
+          }
+
+          if (!equal(notifies, toJS(this.notify))) {
             this.setNotify(notifies);
           }
         })();
       }
     } catch (error) {
-      console.log(error);
+      console.log('store_get_notify', error);
     } finally {
       this.getNotifyFlag = true;
     }
@@ -231,16 +236,31 @@ class Store {
     Events.trigger(KEY_BOARD_HIDE);
   }
 
+  @observable accountMenu = [];
+  @action setAccountMenu(accountMenu = []) {
+    this.accountMenu = accountMenu;
+  }
+
   /*********** notify **********/
   @observable notify = {
-    new_notice: 0,
-    new_site_news: 0,
-    new_sys_news: 0,
-    new_totals: 0,
-    customer_card_wallet: 0,
-    updating_version: 0,
-    new_version: '',
-    url_update: '',
+    // new_notice: 0,
+    // notify_list_notice: 0,
+    // new_site_news: 0,
+    // new_sys_news: 0,
+    // new_totals: 0,
+    // updating_version: 0,
+    // new_version: "",
+    // url_update: "",
+    // get list values of SERVICE_TYPE to format {[value]: 0, ...}
+    // ...Object.values(SERVICES_TYPE)
+    //   .map((type) => ({
+    //     [type]: 0,
+    //   }))
+    //   .reduce(function(result, item) {
+    //     const key = Object.keys(item)[0];
+    //     result[key] = item[key];
+    //     return result;
+    //   }, {}),
   };
   @observable notify_chat = {};
   @observable notify_admin_chat = {};
@@ -251,12 +271,14 @@ class Store {
 
   @action setNotify(data) {
     if (!!data && typeof data === 'object') {
-      const isNotifyUpdated = is1LevelObjectUpdated(this.notify, data);
+      const isNotifyUpdated = !equal(this.notify, data);
+
       if (isNotifyUpdated) {
         this.notify = {
           ...this.notify,
-          ...data
+          ...data,
         };
+
         Events.trigger(CALLBACK_APP_UPDATING, data);
       }
     }
@@ -386,6 +408,7 @@ class Store {
     }
 
     this.cart_data = data;
+    this.setUserCartNote(data.user_note);
 
     // object to array and reverse stack
     if (data && Object.keys(data.products).length > 0) {
@@ -557,7 +580,7 @@ class Store {
 
   @observable homeStatusBar = {
     barStyle: 'light-content',
-    backgroundColor: appConfig.colors.primary
+    backgroundColor: appConfig.colors.primary,
   };
 
   @action setHomeBarStyle(barStyle) {
@@ -586,9 +609,12 @@ class Store {
     this.ignoreChangeDomain = ignoreChangeDomain;
   }
 
-  @observable apiDomain = '';
-  @action setBaseAPIDomain(apiDomain) {
-    this.apiDomain = apiDomain;
+  @observable baseDomains = [];
+  @action setBaseDomains(domains) {
+    this.baseDomains = domains;
+  }
+  @action updateBaseDomain(index, domain) {
+    this.baseDomains[index] = domain;
   }
 
   @observable isUpdateOrders = false;
@@ -596,16 +622,20 @@ class Store {
     this.isUpdateOrders = isUpdateOrders;
   }
 
-  @action logOut(userInfo) {
+  @observable isUpdateNotify = false;
+  @action setUpdateNotify(isUpdateNotify) {
+    this.isUpdateNotify = isUpdateNotify;
+  }
+
+  @action async logOut(userInfo) {
     this.setUserInfo(userInfo);
     this.resetCartData();
     this.setRefreshHomeChange(this.refresh_home_change + 1);
     this.setOrdersKeyChange(this.orders_key_change + 1);
     this.resetAsyncStorage();
 
-    const isFirebaseSignedIn = !!firebaseAuth().currentUser;
-    if (isFirebaseSignedIn) {
-      firebaseAuth().signOut();
+    if (!!firebaseAuth().currentUser) {
+      await firebaseAuth().signOut();
     }
   }
 
@@ -637,6 +667,20 @@ class Store {
     this.socialPosts.replace(new Map());
   }
 
+  @observable socialProducts = observable.map(new Map());
+  @action setSocialProducts(socialProducts = {}) {
+    this.socialProducts.merge(socialProducts);
+  }
+
+  @action updateSocialProducts(id, data = {}) {
+    let temp = this.socialProducts.get(id) || {};
+    this.socialProducts.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialProducts() {
+    this.socialProducts.replace(new Map());
+  }
+
   @observable socialPostingData = {};
   @action setSocialPostingData(data = {}) {
     this.socialPostingData = data;
@@ -648,6 +692,7 @@ class Store {
     formatPostStoreData = (data) => {
       return data;
     },
+    editMode = false,
   ) {
     this.setSocialPostingData({...data, progress: 0});
     this.updateSocialPost(data.id, formatPostStoreData(data));
@@ -669,6 +714,7 @@ class Store {
       try {
         const response = await APIHandler.social_create_post(
           postParams,
+          editMode ? data.id : '',
         ).promise();
 
         if (response) {
@@ -707,13 +753,22 @@ class Store {
 
     if (data?.images?.length) {
       let imagesProgress = [];
-      let images = Array.from({length: data.images.length});
+      const listUploadImage = data.images.filter((image) => !!image.uri);
+      const listNotUploadImage = data.images.map((image) => {
+        return !image.uploadPath && !image.path ? image : undefined;
+      });
+
+      if (!listUploadImage.length) {
+        postData({...data, images: data.images});
+        return;
+      }
+      let images = Array.from({length: listUploadImage.length});
       let totalUploaded = 0;
       const requests = uploadImages(
         APIHandler.url_user_upload_image(),
-        data.images,
+        listUploadImage,
         (progress, image, index) => {
-          imagesProgress[index] = progress * (100 / data.images.length);
+          imagesProgress[index] = progress * (100 / listUploadImage.length);
           this.setSocialPostingData({
             ...this.socialPostingData,
             progress: imagesProgress.reduce(
@@ -731,9 +786,14 @@ class Store {
             height: image.height,
           };
 
-          if (totalUploaded === data.images.length) {
+          if (totalUploaded === listUploadImage.length) {
             if (images.every((image) => !!image?.name)) {
-              postData({...data, images});
+              listNotUploadImage.forEach((img, index) => {
+                if (img === undefined) {
+                  listNotUploadImage[index] = images.splice(0, 1)[0];
+                }
+              });
+              postData({...data, images: listNotUploadImage});
             } else {
               this.setSocialPostingData({
                 ...this.socialPostingData,
@@ -757,9 +817,51 @@ class Store {
     }
   }
 
-  @observable selectedNewsId = "";
-  @action setSelectedNewsId(selectedNewsId = ""){
+  @observable selectedNewsId = '';
+  @action setSelectedNewsId(selectedNewsId = '') {
     this.selectedNewsId = selectedNewsId;
+  }
+
+  @observable place_data = null;
+  @observable place_data_static = null;
+
+  @action setPlaceData(data) {
+    this.place_data = data;
+  }
+
+  @action setPlaceDataStatic(data) {
+    this.place_data_static = data;
+  }
+
+  @observable site_data = null;
+
+  @action setSiteData(data) {
+    this.site_data = data;
+  }
+
+  async getAirportData(data) {
+    try {
+      var response = await APIHandler.search_airport(data);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          if (this.place_data == null) {
+            this.setPlaceDataStatic(response.data);
+          }
+          this.setPlaceData(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+    }
+  }
+
+  @computed get formattedList() {
+    return this.place_data
+      ?.map((v) => {
+        return {title: v.title, data: v.data.slice()};
+      })
+      .slice();
   }
 }
 

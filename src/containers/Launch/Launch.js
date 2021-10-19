@@ -104,8 +104,8 @@ class Launch extends Component {
         break;
       case STATUS_SYNC_FLAG:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
-        Actions.replace(appConfig.routes.gpsStoreLocation);
+        store.setAnalyticsUser(user);
+        Actions.replace(appConfig.routes.rootGpsStoreLocation);
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);

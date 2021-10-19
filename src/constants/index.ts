@@ -1,5 +1,6 @@
 import {ANALYTICS_EVENTS_NAME, formatViewEvents} from './analytics';
 import {PRODUCT_TYPES} from './product';
+import {ORDER_TYPES} from './orders';
 import appConfig from 'app-config';
 
 const LOGIN_MODE = {
@@ -19,18 +20,13 @@ export {
   LOGIN_MODE,
   LOGIN_STEP,
   PRODUCT_TYPES,
+  ORDER_TYPES,
 };
 
 // Use with Ionicons.
 export const BACK_NAV_ICON_NAME = appConfig.device.isIOS
   ? 'ios-chevron-back'
   : 'md-arrow-back';
-
-/**
- *  Will delete when merge issue/making_themes
- *  -- start --
- * @deprecated
- * */
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -64,7 +60,21 @@ export const BUNDLE_ICON_SETS = {
   SimpleLineIcons,
 };
 
-// -- end --
+export type BUNDLE_ICON_SETS_NAME =
+  | 'AntDesign'
+  | 'Entypo'
+  | 'EvilIcons'
+  | 'Feather'
+  | 'FontAwesome'
+  | 'FontAwesome5'
+  | 'Fontisto'
+  | 'Foundation'
+  | 'Ionicons'
+  | 'MaterialIcons'
+  | 'MaterialCommunityIcons'
+  | 'Octicons'
+  | 'Zocial'
+  | 'SimpleLineIcons';
 
 export const BUNDLE_ICON_SETS_NAME = {
   AntDesign: 'AntDesign',
@@ -87,3 +97,12 @@ export const MAX_DRAWER_WIDTH = 350;
 export const BASE_DRAWER_WIDTH = appConfig.device.width * 0.8;
 export const DRAWER_WIDTH =
   BASE_DRAWER_WIDTH > MAX_DRAWER_WIDTH ? MAX_DRAWER_WIDTH : BASE_DRAWER_WIDTH;
+
+export const REQUEST_TYPE = {
+  WARRANTY: 'warranty',
+};
+
+export const GPS_LIST_TYPE = {
+  GPS_LIST_SITE: 'gps_list_site',
+  GPS_LIST_STORE: 'gps_list_store',
+};

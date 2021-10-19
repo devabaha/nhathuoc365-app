@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
+
+import appConfig from 'app-config';
+import {servicesHandler, SERVICES_TYPE} from '../../../helper/servicesHandler';
+
 import HomeCardList, {
   HomeCardItem,
 } from '../../../components/Home/component/HomeCardList';
 import {Request} from '../../Requests';
 import {Bill, QuickPayment} from '../../Bills';
-import {servicesHandler, SERVICES_TYPE} from '../../../helper/servicesHandler';
 
 class Body extends Component {
   state = {};
@@ -63,13 +66,12 @@ class Body extends Component {
             {({item, index}) => (
               <Bill
                 disabled
-                containerStyle={styles.bill}
+                wrapperStyle={styles.bill}
                 status={item.status}
                 title={item.title}
                 period={item.payment_period}
                 price={item.price_view}
                 onPress={() => this.props.onPressBill(item)}
-                last={this.props.bills.length - 1 === index}
               />
             )}
           </HomeCardList>
@@ -95,7 +97,8 @@ class Body extends Component {
                 noti={item.unread}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
-                wrapperStyle={{marginVertical: 0}}
+                wrapperStyle={styles.requestWrapper}
+                containerStyle={styles.requestContainer}
               />
             )}
           </HomeCardList>
@@ -164,18 +167,28 @@ class Body extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#eee',
+    backgroundColor: appConfig.colors.sceneBackground,
   },
   bill: {
-    width: 205,
+    minWidth: 250,
+    maxWidth: appConfig.device.width * 0.8,
+  },
+  requestWrapper: {
+    width: undefined,
+    maxWidth: appConfig.device.width * 0.8,
+  },
+  requestContainer: {
+    borderWidth: 1,
+    borderColor: appConfig.colors.border,
+    borderRadius: 8,
   },
   homeCardContainer: {
     backgroundColor: '#fff',
     paddingTop: 15,
-    paddingBottom: 10
   },
   homeCardContent: {
-    paddingHorizontal: 0,
+    paddingLeft: 0,
+    paddingRight: 15,
   },
 });
 
