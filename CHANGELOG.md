@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
 - [CU-1mtfept] Not showing data when auto scrolling to the selected item by [minhnguyenit14@gmail.com].
+- Creating address is duplicated in CreateAddress by [lamah.dev@gmail.com].
 
 ## [r12.1.4]
 ### Added
