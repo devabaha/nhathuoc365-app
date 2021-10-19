@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
 ### Changed
 - [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
 - [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
