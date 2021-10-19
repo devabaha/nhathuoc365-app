@@ -369,7 +369,7 @@ class DomainSelector extends Component {
                 DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
           )?.title || '';
 
-          this.setState({localStorageDomains});
+        this.setState({localStorageDomains});
         this.onChangeDomainName(
           DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
           autoSelectedAPIDomainName,
@@ -902,6 +902,7 @@ class DomainSelector extends Component {
           parentRef={this.refAPIDomainInput}
           data={API_DOMAIN_OPTIONS}
           show={this.state[DOMAIN_ATTRIBUTE.API_DOMAIN.isShowSelectorParamName]}
+          useParentWidth
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
               DOMAIN_ATTRIBUTE.API_DOMAIN.domainParamName,
@@ -917,6 +918,7 @@ class DomainSelector extends Component {
           show={
             this.state[DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.isShowSelectorParamName]
           }
+          useParentWidth
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
               DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName,
@@ -932,6 +934,7 @@ class DomainSelector extends Component {
           show={
             this.state[DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.isShowSelectorParamName]
           }
+          useParentWidth
           onSelect={(domain) =>
             this.handleSelectAPIDomain(
               DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName,

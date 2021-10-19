@@ -1,10 +1,4 @@
-import React, {
-  MutableRefObject,
-  useState,
-  useRef,
-  useEffect,
-  isValidElement,
-} from 'react';
+import React, {MutableRefObject, useState, useEffect} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -12,29 +6,21 @@ import {
   View,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {
-  useValues,
-  timing as timingRedash,
-  delay,
-  transformOrigin,
-  useClocks,
-  TimingParams,
-} from 'react-native-redash';
+import {useValues, useClocks} from 'react-native-redash';
 import Animated, {
   Easing,
   useCode,
   block,
   cond,
   set,
-  not,
   call,
   startClock,
   stopClock,
-  clockRunning,
   timing,
   eq,
   concat,
-  Extrapolate,
+  clockRunning,
+  neq,
 } from 'react-native-reanimated';
 import AwesomeComboItem from './AwesomeComboItem';
 import appConfig from 'app-config';
@@ -43,7 +29,7 @@ import useIsMounted from 'react-is-mounted-hook';
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    zIndex: 999,
+    zIndex: 9999,
     maxWidth: appConfig.device.width * 0.6,
   },
   container: {
@@ -56,6 +42,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 7,
     overflow: 'hidden',
+  },
+  mask: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 9990,
   },
 });
 const PADDING_STANDARD = 15;
@@ -72,6 +62,7 @@ type AwesomeComboPosition = {
 type AwesomeComboProps = {
   data: Array<AwesomeComboItem>;
   show: boolean;
+  useParentWidth: boolean;
   /**
    * [Android] Require props collapsable={false} or implement onLayout
    * in the View or parent component to make `measure()` return values
@@ -112,6 +103,7 @@ function runTiming(
   };
 
   return block([
+    cond(clockRunning(clock), [], startClock(clock)),
     timing(clock, state, config),
     cond(
       eq(state.finished, 1),
@@ -131,20 +123,19 @@ function AwesomeCombo({
   show = false,
   parentRef,
   position = {x: 0, y: 0, width: undefined},
+  useParentWidth = false,
   renderCustomItem,
   onSelect,
   onClose = () => {},
 }: AwesomeComboProps) {
   const isMounted = useIsMounted();
-  const refAwesomeCombo = useRef<any>();
   const [containerPosition, setContainerPosition] = useState(position);
   const [visible, setVisible] = useState(show);
-  const [
-    animatedOpacity,
-    animatedHeight,
-    animatedTranslateX,
-    isShow,
-  ] = useValues(0, 0, -5, 0);
+  const [animatedOpacity, animatedHeight, animatedTranslateX] = useValues(
+    0,
+    0,
+    0,
+  );
   const [opacityClock, heightClock] = useClocks(2);
 
   useEffect(() => {
@@ -153,45 +144,29 @@ function AwesomeCombo({
     }
   }, [show]);
 
+  useCode(
+    () => [
+      set(
+        animatedOpacity,
+        runTiming(
+          opacityClock,
+          200,
+          animatedOpacity,
+          show ? 1 : 0,
+          onFinishHeightAnimation,
+        ),
+      ),
+    ],
+    [show],
+  );
+
   const onFinishHeightAnimation = (position) => {
     if (!isMounted()) return;
 
-    if (!position) {
+    if (!position && visible) {
       setVisible(false);
     }
   };
-
-  useCode(() => set(isShow, show ? 1 : 0), [show]);
-
-  useCode(
-    () =>
-      block([
-        startClock(opacityClock),
-        set(
-          animatedOpacity,
-          runTiming(opacityClock, 200, animatedOpacity, show ? 1 : 0),
-        ),
-      ]),
-    [show],
-  );
-
-  useCode(
-    () =>
-      block([
-        startClock(heightClock),
-        set(
-          animatedHeight,
-          runTiming(
-            heightClock,
-            300,
-            animatedHeight,
-            show ? 100 : 0,
-            onFinishHeightAnimation,
-          ),
-        ),
-      ]),
-    [show],
-  );
 
   function renderItem(item: AwesomeComboItem, index: number) {
     return renderCustomItem ? (
@@ -213,7 +188,6 @@ function AwesomeCombo({
       width: containerWidth,
       height: containerHeight,
     } = e.nativeEvent.layout;
-    // const { x: parentX, y: parentY } = this.props.position;
     const {width: appWidth, height: appHeight} = Dimensions.get('window');
 
     if (parentRef.current) {
@@ -233,7 +207,7 @@ function AwesomeCombo({
                 (containerWidth - (appWidth - pageX)) -
                 PADDING_STANDARD,
               y: pageY + height + PADDING_STANDARD,
-              width: undefined,
+              width,
             });
           } else {
             setContainerPosition({
@@ -251,7 +225,7 @@ function AwesomeCombo({
     visible && (
       <>
         <TouchableWithoutFeedback onPress={onClose}>
-          <View style={{...StyleSheet.absoluteFillObject}} />
+          <View style={styles.mask} />
         </TouchableWithoutFeedback>
         <View
           pointerEvents="box-none"
@@ -268,17 +242,23 @@ function AwesomeCombo({
             style={[
               styles.container,
               {
-                width: containerPosition.width,
+                width: useParentWidth ? containerPosition.width : undefined,
                 opacity:
                   containerPosition.width !== undefined ? animatedOpacity : 0,
-                // transform: [{translateX: animatedTranslateX}],
+                transform: [{translateX: animatedTranslateX}],
               },
             ]}>
             <Animated.View
               style={[
                 styles.mainContent,
                 {
-                  height: concat(animatedHeight, '%'),
+                  height: concat(
+                    animatedOpacity.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 100],
+                    }),
+                    '%',
+                  ),
                 },
               ]}>
               {data.map((item: AwesomeComboItem, index: number) =>
@@ -292,4 +272,15 @@ function AwesomeCombo({
   );
 }
 
-export default React.memo(AwesomeCombo);
+const areEquals = (prevProps, nextProps) => {
+  return (
+    prevProps.show === nextProps.show &&
+    prevProps.data === nextProps.data &&
+    prevProps.show === nextProps.show &&
+    prevProps.parentRef === nextProps.parentRef &&
+    prevProps.position === nextProps.position &&
+    prevProps.useParentWidth === nextProps.useParentWidth
+  );
+};
+
+export default React.memo(AwesomeCombo, areEquals);

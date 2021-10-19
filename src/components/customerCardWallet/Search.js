@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PropTypes from 'prop-types';
-import {CardWallet} from './CardWallet';
+import CardWallet from './CardWallet';
 import appConfig from 'app-config';
 
 class Search extends Component {
