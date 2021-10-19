@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import NormalList from './NormalList';
 import TagList from './TagList';
-import { LIST_TYPE } from '../constants';
+import {LIST_TYPE} from '../constants';
 import Animated from 'react-native-reanimated';
 
 class ModernListComponent extends Component {
@@ -10,13 +10,16 @@ class ModernListComponent extends Component {
 
   renderHeader() {
     return (
-      <View style={[styles.headerContent]}>
+      <TouchableOpacity
+        style={[styles.headerContent]}
+        disabled={!this.props.onHeaderPress}
+        onPress={this.props.onHeaderPress}>
         {this.props.headerLeftComponent}
         <Text style={[styles.headerTitle, this.props.headerTitleStyle]}>
           {this.props.headerTitle}
         </Text>
         {this.props.headerRightComponent}
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -33,7 +36,7 @@ class ModernListComponent extends Component {
       renderItem: this.props.renderItem,
       extraData: this.props.extraData,
       listEmptyComponent: this.props.listEmptyComponent,
-      scrollEnabled: this.props.scrollEnabled
+      scrollEnabled: this.props.scrollEnabled,
     };
     switch (this.props.type) {
       case LIST_TYPE.NORMAL:
@@ -57,8 +60,7 @@ class ModernListComponent extends Component {
 
         <Animated.View
           style={[styles.container, styles.body, this.props.bodyWrapperStyle]}
-          onLayout={this.props.onBodyLayout}
-        >
+          onLayout={this.props.onBodyLayout}>
           {body}
         </Animated.View>
       </Animated.View>
@@ -74,20 +76,20 @@ const styles = StyleSheet.create({
   headerWrapper: {
     paddingTop: 10,
     paddingBottom: 7,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   headerContent: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 16,
     flex: 1,
-    color: '#555'
+    color: '#555',
   },
   body: {
-    overflow: 'hidden'
-  }
+    overflow: 'hidden',
+  },
 });
 
 export default ModernListComponent;

@@ -71,6 +71,7 @@ class ModernList extends Component {
         headerLeftComponent={this.props.headerLeftComponent}
         renderItem={this.props.renderItem}
         onPressItem={this.props.onPressItem}
+        onHeaderPress={this.props.onHeaderPress} 
         onBodyLayout={this.props.onBodyLayout}
         activeStyle={this.props.activeStyle}
         activeTextStyle={this.props.activeTextStyle}
