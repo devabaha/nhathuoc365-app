@@ -334,7 +334,8 @@ class Item extends Component {
     const {t} = this.props;
     try {
       const response = await APIHandler.site_product(store.store_id, item.id);
-      console.log(response);
+      if (this.unmounted) return;
+
       if (response && response.status == STATUS_SUCCESS) {
         const productSocialFormat = this.getProductWithSocialFormat(
           response.data,
@@ -348,7 +349,7 @@ class Item extends Component {
             calculateLikeCountFriendly(productSocialFormat) || 0,
         });
         // delay append data
-        setTimeout(() => {
+        // setTimeout(() => {
           if (isIOS) {
             layoutAnimation();
           }
@@ -370,9 +371,6 @@ class Item extends Component {
               item_data: response.data,
               images: images,
               like_flag: response.data.like_flag,
-              loading: false,
-              refreshing: false,
-              like_loading: false,
             },
             () => {
               // cache in five minutes
@@ -383,7 +381,12 @@ class Item extends Component {
               });
             },
           );
-        }, delay || this._delay());
+        // }, delay || this._delay());
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('common:api.error.message'),
+        });
       }
     } catch (e) {
       console.log(e + ' site_product');
@@ -391,6 +394,13 @@ class Item extends Component {
         type: 'danger',
         message: t('common:api.error.message'),
       });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+          like_loading: false,
+          refreshing: false,
+        });
     }
   }
 

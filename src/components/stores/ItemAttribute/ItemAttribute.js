@@ -451,7 +451,7 @@ class ItemAttribute extends PureComponent {
       ? this.state.selectedModel.image
       : infoByAttrs.image
       ? infoByAttrs.image
-      : this.state.product.image;
+      : this.state.product?.image;
 
     const isDropShipDisabled =
       this.hasAttrs && !Object.keys(this.state.selectedModel).length;
@@ -473,7 +473,7 @@ class ItemAttribute extends PureComponent {
       : this.state.product?.price_view || '-';
 
     const price =
-      (this.state.selectedModel.price
+      (typeof this.state.selectedModel.price === 'number'
         ? this.state.selectedModel.price_view
         : this.state.product.total_price_view) ||
       (this.isDropShip && this.state.product.price_view);
