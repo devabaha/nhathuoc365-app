@@ -813,7 +813,11 @@ class TickidChat extends Component {
         if (!supported) {
           console.error('No handler for URL:', url);
         } else {
-          Linking.openURL(url);
+          // Linking.openURL(url);
+          Actions.push(appConfig.routes.modalWebview, {
+            url: url,
+            title: url,
+          });
         }
       });
     }
