@@ -21,6 +21,7 @@ import HorizontalInfoItem from '../account/HorizontalInfoItem';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { INPUT_ADDRESS_TYPE } from 'src/helper/configKeyHandler/configKeyHandler';
 import { COMBO_LOCATION_TYPE } from '../ModalComboLocation/constants';
+
 class CreateAddress extends Component {
   constructor(props) {
     super(props);
@@ -589,8 +590,8 @@ class CreateAddress extends Component {
     var is_go_confirm = this.props.redirect == 'confirm';
     const { t } = this.props;
 
-    const disabled = this.disabled;
-
+    const disabled = this.state.finish_loading || this.disabled;
+    
     return (
       <>
         <View style={styles.container}>
