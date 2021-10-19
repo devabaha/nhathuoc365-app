@@ -1,25 +1,26 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 
 import appConfig from 'app-config';
 
 export default class ListHeader extends Component {
   render() {
-    let { title, alignLeft, containerStyle } = this.props;
+    let {title, alignLeft, containerStyle, titleStyle} = this.props;
 
     return (
       <View
         style={[
           styles.store_heading_box,
           {
-            alignItems: alignLeft ? 'flex-start' : 'center'
+            alignItems: alignLeft ? 'flex-start' : 'center',
           },
-          containerStyle
-        ]}
-      >
-        {!!title && <Text style={styles.store_heading_title}>{title}</Text>}
+          containerStyle,
+        ]}>
+        {!!title && (
+          <Text style={[styles.store_heading_title, titleStyle]}>{title}</Text>
+        )}
       </View>
     );
   }
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   store_heading_title: {
     fontSize: 14,
@@ -38,5 +39,5 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     textAlign: 'center',
     ...appConfig.styles.typography.heading3,
-  }
+  },
 });
