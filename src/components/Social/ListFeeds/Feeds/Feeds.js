@@ -69,6 +69,7 @@ const Feeds = ({
   containerStyle,
   disableComment,
   disableShare,
+  showMoreActionsButton,
   onPressPost,
   onPressGroup,
   onPressUserName,
@@ -76,6 +77,7 @@ const Feeds = ({
   renderActionBar,
   onActionBarPress,
   onPressTotalComments,
+  onPressMoreActions,
 }) => {
   // console.log('render feeds');
   const {t} = useTranslation('social');
@@ -156,10 +158,12 @@ const Feeds = ({
           images={images}
           title={title}
           thumbnailUrl={thumbnailUrl}
+          showMoreActionsButton={showMoreActionsButton}
           onPress={onPressPost}
           onPressGroup={onPressGroup}
           onPressUserName={onPressUserName}
           onPressAvatar={onPressAvatar}
+          onPressMoreActions={onPressMoreActions}
         />
 
         <ActionContainer

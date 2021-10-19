@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     minWidth: MIN_WIDTH_MESSAGE,
-    width: '100%',
     alignItems: 'flex-end',
+    alignSelf: 'flex-end',
     zIndex: 1,
   },
   btnContainer: {
@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#777',
-    paddingLeft: 40,
     paddingRight: 15,
   },
   mask: {
     height: '100%',
-    width: '100%',
+    width: '120%',
+    left: '-20%',
     position: 'absolute',
   },
 });
@@ -32,6 +32,7 @@ const SeeMoreBtn = ({
   title,
   lineHeight,
   containerStyle,
+  titleStyle,
   bgColor = '#fff',
   onPress = () => {},
 }) => {
@@ -47,7 +48,7 @@ const SeeMoreBtn = ({
         <LinearGradient
           style={styles.mask}
           colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
-          locations={[0.8, 1]}
+          locations={[0.77, 1]}
           angle={-90}
           useAngle
         />
@@ -57,8 +58,9 @@ const SeeMoreBtn = ({
             {
               lineHeight,
             },
+            titleStyle,
           ]}>
-          ... {title || t('seeMore')}
+          {title || t('seeMore')}
         </Text>
       </TouchableOpacity>
     </View>

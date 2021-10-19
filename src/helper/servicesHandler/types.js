@@ -61,6 +61,7 @@ export const SERVICES_TYPE = {
   /** STORE */
   OPEN_SHOP: 'open_shop',
   GPS_LIST_STORE: 'gps_list_store',
+  GPS_LIST_SITE: 'gps_list_site',
 
   /** COMMUNICATION */
   CALL: 'call',
@@ -100,6 +101,7 @@ export const SERVICES_TYPE = {
   /** SOCIAL */
   SOCIAL: 'social',
   SOCIAL_GROUP: 'social_group',
+  SOCIAL_CREATE_POST: 'social_create_post',
 
   /** PROGRESS TRACKING */
   LIST_PROGRESS_TRACKING: 'list_progress_tracking',
@@ -121,6 +123,4 @@ export const SERVICES_TYPE = {
 
   /** Wallet */
   WALLET: 'wallet',
-
-  LIST_SITE: 'list_site'
 };

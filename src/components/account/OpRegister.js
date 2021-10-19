@@ -31,7 +31,11 @@ class OpRegister extends Component {
       loading: false,
       isCityLoading: false,
       isWarehouseLoading: false,
-      referCodeEditable: store?.user_info?.invite_user_id ? false : true,
+      referCodeEditable:
+        isConfigActive(CONFIG_KEY.HIDE_REFERRAL_CODE_REGISTER_KEY) &&
+        store?.user_info?.invite_user_id
+          ? false
+          : true,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
@@ -150,7 +154,7 @@ class OpRegister extends Component {
           });
         } finally {
           if (this.unmounted) return;
-          
+
           this.setState({loading: false});
         }
       },

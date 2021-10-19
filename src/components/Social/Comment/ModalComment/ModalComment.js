@@ -90,6 +90,7 @@ class ModalComment extends Component {
         autoFocus={this.props.autoFocus}
         accessoryTypes={this.props.accessoryTypes}
         placeholder={this.props.placeholder}
+        disableEditComment={this.props.disableEditComment}
       />
     );
   }

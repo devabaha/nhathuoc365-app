@@ -13,6 +13,7 @@ import {
   Text,
 } from 'react-native';
 import Animated, {Easing} from 'react-native-reanimated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -502,6 +503,15 @@ class Home extends Component {
                       imageUrl={item.image_url}
                       onPress={() => this.props.onPressSiteItem(item)}
                       last={this.props.sites.length - 1 === index}
+                      subTitle={item.address}
+                      titleStyle={styles.siteTitleContent}
+                      subTitleStyle={styles.siteSubtitleContent}
+                      iconSubTitle={
+                        <Ionicons
+                          name="ios-location-sharp"
+                          style={styles.siteIcon}
+                        />
+                      }
                     />
                   )}
                 </HomeCardList>
@@ -681,6 +691,16 @@ let styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 0,
     marginBottom: -15,
+  },
+  siteTitleContent: {
+    fontWeight: '500',
+  },
+  siteSubtitleContent: {
+    color: '#666',
+  },
+  siteIcon: {
+    fontSize: 15,
+    color: '#000',
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);

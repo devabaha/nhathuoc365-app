@@ -43,4 +43,6 @@ export const CONFIG_KEY = {
   OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
 
   NOT_ALLOW_EDIT_CART_KEY: 'not_allow_edit_cart_key',
+
+  HIDE_REGISTER_REFERRAL_CODE_KEY: 'hide_register_referral_code_key',
 };

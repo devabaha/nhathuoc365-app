@@ -11,6 +11,10 @@ import appConfig from 'app-config';
 import moment from 'moment';
 
 import {getPostGridImagesType, renderGridImages} from './post';
+import {
+  MAX_LENGTH_CONTENT,
+  MAX_LINE_OF_CONTENT,
+} from 'src/constants/social/post';
 
 export {getPostGridImagesType, renderGridImages};
 
@@ -131,7 +135,7 @@ export const handleSocialActionBarPress = (
   actionType,
   feeds,
   isCommentInputAutoFocus = true,
-  extraProps = {}
+  extraProps = {},
 ) => {
   switch (actionType) {
     case SOCIAL_BUTTON_TYPES.LIKE:
@@ -145,7 +149,7 @@ export const handleSocialActionBarPress = (
         object_id: feeds?.object_id || feeds?.id,
         site_id: feeds.site_id,
         autoFocus: isCommentInputAutoFocus,
-        ...extraProps
+        ...extraProps,
       });
       break;
     case SOCIAL_BUTTON_TYPES.SHARE:
@@ -161,12 +165,51 @@ export const getRelativeTime = (
   return moment(time, format).fromNow();
 };
 
-export const formatPostStoreData = (post) => {
+export const formatStoreSocialPosts = (posts, callback = () => {}) => {
+  const storePosts = {};
+  posts.forEach((post) => {
+    storePosts[post.id] = formatPostStoreData(post);
+    callback(post);
+  });
+  return storePosts;
+};
+
+export const formatPostStoreData = (post = {}) => {
   return {
+    ...post,
     like_count: post.like_count || 0,
     like_count_friendly: calculateLikeCountFriendly(post) || 0,
     share_count: post.share_count || 0,
     like_flag: post.like_flag || 0,
     comment_count: post.comment_count || 0,
   };
+};
+
+export const isShowFullContent = (
+  content,
+  callback = () => {},
+  maxLength = MAX_LENGTH_CONTENT,
+  maxLine = MAX_LINE_OF_CONTENT,
+) => {
+  const splitter = '\n';
+  let truncatedContent = '';
+  let numOfBreak = 0;
+
+  if (content) {
+    const contentBreakLines = content.split(splitter);
+    numOfBreak = contentBreakLines?.length;
+
+    if (content.length > maxLength) {
+      truncatedContent = content.slice(0, maxLength);
+    } else if (numOfBreak > maxLine) {
+      truncatedContent = contentBreakLines.slice(0, maxLine).join(splitter);
+    }
+    if (!!truncatedContent) {
+      truncatedContent += '...';
+    }
+  }
+
+  callback(truncatedContent || content);
+
+  return !content || (content.length <= maxLength && numOfBreak <= maxLine);
 };
