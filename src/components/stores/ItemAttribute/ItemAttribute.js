@@ -61,7 +61,8 @@ class ItemAttribute extends PureComponent {
 
         if (
           attrs.length === 1 &&
-          !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY)
+          (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
+            !!(this.state?.product || this.props.product)?.sale_in_stock)
         ) {
           // disable if empty inventory ONLY IF product has only 1 attr.
           disabled = !!!Object.values(models).find(
@@ -334,7 +335,8 @@ class ItemAttribute extends PureComponent {
       if (possible) {
         if (
           !models[key].inventory &&
-          !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY)
+          (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
+            !!this.state.product?.sale_in_stock)
         ) {
           let viewData = [...this.state.viewData];
           viewData.forEach((vData, index) => {

@@ -11,7 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
-import {showDrawer} from 'src/components/Drawer';
+import {formatStoreSocialPosts} from 'app-helper/social';
 
 class Home extends Component {
   constructor(props) {
@@ -119,6 +119,9 @@ class Home extends Component {
 
         this.executeDeepLink();
         this.getCartData();
+        if (response.data?.social_posts?.length) {
+          // store.resetSocialPosts();
+        }
       }
     } catch (error) {
       console.log(error);
@@ -209,8 +212,10 @@ class Home extends Component {
   }
 
   handleShowAllSites = () => {
-    store.setSelectedTab(appConfig.routes.customerCardWallet);
-    Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
+    // store.setSelectedTab(appConfig.routes.customerCardWallet);
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_SITE,
+    });
   };
 
   handleShowAllGroupProduct = (group) => {

@@ -163,7 +163,8 @@
       "mainTitle": "Social"
     },
     "createPost": {
-      "mainTitle": "Create post"
+      "mainTitle": "Create post",
+      "editTitle": "Edit post"
     },
     "listUserChat": {
       "mainTitle": "Messages"
@@ -175,6 +176,9 @@
       "mainTitle": "Request list",
       "detailTitle": "Request detail",
       "creationTitle": "Create a request"
+    },
+    "listSite": {
+      "mainTitle": "List of store"
     }
   },
 
@@ -245,6 +249,7 @@
   "delete": "Delete",
   "addImages": "Add Images",
   "addImagesDescription": "Tap to select images",
+  "save": "Save",
   "saved": "Saved",
   "saveImageFailed": "Save image unsuccessfully, please try again.",
   "saveImageLabel": "Save image",
@@ -259,6 +264,7 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "update": "Update",
+  "agree": "OK",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",

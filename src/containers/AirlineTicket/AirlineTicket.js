@@ -1,34 +1,31 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
   ScrollView,
-  Switch
 } from 'react-native';
 
-import { Actions, ActionConst } from 'react-native-router-flux';
 import Store from '../../store';
 import FindTickets from '../AirlineTicket/component/FindTicket';
-import config from 'app-config';
+import appConfig from 'app-config';
 
 class AirlineTicket extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      finish: false
-    }
+      finish: false,
+    };
   }
 
   componentDidMount() {
     this._getData();
     Store.getAirportData();
   }
-
 
   _getData = async () => {
     try {
@@ -53,7 +50,7 @@ class AirlineTicket extends Component {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <FindTickets ref={ref => this.ref_ticket = ref} />
+          <FindTickets ref={(ref) => (this.ref_ticket = ref)} />
         </ScrollView>
 
         <View style={styles.boxBtnSearch}>
@@ -73,25 +70,25 @@ class AirlineTicket extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-     backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   boxBtnSearch: {
     width: Util.size.width,
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   btnSearchContent: {
     width: Util.size.width * 0.916,
     height: Util.size.width * 0.916 * 0.1515,
-    backgroundColor: config._primaryColor,
+    backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5
+    borderRadius: 5,
   },
   textBtnSearch: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 export default AirlineTicket;

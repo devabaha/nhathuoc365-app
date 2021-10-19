@@ -5,6 +5,7 @@ import Communications from 'react-native-communications';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
+import {GPS_LIST_TYPE} from 'src/constants';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -281,6 +282,13 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.GPS_LIST_STORE:
       Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
+        type: GPS_LIST_TYPE.GPS_LIST_STORE,
+      });
+      break;
+    case SERVICES_TYPE.GPS_LIST_SITE:
+      Actions.push(appConfig.routes.gpsListStore, {
+        title: service.title || commonT('screen.gpsListStore.mainTitle'),
+        type: GPS_LIST_TYPE.GPS_LIST_SITE,
       });
       break;
 
@@ -427,6 +435,21 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       Actions.push(appConfig.routes.socialGroup, {
         id: service.id,
         groupName: service.name,
+      });
+      break;
+    /** Social Create Post */
+    case SERVICES_TYPE.SOCIAL_CREATE_POST:
+      Actions.push(appConfig.routes.socialCreatePost, {
+        title: service.title || t('screen.createPost.mainTitle'),
+        group: service.group,
+        groupId: service.group_id,
+        editMode: service.editMode,
+        postId: service.post_id,
+        siteId: service.site_id || store?.store_data?.id,
+        avatar: service.avatar || store?.user_info?.img,
+        contentText: service.content,
+        images: service.images,
+        isOpenImagePicker: service.isOpenImagePicker,
       });
       break;
 

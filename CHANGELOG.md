@@ -6,8 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
+- [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 ### Changed
+- [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
+- [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
 - [CU-1mkte7j] UX in stores/Search by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1mz5q0r] Open link in android version 11 and up by [lamah.dev@gmail.com].
+- [CU-1mtfept] Not showing data when auto scrolling to the selected item by [minhnguyenit14@gmail.com].
+- Creating address is duplicated in CreateAddress by [lamah.dev@gmail.com].
 
 ## [r12.1.4]
 ### Added
