@@ -259,6 +259,7 @@
   "showMore": "Xem thêm",
   "showLess": "Thu gọn",
   "update": "Cập nhật",
+  "confirm" : "Xác nhận",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
