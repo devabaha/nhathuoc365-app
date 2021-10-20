@@ -285,5 +285,6 @@
     "runInBackground": "Chạy ngầm"
   },
   "optional": "không bắt buộc",
-  "cantOpenLink": "Không mở được link!"
+  "cantOpenLink": "Không mở được link!",
+  "noneStoreFound": "Không tìm kiếm thấy cửa hàng phù hợp"
 }

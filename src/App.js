@@ -1128,10 +1128,20 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.rootGpsListStore}>
+                  <Scene
+                    key={`${appConfig.routes.rootGpsListStore}_1`}
+                    {...navBarConfig}
+                    component={GPSListStore}
+                    back
+                  />
+                </Stack>
+
                 <Stack key={appConfig.routes.gpsListStore}>
                   <Scene
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
+                    navBar={SearchNavBarContainer}
                     component={GPSListStore}
                     back
                   />
