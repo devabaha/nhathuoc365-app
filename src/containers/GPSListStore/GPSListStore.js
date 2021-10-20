@@ -123,6 +123,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const appState = useRef('active');
   const watchID = useRef('');
   const isUpdatedListStoreByPosition = useRef(false);
+  const isMounted = useIsMounted();
 
   const [getListStoreRequest] = useState(new APIRequest());
   const [setStoreRequest] = useState(new APIRequest());

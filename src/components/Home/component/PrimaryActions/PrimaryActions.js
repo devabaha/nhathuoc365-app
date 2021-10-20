@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
   actionTitle: {
     marginTop: 10,
     ...appConfig.styles.typography.sub,
+    textAlign: 'center'
   },
 });
 

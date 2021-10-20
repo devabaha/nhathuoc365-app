@@ -13,6 +13,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import store from '../../store';
 import {LIVE_API_DOMAIN} from '../../network/API/BaseAPI';
+import DomainWatermark from './DomainWatermark';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -208,19 +209,10 @@ class NetWorkInfo extends Component {
   }
 
   renderDevServerModeWaterMark() {
-    const isLiveServer = store.apiDomain === LIVE_API_DOMAIN;
+    const isLiveServer = store.baseDomains[0] === LIVE_API_DOMAIN;
+    let domains = [...store.baseDomains];
     if (!isLiveServer) {
-      return (
-        <SafeAreaView
-          pointerEvents="none"
-          style={styles.devServerWaterMarkWrapper}>
-          <View style={styles.devServerWaterMarkContainer}>
-            <Text style={styles.devServerWaterMarkLabel}>
-              {store.apiDomain}
-            </Text>
-          </View>
-        </SafeAreaView>
-      );
+      return <DomainWatermark domains={domains} />;
     }
 
     return null;
