@@ -113,6 +113,10 @@ class PaymentMethod extends Component {
     this.setState({loading: true});
 
     const data = {
+      gateway:
+        this.state.selectedPaymentMethodDetail?.gateway !== undefined
+          ? this.state.selectedPaymentMethodDetail.gateway
+          : this.state.selectedMethod.gateway,
       payment_type: this.state.selectedMethod.type,
       payment_content: '',
       payment_method_id: this.state.selectedPaymentMethodDetail?.id || '',
