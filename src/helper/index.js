@@ -8,3 +8,11 @@ export const openLink = (url) => {
     Alert.alert(t('cantOpenLink'));
   });
 };
+
+export const isValidDate = (date) => {
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+
+  return date instanceof Date && !isNaN(date);
+};

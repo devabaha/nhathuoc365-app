@@ -313,6 +313,7 @@ class Config {
       modalEditImages: 'modalEditImages',
       modalCalendar: 'modalCalendar',
       modalActionSheet: 'modalActionSheet',
+      modalDateTimePicker: 'modalDateTimePicker',
 
       //  Reset password
       resetPassword: 'resetPassword',

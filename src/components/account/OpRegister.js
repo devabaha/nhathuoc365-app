@@ -329,8 +329,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={dobData}
           onSelectedDate={this.onSelectedDate}
         />
@@ -355,8 +355,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={cityData}
           onSelectedValue={this.onPressSelectProvince}
         />
@@ -388,8 +388,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={wareHouseData}
           onSelectedValue={this.onPressWarehouse}
         />
@@ -730,14 +730,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#aaa',
   },
 
-  dobTitle: {
-    paddingLeft: 15,
-    marginLeft: 0,
-  },
-  dob: {
+  infoContainer: {
     borderBottomWidth: 0.5,
     borderColor: '#eee',
     marginRight: -5,
+    paddingLeft: 15,
   },
 
   referInputWrapper: {

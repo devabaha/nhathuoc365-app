@@ -265,6 +265,8 @@
   "showLess": "Thu gọn",
   "update": "Cập nhật",
   "agree": "Đồng ý",
+  "select": "Chọn",
+  "done": "Xong",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
