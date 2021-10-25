@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [CU-e00xdw] hide_wallet_homepage_key in Home by [lamah.dev@gmail.com].
 - ModalDateTimePicker by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1pd4hmw] Display the box to enter the referral code when clicking the affiliate link by [lamah.dev@gmail.com].
 ### Fixed
 - [CU-1p7b8x5] Crash when show DateTime picker by [minhnguyenit14@gmail.com].
 
