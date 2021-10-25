@@ -291,6 +291,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         type: GPS_LIST_TYPE.GPS_LIST_SITE,
         navBar: SearchNavBar,
         placeholder: commonT('home:searchingStore'),
+        autoFocus: service.autoFocus,
       });
       break;
 
