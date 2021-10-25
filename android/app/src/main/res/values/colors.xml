@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="splashBackground" type="color">#FFF</item>
+    <item name="splashBackground" type="color">#FFFFFF</item>
     <item name="primary" type="color">#812384</item>
 </resources>
