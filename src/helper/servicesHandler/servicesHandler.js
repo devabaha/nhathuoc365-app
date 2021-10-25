@@ -17,6 +17,7 @@ import {
 } from './radaHandler';
 import i18n from 'src/i18n';
 
+import SearchNavBar from '../../components/stores/SearchNavBar';
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -280,7 +281,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
-      Actions.push(appConfig.routes.rootGpsListStore, {
+      Actions.push(appConfig.routes.gpsListStore, {
         title: service.title || commonT('screen.gpsListStore.mainTitle'),
         type: GPS_LIST_TYPE.GPS_LIST_STORE,
       });
@@ -288,6 +289,8 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.GPS_LIST_SITE:
       Actions.push(appConfig.routes.gpsListStore, {
         type: GPS_LIST_TYPE.GPS_LIST_SITE,
+        navBar: SearchNavBar,
+        placeholder: t('home:searchingStore'),
       });
       break;
 

@@ -140,7 +140,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
   const [noResult, setNoResult] = useState(false);
 
   const title = 'Không truy cập được Vị trí';
@@ -166,18 +165,13 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     requestLocationPermission();
 
     if (type === GPS_LIST_TYPE.GPS_LIST_SITE) {
-      let keyword = '';
-      let placeholder = t('home:searchingStore');
       setTimeout(() => {
         Actions.refresh({
-          searchValue: keyword || '',
-          placeholder,
+          searchValue: '',
           onSearch: (text) => {
             Actions.refresh({
               searchValue: text,
             });
-
-            setSearchValue(text);
 
             // auto search on changed text
             onSearch(text);
@@ -190,7 +184,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
               searchValue: '',
             });
 
-            setSearchValue('');
             onSearch('');
           },
         });
@@ -215,6 +208,9 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   };
 
   const getListStore = async (data) => {
+    if (type === GPS_LIST_TYPE.GPS_LIST_SITE) {
+      setLoading(true);
+    }
     if (latitude !== undefined && longitude !== undefined) {
       data = {
         lat: latitude,
