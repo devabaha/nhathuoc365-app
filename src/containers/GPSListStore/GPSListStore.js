@@ -140,7 +140,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
-  const [noResult, setNoResult] = useState(false);
 
   const title = 'Không truy cập được Vị trí';
   const content =
@@ -234,16 +233,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           ? responseData?.stores
           : responseData?.data?.stores) || [],
       );
-      if (
-        type === GPS_LIST_TYPE.GPS_LIST_SITE &&
-        !responseData?.data?.stores?.length
-      ) {
-        setNoResult(true);
-        flashShowMessage({
-          type: 'danger',
-          message: t('common:noStoreFound'),
-        });
-      }
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -455,7 +444,15 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   };
 
   const renderNoResult = () => {
-    return noResult && <NoResult message={t('common:noResult')} />;
+    return (
+      <NoResult
+        message={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? t('common:noResult')
+            : t('common:noStoreFound')
+        }
+      />
+    );
   };
   return (
     <ScreenWrapper>
