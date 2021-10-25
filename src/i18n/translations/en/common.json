@@ -259,7 +259,8 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "update": "Update",
-  "confirm": "Confirm",
+  "agree" : "Agree",
+  "disagree" : "Disagree",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
@@ -280,5 +281,6 @@
     "runInBackground": "Run in background"
   },
   "optional": "optional",
-  "cantOpenLink": "Can not open link!"
+  "cantOpenLink": "Can not open link!",
+  "required" : "required"
 }

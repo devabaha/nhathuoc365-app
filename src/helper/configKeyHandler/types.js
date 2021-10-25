@@ -43,4 +43,6 @@ export const CONFIG_KEY = {
   OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
 
   NOT_ALLOW_EDIT_CART_KEY: 'not_allow_edit_cart_key',
+
+  SLA_NEWS_ID_KEY: 'sla_news_id_key',
 };

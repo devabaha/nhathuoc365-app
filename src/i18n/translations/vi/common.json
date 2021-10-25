@@ -259,7 +259,8 @@
   "showMore": "Xem thêm",
   "showLess": "Thu gọn",
   "update": "Cập nhật",
-  "confirm" : "Xác nhận",
+  "agree" : "Tôi đồng ý",
+  "disagree" : "Không đồng ý",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
@@ -280,5 +281,6 @@
     "runInBackground": "Chạy ngầm"
   },
   "optional": "không bắt buộc",
-  "cantOpenLink": "Không mở được link!"
+  "cantOpenLink": "Không mở được link!",
+  "required" : "(bắt buộc)"
 }

@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 
 import Modal from 'react-native-modalbox';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CheckBox} from 'react-native-elements';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-
 import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
-  modalConfirm: {
+  modalLicense: {
     width: appConfig.device.width * 0.8,
-    maxHeight: appConfig.device.height / 2,
     backgroundColor: 'transparent',
     justifyContent: 'center',
   },
@@ -24,26 +27,51 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     marginVertical: 16,
+    paddingHorizontal: 24,
   },
   title: {
     textAlign: 'center',
     color: '#111',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
   },
-  modalContentContainer: {
-    paddingTop: 8,
+  modalContentWrapper: {
     width: '100%',
-    minHeight: '50%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     borderTopWidth: Util.pixel,
     borderColor: '#dddddd',
   },
-  webview: {},
-  checkboxContainer: {
+  contentContainer: {
+    maxHeight: appConfig.device.height / 4,
+  },
+  contentHtmlContainer: {
+    height: appConfig.device.height / 4,
+  },
+  webviewContent: {
+    width: '100%',
+    // marginTop: 8,
+  },
+  contentTextContainer: {
+    paddingVertical: 8,
+  },
+  checkboxesWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
+  },
+  checkboxesContainer: {
+    margin: 0,
+    padding: 0,
+    marginLeft: 0,
+    marginRight: 0,
+    backgroundColor: '#ffffff',
+    borderWidth: 0,
+    flex: 1,
+  },
+  checkboxLabel: {
+    flex: 1,
+    flexWrap: 'wrap',
+    marginRight: 0,
   },
   modalActionBtnContainer: {
     flexDirection: 'row',
@@ -62,35 +90,65 @@ const styles = StyleSheet.create({
   actionButtonLabel: {
     color: appConfig._primaryColor,
   },
+  actionAgreeBtnLabel: {
+    fontWeight: '700',
+  },
 });
 
 class LicenseModal extends Component {
+  static defaultProps = {
+    html: false,
+  };
+
   state = {
-    confirmed: false,
+    checkboxes: this.props.checkboxes,
+    agreeBtnDisabled: true,
   };
 
-  required = false;
-
-  componentWillUnmount() {
-    this.setState({
-      confirmed: false,
-    });
-  }
-  toggleCheckbox = () => {
-    this.setState((prevState) => {
-      return {confirmed: !prevState.confirmed};
-    });
-  };
-
-  handleConfirmPress = () => {
-    if (this.required) {
-      if (this.state.confirmed) {
-        if (this.props.onConfirm) {
-          this.props.onConfirm();
-        }
-      }
+  componentDidMount() {
+    if (this.props.checkboxes?.length === 0) {
+      this.setState({
+        agreeBtnDisabled: false,
+      });
     } else {
-      this.props.onConfirm();
+      this.handleBtnAgreeDisabled();
+    }
+  }
+
+  toggleCheckbox = (index) => {
+    this.setState(
+      (prevState) => {
+        let toggleConfirmed = !prevState.checkboxes[index].confirmed;
+        let currentCheckbox = {
+          ...this.state.checkboxes[index],
+          confirmed: toggleConfirmed,
+        };
+        //replace to the old one
+        prevState.checkboxes.splice(index, 1, currentCheckbox);
+
+        return {checkboxes: prevState.checkboxes};
+      },
+      () => this.handleBtnAgreeDisabled(),
+    );
+  };
+
+  handlePressAgree = () => {
+    const listCheckboxesConfirmed = this.state.checkboxes.filter((checkbox) => {
+      return checkbox.confirmed;
+    });
+    this.props.onConfirm(this.state.checkboxes, listCheckboxesConfirmed);
+  };
+
+  handleBtnAgreeDisabled = () => {
+    let passed = this.state.checkboxes.some((checkbox) => {
+      if (checkbox.required) {
+        return !checkbox.confirmed;
+      }
+    });
+    if (!passed) {
+      this.setState({agreeBtnDisabled: false});
+    } else {
+      this.setState({agreeBtnDisabled: true});
     }
   };
 
@@ -98,59 +156,96 @@ class LicenseModal extends Component {
     const {t} = this.props;
     return (
       <Modal
-        ref={this.props.ref_popup}
+        ref={this.props.refModalLicense}
         isOpen={true}
         entry="top"
         swipeToClose={false}
-        style={[styles.modal, styles.modalConfirm]}>
+        style={[styles.modal, styles.modalLicense]}>
         <View style={styles.container}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Điều khoản sử dụng</Text>
+            <Text style={styles.title}>{this.props.title}</Text>
           </View>
 
-          <View style={styles.modalContentContainer}>
-            <AutoHeightWebView
-              ref={this.handleRefWebview}
-              onShouldStartLoadWithRequest={(result) => {
-                return true;
-              }}
-              style={[styles.webview, this.props.contentStyle]}
-              onSizeUpdated={this.props.onSizeUpdated}
-              source={{
-                html: `${this.props.content}`,
-              }}
-              zoomable={this.props.zoomable}
-              scrollEnabled={this.props.scrollEnabled}
-              viewportContent={'width= device-width, user-scalable=no'}
-              javaScriptEnabled
-            />
-            <View style={styles.checkboxContainer}>
-              <CheckBox
-                containerStyle={{
-                  padding: 0,
-                  margin: 0,
-                }}
-                checked={this.state.confirmed}
-                checkedColor={DEFAULT_COLOR}
-                onPress={this.toggleCheckbox}
-              />
-              <Text>Tôi đồng ý với điều khoản</Text>
+          <View style={styles.modalContentWrapper}>
+            <View style={styles.contentContainer}>
+              {this.props.html ? (
+                <View style={styles.contentHtmlContainer}>
+                  <AutoHeightWebView
+                    style={styles.webviewContent}
+                    source={{
+                      html: `${this.props.content}`,
+                    }}
+                    viewportContent={'width=device-width, user-scalable=no'}
+                    javaScriptEnabled
+                  />
+                </View>
+              ) : (
+                <ScrollView contentContainerStyle={styles.contentTextContainer}>
+                  <Text>{this.props.content}</Text>
+                </ScrollView>
+              )}
             </View>
+
+            {this.props.checkboxes?.map((item, index) => {
+              const requiredIcon = item.required
+                ? 'checkbox-marked-outline'
+                : 'checkbox-marked-circle-outline';
+              const requiredColor = item.required
+                ? appConfig._primaryColor
+                : '#0e0e0e';
+
+              return (
+                <View key={index} style={styles.checkboxesWrapper}>
+                  <CheckBox
+                    iconType={'material-community'}
+                    containerStyle={styles.checkboxesContainer}
+                    textStyle={[
+                      styles.checkboxLabel,
+                      {
+                        color: item.required
+                          ? appConfig._primaryColor
+                          : '#0e0e0e',
+                        fontWeight: item.required ? '500' : '400',
+                        fontSize: item.required ? 14 : 13,
+                      },
+                    ]}
+                    checkedIcon={requiredIcon}
+                    uncheckedIcon={requiredIcon}
+                    checked={this.state.checkboxes[index].confirmed}
+                    uncheckedColor={requiredColor}
+                    checkedColor={requiredColor}
+                    onPress={() => this.toggleCheckbox(index)}
+                    title={item.checkboxLabel + `${item.required ? '(*)' : ''}`}
+                  />
+                </View>
+              );
+            })}
           </View>
 
           <View style={styles.modalActionBtnContainer}>
             <TouchableOpacity
-              onPress={this.handleConfirmPress}
+              disabled={this.state.agreeBtnDisabled}
+              onPress={this.handlePressAgree}
               style={[styles.actionButton, styles.actionLeftButton]}>
-              <Text style={styles.actionButtonLabel}>
-                {t('common:confirm')}
+              <Text
+                style={[
+                  styles.actionAgreeBtnLabel,
+                  {
+                    color: this.state.agreeBtnDisabled
+                      ? '#bbbbbb'
+                      : appConfig._primaryColor,
+                  },
+                ]}>
+                {t('common:agree')}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={this.props.onCancel}
+              onPress={this.props.onDisagree}
               style={styles.actionButton}>
-              <Text style={styles.actionButtonLabel}>{t('common:cancel')}</Text>
+              <Text style={styles.actionButtonLabel}>
+                {t('common:disagree')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
