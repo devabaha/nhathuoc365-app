@@ -106,3 +106,8 @@ export const GPS_LIST_TYPE = {
   GPS_LIST_SITE: 'gps_list_site',
   GPS_LIST_STORE: 'gps_list_store',
 };
+
+export const MEDIA_TYPE = {
+  IMAGE: 'image',
+  YOUTUBE_VIDEO: 'youtube',
+};

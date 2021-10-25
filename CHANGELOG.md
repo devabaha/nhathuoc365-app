@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-e00xdw] hide_wallet_homepage_key in Home by [lamah.dev@gmail.com].
 - ModalDateTimePicker by [minhnguyenit14@gmail.com].
 - [CU-1p1jyea] gateway when call api add_payment_method by [minhnguyenit14@gmail.com].
+- [CU-cxj2uh] Include youtube video in product carousel, ItemImageViewer by [minhnguyenit14@gmail.com].
 ### Changed
 - Header of MultiLevelCategories by [minhnguyenit14@gmail.com].
+- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
 - [CU-1pd4hmw] Display the box to enter the referral code when clicking the affiliate link by [lamah.dev@gmail.com].
 ### Fixed
 - [CU-1p7b8x5] Crash when show DateTime picker by [minhnguyenit14@gmail.com].
@@ -23,9 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-1napwg9] Search header in ListSite by [kienluu612@gmail.com].
-### Changed
-- [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
-- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
 ### Changed
 - [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
 - [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
