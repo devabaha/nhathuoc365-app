@@ -265,6 +265,8 @@
   "showLess": "Show less",
   "update": "Update",
   "agree": "OK",
+  "select": "Select",
+  "done": "Done",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
