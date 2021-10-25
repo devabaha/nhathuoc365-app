@@ -290,7 +290,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       Actions.push(appConfig.routes.gpsListStore, {
         type: GPS_LIST_TYPE.GPS_LIST_SITE,
         navBar: SearchNavBar,
-        placeholder: t('home:searchingStore'),
+        placeholder: commonT('home:searchingStore'),
       });
       break;
 
