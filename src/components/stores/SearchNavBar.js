@@ -23,7 +23,8 @@ class SearchNavBar extends Component {
     onSearch: defaultListener,
     onClearText: defaultListener,
     placeholder: '',
-    searchValue: ''
+    searchValue: '',
+    autoFocus: true
   };
 
   renderRight() {
@@ -56,7 +57,7 @@ class SearchNavBar extends Component {
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
           numberOfLines={1}
-          autoFocus
+          autoFocus={this.props.autoFocus}
         />
 
         {!!this.props.searchValue && (

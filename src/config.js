@@ -345,6 +345,7 @@ class Config {
 
       // List GPS store
       gpsListStore: 'gpsListStore',
+      rootGpsListStore: 'rootGpsListStore',
 
       // Agency
       agencyInformationRegister: 'agencyInformationRegister',
