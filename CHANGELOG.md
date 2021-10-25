@@ -6,13 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added
-- [CU-1p1jyea] gateway when call api add_payment_method by [minhnguyenit14@gmail.com].
 
 ## [r12.1.6]
 ### Added
 - [CU-e00xdw] hide_wallet_homepage_key in Home by [lamah.dev@gmail.com].
 - ModalDateTimePicker by [minhnguyenit14@gmail.com].
+- [CU-1p1jyea] gateway when call api add_payment_method by [minhnguyenit14@gmail.com].
 ### Changed
 - Header of MultiLevelCategories by [minhnguyenit14@gmail.com].
 - [CU-1pd4hmw] Display the box to enter the referral code when clicking the affiliate link by [lamah.dev@gmail.com].
