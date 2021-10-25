@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'ios' ? 20 : 0,
         height: Platform.OS === 'ios' ? 64 : 54
       }
-    )
+    ),
   },
   cancelButton: {
     justifyContent: 'center',
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         marginBottom: 8
       },
       {
-        marginVertical: Platform.OS === 'ios' ? 6 : 8
+        marginVertical: Platform.OS === 'ios' ? 6 : 8,
       }
     )
   },

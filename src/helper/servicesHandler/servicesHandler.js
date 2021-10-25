@@ -34,7 +34,7 @@ import i18n from 'src/i18n';
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t, callBack = () => {}) => {
+export const servicesHandler = (service, t = null, callBack = () => {}) => {
   if (!service || !service.type) return;
   const commonT = i18n.getFixedT(undefined, 'common');
   if (!t) {

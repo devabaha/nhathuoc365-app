@@ -1220,6 +1220,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.multiLevelCategory}_1`}
                     component={MultiLevelCategory}
+                    hideNavBar
                     {...navBarConfig}
                     back
                   />
