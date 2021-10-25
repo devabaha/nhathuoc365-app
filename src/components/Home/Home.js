@@ -406,7 +406,6 @@ class Home extends Component {
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
           /> */}
-
             <View style={styles.block}>
               {this.isVisibleLoyaltyBox ? (
                 <PrimaryActions
@@ -630,7 +629,7 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#F5F7F8',
+    backgroundColor: appConfig.colors.sceneBackground,
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -673,6 +672,7 @@ let styles = StyleSheet.create({
   },
 
   servicesBlock: {
+    backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },
@@ -684,6 +684,7 @@ let styles = StyleSheet.create({
     marginBottom: 10,
   },
   block: {
+    zIndex: 1,
     marginBottom: 20,
   },
 
