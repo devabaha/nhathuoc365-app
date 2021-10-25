@@ -265,6 +265,8 @@
   "showLess": "Show less",
   "update": "Update",
   "agree": "OK",
+  "select": "Select",
+  "done": "Done",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
@@ -285,5 +287,6 @@
     "runInBackground": "Run in background"
   },
   "optional": "optional",
-  "cantOpenLink": "Can not open link!"
+  "cantOpenLink": "Can not open link!",
+  "noStoreFound": "No stores found"
 }

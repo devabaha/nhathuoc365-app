@@ -12,7 +12,7 @@ import {
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
 import AntDesignIcon from 'react-native-vector-icons/SimpleLineIcons';
-import { CONFIG_KEY, isConfigActive } from '../../../../helper/configKeyHandler';
+import {CONFIG_KEY, isConfigActive} from '../../../../helper/configKeyHandler';
 import store from 'app-store';
 
 class PrimaryActions extends Component {
@@ -36,7 +36,11 @@ class PrimaryActions extends Component {
   }
 
   get isActiveCommissions() {
-    return isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE)
+    return isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE);
+  }
+
+  get isHideWalletBox() {
+    return isConfigActive(CONFIG_KEY.HIDE_WALLET_HOMEPAGE_KEY);
   }
 
   render() {
@@ -48,6 +52,7 @@ class PrimaryActions extends Component {
     return (
       <View style={styles.container}>
         <View style={[styles.actionsWrapper, actionsWrapper]}>
+        {!this.isHideWalletBox && (
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
               <View style={styles.pointRechargeBtnContainer}>
@@ -81,10 +86,9 @@ class PrimaryActions extends Component {
                   <View style={styles.walletLabelRight}>
                     <Text style={styles.surplus}>{props.surplus}</Text>
                   </View>
-                  
+
                   <View style={styles.iconNextWrapper}>
                     <AntDesignIcon name="arrow-right" style={styles.iconNext} />
-                      {/* <Image style={styles.iconNext} source={imageIconNext} /> */}
                   </View>
                 </View>
               </Button>
@@ -95,7 +99,9 @@ class PrimaryActions extends Component {
                 <View style={styles.walletInfoWrapper}>
                   <Text style={styles.walletNameLabel}>{props.walletName}</Text>
                   <View style={styles.walletLabelRight}>
-                    <Text style={styles.surplus}>{revenue_commissions?.this_month_commissions.value}</Text>
+                    <Text style={styles.surplus}>
+                      {revenue_commissions?.this_month_commissions.value}
+                    </Text>
                   </View>
                   <View style={styles.iconNextWrapper}>
                     <AntDesignIcon name="arrow-right" style={styles.iconNext} />
@@ -104,8 +110,9 @@ class PrimaryActions extends Component {
               </Button>
             )}
           </View>
+          )}
           {this.isActivePrimaryActions && props.primaryActions && (
-            <View style={styles.walletAction}>
+            <View style={[styles.walletAction, this.isHideWalletBox && styles.extraWalletAction]}>
               {props.primaryActions.map((action, index) => (
                 <Button
                   key={index}
@@ -170,7 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 7.5,
     paddingHorizontal: 15,
-    minHeight: 50
+    minHeight: 50,
   },
   walletInfoWrapper: {
     flex: 1,
@@ -209,6 +216,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderTopWidth: 1,
     borderColor: appConfig.colors.border,
+  },
+  extraWalletAction: {
+    borderTopWidth: 0,
   },
   walletLabelRight: {
     paddingLeft: 5,
@@ -252,7 +262,7 @@ const styles = StyleSheet.create({
   actionTitle: {
     marginTop: 10,
     ...appConfig.styles.typography.sub,
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });
 

@@ -636,7 +636,7 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () => {
           if (notify.url_update) {
-            Communications.web(notify.url_update);
+            openLink(notify.url_update);
           }
         },
         boxIconStyle: [

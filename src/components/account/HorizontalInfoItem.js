@@ -8,10 +8,11 @@ import {
 } from 'react-native';
 
 import {isEmpty, isFunction} from 'lodash';
-import DatePicker from 'react-native-datepicker';
-// import DatePicker from '@react-native-community/datetimepicker';
-import appConfig from 'app-config';
 import {Actions} from 'react-native-router-flux';
+
+import appConfig from 'app-config';
+import {isValidDate} from 'app-helper';
+
 import Loading from '../Loading';
 import {Container} from '../Layout';
 
@@ -30,6 +31,19 @@ export default class HorizontalInfoItem extends Component {
       onPressItem: this._onChangeInputValue,
     });
   }
+
+  openDateTimePicker = (dateValue) => {
+    Actions.push(appConfig.routes.modalDateTimePicker, {
+      value: new Date(dateValue),
+      onSelect: (date) => {
+        this.setState({selectedDate: date}, () => {
+          if (isFunction(this.props.onSelectedDate)) {
+            this.props.onSelectedDate(date);
+          }
+        });
+      },
+    });
+  };
 
   _renderRightView = (
     id,
@@ -61,7 +75,11 @@ export default class HorizontalInfoItem extends Component {
         <Text
           style={[
             styles.detailTitle,
-            {color: specialColor ? specialColor : appConfig.colors.text, height: undefined, paddingVertical: 15},
+            {
+              color: specialColor ? specialColor : appConfig.colors.text,
+              height: undefined,
+              paddingVertical: 15,
+            },
             !!defaultValue && !value && {color: appConfig.colors.placeholder},
             detailTitleStyle,
             rightTextStyle,
@@ -101,45 +119,21 @@ export default class HorizontalInfoItem extends Component {
       );
     } else if (select) {
       if (id === 'ngay_sinh') {
+        const dateValue = value || this.state.selectedDate;
+
         return (
           <View style={styles.btnSelect}>
-            <DatePicker
-              style={{justifyContent: 'center'}}
-              date={value || this.state.selectedDate}
-              // value={new Date(value || this.state.selectedDate)}
-              mode="date"
-              placeholder={defaultValue}
-              format="YYYY-MM-DD"
-              confirmBtnText="Xong"
-              cancelBtnText="Huỷ"
-              showIcon={false}
-              customStyles={{
-                dateText: {
-                  fontSize: 14,
-                  color: 'black',
-                  position: 'absolute',
-                  right: 0,
-                  ...rightTextStyle,
-                },
-                placeholderText: {
-                  fontSize: 14,
-                  color: appConfig.colors.placeholder,
-                  position: 'absolute',
-                  right: 0,
-                  ...rightTextStyle,
-                },
-                dateInput: {
-                  borderColor: 'transparent',
-                },
-              }}
-              onDateChange={(date) => {
-                this.setState({selectedDate: date}, () => {
-                  if (isFunction(this.props.onSelectedDate)) {
-                    this.props.onSelectedDate(date);
-                  }
-                });
-              }}
-            />
+            <TouchableOpacity
+              onPress={() => this.openDateTimePicker(dateValue)}>
+              <Text
+                style={StyleSheet.compose(
+                  styles.btnSelectTitle,
+                  detailTitleStyle,
+                  rightTextStyle,
+                )}>
+                {isValidDate(dateValue) ? dateValue : defaultValue}
+              </Text>
+            </TouchableOpacity>
           </View>
         );
       } else {
@@ -199,7 +193,7 @@ export default class HorizontalInfoItem extends Component {
         titleStyle,
         containerStyle: dataContainerStyle,
         isLink,
-        leftTitle
+        leftTitle,
       },
       containerStyle,
       inputProps,
@@ -282,8 +276,8 @@ const styles = StyleSheet.create({
 
   btnSelect: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
+    // justifyContent: 'center',
+    // alignItems: 'flex-end',
     paddingVertical: 15,
     marginVertical: -15,
   },

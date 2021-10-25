@@ -7,6 +7,7 @@ import {
   Animated,
   RefreshControl,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -23,7 +24,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {ORDER_TYPES} from '../../constants';
+import {MEDIA_TYPE, ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -57,6 +58,8 @@ import ListProducts from '../Home/component/ListProducts';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import LinearGradient from 'react-native-linear-gradient';
 import ModalWholesale from './ModalWholesale';
+import Video from '../Video';
+import MediaCarousel from './MediaCarousel';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -88,7 +91,10 @@ class Item extends Component {
 
       webviewContentHeight: undefined,
       isWebviewContentCollapsed: undefined,
+      selectedIndex: 0,
     };
+
+    this.refPlayer = React.createRef();
 
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
@@ -361,6 +367,13 @@ class Item extends Component {
               images.push({
                 url: item.image,
               });
+            });
+          }
+
+          if (response?.data?.video) {
+            images.unshift({
+              type: MEDIA_TYPE.YOUTUBE_VIDEO,
+              url: response.data.video,
             });
           }
 
@@ -710,10 +723,14 @@ class Item extends Component {
     }));
   };
 
-  renderPagination = (index, total, context, hasImages) => {
+  handleChangeImageIndex = (index, image) => {
+    this.setState({selectedIndex: index});
+  };
+
+  renderPagination = (index, total, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
     return (
-      <View style={styles.paginationContainer}>
+      <View pointerEvents="none" style={styles.paginationContainer}>
         <Text style={styles.paginationText}>{pagingMess}</Text>
       </View>
     );
@@ -765,6 +782,45 @@ class Item extends Component {
     });
   }
 
+  renderItem = ({item: image, index}) => {
+    return (
+      <View style={{width: appConfig.device.width}}>
+        {image?.image ? (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => {
+              console.log(this.state.images);
+              Actions.item_image_viewer({
+                images: this.state.images,
+                index: index - 1,
+              });
+            }}>
+            <View style={{height: '100%'}}>
+              <FastImage
+                style={styles.swiper_image}
+                source={{uri: image.image}}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableHighlight>
+        ) : (
+          <Video
+            refPlayer={this.refPlayer}
+            type="youtube"
+            videoId={image}
+            containerStyle={{
+              justifyContent: 'center',
+              height: appConfig.device.height / 2,
+            }}
+            height={appConfig.device.height / 2}
+            autoAdjustLayout
+            youtubeIframeProps={{play: this.state.selectedIndex === index}}
+          />
+        )}
+      </View>
+    );
+  };
+
   renderProductSwiper(product) {
     const images = product?.img || [];
     const hasImages = !!images.length;
@@ -785,21 +841,23 @@ class Item extends Component {
               />
             </View>
           ) : (
-            <Swiper
-              showsButtons={isShowButtons}
-              renderPagination={(index, total, context) =>
-                this.renderPagination(index, total, context, hasImages)
-              }
-              buttonWrapperStyle={{
-                alignItems: 'flex-end',
-              }}
-              nextButton={this.renderNextButton()}
-              prevButton={this.renderPrevButton()}
-              width={appConfig.device.width}
-              height={appConfig.device.height / 2}
-              containerStyle={styles.content_swiper}>
-              {this.renderProductImages(images)}
-            </Swiper>
+            <MediaCarousel data={this.state.images} />
+            // <Swiper
+            //   loop={false}
+            //   showsButtons={isShowButtons}
+            //   renderPagination={(index, total, context) =>
+            //     this.renderPagination(index, total, context, hasImages)
+            //   }
+            //   buttonWrapperStyle={{
+            //     alignItems: 'flex-end',
+            //   }}
+            //   nextButton={this.renderNextButton()}
+            //   prevButton={this.renderPrevButton()}
+            //   width={appConfig.device.width}
+            //   height={appConfig.device.height / 2}
+            //   containerStyle={styles.content_swiper}>
+            //   {this.renderProductImages(images)}
+            // </Swiper>
           )}
         </SkeletonLoading>
       </View>

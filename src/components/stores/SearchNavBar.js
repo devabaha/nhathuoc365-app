@@ -23,7 +23,8 @@ class SearchNavBar extends Component {
     onSearch: defaultListener,
     onClearText: defaultListener,
     placeholder: '',
-    searchValue: ''
+    searchValue: '',
+    autoFocus: true
   };
 
   renderRight() {
@@ -56,7 +57,7 @@ class SearchNavBar extends Component {
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
           numberOfLines={1}
-          autoFocus
+          autoFocus={this.props.autoFocus}
         />
 
         {!!this.props.searchValue && (
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'ios' ? 20 : 0,
         height: Platform.OS === 'ios' ? 64 : 54
       }
-    )
+    ),
   },
   cancelButton: {
     justifyContent: 'center',
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         marginBottom: 8
       },
       {
-        marginVertical: Platform.OS === 'ios' ? 6 : 8
+        marginVertical: Platform.OS === 'ios' ? 6 : 8,
       }
     )
   },

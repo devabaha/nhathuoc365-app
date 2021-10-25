@@ -3,9 +3,7 @@ import appConfig from 'app-config';
 
 export const share = async (url, message = '') => {
   try {
-    const shareContent = url
-    ? {url, message: `${message}\r\n\r\n${url}`}
-    : {message};
+    const shareContent = url ? {url, message} : {message};
 
     const result = await Share.share(shareContent, {
       dialogTitle: message,
@@ -23,6 +21,9 @@ export const share = async (url, message = '') => {
     }
   } catch (error) {
     console.log('%cerror_sharing', 'color: red', error);
+    if (error?.message === 'User did not share') {
+      return;
+    }
     //@ts-ignore
     flashShowMessage({
       type: 'danger',

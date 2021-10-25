@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.1.5';
+    return 'r12.1.6';
   }
 
   get appName() {
@@ -313,6 +313,7 @@ class Config {
       modalEditImages: 'modalEditImages',
       modalCalendar: 'modalCalendar',
       modalActionSheet: 'modalActionSheet',
+      modalDateTimePicker: 'modalDateTimePicker',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -344,6 +345,7 @@ class Config {
 
       // List GPS store
       gpsListStore: 'gpsListStore',
+      rootGpsListStore: 'rootGpsListStore',
 
       // Agency
       agencyInformationRegister: 'agencyInformationRegister',
