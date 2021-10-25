@@ -286,5 +286,5 @@
   },
   "optional": "optional",
   "cantOpenLink": "Can not open link!",
-  "noneStoreFound": "None of store found"
+  "noStoreFound": "No stores found"
 }

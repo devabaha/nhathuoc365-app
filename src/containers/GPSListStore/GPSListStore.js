@@ -232,16 +232,16 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
       setListStore(
         (type === GPS_LIST_TYPE.GPS_LIST_STORE
           ? responseData?.stores
-          : responseData?.data.stores) || [],
+          : responseData?.data?.stores) || [],
       );
       if (
         type === GPS_LIST_TYPE.GPS_LIST_SITE &&
-        !responseData?.data.stores.length
+        !responseData?.data?.stores?.length
       ) {
         setNoResult(true);
         flashShowMessage({
           type: 'danger',
-          message: t('common:noneStoreFound'),
+          message: t('common:noStoreFound'),
         });
       }
     } catch (error) {
@@ -259,7 +259,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const onSearch = debounce((keyword) => {
     keyword = keyword.trim();
     getListStore({content: keyword});
-  }, 800);
+  }, 500);
 
   const handleAppStateChange = (nextAppState) => {
     if (
