@@ -6,6 +6,9 @@ import {CarouselProps} from '.';
 import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
+  container: {
+    overflow: 'visible',
+  },
   paginationContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     position: 'absolute',
@@ -61,6 +64,8 @@ export class Carousel extends Component<CarouselProps> {
     );
   };
 
+  containerStyle = [styles.container, this.props.containerStyle];
+
   render() {
     const {
       wrapperStyle,
@@ -83,7 +88,9 @@ export class Carousel extends Component<CarouselProps> {
           onSnapToItem={this.handleSnapToItem}
           onScrollToIndexFailed={this.handleScrollToIndexFailed}
           {...props}
+          containerCustomStyle={this.containerStyle}
         />
+
         {this.renderPagination()}
       </View>
     );

@@ -1,15 +1,18 @@
-import React, {ClassAttributes, Component} from 'react';
+import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import YoutubeIframe, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+
 import equal from 'deep-equal';
 import {withTranslation} from 'react-i18next';
+import YoutubeIframe, {getYoutubeMeta} from 'react-native-youtube-iframe';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import {YoutubeVideoIframeProps} from '.';
 
 import appConfig from 'app-config';
+
 import Loading from 'src/components/Loading';
 import {Container} from 'src/components/Layout';
+import Controls from '../Controls';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,7 +40,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     autoAdjustLayout: false,
   };
 
-  refPlayer = React.createRef();
+  refPlayer = React.createRef<any>();
 
   state = {
     isError: false,
@@ -47,7 +50,12 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     metaData: undefined,
     containerWidth: undefined,
     containerHeight: undefined,
+
+    currentTime: '',
+    totalTime: '',
   };
+
+  getYoutubeTimerInterval: any = () => {};
 
   shouldComponentUpdate(nextProps: YoutubeVideoIframeProps, nextState) {
     if (nextState !== this.state) {
@@ -82,6 +90,28 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     return false;
   }
 
+  componentDidMount() {
+    if (this.props.refPlayer) {
+      this.props.refPlayer(this.refPlayer.current);
+    }
+    if (this.refPlayer.current) {
+      setTimeout(async () => {
+        const totalTime = await this.refPlayer.current?.getDuration();
+
+        this.setState({totalTime});
+      }, 1500);
+
+      this.getYoutubeTimerInterval = setInterval(async () => {
+        const currentTime = await this.refPlayer.current.getCurrentTime();
+        this.setState({currentTime});
+      }, 100);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.getYoutubeTimerInterval);
+  }
+
   getAdjustedVideoLayout = (
     metaData = this.state.metaData,
     containerWidth = this.state.containerWidth,
@@ -101,6 +131,14 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     }
 
     return {width, height, metaData};
+  };
+
+  handleProgress = (progress) => {
+    if (this.refPlayer.current) {
+      this.refPlayer.current.seekTo(
+        Math.floor(progress * (Number(this.state.totalTime) || 0)),
+      );
+    }
   };
 
   handleReady = () => {
@@ -152,41 +190,57 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   render() {
     return (
-      <View
-        onLayout={this.handleContainerLayout}
-        style={[styles.container, this.props.containerStyle]}>
-        <View onStartShouldSetResponder={this.handleStartShouldSetResponder}>
-          <YoutubeIframe
-            ref={this.props.refPlayer}
-            videoId={this.props.videoId}
-            height={this.state.height}
-            width={this.state.width}
-            webViewStyle={this.props.webviewStyle}
-            onChangeState={this.props.onChangeState}
-            onReady={this.handleReady}
-            onError={this.handleError}
-            forceAndroidAutoplay
-            {...this.props.youtubeIframeProps}
-          />
-        </View>
-        {(this.state.isError || this.state.loading) && (
-          <View style={styles.mask}>
-            {this.state.isError ? (
-              <Container center>
-                <AntDesignIcon
-                  name="exclamationcircle"
-                  style={styles.errorIcon}
-                />
-                <Text style={styles.errorMessage}>
-                  {this.props.t('api.error.message')}
-                </Text>
-              </Container>
-            ) : (
-              this.state.loading && <Loading center />
-            )}
+      <>
+        <View
+          onLayout={this.handleContainerLayout}
+          style={[styles.container, this.props.containerStyle]}>
+          <View onStartShouldSetResponder={this.handleStartShouldSetResponder}>
+            <YoutubeIframe
+              ref={this.refPlayer}
+              videoId={this.props.videoId}
+              height={this.state.height}
+              width={this.state.width}
+              webViewStyle={this.props.webviewStyle}
+              onChangeState={this.props.onChangeState}
+              onReady={this.handleReady}
+              onError={this.handleError}
+              forceAndroidAutoplay
+              {...this.props.youtubeIframeProps}
+              initialPlayerParams={{
+                // controls: false,
+                ...this.props.youtubeIframeProps?.initialPlayerParams,
+              }}
+            />
           </View>
-        )}
-      </View>
+          {(this.state.isError || this.state.loading) && (
+            <View style={styles.mask}>
+              {this.state.isError ? (
+                <Container center>
+                  <AntDesignIcon
+                    name="exclamationcircle"
+                    style={styles.errorIcon}
+                  />
+                  <Text style={styles.errorMessage}>
+                    {this.props.t('api.error.message')}
+                  </Text>
+                </Container>
+              ) : (
+                this.state.loading && <Loading center />
+              )}
+            </View>
+          )}
+        </View>
+
+        <Controls
+          currentTime={this.state.currentTime}
+          totalTime={this.state.totalTime}
+          isPlay={!!this.props.youtubeIframeProps?.play}
+          isMute={!!this.props.youtubeIframeProps?.mute}
+          onPressPlay={this.props.onPressPlay}
+          onPressMute={this.props.onPressMute}
+          onProgress={this.handleProgress}
+        />
+      </>
     );
   }
 }

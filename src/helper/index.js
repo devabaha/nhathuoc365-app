@@ -16,3 +16,26 @@ export const isValidDate = (date) => {
 
   return date instanceof Date && !isNaN(date);
 };
+
+export const convertSecondsToFormattedTimeData = (
+  seconds,
+  padStart = {
+    second: 2,
+    hour: 2,
+    minute: 2,
+  },
+) => {
+  let h = Math.floor(seconds / 3600);
+  let m = Math.floor((seconds - h * 3600) / 60);
+  let s = Math.floor(seconds - h * 3600) % 60;
+
+  h = h.toString().padStart(padStart.hour, '0');
+  m = m.toString().padStart(padStart.minute, '0');
+  s = s.toString().padStart(padStart.second, '0');
+
+  return {
+    hour: h,
+    minute: m,
+    second: s,
+  };
+};

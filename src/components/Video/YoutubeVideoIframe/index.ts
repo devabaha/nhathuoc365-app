@@ -15,12 +15,15 @@ export interface YoutubeVideoIframeProps {
   height: number; // string-able
 
   width?: number; // string-able
-  refPlayer?: React.MutableRefObject<YoutubeIframeRef>;
+  refPlayer?: (ref: YoutubeIframeRef) => void;
   webviewStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
   autoAdjustLayout?: boolean;
   onReady?: () => void;
   onError?: (error: string) => void;
   onChangeState?: (event: string) => void;
+  onPressPlay?: () => void;
+  onPressMute?: () => void;
+  onProgress?: (progress:  number) => void;
   youtubeIframeProps?: YoutubeIframeProps;
 }

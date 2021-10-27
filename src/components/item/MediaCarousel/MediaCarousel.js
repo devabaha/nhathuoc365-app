@@ -65,13 +65,12 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
     return (
       <Video
         type="youtube"
-        videoId={media.url}
+        // videoId={media.url}
+        videoId="VJDJs9dumZI"
         containerStyle={styles.videoContainer}
         height={appConfig.device.height / 2}
         autoAdjustLayout
-        youtubeIframeProps={{
-          play: currentIndex === index,
-        }}
+        isPlay={currentIndex === index}
       />
     );
   };
@@ -79,28 +78,30 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
   const renderItem = useCallback(
     ({item: media, index}) => {
       return (
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.item_image_viewer({
-              images: data,
-              index: index,
-            });
-          }}>
-          <View style={styles.mediaContainer}>
-            {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
-              <View style={styles.imageContainer}>
-                <Image
-                  style={styles.image}
-                  source={{uri: media.url}}
-                  resizeMode="contain"
-                />
-              </View>
-            ) : (
-              renderVideo(media, index)
-            )}
-          </View>
-        </TouchableHighlight>
+        <>
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => {
+              Actions.item_image_viewer({
+                images: data,
+                index: index,
+              });
+            }}>
+            <View style={styles.mediaContainer}>
+              {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={styles.image}
+                    source={{uri: media.url}}
+                    resizeMode="contain"
+                  />
+                </View>
+              ) : (
+                renderVideo(media, index)
+              )}
+            </View>
+          </TouchableHighlight>
+        </>
       );
     },
     [currentIndex],
