@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-cxj2uh] Include youtube video in product carousel, ItemImageViewer by [minhnguyenit14@gmail.com].
 ### Changed
 - Header of MultiLevelCategories by [minhnguyenit14@gmail.com].
-- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
+- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-1pd4hmw] Display the box to enter the referral code when clicking the affiliate link by [lamah.dev@gmail.com].
 ### Fixed
 - [CU-1p7b8x5] Crash when show DateTime picker by [minhnguyenit14@gmail.com].

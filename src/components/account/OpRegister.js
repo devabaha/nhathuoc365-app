@@ -33,8 +33,9 @@ class OpRegister extends Component {
       isCityLoading: false,
       isWarehouseLoading: false,
       referCodeEditable:
-        isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
-        !store?.user_info?.invite_user_id,
+        !isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
+        !store?.user_info?.invite_user_id &&
+        !store?.refer_code,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
@@ -48,7 +49,7 @@ class OpRegister extends Component {
 
     this.updateReferCodeDisposer = reaction(
       () => store.refer_code,
-      this.updateReferCode,
+      this.updateReferCode.bind(this),
     );
 
     this.eventTracker = new EventTracker();
@@ -421,7 +422,11 @@ class OpRegister extends Component {
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
       (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
+      (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id) ||
+      (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
+        isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
+        !store?.user_info?.invite_user_id &&
+        !this.state.refer);
 
     const referCodeTitle = (
       <Text>
