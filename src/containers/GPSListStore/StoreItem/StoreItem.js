@@ -103,6 +103,8 @@ const StoreItem = ({
   requestLocationLoading,
   disabledDistanceStyle,
 }) => {
+  const {t} = useTranslation();
+  
   const handleCall = () => {
     if (phone && phone != '') {
       Communications.phonecall(phone, true);
@@ -166,7 +168,7 @@ const StoreItem = ({
                 onPress={() => openMap(lat, lng)}>
                 <Container row style={styles.openMapBtn}>
                   <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>{actionBtnTitle}</Text>
+                  <Text style={styles.openMapTxt}>{actionBtnTitle || t('map')}</Text>
                 </Container>
               </Button>
             </Container>
