@@ -136,10 +136,13 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const [isGoToSetting, setGotoSetting] = useState(false);
   const [requestLocationLoading, setRequestLocationLoading] = useState(true);
   const [isConnectGPS, setConnectGPS] = useState(false);
+  const [isGetDataFirstTime, setGetDataFirstTime] = useState(true);
   const [requestLocationErrorCode, setRequestLocationErrorCode] = useState(-1);
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [noResult, setNoResult] = useState(false);
 
   const title = 'Không truy cập được Vị trí';
   const content =
@@ -163,31 +166,29 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     AppState.addEventListener('change', handleAppStateChange);
     requestLocationPermission();
 
-    if (type === GPS_LIST_TYPE.GPS_LIST_SITE) {
-      setTimeout(() => {
-        Actions.refresh({
-          searchValue: '',
-          onSearch: (text) => {
-            Actions.refresh({
-              searchValue: text,
-            });
+    setTimeout(() => {
+      Actions.refresh({
+        searchValue: '',
+        onSearch: (text) => {
+          Actions.refresh({
+            searchValue: text,
+          });
 
-            // auto search on changed text
-            onSearch(text);
-          },
-          onCancel: () => {
-            Keyboard.dismiss();
-          },
-          onClearText: () => {
-            Actions.refresh({
-              searchValue: '',
-            });
+          // auto search on changed text
+          onSearch(text);
+        },
+        onCancel: () => {
+          Keyboard.dismiss();
+        },
+        onClearText: () => {
+          Actions.refresh({
+            searchValue: '',
+          });
 
-            onSearch('');
-          },
-        });
+          onSearch('');
+        },
       });
-    }
+    });
   };
 
   const unMount = () => {
@@ -207,25 +208,19 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   };
 
   const getListStore = async (data) => {
-    if (type === GPS_LIST_TYPE.GPS_LIST_SITE) {
-      setLoading(true);
-    }
+    setLoading(true);
+
     if (latitude !== undefined && longitude !== undefined) {
       data = {
         lat: latitude,
         lng: longitude,
       };
     }
-
     getListStoreRequest.data =
       type === GPS_LIST_TYPE.GPS_LIST_STORE
         ? APIHandler.user_site_store(data)
         : APIHandler.user_list_gps_store_location(data);
     try {
-      // const responseData =
-      //   type === GPS_LIST_TYPE.GPS_LIST_STORE
-      //     ? await getListStoreRequest.promise()
-      //     : (await APIHandler.user_list_gps_store_location(data))?.data;
       const responseData = await getListStoreRequest.promise();
 
       setListStore(
@@ -242,6 +237,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setGetDataFirstTime(false);
     }
   };
 
@@ -293,12 +289,24 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
       distanceFilter: 1,
     };
     Geolocation.clearWatch(watchID.current);
-    watchID.current = Geolocation.watchPosition(
-      (position) => handleSaveLocation(position),
-      (err) => {
-        console.log('watch_position', watchID.current, err);
-        setConnectGPS(false);
-        !listStore?.length && getListStore();
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log('geolocation', watchID.current, position);
+        if (!isMounted()) return;
+
+        watchID.current = Geolocation.watchPosition(
+          (position) => handleSaveLocation(position),
+          (err) => {
+            console.log('watch_position', watchID.current, err);
+            setConnectGPS(false);
+            !listStore?.length && getListStore();
+          },
+          config,
+        );
+        handleSaveLocation(position);
+      },
+      (error) => {
+        console.log('update_location', error);
       },
       config,
     );
@@ -438,6 +446,19 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           requestLocationLoading={requestLocationLoading}
           distance={calculateDiffDistance(store.lng, store.lat)}
           disabledDistanceStyle={disabledDistanceStyle}
+          actionBtnTitle={
+            type === GPS_LIST_TYPE.GPS_LIST_STORE
+              ? t('common:showMap')
+              : t('common:goShopping')
+          }
+          actionBtnIconName={
+            type === GPS_LIST_TYPE.GPS_LIST_SITE && 'ios-cart-sharp'
+          }
+          onPressActionBtn={
+            type === GPS_LIST_TYPE.GPS_LIST_SITE
+              ? () => handlePressSite(store)
+              : null
+          }
         />
       </TouchableOpacity>
     );
@@ -445,15 +466,18 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
 
   const renderNoResult = () => {
     return (
-      <NoResult
-        message={
-          type === GPS_LIST_TYPE.GPS_LIST_STORE
-            ? t('common:noResult')
-            : t('common:noStoreFound')
-        }
-      />
+      !isGetDataFirstTime && (
+        <NoResult
+          message={
+            type === GPS_LIST_TYPE.GPS_LIST_STORE
+              ? t('common:noResult')
+              : t('common:noStoreFound')
+          }
+        />
+      )
     );
   };
+
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
@@ -478,6 +502,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
         ListEmptyComponent={renderNoResult}
+        onScroll={Keyboard.dismiss}
       />
     </ScreenWrapper>
   );
