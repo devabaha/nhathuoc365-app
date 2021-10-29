@@ -8,4 +8,6 @@ export interface VideoProps extends YoutubeVideoIframeProps {
   type: VideoType;
   isPlay: boolean;
   isMute?: boolean;
+
+  onPressFullscreen?: () => void;
 }

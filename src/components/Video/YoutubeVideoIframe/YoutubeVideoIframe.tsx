@@ -38,8 +38,11 @@ const styles = StyleSheet.create({
 class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   static defaultProps = {
     autoAdjustLayout: false,
+    onProgress: () => {},
+    onPressFullscreen: () => {},
   };
 
+  refWebview = React.createRef<any>();
   refPlayer = React.createRef<any>();
 
   state = {
@@ -51,8 +54,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     containerWidth: undefined,
     containerHeight: undefined,
 
-    currentTime: '',
-    totalTime: '',
+    currentTime: 0,
+    totalTime: 0,
+    bufferTime: 0,
+
+    isFullScreen: false,
   };
 
   getYoutubeTimerInterval: any = () => {};
@@ -92,6 +98,9 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   componentDidMount() {
     if (this.props.refPlayer) {
+      console.log(this.refPlayer.current);
+      //@ts-ignore
+      this.refWebview.current = this.refPlayer.current.getWebViewRef();
       this.props.refPlayer(this.refPlayer.current);
     }
   }
@@ -123,17 +132,28 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   getTimer = async () => {
     if (this.refPlayer.current) {
-      const totalTime = await this.refPlayer.current?.getDuration();
-      console.log(totalTime);
-      this.setState({totalTime});
-      this.getYoutubeTimerInterval = setInterval(async () => {
-        const currentTime = await this.refPlayer.current.getCurrentTime();
-        this.setState({currentTime});
-      }, 100);
+      try {
+        const totalTime = await this.refPlayer.current?.getDuration();
+        this.setState({totalTime});
+
+        this.getYoutubeTimerInterval = setInterval(async () => {
+          const currentTime = await this.refPlayer.current.getCurrentTime();
+          this.setState({currentTime});
+
+          this.refPlayer.current
+            .getVideoLoadedFraction()
+            .then((bufferFraction) => {
+              this.setState({bufferTime: bufferFraction * totalTime});
+            });
+        }, 100);
+      } catch (error) {
+        console.log('youtube_iframe_get_timer', error);
+      }
     }
   };
 
   handleProgress = (progress) => {
+    this.props.onProgress(progress);
     if (this.refPlayer.current) {
       this.refPlayer.current.seekTo(
         Math.floor(progress * (Number(this.state.totalTime) || 0)),
@@ -148,12 +168,17 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   };
 
   handleError = (error) => {
-    console.log(error);
+    console.log('youtube iframe', error);
     this.setState({
       isError: true,
       loading: false,
     });
     this.props.onError && this.props.onError(error);
+  };
+
+  handleFullScreen = () => {
+    this.props.onPressFullscreen();
+    this.setState({isFullScreen: true});
   };
 
   handleContainerLayout = (e) => {
@@ -185,17 +210,16 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     });
   };
 
-  handleStartShouldSetResponder = () => {
-    return true;
-  };
-
   render() {
     return (
-      <>
+      <View
+        style={{
+          flex: 1,
+        }}>
         <View
           onLayout={this.handleContainerLayout}
           style={[styles.container, this.props.containerStyle]}>
-          <View onStartShouldSetResponder={this.handleStartShouldSetResponder}>
+          <View>
             <YoutubeIframe
               ref={this.refPlayer}
               videoId={this.props.videoId}
@@ -235,13 +259,15 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
         <Controls
           currentTime={this.state.currentTime}
           totalTime={this.state.totalTime}
+          bufferTime={this.state.bufferTime}
           isPlay={!!this.props.youtubeIframeProps?.play}
           isMute={!!this.props.youtubeIframeProps?.mute}
           onPressPlay={this.props.onPressPlay}
           onPressMute={this.props.onPressMute}
           onProgress={this.handleProgress}
+          onPressFullScreen={this.handleFullScreen}
         />
-      </>
+      </View>
     );
   }
 }

@@ -82,6 +82,7 @@ export class Video extends Component<VideoProps> {
           onPressPlay={this.handlePressPlay}
           onPressMute={this.handlePressMute}
           onProgress={this.handleProgress}
+          onPressFullscreen={this.props.onPressFullscreen}
           youtubeIframeProps={{
             ...this.props.youtubeIframeProps,
             play: this.state.isPlay,

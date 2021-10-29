@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
 const Tracker = ({
   currentTime,
   totalTime,
+  bufferTime,
   isMute = false,
   actionsContainerPointerEvents = 'auto',
   actionsContainerStyle = {},
@@ -64,6 +65,7 @@ const Tracker = ({
       <ProgressBar
         progress={currentTime / (totalTime || 1)}
         popovers={getPopOverData}
+        bufferProgress={bufferTime / (totalTime || 1)}
         onProgress={onProgress}
         onChangingProgress={onChangingProgress}
       />

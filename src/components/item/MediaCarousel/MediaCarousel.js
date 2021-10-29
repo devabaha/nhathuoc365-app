@@ -52,6 +52,13 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
     setCurrentIndex(index);
   }, []);
 
+  const goToGallery = useCallback((index) => {
+    Actions.item_image_viewer({
+      images: data,
+      index: index,
+    });
+  }, []);
+
   const renderPagination = (index, total) => {
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
@@ -65,12 +72,12 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
     return (
       <Video
         type="youtube"
-        // videoId={media.url}
-        videoId="VJDJs9dumZI"
+        videoId={media.url}
         containerStyle={styles.videoContainer}
         height={appConfig.device.height / 2}
         autoAdjustLayout
         isPlay={currentIndex === index}
+        onPressFullscreen={() => goToGallery(index)}
       />
     );
   };
@@ -80,13 +87,9 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
       return (
         <>
           <TouchableHighlight
+            disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
             underlayColor="transparent"
-            onPress={() => {
-              Actions.item_image_viewer({
-                images: data,
-                index: index,
-              });
-            }}>
+            onPress={() => goToGallery(index)}>
             <View style={styles.mediaContainer}>
               {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
                 <View style={styles.imageContainer}>

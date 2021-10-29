@@ -24,6 +24,7 @@ export interface YoutubeVideoIframeProps {
   onChangeState?: (event: string) => void;
   onPressPlay?: () => void;
   onPressMute?: () => void;
+  onPressFullscreen?: () => void;
   onProgress?: (progress:  number) => void;
   youtubeIframeProps?: YoutubeIframeProps;
 }

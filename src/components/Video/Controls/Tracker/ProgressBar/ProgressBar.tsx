@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: 3,
-    backgroundColor: themes.colors.overlay,
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
@@ -236,7 +235,7 @@ const ProgressBar = ({
         ref={refLongPressGesture}
         simultaneousHandlers={refPanGesture}
         {...tapGestureHandler}
-        minDurationMs={300}>
+        minDurationMs={200}>
         <Animated.View>
           <PanGestureHandler ref={refPanGesture} {...gestureHandler}>
             <Animated.View style={styles.wrapper}>
@@ -246,7 +245,7 @@ const ProgressBar = ({
                   style={[
                     styles.foreground,
                     {
-                      width: bufferProgress,
+                      width: bufferProgress * appConfig.device.width,
                     },
                   ]}
                 />

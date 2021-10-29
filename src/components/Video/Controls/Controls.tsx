@@ -72,8 +72,11 @@ const Controls = ({
   isMute: isMuteProps,
   currentTime,
   totalTime,
+  bufferTime,
+  containerStyle = {},
   onPressPlay = () => {},
   onPressMute = () => {},
+  onPressFullScreen = () => {},
   onChangingProgress = (progress: number) => {},
   onProgress = (progress: number) => {},
 }) => {
@@ -219,10 +222,12 @@ const Controls = ({
       <Tracker
         currentTime={currentTime}
         totalTime={totalTime}
+        bufferTime={bufferTime}
         isMute={!!isMute}
         actionsContainerPointerEvents={isControlsVisible ? 'auto' : 'none'}
         actionsContainerStyle={animatedVisibleControlsStyle}
         onPressMute={toggleMute}
+        onPressFullscreen={onPressFullScreen}
         onChangingProgress={handleChangingProgress}
         onProgress={handleProgressEnd}
       />
@@ -236,7 +241,7 @@ const Controls = ({
   }, []);
 
   return (
-    <View onStartShouldSetResponder={() => true} style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <TapGestureHandler {...gestureHandler}>
         <Animated.View style={styles.container}>
           <Animated.View
