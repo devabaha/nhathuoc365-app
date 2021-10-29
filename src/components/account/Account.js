@@ -171,7 +171,8 @@ class Account extends Component {
         ),
         isHidden:
           !user_info.default_wallet ||
-          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE) ||
+          isConfigActive(CONFIG_KEY.HIDE_WALLET_ACCOUNT_KEY),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -335,7 +336,9 @@ class Account extends Component {
       },
       {
         key: 'vouchers',
-        isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
+          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
         label: t('options.myVoucher.label'),
         desc: t('options.myVoucher.desc'),
         leftIcon: (

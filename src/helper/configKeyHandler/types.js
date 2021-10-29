@@ -47,4 +47,7 @@ export const CONFIG_KEY = {
   HIDE_REGISTER_REFERRAL_CODE_KEY: 'hide_register_referral_code_key',
 
   HIDE_WALLET_HOMEPAGE_KEY: 'hide_wallet_homepage_key',
+  HIDE_WALLET_ACCOUNT_KEY: 'hide_wallet_account_key',
+
+  HIDE_VOUCHERS_ACCOUNT_KEY: 'hide_vouchers_account_key',
 };
