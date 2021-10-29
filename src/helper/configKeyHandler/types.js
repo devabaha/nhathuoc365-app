@@ -1,7 +1,7 @@
 export const CONFIG_KEY = {
-  SELECT_CITY_KEY: 'choose_city_site_key',
-  SELECT_BIRTH_KEY: 'choose_birth_site_key',
-  SELECT_STORE_KEY: 'choose_store_site_key',
+  CHOOSE_CITY_SITE_KEY: 'choose_city_site_key',
+  CHOOSE_BIRTH_SITE_KEY: 'choose_birth_site_key',
+  CHOOSE_STORE_SITE_KEY: 'choose_store_site_key',
 
   HIDE_PREMIUM_TAB_KEY: 'hide_premium_tab_key',
   HIDE_PREMIUM_POINT_KEY: 'hide_premium_point_key',

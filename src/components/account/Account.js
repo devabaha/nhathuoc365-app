@@ -439,7 +439,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
+        isHidden: !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {
@@ -833,7 +833,7 @@ class Account extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();

@@ -62,7 +62,7 @@ class OpRegister extends Component {
 
   get isActiveCity() {
     return (
-      isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) &&
+      isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) &&
       this.state.cities.length !== 0
     );
   }
@@ -72,8 +72,8 @@ class OpRegister extends Component {
   }
 
   componentDidMount() {
-    isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
-    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
+    isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
+    isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && this.getListWarehouse();
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -326,7 +326,7 @@ class OpRegister extends Component {
   };
 
   renderDOB() {
-    if (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY)) {
+    if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
         id: 'ngay_sinh',
         title: this.props.t('data.birthdate.title'),
@@ -375,7 +375,7 @@ class OpRegister extends Component {
   }
 
   renderWarehouse() {
-    if (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) {
+    if (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
       const disable =
         !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
@@ -421,8 +421,8 @@ class OpRegister extends Component {
     const disabled =
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
-      (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY) && !birth) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && !warehouseSelected.id) ||
       (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
         isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
         !store?.user_info?.invite_user_id &&

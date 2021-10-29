@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - hide_vouchers_account_key by [minhnguyenit14@gmail.com].
 ### Changed
 - GPS_LIST_STORE, GPS_LIST_SITE UI, UX by [minhnguyenit14@gmail.com].
+- select_city_key to choose_city_site_key, select_birth_key to choose_birth_site_key, select_store_key to choose_store_site_key by [minhnguyenit14@gmail.com].
+- Hide RightButtonNavBar type share prop shareURL not existed by [minhnguyenit14@gmail.com].
 ### Fixed
-- [Android] can not get current location in the first time by [minhnguyenit14@gmail.com].
-- [Android] in some devices, home page can not show all content by [minhnguyenit14@gmail.com].
+- [Android] Can not get current location in the first time by [minhnguyenit14@gmail.com].
+- [Android] In some devices, home page can not show all content by [minhnguyenit14@gmail.com].
 
 ## [r12.1.6] - 2021-10-28
 ### Added

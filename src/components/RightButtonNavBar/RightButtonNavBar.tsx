@@ -194,9 +194,13 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   render() {
+    if (this.props.type === RIGHT_BUTTON_TYPE.SHARE && !this.props.shareURL)
+      return null;
+
     const TouchableComponent = this.props.touchableOpacity
       ? TouchableOpacity
       : TouchableHighlight;
+
     return (
       <TouchableComponent
         underlayColor="transparent"

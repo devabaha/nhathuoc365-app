@@ -193,22 +193,30 @@ class Header extends Component {
   };
 
   renderRightButtons() {
-    return RIGHT_BUTTONS.map((btn, index) => {
-      if (
-        btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE &&
-        !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
-      ) {
-        return null;
-      }
-      const isLast = index === RIGHT_BUTTONS.length - 1;
+    const buttons = [...RIGHT_BUTTONS];
+
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
+      buttons.splice(
+        buttons.findIndex((btn) => btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE),
+        1,
+      );
+    }
+
+    if (!this.props.item.url) {
+      buttons.splice(
+        buttons.findIndex((btn) => btn.type === RIGHT_BUTTON_TYPE.SHARE),
+        1,
+      );
+    }
+
+    return buttons.map((btn, index) => {
 
       const narrowRightGapStyle = {
         left: interpolate(this.animatedTranslate, {
           inputRange: [0, 1],
-          outputRange: [0, 7 * (RIGHT_BUTTONS.length - index)],
+          outputRange: [0, 7 * (buttons.length - index)],
         }),
       };
-
       return (
         <Animated.View key={index} style={narrowRightGapStyle}>
           <RightButtonNavBar
