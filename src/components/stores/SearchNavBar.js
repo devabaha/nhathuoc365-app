@@ -24,7 +24,6 @@ class SearchNavBar extends Component {
     onClearText: defaultListener,
     placeholder: '',
     searchValue: '',
-    autoFocus: true
   };
 
   renderRight() {
