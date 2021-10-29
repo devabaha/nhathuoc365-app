@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -14,19 +14,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Animated, {
   block,
   call,
+  cond,
   Easing,
   eq,
   set,
   useCode,
   useValue,
 } from 'react-native-reanimated';
-import Svg, {Path} from 'react-native-svg';
 
 import appConfig from 'app-config';
-import {timing} from 'react-native-redash';
+import {timing, useTapGestureHandler} from 'react-native-redash';
 
 import PlayPauseButton from './PlayPauseButton';
 import Tracker from './Tracker';
+import {timingFunction} from './helper';
+import {State, TapGestureHandler} from 'react-native-gesture-handler';
 
 const PLAY_SVG_PATH =
   'M 133 440 a 35.37 35.37 0 0 1 -17.5 -4.67 c -12 -6.8 -19.46 -20 -19.46 -34.33 V 111 c 0 -14.37 7.46 -27.53 19.46 -34.33 a 35.13 35.13 0 0 1 35.77 0.45 l 247.85 148.36 a 36 36 0 0 1 0 61 l -247.89 148.4 A 35.5 35.5 0 0 1 133 440 Z';
@@ -40,6 +42,9 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1,
+  },
+  mask: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: appConfig.colors.overlay,
   },
 
@@ -69,14 +74,21 @@ const Controls = ({
   totalTime,
   onPressPlay = () => {},
   onPressMute = () => {},
-  onProgress = (value: number) => {},
+  onChangingProgress = (progress: number) => {},
+  onProgress = (progress: number) => {},
 }) => {
   const refPlayPath = useRef<any>();
+  const timeoutHideControls = useRef<any>(() => {});
 
+  const [isControlsVisible, setControlsVisible] = useState(1);
   const [isPlay, setPlay] = useState(isPlayProps ? 1 : 0);
   const [isMute, setMute] = useState(isMuteProps ? 1 : 0);
+  const [isChangingProgress, setChangingProgress] = useState(0);
 
   const animatedPlayValue = useValue(isPlay);
+  const animatedVisibleControls = useValue(isChangingProgress);
+
+  const {gestureHandler, state} = useTapGestureHandler();
 
   useEffect(() => {
     setPlay(isPlayProps ? 1 : 0);
@@ -86,13 +98,55 @@ const Controls = ({
     setMute(isMuteProps ? 1 : 0);
   }, [isMuteProps]);
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutHideControls.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isControlsVisible) {
+      hideControls();
+    }
+
+    () => {
+      clearTimeout(timeoutHideControls.current);
+    };
+  }, [isControlsVisible]);
+
+  const hideControls = useCallback(() => {
+    clearTimeout(timeoutHideControls.current);
+    timeoutHideControls.current = setTimeout(() => {
+      setControlsVisible(0);
+    }, 3000);
+  }, []);
+
   const togglePlay = useCallback(() => {
+    hideControls();
     onPressPlay();
   }, [isPlay]);
 
   const toggleMute = useCallback(() => {
+    hideControls();
     onPressMute();
   }, [isMute]);
+
+  const handleChangingProgress = useCallback(
+    (progress) => {
+      clearTimeout(timeoutHideControls.current);
+      onChangingProgress(progress);
+      if (!isChangingProgress) {
+        setChangingProgress(1);
+      }
+    },
+    [isChangingProgress],
+  );
+
+  const handleProgressEnd = useCallback((progress) => {
+    onProgress(progress);
+    setChangingProgress(0);
+    hideControls();
+  }, []);
 
   const animatePlay = ([value]) => {
     if (refPlayPath.current) {
@@ -121,6 +175,35 @@ const Controls = ({
     return block([call([animatedPlayValue], animatePlay)]);
   }, []);
 
+  useCode(() => {
+    return [
+      cond(eq(state, State.BEGAN), []),
+      cond(eq(state, State.END), [
+        set(state, State.UNDETERMINED),
+        call([], () => {
+          clearTimeout(timeoutHideControls.current);
+          setControlsVisible(isControlsVisible ? 0 : 1);
+        }),
+      ]),
+    ];
+  }, [isControlsVisible]);
+
+  useCode(() => {
+    return block([
+      set(
+        animatedVisibleControls,
+        timingFunction(
+          animatedVisibleControls,
+          cond(
+            eq(isChangingProgress, 0),
+            isControlsVisible,
+            isChangingProgress ? 0 : 1,
+          ),
+        ),
+      ),
+    ]);
+  }, [isChangingProgress, isControlsVisible]);
+
   const renderPlay = () => {
     return (
       <PlayPauseButton
@@ -137,16 +220,34 @@ const Controls = ({
         currentTime={currentTime}
         totalTime={totalTime}
         isMute={!!isMute}
+        actionsContainerPointerEvents={isControlsVisible ? 'auto' : 'none'}
+        actionsContainerStyle={animatedVisibleControlsStyle}
         onPressMute={toggleMute}
-        onProgress={onProgress}
+        onChangingProgress={handleChangingProgress}
+        onProgress={handleProgressEnd}
       />
     );
   };
 
+  const animatedVisibleControlsStyle = useMemo(() => {
+    return {
+      opacity: animatedVisibleControls,
+    };
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.body}>{renderPlay()}</View>
-      <View style={styles.footer}>{renderTracker()}</View>
+    <View onStartShouldSetResponder={() => true} style={styles.container}>
+      <TapGestureHandler {...gestureHandler}>
+        <Animated.View style={styles.container}>
+          <Animated.View
+            pointerEvents={isControlsVisible ? 'auto' : 'none'}
+            style={[styles.body, animatedVisibleControlsStyle]}>
+            <View style={styles.mask} />
+            {renderPlay()}
+          </Animated.View>
+          <View style={styles.footer}>{renderTracker()}</View>
+        </Animated.View>
+      </TapGestureHandler>
     </View>
   );
 };

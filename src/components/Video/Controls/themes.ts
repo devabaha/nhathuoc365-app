@@ -5,5 +5,6 @@ export const themes = {
     primary: appConfig.colors.white,
     highlight: appConfig.colors.primary,
     secondary: appConfig.colors.icon,
+    overlay: appConfig.colors.overlay
   },
 };

@@ -18,24 +18,24 @@ export const isValidDate = (date) => {
 };
 
 export const convertSecondsToFormattedTimeData = (
-  seconds,
+  timeInSeconds,
   padStart = {
-    second: 2,
-    hour: 2,
-    minute: 2,
+    seconds: 2,
+    hours: 2,
+    minutes: 2,
   },
 ) => {
-  let h = Math.floor(seconds / 3600);
-  let m = Math.floor((seconds - h * 3600) / 60);
-  let s = Math.floor(seconds - h * 3600) % 60;
+  let h = Math.floor(timeInSeconds / 3600);
+  let m = Math.floor((timeInSeconds - h * 3600) / 60);
+  let s = Math.floor(timeInSeconds - h * 3600) % 60;
 
-  h = h.toString().padStart(padStart.hour, '0');
-  m = m.toString().padStart(padStart.minute, '0');
-  s = s.toString().padStart(padStart.second, '0');
+  h = h.toString().padStart(padStart.hours, '0');
+  m = m.toString().padStart(padStart.minutes, '0');
+  s = s.toString().padStart(padStart.seconds, '0');
 
   return {
-    hour: h,
-    minute: m,
-    second: s,
+    hours: h,
+    minutes: m,
+    seconds: s,
   };
 };

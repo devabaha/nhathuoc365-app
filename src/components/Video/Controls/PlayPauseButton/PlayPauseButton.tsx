@@ -1,21 +1,16 @@
 import React, {useCallback, useRef} from 'react';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
-import {interpolate} from 'flubber';
-import {interpolateColor, timing} from 'react-native-redash';
-import extractBrush from 'react-native-svg/lib/module/lib/extract/extractBrush';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {StyleSheet} from 'react-native';
 import Animated, {
-  block,
   call,
   Easing,
-  eq,
-  set,
   useCode,
   useValue,
 } from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import appConfig from 'app-config';
+import {themes} from '../themes';
 
 const MAIN_ICON_ACTUAL_SIZE = 512;
 const MAIN_ICON_SIZE = 42;
@@ -29,7 +24,7 @@ const styles = StyleSheet.create({
     height: CONTAINER_SIZE,
     borderRadius: CONTAINER_SIZE / 2,
     //@ts-ignore
-    borderColor: hexToRgbA(appConfig.colors.white, 0.5),
+    borderColor: hexToRgbA(themes.colors.primary, 0.2),
 
     justifyContent: 'center',
     alignItems: 'center',
@@ -37,7 +32,7 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: appConfig.colors.white,
+    backgroundColor: themes.colors.primary,
   },
 });
 
@@ -62,11 +57,13 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
   const handlePressOut = useCallback(() => {
     isPressOut.current = true;
     if (pressInValue.current === 1) {
+      console.log('a');
+
       animateBackground();
     }
   }, []);
 
-  const handlePresInValueChange = useCallback(([value]) => {
+  const handlePressInValueChange = useCallback(([value]) => {
     pressInValue.current = value;
     if (
       value === 1 &&
@@ -82,6 +79,7 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
   }, []);
 
   const animateBackground = useCallback(() => {
+    isAnimatedPressInFinished.current = false;
     Animated.timing(animatedPressOutValue, {
       toValue: 1,
       duration: 200,
@@ -95,23 +93,26 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
   }, []);
 
   useCode(() => {
-    return [call([animatedPressInValue], handlePresInValueChange)];
+    return [call([animatedPressInValue], handlePressInValueChange)];
   }, []);
 
   return (
-    <Pressable
+    <TouchableOpacity
+      onPress={onPress}
       //@ts-ignore
       hitSlop={HIT_SLOP}
-      onPress={onPress}
       onPressIn={handlePressIn}
-      onPressOut={handlePressOut}>
+      onPressOut={handlePressOut}
+      activeOpacity={1}
+      //@ts-ignore
+      disallowInterruption>
       <Animated.View
         style={[
           styles.container,
           {
             borderWidth: animatedPressOutValue.interpolate({
               inputRange: [0, 0.5, 1],
-              outputRange: [0, 1, 0],
+              outputRange: [0, 2, 0],
             }),
           },
         ]}>
@@ -121,7 +122,7 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
             {
               opacity: animatedPressInValue.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, 0.1],
+                outputRange: [0, 0.2],
               }),
             },
           ]}
@@ -135,7 +136,7 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
           />
         </Svg>
       </Animated.View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

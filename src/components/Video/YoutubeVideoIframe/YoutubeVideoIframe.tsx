@@ -94,18 +94,6 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     if (this.props.refPlayer) {
       this.props.refPlayer(this.refPlayer.current);
     }
-    if (this.refPlayer.current) {
-      setTimeout(async () => {
-        const totalTime = await this.refPlayer.current?.getDuration();
-
-        this.setState({totalTime});
-      }, 1500);
-
-      this.getYoutubeTimerInterval = setInterval(async () => {
-        const currentTime = await this.refPlayer.current.getCurrentTime();
-        this.setState({currentTime});
-      }, 100);
-    }
   }
 
   componentWillUnmount() {
@@ -133,6 +121,18 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     return {width, height, metaData};
   };
 
+  getTimer = async () => {
+    if (this.refPlayer.current) {
+      const totalTime = await this.refPlayer.current?.getDuration();
+      console.log(totalTime);
+      this.setState({totalTime});
+      this.getYoutubeTimerInterval = setInterval(async () => {
+        const currentTime = await this.refPlayer.current.getCurrentTime();
+        this.setState({currentTime});
+      }, 100);
+    }
+  };
+
   handleProgress = (progress) => {
     if (this.refPlayer.current) {
       this.refPlayer.current.seekTo(
@@ -144,6 +144,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   handleReady = () => {
     this.setState({isError: false, loading: false});
     this.props.onReady && this.props.onReady();
+    this.getTimer();
   };
 
   handleError = (error) => {
@@ -207,7 +208,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               forceAndroidAutoplay
               {...this.props.youtubeIframeProps}
               initialPlayerParams={{
-                // controls: false,
+                controls: false,
                 ...this.props.youtubeIframeProps?.initialPlayerParams,
               }}
             />

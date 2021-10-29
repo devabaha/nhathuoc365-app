@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
+import appConfig from 'app-config';
 import {convertSecondsToFormattedTimeData} from 'app-helper';
 import {themes} from '../themes';
 
@@ -10,22 +12,18 @@ import ProgressBar from './ProgressBar';
 import Timer from './Timer';
 
 const styles = StyleSheet.create({
-  timerContainer: {
+  actionsContainer: {
     paddingHorizontal: 30,
     position: 'absolute',
     bottom: 30,
     width: '100%',
     justifyContent: 'space-between',
   },
-  timerTitle: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
 
   icon: {
     color: themes.colors.primary,
     fontSize: 22,
-    marginLeft: 15,
+    marginLeft: 20,
   },
 });
 
@@ -33,47 +31,73 @@ const Tracker = ({
   currentTime,
   totalTime,
   isMute = false,
+  actionsContainerPointerEvents = 'auto',
+  actionsContainerStyle = {},
   onPressMute = () => {},
   onPressFullscreen = () => {},
-  onProgress = (value: number) => {},
+  onChangingProgress = (progress: number) => {},
+  onProgress = (progress: number) => {},
 }) => {
-  const formattedCurrentTime = () => {
-    const {hour, minute, second} = convertSecondsToFormattedTimeData(
-      currentTime,
+  const formattedTime = (timeInSeconds) => {
+    const {hours, minutes, seconds} = convertSecondsToFormattedTimeData(
+      timeInSeconds,
     );
-
-    return [Number(hour) ? hour : '', minute, second]
+    return [Number(hours) ? hours : '', minutes, seconds]
       .join(':')
-      .slice(Number(hour) ? 0 : 1);
+      .slice(Number(hours) ? 0 : 1);
   };
 
-  const formattedTotalTime = () => {
-    const {hour, minute, second} = convertSecondsToFormattedTimeData(totalTime);
-    return [Number(hour) ? hour : '', minute, second]
-      .join(':')
-      .slice(Number(hour) ? 0 : 1);
-  };
+  const getPopOverData = useMemo(() => {
+    const popoverLength = appConfig.device.width / totalTime;
+
+    const popovers = Array.from({length: totalTime}, (_, index) => ({
+      start: index * popoverLength,
+      end: popoverLength * (index + 1),
+      value: formattedTime(index),
+    }));
+
+    return popovers;
+  }, [totalTime]);
 
   return (
     <View>
-      <ProgressBar progress={currentTime / totalTime} onProgress={onProgress} />
+      <ProgressBar
+        progress={currentTime / (totalTime || 1)}
+        popovers={getPopOverData}
+        onProgress={onProgress}
+        onChangingProgress={onChangingProgress}
+      />
 
-      <Container row style={styles.timerContainer}>
+      <Container
+        row
+        reanimated
+        style={[styles.actionsContainer, actionsContainerStyle]}
+        //@ts-ignore
+        pointerEvents={actionsContainerPointerEvents}>
         <Timer
-          current={formattedCurrentTime()}
-          total={formattedTotalTime()}
-          titleStyle={styles.timerTitle}
+          current={formattedTime(currentTime)}
+          total={formattedTime(totalTime)}
         />
         <Container row>
-          {/* @ts-ignore */}
-          <TouchableOpacity hitSlop={HIT_SLOP} onPress={onPressMute}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            // @ts-ignore
+            disallowInterruption
+            // @ts-ignore
+            hitSlop={HIT_SLOP}
+            onPress={onPressMute}>
             <Ionicons
               name={isMute ? 'ios-volume-mute' : 'ios-volume-high'}
               style={styles.icon}
             />
           </TouchableOpacity>
-          {/* @ts-ignore */}
-          <TouchableOpacity hitSlop={HIT_SLOP} onPress={onPressFullscreen}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            // @ts-ignore
+            disallowInterruption
+            // @ts-ignore
+            // hitSlop={HIT_SLOP}
+            onPress={onPressFullscreen}>
             <Ionicons name="ios-scan" style={styles.icon} />
           </TouchableOpacity>
         </Container>

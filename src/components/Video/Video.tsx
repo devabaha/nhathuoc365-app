@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {getYoutubeMeta} from 'react-native-youtube-iframe';
 
 import {VideoProps} from '.';
-import {convertSecondsToFormattedTimeData} from 'app-helper';
 
-import Controls from './Controls';
 import YoutubeVideoIframe from './YoutubeVideoIframe';
 
 const styles = StyleSheet.create({
@@ -17,8 +14,6 @@ export class Video extends Component<VideoProps> {
   state = {
     isPlay: !!this.props.isPlay,
     isMute: !!this.props.isMute,
-    currentTime: '',
-    totalTime: '',
   };
 
   refYoutubePlayer = React.createRef<any>();
@@ -64,8 +59,8 @@ export class Video extends Component<VideoProps> {
   };
 
   handleProgress = (progress) => {
-    console.log(progress)
-  }
+    console.log(progress);
+  };
 
   containerStyle = [styles.container, this.props.containerStyle];
 
@@ -88,9 +83,9 @@ export class Video extends Component<VideoProps> {
           onPressMute={this.handlePressMute}
           onProgress={this.handleProgress}
           youtubeIframeProps={{
+            ...this.props.youtubeIframeProps,
             play: this.state.isPlay,
             mute: this.state.isMute,
-            ...this.props.youtubeIframeProps,
           }}
         />
       </View>

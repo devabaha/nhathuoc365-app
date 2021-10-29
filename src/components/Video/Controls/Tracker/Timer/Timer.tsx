@@ -6,6 +6,8 @@ import {themes} from '../../themes';
 const styles = StyleSheet.create({
   title: {
     color: themes.colors.secondary,
+    fontSize: 12,
+    fontWeight: '500',
   },
   highlight: {
     color: themes.colors.primary,
@@ -13,8 +15,8 @@ const styles = StyleSheet.create({
 });
 
 const Timer = ({
-  total,
   current,
+  total = '',
   containerStyle = {},
   titleStyle = {},
   highlightStyle = {},
