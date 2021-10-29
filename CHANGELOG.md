@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r12.1.7]
+## [r12.1.7] - 2021-10-29
 ### Added
 - hide_wallet_account_key by [minhnguyenit14@gmail.com].
 - hide_vouchers_account_key by [minhnguyenit14@gmail.com].
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Android] can not get current location in the first time by [minhnguyenit14@gmail.com].
 - [Android] in some devices, home page can not show all content by [minhnguyenit14@gmail.com].
 
-## [r12.1.6]
+## [r12.1.6] - 2021-10-28
 ### Added
 - [CU-e00xdw] hide_wallet_homepage_key in Home by [lamah.dev@gmail.com].
 - ModalDateTimePicker by [minhnguyenit14@gmail.com].
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CU-1p7b8x5] Crash when show DateTime picker by [minhnguyenit14@gmail.com].
 
-## [r12.1.5]
+## [r12.1.5] - 2021-10-19
 ### Added
 - [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-1mtfept] Not showing data when auto scrolling to the selected item in ModalLocation by [minhnguyenit14@gmail.com].
 - Creating address is duplicated in CreateAddress by [lamah.dev@gmail.com].
 
-## [r12.1.4]
+## [r12.1.4] - 2021-10-01
 ### Added
 - [CU-mdwa93] Short content product in Item by [lamah.dev@gmail.com].
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-j3fuac] Use title from service as a highest priority for agency_information_register type by [minhnguyenit14@gmail.com].
 - [Android] Doesn't log out firebase when log out app by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
-## [r12.1.3]
+## [r12.1.3] - 2021-09-14
 ### Added
 - [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-e5q6jn] config_key facebook_fanpage in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
