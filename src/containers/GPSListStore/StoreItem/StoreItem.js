@@ -96,6 +96,7 @@ const StoreItem = ({
   phone,
   lat,
   lng,
+  actionBtnTitle,
 
   distance,
   enableDistance = false,
@@ -165,7 +166,7 @@ const StoreItem = ({
                 onPress={() => openMap(lat, lng)}>
                 <Container row style={styles.openMapBtn}>
                   <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>Xem bản đồ</Text>
+                  <Text style={styles.openMapTxt}>{actionBtnTitle}</Text>
                 </Container>
               </Button>
             </Container>
