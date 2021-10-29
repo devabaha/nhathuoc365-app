@@ -448,8 +448,8 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           disabledDistanceStyle={disabledDistanceStyle}
           actionBtnTitle={
             type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? t('common:showMap')
-              : t('common:goShopping')
+              ? t('showMap')
+              : t('goShopping')
           }
           actionBtnIconName={
             type === GPS_LIST_TYPE.GPS_LIST_SITE && 'ios-cart-sharp'
@@ -470,8 +470,8 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
         <NoResult
           message={
             type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? t('common:noResult')
-              : t('common:noStoreFound')
+              ? t('noResult')
+              : t('noStoreFound')
           }
         />
       )
