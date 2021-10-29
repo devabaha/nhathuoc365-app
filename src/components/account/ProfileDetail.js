@@ -84,7 +84,7 @@ class ProfileDetail extends Component {
           //   id: 'thanh_pho',
           //   title: t('sections.city.title'),
           //   value: store.user_info.city,
-          //   isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY)
+          //   isHidden: !isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY)
           // },
         ],
       },
