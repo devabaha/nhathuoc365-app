@@ -448,7 +448,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           disabledDistanceStyle={disabledDistanceStyle}
           actionBtnTitle={
             type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? t('showMap')
+              ? t('map')
               : t('goShopping')
           }
           actionBtnIconName={
