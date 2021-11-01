@@ -1267,7 +1267,7 @@ class Account extends Component {
             <CustomAutoHeightWebview
               content={siteContentValue}
               containerStyle={styles.footerSiteContainer}
-              contentStyle={styles.footerSiteContent}
+              // contentStyle={styles.footerSiteContent}
               customStyle={`body {
                 overflow-x: hidden;
               }`}
@@ -1556,7 +1556,7 @@ const styles = StyleSheet.create({
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   footerSiteContent: {
     width: appConfig.device.width - 24,

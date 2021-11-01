@@ -356,44 +356,44 @@ class Item extends Component {
         });
         // delay append data
         // setTimeout(() => {
-          if (isIOS) {
-            layoutAnimation();
-          }
+        if (isIOS) {
+          layoutAnimation();
+        }
 
-          var images = [];
+        var images = [];
 
-          if (response.data && response.data.img) {
-            response.data.img.map((item) => {
-              images.push({
-                url: item.image,
-              });
+        if (response.data && response.data.img) {
+          response.data.img.map((item) => {
+            images.push({
+              url: item.image,
             });
-          }
+          });
+        }
 
-          if (response?.data?.video) {
-            images.unshift({
-              type: MEDIA_TYPE.YOUTUBE_VIDEO,
-              url: response.data.video,
+        if (response?.data?.video) {
+          images.unshift({
+            type: MEDIA_TYPE.YOUTUBE_VIDEO,
+            url: response.data.video,
+          });
+        }
+
+        this.logEventTracking(response.data);
+
+        this.setState(
+          {
+            item_data: response.data,
+            images: images,
+            like_flag: response.data.like_flag,
+          },
+          () => {
+            // cache in five minutes
+            storage.save({
+              key: item_key,
+              data: this.state.item_data,
+              expires: ITEM_CACHE,
             });
-          }
-
-          this.logEventTracking(response.data);
-
-          this.setState(
-            {
-              item_data: response.data,
-              images: images,
-              like_flag: response.data.like_flag,
-            },
-            () => {
-              // cache in five minutes
-              storage.save({
-                key: item_key,
-                data: this.state.item_data,
-                expires: ITEM_CACHE,
-              });
-            },
-          );
+          },
+        );
         // }, delay || this._delay());
       } else {
         flashShowMessage({
@@ -1319,11 +1319,14 @@ class Item extends Component {
                   <CustomAutoHeightWebview
                     ref={(inst) => (this.refWebview.current = inst)}
                     onSizeUpdated={this.handleWebviewContentLayout}
-                    containerStyle={
+                    containerStyle={[
+                      {
+                        width: '100%'
+                      },
                       this.state.isWebviewContentCollapsed !== undefined &&
-                      !!this.state.isWebviewContentCollapsed &&
-                      styles.webviewCollapsedContainer
-                    }
+                        !!this.state.isWebviewContentCollapsed &&
+                        styles.webviewCollapsedContainer,
+                    ]}
                     content={item.content}
                     onGetInnerText={(innerText) =>
                       this.handleGetInnerTextWebview(innerText, item)
@@ -1605,6 +1608,7 @@ const styles = StyleSheet.create({
   item_content_text: {
     width: '100%',
     paddingTop: 20,
+    paddingHorizontal: 0,
   },
 
   boxButtonActions: {
