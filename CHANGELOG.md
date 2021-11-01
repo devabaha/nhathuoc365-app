@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- data_va info in Transaction by [minhnguyenit14@gmail.com].
+- [CU-1q9my54] data_va info in Transaction by [minhnguyenit14@gmail.com].
 
 ## [r12.1.7] - 2021-10-29
 ### Added
