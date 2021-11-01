@@ -228,7 +228,7 @@ export default class HorizontalInfoItem extends Component {
           </Text>
         </Container>
         {renderRight
-          ? renderRight()
+          ? renderRight(styles.detailTitle)
           : this._renderRightView(
               id,
               input,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
 
   detailTitle: {
-    flex: 1,
+    // flex: 1,
     height: '100%',
     fontSize: 14,
     color: '#242424',
@@ -289,7 +289,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingVertical: 15,
     // marginVertical: -15,
-    // backgroundColor: 'red'
 
   },
   columnViewContainer: {

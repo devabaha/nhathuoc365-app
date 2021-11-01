@@ -6,18 +6,23 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
 
-import appConfig from 'app-config';
 import store from 'app-store';
+import appConfig from 'app-config';
+import {copyToClipboard} from 'app-helper';
+import {saveImage} from 'app-helper/image';
 
 import {PhotoLibraryPermission} from '../../../helper/permissionHelper';
 import {CART_PAYMENT_STATUS} from '../../../constants/cart/types';
+import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
 
 import {APIRequest} from '../../../network/Entity';
 
@@ -29,8 +34,6 @@ import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
-import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
-import {saveImage} from 'app-helper/image';
 
 const styles = StyleSheet.create({
   container: {
@@ -104,6 +107,13 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     // backgroundColor: '#fafafa',
   },
+  infoButtonContainer: {
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    borderRadius: 4,
+    overflow: 'hidden',
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+  },
   infoTitle: {
     padding: 10,
     backgroundColor: '#f5f5f5',
@@ -112,6 +122,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
+  },
+  copyIcon: {
+    color: appConfig.colors.primary,
+    marginRight: 5,
   },
   title: {},
   value: {},
@@ -393,6 +407,10 @@ const Transaction = ({
     [transactionData],
   );
 
+  const copyAccountNumber = (accountNumber) => {
+    copyToClipboard(accountNumber);
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     getTransactionData();
@@ -463,26 +481,19 @@ const Transaction = ({
   };
 
   const renderPaymentInfo = () => {
-    const data_va = [
-      {
-        title: 'Số tài khoản',
-        value: '900000008055',
-      },
-      {
-        title: 'Tên tài khoản',
-        value: 'VAP001 EPAYTEST1',
-      },
-      {
-        title: 'Ngân hàng',
-        value: 'WOORIBANK',
-      },
-      {
-        title: 'Ngày hết hiệu lực chuyển khoản',
-        value: '20211030135400',
-      },
-    ];
-    return data_va.map((info, index) => {
-      info.title += 'asdfd fa fdsafd faf'
+    return transactionData.data_va.map((info, index) => {
+      if (info.copy) {
+        info.renderRight = (titleStyle) => {
+          return (
+            <TouchableOpacity onPress={() => copyAccountNumber(info.value)}>
+              <Container row style={styles.infoButtonContainer}>
+                <Ionicons name="ios-copy" style={styles.copyIcon} />
+                <Text style={titleStyle}>{info.value}</Text>
+              </Container>
+            </TouchableOpacity>
+          );
+        };
+      }
       return (
         <HorizontalInfoItem
           key={index}
@@ -577,7 +588,7 @@ const Transaction = ({
           }>
           {renderQRCode()}
 
-          {!!!transactionData?.data_va?.length &&
+          {!!transactionData?.data_va?.length &&
             renderBlockInfo('Thông tin thanh toán', renderPaymentInfo)}
           {!!transactionData?.details?.length &&
             renderBlockInfo('Thông tin giao dịch', renderTransactionInfo)}
