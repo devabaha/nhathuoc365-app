@@ -8,6 +8,7 @@ import {MEDIA_TYPE} from 'src/constants';
 
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
+import { Actions } from 'react-native-router-flux';
 
 const DOUBLE_PRESS_INTERVAL = 300;
 const PRESS_DELTA = 50;
@@ -169,6 +170,7 @@ const ItemImage = ({
             youtubeIframeProps={{
               play: index === selectedIndex,
             }}
+            onPressFullscreen={Actions.pop}
           />
         ) : (
           <Image source={{uri: url}} resizeMode="contain" />

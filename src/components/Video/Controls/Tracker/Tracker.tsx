@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import appConfig from 'app-config';
-import {convertSecondsToFormattedTimeData} from 'app-helper';
+import {formatTime} from 'app-helper';
 import {themes} from '../themes';
 
 import {Container} from 'src/components/Layout';
@@ -39,32 +39,12 @@ const Tracker = ({
   onChangingProgress = (progress: number) => {},
   onProgress = (progress: number) => {},
 }) => {
-  const formattedTime = (timeInSeconds) => {
-    const {hours, minutes, seconds} = convertSecondsToFormattedTimeData(
-      timeInSeconds,
-    );
-    return [Number(hours) ? hours : '', minutes, seconds]
-      .join(':')
-      .slice(Number(hours) ? 0 : 1);
-  };
-
-  const getPopOverData = useMemo(() => {
-    const popoverLength = appConfig.device.width / totalTime;
-
-    const popovers = Array.from({length: totalTime}, (_, index) => ({
-      start: index * popoverLength,
-      end: popoverLength * (index + 1),
-      value: formattedTime(index),
-    }));
-
-    return popovers;
-  }, [totalTime]);
 
   return (
-    <View>
+    <View style={{paddingHorizontal: 30}}>
       <ProgressBar
         progress={currentTime / (totalTime || 1)}
-        popovers={getPopOverData}
+        total={totalTime}
         bufferProgress={bufferTime / (totalTime || 1)}
         onProgress={onProgress}
         onChangingProgress={onChangingProgress}
@@ -77,8 +57,8 @@ const Tracker = ({
         //@ts-ignore
         pointerEvents={actionsContainerPointerEvents}>
         <Timer
-          current={formattedTime(currentTime)}
-          total={formattedTime(totalTime)}
+          current={formatTime(currentTime)}
+          total={formatTime(totalTime)}
         />
         <Container row>
           <TouchableOpacity

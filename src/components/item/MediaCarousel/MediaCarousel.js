@@ -77,7 +77,7 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
         height={appConfig.device.height / 2}
         autoAdjustLayout
         isPlay={currentIndex === index}
-        onPressFullscreen={() => goToGallery(index)}
+        // onPressFullscreen={() => goToGallery(index)}
       />
     );
   };

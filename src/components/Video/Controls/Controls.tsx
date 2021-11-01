@@ -73,6 +73,7 @@ const Controls = ({
   currentTime,
   totalTime,
   bufferTime,
+  isFullscreen,
   containerStyle = {},
   onPressPlay = () => {},
   onPressMute = () => {},
@@ -240,6 +241,12 @@ const Controls = ({
     };
   }, []);
 
+  const extraFooterStyle = useMemo(() => {
+    return {
+      bottom: isFullscreen ? 30 : 0,
+    };
+  }, [isFullscreen]);
+
   return (
     <View style={[styles.container, containerStyle]}>
       <TapGestureHandler {...gestureHandler}>
@@ -250,7 +257,7 @@ const Controls = ({
             <View style={styles.mask} />
             {renderPlay()}
           </Animated.View>
-          <View style={styles.footer}>{renderTracker()}</View>
+          <View style={[styles.footer, extraFooterStyle]}>{renderTracker()}</View>
         </Animated.View>
       </TapGestureHandler>
     </View>

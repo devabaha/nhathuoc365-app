@@ -36,6 +36,7 @@ import appConfig from 'app-config';
 import {themes} from '../../themes';
 import Timer from '../Timer';
 import {timingFunction} from '../../helper';
+import {formatTime} from 'app-helper/';
 
 const THUMB_SIZE = 15;
 
@@ -88,8 +89,8 @@ const styles = StyleSheet.create({
 
 const ProgressBar = ({
   progress = 0,
+  total = 1,
   bufferProgress = 0,
-  popovers = [],
   onChangingProgress = (progress: number) => {},
   onProgress = (progress: number) => {},
 }) => {
@@ -108,6 +109,8 @@ const ProgressBar = ({
 
   const animatedThumbValue = useValue(0);
 
+  const [containerWidth, setContainerWidth] = useState(1);
+
   const {gestureHandler, state, translation} = usePanGestureHandler();
   const {
     gestureHandler: tapGestureHandler,
@@ -115,6 +118,22 @@ const ProgressBar = ({
   } = useTapGestureHandler();
 
   const [currentPopover, setCurrentPopover] = useState(undefined);
+
+  const popovers = useMemo(() => {
+    const popoverLength = containerWidth / total;
+
+    const popovers = Array.from({length: total}, (_, index) => ({
+      start: index * popoverLength,
+      end: popoverLength * (index + 1),
+      value: formatTime(index),
+    }));
+
+    return popovers || [];
+  }, [total, containerWidth]);
+
+  const handleContainerLayout = useCallback((e) => {
+    setContainerWidth(e.nativeEvent.layout.width || 1);
+  }, []);
 
   const handleChangeProgress = useCallback(
     (position) => {
@@ -138,7 +157,7 @@ const ProgressBar = ({
         call([positionX], ([value]) => handleChangeProgress(value)),
       ]),
     ];
-  }, [popovers]);
+  }, [popovers, containerWidth]);
 
   useCode(() => {
     return [
@@ -158,13 +177,13 @@ const ProgressBar = ({
         set(
           positionX,
           cond(
-            greaterThan(tempPositionX, appConfig.device.width),
-            appConfig.device.width,
+            greaterThan(tempPositionX, containerWidth),
+            containerWidth,
             cond(lessThan(tempPositionX, 0), 0, tempPositionX),
           ),
         ),
         call([positionX], ([value]) =>
-          onChangingProgress(value / appConfig.device.width),
+          onChangingProgress(value / containerWidth),
         ),
       ]),
       cond(eq(state, State.END), [
@@ -174,9 +193,7 @@ const ProgressBar = ({
         cond(eq(isStartChangeProgressManually, 1), [
           set(isStartChangeProgressManually, 0),
           set(currentProgress, progress || 0),
-          call([positionX], ([value]) =>
-            onProgress(value / appConfig.device.width),
-          ),
+          call([positionX], ([value]) => onProgress(value / containerWidth)),
         ]),
       ]),
 
@@ -194,20 +211,17 @@ const ProgressBar = ({
         ),
       ),
     ];
-  }, []);
+  }, [containerWidth]);
 
   useCode(
     () => [
       cond(
         eq(isChangingProgressManually, 0),
-        [set(positionX, (progress || 0) * appConfig.device.width)],
+        [set(positionX, (progress || 0) * containerWidth)],
         [
           set(
             diffProgress,
-            multiply(
-              abs(sub(positionX, (progress || 0) * appConfig.device.width)),
-              1,
-            ),
+            multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
           ),
 
           cond(and(lessThan(diffProgress, 0.1), greaterThan(diffProgress, 0)), [
@@ -216,7 +230,7 @@ const ProgressBar = ({
         ],
       ),
     ],
-    [progress],
+    [progress, containerWidth],
   );
 
   const animatedThumbStyle = useMemo(() => {
@@ -227,6 +241,7 @@ const ProgressBar = ({
 
   return (
     <View
+      onLayout={handleContainerLayout}
       onStartShouldSetResponder={() => true}
       onResponderTerminationRequest={() => false}
       onStartShouldSetResponderCapture={() => false}
@@ -245,7 +260,7 @@ const ProgressBar = ({
                   style={[
                     styles.foreground,
                     {
-                      width: bufferProgress * appConfig.device.width,
+                      width: bufferProgress * containerWidth,
                     },
                   ]}
                 />

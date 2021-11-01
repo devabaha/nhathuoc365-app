@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Modal} from 'react-native';
 
 import equal from 'deep-equal';
 import {withTranslation} from 'react-i18next';
@@ -97,11 +97,13 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   }
 
   componentDidMount() {
-    if (this.props.refPlayer) {
-      console.log(this.refPlayer.current);
+    if (this.refPlayer.current) {
       //@ts-ignore
       this.refWebview.current = this.refPlayer.current.getWebViewRef();
-      this.props.refPlayer(this.refPlayer.current);
+
+      if (this.props.refPlayer) {
+        this.props.refPlayer(this.refPlayer.current);
+      }
     }
   }
 
@@ -178,7 +180,9 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   handleFullScreen = () => {
     this.props.onPressFullscreen();
-    this.setState({isFullScreen: true});
+    this.setState((prevState: any) => ({
+      isFullScreen: !prevState.isFullScreen,
+    }));
   };
 
   handleContainerLayout = (e) => {
@@ -210,12 +214,27 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     });
   };
 
-  render() {
+  renderVideo = () => {
     return (
       <View
-        style={{
-          flex: 1,
-        }}>
+        style={[
+          {
+            flex: 1,
+          },
+          this.state.isFullScreen && {
+            ...StyleSheet.absoluteFillObject,
+            width: appConfig.device.height,
+            height: appConfig.device.width,
+            transform: [
+              {translateY: appConfig.device.height / 2},
+              {translateX: appConfig.device.width / 2},
+              {rotate: '90deg'},
+              {translateX: -appConfig.device.width / 2},
+              {translateY: appConfig.device.height / 2},
+            ],
+            backgroundColor: 'red',
+          },
+        ]}>
         <View
           onLayout={this.handleContainerLayout}
           style={[styles.container, this.props.containerStyle]}>
@@ -223,8 +242,16 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             <YoutubeIframe
               ref={this.refPlayer}
               videoId={this.props.videoId}
-              height={this.state.height}
-              width={this.state.width}
+              height={
+                this.state.isFullScreen
+                  ? appConfig.device.width
+                  : this.state.height
+              }
+              width={
+                this.state.isFullScreen
+                  ? appConfig.device.height
+                  : this.state.width
+              }
               webViewStyle={this.props.webviewStyle}
               onChangeState={this.props.onChangeState}
               onReady={this.handleReady}
@@ -256,18 +283,46 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           )}
         </View>
 
-        <Controls
-          currentTime={this.state.currentTime}
-          totalTime={this.state.totalTime}
-          bufferTime={this.state.bufferTime}
-          isPlay={!!this.props.youtubeIframeProps?.play}
-          isMute={!!this.props.youtubeIframeProps?.mute}
-          onPressPlay={this.props.onPressPlay}
-          onPressMute={this.props.onPressMute}
-          onProgress={this.handleProgress}
-          onPressFullScreen={this.handleFullScreen}
-        />
+        <View
+          style={[
+            {
+              ...StyleSheet.absoluteFillObject,
+            },
+            this.state.isFullScreen &&
+              {
+                // width: appConfig.device.height,
+                // height: appConfig.device.width,
+                // transform: [
+                //   {translateY: appConfig.device.height / 2},
+                //   {translateX: appConfig.device.width / 2},
+                //   {rotate: '90deg'},
+                //   {translateX: -appConfig.device.width / 2},
+                //   {translateY: appConfig.device.height / 2},
+                // ],
+              },
+          ]}>
+          <Controls
+            currentTime={this.state.currentTime}
+            totalTime={this.state.totalTime}
+            bufferTime={this.state.bufferTime}
+            isPlay={!!this.props.youtubeIframeProps?.play}
+            isMute={!!this.props.youtubeIframeProps?.mute}
+            isFullscreen={this.state.isFullScreen}
+            onPressPlay={this.props.onPressPlay}
+            onPressMute={this.props.onPressMute}
+            onProgress={this.handleProgress}
+            onPressFullScreen={this.handleFullScreen}
+          />
+        </View>
       </View>
+    );
+  };
+
+  render() {
+    return this.state.isFullScreen ? (
+      <Modal transparent>{this.renderVideo()}</Modal>
+    ) : (
+      this.renderVideo()
     );
   }
 }

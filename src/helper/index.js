@@ -17,7 +17,7 @@ export const isValidDate = (date) => {
   return date instanceof Date && !isNaN(date);
 };
 
-export const convertSecondsToFormattedTimeData = (
+export const convertSecondsToElementTimeData = (
   timeInSeconds,
   padStart = {
     seconds: 2,
@@ -38,4 +38,13 @@ export const convertSecondsToFormattedTimeData = (
     minutes: m,
     seconds: s,
   };
+};
+
+export const formatTime = (timeInSeconds) => {
+  const {hours, minutes, seconds} = convertSecondsToElementTimeData(
+    timeInSeconds,
+  );
+  return [Number(hours) ? hours : '', minutes, seconds]
+    .join(':')
+    .slice(Number(hours) ? 0 : 1);
 };
