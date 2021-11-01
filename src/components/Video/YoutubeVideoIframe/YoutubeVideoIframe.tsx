@@ -60,6 +60,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
     isFullScreen: false,
   };
+  currentTime = 0;
 
   getYoutubeTimerInterval: any = () => {};
 
@@ -136,9 +137,18 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     if (this.refPlayer.current) {
       try {
         const totalTime = await this.refPlayer.current?.getDuration();
-        this.setState({totalTime});
+
+        // Sometimes getDuration() do not work correctly (usual get 1 seconds more than the actual video duration)
+        // if seek to time exceeding the actual time of video, seekTo() will not work.
+        // So, to make sure it work, minus 1 second if you want to seek to end of the video.
+        this.setState({totalTime: totalTime - 1});
 
         this.getYoutubeTimerInterval = setInterval(async () => {
+          if (!this.refPlayer.current) {
+            clearInterval(this.getYoutubeTimerInterval);
+            return;
+          }
+
           const currentTime = await this.refPlayer.current.getCurrentTime();
           this.setState({currentTime});
 
@@ -156,14 +166,29 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   handleProgress = (progress) => {
     this.props.onProgress(progress);
+
     if (this.refPlayer.current) {
-      this.refPlayer.current.seekTo(
-        Math.floor(progress * (Number(this.state.totalTime) || 0)),
+      const seekToTime = Math.floor(
+        progress * (Number(this.state.totalTime) || 0),
       );
+
+      this.refPlayer.current.seekTo(seekToTime);
+    }
+  };
+
+  handlePressPlay = () => {
+    if (this.props.isEnd) {
+      this.handleProgress(0);
+    } else {
+      this.props.onPressPlay && this.props.onPressPlay();
     }
   };
 
   handleReady = () => {
+    if (this.currentTime) {
+      this.handleProgress(this.currentTime/this.state.totalTime);
+      this.currentTime = 0;
+    }
     this.setState({isError: false, loading: false});
     this.props.onReady && this.props.onReady();
     this.getTimer();
@@ -179,6 +204,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   };
 
   handleFullScreen = () => {
+    this.currentTime = this.state.currentTime;
     this.props.onPressFullscreen();
     this.setState((prevState: any) => ({
       isFullScreen: !prevState.isFullScreen,
@@ -232,7 +258,6 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               {translateX: -appConfig.device.width / 2},
               {translateY: appConfig.device.height / 2},
             ],
-            backgroundColor: 'red',
           },
         ]}>
         <View
@@ -307,10 +332,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             bufferTime={this.state.bufferTime}
             isPlay={!!this.props.youtubeIframeProps?.play}
             isMute={!!this.props.youtubeIframeProps?.mute}
+            isEnd={this.props.isEnd}
             isFullscreen={this.state.isFullScreen}
-            onPressPlay={this.props.onPressPlay}
+            onPressPlay={this.handlePressPlay}
             onPressMute={this.props.onPressMute}
-            onProgress={this.handleProgress}
+            onChangedProgress={this.handleProgress}
             onPressFullScreen={this.handleFullScreen}
           />
         </View>

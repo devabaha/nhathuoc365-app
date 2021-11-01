@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 
-import appConfig from 'app-config';
 import {formatTime} from 'app-helper';
 import {themes} from '../themes';
 
@@ -13,9 +13,10 @@ import Timer from './Timer';
 
 const styles = StyleSheet.create({
   actionsContainer: {
-    paddingHorizontal: 30,
     position: 'absolute',
     bottom: 30,
+    alignSelf: 'center',
+    paddingHorizontal: 30,
     width: '100%',
     justifyContent: 'space-between',
   },
@@ -32,28 +33,49 @@ const Tracker = ({
   totalTime,
   bufferTime,
   isMute = false,
+  isFullscreen = false,
   actionsContainerPointerEvents = 'auto',
   actionsContainerStyle = {},
+  containerStyle = {},
+  progressBarStyle = {},
   onPressMute = () => {},
   onPressFullscreen = () => {},
   onChangingProgress = (progress: number) => {},
-  onProgress = (progress: number) => {},
+  onChangedProgress = (progress: number) => {},
 }) => {
+  const extraProgressBarStyle = useMemo(() => {
+    return {
+      paddingHorizontal: isFullscreen ? 30 : 0,
+    };
+  }, [isFullscreen]);
+
+  const extractionsContainerStyle = useMemo(() => {
+    return {
+      bottom: isFullscreen ? 60 : 30,
+    };
+  }, [isFullscreen]);
 
   return (
-    <View style={{paddingHorizontal: 30}}>
-      <ProgressBar
-        progress={currentTime / (totalTime || 1)}
-        total={totalTime}
-        bufferProgress={bufferTime / (totalTime || 1)}
-        onProgress={onProgress}
-        onChangingProgress={onChangingProgress}
-      />
+    <Animated.View style={containerStyle}>
+      <Animated.View style={[extraProgressBarStyle, progressBarStyle]}>
+        <ProgressBar
+          isFullscreen={isFullscreen}
+          progress={currentTime / (totalTime || 1)}
+          total={totalTime}
+          bufferProgress={bufferTime / (totalTime || 1)}
+          onChangedProgress={onChangedProgress}
+          onChangingProgress={onChangingProgress}
+        />
+      </Animated.View>
 
       <Container
         row
         reanimated
-        style={[styles.actionsContainer, actionsContainerStyle]}
+        style={[
+          styles.actionsContainer,
+          extractionsContainerStyle,
+          actionsContainerStyle,
+        ]}
         //@ts-ignore
         pointerEvents={actionsContainerPointerEvents}>
         <Timer
@@ -84,7 +106,7 @@ const Tracker = ({
           </TouchableOpacity>
         </Container>
       </Container>
-    </View>
+    </Animated.View>
   );
 };
 

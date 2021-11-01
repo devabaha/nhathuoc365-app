@@ -19,6 +19,7 @@ export interface YoutubeVideoIframeProps {
   webviewStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
   autoAdjustLayout?: boolean;
+  isEnd?: boolean;
   onReady?: () => void;
   onError?: (error: string) => void;
   onChangeState?: (event: string) => void;

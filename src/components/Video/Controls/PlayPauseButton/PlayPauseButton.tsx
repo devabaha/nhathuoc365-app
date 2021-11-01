@@ -36,7 +36,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const PlayPauseButton = ({onPress, refPath, path}) => {
+const PlayPauseButton = ({
+  onPress,
+  refPath,
+  path,
+  fill = appConfig.colors.white,
+  strokeWidth = 0,
+}) => {
   const isPressOut = useRef(true);
   const pressInValue = useRef(0);
   const isAnimatedPressInFinished = useRef(true);
@@ -57,8 +63,6 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
   const handlePressOut = useCallback(() => {
     isPressOut.current = true;
     if (pressInValue.current === 1) {
-      console.log('a');
-
       animateBackground();
     }
   }, []);
@@ -131,7 +135,9 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
           <Path
             ref={refPath}
             d={path}
-            fill={appConfig.colors.white}
+            fill={fill}
+            stroke={appConfig.colors.white}
+            strokeWidth={strokeWidth}
             scale={MAIN_ICON_SCALE_RATIO}
           />
         </Svg>
@@ -141,7 +147,11 @@ const PlayPauseButton = ({onPress, refPath, path}) => {
 };
 
 const areEquals = (prevProps, nextProps) => {
-  return prevProps.path === nextProps.path;
+  return (
+    prevProps.path === nextProps.path &&
+    prevProps.fill === nextProps.fill &&
+    prevProps.strokeWidth === nextProps.strokeWidth
+  );
 };
 
 export default React.memo(PlayPauseButton, areEquals);

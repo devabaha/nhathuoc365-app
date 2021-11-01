@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
 export class Video extends Component<VideoProps> {
   state = {
     isPlay: !!this.props.isPlay,
+    isEnd: false,
     isMute: !!this.props.isMute,
   };
 
@@ -39,17 +40,25 @@ export class Video extends Component<VideoProps> {
         }
         break;
       case 'paused':
-        if (this.state.isPlay) {
+        if (this.state.isPlay || this.state.isEnd) {
           this.handlePressPlay();
+        }
+        break;
+      case 'ended':
+        if (this.state.isPlay) {
+          this.handlePressPlay(true);
         }
         break;
     }
   };
 
-  handlePressPlay = () => {
-    this.setState((prevState: any) => ({
-      isPlay: !prevState.isPlay,
-    }));
+  handlePressPlay = (isEnd = false) => {
+    this.setState((prevState: any) => {
+      return {
+        isPlay: !prevState.isPlay,
+        isEnd,
+      };
+    });
   };
 
   handlePressMute = () => {
@@ -59,7 +68,7 @@ export class Video extends Component<VideoProps> {
   };
 
   handleProgress = (progress) => {
-    console.log(progress);
+    // console.log(progress);
   };
 
   containerStyle = [styles.container, this.props.containerStyle];
@@ -88,6 +97,7 @@ export class Video extends Component<VideoProps> {
             play: this.state.isPlay,
             mute: this.state.isMute,
           }}
+          isEnd={this.state.isEnd}
         />
       </View>
     );

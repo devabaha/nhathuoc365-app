@@ -36,17 +36,22 @@ import appConfig from 'app-config';
 import {themes} from '../../themes';
 import Timer from '../Timer';
 import {timingFunction} from '../../helper';
-import {formatTime} from 'app-helper/';
+import {formatTime} from 'app-helper';
 
 const THUMB_SIZE = 15;
+const TRACKER_HEIGHT = 3;
+const TIMER_PADDING = 15;
 
 const styles = StyleSheet.create({
   wrapper: {
     paddingTop: 50,
   },
+  wrapperFullscreen: {
+    paddingBottom: 30,
+  },
   container: {
     width: '100%',
-    height: 3,
+    height: TRACKER_HEIGHT,
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
@@ -57,6 +62,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: '100%',
+  },
+  trackerFullscreen: {
+    borderRadius: TRACKER_HEIGHT / 2,
   },
   foreground: {
     position: 'absolute',
@@ -91,8 +99,9 @@ const ProgressBar = ({
   progress = 0,
   total = 1,
   bufferProgress = 0,
+  isFullscreen = false,
   onChangingProgress = (progress: number) => {},
-  onProgress = (progress: number) => {},
+  onChangedProgress = (progress: number) => {},
 }) => {
   const refPanGesture = useRef<any>();
   const refLongPressGesture = useRef<any>();
@@ -110,6 +119,7 @@ const ProgressBar = ({
   const animatedThumbValue = useValue(0);
 
   const [containerWidth, setContainerWidth] = useState(1);
+  const [timerWidth, setTimerWidth] = useState(0);
 
   const {gestureHandler, state, translation} = usePanGestureHandler();
   const {
@@ -149,6 +159,10 @@ const ProgressBar = ({
 
   const handleEndChangeProgress = useCallback(() => {
     setCurrentPopover(undefined);
+  }, []);
+
+  const handleTimerLayout = useCallback((e) => {
+    setTimerWidth(e.nativeEvent.layout.width);
   }, []);
 
   useCode(() => {
@@ -193,7 +207,9 @@ const ProgressBar = ({
         cond(eq(isStartChangeProgressManually, 1), [
           set(isStartChangeProgressManually, 0),
           set(currentProgress, progress || 0),
-          call([positionX], ([value]) => onProgress(value / containerWidth)),
+          call([positionX], ([value]) => {
+            onChangedProgress(value / containerWidth);
+          }),
         ]),
       ]),
 
@@ -206,8 +222,14 @@ const ProgressBar = ({
           ),
         ],
         cond(
-          neq(animatedThumbValue, 0),
-          set(animatedThumbValue, timingFunction(animatedThumbValue, 0)),
+          neq(animatedThumbValue, cond(eq(isFullscreen ? 1 : 0, 0), 0, 0.6)),
+          set(
+            animatedThumbValue,
+            timingFunction(
+              animatedThumbValue,
+              cond(eq(isFullscreen ? 1 : 0, 0), 0, 0.6),
+            ),
+          ),
         ),
       ),
     ];
@@ -224,9 +246,13 @@ const ProgressBar = ({
             multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
           ),
 
-          cond(and(lessThan(diffProgress, 0.1), greaterThan(diffProgress, 0)), [
-            set(isChangingProgressManually, 0),
-          ]),
+          cond(
+            or(
+              eq(progress, 1),
+              and(lessThan(diffProgress, 0.1), greaterThan(diffProgress, 0)),
+            ),
+            [set(isChangingProgressManually, 0)],
+          ),
         ],
       ),
     ],
@@ -238,6 +264,14 @@ const ProgressBar = ({
       transform: [{scale: animatedThumbValue}],
     };
   }, []);
+
+  const wrapperFullscreenStyle = useMemo(() => {
+    return isFullscreen && [styles.wrapperFullscreen];
+  }, [isFullscreen]);
+
+  const animatedProgressBarFullscreen = useMemo(() => {
+    return isFullscreen && styles.trackerFullscreen;
+  }, [isFullscreen]);
 
   return (
     <View
@@ -253,15 +287,17 @@ const ProgressBar = ({
         minDurationMs={200}>
         <Animated.View>
           <PanGestureHandler ref={refPanGesture} {...gestureHandler}>
-            <Animated.View style={styles.wrapper}>
-              <Animated.View style={styles.container}>
-                <View style={styles.mask} />
+            <Animated.View style={[styles.wrapper, wrapperFullscreenStyle]}>
+              <Animated.View
+                style={[styles.container, animatedProgressBarFullscreen]}>
+                <View style={[styles.mask, animatedProgressBarFullscreen]} />
                 <Animated.View
                   style={[
                     styles.foreground,
                     {
                       width: bufferProgress * containerWidth,
                     },
+                    animatedProgressBarFullscreen,
                   ]}
                 />
 
@@ -272,6 +308,7 @@ const ProgressBar = ({
                       {
                         width: positionX,
                       },
+                      animatedProgressBarFullscreen,
                     ]}
                   />
                   <Animated.View
@@ -283,8 +320,43 @@ const ProgressBar = ({
                     ]}>
                     {!!currentPopover && (
                       <Timer
+                        //@ts-ignore
+                        onLayout={handleTimerLayout}
                         current={currentPopover?.value}
-                        containerStyle={styles.timerContainer}
+                        containerStyle={[
+                          styles.timerContainer,
+                          {
+                            transform: [
+                              {
+                                translateX: cond(
+                                  lessThan(
+                                    positionX,
+                                    timerWidth / 2 + TIMER_PADDING,
+                                  ),
+                                  sub(
+                                    timerWidth / 2 + TIMER_PADDING,
+                                    positionX,
+                                  ),
+                                  cond(
+                                    greaterThan(
+                                      positionX,
+                                      containerWidth -
+                                        timerWidth / 2 -
+                                        TIMER_PADDING,
+                                    ),
+                                    sub(
+                                      containerWidth -
+                                        timerWidth / 2 -
+                                        TIMER_PADDING,
+                                      positionX,
+                                    ),
+                                    0,
+                                  ),
+                                ),
+                              },
+                            ],
+                          },
+                        ]}
                       />
                     )}
                     <Animated.View style={[styles.thumb, animatedThumbStyle]} />

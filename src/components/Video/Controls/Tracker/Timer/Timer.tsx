@@ -20,9 +20,10 @@ const Timer = ({
   containerStyle = {},
   titleStyle = {},
   highlightStyle = {},
+  onLayout = () => {}
 }) => {
   return (
-    <Container row style={containerStyle}>
+    <Container onLayout={onLayout} row reanimated style={containerStyle}>
       <Text style={[styles.title, titleStyle]}>
         <Text style={[styles.highlight, highlightStyle]}>{current}</Text>
         {!!total && ` / ${total}`}
