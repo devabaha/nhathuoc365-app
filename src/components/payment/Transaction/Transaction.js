@@ -30,7 +30,7 @@ import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
 import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
-import { saveImage } from 'app-helper/image';
+import {saveImage} from 'app-helper/image';
 
 const styles = StyleSheet.create({
   container: {
@@ -277,13 +277,14 @@ const Transaction = ({
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             setTransactionData(response.data);
-            if (
-              !response.data.data_qrcode &&
-              response.data.url &&
-              isOpenTransaction
-            ) {
-              handleOpenTransaction(response.data.url);
-            }
+            // if (
+            //   !response.data.data_va &&
+            //   !response.data.data_qrcode &&
+            //   response.data.url &&
+            //   isOpenTransaction
+            // ) {
+            //   handleOpenTransaction(response.data.url);
+            // }
           }
         } else {
           flashShowMessage({
@@ -428,8 +429,8 @@ const Transaction = ({
     );
   };
 
-  const renderInfo = () => {
-    return transactionData?.details?.map((info, index) => {
+  const renderTransactionInfo = () => {
+    return transactionData.details.map((info, index) => {
       const tempInfo = {...info};
       tempInfo.rightTextStyle = styles.value;
       if (tempInfo.title_highlight) {
@@ -459,6 +460,46 @@ const Transaction = ({
         />
       );
     });
+  };
+
+  const renderPaymentInfo = () => {
+    const data_va = [
+      {
+        title: 'Số tài khoản',
+        value: '900000008055',
+      },
+      {
+        title: 'Tên tài khoản',
+        value: 'VAP001 EPAYTEST1',
+      },
+      {
+        title: 'Ngân hàng',
+        value: 'WOORIBANK',
+      },
+      {
+        title: 'Ngày hết hiệu lực chuyển khoản',
+        value: '20211030135400',
+      },
+    ];
+    return data_va.map((info, index) => {
+      info.title += 'asdfd fa fdsafd faf'
+      return (
+        <HorizontalInfoItem
+          key={index}
+          containerStyle={styles.infoContainer}
+          data={info}
+        />
+      );
+    });
+  };
+
+  const renderBlockInfo = (title, renderChild = () => {}) => {
+    return (
+      <>
+        <Text style={styles.infoTitle}>{title}</Text>
+        {renderChild()}
+      </>
+    );
   };
 
   const renderNote = () => {
@@ -536,8 +577,10 @@ const Transaction = ({
           }>
           {renderQRCode()}
 
-          <Text style={styles.infoTitle}>Thông tin giao dịch</Text>
-          {renderInfo()}
+          {!!!transactionData?.data_va?.length &&
+            renderBlockInfo('Thông tin thanh toán', renderPaymentInfo)}
+          {!!transactionData?.details?.length &&
+            renderBlockInfo('Thông tin giao dịch', renderTransactionInfo)}
           {renderNote()}
         </ScrollView>
 

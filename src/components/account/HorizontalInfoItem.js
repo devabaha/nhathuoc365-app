@@ -78,7 +78,7 @@ export default class HorizontalInfoItem extends Component {
             {
               color: specialColor ? specialColor : appConfig.colors.text,
               height: undefined,
-              paddingVertical: 15,
+              // paddingVertical: 15,
             },
             !!defaultValue && !value && {color: appConfig.colors.placeholder},
             detailTitleStyle,
@@ -221,7 +221,7 @@ export default class HorizontalInfoItem extends Component {
           containerStyle,
           dataContainerStyle,
         ]}>
-        <Container row>
+        <Container row flex>
           {leftTitle}
           <Text style={[styles.title, extraTitleStyle, titleStyle]}>
             {title}
@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingVertical: 15
   },
 
   title: {
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     // alignItems: 'flex-end',
-    paddingVertical: 15,
+    // paddingVertical: 15,
     marginVertical: -15,
   },
   btnSelectTitle: {
@@ -287,6 +288,9 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     textAlign: 'right',
     paddingVertical: 15,
+    // marginVertical: -15,
+    // backgroundColor: 'red'
+
   },
   columnViewContainer: {
     flexDirection: 'column',
@@ -296,7 +300,10 @@ const styles = StyleSheet.create({
   },
   columnViewTitle: {
     flex: 0,
-    paddingVertical: 10,
+    // paddingVertical: 10,
+    paddingTop: 15,
+    paddingBottom: 10,
+    marginTop: -15,
     marginLeft: 0,
   },
   columnViewValue: {
