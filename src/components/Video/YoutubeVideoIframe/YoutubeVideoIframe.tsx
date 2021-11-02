@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Modal} from 'react-native';
+import {StyleSheet, View, Text, Modal, StatusBar} from 'react-native';
 
 import equal from 'deep-equal';
 import {withTranslation} from 'react-i18next';
@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     color: appConfig.colors.disabled,
     marginTop: 15,
   },
+  controlsContainer: {
+    ...StyleSheet.absoluteFillObject,
+  },
 });
 
 class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
@@ -58,7 +61,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     totalTime: 0,
     bufferTime: 0,
 
-    isFullScreen: false,
+    isFullscreen: false,
   };
   currentTime = 0;
 
@@ -176,6 +179,15 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     }
   };
 
+  handleSkip = (skipTime) => {
+    let progress =
+      (this.state.currentTime + skipTime) / (this.state.totalTime || 1);
+    progress > 1 && (progress = 1);
+    progress < 0 && (progress = 0);
+
+    this.handleProgress(progress);
+  };
+
   handlePressPlay = () => {
     if (this.props.isEnd) {
       this.handleProgress(0);
@@ -186,7 +198,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   handleReady = () => {
     if (this.currentTime) {
-      this.handleProgress(this.currentTime/this.state.totalTime);
+      this.handleProgress(this.currentTime / this.state.totalTime);
       this.currentTime = 0;
     }
     this.setState({isError: false, loading: false});
@@ -206,9 +218,14 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   handleFullScreen = () => {
     this.currentTime = this.state.currentTime;
     this.props.onPressFullscreen();
-    this.setState((prevState: any) => ({
-      isFullScreen: !prevState.isFullScreen,
-    }));
+    this.setState((prevState: any) => {
+      const isFullscreen = !prevState.isFullscreen;
+      StatusBar.setHidden(isFullscreen);
+
+      return {
+        isFullscreen,
+      };
+    });
   };
 
   handleContainerLayout = (e) => {
@@ -247,7 +264,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           {
             flex: 1,
           },
-          this.state.isFullScreen && {
+          this.state.isFullscreen && {
             ...StyleSheet.absoluteFillObject,
             width: appConfig.device.height,
             height: appConfig.device.width,
@@ -268,12 +285,12 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               ref={this.refPlayer}
               videoId={this.props.videoId}
               height={
-                this.state.isFullScreen
+                this.state.isFullscreen
                   ? appConfig.device.width
                   : this.state.height
               }
               width={
-                this.state.isFullScreen
+                this.state.isFullscreen
                   ? appConfig.device.height
                   : this.state.width
               }
@@ -308,24 +325,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           )}
         </View>
 
-        <View
-          style={[
-            {
-              ...StyleSheet.absoluteFillObject,
-            },
-            this.state.isFullScreen &&
-              {
-                // width: appConfig.device.height,
-                // height: appConfig.device.width,
-                // transform: [
-                //   {translateY: appConfig.device.height / 2},
-                //   {translateX: appConfig.device.width / 2},
-                //   {rotate: '90deg'},
-                //   {translateX: -appConfig.device.width / 2},
-                //   {translateY: appConfig.device.height / 2},
-                // ],
-              },
-          ]}>
+        <View style={styles.controlsContainer}>
           <Controls
             currentTime={this.state.currentTime}
             totalTime={this.state.totalTime}
@@ -333,10 +333,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             isPlay={!!this.props.youtubeIframeProps?.play}
             isMute={!!this.props.youtubeIframeProps?.mute}
             isEnd={this.props.isEnd}
-            isFullscreen={this.state.isFullScreen}
+            isFullscreen={this.state.isFullscreen}
             onPressPlay={this.handlePressPlay}
             onPressMute={this.props.onPressMute}
             onChangedProgress={this.handleProgress}
+            onSkippingTime={this.handleSkip}
             onPressFullScreen={this.handleFullScreen}
           />
         </View>
@@ -345,7 +346,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   };
 
   render() {
-    return this.state.isFullScreen ? (
+    return this.state.isFullscreen ? (
       <Modal transparent>{this.renderVideo()}</Modal>
     ) : (
       this.renderVideo()

@@ -1,6 +1,7 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
 
   icon: {
     color: themes.colors.primary,
-    fontSize: 22,
+    fontSize: 24,
     marginLeft: 20,
   },
 });
@@ -90,8 +91,8 @@ const Tracker = ({
             // @ts-ignore
             hitSlop={HIT_SLOP}
             onPress={onPressMute}>
-            <Ionicons
-              name={isMute ? 'ios-volume-mute' : 'ios-volume-high'}
+            <MaterialIcons
+              name={isMute ? 'volume-off' : 'volume-up'}
               style={styles.icon}
             />
           </TouchableOpacity>
@@ -102,7 +103,10 @@ const Tracker = ({
             // @ts-ignore
             // hitSlop={HIT_SLOP}
             onPress={onPressFullscreen}>
-            <Ionicons name="ios-scan" style={styles.icon} />
+            <MaterialIcons
+              name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
+              style={styles.icon}
+            />
           </TouchableOpacity>
         </Container>
       </Container>

@@ -9,7 +9,6 @@ import Animated, {
 import Svg, {Path} from 'react-native-svg';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-import appConfig from 'app-config';
 import {themes} from '../themes';
 
 const MAIN_ICON_ACTUAL_SIZE = 512;
@@ -40,7 +39,7 @@ const PlayPauseButton = ({
   onPress,
   refPath,
   path,
-  fill = appConfig.colors.white,
+  fill = themes.colors.primary,
   strokeWidth = 0,
 }) => {
   const isPressOut = useRef(true);
@@ -136,7 +135,7 @@ const PlayPauseButton = ({
             ref={refPath}
             d={path}
             fill={fill}
-            stroke={appConfig.colors.white}
+            stroke={themes.colors.primary}
             strokeWidth={strokeWidth}
             scale={MAIN_ICON_SCALE_RATIO}
           />
