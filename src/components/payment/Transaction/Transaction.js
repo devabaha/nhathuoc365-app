@@ -203,7 +203,11 @@ const Transaction = ({
   const refPopup = useRef(null);
   const refQRCode = useRef();
 
-  const isActiveWebview = () => !transactionData?.data_qrcode && !isPaid;
+  const isActiveWebview = (transaction = transactionData) =>
+    transaction?.url &&
+    !transaction?.data_qrcode &&
+    !isPaid &&
+    !transaction?.data_va?.length;
 
   useEffect(() => {
     getTransactionData(true);
@@ -291,14 +295,9 @@ const Transaction = ({
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             setTransactionData(response.data);
-            // if (
-            //   !response.data.data_va &&
-            //   !response.data.data_qrcode &&
-            //   response.data.url &&
-            //   isOpenTransaction
-            // ) {
-            //   handleOpenTransaction(response.data.url);
-            // }
+            if (isActiveWebview(response.data) && isOpenTransaction) {
+              handleOpenTransaction(response.data.url);
+            }
           }
         } else {
           flashShowMessage({
@@ -322,7 +321,7 @@ const Transaction = ({
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [isPaid]);
 
   const handleSavePhoto = async (dataURL) => {
     await saveImage(undefined, dataURL, 'png');
