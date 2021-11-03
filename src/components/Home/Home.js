@@ -590,6 +590,7 @@ class Home extends Component {
                             title={item.title}
                             imageUrl={item.image_url}
                             onPress={() => this.props.onPressNewItem(item)}
+                            video={item.video}
                             last={this.props.newses.length - 1 === index}
                           />
                         );

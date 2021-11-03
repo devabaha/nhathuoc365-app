@@ -318,8 +318,8 @@ let styles = StyleSheet.create({
     marginLeft: 'auto',
     marginRight: 7,
     marginBottom: 7,
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -334,8 +334,8 @@ let styles = StyleSheet.create({
   },
   iconVideo: {
     color: appConfig.colors.white,
-    fontSize: appConfig.device.isIOS ? 8 : 7,
-    left: appConfig.device.isIOS ? 1 : 0.5,
+    fontSize: appConfig.device.isIOS ? 10 : 9,
+    left: appConfig.device.isIOS ? 1.5 : 0.75,
   },
   brandTagContainer: {
     backgroundColor: '#fff',

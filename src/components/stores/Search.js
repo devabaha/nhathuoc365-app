@@ -11,24 +11,30 @@ import {
   // Easing,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import store from '../../store/Store';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Animated, {Easing} from 'react-native-reanimated';
+
+import appConfig from 'app-config';
+import store from 'app-store';
+import {LIST_TYPE} from 'app-packages/tickid-modern-list/constants';
+import EventTracker from '../../helper/EventTracker';
+
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import ModernList from 'app-packages/tickid-modern-list';
-import {LIST_TYPE} from 'app-packages/tickid-modern-list/constants';
-import Animated, {Easing} from 'react-native-reanimated';
 import {debounce} from 'lodash';
-import EventTracker from '../../helper/EventTracker';
 import NoResult from '../NoResult';
+import {Container} from '../Layout';
 
 const {interpolate} = Animated;
 const START_DEG = new Animated.Value(0);
 const END_DEG = new Animated.Value(Math.PI);
 const STORE_SEARCH_KEY = 'STORE-SEARCH';
+const MAX_PREVIEW_HISTORY_LENGTH = 3;
 
 class Search extends Component {
   static defaultProps = {
@@ -44,6 +50,7 @@ class Search extends Component {
       header_title: '',
       search_data: null,
       history: null,
+      isShowFullHistory: false,
       buying_idx: [],
       searchValue: '',
       categories: this.categories,
@@ -309,12 +316,18 @@ class Search extends Component {
   }
 
   _onTouchHistory(item) {
+    this.setState({isShowFullHistory: false});
     this._insertName(item);
 
     this.onSearch(item.name);
   }
 
   _updateHistory(item) {
+    const isExisted =
+      this.state.history?.length &&
+      this.state.history.find((history) => history.id === item.id);
+    if (isExisted || !this.state.searchValue) return;
+
     item = {
       id: item.id,
       name: item.name,
@@ -338,16 +351,15 @@ class Search extends Component {
         },
       })
       .then((data) => {
-        this._saveHistorey([...data, item]);
+        this._saveHistory([...data, item]);
       })
       .catch((err) => {
         // save
-        this._saveHistorey([item]);
+        this._saveHistory([item]);
       });
   }
 
-  _saveHistorey(data) {
-    // cache in five minutes
+  _saveHistory(data) {
     storage.save({
       key:
         STORE_SEARCH_KEY +
@@ -363,7 +375,18 @@ class Search extends Component {
     this.setState({history: data});
   }
 
-  removeHistory = () => {
+  removeHistory = (history) => {
+    if (!this.state.history?.length) return;
+    history = {
+      id: history.id,
+      name: history.name,
+    };
+
+    const histories = this.state.history.filter((h) => h.name !== history.name);
+    this._saveHistory(histories);
+  };
+
+  removeAllHistory = () => {
     storage.remove({
       key:
         STORE_SEARCH_KEY +
@@ -487,6 +510,12 @@ class Search extends Component {
     }
   }
 
+  toggleShowMoreHistory = () => {
+    this.setState((prevState) => ({
+      isShowFullHistory: !prevState.isShowFullHistory,
+    }));
+  };
+
   renderHeader = () => {
     return (
       <>
@@ -567,20 +596,61 @@ class Search extends Component {
   };
 
   renderHistory = () => {
-    if (this.state.history === null) return;
+    if (!this.state.history?.length) return;
     let data = [...this.state.history];
     data = data.reverse();
+    data = this.state.isShowFullHistory
+      ? data
+      : data.slice(0, MAX_PREVIEW_HISTORY_LENGTH);
+    data = data.map((history) => {
+      history = {...history};
+      history.titleStyle = styles.historyTitle;
+      history.iconLeft = (
+        <MaterialCommunityIcons name="history" style={styles.historyIcon} />
+      );
+      history.iconRight = (
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          onPress={() => this.removeHistory(history)}>
+          <MaterialCommunityIcons name="close" style={styles.historyIcon} />
+        </TouchableOpacity>
+      );
+      return history;
+    });
 
     return (
-      <ModernList
-        headerTitle="Lịch sử tìm kiếm"
-        mainKey="name"
-        data={data}
-        onPressItem={(item) => this._onTouchHistory(item)}
-        containerStyle={{marginTop: 10}}
-        scrollEnabled={false}
-        headerRightComponent={<RemoveBtn onPress={this.removeHistory} />}
-      />
+      <>
+        <ModernList
+          headerTitle="Lịch sử tìm kiếm"
+          mainKey="name"
+          data={data}
+          onPressItem={(item) => this._onTouchHistory(item)}
+          containerStyle={{marginTop: 10}}
+          scrollEnabled={false}
+          headerRightComponent={<RemoveBtn onPress={this.removeAllHistory} />}
+        />
+        {this.state.history?.length > MAX_PREVIEW_HISTORY_LENGTH && (
+          <View style={styles.showFullHistoryWrapper}>
+            <TouchableOpacity
+              style={styles.showFullHistoryContainer}
+              onPress={this.toggleShowMoreHistory}>
+              <Text style={styles.showFullHistoryTitle}>
+                {this.props.t(
+                  this.state.isShowFullHistory
+                    ? 'common:showLess'
+                    : 'common:showMore',
+                )}
+              </Text>
+              <FontAwesomeIcon
+                name={
+                  this.state.isShowFullHistory ? 'chevron-up' : 'chevron-down'
+                }
+                style={styles.showFullHistoryIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </>
     );
   };
 
@@ -689,7 +759,7 @@ const styles = StyleSheet.create({
   },
   seach_history_name: {
     fontSize: 14,
-    color: '#404040',
+    color: appConfig.colors.text,
   },
   seach_history_expand: {
     width: 40,
@@ -699,6 +769,14 @@ const styles = StyleSheet.create({
     top: 0,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  historyTitle: {
+    marginLeft: 10,
+    color: appConfig.colors.text,
+  },
+  historyIcon: {
+    fontSize: 18,
+    color: appConfig.colors.typography.secondary,
   },
 
   container: {
@@ -784,11 +862,30 @@ const styles = StyleSheet.create({
     color: DEFAULT_COLOR,
     fontWeight: '500',
   },
+
+  showFullHistoryWrapper: {
+    backgroundColor: appConfig.colors.white,
+  },
+  showFullHistoryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  showFullHistoryTitle: {
+    color: appConfig.colors.primary,
+  },
+  showFullHistoryIcon: {
+    color: appConfig.colors.primary,
+    marginLeft: 5,
+  },
 });
 
 export default withTranslation(['stores', 'common'])(observer(Search));
 
-const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+const AnimatedIcon = Animated.createAnimatedComponent(FontAwesomeIcon);
 const CollapseIcon = (props) => (
   <TouchableOpacity
     hitSlop={HIT_SLOP}
