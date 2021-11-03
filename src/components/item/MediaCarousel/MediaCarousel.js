@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 
 import appConfig from 'app-config';
@@ -11,7 +11,7 @@ import {MEDIA_TYPE} from 'src/constants';
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: appConfig.device.height / 2,
+    // height: appConfig.device.height / 2,
   },
   paginationContainer: {
     borderRadius: 20,
@@ -40,19 +40,45 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     justifyContent: 'center',
-    height: appConfig.device.height / 2,
+    // height: appConfig.device.height / 2,
     backgroundColor: '#000',
   },
 });
 
-const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
+const MediaCarousel = ({
+  wrapperStyle,
+  height,
+  data,
+  showPagination = true,
+  initIndex = 0,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(initIndex);
+
+  const videoContainerStyle = useMemo(() => {
+    return [
+      styles.videoContainer,
+      {
+        height,
+      },
+    ];
+  }, [height]);
+
+  const wrapperMixStyle = useMemo(() => {
+    return [
+      styles.wrapper,
+      wrapperStyle,
+      {
+        height,
+      },
+    ];
+  }, [height, wrapperStyle]);
 
   const handleChangeImageIndex = useCallback((index, media) => {
     setCurrentIndex(index);
   }, []);
 
   const renderPagination = (index, total) => {
+    if (!showPagination) return null;
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
       <View pointerEvents="none" style={styles.paginationContainer}>
@@ -66,7 +92,7 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
       <Video
         type="youtube"
         videoId={media.url}
-        containerStyle={styles.videoContainer}
+        containerStyle={videoContainerStyle}
         height={appConfig.device.height / 2}
         autoAdjustLayout
         youtubeIframeProps={{
@@ -94,6 +120,7 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
                   style={styles.image}
                   source={{uri: media.url}}
                   resizeMode="contain"
+                  {...media.mediaProps}
                 />
               </View>
             ) : (
@@ -108,7 +135,8 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
 
   return (
     <Carousel
-      wrapperStyle={[styles.wrapper, wrapperStyle]}
+      scrollEnabled={data?.length > 1}
+      wrapperStyle={wrapperMixStyle}
       data={data}
       renderItem={renderItem}
       onChangeIndex={handleChangeImageIndex}

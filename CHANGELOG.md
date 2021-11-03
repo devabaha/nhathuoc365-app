@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.1.8] - 2021-11-03
+### Added
+- [CU-1qfavjg] video in NotifyItem by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1qfavjg] History UX in stores/Search by [minhnguyenit14@gmail.com].
+
 ## [r12.1.7] - 2021-10-29
 ### Added
 - hide_wallet_account_key by [minhnguyenit14@gmail.com].
