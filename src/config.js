@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.1.4';
+    return 'r12.1.8';
   }
 
   get appName() {
@@ -146,6 +146,7 @@ class Config {
       placeholder: '#c7c7cd',
       sale: '#FD0D1B',
       overlay: 'rgba(0,0,0,.6)',
+      disabled: '#ccc',
       highlight: {
         1: '#51B748',
       },
@@ -312,6 +313,7 @@ class Config {
       modalEditImages: 'modalEditImages',
       modalCalendar: 'modalCalendar',
       modalActionSheet: 'modalActionSheet',
+      modalDateTimePicker: 'modalDateTimePicker',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -343,6 +345,7 @@ class Config {
 
       // List GPS store
       gpsListStore: 'gpsListStore',
+      rootGpsListStore: 'rootGpsListStore',
 
       // Agency
       agencyInformationRegister: 'agencyInformationRegister',

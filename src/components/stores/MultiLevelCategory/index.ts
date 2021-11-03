@@ -1,4 +1,4 @@
-export { default } from "./MultiLevelCategory";
+export {default} from './MultiLevelCategory';
 
 export type Category = {
   name?: string;
@@ -6,7 +6,7 @@ export type Category = {
   list?: Array<any>;
 };
 
-export type CategoryType = "fix" | "scroll";
+export type CategoryType = 'fix' | 'scroll';
 
 export interface MultiLevelCategoryProps {
   /**
@@ -15,5 +15,6 @@ export interface MultiLevelCategoryProps {
    */
   type?: CategoryType;
   siteId?: string | number;
+  title?: string | number;
   categoryId?: string;
 }

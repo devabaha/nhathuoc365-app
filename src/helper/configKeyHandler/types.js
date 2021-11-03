@@ -1,7 +1,7 @@
 export const CONFIG_KEY = {
-  SELECT_CITY_KEY: 'choose_city_site_key',
-  SELECT_BIRTH_KEY: 'choose_birth_site_key',
-  SELECT_STORE_KEY: 'choose_store_site_key',
+  CHOOSE_CITY_SITE_KEY: 'choose_city_site_key',
+  CHOOSE_BIRTH_SITE_KEY: 'choose_birth_site_key',
+  CHOOSE_STORE_SITE_KEY: 'choose_store_site_key',
 
   HIDE_PREMIUM_TAB_KEY: 'hide_premium_tab_key',
   HIDE_PREMIUM_POINT_KEY: 'hide_premium_point_key',
@@ -43,4 +43,11 @@ export const CONFIG_KEY = {
   OPEN_STORE_FROM_LIST_KEY: 'open_store_from_list_key',
 
   NOT_ALLOW_EDIT_CART_KEY: 'not_allow_edit_cart_key',
+
+  HIDE_REGISTER_REFERRAL_CODE_KEY: 'hide_register_referral_code_key',
+
+  HIDE_WALLET_HOMEPAGE_KEY: 'hide_wallet_homepage_key',
+  HIDE_WALLET_ACCOUNT_KEY: 'hide_wallet_account_key',
+
+  HIDE_VOUCHERS_ACCOUNT_KEY: 'hide_vouchers_account_key',
 };

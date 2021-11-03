@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import appConfig from 'app-config';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   header: {
@@ -87,9 +88,9 @@ const ProductInfo = ({
             imageUri || {
               backgroundColor: '#eee',
             },
-            imageContainerStyle
+            imageContainerStyle,
           ]}>
-          <CachedImage mutable source={{uri: imageUri}} style={styles.image} />
+          <Image canTouch source={{uri: imageUri}} style={styles.image} />
         </View>
 
         <View style={styles.info}>

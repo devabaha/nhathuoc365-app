@@ -24,19 +24,16 @@ import Loading from '../../../Loading';
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 class Header extends Component {
-  static defaultProps = {
-    loading: false,
-  };
-
   render() {
-    const {t} = this.props;
-    const {notify} = store;
     return (
       <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
         <Animated.View style={[styles.maskMain, this.props.maskMainStyle]} />
         <Animated.View style={[styles.maskSub, this.props.maskSubStyle]} />
         <View style={[styles.container, this.props.containerStyle]}>
-          <View onLayout={this.props.onContentLayout} style={styles.contentContainer}>
+          <View
+            onLayout={this.props.onContentLayout}
+            style={[styles.contentContainer, this.props.contentContainer]}>
+            {this.props.renderLeft()}
             <View style={styles.userNameWrapper}>
               <TouchableOpacity
                 disabled={this.props.loading}
@@ -53,7 +50,10 @@ class Header extends Component {
                   <Ionicons style={styles.searchIcon} name="ios-search" />
                   <TextInput
                     style={styles.searchInput}
-                    placeholder={store.store_data ? store.store_data.name : ''}
+                    placeholder={
+                      this.props.placeholder ||
+                      (store.store_data ? store.store_data.name : '')
+                    }
                     placeholderTextColor={appConfig.colors.white}
                     numberOfLines={1}
                   />
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   maskMain: {
     width: '100%',
@@ -212,11 +212,15 @@ const styles = StyleSheet.create({
 Header.propTypes = {
   name: PropTypes.string,
   notify: PropTypes.object,
+  loading: PropTypes.bool,
+  renderLeft: PropTypes.func,
 };
 
 Header.defaultProps = {
   name: '',
   notify: {},
+  loading: false,
+  renderLeft: () => null,
 };
 
 export default withTranslation(['home', 'stores'])(observer(Header));

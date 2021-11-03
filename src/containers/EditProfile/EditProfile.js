@@ -64,7 +64,6 @@ class EditProfile extends Component {
               value: this.props.user_info.birth,
               defaultValue: props.t('sections.birthdate.defaultValue'),
               select: true,
-              defaultValue: '-'
             },
             {
               id: 'gioi_tinh',
@@ -72,7 +71,6 @@ class EditProfile extends Component {
               value: this.props.user_info.gender,
               defaultValue: props.t('sections.gender.defaultValue'),
               select: true,
-              defaultValue: '-'
             },
             {
               id: 'email',

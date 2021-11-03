@@ -21,28 +21,28 @@ export const LIVE_AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
 
 class BaseAPI {
   constructor(
-    apiDomain = SPRINT_DEV_API_DOMAIN,
-    socialDomain = LIVE_SOCIAL_DOMAIN,
+    apiDomain = LIVE_API_DOMAIN,
     imageDomain = LIVE_IMAGE_DOMAIN,
+    socialDomain = LIVE_SOCIAL_DOMAIN,
     airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,
   ) {
     this._apiDomain = apiDomain;
-    this._socialDomain = socialDomain;
     this._imageDomain = imageDomain;
+    this._socialDomain = socialDomain;
     this._airlineTicketDomain = airlineTicketDomain;
-    store.setBaseAPIDomain(apiDomain);
+    store.setBaseDomains([apiDomain, imageDomain, socialDomain]);
   }
 
   get apiDomain() {
     return this._apiDomain;
   }
 
-  get socialDomain() {
-    return this._socialDomain;
-  }
-
   get imageDomain() {
     return this._imageDomain;
+  }
+
+  get socialDomain() {
+    return this._socialDomain;
   }
 
   get airlineTicketDomain() {
@@ -59,15 +59,17 @@ class BaseAPI {
       apiDomain === LIVE_API_DOMAIN || apiDomain === PRE_RELEASE_API_DOMAIN
         ? LIVE_SOCIAL_DOMAIN
         : DEV_SOCIAL_DOMAIN;
-    store.setBaseAPIDomain(apiDomain);
-  }
-
-  set updateSocialDomain(socialDomain) {
-    this._socialDomain = socialDomain;
+    store.updateBaseDomain(0, apiDomain);
   }
 
   set updateImageDomain(imageDomain) {
     this._imageDomain = imageDomain;
+    store.updateBaseDomain(1, imageDomain);
+  }
+
+  set updateSocialDomain(socialDomain) {
+    this._socialDomain = socialDomain;
+    store.updateBaseDomain(2, socialDomain);
   }
 
   set updateAirlineTicketDomain(airlineTicketDomain) {

@@ -33,8 +33,11 @@ class NormalList extends Component {
           onPress={() => this.props.onPressItem(item)}
           style={[styles.rowWrapper, styles.row, extraStyle]}>
           <View style={[styles.rowContent, styles.row, extraStyleContent]}>
-            <Text style={styles.text}>{text}</Text>
-            <Icon name="arrow-up-left" style={styles.rightIcon} />
+            {item.iconLeft}
+            <Text style={[styles.text, item.titleStyle]}>{text}</Text>
+            {item.iconRight || (
+              <Icon name="arrow-up-left" style={styles.rightIcon} />
+            )}
           </View>
         </TouchableHighlight>
       );

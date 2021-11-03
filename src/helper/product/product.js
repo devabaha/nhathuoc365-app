@@ -11,6 +11,10 @@ export const isOutOfStock = (product = {}) => {
   );
 };
 
+export const hasVideo = (product = {}) => {
+  return !!product.video;
+};
+
 export const isUnpaid = (cartData = {}) => {
   return (
     cartData.payment_status === null ||

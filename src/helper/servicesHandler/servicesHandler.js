@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
+import {GPS_LIST_TYPE} from 'src/constants';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -17,6 +18,7 @@ import {
   handleOrderHistoryPress,
 } from './radaHandler';
 
+import SearchNavBar from '../../components/stores/SearchNavBar';
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -34,7 +36,7 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t, callBack = () => {}) => {
+export const servicesHandler = (service, t = null, callBack = () => {}) => {
   if (!service || !service.type) return;
   const commonT = i18n.getFixedT(undefined, 'common');
   if (!t) {
@@ -280,8 +282,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
+    case SERVICES_TYPE.GPS_LIST_SITE:
       Actions.push(appConfig.routes.gpsListStore, {
-        title: service.title || commonT('screen.gpsListStore.mainTitle'),
+        type: service.type,
+        placeholder: service.placeholder || commonT('home:searchingStore'),
+        autoFocus: service.autoFocus,
       });
       break;
 
@@ -428,6 +433,21 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       Actions.push(appConfig.routes.socialGroup, {
         id: service.id,
         groupName: service.name,
+      });
+      break;
+    /** Social Create Post */
+    case SERVICES_TYPE.SOCIAL_CREATE_POST:
+      Actions.push(appConfig.routes.socialCreatePost, {
+        title: service.title || t('screen.createPost.mainTitle'),
+        group: service.group,
+        groupId: service.group_id,
+        editMode: service.editMode,
+        postId: service.post_id,
+        siteId: service.site_id || store?.store_data?.id,
+        avatar: service.avatar || store?.user_info?.img,
+        contentText: service.content,
+        images: service.images,
+        isOpenImagePicker: service.isOpenImagePicker,
       });
       break;
 

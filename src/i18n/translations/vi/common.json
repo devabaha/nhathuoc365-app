@@ -163,7 +163,8 @@
       "mainTitle": "Cộng đồng"
     },
     "createPost": {
-      "mainTitle": "Tạo bài viết"
+      "mainTitle": "Tạo bài viết",
+      "editTitle": "Sửa bài viết"
     },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
@@ -175,6 +176,9 @@
       "mainTitle": "Danh sách yêu cầu",
       "detailTitle": "Chi tiết yêu cầu",
       "creationTitle": "Tạo yêu cầu"
+    },
+    "listSite": {
+      "mainTitle": "Danh sách cửa hàng"
     }
   },
 
@@ -245,6 +249,7 @@
   "delete": "Xoá",
   "addImages": "Thêm ảnh",
   "addImagesDescription": "Chạm để thêm ảnh",
+  "save": "Lưu",
   "saved": "Đã lưu",
   "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại.",
   "saveImageLabel": "Lưu ảnh",
@@ -259,6 +264,9 @@
   "showMore": "Xem thêm",
   "showLess": "Thu gọn",
   "update": "Cập nhật",
+  "agree": "Đồng ý",
+  "select": "Chọn",
+  "done": "Xong",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
@@ -279,5 +287,8 @@
     "runInBackground": "Chạy ngầm"
   },
   "optional": "không bắt buộc",
-  "cantOpenLink": "Không mở được link!"
+  "cantOpenLink": "Không mở được link!",
+  "noStoreFound": "Không tìm thấy cửa hàng",
+  "map": "Bản đồ",
+  "goShopping": "Vào mua hàng"
 }

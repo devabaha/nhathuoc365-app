@@ -37,6 +37,7 @@ import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import {openLink} from 'app-helper';
 
 const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
@@ -170,7 +171,8 @@ class Account extends Component {
         ),
         isHidden:
           !user_info.default_wallet ||
-          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE) ||
+          isConfigActive(CONFIG_KEY.HIDE_WALLET_ACCOUNT_KEY),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -334,7 +336,9 @@ class Account extends Component {
       },
       {
         key: 'vouchers',
-        isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
+          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
         label: t('options.myVoucher.label'),
         desc: t('options.myVoucher.desc'),
         leftIcon: (
@@ -435,7 +439,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
+        isHidden: !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {
@@ -511,7 +515,7 @@ class Account extends Component {
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Communications.web(FACEBOOK_DOMAIN + facebookFanpage);
+          openLink(FACEBOOK_DOMAIN + facebookFanpage);
         },
         boxIconStyle: [
           styles.boxIconStyle,
@@ -635,7 +639,7 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () => {
           if (notify.url_update) {
-            Communications.web(notify.url_update);
+            openLink(notify.url_update);
           }
         },
         boxIconStyle: [
@@ -829,7 +833,7 @@ class Account extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();

@@ -203,6 +203,7 @@ import ModalCalendar from './components/ModalCalendar';
 import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
+import ModalDateTimePicker from './components/ModalDateTimePicker';
 
 /**
  * Not allow font scaling
@@ -848,6 +849,16 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ CUSTOMER CARD WALLET ================ */}
+                <Stack key={appConfig.routes.customerCardWallet}>
+                  <Scene
+                    key={`${appConfig.routes.customerCardWallet}_1`}
+                    component={CustomerCardWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ REQUESTS ================ */}
                 <Stack key={appConfig.routes.requests}>
                   <Scene
@@ -1123,6 +1134,7 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
                     component={GPSListStore}
+                    navBar={SearchNavBarContainer}
                     back
                   />
                 </Stack>
@@ -1209,6 +1221,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.multiLevelCategory}_1`}
                     component={MultiLevelCategory}
+                    hideNavBar
                     {...navBarConfig}
                     back
                   />
@@ -2001,6 +2014,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.itemAttribute}
                 component={ItemAttribute}
+              />
+
+              {/* ================ MODAL DATE TIME PICKER ================ */}
+              <Stack
+                key={appConfig.routes.modalDateTimePicker}
+                component={ModalDateTimePicker}
               />
 
               {/* ================ MODAL CALENDAR ================ */}

@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Loading from '../../../Loading';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import appConfig from 'app-config';
+import {hasVideo} from 'app-helper/product/product';
 
 class HomeCardItem extends Component {
   state = {
@@ -44,16 +46,21 @@ class HomeCardItem extends Component {
           <ImageBackground
             style={[styles.image, props.imageStyle]}
             source={{uri: props.imageUrl}}>
+            {hasVideo(props) && (
+              <View style={styles.videoContainer}>
+                <Icon name="play" style={styles.iconVideo} />
+              </View>
+            )}
             {this.state.loading && (
               <Loading color="#fff" containerStyle={styles.loading} />
             )}
           </ImageBackground>
           <View style={[styles.titleWrapper, props.textWrapperStyle]}>
-            <Text numberOfLines={2} style={styles.title}>
+            <Text numberOfLines={2} style={[styles.title, props.titleStyle]}>
               {props.title}
             </Text>
             {!!props.subTitle && (
-              <Text style={styles.subTitle}>
+              <Text style={[styles.subTitle, props.subTitleStyle]}>
                 {this.props.iconSubTitle}
                 {!!this.props.iconSubTitle && ` `}
                 <Text style={styles.specialSubTitle}>
@@ -109,6 +116,25 @@ const styles = StyleSheet.create({
   loading: {
     height: '100%',
     backgroundColor: 'rgba(0,0,0,.5)',
+  },
+  videoContainer: {
+    marginLeft: 'auto',
+    marginRight: 7,
+    marginBottom: 7,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  iconVideo: {
+    color: appConfig.colors.white,
+    fontSize: appConfig.device.isIOS ? 10 : 9,
+    left: appConfig.device.isIOS ? 1.5 : 0.75,
   },
 });
 

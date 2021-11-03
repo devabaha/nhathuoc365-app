@@ -9,6 +9,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import {reaction} from 'mobx';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
@@ -31,7 +32,10 @@ class OpRegister extends Component {
       loading: false,
       isCityLoading: false,
       isWarehouseLoading: false,
-      referCodeEditable: store?.user_info?.invite_user_id ? false : true,
+      referCodeEditable:
+        !isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
+        !store?.user_info?.invite_user_id &&
+        !store?.refer_code,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
@@ -43,6 +47,11 @@ class OpRegister extends Component {
       listWarehouse: [],
     };
 
+    this.updateReferCodeDisposer = reaction(
+      () => store.refer_code,
+      this.updateReferCode.bind(this),
+    );
+
     this.eventTracker = new EventTracker();
     this.getUserCityRequest = new APIRequest();
     this.getWarehouseRequest = new APIRequest();
@@ -53,14 +62,18 @@ class OpRegister extends Component {
 
   get isActiveCity() {
     return (
-      isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) &&
+      isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) &&
       this.state.cities.length !== 0
     );
   }
 
+  get isActiveReferCode() {
+    return !isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY);
+  }
+
   componentDidMount() {
-    isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
-    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
+    isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
+    isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && this.getListWarehouse();
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -81,6 +94,7 @@ class OpRegister extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     cancelRequests(this.requests);
+    this.updateReferCodeDisposer();
     this.eventTracker.clearTracking();
   }
 
@@ -150,7 +164,7 @@ class OpRegister extends Component {
           });
         } finally {
           if (this.unmounted) return;
-          
+
           this.setState({loading: false});
         }
       },
@@ -242,13 +256,11 @@ class OpRegister extends Component {
     }
   }
 
-  updateReferCode() {
-    const store_refer_code = store.refer_code;
-
-    if (store_refer_code) {
+  updateReferCode(refer_code) {
+    if (refer_code) {
       this.setState(
         {
-          refer: store_refer_code,
+          refer: refer_code,
           referCodeEditable: false,
         },
         () => {
@@ -314,7 +326,7 @@ class OpRegister extends Component {
   };
 
   renderDOB() {
-    if (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY)) {
+    if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
         id: 'ngay_sinh',
         title: this.props.t('data.birthdate.title'),
@@ -325,8 +337,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={dobData}
           onSelectedDate={this.onSelectedDate}
         />
@@ -351,8 +363,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={cityData}
           onSelectedValue={this.onPressSelectProvince}
         />
@@ -363,7 +375,7 @@ class OpRegister extends Component {
   }
 
   renderWarehouse() {
-    if (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) {
+    if (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
       const disable =
         !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
@@ -384,8 +396,8 @@ class OpRegister extends Component {
 
       return (
         <HorizontalInfoItem
-          titleStyle={[styles.input_label, styles.dobTitle]}
-          containerStyle={styles.dob}
+          titleStyle={styles.input_label}
+          containerStyle={styles.infoContainer}
           data={wareHouseData}
           onSelectedValue={this.onPressWarehouse}
         />
@@ -406,12 +418,15 @@ class OpRegister extends Component {
       warehouseSelected,
     } = this.state;
     const {t} = this.props;
-    this.updateReferCode();
     const disabled =
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
-      (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
+      (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY) && !birth) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && !warehouseSelected.id) ||
+      (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
+        isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
+        !store?.user_info?.invite_user_id &&
+        !this.state.refer);
 
     const referCodeTitle = (
       <Text>
@@ -423,6 +438,9 @@ class OpRegister extends Component {
         )}
       </Text>
     );
+
+    const extraReferCodeStyle =
+      !this.state.referCodeEditable && styles.input_text_disabled;
 
     return (
       <View style={styles.container}>
@@ -470,10 +488,21 @@ class OpRegister extends Component {
           {this.renderCity()}
           {this.renderWarehouse()}
 
-          {this.state.referCodeEditable && (
+          {this.isActiveReferCode && (
             <>
-              <View style={[styles.input_box, styles.referInputWrapper]}>
-                <Text style={[styles.input_label, styles.referInputLabel]}>
+              <View
+                style={[
+                  styles.input_box,
+                  styles.referInputWrapper,
+                  !this.state.referCodeEditable &&
+                    styles.referInputWrapperDisable,
+                ]}>
+                <Text
+                  style={[
+                    styles.input_label,
+                    styles.referInputLabel,
+                    extraReferCodeStyle,
+                  ]}>
                   {referCodeTitle}
                 </Text>
 
@@ -485,8 +514,7 @@ class OpRegister extends Component {
                     style={[
                       styles.input_text,
                       styles.referInput,
-                      !this.state.referCodeEditable &&
-                        styles.input_text_disabled,
+                      extraReferCodeStyle,
                     ]}
                     keyboardType="default"
                     maxLength={30}
@@ -501,10 +529,14 @@ class OpRegister extends Component {
                   />
 
                   <TouchableOpacity
+                    disabled={!this.state.referCodeEditable}
                     hitSlop={HIT_SLOP}
                     onPress={this.onPressScanInvitationCode}
-                    style={styles.inputIconContainer}>
-                    <Icon name="qrcode" style={styles.inputIcon} />
+                    style={[styles.inputIconContainer, extraReferCodeStyle]}>
+                    <Icon
+                      name="qrcode"
+                      style={[styles.inputIcon, extraReferCodeStyle]}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -601,7 +633,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-
+    backgroundColor: appConfig.colors.sceneBackground,
     marginBottom: 0,
   },
   input_box: {
@@ -628,7 +660,8 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   input_text_disabled: {
-    color: '#777',
+    color: '#aaa',
+    borderColor: '#aaa',
   },
   inputIconContainer: {
     marginHorizontal: 15,
@@ -726,19 +759,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#aaa',
   },
 
-  dobTitle: {
-    paddingLeft: 15,
-    marginLeft: 0,
-  },
-  dob: {
+  infoContainer: {
     borderBottomWidth: 0.5,
     borderColor: '#eee',
     marginRight: -5,
+    paddingLeft: 15,
   },
 
   referInputWrapper: {
     flexDirection: undefined,
     alignItems: undefined,
+  },
+  referInputWrapperDisable: {
+    backgroundColor: '#eee',
   },
   referInputLabel: {
     paddingTop: 10,

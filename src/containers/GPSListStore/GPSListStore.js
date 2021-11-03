@@ -11,12 +11,15 @@ import {
 import Geolocation from '@react-native-community/geolocation';
 import {Actions} from 'react-native-router-flux';
 import {getPreciseDistance} from 'geolib';
+import useIsMounted from 'react-is-mounted-hook';
+import {debounce} from 'lodash';
 
 import appConfig from 'app-config';
 import store from 'app-store';
 import {APIRequest} from '../../network/Entity';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {GPS_LIST_TYPE} from 'src/constants';
 
 import ScreenWrapper from '../../components/ScreenWrapper';
 import Modal from '../../components/account/Transfer/Payment/Modal';
@@ -27,6 +30,7 @@ import {
 } from '../../helper/permissionHelper';
 import Loading from '../../components/Loading';
 import StoreItem from './StoreItem';
+import NoResult from 'src/components/NoResult';
 
 const styles = StyleSheet.create({
   image: {
@@ -113,15 +117,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const GPSListStore = () => {
+const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const {t} = useTranslation();
 
   const appState = useRef('active');
   const watchID = useRef('');
   const isUpdatedListStoreByPosition = useRef(false);
+  const isMounted = useIsMounted();
 
   const [getListStoreRequest] = useState(new APIRequest());
   const [setStoreRequest] = useState(new APIRequest());
+
   const [requests] = useState([getListStoreRequest, setStoreRequest]);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -130,10 +136,13 @@ const GPSListStore = () => {
   const [isGoToSetting, setGotoSetting] = useState(false);
   const [requestLocationLoading, setRequestLocationLoading] = useState(true);
   const [isConnectGPS, setConnectGPS] = useState(false);
+  const [isGetDataFirstTime, setGetDataFirstTime] = useState(true);
   const [requestLocationErrorCode, setRequestLocationErrorCode] = useState(-1);
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [noResult, setNoResult] = useState(false);
 
   const title = 'Không truy cập được Vị trí';
   const content =
@@ -156,6 +165,30 @@ const GPSListStore = () => {
     getListStore();
     AppState.addEventListener('change', handleAppStateChange);
     requestLocationPermission();
+
+    setTimeout(() => {
+      Actions.refresh({
+        searchValue: '',
+        onSearch: (text) => {
+          Actions.refresh({
+            searchValue: text,
+          });
+
+          // auto search on changed text
+          onSearch(text);
+        },
+        onCancel: () => {
+          Keyboard.dismiss();
+        },
+        onClearText: () => {
+          Actions.refresh({
+            searchValue: '',
+          });
+
+          onSearch('');
+        },
+      });
+    });
   };
 
   const unMount = () => {
@@ -175,16 +208,26 @@ const GPSListStore = () => {
   };
 
   const getListStore = async (data) => {
+    setLoading(true);
+
     if (latitude !== undefined && longitude !== undefined) {
       data = {
         lat: latitude,
         lng: longitude,
       };
     }
-    getListStoreRequest.data = APIHandler.user_site_store(data);
+    getListStoreRequest.data =
+      type === GPS_LIST_TYPE.GPS_LIST_STORE
+        ? APIHandler.user_site_store(data)
+        : APIHandler.user_list_gps_store_location(data);
     try {
       const responseData = await getListStoreRequest.promise();
-      setListStore(responseData?.stores || []);
+
+      setListStore(
+        (type === GPS_LIST_TYPE.GPS_LIST_STORE
+          ? responseData?.stores
+          : responseData?.data?.stores) || [],
+      );
     } catch (error) {
       console.log('%cget_list_store', 'color:red', error);
       flashShowMessage({
@@ -194,8 +237,14 @@ const GPSListStore = () => {
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setGetDataFirstTime(false);
     }
   };
+
+  const onSearch = debounce((keyword) => {
+    keyword = keyword.trim();
+    getListStore({content: keyword});
+  }, 500);
 
   const handleAppStateChange = (nextAppState) => {
     if (
@@ -240,12 +289,24 @@ const GPSListStore = () => {
       distanceFilter: 1,
     };
     Geolocation.clearWatch(watchID.current);
-    watchID.current = Geolocation.watchPosition(
-      (position) => handleSaveLocation(position),
-      (err) => {
-        console.log('watch_position', watchID.current, err);
-        setConnectGPS(false);
-        !listStore?.length && getListStore();
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log('geolocation', watchID.current, position);
+        if (!isMounted()) return;
+
+        watchID.current = Geolocation.watchPosition(
+          (position) => handleSaveLocation(position),
+          (err) => {
+            console.log('watch_position', watchID.current, err);
+            setConnectGPS(false);
+            !listStore?.length && getListStore();
+          },
+          config,
+        );
+        handleSaveLocation(position);
+      },
+      (error) => {
+        console.log('update_location', error);
       },
       config,
     );
@@ -318,6 +379,13 @@ const GPSListStore = () => {
     }
   }, []);
 
+  const handlePressSite = useCallback((site) => {
+    servicesHandler({
+      siteId: site.site_id,
+      type: SERVICES_TYPE.OPEN_SHOP,
+    });
+  }, []);
+
   const cancelModal = () => {
     closeModal();
   };
@@ -353,11 +421,23 @@ const GPSListStore = () => {
     return (
       <TouchableOpacity
         activeOpacity={0.5}
-        disabled={!isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)}
-        onPress={() => handlePressStore(store)}>
+        disabled={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? !isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)
+            : false
+        }
+        onPress={
+          type === GPS_LIST_TYPE.GPS_LIST_STORE
+            ? () => handlePressStore(store)
+            : () => handlePressSite(store)
+        }>
         <StoreItem
           name={store.name}
-          image={store.image_url}
+          image={
+            type === GPS_LIST_TYPE.GPS_LIST_STORE
+              ? store.image_url
+              : store.image
+          }
           address={store.address}
           phone={store.phone}
           lat={store.lat}
@@ -366,8 +446,35 @@ const GPSListStore = () => {
           requestLocationLoading={requestLocationLoading}
           distance={calculateDiffDistance(store.lng, store.lat)}
           disabledDistanceStyle={disabledDistanceStyle}
+          actionBtnTitle={
+            type === GPS_LIST_TYPE.GPS_LIST_STORE
+              ? t('map')
+              : t('goShopping')
+          }
+          actionBtnIconName={
+            type === GPS_LIST_TYPE.GPS_LIST_SITE && 'ios-cart-sharp'
+          }
+          onPressActionBtn={
+            type === GPS_LIST_TYPE.GPS_LIST_SITE
+              ? () => handlePressSite(store)
+              : null
+          }
         />
       </TouchableOpacity>
+    );
+  };
+
+  const renderNoResult = () => {
+    return (
+      !isGetDataFirstTime && (
+        <NoResult
+          message={
+            type === GPS_LIST_TYPE.GPS_LIST_STORE
+              ? t('noResult')
+              : t('noStoreFound')
+          }
+        />
+      )
     );
   };
 
@@ -394,6 +501,8 @@ const GPSListStore = () => {
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={renderNoResult}
+        onScroll={Keyboard.dismiss}
       />
     </ScreenWrapper>
   );

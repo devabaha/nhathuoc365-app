@@ -7,6 +7,7 @@ import {
   Animated,
   RefreshControl,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -23,7 +24,7 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
-import {ORDER_TYPES} from '../../constants';
+import {MEDIA_TYPE, ORDER_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
@@ -56,6 +57,9 @@ import {
 import ListProducts from '../Home/component/ListProducts';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import LinearGradient from 'react-native-linear-gradient';
+import ModalWholesale from './ModalWholesale';
+import Video from '../Video';
+import MediaCarousel from './MediaCarousel';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -87,13 +91,17 @@ class Item extends Component {
 
       webviewContentHeight: undefined,
       isWebviewContentCollapsed: undefined,
+      selectedIndex: 0,
     };
+
+    this.refPlayer = React.createRef();
 
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
     this.refPopupConfirmCartType = React.createRef();
     this.refWebview = React.createRef();
+    this.refModalWholesale = React.createRef();
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -231,7 +239,7 @@ class Item extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
@@ -332,7 +340,8 @@ class Item extends Component {
     const {t} = this.props;
     try {
       const response = await APIHandler.site_product(store.store_id, item.id);
-      console.log(response);
+      if (this.unmounted) return;
+
       if (response && response.status == STATUS_SUCCESS) {
         const productSocialFormat = this.getProductWithSocialFormat(
           response.data,
@@ -346,42 +355,51 @@ class Item extends Component {
             calculateLikeCountFriendly(productSocialFormat) || 0,
         });
         // delay append data
-        setTimeout(() => {
-          if (isIOS) {
-            layoutAnimation();
-          }
+        // setTimeout(() => {
+        if (isIOS) {
+          layoutAnimation();
+        }
 
-          var images = [];
+        var images = [];
 
-          if (response.data && response.data.img) {
-            response.data.img.map((item) => {
-              images.push({
-                url: item.image,
-              });
+        if (response.data && response.data.img) {
+          response.data.img.map((item) => {
+            images.push({
+              url: item.image,
             });
-          }
+          });
+        }
 
-          this.logEventTracking(response.data);
+        if (response?.data?.video) {
+          images.unshift({
+            type: MEDIA_TYPE.YOUTUBE_VIDEO,
+            url: response.data.video,
+          });
+        }
 
-          this.setState(
-            {
-              item_data: response.data,
-              images: images,
-              like_flag: response.data.like_flag,
-              loading: false,
-              refreshing: false,
-              like_loading: false,
-            },
-            () => {
-              // cache in five minutes
-              storage.save({
-                key: item_key,
-                data: this.state.item_data,
-                expires: ITEM_CACHE,
-              });
-            },
-          );
-        }, delay || this._delay());
+        this.logEventTracking(response.data);
+
+        this.setState(
+          {
+            item_data: response.data,
+            images: images,
+            like_flag: response.data.like_flag,
+          },
+          () => {
+            // cache in five minutes
+            storage.save({
+              key: item_key,
+              data: this.state.item_data,
+              expires: ITEM_CACHE,
+            });
+          },
+        );
+        // }, delay || this._delay());
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('common:api.error.message'),
+        });
       }
     } catch (e) {
       console.log(e + ' site_product');
@@ -389,6 +407,13 @@ class Item extends Component {
         type: 'danger',
         message: t('common:api.error.message'),
       });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+          like_loading: false,
+          refreshing: false,
+        });
     }
   }
 
@@ -686,16 +711,26 @@ class Item extends Component {
     }
   };
 
+  handleWholesalePress = () => {
+    if (this.refModalWholesale.current) {
+      this.refModalWholesale.current.open();
+    }
+  };
+
   toggleCollapseWebviewContent = () => {
     this.setState((prevState) => ({
       isWebviewContentCollapsed: !prevState.isWebviewContentCollapsed,
     }));
   };
 
-  renderPagination = (index, total, context, hasImages) => {
+  handleChangeImageIndex = (index, image) => {
+    this.setState({selectedIndex: index});
+  };
+
+  renderPagination = (index, total, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
     return (
-      <View style={styles.paginationContainer}>
+      <View pointerEvents="none" style={styles.paginationContainer}>
         <Text style={styles.paginationText}>{pagingMess}</Text>
       </View>
     );
@@ -747,6 +782,45 @@ class Item extends Component {
     });
   }
 
+  renderItem = ({item: image, index}) => {
+    return (
+      <View style={{width: appConfig.device.width}}>
+        {image?.image ? (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => {
+              console.log(this.state.images);
+              Actions.item_image_viewer({
+                images: this.state.images,
+                index: index - 1,
+              });
+            }}>
+            <View style={{height: '100%'}}>
+              <FastImage
+                style={styles.swiper_image}
+                source={{uri: image.image}}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableHighlight>
+        ) : (
+          <Video
+            refPlayer={this.refPlayer}
+            type="youtube"
+            videoId={image}
+            containerStyle={{
+              justifyContent: 'center',
+              height: appConfig.device.height / 2,
+            }}
+            height={appConfig.device.height / 2}
+            autoAdjustLayout
+            youtubeIframeProps={{play: this.state.selectedIndex === index}}
+          />
+        )}
+      </View>
+    );
+  };
+
   renderProductSwiper(product) {
     const images = product?.img || [];
     const hasImages = !!images.length;
@@ -767,21 +841,26 @@ class Item extends Component {
               />
             </View>
           ) : (
-            <Swiper
-              showsButtons={isShowButtons}
-              renderPagination={(index, total, context) =>
-                this.renderPagination(index, total, context, hasImages)
-              }
-              buttonWrapperStyle={{
-                alignItems: 'flex-end',
-              }}
-              nextButton={this.renderNextButton()}
-              prevButton={this.renderPrevButton()}
-              width={appConfig.device.width}
+            <MediaCarousel
               height={appConfig.device.height / 2}
-              containerStyle={styles.content_swiper}>
-              {this.renderProductImages(images)}
-            </Swiper>
+              data={this.state.images}
+            />
+            // <Swiper
+            //   loop={false}
+            //   showsButtons={isShowButtons}
+            //   renderPagination={(index, total, context) =>
+            //     this.renderPagination(index, total, context, hasImages)
+            //   }
+            //   buttonWrapperStyle={{
+            //     alignItems: 'flex-end',
+            //   }}
+            //   nextButton={this.renderNextButton()}
+            //   prevButton={this.renderPrevButton()}
+            //   width={appConfig.device.width}
+            //   height={appConfig.device.height / 2}
+            //   containerStyle={styles.content_swiper}>
+            //   {this.renderProductImages(images)}
+            // </Swiper>
           )}
         </SkeletonLoading>
       </View>
@@ -867,6 +946,34 @@ class Item extends Component {
       )
     );
   }
+
+  renderWholesaleInfo = (product) => {
+    if (!product?.detail_price_steps?.length) return;
+
+    const {t} = this.props;
+
+    const wholesaleValue = t('wholesale.value', {
+      price: product.detail_price_steps[0].unit_price,
+      quantity: product?.detail_price_steps[0].quantity,
+    });
+
+    return (
+      <View style={styles.wholesaleContainer}>
+        <View style={[styles.item_content_item, styles.item_content_item_left]}>
+          <Text style={styles.item_content_item_title}>
+            {t('wholesale.title')}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={this.handleWholesalePress}
+          style={[styles.item_content_item, styles.item_content_item_right]}>
+          <Text style={styles.item_content_item_value}>{wholesaleValue}</Text>
+          <Icon name="angle-right" style={styles.wholesaleRightIcon} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   renderBtnProductStamps = () => {
     return (
@@ -978,6 +1085,7 @@ class Item extends Component {
     const extraSocialProps = {
       accessoryTypes: [ACCESSORY_TYPE.RATING],
       placeholder: this.props.t('placeholderRating'),
+      disableEditComment: true,
     };
 
     return (
@@ -1143,11 +1251,15 @@ class Item extends Component {
             </View>
 
             {item != null && !this.state.loading && (
-              <View style={[styles.block, styles.item_content_box]}>
-                {this.renderBtnProductStamps()}
-                {this.renderNoticeMessage(item)}
-                {this.renderDetailInfo(item)}
-              </View>
+              <>
+                {this.renderWholesaleInfo(item)}
+
+                <View style={[styles.block, styles.item_content_box]}>
+                  {this.renderBtnProductStamps()}
+                  {this.renderNoticeMessage(item)}
+                  {this.renderDetailInfo(item)}
+                </View>
+              </>
             )}
 
             {!!item.object && (
@@ -1192,9 +1304,16 @@ class Item extends Component {
             )}
 
             {!!item?.short_content && (
-                <View style={[styles.block, styles.item_content_text, styles.shortContentBox]}>
-                 <Text style={styles.shortContentItem}>{item.short_content}</Text>
-                </View>
+              <View
+                style={[
+                  styles.block,
+                  styles.item_content_text,
+                  styles.shortContentBox,
+                ]}>
+                <Text style={styles.shortContentItem}>
+                  {item.short_content}
+                </Text>
+              </View>
             )}
 
             {!!item?.content && (
@@ -1299,6 +1418,11 @@ class Item extends Component {
             }
           }}
           yesConfirm={this._removeCartItem.bind(this)}
+        />
+
+        <ModalWholesale
+          data={item.detail_price_steps || []}
+          innerRef={(inst) => (this.refModalWholesale.current = inst)}
         />
       </View>
     );
@@ -1628,7 +1752,7 @@ const styles = StyleSheet.create({
     paddingBottom: appConfig.device.bottomSpace,
     // ...elevationShadowStyle(7),
   },
-  
+
   webviewCollapsedContainer: {
     height: WEBVIEW_HEIGHT_COLLAPSED,
     overflow: 'hidden',
@@ -1648,11 +1772,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: appConfig.colors.primary,
   },
+
+  wholesaleContainer: {
+    flexDirection: 'row',
+    padding: 15,
+    borderColor: '#eee',
+    borderBottomWidth: 1,
+    width: appConfig.device.width,
+    alignItems: 'center',
+  },
+  wholesaleRightIcon: {
+    color: '#ccc',
+    fontSize: 26,
+    paddingLeft: 10,
+  },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
   },
   shortContentItem: {
-     ...appConfig.styles.typography.text,
+    ...appConfig.styles.typography.text,
     lineHeight: 24,
     fontSize: 14,
   },

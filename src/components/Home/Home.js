@@ -13,6 +13,7 @@ import {
   Text,
 } from 'react-native';
 import Animated, {Easing} from 'react-native-reanimated';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
@@ -352,6 +353,7 @@ class Home extends Component {
             iconStyle={this.headerIconStyle}
             notify={this.props.notify}
             name={name}
+            showCart={false}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
             loading={this.props.storeFetching}
@@ -385,7 +387,7 @@ class Home extends Component {
                 useNativeDriver: true,
               },
             )}
-            style={{overflow: 'visible'}}
+            // style={{overflow: 'visible'}}
             contentContainerStyle={{
               paddingTop: extraTop,
               paddingBottom: 30,
@@ -405,7 +407,6 @@ class Home extends Component {
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
           /> */}
-
             <View style={styles.block}>
               {this.isVisibleLoyaltyBox ? (
                 <PrimaryActions
@@ -502,6 +503,15 @@ class Home extends Component {
                       imageUrl={item.image_url}
                       onPress={() => this.props.onPressSiteItem(item)}
                       last={this.props.sites.length - 1 === index}
+                      subTitle={item.address}
+                      titleStyle={styles.siteTitleContent}
+                      subTitleStyle={styles.siteSubtitleContent}
+                      iconSubTitle={
+                        <Ionicons
+                          name="ios-location-sharp"
+                          style={styles.siteIcon}
+                        />
+                      }
                     />
                   )}
                 </HomeCardList>
@@ -580,6 +590,7 @@ class Home extends Component {
                             title={item.title}
                             imageUrl={item.image_url}
                             onPress={() => this.props.onPressNewItem(item)}
+                            video={item.video}
                             last={this.props.newses.length - 1 === index}
                           />
                         );
@@ -620,7 +631,7 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#F5F7F8',
+    backgroundColor: appConfig.colors.sceneBackground,
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -663,6 +674,7 @@ let styles = StyleSheet.create({
   },
 
   servicesBlock: {
+    backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },
@@ -674,6 +686,7 @@ let styles = StyleSheet.create({
     marginBottom: 10,
   },
   block: {
+    zIndex: 1,
     marginBottom: 20,
   },
 
@@ -681,6 +694,16 @@ let styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 0,
     marginBottom: -15,
+  },
+  siteTitleContent: {
+    fontWeight: '500',
+  },
+  siteSubtitleContent: {
+    color: '#666',
+  },
+  siteIcon: {
+    fontSize: 15,
+    color: '#000',
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);
