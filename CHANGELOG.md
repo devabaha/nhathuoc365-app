@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.1] - 2021-11-03
+### Added
+- [CU-m83pww] Integrate VNPAY SDK by [minhnguyenit14@gmail.com].
+- [CU-1q9my54] data_va info in Transaction by [minhnguyenit14@gmail.com].
+
 ## [r12.1.8] - 2021-11-03
 ### Added
-- [CU-1qfavjg] video in NotifyItem by [minhnguyenit14@gmail.com].
+- [CU-1qfavjg] Video in NotifyItem by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-1qfavjg] History UX in stores/Search by [minhnguyenit14@gmail.com].
 ### Fixed

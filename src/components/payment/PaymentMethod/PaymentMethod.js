@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   confirmContainer: {
     backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingBottom: 30,
+    paddingBottom: appConfig.device.bottomSpace + 15,
   },
   totalPriceInfoRow: {
     justifyContent: 'space-between',
@@ -368,11 +368,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  PaymentMethodDetailLogoContainer: {
+  paymentMethodDetailLogoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  PaymentMethodDetailLogo: {
+  paymentMethodDetailLogo: {
     marginLeft: 10,
     resizeMode: 'contain',
     width: 50,
@@ -407,11 +407,11 @@ const TotalPrice = (props) => {
 
 const PaymentMethodDetailLogo = (props) => {
   return (
-    <View style={styles.PaymentMethodDetailLogoContainer}>
+    <View style={styles.paymentMethodDetailLogoContainer}>
       <CachedImage
         mutable
         source={{uri: props.image}}
-        style={styles.PaymentMethodDetailLogo}
+        style={styles.paymentMethodDetailLogo}
       />
     </View>
   );

@@ -14,5 +14,11 @@
       "placeholder": "Nhập lời nhắn cho người nhận"
     }
   },
-  "transferBtnTitle": "Tiếp tục"
+  "transferBtnTitle": "Tiếp tục",
+  "transaction": {
+    "title": "Thanh toán",
+    "vnpayTitle": "Thanh toán VNPAY",
+    "noPaymentInformation": "Chưa có thông tin thanh toán",
+    "cancelPaymentFlowConfirmMessage": "Bạn sẽ phải thực hiện thanh toán lại từ đầu nếu thoát. Bạn chắc chắn muốn thoát chứ?"
+  }
 }

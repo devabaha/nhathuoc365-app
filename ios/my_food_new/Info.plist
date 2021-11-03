@@ -31,11 +31,25 @@
 				<string>vn.abahaglobal</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>vn.abahaglobal</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CodePushDeploymentKey</key>
 	<string>DeploymentKey</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemapsurl</string>
+		<string>comgooglemaps</string>
+		<string>comgooglemaps-x-callback</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -124,11 +138,5 @@
 	<string>abahavn.app.link</string>
 	<key>branch_key</key>
 	<string>key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9</string>
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>comgooglemapsurl</string>
-        <string>comgooglemaps</string>
-        <string>comgooglemaps-x-callback</string>
-    </array>
 </dict>
 </plist>
