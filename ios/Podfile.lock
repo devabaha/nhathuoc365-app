@@ -378,6 +378,8 @@ PODS:
     - react-native-video/Video (= 5.1.1)
   - react-native-video/Video (5.1.1):
     - React-Core
+  - react-native-vnpay-merchant (1.0.0):
+    - React
   - react-native-webview (11.0.2):
     - React-Core
   - React-RCTActionSheet (0.63.4):
@@ -572,6 +574,7 @@ DEPENDENCIES:
   - react-native-shimmer (from `../node_modules/react-native-shimmer`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-vnpay-merchant (from `../node_modules/react-native-vnpay-merchant`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -717,6 +720,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-simple-toast"
   react-native-video:
     :path: "../node_modules/react-native-video"
+  react-native-vnpay-merchant:
+    :path: "../node_modules/react-native-vnpay-merchant"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-RCTActionSheet:
@@ -852,6 +857,7 @@ SPEC CHECKSUMS:
   react-native-shimmer: 2fdba9953215a29106febc9d147caa31a0080a8a
   react-native-simple-toast: bf002828cf816775a6809f7a9ec3907509bce11f
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
+  react-native-vnpay-merchant: c9f1ebb375802c7004045e3646240f043acaaf61
   react-native-webview: dfd7202ff115c44d3ea401c2f36122fb3ac79f07
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b

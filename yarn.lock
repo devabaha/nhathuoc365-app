@@ -8640,6 +8640,9 @@ react-native-video@^5.1.1:
     prop-types "^15.7.2"
     shaka-player "^2.5.9"
 
+"react-native-vnpay-merchant@file:react-native-vnpay-merchant":
+  version "1.0.0"
+
 react-native-webview@9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-9.1.1.tgz#8a83da99650093aee192506704084f850face482"
