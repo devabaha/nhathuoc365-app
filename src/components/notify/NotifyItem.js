@@ -292,7 +292,7 @@ class NotifyItem extends Component {
 
             {item_data != null ? (
               <CustomAutoHeightWebview
-                contentStyle={styles.webview}
+                containerStyle={styles.webviewContainer}
                 content={item_data.content}
               />
             ) : null}
@@ -446,9 +446,13 @@ const styles = StyleSheet.create({
   listStoreProductContainer: {
     paddingTop: 0,
   },
+  webviewContainer: {
+    marginTop: 10,
+  },
   webview: {
-    marginTop: 15,
-    marginHorizontal: 15,
+    // marginTop: 15,
+    // marginHorizontal: 15,
+    width: '100%',
   },
 
   notifyBlock: {
