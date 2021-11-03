@@ -1,4 +1,5 @@
 import {Linking, Alert} from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import i18n from 'src/i18n';
 
 export const openLink = (url) => {
@@ -15,4 +16,18 @@ export const isValidDate = (date) => {
   }
 
   return date instanceof Date && !isNaN(date);
+};
+
+export const copyToClipboard = (
+  text,
+  config = {isShowCopiedMessage: true, copiedMessage: ''},
+) => {
+  Clipboard.setString(text);
+
+  if (config.isShowCopiedMessage) {
+    if (!config.copiedMessage) {
+      config.copiedMessage = i18n.getFixedT(undefined, 'common')('copied');
+    }
+    Toast.show(config.copiedMessage);
+  }
 };
