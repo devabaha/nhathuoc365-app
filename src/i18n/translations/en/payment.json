@@ -14,5 +14,11 @@
       "placeholder": "Enter a message for the receiver"
     }
   },
-  "transferBtnTitle": "Transfer"
+  "transferBtnTitle": "Transfer",
+  "transaction": {
+    "title": "Payment",
+    "vnpayTitle": "VNPAY Payment",
+    "noPaymentInformation": "No payment information yet",
+    "cancelPaymentFlowConfirmMessage": "You will have to remake the payment flow if you close. Are you sure you want to close?"
+  }
 }

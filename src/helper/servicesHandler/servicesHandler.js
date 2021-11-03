@@ -1,7 +1,9 @@
 import {Actions} from 'react-native-router-flux';
-import appConfig from 'app-config';
 import {Alert, Linking} from 'react-native';
 import Communications from 'react-native-communications';
+import i18n from 'i18next';
+
+import appConfig from 'app-config';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
@@ -15,7 +17,6 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
-import i18n from 'src/i18n';
 
 import SearchNavBar from '../../components/stores/SearchNavBar';
 /**
