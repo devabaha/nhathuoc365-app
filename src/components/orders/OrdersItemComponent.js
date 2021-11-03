@@ -488,6 +488,7 @@ const styles = StyleSheet.create({
   orders_item_content_text: {
     marginTop: 8,
     overflow: 'hidden',
+    marginRight: 15,
     // marginLeft: 22,
   },
   orders_item_content_value: {
