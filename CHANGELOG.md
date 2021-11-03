@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [CU-1qfavjg] video in NotifyItem by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1qfavjg] History UX in stores/Search by [minhnguyenit14@gmail.com].
 
 ## [r12.1.7] - 2021-10-29
 ### Added

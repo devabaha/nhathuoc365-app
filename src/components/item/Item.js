@@ -356,44 +356,44 @@ class Item extends Component {
         });
         // delay append data
         // setTimeout(() => {
-          if (isIOS) {
-            layoutAnimation();
-          }
+        if (isIOS) {
+          layoutAnimation();
+        }
 
-          var images = [];
+        var images = [];
 
-          if (response.data && response.data.img) {
-            response.data.img.map((item) => {
-              images.push({
-                url: item.image,
-              });
+        if (response.data && response.data.img) {
+          response.data.img.map((item) => {
+            images.push({
+              url: item.image,
             });
-          }
+          });
+        }
 
-          if (response?.data?.video) {
-            images.unshift({
-              type: MEDIA_TYPE.YOUTUBE_VIDEO,
-              url: response.data.video,
+        if (response?.data?.video) {
+          images.unshift({
+            type: MEDIA_TYPE.YOUTUBE_VIDEO,
+            url: response.data.video,
+          });
+        }
+
+        this.logEventTracking(response.data);
+
+        this.setState(
+          {
+            item_data: response.data,
+            images: images,
+            like_flag: response.data.like_flag,
+          },
+          () => {
+            // cache in five minutes
+            storage.save({
+              key: item_key,
+              data: this.state.item_data,
+              expires: ITEM_CACHE,
             });
-          }
-
-          this.logEventTracking(response.data);
-
-          this.setState(
-            {
-              item_data: response.data,
-              images: images,
-              like_flag: response.data.like_flag,
-            },
-            () => {
-              // cache in five minutes
-              storage.save({
-                key: item_key,
-                data: this.state.item_data,
-                expires: ITEM_CACHE,
-              });
-            },
-          );
+          },
+        );
         // }, delay || this._delay());
       } else {
         flashShowMessage({
@@ -841,7 +841,10 @@ class Item extends Component {
               />
             </View>
           ) : (
-            <MediaCarousel data={this.state.images} />
+            <MediaCarousel
+              height={appConfig.device.height / 2}
+              data={this.state.images}
+            />
             // <Swiper
             //   loop={false}
             //   showsButtons={isShowButtons}
