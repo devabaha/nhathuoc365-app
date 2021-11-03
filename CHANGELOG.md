@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-m83pww] Integrate VNPAY SDK by [minhnguyenit14@gmail.com].
 - [CU-1q9my54] data_va info in Transaction by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] iframe embedded can not open full screen by [minhnguyenit14@gmail.com].
 
 ## [r12.1.8] - 2021-11-03
 ### Added

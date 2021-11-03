@@ -72,8 +72,11 @@ const CUSTOM_SCRIPT = `
 `;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15
+  },
   webview: {
-    width: appConfig.device.width - 30,
+    width: '100%',
   },
 });
 
@@ -134,7 +137,7 @@ class CustomAutoHeightWebview extends Component {
 
   render() {
     return (
-      <View style={this.props.containerStyle} onLayout={this.props.onLayout}>
+      <View style={[styles.container, this.props.containerStyle]} onLayout={this.props.onLayout}>
         <AutoHeightWebView
           ref={this.handleRefWebview}
           onShouldStartLoadWithRequest={(result) => {
@@ -152,6 +155,7 @@ class CustomAutoHeightWebview extends Component {
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
           customStyle={CUSTOM_STYLE + this.props.customStyle}
+          allowsFullscreenVideo={true}
         />
       </View>
     );

@@ -1322,11 +1322,14 @@ class Item extends Component {
                   <CustomAutoHeightWebview
                     ref={(inst) => (this.refWebview.current = inst)}
                     onSizeUpdated={this.handleWebviewContentLayout}
-                    containerStyle={
+                    containerStyle={[
+                      {
+                        width: '100%'
+                      },
                       this.state.isWebviewContentCollapsed !== undefined &&
-                      !!this.state.isWebviewContentCollapsed &&
-                      styles.webviewCollapsedContainer
-                    }
+                        !!this.state.isWebviewContentCollapsed &&
+                        styles.webviewCollapsedContainer,
+                    ]}
                     content={item.content}
                     onGetInnerText={(innerText) =>
                       this.handleGetInnerTextWebview(innerText, item)
@@ -1608,6 +1611,7 @@ const styles = StyleSheet.create({
   item_content_text: {
     width: '100%',
     paddingTop: 20,
+    paddingHorizontal: 0,
   },
 
   boxButtonActions: {
@@ -1788,6 +1792,7 @@ const styles = StyleSheet.create({
   },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
+    paddingHorizontal: 15
   },
   shortContentItem: {
     ...appConfig.styles.typography.text,
