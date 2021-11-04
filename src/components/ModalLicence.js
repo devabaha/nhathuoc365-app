@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd',
   },
   actionButtonLabel: {
-    color: appConfig._primaryColor,
+    color: '#0b0b0b',
   },
   actionAgreeBtnLabel: {
     fontWeight: '700',
@@ -136,7 +136,7 @@ class LicenseModal extends Component {
     const listCheckboxesConfirmed = this.state.checkboxes.filter((checkbox) => {
       return checkbox.confirmed;
     });
-    this.props.onConfirm(this.state.checkboxes, listCheckboxesConfirmed);
+    this.props.onAgree(this.state.checkboxes, listCheckboxesConfirmed);
   };
 
   handleBtnAgreeDisabled = () => {
@@ -187,12 +187,10 @@ class LicenseModal extends Component {
             </View>
 
             {this.props.checkboxes?.map((item, index) => {
-              const requiredIcon = item.required
-                ? 'checkbox-marked-outline'
-                : 'checkbox-marked-circle-outline';
               const requiredColor = item.required
                 ? appConfig._primaryColor
                 : '#0e0e0e';
+              const requiredTitleMarker = ` ${item.required ? '(*)' : ''}`;
 
               return (
                 <View key={index} style={styles.checkboxesWrapper}>
@@ -209,13 +207,21 @@ class LicenseModal extends Component {
                         fontSize: item.required ? 14 : 13,
                       },
                     ]}
-                    checkedIcon={requiredIcon}
-                    uncheckedIcon={requiredIcon}
+                    checkedIcon={
+                      item.required
+                        ? 'checkbox-marked-outline'
+                        : 'checkbox-marked-circle-outline'
+                    }
+                    uncheckedIcon={
+                      item.required
+                        ? 'checkbox-blank-outline'
+                        : 'checkbox-blank-circle-outline'
+                    }
                     checked={this.state.checkboxes[index].confirmed}
                     uncheckedColor={requiredColor}
                     checkedColor={requiredColor}
                     onPress={() => this.toggleCheckbox(index)}
-                    title={item.checkboxLabel + `${item.required ? '(*)' : ''}`}
+                    title={item.checkboxLabel + requiredTitleMarker}
                   />
                 </View>
               );
