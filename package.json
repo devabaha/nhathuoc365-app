@@ -11,7 +11,6 @@
     "postinstall": "bash setup"
   },
   "dependencies": {
-    "react-native-vnpay-merchant": "file:react-native-vnpay-merchant",
     "@alessiocancian/react-native-actionsheet": "^3.0.3",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/art": "^1.2.0",
@@ -123,6 +122,7 @@
     "react-native-vector-icons": "^7.1.0",
     "react-native-video": "^5.1.1",
     "react-native-video-controls": "^2.8.1",
+    "react-native-vnpay-merchant": "file:react-native-vnpay-merchant",
     "react-native-webview": "^11.0.2",
     "react-native-youtube-iframe": "^2.1.0",
     "rn-fetch-blob": "git+https://github.com/joltup/rn-fetch-blob.git",
