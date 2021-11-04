@@ -246,7 +246,7 @@ class PaymentMethod extends Component {
     const extraFee = this.props.extraFee || {};
 
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -299,7 +299,7 @@ class PaymentMethod extends Component {
             onPress={this.handleConfirm}
           />
         )}
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   confirmContainer: {
     backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingBottom: appConfig.device.bottomSpace + 15,
+    paddingBottom: appConfig.device.bottomSpace || 15,
   },
   totalPriceInfoRow: {
     justifyContent: 'space-between',

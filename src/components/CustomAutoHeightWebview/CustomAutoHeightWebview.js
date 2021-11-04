@@ -10,6 +10,10 @@ const ACTION_TYPE = {
 };
 
 const CUSTOM_STYLE = `
+  body {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   * {
     font-family: 'arial';
   }
@@ -73,7 +77,6 @@ const CUSTOM_SCRIPT = `
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15
   },
   webview: {
     width: '100%',
@@ -137,7 +140,9 @@ class CustomAutoHeightWebview extends Component {
 
   render() {
     return (
-      <View style={[styles.container, this.props.containerStyle]} onLayout={this.props.onLayout}>
+      <View
+        style={[styles.container, this.props.containerStyle]}
+        onLayout={this.props.onLayout}>
         <AutoHeightWebView
           ref={this.handleRefWebview}
           onShouldStartLoadWithRequest={(result) => {
