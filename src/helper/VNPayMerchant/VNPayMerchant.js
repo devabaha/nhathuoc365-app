@@ -38,7 +38,7 @@ class VNPayMerchant {
 
   show(option = {}) {
     const t = i18next.getFixedT(undefined, 'payment');
-    RNVnpayMerchant.show({
+    const config = {
       isSandbox: true,
       scheme: 'vn.abahaglobal',
       backAlert: t('transaction.cancelPaymentFlowConfirmMessage'),
@@ -50,7 +50,8 @@ class VNPayMerchant {
       //   paymentUrl
       // tmn_code: 'GOGREEN1',
       ...option,
-    });
+    };
+    RNVnpayMerchant.show(config);
   }
 }
 
