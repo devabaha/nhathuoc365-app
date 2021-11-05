@@ -1,11 +1,6 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Keyboard} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../../Badges';
@@ -77,6 +72,9 @@ class ProductItem extends PureComponent {
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
+    if (!!item.has_attr) {
+      Keyboard.dismiss();
+    }
     this.CTAProduct.handlePressMainActionBtnProduct(item, CART_TYPES.NORMAL);
   };
 

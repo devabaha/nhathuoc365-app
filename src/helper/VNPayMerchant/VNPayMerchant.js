@@ -50,7 +50,7 @@ class VNPayMerchant {
       //   paymentUrl
       // tmn_code: 'GOGREEN1',
       ...option,
-    }
+    };
     RNVnpayMerchant.show(config);
   }
 }

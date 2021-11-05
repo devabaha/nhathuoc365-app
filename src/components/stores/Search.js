@@ -683,7 +683,6 @@ class Search extends Component {
                 index={index}
                 buying_idx={buying_idx}
                 onPress={this._goItem.bind(this, item)}
-                buyPress={this._updateHistory.bind(this, item)}
               />
             )}
             keyExtractor={(item) => item.id}
