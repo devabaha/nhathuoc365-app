@@ -1,5 +1,5 @@
-import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState, useCallback, useMemo, useRef} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {
   PanGestureHandler,
   State,
@@ -11,14 +11,11 @@ import Animated, {
   and,
   call,
   cond,
-  divide,
   eq,
-  Extrapolate,
-  floor,
-  greaterOrEq,
   greaterThan,
-  lessOrEq,
   lessThan,
+  max,
+  min,
   multiply,
   neq,
   or,
@@ -100,6 +97,8 @@ const ProgressBar = ({
   total = 1,
   bufferProgress = 0,
   isFullscreen = false,
+  thumbStyle = {},
+  animatedVisibleValue = new Animated.Value(0),
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
@@ -261,7 +260,18 @@ const ProgressBar = ({
 
   const animatedThumbStyle = useMemo(() => {
     return {
-      transform: [{scale: animatedThumbValue}],
+      transform: [
+        {
+          scale: max(
+            animatedThumbValue,
+            cond(
+              neq(animatedVisibleValue, 0),
+              min(animatedVisibleValue, 0.6),
+              animatedVisibleValue,
+            ),
+          ),
+        },
+      ],
     };
   }, []);
 
@@ -359,7 +369,9 @@ const ProgressBar = ({
                         ]}
                       />
                     )}
-                    <Animated.View style={[styles.thumb, animatedThumbStyle]} />
+                    <Animated.View
+                      style={[styles.thumb, animatedThumbStyle, thumbStyle]}
+                    />
                   </Animated.View>
                 </View>
               </Animated.View>

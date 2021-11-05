@@ -21,7 +21,7 @@ export class Video extends Component<VideoProps> {
   getYoutubeTimerInterval: any = () => {};
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.isPlay !== this.props.isPlay) {
+    if (nextProps.isPlay !== this.props.isPlay && !this.state.isEnd) {
       this.setState({isPlay: nextProps.isPlay});
     }
     if (nextProps.isMute !== this.props.isMute) {

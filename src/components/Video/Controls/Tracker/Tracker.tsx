@@ -39,6 +39,8 @@ const Tracker = ({
   actionsContainerStyle = {},
   containerStyle = {},
   progressBarStyle = {},
+  progressBarThumbStyle = {},
+  animatedVisibleValue = undefined,
   onPressMute = () => {},
   onPressFullscreen = () => {},
   onChangingProgress = (progress: number) => {},
@@ -64,6 +66,8 @@ const Tracker = ({
           progress={currentTime / (totalTime || 1)}
           total={totalTime}
           bufferProgress={bufferTime / (totalTime || 1)}
+          animatedVisibleValue={animatedVisibleValue}
+          thumbStyle={progressBarThumbStyle}
           onChangedProgress={onChangedProgress}
           onChangingProgress={onChangingProgress}
         />

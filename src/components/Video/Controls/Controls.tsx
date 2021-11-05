@@ -7,12 +7,10 @@ import extractStroke from 'react-native-svg/src/lib/extract/extractStroke';
 
 import Animated, {
   Easing,
-  and,
   block,
   call,
   cond,
   eq,
-  neq,
   set,
   useCode,
   useValue,
@@ -369,6 +367,7 @@ const Controls = ({
         progressBarStyle={
           isFullscreen && !isChangingProgress && animatedVisibleProgressBarStyle
         }
+        animatedVisibleValue={animatedVisibleMask}
         onPressMute={toggleMute}
         onPressFullscreen={onPressFullScreen}
         onChangingProgress={handleChangingProgress}
