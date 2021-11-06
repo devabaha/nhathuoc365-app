@@ -1136,8 +1136,6 @@ class Item extends Component {
                 )}
                 {isInventoryVisible && (
                   <View style={styles.productsLeftContainer}>
-                    {/* <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} /> */}
                     <Text style={styles.productsLeftText}>
                       {t('productsLeft', {quantity: item.inventory})}
                     </Text>

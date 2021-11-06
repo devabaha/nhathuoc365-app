@@ -34,6 +34,7 @@ import {themes} from '../../themes';
 import Timer from '../Timer';
 import {timingFunction} from '../../helper';
 import {formatTime} from 'app-helper';
+import {debounce} from 'lodash';
 
 const THUMB_SIZE = 15;
 const TRACKER_HEIGHT = 3;
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   timerContainer: {
     position: 'absolute',
-    top: -40,
+    top: -60,
   },
 });
 
@@ -105,22 +106,28 @@ const ProgressBar = ({
   const refPanGesture = useRef<any>();
   const refLongPressGesture = useRef<any>();
 
+  const [containerWidth, setContainerWidth] = useState(1);
+  const [containerOffsetX, setContainerOffsetX] = useState(0);
+  const [timerWidth, setTimerWidth] = useState(0);
+
   const isStartChangeProgressManually = useValue(0);
   const isChangingProgressManually = useValue(0);
 
   const diffProgress = useValue(0);
-  const currentProgress = useValue(0);
 
   const tempPositionX = useValue(0);
   const oldPositionX = useValue(0);
   const positionX = useValue(0);
+  const panPositionX = useValue(0);
 
   const animatedThumbValue = useValue(0);
 
-  const [containerWidth, setContainerWidth] = useState(1);
-  const [timerWidth, setTimerWidth] = useState(0);
-
-  const {gestureHandler, state, translation} = usePanGestureHandler();
+  const {
+    gestureHandler,
+    state: panState,
+    translation,
+    position,
+  } = usePanGestureHandler();
   const {
     gestureHandler: tapGestureHandler,
     state: tapState,
@@ -140,8 +147,13 @@ const ProgressBar = ({
     return popovers || [];
   }, [total, containerWidth]);
 
+  const updateContainerDimensions = useCallback(debounce((layout) => {
+    setContainerWidth(layout.width || 1);
+    setContainerOffsetX(layout.x);
+  }, 0), [])
+
   const handleContainerLayout = useCallback((e) => {
-    setContainerWidth(e.nativeEvent.layout.width || 1);
+    updateContainerDimensions(e.nativeEvent.layout);
   }, []);
 
   const handleChangeProgress = useCallback(
@@ -166,46 +178,38 @@ const ProgressBar = ({
 
   useCode(() => {
     return [
-      cond(eq(state, State.ACTIVE), [
-        call([positionX], ([value]) => handleChangeProgress(value)),
-      ]),
-    ];
-  }, [popovers, containerWidth]);
-
-  useCode(() => {
-    return [
-      cond(eq(state, State.BEGAN), [
-        // call([state, tapState], ([x, y]) => console.log('start', x, y)),
+      cond(eq(panState, State.BEGAN), [
+        // call([panState, tapState], ([x, y]) => console.log('start', x, y)),
 
         set(isChangingProgressManually, 1),
         set(isStartChangeProgressManually, 1),
         set(oldPositionX, positionX),
         set(tempPositionX, 0),
       ]),
-      cond(eq(state, State.ACTIVE), [
-        // call([state, tapState], ([x, y]) => console.log('active', x, y)),
+      cond(eq(panState, State.ACTIVE), [
+        // call([panState, tapState], ([x, y]) => console.log('active', x, y)),
 
         set(isChangingProgressManually, 1),
-        set(tempPositionX, add(oldPositionX, translation.x)),
-        set(
-          positionX,
-          cond(
-            greaterThan(tempPositionX, containerWidth),
-            containerWidth,
-            cond(lessThan(tempPositionX, 0), 0, tempPositionX),
-          ),
-        ),
-        call([positionX], ([value]) =>
+        // set(tempPositionX, add(oldPositionX, translation.x)),
+        // set(
+        //   positionX,
+        //   cond(
+        //     greaterThan(tempPositionX, containerWidth),
+        //     containerWidth,
+        //     cond(lessThan(tempPositionX, 0), 0, tempPositionX),
+        //   ),
+        // ),
+        call([panPositionX], ([value]) =>
           onChangingProgress(value / containerWidth),
         ),
       ]),
-      cond(eq(state, State.END), [
-        // call([state, tapState], ([x, y]) => console.log('end', x, y)),
+      cond(eq(panState, State.END), [
+        // call([panState, tapState], ([x, y]) => console.log('end', x, y)),
 
         call([], handleEndChangeProgress),
         cond(eq(isStartChangeProgressManually, 1), [
           set(isStartChangeProgressManually, 0),
-          set(currentProgress, progress || 0),
+          set(positionX, panPositionX),
           call([positionX], ([value]) => {
             onChangedProgress(value / containerWidth);
           }),
@@ -213,7 +217,7 @@ const ProgressBar = ({
       ]),
 
       cond(
-        or(eq(state, State.ACTIVE), eq(tapState, State.ACTIVE)),
+        or(eq(panState, State.ACTIVE), eq(tapState, State.ACTIVE)),
         [
           cond(
             neq(animatedThumbValue, 1),
@@ -234,23 +238,51 @@ const ProgressBar = ({
     ];
   }, [containerWidth]);
 
+  useCode(() => {
+    return [
+      set(
+        panPositionX,
+        cond(
+          lessThan(position.x, 0),
+          [0],
+          cond(
+            greaterThan(
+              position.x,
+              containerWidth,
+            ),
+            [containerWidth],
+            position.x,
+          ),
+        ),
+      ),
+    ];
+  }, [containerOffsetX, containerWidth]);
+
+  useCode(() => {
+    return [
+      cond(eq(panState, State.ACTIVE), [
+        call([panPositionX], ([value]) => handleChangeProgress(value)),
+      ]),
+    ];
+  }, [popovers]);
+
   useCode(
     () => [
       cond(
-        eq(isChangingProgressManually, 0),
+        neq(panState, State.END),
         [set(positionX, (progress || 0) * containerWidth)],
         [
           set(
             diffProgress,
             multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
           ),
-
+          call([diffProgress], ([value]) => console.log(value)),
           cond(
-            or(
-              eq(progress, 1),
-              and(lessThan(diffProgress, 0.1), greaterThan(diffProgress, 0)),
-            ),
-            [set(isChangingProgressManually, 0)],
+            and(lessThan(diffProgress, 0.5), greaterThan(diffProgress, 0)),
+            [
+              set(isChangingProgressManually, 0),
+              set(panState, State.UNDETERMINED),
+            ],
           ),
         ],
       ),
@@ -325,7 +357,15 @@ const ProgressBar = ({
                     style={[
                       styles.thumbContainer,
                       {
-                        transform: [{translateX: positionX}],
+                        transform: [
+                          {
+                            translateX: cond(
+                              eq(isChangingProgressManually, 1),
+                              panPositionX,
+                              positionX,
+                            ),
+                          },
+                        ],
                       },
                     ]}>
                     {!!currentPopover && (
@@ -340,16 +380,16 @@ const ProgressBar = ({
                               {
                                 translateX: cond(
                                   lessThan(
-                                    positionX,
+                                    panPositionX,
                                     timerWidth / 2 + TIMER_PADDING,
                                   ),
                                   sub(
                                     timerWidth / 2 + TIMER_PADDING,
-                                    positionX,
+                                    panPositionX,
                                   ),
                                   cond(
                                     greaterThan(
-                                      positionX,
+                                      panPositionX,
                                       containerWidth -
                                         timerWidth / 2 -
                                         TIMER_PADDING,
@@ -358,7 +398,7 @@ const ProgressBar = ({
                                       containerWidth -
                                         timerWidth / 2 -
                                         TIMER_PADDING,
-                                      positionX,
+                                      panPositionX,
                                     ),
                                     0,
                                   ),

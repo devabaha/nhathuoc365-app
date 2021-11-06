@@ -105,7 +105,7 @@ const Controls = ({
   isEnd: isEndProps,
   currentTime,
   totalTime,
-  bufferTime,
+  bufferTime = 0,
   isFullscreen = false,
   containerStyle = {},
   onPressPlay = () => {},

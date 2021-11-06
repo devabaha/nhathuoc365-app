@@ -114,7 +114,7 @@ const TimeSkipper = ({
   const handleLeftSingleTap = useCallback(
     (event: TapGestureHandlerGestureEvent) => {
       if (event.nativeEvent.state === State.ACTIVE) {
-        // console.log('single tap left');
+        console.log('single tap left');
       }
     },
     [],
@@ -123,7 +123,7 @@ const TimeSkipper = ({
   const handleRightSingleTap = useCallback(
     (event: TapGestureHandlerGestureEvent) => {
       if (event.nativeEvent.state === State.ACTIVE) {
-        // console.log('single tap right');
+        console.log('single tap right');
       }
     },
     [],
@@ -154,7 +154,7 @@ const TimeSkipper = ({
         onSkipping(-amount);
 
         isLeftDoubleTapping.current = true;
-        // console.log('left double tap');
+        console.log('left double tap');
         const cloneRipples = [...leftRipples];
         cloneRipples.push(
           formatRippleData(event.nativeEvent.x, event.nativeEvent.y),
@@ -201,7 +201,7 @@ const TimeSkipper = ({
         onSkipping(amount);
 
         isRightDoubleTapping.current = true;
-        // console.log('right double tap');
+        console.log('right double tap');
         const cloneRipples = [...rightRipples];
         cloneRipples.push(
           formatRippleData(event.nativeEvent.x, event.nativeEvent.y),
@@ -366,7 +366,8 @@ const TimeSkipper = ({
           <TapGestureHandler
             ref={refLeftSkipperDoubleTap}
             onHandlerStateChange={handleLeftDoubleTap}
-            numberOfTaps={2}>
+            numberOfTaps={2}
+            maxDelayMs={300}>
             <Animated.View style={styles.leftGestureContainer}>
               <Animated.View style={ripplesLeftMaskStyle} />
               {leftRipples.map((ripple, index) => {
@@ -385,7 +386,8 @@ const TimeSkipper = ({
           <TapGestureHandler
             ref={refRightSkipperDoubleTap}
             onHandlerStateChange={handleRightDoubleTap}
-            numberOfTaps={2}>
+            numberOfTaps={2}
+            maxDelayMs={300}>
             <Animated.View style={styles.rightGestureContainer}>
               <Animated.View style={ripplesRightMaskStyle} />
               {rightRipples.map((ripple, index) => {

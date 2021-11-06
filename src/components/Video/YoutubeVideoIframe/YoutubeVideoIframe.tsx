@@ -13,6 +13,8 @@ import appConfig from 'app-config';
 import Loading from 'src/components/Loading';
 import {Container} from 'src/components/Layout';
 import Controls from '../Controls';
+import Animated, {concat, Easing} from 'react-native-reanimated';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,11 +66,29 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     isFullscreen: false,
   };
   currentTime = 0;
+  isAnimateFullscreen = false;
 
   getYoutubeTimerInterval: any = () => {};
+  animatedFullscreenValue = new Animated.Value(this.state.isFullscreen ? 1 : 0);
 
   shouldComponentUpdate(nextProps: YoutubeVideoIframeProps, nextState) {
     if (nextState !== this.state) {
+      if (nextState.isFullscreen !== this.state.isFullscreen) {
+        this.isAnimateFullscreen = true;
+        this.setState({isAnimateFullscreen: true});
+        Animated.timing(this.animatedFullscreenValue, {
+          toValue: nextState.isFullscreen ? 1 : 0,
+          easing: Easing.ease,
+          duration: 300,
+        }).start(({finished}) => {
+          if (finished) {
+            this.setState({
+              isAnimateFullscreen: false,
+            });
+          }
+          this.isAnimateFullscreen = !finished;
+        });
+      }
       return true;
     }
 
@@ -153,12 +173,16 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           }
 
           const currentTime = await this.refPlayer.current.getCurrentTime();
-          this.setState({currentTime});
+          if (currentTime > this.currentTime) {
+            this.setState({currentTime});
+            this.currentTime = 0;
+          }
 
           this.refPlayer.current
             .getVideoLoadedFraction()
             .then((bufferFraction) => {
-              this.setState({bufferTime: bufferFraction * totalTime});
+              !this.isAnimateFullscreen &&
+                this.setState({bufferTime: bufferFraction * totalTime});
             });
         }, 100);
       } catch (error) {
@@ -199,7 +223,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   handleReady = () => {
     if (this.currentTime) {
       this.handleProgress(this.currentTime / this.state.totalTime);
-      this.currentTime = 0;
+      // this.currentTime = 0;
     }
     this.setState({isError: false, loading: false});
     this.props.onReady && this.props.onReady();
@@ -218,6 +242,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   handleFullScreen = () => {
     this.currentTime = this.state.currentTime;
     this.props.onPressFullscreen();
+    clearInterval(this.getYoutubeTimerInterval);
     this.setState((prevState: any) => {
       const isFullscreen = !prevState.isFullscreen;
       StatusBar.setHidden(isFullscreen);
@@ -233,7 +258,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
       width: containerWidth,
       height: containerHeight,
     } = e.nativeEvent.layout;
-    if (this.props.autoAdjustLayout && this.props.videoId) {
+    if (
+      this.props.autoAdjustLayout &&
+      this.props.videoId &&
+      !this.state.width
+    ) {
       getYoutubeMeta(this.props.videoId)
         .then((meta) => {
           const {width, height, metaData} = this.getAdjustedVideoLayout(
@@ -259,21 +288,110 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   renderVideo = () => {
     return (
-      <View
+      <Animated.View
         style={[
           {
             flex: 1,
           },
           this.state.isFullscreen && {
             ...StyleSheet.absoluteFillObject,
+            zIndex: 999,
             width: appConfig.device.height,
             height: appConfig.device.width,
+            // width: this.animatedFullscreenValue.interpolate({
+            //   inputRange: [0, 1],
+            //   outputRange: [this.state.width, appConfig.device.height],
+            // }),
+            // height: this.animatedFullscreenValue.interpolate({
+            //   inputRange: [0, 1],
+            //   outputRange: [this.state.height, appConfig.device.width],
+            // }),
+          },
+          {
             transform: [
-              {translateY: appConfig.device.height / 2},
-              {translateX: appConfig.device.width / 2},
-              {rotate: '90deg'},
-              {translateX: -appConfig.device.width / 2},
-              {translateY: appConfig.device.height / 2},
+              {
+                translateX: this.animatedFullscreenValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    0,
+                    (appConfig.device.width -
+                      (this.state.containerWidth || 0)) /
+                      2,
+                  ],
+                }),
+              },
+              {
+                translateY: this.animatedFullscreenValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    0,
+                    (appConfig.device.height -
+                      (this.state.containerHeight || 0)) /
+                      2,
+                  ],
+                }),
+              },
+              // {
+              //   translateX: this.animatedFullscreenValue.interpolate({
+              //     inputRange: [0, 1],
+              //     outputRange: [
+              //       0,
+              //       -(appConfig.device.height - (appConfig.device.width || 0)) / 2,
+              //     ],
+              //   }),
+              // },
+
+              {
+                rotate: concat(
+                  this.animatedFullscreenValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 90],
+                  }),
+                  'deg',
+                ),
+              },
+              {
+                scaleX: this.animatedFullscreenValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    1,
+                    appConfig.device.height / (this.state.containerWidth || 1),
+                  ],
+                }),
+              },
+              {
+                scaleY: this.animatedFullscreenValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [
+                    1,
+                    appConfig.device.width / (this.state.containerHeight || 1),
+                  ],
+                }),
+              },
+              //  {
+              //   translateX: this.animatedFullscreenValue.interpolate({
+              //     inputRange: [0, 1],
+              //     outputRange: [
+              //       0,
+              //       (appConfig.device.height/2 -((appConfig.device.width - (this.state.containerHeight || 0)/2))),
+              //     ],
+              //   }),
+              // },
+              // {
+              //   translateX: this.animatedFullscreenValue.interpolate({
+              //     inputRange: [0, 1],
+              //     outputRange: [
+              //       0,
+              //       appConfig.device.height / 2 - appConfig.device.width / 2,
+              //     ],
+              //   }),
+              // },
+              // {
+              //   translateY: this.animatedFullscreenValue.interpolate({
+              //     inputRange: [0, 1],
+              //     outputRange: [0, appConfig.device.width/2],
+              //   }),
+              // },
             ],
           },
         ]}>
@@ -294,7 +412,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                   ? appConfig.device.height
                   : this.state.width
               }
-              webViewStyle={this.props.webviewStyle}
+              // height={this.state.height
+              // }
+              // width={this.state.width
+              // }
+              webViewStyle={[this.props.webviewStyle]}
               onChangeState={this.props.onChangeState}
               onReady={this.handleReady}
               onError={this.handleError}
@@ -341,13 +463,17 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             onPressFullScreen={this.handleFullScreen}
           />
         </View>
-      </View>
+      </Animated.View>
     );
   };
 
   render() {
     return this.state.isFullscreen ? (
-      <Modal transparent>{this.renderVideo()}</Modal>
+      <Modal transparent>
+        <GestureHandlerRootView style={{flex: 1}}>
+          {this.renderVideo()}
+        </GestureHandlerRootView>
+      </Modal>
     ) : (
       this.renderVideo()
     );

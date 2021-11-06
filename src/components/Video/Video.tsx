@@ -92,6 +92,10 @@ export class Video extends Component<VideoProps> {
           onPressMute={this.handlePressMute}
           onProgress={this.handleProgress}
           onPressFullscreen={this.props.onPressFullscreen}
+          // onPressFullscreen={(isFullscreen, element) => this.props.onPressFullscreen(
+          //   !isFullscreen?  cloneElement(<Video />, {...this.props, isFullscreen: true}, {...this.state}):null
+          // )}
+          // isFullscreen={this.props.isFullscreen}
           youtubeIframeProps={{
             ...this.props.youtubeIframeProps,
             play: this.state.isPlay,
