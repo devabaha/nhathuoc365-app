@@ -6,7 +6,7 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import {reaction} from 'mobx';
 import appConfig from 'app-config';
@@ -77,6 +77,8 @@ class Orders extends Component {
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
+        if (this.unmounted) return;
+
         this.setState({
           scrollTop: top,
         });
@@ -85,6 +87,8 @@ class Orders extends Component {
   }
 
   _scrollOverTopAndReload() {
+    if (this.unmounted) return;
+
     this.setState(
       {
         refreshing: true,
@@ -104,6 +108,8 @@ class Orders extends Component {
       StatusBar.setNetworkActivityIndicatorVisible(true);
     try {
       const response = await APIHandler.user_cart_list();
+      if (this.unmounted) return;
+
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const item = response.data.find(
@@ -125,15 +131,15 @@ class Orders extends Component {
         }
 
         // setTimeout(() => {
-          this.setState({
-            data: response.data,
-            empty: false,
-            finish: true,
-          });
+        this.setState({
+          data: response.data,
+          empty: false,
+          finish: true,
+        });
 
-          if (!noScroll) {
-            this._scrollToTop(0);
-          }
+        if (!noScroll) {
+          this._scrollToTop(0);
+        }
         // }, delay || 0);
       } else {
         setTimeout(() => {
@@ -145,19 +151,21 @@ class Orders extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-    store.setUpdateOrders(false);
-    store.getNotify();
+      store.setUpdateOrders(false);
+      store.getNotify();
       store.setDeepLinkData(null);
 
       appConfig.device.isIOS &&
         StatusBar.setNetworkActivityIndicatorVisible(false);
+
+      if (this.unmounted) return;
 
       this.setState({
         loading: false,
         refreshing: false,
       });
 
-     !this.autoUpdateDisposer && this.forceUpdateOrders();
+      !this.autoUpdateDisposer && this.forceUpdateOrders();
     }
   }
 
@@ -307,7 +315,7 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
-    if(this.autoUpdateDisposer) return;
+    if (this.autoUpdateDisposer) return;
 
     this.autoUpdateDisposer = reaction(
       () => store.isUpdateOrders,
@@ -332,7 +340,10 @@ class Orders extends Component {
         <FlatList
           scrollIndicatorInsets={{right: 0.01}}
           style={styles.items_box}
-          contentContainerStyle={{flexGrow: 1, paddingBottom: appConfig.device.bottomSpace}}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: appConfig.device.bottomSpace,
+          }}
           data={data || []}
           extraData={this.state}
           // ItemSeparatorComponent={() => <View style={styles.separator}></View>}

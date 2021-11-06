@@ -9,3 +9,7 @@ export const PAYMENT_METHOD_TYPES = {
   DEBIT_CREDIT: 12,
   QR_CODE: 13,
 };
+
+export const PAYMENT_METHOD_GATEWAY = {
+  VNPAY: 'vnpay',
+};

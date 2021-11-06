@@ -1,11 +1,6 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Keyboard} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../../Badges';
@@ -77,6 +72,9 @@ class ProductItem extends PureComponent {
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
+    if (!!item.has_attr) {
+      Keyboard.dismiss();
+    }
     this.CTAProduct.handlePressMainActionBtnProduct(item, CART_TYPES.NORMAL);
   };
 
@@ -318,8 +316,8 @@ let styles = StyleSheet.create({
     marginLeft: 'auto',
     marginRight: 7,
     marginBottom: 7,
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -334,8 +332,8 @@ let styles = StyleSheet.create({
   },
   iconVideo: {
     color: appConfig.colors.white,
-    fontSize: appConfig.device.isIOS ? 8 : 7,
-    left: appConfig.device.isIOS ? 1 : 0.5,
+    fontSize: appConfig.device.isIOS ? 10 : 9,
+    left: appConfig.device.isIOS ? 1.5 : 0.75,
   },
   brandTagContainer: {
     backgroundColor: '#fff',

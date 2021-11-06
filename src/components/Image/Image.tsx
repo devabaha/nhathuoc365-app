@@ -11,7 +11,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const Image = (props: ImageProps) => {
+const Image = ({
+  errorColor = '',
+  loadingColor = '',
+  canTouch = false,
+  style = {},
+  containerStyle = {},
+  onLoadError = () => {},
+  onLoadEnd = () => {},
+  renderError = () => {},
+  ...props
+}: ImageProps) => {
   const [isError, setError] = useState(false);
   const [isOpenLightBox, setOpenLightBox] = useState(false);
   const [isLoadEnd, setLoadEnd] = useState(false);
@@ -22,10 +32,12 @@ const Image = (props: ImageProps) => {
   };
 
   const handleLoadEnd = () => {
+    onLoadEnd();
     setLoadEnd(true);
   };
 
   const handleError = () => {
+    onLoadError();
     setError(true);
   };
 
@@ -37,12 +49,12 @@ const Image = (props: ImageProps) => {
     setOpenLightBox(false);
   };
 
-  return isError && !!props.renderError ? (
-    props.renderError()
-  ) : props.canTouch ? (
+  return isError && !!renderError ? (
+    renderError()
+  ) : canTouch ? (
     <View
-      style={[styles.image, props.containerStyle]}
-      pointerEvents={props.canTouch && !isError ? 'auto' : 'none'}>
+      style={[styles.image, containerStyle]}
+      pointerEvents={canTouch && !isError ? 'auto' : 'none'}>
       <Lightbox
         underlayColor="transparent"
         springConfig={{overshootClamping: true}}
@@ -56,8 +68,8 @@ const Image = (props: ImageProps) => {
           {...props}
           style={[
             styles.image,
-            props.style,
-            isError && {backgroundColor: props.errorColor || '#eee'},
+            style,
+            isError && {backgroundColor: errorColor || '#eee'},
           ]}
         />
       </Lightbox>
@@ -70,9 +82,9 @@ const Image = (props: ImageProps) => {
       {...props}
       style={[
         styles.image,
-        props.style,
-        !isLoadEnd && {backgroundColor: props.loadingColor || '#eee'},
-        isError && {backgroundColor: props.errorColor || '#eee'},
+        style,
+        !isLoadEnd && {backgroundColor: loadingColor || '#eee'},
+        isError && {backgroundColor: errorColor || '#eee'},
       ]}
     />
   );

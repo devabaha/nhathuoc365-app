@@ -239,7 +239,7 @@ class Item extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
@@ -842,7 +842,10 @@ class Item extends Component {
               />
             </View>
           ) : (
-            <MediaCarousel data={this.state.images} />
+            <MediaCarousel
+              height={appConfig.device.height / 2}
+              data={this.state.images}
+            />
             // <Swiper
             //   loop={false}
             //   showsButtons={isShowButtons}
@@ -1318,11 +1321,14 @@ class Item extends Component {
                   <CustomAutoHeightWebview
                     ref={(inst) => (this.refWebview.current = inst)}
                     onSizeUpdated={this.handleWebviewContentLayout}
-                    containerStyle={
+                    containerStyle={[
+                      {
+                        width: '100%'
+                      },
                       this.state.isWebviewContentCollapsed !== undefined &&
-                      !!this.state.isWebviewContentCollapsed &&
-                      styles.webviewCollapsedContainer
-                    }
+                        !!this.state.isWebviewContentCollapsed &&
+                        styles.webviewCollapsedContainer,
+                    ]}
                     content={item.content}
                     onGetInnerText={(innerText) =>
                       this.handleGetInnerTextWebview(innerText, item)
@@ -1604,6 +1610,7 @@ const styles = StyleSheet.create({
   item_content_text: {
     width: '100%',
     paddingTop: 20,
+    paddingHorizontal: 0,
   },
 
   boxButtonActions: {
@@ -1784,6 +1791,7 @@ const styles = StyleSheet.create({
   },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
+    paddingHorizontal: 15
   },
   shortContentItem: {
     ...appConfig.styles.typography.text,

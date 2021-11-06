@@ -160,7 +160,7 @@ class EditProfile extends Component {
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
-    isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
+    isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
   }
 
   componentWillUnmount() {
@@ -370,7 +370,7 @@ class EditProfile extends Component {
       item.value =
         this.state.provinceSelected.name ||
         this.props.t('opRegister:data.province.title');
-      item.isHidden = !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY);
+      item.isHidden = !isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY);
       item.isLoading = this.state.cityLoading;
       item.disable = disable;
       item.select = !disable;

@@ -171,7 +171,8 @@ class Account extends Component {
         ),
         isHidden:
           !user_info.default_wallet ||
-          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE) ||
+          isConfigActive(CONFIG_KEY.HIDE_WALLET_ACCOUNT_KEY),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -335,7 +336,9 @@ class Account extends Component {
       },
       {
         key: 'vouchers',
-        isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
+          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
         label: t('options.myVoucher.label'),
         desc: t('options.myVoucher.desc'),
         leftIcon: (
@@ -436,7 +439,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
+        isHidden: !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {
@@ -830,7 +833,7 @@ class Account extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
@@ -1264,7 +1267,6 @@ class Account extends Component {
             <CustomAutoHeightWebview
               content={siteContentValue}
               containerStyle={styles.footerSiteContainer}
-              contentStyle={styles.footerSiteContent}
               customStyle={`body {
                 overflow-x: hidden;
               }`}
@@ -1553,7 +1555,7 @@ const styles = StyleSheet.create({
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   footerSiteContent: {
     width: appConfig.device.width - 24,

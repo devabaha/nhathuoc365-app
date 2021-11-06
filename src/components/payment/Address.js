@@ -215,8 +215,11 @@ class Address extends Component {
   }
 
   _goConfirm() {
-    // Actions.replace(appConfig.routes.paymentConfirm);
     Actions.pop();
+    if (this.props.redirect == 'confirm') {
+      Actions.push(appConfig.routes.paymentConfirm);
+    } else {
+    }
   }
 
   // chọn địa chỉ cho đơn hàng

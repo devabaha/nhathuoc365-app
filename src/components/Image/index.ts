@@ -9,4 +9,6 @@ export interface ImageProps extends FastImageProps {
   loadingColor?: string;
   canTouch?: boolean;
   containerStyle?: StyleProp<ViewProps>;
+  onLoadError?: () => void;
+  onLoadEnd?: () => void;
 }

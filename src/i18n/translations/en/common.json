@@ -288,5 +288,7 @@
   },
   "optional": "optional",
   "cantOpenLink": "Can not open link!",
-  "noStoreFound": "No stores found"
+  "noStoreFound": "No stores found",
+  "map": "Map",
+  "goShopping": "Go shopping"
 }

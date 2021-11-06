@@ -10,6 +10,10 @@ const ACTION_TYPE = {
 };
 
 const CUSTOM_STYLE = `
+  body {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   * {
     font-family: 'arial';
   }
@@ -72,8 +76,10 @@ const CUSTOM_SCRIPT = `
 `;
 
 const styles = StyleSheet.create({
+  container: {
+  },
   webview: {
-    width: appConfig.device.width - 30,
+    width: '100%',
   },
 });
 
@@ -134,7 +140,9 @@ class CustomAutoHeightWebview extends Component {
 
   render() {
     return (
-      <View style={this.props.containerStyle} onLayout={this.props.onLayout}>
+      <View
+        style={[styles.container, this.props.containerStyle]}
+        onLayout={this.props.onLayout}>
         <AutoHeightWebView
           ref={this.handleRefWebview}
           onShouldStartLoadWithRequest={(result) => {
@@ -152,6 +160,7 @@ class CustomAutoHeightWebview extends Component {
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
           customStyle={CUSTOM_STYLE + this.props.customStyle}
+          allowsFullscreenVideo={true}
         />
       </View>
     );

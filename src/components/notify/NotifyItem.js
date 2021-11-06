@@ -32,6 +32,8 @@ import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import Loading from '../Loading';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import MediaCarousel from '../item/MediaCarousel';
+import {MEDIA_TYPE} from 'src/constants';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -134,9 +136,7 @@ class NotifyItem extends Component {
   }
 
   getHeaderInfo(infoKey) {
-    const item = this.state.item || {};
-    const item_data = this.state.item_data || {};
-    return item[infoKey] || item_data[infoKey];
+    return this.notify[infoKey];
   }
 
   renderRightButton() {
@@ -218,6 +218,16 @@ class NotifyItem extends Component {
     const shopName = this.getHeaderInfo('shop_name');
     const created = this.getHeaderInfo('created');
 
+    const media = [
+      {url: this.getHeaderInfo('image_url'), mediaProps: {resizeMode: 'cover'}},
+    ];
+    if (this.notify?.video) {
+      media.unshift({
+        type: MEDIA_TYPE.YOUTUBE_VIDEO,
+        url: this.notify?.video,
+      });
+    }
+
     return (
       <View style={styles.container}>
         {this.state.loading && <Loading center />}
@@ -230,11 +240,17 @@ class NotifyItem extends Component {
           }
           style={styles.notify_container}>
           <View style={styles.notify_image_box}>
-            <CachedImage
+            <MediaCarousel
+              height="100%"
+              data={media}
+              showPagination={media.length > 1}
+            />
+
+            {/* <CachedImage
               mutable
               style={styles.notify_image}
               source={{uri: this.getHeaderInfo('image_url')}}
-            />
+            /> */}
           </View>
 
           <View
@@ -274,14 +290,12 @@ class NotifyItem extends Component {
               )}
             </View>
 
-            {
-              item_data != null ? (
-                <CustomAutoHeightWebview
-                  contentStyle={styles.webview}
-                  content={item_data.content}
-                />
-              ) : null
-            }
+            {item_data != null ? (
+              <CustomAutoHeightWebview
+                containerStyle={styles.webviewContainer}
+                content={item_data.content}
+              />
+            ) : null}
           </View>
 
           {item_data != null &&
@@ -401,6 +415,9 @@ const styles = StyleSheet.create({
   notify_image_box: {
     height: appConfig.device.width / 1.75,
     backgroundColor: '#cccccc',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    // alignItems: 'center'
   },
   notify_image: {
     flex: 1,
@@ -429,9 +446,13 @@ const styles = StyleSheet.create({
   listStoreProductContainer: {
     paddingTop: 0,
   },
+  webviewContainer: {
+    marginTop: 10,
+  },
   webview: {
-    marginTop: 15,
-    marginHorizontal: 15,
+    // marginTop: 15,
+    // marginHorizontal: 15,
+    width: '100%',
   },
 
   notifyBlock: {

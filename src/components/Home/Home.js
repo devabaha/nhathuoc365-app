@@ -353,6 +353,7 @@ class Home extends Component {
             iconStyle={this.headerIconStyle}
             notify={this.props.notify}
             name={name}
+            showCart={false}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
             loading={this.props.storeFetching}
@@ -386,7 +387,7 @@ class Home extends Component {
                 useNativeDriver: true,
               },
             )}
-            style={{overflow: 'visible'}}
+            // style={{overflow: 'visible'}}
             contentContainerStyle={{
               paddingTop: extraTop,
               paddingBottom: 30,
@@ -589,6 +590,7 @@ class Home extends Component {
                             title={item.title}
                             imageUrl={item.image_url}
                             onPress={() => this.props.onPressNewItem(item)}
+                            video={item.video}
                             last={this.props.newses.length - 1 === index}
                           />
                         );

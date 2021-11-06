@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 
 import appConfig from 'app-config';
@@ -11,7 +11,7 @@ import {MEDIA_TYPE} from 'src/constants';
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: appConfig.device.height / 2,
+    // height: appConfig.device.height / 2,
   },
   paginationContainer: {
     borderRadius: 20,
@@ -40,13 +40,38 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     justifyContent: 'center',
-    height: appConfig.device.height / 2,
+    // height: appConfig.device.height / 2,
     backgroundColor: '#000',
   },
 });
 
-const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
+const MediaCarousel = ({
+  wrapperStyle,
+  height,
+  data,
+  showPagination = true,
+  initIndex = 0,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(initIndex);
+
+  const videoContainerStyle = useMemo(() => {
+    return [
+      styles.videoContainer,
+      {
+        height,
+      },
+    ];
+  }, [height]);
+
+  const wrapperMixStyle = useMemo(() => {
+    return [
+      styles.wrapper,
+      wrapperStyle,
+      {
+        height,
+      },
+    ];
+  }, [height, wrapperStyle]);
 
   const handleChangeImageIndex = useCallback((index, media) => {
     setCurrentIndex(index);
@@ -60,6 +85,7 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
   }, []);
 
   const renderPagination = (index, total) => {
+    if (!showPagination) return null;
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
       <View pointerEvents="none" style={styles.paginationContainer}>
@@ -73,7 +99,7 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
       <Video
         type="youtube"
         videoId={media.url}
-        containerStyle={styles.videoContainer}
+        containerStyle={videoContainerStyle}
         height={appConfig.device.height / 2}
         autoAdjustLayout
         isPlay={currentIndex === index}
@@ -85,26 +111,29 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
   const renderItem = useCallback(
     ({item: media, index}) => {
       return (
-        <>
-          <TouchableHighlight
-            disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
-            underlayColor="transparent"
-            onPress={() => goToGallery(index)}>
-            <View style={styles.mediaContainer}>
-              {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
-                <View style={styles.imageContainer}>
-                  <Image
-                    style={styles.image}
-                    source={{uri: media.url}}
-                    resizeMode="contain"
-                  />
-                </View>
-              ) : (
-                renderVideo(media, index)
-              )}
-            </View>
-          </TouchableHighlight>
-        </>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
+            Actions.item_image_viewer({
+              images: data,
+              index: index,
+            });
+          }}>
+          <View style={styles.mediaContainer}>
+            {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.image}
+                  source={{uri: media.url}}
+                  resizeMode="contain"
+                  {...media.mediaProps}
+                />
+              </View>
+            ) : (
+              renderVideo(media, index)
+            )}
+          </View>
+        </TouchableHighlight>
       );
     },
     [currentIndex],
@@ -112,7 +141,8 @@ const MediaCarousel = ({wrapperStyle, data, initIndex = 0}) => {
 
   return (
     <Carousel
-      wrapperStyle={[styles.wrapper, wrapperStyle]}
+      scrollEnabled={data?.length > 1}
+      wrapperStyle={wrapperMixStyle}
       data={data}
       renderItem={renderItem}
       onChangeIndex={handleChangeImageIndex}
