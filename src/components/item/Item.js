@@ -843,7 +843,7 @@ class Item extends Component {
             </View>
           ) : (
             <MediaCarousel
-              height={appConfig.device.height / 2}
+              height={appConfig.device.width}
               data={this.state.images}
             />
             // <Swiper

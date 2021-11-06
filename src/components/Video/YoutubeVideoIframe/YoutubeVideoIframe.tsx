@@ -67,6 +67,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   };
   currentTime = 0;
   isAnimateFullscreen = false;
+  isUnmounted = false;
 
   getYoutubeTimerInterval: any = () => {};
   animatedFullscreenValue = new Animated.Value(this.state.isFullscreen ? 1 : 0);
@@ -132,6 +133,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   }
 
   componentWillUnmount() {
+    this.isUnmounted = true;
     clearInterval(this.getYoutubeTimerInterval);
   }
 
@@ -173,7 +175,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           }
 
           const currentTime = await this.refPlayer.current.getCurrentTime();
-          if (currentTime > this.currentTime) {
+          if (!this.isUnmounted && currentTime > this.currentTime) {
             this.setState({currentTime});
             this.currentTime = 0;
           }
@@ -181,7 +183,8 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           this.refPlayer.current
             .getVideoLoadedFraction()
             .then((bufferFraction) => {
-              !this.isAnimateFullscreen &&
+              !this.isUnmounted &&
+                !this.isAnimateFullscreen &&
                 this.setState({bufferTime: bufferFraction * totalTime});
             });
         }, 100);
@@ -189,6 +192,25 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
         console.log('youtube_iframe_get_timer', error);
       }
     }
+  };
+
+  /**
+   * @todo Youtube iframe ratio always is 16:9 (even if the actual video ratio is a different ratio).
+   * -> update iframe size to fit with actual video size to make it display in shape, fitted, centered.
+   */
+  updateIframeSize = () => {
+    if (this.state.isFullscreen) return;
+    //@ts-ignore
+    this.refWebview.current =
+      this.refPlayer.current && this.refPlayer.current.getWebViewRef();
+    this.refWebview.current &&
+      this.refWebview.current.injectJavaScript(
+        `
+        var iframe = document.getElementsByTagName('iframe')[0];
+        iframe.style.height = '${this.state.height}px';
+        true;
+      `,
+      );
   };
 
   handleProgress = (progress) => {
@@ -228,6 +250,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     this.setState({isError: false, loading: false});
     this.props.onReady && this.props.onReady();
     this.getTimer();
+    this.updateIframeSize();
   };
 
   handleError = (error) => {
@@ -416,7 +439,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               // }
               // width={this.state.width
               // }
-              webViewStyle={[this.props.webviewStyle]}
+              webViewStyle={this.props.webviewStyle}
               onChangeState={this.props.onChangeState}
               onReady={this.handleReady}
               onError={this.handleError}

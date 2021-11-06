@@ -100,7 +100,7 @@ const MediaCarousel = ({
         type="youtube"
         videoId={media.url}
         containerStyle={videoContainerStyle}
-        height={appConfig.device.height / 2}
+        height={height}
         autoAdjustLayout
         isPlay={currentIndex === index}
         // onPressFullscreen={() => goToGallery(index)}
@@ -112,6 +112,7 @@ const MediaCarousel = ({
     ({item: media, index}) => {
       return (
         <TouchableHighlight
+          disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
           underlayColor="transparent"
           onPress={() => {
             Actions.item_image_viewer({
