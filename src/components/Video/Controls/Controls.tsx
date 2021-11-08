@@ -110,16 +110,17 @@ const Controls = ({
   containerStyle = {},
   onPressPlay = () => {},
   onPressMute = () => {},
-  onPressFullScreen = () => {},
+  onPressFullscreen = () => {},
+  onRotateFullscreen = () => {},
   onSkippingTime = (seconds: number) => {},
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
   const refPlayPath = useRef<any>();
-  const refLeftSkipperSingleTap = useRef<any>();
-  const refRightSkipperSingleTap = useRef<any>();
-  const refLeftSkipperDoubleTap = useRef<any>();
-  const refRightSkipperDoubleTap = useRef<any>();
+  const refSkipperSingleLeftTap = useRef<any>();
+  const refSkipperSingleRightTap = useRef<any>();
+  const refSkipperDoubleLeftTap = useRef<any>();
+  const refSkipperDoubleRightTap = useRef<any>();
 
   const timeoutHideControls = useRef<any>(() => {});
 
@@ -134,6 +135,9 @@ const Controls = ({
   const animatedVisibleControls = useValue(isChangingProgress);
   const animatedVisibleProgressBar = useValue(isChangingProgress);
   const animatedVisibleMask = useValue(isChangingProgress);
+
+  const stateSkipperSingleLeftTap = useValue<number>(State.UNDETERMINED);
+  const stateSkipperSingleRightTap = useValue<number>(State.UNDETERMINED);
 
   const state = useValue<number>(State.UNDETERMINED);
 
@@ -200,21 +204,35 @@ const Controls = ({
     onPressMute();
   }, [isMute, isPlay]);
 
-  const handleRefLeftSkipperSingleTap = useCallback((ref) => {
-    refLeftSkipperSingleTap.current = ref.current;
+  const handleRefSkipperSingleLeftTap = useCallback((ref) => {
+    refSkipperSingleLeftTap.current = ref.current;
   }, []);
 
-  const handleRefRightSkipperSingleTap = useCallback((ref) => {
-    refRightSkipperSingleTap.current = ref.current;
+  const handleRefSkipperSingleRightTap = useCallback((ref) => {
+    refSkipperSingleRightTap.current = ref.current;
   }, []);
 
-  const handleRefLeftSkipperDoubleTap = useCallback((ref) => {
-    refLeftSkipperDoubleTap.current = ref.current;
+  const handleRefSkipperDoubleLeftTap = useCallback((ref) => {
+    refSkipperDoubleLeftTap.current = ref.current;
   }, []);
 
-  const handleRefRightSkipperDoubleTap = useCallback((ref) => {
-    refRightSkipperDoubleTap.current = ref.current;
+  const handleRefSkipperDoubleRightTap = useCallback((ref) => {
+    refSkipperDoubleRightTap.current = ref.current;
   }, []);
+
+  const handleSkipperSingleLeftTap = useCallback(
+    (event: TapGestureHandlerGestureEvent) => {
+      stateSkipperSingleLeftTap.setValue(event.nativeEvent.state);
+    },
+    [],
+  );
+
+  const handleSkipperSingleRightTap = useCallback(
+    (event: TapGestureHandlerGestureEvent) => {
+      stateSkipperSingleRightTap.setValue(event.nativeEvent.state);
+    },
+    [],
+  );
 
   const handleChangingProgress = useCallback(
     (progress) => {
@@ -299,7 +317,6 @@ const Controls = ({
 
   useCode(() => {
     return [
-      cond(eq(state, State.BEGAN), []),
       cond(eq(state, State.END), [
         set(state, State.UNDETERMINED),
         call([], ([]) => {
@@ -369,7 +386,8 @@ const Controls = ({
         }
         animatedVisibleValue={animatedVisibleMask}
         onPressMute={toggleMute}
-        onPressFullscreen={onPressFullScreen}
+        onPressFullscreen={onPressFullscreen}
+        onRotateFullscreen={onRotateFullscreen}
         onChangingProgress={handleChangingProgress}
         onChangedProgress={handleChangedProgress}
       />
@@ -397,10 +415,10 @@ const Controls = ({
   const tapGestureWaitFor = useMemo(() => {
     const waitFor = [];
     if (!!currentTime) {
-      waitFor.push(refLeftSkipperDoubleTap);
+      waitFor.push(refSkipperDoubleLeftTap);
     }
     if (!isEnd) {
-      waitFor.push(refRightSkipperDoubleTap);
+      waitFor.push(refSkipperDoubleRightTap);
     }
 
     return waitFor;
@@ -410,10 +428,6 @@ const Controls = ({
     <View style={[styles.container, containerStyle]}>
       <TapGestureHandler
         onHandlerStateChange={handleTapStateChange}
-        simultaneousHandlers={[
-          refLeftSkipperSingleTap,
-          refRightSkipperSingleTap,
-        ]}
         waitFor={tapGestureWaitFor}>
         <Animated.View style={styles.contentContainer}>
           <Animated.View style={[styles.mask, animatedVisibleMaskStyle]} />
@@ -423,12 +437,14 @@ const Controls = ({
           />
 
           <TimeSkipper
-            getRefLeftSkipperSingleTapGesture={handleRefLeftSkipperSingleTap}
-            getRefRightSkipperSingleTapGesture={handleRefRightSkipperSingleTap}
-            getRefLeftSkipperDoubleTapGesture={handleRefLeftSkipperDoubleTap}
-            getRefRightSkipperDoubleTapGesture={handleRefRightSkipperDoubleTap}
+            getRefSkipperSingleLeftTapGesture={handleRefSkipperSingleLeftTap}
+            getRefSkipperSingleRightTapGesture={handleRefSkipperSingleRightTap}
+            getRefSkipperDoubleLeftTapGesture={handleRefSkipperDoubleLeftTap}
+            getRefSkipperDoubleRightTapGesture={handleRefSkipperDoubleRightTap}
             onSkipping={handleSkippingTime}
             onSkipped={handleSkippedTime}
+            onSingleLeftTap={handleSkipperSingleLeftTap}
+            onSingleRightTap={handleSkipperSingleRightTap}
           />
 
           <Animated.View
@@ -437,13 +453,13 @@ const Controls = ({
             {renderPlay()}
           </Animated.View>
 
-          <View
+          <Animated.View
             pointerEvents={
               isFullscreen ? (isControlsVisible ? 'auto' : 'none') : 'auto'
             }
             style={[styles.footer]}>
             {renderTracker()}
-          </View>
+          </Animated.View>
         </Animated.View>
       </TapGestureHandler>
     </View>

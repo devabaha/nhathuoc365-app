@@ -4,6 +4,7 @@ import {
   PanGestureHandler,
   State,
   LongPressGestureHandler,
+  TapGestureHandler,
 } from 'react-native-gesture-handler';
 import Animated, {
   abs,
@@ -42,7 +43,7 @@ const TIMER_PADDING = 15;
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingTop: 50,
+    paddingTop: 15,
   },
   wrapperFullscreen: {
     paddingBottom: 30,
@@ -119,6 +120,8 @@ const ProgressBar = ({
   const oldPositionX = useValue(0);
   const positionX = useValue(0);
   const panPositionX = useValue(0);
+  const tapState = useValue(State.UNDETERMINED);
+  const tapPositionX = useValue(0);
 
   const animatedThumbValue = useValue(0);
 
@@ -129,8 +132,8 @@ const ProgressBar = ({
     position,
   } = usePanGestureHandler();
   const {
-    gestureHandler: tapGestureHandler,
-    state: tapState,
+    gestureHandler: longPressGestureHandler,
+    state: longPressState,
   } = useTapGestureHandler();
 
   const [currentPopover, setCurrentPopover] = useState(undefined);
@@ -147,10 +150,13 @@ const ProgressBar = ({
     return popovers || [];
   }, [total, containerWidth]);
 
-  const updateContainerDimensions = useCallback(debounce((layout) => {
-    setContainerWidth(layout.width || 1);
-    setContainerOffsetX(layout.x);
-  }, 0), [])
+  const updateContainerDimensions = useCallback(
+    debounce((layout) => {
+      setContainerWidth(layout.width || 1);
+      setContainerOffsetX(layout.x);
+    }, 0),
+    [],
+  );
 
   const handleContainerLayout = useCallback((e) => {
     updateContainerDimensions(e.nativeEvent.layout);
@@ -176,10 +182,21 @@ const ProgressBar = ({
     setTimerWidth(e.nativeEvent.layout.width);
   }, []);
 
+  const handleTapStateChange = useCallback((e) => {
+    tapState.setValue(e.nativeEvent.state);
+    tapPositionX.setValue(e.nativeEvent.x);
+  }, []);
+
   useCode(() => {
     return [
+      cond(eq(tapState, State.ACTIVE), [
+        set(isStartChangeProgressManually, 1),
+        set(panPositionX, tapPositionX),
+      ]),
       cond(eq(panState, State.BEGAN), [
-        // call([panState, tapState], ([x, y]) => console.log('start', x, y)),
+        call([panState, longPressState], ([x, y]) =>
+          console.log('start', x, y),
+        ),
 
         set(isChangingProgressManually, 1),
         set(isStartChangeProgressManually, 1),
@@ -187,7 +204,7 @@ const ProgressBar = ({
         set(tempPositionX, 0),
       ]),
       cond(eq(panState, State.ACTIVE), [
-        // call([panState, tapState], ([x, y]) => console.log('active', x, y)),
+        // call([panState, longPressState], ([x, y]) => console.log('active', x, y)),
 
         set(isChangingProgressManually, 1),
         // set(tempPositionX, add(oldPositionX, translation.x)),
@@ -203,21 +220,21 @@ const ProgressBar = ({
           onChangingProgress(value / containerWidth),
         ),
       ]),
-      cond(eq(panState, State.END), [
-        // call([panState, tapState], ([x, y]) => console.log('end', x, y)),
+      cond(or(eq(panState, State.END), eq(tapState, State.ACTIVE)), [
+        // call([panState, longPressState], ([x, y]) => console.log('end', x, y)),
 
         call([], handleEndChangeProgress),
         cond(eq(isStartChangeProgressManually, 1), [
           set(isStartChangeProgressManually, 0),
           set(positionX, panPositionX),
-          call([positionX], ([value]) => {
+          call([positionX, tapPositionX], ([value, b]) => {
             onChangedProgress(value / containerWidth);
           }),
         ]),
       ]),
 
       cond(
-        or(eq(panState, State.ACTIVE), eq(tapState, State.ACTIVE)),
+        or(eq(panState, State.ACTIVE), eq(longPressState, State.ACTIVE)),
         [
           cond(
             neq(animatedThumbValue, 1),
@@ -226,13 +243,15 @@ const ProgressBar = ({
         ],
         cond(
           neq(animatedThumbValue, cond(eq(isFullscreen ? 1 : 0, 0), 0, 0.6)),
-          set(
-            animatedThumbValue,
-            timingFunction(
+          [
+            set(
               animatedThumbValue,
-              cond(eq(isFullscreen ? 1 : 0, 0), 0, 0.6),
+              timingFunction(
+                animatedThumbValue,
+                cond(eq(isFullscreen ? 1 : 0, 0), 0, 0.6),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     ];
@@ -246,10 +265,7 @@ const ProgressBar = ({
           lessThan(position.x, 0),
           [0],
           cond(
-            greaterThan(
-              position.x,
-              containerWidth,
-            ),
+            greaterThan(position.x, containerWidth),
             [containerWidth],
             position.x,
           ),
@@ -277,13 +293,10 @@ const ProgressBar = ({
             multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
           ),
           call([diffProgress], ([value]) => console.log(value)),
-          cond(
-            and(lessThan(diffProgress, 0.5), greaterThan(diffProgress, 0)),
-            [
-              set(isChangingProgressManually, 0),
-              set(panState, State.UNDETERMINED),
-            ],
-          ),
+          cond(and(lessThan(diffProgress, 0.5), greaterThan(diffProgress, 0)), [
+            set(isChangingProgressManually, 0),
+            set(panState, State.UNDETERMINED),
+          ]),
         ],
       ),
     ],
@@ -322,103 +335,112 @@ const ProgressBar = ({
       onResponderTerminationRequest={() => false}
       onStartShouldSetResponderCapture={() => false}
       onMoveShouldSetResponderCapture={() => false}>
-      <LongPressGestureHandler
-        ref={refLongPressGesture}
-        simultaneousHandlers={refPanGesture}
-        {...tapGestureHandler}
-        minDurationMs={200}>
+      <TapGestureHandler
+        simultaneousHandlers={[refPanGesture]}
+        waitFor={refLongPressGesture}
+        onHandlerStateChange={handleTapStateChange}>
         <Animated.View>
-          <PanGestureHandler ref={refPanGesture} {...gestureHandler}>
-            <Animated.View style={[styles.wrapper, wrapperFullscreenStyle]}>
-              <Animated.View
-                style={[styles.container, animatedProgressBarFullscreen]}>
-                <View style={[styles.mask, animatedProgressBarFullscreen]} />
-                <Animated.View
-                  style={[
-                    styles.foreground,
-                    {
-                      width: bufferProgress * containerWidth,
-                    },
-                    animatedProgressBarFullscreen,
-                  ]}
-                />
+          <LongPressGestureHandler
+            ref={refLongPressGesture}
+            simultaneousHandlers={refPanGesture}
+            {...longPressGestureHandler}
+            minDurationMs={200}>
+            <Animated.View>
+              <PanGestureHandler ref={refPanGesture} {...gestureHandler}>
+                <Animated.View style={[styles.wrapper, wrapperFullscreenStyle]}>
+                  <Animated.View
+                    style={[styles.container, animatedProgressBarFullscreen]}>
+                    <View
+                      style={[styles.mask, animatedProgressBarFullscreen]}
+                    />
+                    <Animated.View
+                      style={[
+                        styles.foreground,
+                        {
+                          width: bufferProgress * containerWidth,
+                        },
+                        animatedProgressBarFullscreen,
+                      ]}
+                    />
 
-                <View style={styles.tracker}>
-                  <Animated.View
-                    style={[
-                      styles.background,
-                      {
-                        width: positionX,
-                      },
-                      animatedProgressBarFullscreen,
-                    ]}
-                  />
-                  <Animated.View
-                    style={[
-                      styles.thumbContainer,
-                      {
-                        transform: [
+                    <View style={styles.tracker}>
+                      <Animated.View
+                        style={[
+                          styles.background,
                           {
-                            translateX: cond(
-                              eq(isChangingProgressManually, 1),
-                              panPositionX,
-                              positionX,
-                            ),
+                            width: positionX,
                           },
-                        ],
-                      },
-                    ]}>
-                    {!!currentPopover && (
-                      <Timer
-                        //@ts-ignore
-                        onLayout={handleTimerLayout}
-                        current={currentPopover?.value}
-                        containerStyle={[
-                          styles.timerContainer,
+                          animatedProgressBarFullscreen,
+                        ]}
+                      />
+                      <Animated.View
+                        style={[
+                          styles.thumbContainer,
                           {
                             transform: [
                               {
                                 translateX: cond(
-                                  lessThan(
-                                    panPositionX,
-                                    timerWidth / 2 + TIMER_PADDING,
-                                  ),
-                                  sub(
-                                    timerWidth / 2 + TIMER_PADDING,
-                                    panPositionX,
-                                  ),
-                                  cond(
-                                    greaterThan(
-                                      panPositionX,
-                                      containerWidth -
-                                        timerWidth / 2 -
-                                        TIMER_PADDING,
-                                    ),
-                                    sub(
-                                      containerWidth -
-                                        timerWidth / 2 -
-                                        TIMER_PADDING,
-                                      panPositionX,
-                                    ),
-                                    0,
-                                  ),
+                                  eq(isChangingProgressManually, 1),
+                                  panPositionX,
+                                  positionX,
                                 ),
                               },
                             ],
                           },
-                        ]}
-                      />
-                    )}
-                    <Animated.View
-                      style={[styles.thumb, animatedThumbStyle, thumbStyle]}
-                    />
+                        ]}>
+                        {!!currentPopover && (
+                          <Timer
+                            //@ts-ignore
+                            onLayout={handleTimerLayout}
+                            current={currentPopover?.value}
+                            containerStyle={[
+                              styles.timerContainer,
+                              {
+                                transform: [
+                                  {
+                                    translateX: cond(
+                                      lessThan(
+                                        panPositionX,
+                                        timerWidth / 2 + TIMER_PADDING,
+                                      ),
+                                      sub(
+                                        timerWidth / 2 + TIMER_PADDING,
+                                        panPositionX,
+                                      ),
+                                      cond(
+                                        greaterThan(
+                                          panPositionX,
+                                          containerWidth -
+                                            timerWidth / 2 -
+                                            TIMER_PADDING,
+                                        ),
+                                        sub(
+                                          containerWidth -
+                                            timerWidth / 2 -
+                                            TIMER_PADDING,
+                                          panPositionX,
+                                        ),
+                                        0,
+                                      ),
+                                    ),
+                                  },
+                                ],
+                              },
+                            ]}
+                          />
+                        )}
+                        <Animated.View
+                          style={[styles.thumb, animatedThumbStyle, thumbStyle]}
+                        />
+                      </Animated.View>
+                    </View>
                   </Animated.View>
-                </View>
-              </Animated.View>
+                </Animated.View>
+              </PanGestureHandler>
             </Animated.View>
-          </PanGestureHandler>
+          </LongPressGestureHandler>
         </Animated.View>
-      </LongPressGestureHandler>
+      </TapGestureHandler>
     </View>
   );
 };

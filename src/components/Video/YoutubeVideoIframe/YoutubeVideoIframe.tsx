@@ -64,30 +64,51 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     bufferTime: 0,
 
     isFullscreen: false,
+    isFullscreenLandscape: false,
   };
   currentTime = 0;
-  isAnimateFullscreen = false;
+  isAnimateFullscreenLandscape = false;
   isUnmounted = false;
 
   getYoutubeTimerInterval: any = () => {};
-  animatedFullscreenValue = new Animated.Value(this.state.isFullscreen ? 1 : 0);
+  animatedFullscreenLandscapeValue = new Animated.Value(
+    this.state.isFullscreen ? 1 : 0,
+  );
+
+  get containerWidth() {
+    return this.state.isFullscreenLandscape
+      ? appConfig.device.height
+      : this.state.isFullscreen
+      ? appConfig.device.width
+      : this.state.width;
+  }
+
+  get containerHeight() {
+    return this.state.isFullscreenLandscape
+      ? appConfig.device.width
+      : this.state.isFullscreen
+      ? appConfig.device.height
+      : this.state.height;
+  }
 
   shouldComponentUpdate(nextProps: YoutubeVideoIframeProps, nextState) {
     if (nextState !== this.state) {
-      if (nextState.isFullscreen !== this.state.isFullscreen) {
-        this.isAnimateFullscreen = true;
-        this.setState({isAnimateFullscreen: true});
-        Animated.timing(this.animatedFullscreenValue, {
-          toValue: nextState.isFullscreen ? 1 : 0,
+      if (
+        nextState.isFullscreenLandscape !== this.state.isFullscreenLandscape
+      ) {
+        this.isAnimateFullscreenLandscape = true;
+        this.setState({isAnimateFullscreenLandscape: true});
+        Animated.timing(this.animatedFullscreenLandscapeValue, {
+          toValue: nextState.isFullscreenLandscape ? 1 : 0,
           easing: Easing.ease,
           duration: 300,
         }).start(({finished}) => {
           if (finished) {
             this.setState({
-              isAnimateFullscreen: false,
+              isAnimateFullscreenLandscape: false,
             });
           }
-          this.isAnimateFullscreen = !finished;
+          this.isAnimateFullscreenLandscape = !finished;
         });
       }
       return true;
@@ -184,7 +205,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             .getVideoLoadedFraction()
             .then((bufferFraction) => {
               !this.isUnmounted &&
-                !this.isAnimateFullscreen &&
+                !this.isAnimateFullscreenLandscape &&
                 this.setState({bufferTime: bufferFraction * totalTime});
             });
         }, 100);
@@ -199,7 +220,9 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
    * -> update iframe size to fit with actual video size to make it display in shape, fitted, centered.
    */
   updateIframeSize = () => {
-    if (this.state.isFullscreen) return;
+    const iframeHeight = this.state.isFullscreenLandscape
+      ? appConfig.device.width
+      : this.state.height;
     //@ts-ignore
     this.refWebview.current =
       this.refPlayer.current && this.refPlayer.current.getWebViewRef();
@@ -207,7 +230,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
       this.refWebview.current.injectJavaScript(
         `
         var iframe = document.getElementsByTagName('iframe')[0];
-        iframe.style.height = '${this.state.height}px';
+        iframe.style.height = '${iframeHeight}px';
         true;
       `,
       );
@@ -262,18 +285,31 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     this.props.onError && this.props.onError(error);
   };
 
-  handleFullScreen = () => {
+  handleFullscreen = () => {
     this.currentTime = this.state.currentTime;
     this.props.onPressFullscreen();
     clearInterval(this.getYoutubeTimerInterval);
     this.setState((prevState: any) => {
       const isFullscreen = !prevState.isFullscreen;
+      const isFullscreenLandscape = isFullscreen
+        ? prevState.isFullscreenLandscape
+        : false;
       StatusBar.setHidden(isFullscreen);
 
       return {
         isFullscreen,
+        isFullscreenLandscape,
       };
     });
+  };
+
+  handleRotateFullscreen = () => {
+    this.setState(
+      (prevState: any) => ({
+        isFullscreenLandscape: !prevState.isFullscreenLandscape,
+      }),
+      this.updateIframeSize,
+    );
   };
 
   handleContainerLayout = (e) => {
@@ -315,25 +351,19 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
         style={[
           {
             flex: 1,
+            width: this.containerWidth,
+            height: this.containerHeight,
           },
           this.state.isFullscreen && {
             ...StyleSheet.absoluteFillObject,
             zIndex: 999,
-            width: appConfig.device.height,
-            height: appConfig.device.width,
-            // width: this.animatedFullscreenValue.interpolate({
-            //   inputRange: [0, 1],
-            //   outputRange: [this.state.width, appConfig.device.height],
-            // }),
-            // height: this.animatedFullscreenValue.interpolate({
-            //   inputRange: [0, 1],
-            //   outputRange: [this.state.height, appConfig.device.width],
-            // }),
+            // width: this.containerWidth,
+            // height: this.containerHeight,
           },
           {
             transform: [
               {
-                translateX: this.animatedFullscreenValue.interpolate({
+                translateX: this.animatedFullscreenLandscapeValue.interpolate({
                   inputRange: [0, 1],
                   outputRange: [
                     0,
@@ -344,7 +374,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                 }),
               },
               {
-                translateY: this.animatedFullscreenValue.interpolate({
+                translateY: this.animatedFullscreenLandscapeValue.interpolate({
                   inputRange: [0, 1],
                   outputRange: [
                     0,
@@ -355,7 +385,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                 }),
               },
               // {
-              //   translateX: this.animatedFullscreenValue.interpolate({
+              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
               //     inputRange: [0, 1],
               //     outputRange: [
               //       0,
@@ -366,7 +396,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
               {
                 rotate: concat(
-                  this.animatedFullscreenValue.interpolate({
+                  this.animatedFullscreenLandscapeValue.interpolate({
                     inputRange: [0, 1],
                     outputRange: [0, 90],
                   }),
@@ -374,7 +404,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                 ),
               },
               {
-                scaleX: this.animatedFullscreenValue.interpolate({
+                scaleX: this.animatedFullscreenLandscapeValue.interpolate({
                   inputRange: [0, 1],
                   outputRange: [
                     1,
@@ -383,7 +413,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                 }),
               },
               {
-                scaleY: this.animatedFullscreenValue.interpolate({
+                scaleY: this.animatedFullscreenLandscapeValue.interpolate({
                   inputRange: [0, 1],
                   outputRange: [
                     1,
@@ -392,7 +422,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                 }),
               },
               //  {
-              //   translateX: this.animatedFullscreenValue.interpolate({
+              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
               //     inputRange: [0, 1],
               //     outputRange: [
               //       0,
@@ -401,7 +431,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               //   }),
               // },
               // {
-              //   translateX: this.animatedFullscreenValue.interpolate({
+              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
               //     inputRange: [0, 1],
               //     outputRange: [
               //       0,
@@ -410,7 +440,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               //   }),
               // },
               // {
-              //   translateY: this.animatedFullscreenValue.interpolate({
+              //   translateY: this.animatedFullscreenLandscapeValue.interpolate({
               //     inputRange: [0, 1],
               //     outputRange: [0, appConfig.device.width/2],
               //   }),
@@ -426,19 +456,15 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               ref={this.refPlayer}
               videoId={this.props.videoId}
               height={
-                this.state.isFullscreen
+                this.state.isFullscreenLandscape
                   ? appConfig.device.width
                   : this.state.height
               }
               width={
-                this.state.isFullscreen
+                this.state.isFullscreenLandscape
                   ? appConfig.device.height
                   : this.state.width
               }
-              // height={this.state.height
-              // }
-              // width={this.state.width
-              // }
               webViewStyle={this.props.webviewStyle}
               onChangeState={this.props.onChangeState}
               onReady={this.handleReady}
@@ -483,7 +509,8 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             onPressMute={this.props.onPressMute}
             onChangedProgress={this.handleProgress}
             onSkippingTime={this.handleSkip}
-            onPressFullScreen={this.handleFullScreen}
+            onPressFullscreen={this.handleFullscreen}
+            onRotateFullscreen={this.handleRotateFullscreen}
           />
         </View>
       </Animated.View>

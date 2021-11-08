@@ -1,7 +1,6 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 
@@ -43,6 +42,7 @@ const Tracker = ({
   animatedVisibleValue = undefined,
   onPressMute = () => {},
   onPressFullscreen = () => {},
+  onRotateFullscreen = () => {},
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
@@ -95,11 +95,23 @@ const Tracker = ({
             // @ts-ignore
             hitSlop={HIT_SLOP}
             onPress={onPressMute}>
-            <MaterialIcons
-              name={isMute ? 'volume-off' : 'volume-up'}
+            <MaterialCommunityIcons
+              name={isMute ? 'volume-off' : 'volume-high'}
               style={styles.icon}
             />
           </TouchableOpacity>
+          {isFullscreen && <TouchableOpacity
+            activeOpacity={0.5}
+            // @ts-ignore
+            disallowInterruption
+            // @ts-ignore
+            hitSlop={HIT_SLOP}
+            onPress={onRotateFullscreen}>
+            <MaterialCommunityIcons
+              name={'phone-rotate-landscape'}
+              style={styles.icon}
+            />
+          </TouchableOpacity>}
           <TouchableOpacity
             activeOpacity={0.5}
             // @ts-ignore
@@ -107,7 +119,7 @@ const Tracker = ({
             // @ts-ignore
             // hitSlop={HIT_SLOP}
             onPress={onPressFullscreen}>
-            <MaterialIcons
+            <MaterialCommunityIcons
               name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
               style={styles.icon}
             />
