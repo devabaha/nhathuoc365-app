@@ -133,7 +133,7 @@ class ItemImageViewer extends Component {
 
   renderHeader = (currentIndex = this.state.currentIndex) => {
     return (
-      <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
+      <TouchableWithoutFeedback onPress={() => this.toggleHeaderVisibility()}>
         <Animated.View
           style={[styles.headerContainer, {opacity: this.opacity}]}>
           <SafeAreaView style={styles.headerContentContainer}>
