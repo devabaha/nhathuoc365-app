@@ -20,12 +20,17 @@ export interface YoutubeVideoIframeProps {
   containerStyle?: StyleProp<ViewProps>;
   autoAdjustLayout?: boolean;
   isEnd?: boolean;
+  isFullscreenWithoutModal?: boolean;
   onReady?: () => void;
   onError?: (error: string) => void;
   onChangeState?: (event: string) => void;
   onPressPlay?: () => void;
   onPressMute?: () => void;
   onPressFullscreen?: () => void;
-  onProgress?: (progress:  number) => void;
+  onRotateFullscreen?: (isFullscreenLandscape: boolean) => void;
+  onChangeControlsVisible?: (isControlsVisible: boolean) => void;
+  onProgress?: (progress: number) => void;
   youtubeIframeProps?: YoutubeIframeProps;
+
+  renderVideo?: (videoComponent: React.ReactNode) => React.ReactNode;
 }

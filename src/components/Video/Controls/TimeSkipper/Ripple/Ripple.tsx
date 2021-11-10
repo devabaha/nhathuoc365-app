@@ -32,6 +32,7 @@ const Ripple = ({
   y,
   size = 100,
   scale = 10,
+  viewableAreaWidth = '50%',
   direction = 'ltf',
   iconName,
   renderDescription = (animatedValue) => {
@@ -139,7 +140,7 @@ const Ripple = ({
           },
         ]}></Animated.View>
 
-      <View style={styles.iconContainer}>
+      <View style={[styles.iconContainer, {width: viewableAreaWidth}]}>
         {/* @ts-ignore */}
         <Animated.View style={[extraIconContainerStyle]}>
           {renderIcons()}

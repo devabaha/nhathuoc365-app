@@ -44,7 +44,6 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   static defaultProps = {
     autoAdjustLayout: false,
     onProgress: () => {},
-    onPressFullscreen: () => {},
   };
 
   refWebview = React.createRef<any>();
@@ -63,8 +62,10 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     totalTime: 0,
     bufferTime: 0,
 
-    isFullscreen: false,
+    isFullscreen: !!this.props.isFullscreenWithoutModal,
     isFullscreenLandscape: false,
+
+    playerState: '',
   };
   currentTime = 0;
   isAnimateFullscreenLandscape = false;
@@ -72,7 +73,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
   getYoutubeTimerInterval: any = () => {};
   animatedFullscreenLandscapeValue = new Animated.Value(
-    this.state.isFullscreen ? 1 : 0,
+    this.state.isFullscreenLandscape ? 1 : 0,
   );
 
   get containerWidth() {
@@ -223,6 +224,10 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     const iframeHeight = this.state.isFullscreenLandscape
       ? appConfig.device.width
       : this.state.height;
+    const iframeWidth = this.state.isFullscreenLandscape
+      ? appConfig.device.height
+      : this.state.width;
+
     //@ts-ignore
     this.refWebview.current =
       this.refPlayer.current && this.refPlayer.current.getWebViewRef();
@@ -231,6 +236,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
         `
         var iframe = document.getElementsByTagName('iframe')[0];
         iframe.style.height = '${iframeHeight}px';
+        iframe.style.width = '${iframeWidth}px';
         true;
       `,
       );
@@ -265,10 +271,26 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     }
   };
 
+  handleChangeState = (e) => {
+    this.setState({playerState: e}, () => {
+      // When isFullscreen true, components in renderVideo() will be re-mounted
+      // state of player will be set to 'unstarted' by default of youtube iframe
+      // => current time will not be updated if any changes
+      // => have to force the player play to update current time.
+      if (this.state.playerState === 'unstarted') {
+        if (this.refPlayer.current) {
+          this.refPlayer.current.playVideo();
+        }
+      }
+    });
+
+    this.props.onChangeState && this.props.onChangeState(e);
+  };
+
   handleReady = () => {
     if (this.currentTime) {
+      console.log(this.currentTime);
       this.handleProgress(this.currentTime / this.state.totalTime);
-      // this.currentTime = 0;
     }
     this.setState({isError: false, loading: false});
     this.props.onReady && this.props.onReady();
@@ -286,8 +308,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   };
 
   handleFullscreen = () => {
+    if (this.props.onPressFullscreen) {
+      this.props.onPressFullscreen();
+      return;
+    }
     this.currentTime = this.state.currentTime;
-    this.props.onPressFullscreen();
     clearInterval(this.getYoutubeTimerInterval);
     this.setState((prevState: any) => {
       const isFullscreen = !prevState.isFullscreen;
@@ -308,7 +333,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
       (prevState: any) => ({
         isFullscreenLandscape: !prevState.isFullscreenLandscape,
       }),
-      this.updateIframeSize,
+      () => {
+        this.props.onRotateFullscreen &&
+          this.props.onRotateFullscreen(this.state.isFullscreenLandscape);
+        this.updateIframeSize();
+      },
     );
   };
 
@@ -339,13 +368,64 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           this.setState({width, height});
         });
     }
+
     this.setState({
       containerWidth,
       containerHeight,
     });
   };
 
-  renderVideo = () => {
+  renderVideo() {
+    return (
+      <View
+        onLayout={this.handleContainerLayout}
+        style={[styles.container, this.props.containerStyle]}>
+        <View>
+          <YoutubeIframe
+            ref={this.refPlayer}
+            videoId={this.props.videoId}
+            height={
+              this.state.isFullscreenLandscape
+                ? appConfig.device.width
+                : this.state.height
+            }
+            width={
+              this.state.isFullscreenLandscape
+                ? appConfig.device.height
+                : this.state.width
+            }
+            webViewStyle={this.props.webviewStyle}
+            onChangeState={this.handleChangeState}
+            onReady={this.handleReady}
+            onError={this.handleError}
+            forceAndroidAutoplay
+            {...this.props.youtubeIframeProps}
+            initialPlayerParams={{
+              controls: false,
+              ...this.props.youtubeIframeProps?.initialPlayerParams,
+            }}
+          />
+          {(this.state.isError || this.state.loading) && (
+            <View style={styles.mask}>
+              {this.state.isError ? (
+                <Container center>
+                  <AntDesignIcon
+                    name="exclamationcircle"
+                    style={styles.errorIcon}
+                  />
+                  <Text style={styles.errorMessage}>
+                    {this.props.t('api.error.message')}
+                  </Text>
+                </Container>
+              ) : null}
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  }
+
+  renderVideoContainer = () => {
     return (
       <Animated.View
         style={[
@@ -357,8 +437,6 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           this.state.isFullscreen && {
             ...StyleSheet.absoluteFillObject,
             zIndex: 999,
-            // width: this.containerWidth,
-            // height: this.containerHeight,
           },
           {
             transform: [
@@ -384,15 +462,6 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                   ],
                 }),
               },
-              // {
-              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
-              //     inputRange: [0, 1],
-              //     outputRange: [
-              //       0,
-              //       -(appConfig.device.height - (appConfig.device.width || 0)) / 2,
-              //     ],
-              //   }),
-              // },
 
               {
                 rotate: concat(
@@ -403,129 +472,78 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
                   'deg',
                 ),
               },
+
               {
-                scaleX: this.animatedFullscreenLandscapeValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [
-                    1,
-                    appConfig.device.height / (this.state.containerWidth || 1),
-                  ],
-                }),
+                translateX: this.props.isFullscreenWithoutModal
+                  ? this.animatedFullscreenLandscapeValue.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [
+                        0,
+                        (appConfig.device.width -
+                          (this.state.containerWidth || 0)) /
+                          2,
+                      ],
+                    })
+                  : 0,
               },
               {
-                scaleY: this.animatedFullscreenLandscapeValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [
-                    1,
-                    appConfig.device.width / (this.state.containerHeight || 1),
-                  ],
-                }),
+                translateY: this.props.isFullscreenWithoutModal
+                  ? this.animatedFullscreenLandscapeValue.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [
+                        0,
+                        (appConfig.device.height -
+                          (this.state.containerHeight || 0)) /
+                          2,
+                      ],
+                    })
+                  : 0,
               },
-              //  {
-              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
-              //     inputRange: [0, 1],
-              //     outputRange: [
-              //       0,
-              //       (appConfig.device.height/2 -((appConfig.device.width - (this.state.containerHeight || 0)/2))),
-              //     ],
-              //   }),
-              // },
-              // {
-              //   translateX: this.animatedFullscreenLandscapeValue.interpolate({
-              //     inputRange: [0, 1],
-              //     outputRange: [
-              //       0,
-              //       appConfig.device.height / 2 - appConfig.device.width / 2,
-              //     ],
-              //   }),
-              // },
-              // {
-              //   translateY: this.animatedFullscreenLandscapeValue.interpolate({
-              //     inputRange: [0, 1],
-              //     outputRange: [0, appConfig.device.width/2],
-              //   }),
-              // },
             ],
           },
         ]}>
-        <View
-          onLayout={this.handleContainerLayout}
-          style={[styles.container, this.props.containerStyle]}>
-          <View>
-            <YoutubeIframe
-              ref={this.refPlayer}
-              videoId={this.props.videoId}
-              height={
-                this.state.isFullscreenLandscape
-                  ? appConfig.device.width
-                  : this.state.height
-              }
-              width={
-                this.state.isFullscreenLandscape
-                  ? appConfig.device.height
-                  : this.state.width
-              }
-              webViewStyle={this.props.webviewStyle}
-              onChangeState={this.props.onChangeState}
-              onReady={this.handleReady}
-              onError={this.handleError}
-              forceAndroidAutoplay
-              {...this.props.youtubeIframeProps}
-              initialPlayerParams={{
-                controls: false,
-                ...this.props.youtubeIframeProps?.initialPlayerParams,
-              }}
+        {this.props.renderVideo
+          ? this.props.renderVideo(this.renderVideo())
+          : this.renderVideo()}
+
+        {this.state.loading ? (
+          <Loading center />
+        ) : (
+          <View style={styles.controlsContainer}>
+            <Controls
+              currentTime={this.state.currentTime}
+              totalTime={this.state.totalTime}
+              bufferTime={this.state.bufferTime}
+              isPlay={!!this.props.youtubeIframeProps?.play}
+              isMute={!!this.props.youtubeIframeProps?.mute}
+              isEnd={this.props.isEnd}
+              isFullscreen={this.state.isFullscreen}
+              isFullscreenLandscape={this.state.isFullscreenLandscape}
+              onPressPlay={this.handlePressPlay}
+              onPressMute={this.props.onPressMute}
+              onChangedProgress={this.handleProgress}
+              onSkippingTime={this.handleSkip}
+              onPressFullscreen={this.handleFullscreen}
+              onRotateFullscreen={this.handleRotateFullscreen}
+              onChangeControlsVisible={this.props.onChangeControlsVisible}
             />
           </View>
-          {(this.state.isError || this.state.loading) && (
-            <View style={styles.mask}>
-              {this.state.isError ? (
-                <Container center>
-                  <AntDesignIcon
-                    name="exclamationcircle"
-                    style={styles.errorIcon}
-                  />
-                  <Text style={styles.errorMessage}>
-                    {this.props.t('api.error.message')}
-                  </Text>
-                </Container>
-              ) : (
-                this.state.loading && <Loading center />
-              )}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.controlsContainer}>
-          <Controls
-            currentTime={this.state.currentTime}
-            totalTime={this.state.totalTime}
-            bufferTime={this.state.bufferTime}
-            isPlay={!!this.props.youtubeIframeProps?.play}
-            isMute={!!this.props.youtubeIframeProps?.mute}
-            isEnd={this.props.isEnd}
-            isFullscreen={this.state.isFullscreen}
-            onPressPlay={this.handlePressPlay}
-            onPressMute={this.props.onPressMute}
-            onChangedProgress={this.handleProgress}
-            onSkippingTime={this.handleSkip}
-            onPressFullscreen={this.handleFullscreen}
-            onRotateFullscreen={this.handleRotateFullscreen}
-          />
-        </View>
+        )}
       </Animated.View>
     );
   };
 
   render() {
-    return this.state.isFullscreen ? (
+    return this.state.isFullscreen && !this.props.isFullscreenWithoutModal ? (
       <Modal transparent>
         <GestureHandlerRootView style={{flex: 1}}>
-          {this.renderVideo()}
+          {this.renderVideoContainer()}
         </GestureHandlerRootView>
       </Modal>
     ) : (
-      this.renderVideo()
+      <GestureHandlerRootView style={{flex: 1}}>
+        {this.renderVideoContainer()}
+      </GestureHandlerRootView>
     );
   }
 }

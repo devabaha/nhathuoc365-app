@@ -8,7 +8,7 @@ import {MEDIA_TYPE} from 'src/constants';
 
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 
 const DOUBLE_PRESS_INTERVAL = 300;
 const PRESS_DELTA = 50;
@@ -26,6 +26,8 @@ const ItemImage = ({
   index,
   selectedIndex,
   type,
+  onRotateFullscreen,
+  onChangeVideoControlsVisible,
   onMove = () => {},
   onPress = () => {},
 }) => {
@@ -151,31 +153,32 @@ const ItemImage = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}>
-      <ImageZoom
-        ref={(inst) => (refImage.current = inst)}
-        onStartShouldSetPanResponder={handleStartShouldSetPanResponder}
-        onMove={handleMove}
-        onClick={onPress}
-        cropHeight={appConfig.device.height}
-        cropWidth={appConfig.device.width}
-        imageHeight={appConfig.device.height}
-        imageWidth={appConfig.device.width}>
-        {type === MEDIA_TYPE.YOUTUBE_VIDEO ? (
-          <Video
-            type="youtube"
-            videoId={url}
-            containerStyle={styles.videoContainer}
-            autoAdjustLayout
-            height={appConfig.device.height}
-            youtubeIframeProps={{
-              play: index === selectedIndex,
-            }}
-            onPressFullscreen={Actions.pop}
-          />
-        ) : (
+      {type === MEDIA_TYPE.YOUTUBE_VIDEO ? (
+        <Video
+          type="youtube"
+          videoId={url}
+          containerStyle={styles.videoContainer}
+          autoAdjustLayout
+          isFullscreenWithoutModal
+          height={appConfig.device.height}
+          isPlay={index === selectedIndex}
+          onPressFullscreen={Actions.pop}
+          onRotateFullscreen={onRotateFullscreen}
+          onChangeControlsVisible={onChangeVideoControlsVisible}
+        />
+      ) : (
+        <ImageZoom
+          ref={(inst) => (refImage.current = inst)}
+          onStartShouldSetPanResponder={handleStartShouldSetPanResponder}
+          onMove={handleMove}
+          onClick={onPress}
+          cropHeight={appConfig.device.height}
+          cropWidth={appConfig.device.width}
+          imageHeight={appConfig.device.height}
+          imageWidth={appConfig.device.width}>
           <Image source={{uri: url}} resizeMode="contain" />
-        )}
-      </ImageZoom>
+        </ImageZoom>
+      )}
     </View>
   );
 };

@@ -15,10 +15,13 @@ export class Video extends Component<VideoProps> {
     isPlay: !!this.props.isPlay,
     isEnd: false,
     isMute: !!this.props.isMute,
+    isFullscreenWithoutModal: !!this.props.isFullscreenWithoutModal,
   };
 
   refYoutubePlayer = React.createRef<any>();
   getYoutubeTimerInterval: any = () => {};
+
+  playerState = '';
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.isPlay !== this.props.isPlay && !this.state.isEnd) {
@@ -27,11 +30,17 @@ export class Video extends Component<VideoProps> {
     if (nextProps.isMute !== this.props.isMute) {
       this.setState({isMute: nextProps.isMute});
     }
+    if (nextProps.isFullscreenWithoutModal !== this.props.isFullscreenWithoutModal) {
+      this.setState({isFullscreenWithoutModal: nextProps.isFullscreenWithoutModal});
+    }
 
     return true;
   }
+  
 
   handleChangeState = (e) => {
+    this.playerState = e;
+
     this.props.onChangeState && this.props.onChangeState(e);
     switch (e) {
       case 'playing':
@@ -69,6 +78,12 @@ export class Video extends Component<VideoProps> {
 
   handleProgress = (progress) => {
     // console.log(progress);
+    if (
+      this.state.isEnd &&
+      this.playerState === 'unstarted'
+    ) {
+      this.handlePressPlay();
+    }
   };
 
   containerStyle = [styles.container, this.props.containerStyle];
@@ -88,20 +103,20 @@ export class Video extends Component<VideoProps> {
           onChangeState={this.handleChangeState}
           onReady={this.props.onReady}
           onError={this.props.onError}
-          onPressPlay={this.handlePressPlay}
+          onPressPlay={() => this.handlePressPlay()}
           onPressMute={this.handlePressMute}
           onProgress={this.handleProgress}
           onPressFullscreen={this.props.onPressFullscreen}
-          // onPressFullscreen={(isFullscreen, element) => this.props.onPressFullscreen(
-          //   !isFullscreen?  cloneElement(<Video />, {...this.props, isFullscreen: true}, {...this.state}):null
-          // )}
-          // isFullscreen={this.props.isFullscreen}
+          onRotateFullscreen={this.props.onRotateFullscreen}
+          onChangeControlsVisible={this.props.onChangeControlsVisible}
           youtubeIframeProps={{
             ...this.props.youtubeIframeProps,
             play: this.state.isPlay,
             mute: this.state.isMute,
           }}
           isEnd={this.state.isEnd}
+          isFullscreenWithoutModal={this.state.isFullscreenWithoutModal}
+          renderVideo={this.props.renderVideo}
         />
       </View>
     );

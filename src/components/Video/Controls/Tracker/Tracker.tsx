@@ -34,6 +34,7 @@ const Tracker = ({
   bufferTime,
   isMute = false,
   isFullscreen = false,
+  isFullscreenLandscape = false,
   actionsContainerPointerEvents = 'auto',
   actionsContainerStyle = {},
   containerStyle = {},
@@ -93,25 +94,29 @@ const Tracker = ({
             // @ts-ignore
             disallowInterruption
             // @ts-ignore
-            hitSlop={HIT_SLOP}
+            // hitSlop={HIT_SLOP}
             onPress={onPressMute}>
             <MaterialCommunityIcons
               name={isMute ? 'volume-off' : 'volume-high'}
               style={styles.icon}
             />
           </TouchableOpacity>
-          {isFullscreen && <TouchableOpacity
-            activeOpacity={0.5}
-            // @ts-ignore
-            disallowInterruption
-            // @ts-ignore
-            hitSlop={HIT_SLOP}
-            onPress={onRotateFullscreen}>
-            <MaterialCommunityIcons
-              name={'phone-rotate-landscape'}
-              style={styles.icon}
-            />
-          </TouchableOpacity>}
+          {isFullscreen && (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              // @ts-ignore
+              disallowInterruption
+              // @ts-ignore
+              // hitSlop={HIT_SLOP}
+              onPress={onRotateFullscreen}>
+              <MaterialCommunityIcons
+                name={
+                  isFullscreenLandscape ? 'crop-portrait' : 'crop-landscape'
+                }
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             activeOpacity={0.5}
             // @ts-ignore

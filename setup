@@ -15,8 +15,10 @@ declare dist_youtube_iframe="${rn_youtube_iframe}/dist";
 declare js_youtube_iframe="${rn_youtube_iframe}/src/YoutubeIframe.js";
 declare refSign=".*\(() => ({\).*";
 declare webviewInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoLoadedFraction', data: player.getVideoLoadedFraction()}));true;\`";
-declare replaceCode="    () => ({getWebViewRef: () => {
-        return webViewRef.current;
+declare replaceCode="    () => ({playVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.playVideo),
+        pauseVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.pauseVideo),
+        getWebViewRef: () => {
+            return webViewRef.current;
         },
         getVideoLoadedFraction: () => {
             webViewRef.current.injectJavaScript($webviewInjectedJs);

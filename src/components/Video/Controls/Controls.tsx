@@ -107,7 +107,9 @@ const Controls = ({
   totalTime,
   bufferTime = 0,
   isFullscreen = false,
+  isFullscreenLandscape = false,
   containerStyle = {},
+  onChangeControlsVisible = (isControlsVisible: boolean) => {},
   onPressPlay = () => {},
   onPressMute = () => {},
   onPressFullscreen = () => {},
@@ -148,22 +150,31 @@ const Controls = ({
   }, [isPlayProps]);
 
   useEffect(() => {
-    // if (!isEndProps && !!isEnd) {
-    //   animatedPlayValue.setValue(-1);
-    // }
-    if (isEndProps !== !!isEnd) {
-      Animated.timing(animatedPlayValue, {
-        toValue: isEndProps ? 2 : 1,
-        duration: 200,
-        easing: Easing.quad,
-      }).start();
-      setEnd(isEndProps ? 1 : 0);
+    if (isEndProps !== !!isEnd || !!isEndProps) {
+      setTimeout(() => {
+        Animated.timing(animatedPlayValue, {
+          toValue: isEndProps ? 2 : 1,
+          duration: 200,
+          easing: Easing.quad,
+        }).start();
+
+        if (isEndProps !== !!isEnd) {
+          setEnd(isEndProps ? 1 : 0);
+          if (isEndProps) {
+            setControlsVisible(1);
+          }
+        }
+      });
     }
   }, [isEndProps]);
 
   useEffect(() => {
     setMute(isMuteProps ? 1 : 0);
   }, [isMuteProps]);
+
+  useEffect(() => {
+    onChangeControlsVisible(!!isControlsVisible);
+  }, [isControlsVisible]);
 
   useEffect(() => {
     return () => {
@@ -379,6 +390,7 @@ const Controls = ({
         bufferTime={bufferTime}
         isMute={!!isMute}
         isFullscreen={isFullscreen}
+        isFullscreenLandscape={isFullscreenLandscape}
         actionsContainerPointerEvents={isControlsVisible ? 'auto' : 'none'}
         actionsContainerStyle={animatedVisibleControlsStyle}
         progressBarStyle={

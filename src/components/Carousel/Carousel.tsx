@@ -30,6 +30,13 @@ export class Carousel extends Component<CarouselProps> {
   };
   refCarousel = React.createRef<RNCarousel<any>>();
 
+  componentDidMount() {
+    if (this.props.refCarousel) {
+      //@ts-ignore
+      this.props.refCarousel(this.refCarousel.current._carouselRef);
+    }
+  }
+
   handleSnapToItem = (currentIndex) => {
     this.props.onChangeIndex &&
       this.props.onChangeIndex(currentIndex, this.props.data[currentIndex]);

@@ -1,5 +1,7 @@
 import React, {useState, useCallback, useMemo, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
+
+import {debounce} from 'lodash';
 import {
   PanGestureHandler,
   State,
@@ -31,15 +33,12 @@ import {
 } from 'react-native-redash';
 
 import appConfig from 'app-config';
+import {TRACKER_HEIGHT, THUMB_SIZE, TIMER_PADDING} from '../../constants';
 import {themes} from '../../themes';
-import Timer from '../Timer';
 import {timingFunction} from '../../helper';
 import {formatTime} from 'app-helper';
-import {debounce} from 'lodash';
 
-const THUMB_SIZE = 15;
-const TRACKER_HEIGHT = 3;
-const TIMER_PADDING = 15;
+import Timer from '../Timer';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -111,19 +110,19 @@ const ProgressBar = ({
   const [containerOffsetX, setContainerOffsetX] = useState(0);
   const [timerWidth, setTimerWidth] = useState(0);
 
-  const isStartChangeProgressManually = useValue(0);
-  const isChangingProgressManually = useValue(0);
+  const isStartChangeProgressManually = useValue<number>(0);
+  const isChangingProgressManually = useValue<number>(0);
 
-  const diffProgress = useValue(0);
+  const diffProgress = useValue<number>(0);
 
-  const tempPositionX = useValue(0);
-  const oldPositionX = useValue(0);
-  const positionX = useValue(0);
-  const panPositionX = useValue(0);
-  const tapState = useValue(State.UNDETERMINED);
-  const tapPositionX = useValue(0);
+  const tempPositionX = useValue<number>(0);
+  const oldPositionX = useValue<number>(0);
+  const positionX = useValue<number>(0);
+  const panPositionX = useValue<number>(0);
+  const tapState = useValue<number>(State.UNDETERMINED);
+  const tapPositionX = useValue<number>(0);
 
-  const animatedThumbValue = useValue(0);
+  const animatedThumbValue = useValue<number>(0);
 
   const {
     gestureHandler,
@@ -152,6 +151,8 @@ const ProgressBar = ({
 
   const updateContainerDimensions = useCallback(
     debounce((layout) => {
+      panPositionX.setValue(progress * layout.width);
+      positionX.setValue(progress * layout.width);
       setContainerWidth(layout.width || 1);
       setContainerOffsetX(layout.x);
     }, 0),
@@ -191,12 +192,25 @@ const ProgressBar = ({
     return [
       cond(eq(tapState, State.ACTIVE), [
         set(isStartChangeProgressManually, 1),
-        set(panPositionX, tapPositionX),
+        [
+          set(
+            panPositionX,
+            cond(
+              lessThan(tapPositionX, 0),
+              0,
+              cond(
+                greaterThan(tapPositionX, containerWidth),
+                containerWidth,
+                tapPositionX,
+              ),
+            ),
+          ),
+        ],
       ]),
       cond(eq(panState, State.BEGAN), [
-        call([panState, longPressState], ([x, y]) =>
-          console.log('start', x, y),
-        ),
+        // call([panState, longPressState], ([x, y]) =>
+        //   console.log('start', x, y),
+        // ),
 
         set(isChangingProgressManually, 1),
         set(isStartChangeProgressManually, 1),
@@ -267,7 +281,11 @@ const ProgressBar = ({
           cond(
             greaterThan(position.x, containerWidth),
             [containerWidth],
-            position.x,
+            cond(
+              or(eq(tapState, State.ACTIVE), eq(panState, State.ACTIVE)),
+              position.x,
+              positionX,
+            ),
           ),
         ),
       ),
@@ -292,8 +310,8 @@ const ProgressBar = ({
             diffProgress,
             multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
           ),
-          call([diffProgress], ([value]) => console.log(value)),
-          cond(and(lessThan(diffProgress, 0.5), greaterThan(diffProgress, 0)), [
+          // call([diffProgress], ([value]) => console.log(value)),
+          cond(and(lessThan(diffProgress, 0.8), greaterThan(diffProgress, 0)), [
             set(isChangingProgressManually, 0),
             set(panState, State.UNDETERMINED),
           ]),

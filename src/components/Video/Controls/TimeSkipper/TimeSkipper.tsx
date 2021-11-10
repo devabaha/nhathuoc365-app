@@ -16,7 +16,7 @@ import Ripple from './Ripple';
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    // overflow: 'hidden',
+    overflow: 'hidden',
     justifyContent: 'center',
   },
   gestureContainer: {
@@ -109,7 +109,7 @@ const TimeSkipper = ({
     (event: TapGestureHandlerGestureEvent) => {
       onSingleLeftTap(event);
       if (event.nativeEvent.state === State.ACTIVE) {
-      console.log('single tap left');
+        console.log('single tap left');
       }
     },
     [],
@@ -119,11 +119,20 @@ const TimeSkipper = ({
     (event: TapGestureHandlerGestureEvent) => {
       onSingleRightTap(event);
       if (event.nativeEvent.state === State.ACTIVE) {
-      console.log('single tap right');
+        console.log('single tap right');
       }
     },
     [],
   );
+
+  const getViewableRippleWidth = useCallback(() => {
+    return (
+      gestureAreaSize / 2 +
+      (gestureAreaSize > containerWidth
+        ? (containerWidth - gestureAreaSize) / 2
+        : 0)
+    );
+  }, [gestureAreaSize, containerWidth]);
 
   const formatRippleData = useCallback(
     (x, y) => {
@@ -133,9 +142,10 @@ const TimeSkipper = ({
         y,
         size: gestureAreaSize / 3,
         scale: 7,
+        viewableAreaWidth: getViewableRippleWidth(),
       };
     },
-    [gestureAreaSize],
+    [gestureAreaSize, getViewableRippleWidth],
   );
 
   const handleDoubleLeftTap = useCallback(
@@ -183,7 +193,13 @@ const TimeSkipper = ({
         }, 300);
       }
     },
-    [leftRipples, gestureAreaSize, amount, totalNumberOfTimesLeftSkipped],
+    [
+      leftRipples,
+      gestureAreaSize,
+      getViewableRippleWidth,
+      amount,
+      totalNumberOfTimesLeftSkipped,
+    ],
   );
 
   const handleDoubleRightTap = useCallback(
@@ -230,7 +246,13 @@ const TimeSkipper = ({
         }, 300);
       }
     },
-    [rightRipples, gestureAreaSize, amount, totalNumberOfTimesRightSkipped],
+    [
+      rightRipples,
+      gestureAreaSize,
+      getViewableRippleWidth,
+      amount,
+      totalNumberOfTimesRightSkipped,
+    ],
   );
 
   const handleContainerLayout = useCallback((e) => {
@@ -283,6 +305,7 @@ const TimeSkipper = ({
         size={ripple.size}
         scale={ripple.scale}
         iconName={iconName}
+        viewableAreaWidth={ripple.viewableAreaWidth}
         direction={direction}
         onFinishAnimation={onFinishAnimationFunction}
         renderDescription={(animatedShowRippleValue) => (
@@ -292,7 +315,6 @@ const TimeSkipper = ({
               fontWeight: '500',
               marginTop: 5,
               fontSize: Math.max(Math.min(gestureAreaSize / 30, 13), 10),
-
               opacity: animatedShowRippleValue.interpolate({
                 inputRange: [0, 0.2, 0.8, 1],
                 outputRange: [0, 1, 1, 0],
@@ -318,15 +340,15 @@ const TimeSkipper = ({
 
   const leftGestureContainerStyle = useMemo(() => {
     return {
-      left: -gestureAreaSize / 2,
+      left: getViewableRippleWidth() - gestureAreaSize,
     };
-  }, [gestureAreaSize]);
+  }, [gestureAreaSize, getViewableRippleWidth]);
 
   const rightGestureContainerStyle = useMemo(() => {
     return {
-      right: -gestureAreaSize / 2,
+      right: getViewableRippleWidth() - gestureAreaSize,
     };
-  }, [gestureAreaSize]);
+  }, [gestureAreaSize, getViewableRippleWidth]);
 
   const leftRipplesMaskStyle = useMemo(() => {
     return [
@@ -360,18 +382,18 @@ const TimeSkipper = ({
           onHandlerStateChange={handleSingleLeftTap}
           waitFor={refSkipperDoubleLeftTap}>
           <Animated.View style={{flex: 1}}> */}
-            <TapGestureHandler
-              ref={refSkipperDoubleLeftTap}
-              onHandlerStateChange={handleDoubleLeftTap}
-              numberOfTaps={2}>
-              <Animated.View style={styles.leftGestureContainer}>
-                <Animated.View style={leftRipplesMaskStyle} />
-                {leftRipples.map((ripple, index) => {
-                  return renderRipple(ripple, index, 'ltr');
-                })}
-              </Animated.View>
-            </TapGestureHandler>
-          {/* </Animated.View>
+        <TapGestureHandler
+          ref={refSkipperDoubleLeftTap}
+          onHandlerStateChange={handleDoubleLeftTap}
+          numberOfTaps={2}>
+          <Animated.View style={styles.leftGestureContainer}>
+            <Animated.View style={leftRipplesMaskStyle} />
+            {leftRipples.map((ripple, index) => {
+              return renderRipple(ripple, index, 'ltr');
+            })}
+          </Animated.View>
+        </TapGestureHandler>
+        {/* </Animated.View>
         </TapGestureHandler> */}
       </Animated.View>
 
@@ -382,18 +404,18 @@ const TimeSkipper = ({
           onHandlerStateChange={handleSingleRightTap}
           waitFor={refSkipperDoubleRightTap}>
           <Animated.View style={{flex: 1}}> */}
-            <TapGestureHandler
-              ref={refSkipperDoubleRightTap}
-              onHandlerStateChange={handleDoubleRightTap}
-              numberOfTaps={2}>
-              <Animated.View style={styles.rightGestureContainer}>
-                <Animated.View style={rightRipplesMaskStyle} />
-                {rightRipples.map((ripple, index) => {
-                  return renderRipple(ripple, index, 'rtl');
-                })}
-              </Animated.View>
-            </TapGestureHandler>
-          {/* </Animated.View>
+        <TapGestureHandler
+          ref={refSkipperDoubleRightTap}
+          onHandlerStateChange={handleDoubleRightTap}
+          numberOfTaps={2}>
+          <Animated.View style={styles.rightGestureContainer}>
+            <Animated.View style={rightRipplesMaskStyle} />
+            {rightRipples.map((ripple, index) => {
+              return renderRipple(ripple, index, 'rtl');
+            })}
+          </Animated.View>
+        </TapGestureHandler>
+        {/* </Animated.View>
         </TapGestureHandler> */}
       </Animated.View>
     </Animated.View>
