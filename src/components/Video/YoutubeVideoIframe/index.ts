@@ -12,9 +12,11 @@ export interface YoutubeVideoIframeProps {
   t: TFunction;
 
   videoId: string;
-  height: number; // string-able
 
-  width?: number; // string-able
+  height: number;
+  width?: number;
+  currentTime?: number; // in seconds.
+
   refPlayer?: (ref: YoutubeIframeRef) => void;
   webviewStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
@@ -29,6 +31,7 @@ export interface YoutubeVideoIframeProps {
   onPressFullscreen?: () => void;
   onRotateFullscreen?: (isFullscreenLandscape: boolean) => void;
   onChangeControlsVisible?: (isControlsVisible: boolean) => void;
+  onChangeCurrentTime?: (currentTime: number) => void;
   onProgress?: (progress: number) => void;
   youtubeIframeProps?: YoutubeIframeProps;
 

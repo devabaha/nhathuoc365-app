@@ -56,6 +56,8 @@ class MediaCarousel extends Component {
     stopVideo: false,
   };
 
+  videosInfo = [];
+
   get videoContainerStyle() {
     return [
       styles.videoContainer,
@@ -79,12 +81,17 @@ class MediaCarousel extends Component {
     this.setState({currentIndex: index});
   };
 
+  updateVideoCurrentTime = (index, currentTime) => {
+    this.videosInfo[index] = {currentTime};
+  };
+
   goToGallery = (index) => {
     this.setState({stopVideo: true});
     Actions.item_image_viewer({
       images: this.props.data,
       index: index,
       onBack: () => this.setState({stopVideo: false}),
+      videosInfo: this.videosInfo,
     });
   };
 
@@ -108,6 +115,9 @@ class MediaCarousel extends Component {
         autoAdjustLayout
         isPlay={!this.state.stopVideo && this.state.currentIndex === index}
         onPressFullscreen={() => this.goToGallery(index)}
+        onChangeCurrentTime={(currentTime) =>
+          this.updateVideoCurrentTime(index, currentTime)
+        }
       />
     );
   };

@@ -227,6 +227,7 @@ class ItemImageViewer extends Component {
           onMove={this.handleMove}
           onRotateFullscreen={this.updateContent}
           onChangeVideoControlsVisible={this.handleChangeVideoControlsVisible}
+          currentTime={this.props.videosInfo[index]?.currentTime}
         />
         {/* <ImageZoom
           ref={(inst) => (this.refImage = inst)}

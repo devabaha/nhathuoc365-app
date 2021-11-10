@@ -30,13 +30,16 @@ export class Video extends Component<VideoProps> {
     if (nextProps.isMute !== this.props.isMute) {
       this.setState({isMute: nextProps.isMute});
     }
-    if (nextProps.isFullscreenWithoutModal !== this.props.isFullscreenWithoutModal) {
-      this.setState({isFullscreenWithoutModal: nextProps.isFullscreenWithoutModal});
+    if (
+      nextProps.isFullscreenWithoutModal !== this.props.isFullscreenWithoutModal
+    ) {
+      this.setState({
+        isFullscreenWithoutModal: nextProps.isFullscreenWithoutModal,
+      });
     }
 
     return true;
   }
-  
 
   handleChangeState = (e) => {
     this.playerState = e;
@@ -78,10 +81,7 @@ export class Video extends Component<VideoProps> {
 
   handleProgress = (progress) => {
     // console.log(progress);
-    if (
-      this.state.isEnd &&
-      this.playerState === 'unstarted'
-    ) {
+    if (this.state.isEnd && this.playerState === 'unstarted') {
       this.handlePressPlay();
     }
   };
@@ -97,6 +97,7 @@ export class Video extends Component<VideoProps> {
           videoId={this.props.videoId}
           height={this.props.height}
           width={this.props.width}
+          currentTime={this.props.currentTime}
           webviewStyle={this.props.webviewStyle}
           containerStyle={this.props.containerStyle}
           autoAdjustLayout={this.props.autoAdjustLayout}
@@ -109,6 +110,7 @@ export class Video extends Component<VideoProps> {
           onPressFullscreen={this.props.onPressFullscreen}
           onRotateFullscreen={this.props.onRotateFullscreen}
           onChangeControlsVisible={this.props.onChangeControlsVisible}
+          onChangeCurrentTime={this.props.onChangeCurrentTime}
           youtubeIframeProps={{
             ...this.props.youtubeIframeProps,
             play: this.state.isPlay,

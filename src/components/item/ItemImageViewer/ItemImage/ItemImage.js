@@ -26,6 +26,7 @@ const ItemImage = ({
   index,
   selectedIndex,
   type,
+  currentTime,
   onRotateFullscreen,
   onChangeVideoControlsVisible,
   onMove = () => {},
@@ -165,6 +166,7 @@ const ItemImage = ({
           onPressFullscreen={Actions.pop}
           onRotateFullscreen={onRotateFullscreen}
           onChangeControlsVisible={onChangeVideoControlsVisible}
+          currentTime={currentTime}
         />
       ) : (
         <ImageZoom

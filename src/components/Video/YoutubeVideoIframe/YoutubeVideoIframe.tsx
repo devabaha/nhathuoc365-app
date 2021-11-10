@@ -44,6 +44,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   static defaultProps = {
     autoAdjustLayout: false,
     onProgress: () => {},
+    currentTime: 0,
   };
 
   refWebview = React.createRef<any>();
@@ -58,7 +59,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     containerWidth: undefined,
     containerHeight: undefined,
 
-    currentTime: 0,
+    currentTime: this.props.currentTime,
     totalTime: 0,
     bufferTime: 0,
 
@@ -67,7 +68,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
 
     playerState: '',
   };
-  currentTime = 0;
+  currentTime = this.props.currentTime;
   isAnimateFullscreenLandscape = false;
   isUnmounted = false;
 
@@ -137,6 +138,11 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
       ) {
         this.setState({width: nextProps.width, height: nextProps.height});
       }
+
+      if (nextProps.currentTime !== this.props.currentTime) {
+        this.currentTime = nextProps.currentTime;
+      }
+
       return true;
     }
 
@@ -199,6 +205,8 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           const currentTime = await this.refPlayer.current.getCurrentTime();
           if (!this.isUnmounted && currentTime > this.currentTime) {
             this.setState({currentTime});
+            this.props.onChangeCurrentTime &&
+              this.props.onChangeCurrentTime(currentTime);
             this.currentTime = 0;
           }
 
@@ -284,12 +292,18 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
       }
     });
 
+    if (e === 'playing') {
+      if (this.props.currentTime && this.currentTime && this.state.totalTime) {
+        this.handleProgress(this.currentTime / this.state.totalTime);
+        this.currentTime = 0;
+      }
+    }
+
     this.props.onChangeState && this.props.onChangeState(e);
   };
 
   handleReady = () => {
     if (this.currentTime) {
-      console.log(this.currentTime);
       this.handleProgress(this.currentTime / this.state.totalTime);
     }
     this.setState({isError: false, loading: false});
