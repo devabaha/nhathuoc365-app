@@ -127,12 +127,7 @@ class MediaCarousel extends Component {
       <TouchableHighlight
         disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
         underlayColor="transparent"
-        onPress={() => {
-          Actions.item_image_viewer({
-            images: this.props.data,
-            index: index,
-          });
-        }}>
+        onPress={() => this.goToGallery(index)}>
         <View style={styles.mediaContainer}>
           {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
             <View style={styles.imageContainer}>
