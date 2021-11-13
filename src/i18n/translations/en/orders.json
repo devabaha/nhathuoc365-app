@@ -59,12 +59,12 @@
     },
     "payment": {
       "price": {
-        "temp": "Temporary price",
-        "total": "Total price"
+        "temp": "Merchandise subtotal",
+        "total": "Total payment"
       },
       "discount": {
-        "title": "Promotion",
-        "add": "Add promotion",
+        "title": "Voucher",
+        "add": "Select or enter code",
         "prefix": "Discount"
       }
     },
