@@ -59,12 +59,12 @@
     },
     "payment": {
       "price": {
-        "temp": "Giá tạm tính",
-        "total": "Thành tiền"
+        "temp": "Tổng tiền hàng",
+        "total": "Tổng thanh toán"
       },
       "discount": {
-        "title": "Khuyến mãi",
-        "add": "Thêm khuyến mãi",
+        "title": "Voucher",
+        "add": "Chọn hoặc nhập mã",
         "prefix": "Giảm"
       }
     },

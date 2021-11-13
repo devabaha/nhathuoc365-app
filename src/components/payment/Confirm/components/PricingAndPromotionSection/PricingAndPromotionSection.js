@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   address_default_box: {
-    flex: 1,
+    paddingLeft: 32,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     top: appConfig.device.isAndroid ? 1 : 0,
   },
   voucherIconError: {
-    color: appConfig.colors.status.warning
+    color: appConfig.colors.status.warning,
   },
   promotionValueContainer: {
     flexDirection: 'row',
@@ -115,7 +115,6 @@ const PricingAndPromotionSection = ({
   onUseVoucherOnlineSuccess,
   onRemoveVoucherOnlineSuccess,
   voucherStatus,
-
 }) => {
   const {t} = useTranslation('orders');
 
@@ -270,15 +269,15 @@ const PricingAndPromotionSection = ({
               {!!promotionName ? (
                 <View style={styles.promotionValueContainer}>
                   {voucherStatus === VOUCHER_STATUS_ERROR ? (
-                  <MaterialCommunityIcons
-                    name="alert-circle"
-                    style={[styles.voucherIcon, styles.voucherIconError]}
-                  />
+                    <MaterialCommunityIcons
+                      name="alert-circle"
+                      style={[styles.voucherIcon, styles.voucherIconError]}
+                    />
                   ) : (
-                  <MaterialCommunityIcons
-                    name="check-circle"
-                    style={styles.voucherIcon}
-                  />  
+                    <MaterialCommunityIcons
+                      name="check-circle"
+                      style={styles.voucherIcon}
+                    />
                   )}
                   <Text numberOfLines={2} style={[styles.addVoucherLabel]}>
                     {promotionName}
