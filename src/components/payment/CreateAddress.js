@@ -625,7 +625,7 @@ class CreateAddress extends Component {
                   value={this.state.default_flag}
                   trackColor={{
                     true: appConfig.device.isAndroid
-                      ? hexToRgbA(appConfig.colors.primary, 0.3)
+                      ? hexToRgba(appConfig.colors.primary, 0.3)
                       : appConfig.colors.primary,
                     false: appConfig.colors.sceneBackground,
                   }}

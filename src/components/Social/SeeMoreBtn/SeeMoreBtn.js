@@ -47,7 +47,7 @@ const SeeMoreBtn = ({
         style={styles.btnContainer}>
         <LinearGradient
           style={styles.mask}
-          colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+          colors={[hexToRgba(bgColor, 1), hexToRgba(bgColor, 0)]}
           locations={[0.77, 1]}
           angle={-90}
           useAngle

@@ -14,8 +14,15 @@ import QRScanButton from './QRScanButton';
 import AntDesignIcon from 'react-native-vector-icons/SimpleLineIcons';
 import {CONFIG_KEY, isConfigActive} from '../../../../helper/configKeyHandler';
 import store from 'app-store';
+import Typography from 'src/components/base/Typography/Typography';
+import {TypographyType} from 'src/components/base/Typography/constants';
+import {Card} from 'src/components/base';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
 
 class PrimaryActions extends Component {
+  static contextType = ThemeContext;
+
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
   }
@@ -43,76 +50,99 @@ class PrimaryActions extends Component {
     return isConfigActive(CONFIG_KEY.HIDE_WALLET_HOMEPAGE_KEY);
   }
 
+  handlePressWallet = () => {
+    this.isActiveCommissions
+      ? this.props.onPressCommission && this.props.onPressCommission()
+      : this.props.onSurplusNext && this.props.onSurplusNext();
+  };
+
   render() {
+    const theme = getTheme(this);
     const props = this.props;
     const revenue_commissions = store.user_info.revenue_commissions;
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
+    const walletName = props.walletName;
+    const walletValue = this.isActiveCommissions
+      ? revenue_commissions?.this_month_commissions.value
+      : props.surplus;
+
+    const walletActionStyle = mergeStyles(
+      [
+        styles.walletAction,
+        {
+          borderColor: theme.color.border,
+        },
+      ],
+      this.isHideWalletBox && styles.extraWalletAction,
+    );
+
+    const pointRechargeBtnSeparatorStyle = mergeStyles(
+      styles.pointRechargeBtnSeparator,
+      {
+        backgroundColor: theme.color.border,
+      },
+    );
+
+    const iconNextStyle = mergeStyles(styles.iconNext, {
+      color: theme.color.iconInactive,
+    });
+
     return (
       <View style={styles.container}>
-        <View style={[styles.actionsWrapper, actionsWrapper]}>
-        {!this.isHideWalletBox && (
-          <View style={styles.mainContentWrapper}>
-            {this.isActiveQRScan ? (
-              <View style={styles.pointRechargeBtnContainer}>
-                <QRScanButton
-                  wrapperStyle={styles.pointRechargeBtn}
-                  iconStyle={styles.scanIcon}
-                />
-                <View style={styles.pointRechargeBtnSeparatorContainer}>
-                  <View style={styles.pointRechargeBtnSeparator} />
+        <Card style={[styles.actionsWrapper, actionsWrapper]}>
+          {!this.isHideWalletBox && (
+            <View style={styles.mainContentWrapper}>
+              {this.isActiveQRScan ? (
+                <View style={styles.pointRechargeBtnContainer}>
+                  <QRScanButton
+                    wrapperStyle={styles.pointRechargeBtn}
+                    iconStyle={styles.scanIcon}
+                  />
+                  <View style={styles.pointRechargeBtnSeparatorContainer}>
+                    <View style={pointRechargeBtnSeparatorStyle} />
+                  </View>
                 </View>
-              </View>
-            ) : this.isActiveTopUp ? (
-              <View style={styles.pointRechargeBtnContainer}>
-                <PointRechargeButton
-                  wrapperStyle={styles.pointRechargeBtn}
-                  iconStyle={styles.scanIcon}
-                />
-                <View style={styles.pointRechargeBtnSeparatorContainer}>
-                  <View style={styles.pointRechargeBtnSeparator} />
+              ) : this.isActiveTopUp ? (
+                <View style={styles.pointRechargeBtnContainer}>
+                  <PointRechargeButton
+                    wrapperStyle={styles.pointRechargeBtn}
+                    iconStyle={styles.scanIcon}
+                  />
+                  <View style={styles.pointRechargeBtnSeparatorContainer}>
+                    <View style={pointRechargeBtnSeparatorStyle} />
+                  </View>
                 </View>
-              </View>
-            ) : null}
+              ) : null}
 
-            {!this.isActiveCommissions ? (
               <Button
                 containerStyle={styles.surplusContainer}
-                onPress={() => props.onSurplusNext()}>
+                onPress={() => this.handlePressWallet()}>
                 <View style={styles.walletInfoWrapper}>
-                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={styles.walletNameLabel}>
+                    {walletName}
+                  </Typography>
 
                   <View style={styles.walletLabelRight}>
-                    <Text style={styles.surplus}>{props.surplus}</Text>
+                    <Typography
+                      type={TypographyType.TITLE_LARGE}
+                      style={styles.surplus}>
+                      {walletValue}
+                    </Typography>
                   </View>
 
                   <View style={styles.iconNextWrapper}>
-                    <AntDesignIcon name="arrow-right" style={styles.iconNext} />
+                    <AntDesignIcon name="arrow-right" style={iconNextStyle} />
                   </View>
                 </View>
               </Button>
-            ) : (
-              <Button
-                containerStyle={styles.surplusContainer}
-                onPress={() => props.onPressCommission()}>
-                <View style={styles.walletInfoWrapper}>
-                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
-                  <View style={styles.walletLabelRight}>
-                    <Text style={styles.surplus}>
-                      {revenue_commissions?.this_month_commissions.value}
-                    </Text>
-                  </View>
-                  <View style={styles.iconNextWrapper}>
-                    <AntDesignIcon name="arrow-right" style={styles.iconNext} />
-                  </View>
-                </View>
-              </Button>
-            )}
-          </View>
+            </View>
           )}
           {this.isActivePrimaryActions && props.primaryActions && (
-            <View style={[styles.walletAction, this.isHideWalletBox && styles.extraWalletAction]}>
+            <View style={walletActionStyle}>
               {props.primaryActions.map((action, index) => (
                 <Button
                   key={index}
@@ -133,13 +163,18 @@ class PrimaryActions extends Component {
                         },
                       ]}
                     />
-                    <Text style={styles.actionTitle}>{action.title}</Text>
+                    <Typography
+                      type={TypographyType.LABEL_SMALL}
+                      onSurface
+                      style={styles.actionTitle}>
+                      {action.title}
+                    </Typography>
                   </View>
                 </Button>
               ))}
             </View>
           )}
-        </View>
+        </Card>
       </View>
     );
   }
@@ -169,8 +204,8 @@ const styles = StyleSheet.create({
   },
   actionsWrapper: {
     width: appConfig.device.width - 30,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    // backgroundColor: '#fff',
+    // borderRadius: 8,
     ...appConfig.styles.shadow,
   },
   mainContentWrapper: {
@@ -215,7 +250,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     borderTopWidth: 1,
-    borderColor: appConfig.colors.border,
   },
   extraWalletAction: {
     borderTopWidth: 0,
@@ -247,7 +281,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   surplus: {
-    ...appConfig.styles.typography.heading1,
+    // ...appConfig.styles.typography.heading1,
   },
   actionButton: {
     flex: 1,
@@ -261,7 +295,7 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     marginTop: 10,
-    ...appConfig.styles.typography.sub,
+    // ...appConfig.styles.typography.sub,
     textAlign: 'center',
   },
 });

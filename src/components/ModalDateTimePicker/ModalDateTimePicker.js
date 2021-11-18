@@ -16,6 +16,7 @@ import appConfig from 'app-config';
 import {isValidDate} from 'app-helper';
 
 import {Container} from '../Layout';
+import {mergeStyles} from 'src/Themes/helper';
 
 const styles = StyleSheet.create({
   modal: {
@@ -145,8 +146,7 @@ const ModalDateTimePicker = ({
           </TouchableOpacity>
         </Container>
       )}
-      <View
-        style={StyleSheet.compose(styles.dateTimeContainer, containerStyle)}>
+      <View style={mergeStyles(styles.dateTimeContainer, containerStyle)}>
         <DateTimePicker
           value={value}
           onChange={handleDateChange}

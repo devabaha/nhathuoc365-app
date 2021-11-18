@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 15,
     borderColor: '#ccc',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.05),
   },
   disabledDistance: {
     backgroundColor: '#f5f5f5',

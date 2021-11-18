@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     shadowColor: '#000',
     borderLeftWidth: 5,
-    borderColor: hexToRgbA(DEFAULT_COLOR, 0.9),
+    borderColor: hexToRgba(DEFAULT_COLOR, 0.9),
     shadowOffset: {
       width: 0,
       height: 0,

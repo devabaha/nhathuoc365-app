@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
   },
 
   uncheckOverlay: {
-    backgroundColor: hexToRgbA('#000', 0.03),
+    backgroundColor: hexToRgba('#000', 0.03),
     // backgroundColor: 'rgba(0,0,0,.03)',
     // position: 'absolute',
     // top: 0,

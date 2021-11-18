@@ -613,14 +613,14 @@ class DomainSelector extends Component {
         domain?.title && this.state[domain.domainParamName] === domain.title;
       const extraStyle = isSelected
         ? {
-            backgroundColor: hexToRgbA(
+            backgroundColor: hexToRgba(
               domain.color || appConfig.colors.primary,
               0.1,
             ),
           }
         : {};
       const extraIconStyle = {
-        color: hexToRgbA(domain.color || appConfig.colors.primary, 0.6),
+        color: hexToRgba(domain.color || appConfig.colors.primary, 0.6),
       };
 
       return (

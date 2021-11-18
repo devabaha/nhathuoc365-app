@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   scanner: {
     height: SCANNER_HEIGHT,
     width: '100%',
-    backgroundColor: hexToRgbA('#fff', 0.8),
+    backgroundColor: hexToRgba('#fff', 0.8),
     ...(appConfig.device.isAndroid
       ? elevationShadowStyle(1, 0, 0, 1, appConfig.colors.primary)
       : {}),
@@ -169,8 +169,8 @@ const QRBackground = ({
             {/* <LinearGradient
               style={{flex: 1}}
               colors={[
-                hexToRgbA(appConfig.colors.primary, 0),
-                hexToRgbA(appConfig.colors.primary, 1),
+                hexToRgba(appConfig.colors.primary, 0),
+                hexToRgba(appConfig.colors.primary, 1),
               ]}
               locations={[0.4, 0.8]}
             /> */}

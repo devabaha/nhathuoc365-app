@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   deceptionModal: {
     borderTopWidth: 3,
-    borderColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    borderColor: hexToRgba(appConfig.colors.primary, 0.05),
     padding: 15,
   },
   modalTextUserStyle: {

@@ -204,6 +204,8 @@ import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
+import {getTheme, ThemeContext, ThemeProvider} from './Themes/Theme.context';
+import {BASE_LIGHT_THEME} from './Themes';
 
 /**
  * Not allow font scaling
@@ -578,41 +580,43 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{overflow: 'scroll', flex: 1}}>
-        {/* <GPSStoreLocation /> */}
-        {this.state.header}
-        <NetWorkInfo />
-        <RootRouter
-          appLanguage={this.state.appLanguage}
-          t={this.props.t}
-          setHeader={this.setHeader}
-        />
-        <Drawer />
-        <FlashMessage icon={'auto'} />
-        <AwesomeAlert
-          useNativeDriver
-          show={this.state.isOpenCodePushModal}
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          showCancelButton={false}
-          showConfirmButton={false}
-          customView={
-            <AppCodePush
-              title={
-                this.state.titleUpdateCodePushModal ||
-                this.titleUpdateCodePushModal
-              }
-              description={
-                this.state.descriptionUpdateCodePushModal ||
-                this.descriptionUpdateCodePushModal
-              }
-              progress={this.state.codePushUpdateProgress}
-              onProgressComplete={this.handleCodePushProgressComplete}
-              onPressConfirm={() => this.closeCodePushModal()}
-            />
-          }
-        />
-      </View>
+      <ThemeProvider initial={BASE_LIGHT_THEME}>
+        <View style={{overflow: 'scroll', flex: 1}}>
+          {/* <GPSStoreLocation /> */}
+          {this.state.header}
+          <NetWorkInfo />
+          <RootRouter
+            appLanguage={this.state.appLanguage}
+            t={this.props.t}
+            setHeader={this.setHeader}
+          />
+          <Drawer />
+          <FlashMessage icon={'auto'} />
+          <AwesomeAlert
+            useNativeDriver
+            show={this.state.isOpenCodePushModal}
+            closeOnTouchOutside={false}
+            closeOnHardwareBackPress={false}
+            showCancelButton={false}
+            showConfirmButton={false}
+            customView={
+              <AppCodePush
+                title={
+                  this.state.titleUpdateCodePushModal ||
+                  this.titleUpdateCodePushModal
+                }
+                description={
+                  this.state.descriptionUpdateCodePushModal ||
+                  this.descriptionUpdateCodePushModal
+                }
+                progress={this.state.codePushUpdateProgress}
+                onProgressComplete={this.handleCodePushProgressComplete}
+                onPressConfirm={() => this.closeCodePushModal()}
+              />
+            }
+          />
+        </View>
+      </ThemeProvider>
     );
   }
 }
@@ -623,7 +627,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   tabBarStyle: {
-    borderTopWidth: Util.pixel,
+    borderTopWidth: 0,
     borderColor: '#cccccc',
     backgroundColor: '#ffffff',
     opacity: 1,
@@ -661,9 +665,15 @@ export default withTranslation()(
 );
 
 class RootRouter extends Component {
+  // static contextType = ThemeContext;
+
   state = {
     tabVisible: {},
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     const isTabVisbleChange = Object.keys(nextState.tabVisible).some(
@@ -728,8 +738,8 @@ class RootRouter extends Component {
                   showLabel={false}
                   key={appConfig.routes.primaryTabbar}
                   tabBarStyle={styles.tabBarStyle}
-                  activeBackgroundColor="#ffffff"
-                  inactiveBackgroundColor="#ffffff"
+                  // activeBackgroundColor={this.theme.color.surface}
+                  // inactiveBackgroundColor={this.theme.color.surface}
                   tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
                   {...navBarConfig}>
                   {/* ================ HOME TAB ================ */}
@@ -768,7 +778,9 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}>
+                    icon={TabIcon}
+                    storeIcon
+                    >
                     <Scene component={() => null} />
                   </Stack>
 

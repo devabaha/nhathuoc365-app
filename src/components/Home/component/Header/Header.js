@@ -20,11 +20,33 @@ import RightButtonChat from '../../../RightButtonChat';
 import RightButtonNavBar from '../../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../../RightButtonNavBar/constants';
 import Loading from '../../../Loading';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {Input} from 'src/components/base';
+import { mergeStyles } from 'src/Themes/helper';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 class Header extends Component {
+  static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
+
   render() {
+    const searchIconStyle = mergeStyles(styles.searchIcon, {
+      color: this.theme.color.onOverlay,
+    });
+    const searchInputStyle = mergeStyles(styles.searchInput);
+
+    const iconStyle = mergeStyles(styles.icon, {
+      color: this.theme.color.onPrimary,
+    });
+
+    const searchWrapperStyle = mergeStyles(styles.searchWrapper, {
+      backgroundColor: this.theme.color.overlay30,
+    });
+
     return (
       <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
         <Animated.View style={[styles.maskMain, this.props.maskMainStyle]} />
@@ -38,23 +60,23 @@ class Header extends Component {
               <TouchableOpacity
                 disabled={this.props.loading}
                 onPress={this.props.goToSearch}>
-                <Animated.View style={[styles.searchWrapper, styles.maskSub]} />
+                <Animated.View style={[searchWrapperStyle, styles.maskSub]} />
                 <Animated.View
                   style={[
-                    styles.searchWrapper,
+                    searchWrapperStyle,
                     styles.maskMain,
                     this.props.maskSearchWrapperStyle,
                   ]}
                 />
                 <View pointerEvents="none" style={styles.searchWrapper}>
-                  <Ionicons style={styles.searchIcon} name="ios-search" />
-                  <TextInput
-                    style={styles.searchInput}
+                  <Ionicons style={searchIconStyle} name="ios-search" />
+                  <Input
+                    style={searchInputStyle}
                     placeholder={
                       this.props.placeholder ||
                       (store.store_data ? store.store_data.name : '')
                     }
-                    placeholderTextColor={appConfig.colors.white}
+                    placeholderTextColor={this.theme.color.onOverlay}
                     numberOfLines={1}
                   />
                   {this.props.loading && (
@@ -69,12 +91,12 @@ class Header extends Component {
               icon={
                 <View>
                   <AnimatedIcon
-                    style={[styles.icon, styles.iconMask]}
+                    style={[iconStyle, styles.iconMask]}
                     name="shoppingcart"
                     size={25}
                   />
                   <AnimatedIcon
-                    style={[styles.icon, this.props.iconStyle]}
+                    style={[iconStyle, this.props.iconStyle]}
                     name="shoppingcart"
                     size={25}
                   />
@@ -88,12 +110,12 @@ class Header extends Component {
               icon={
                 <View>
                   <AnimatedIcon
-                    style={[styles.icon, styles.iconMask]}
+                    style={[iconStyle, styles.iconMask]}
                     name="message1"
                     size={23}
                   />
                   <AnimatedIcon
-                    style={[styles.icon, this.props.iconStyle]}
+                    style={[iconStyle, this.props.iconStyle]}
                     name="message1"
                     size={23}
                   />
@@ -189,13 +211,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,.3)',
+    // backgroundColor: 'rgba(0,0,0,.3)',
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
     paddingVertical: isAndroid ? 5 : 10,
-    color: appConfig.colors.white,
+    // color: appConfig.colors.white,
   },
   chatIconStyle: {
     marginRight: 0,

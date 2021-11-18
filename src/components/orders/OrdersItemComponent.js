@@ -267,7 +267,7 @@ class OrdersItemComponent extends Component {
               {!!item.payment_status_name && (
                 <Tag
                   label={item.payment_status_name}
-                  fill={hexToRgbA(
+                  fill={hexToRgba(
                     appConfig.colors.paymentStatus[item.payment_status],
                     0.1,
                   )}
@@ -602,7 +602,7 @@ const ActionButton = React.memo(({title, onGoToStore}) => {
     <View style={actionBtnStyles.container}>
       <TouchableHighlight
         hitSlop={HIT_SLOP}
-        underlayColor={hexToRgbA(appConfig.colors.primary, 0.9)}
+        underlayColor={hexToRgba(appConfig.colors.primary, 0.9)}
         onPress={onGoToStore}
         style={actionBtnStyles.btnContainer}>
         <Text style={actionBtnStyles.btnTitle}>

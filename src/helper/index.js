@@ -18,6 +18,38 @@ export const isValidDate = (date) => {
   return date instanceof Date && !isNaN(date);
 };
 
+export const convertSecondsToElementTimeData = (
+  timeInSeconds,
+  padStart = {
+    seconds: 2,
+    hours: 2,
+    minutes: 2,
+  },
+) => {
+  let h = Math.floor(timeInSeconds / 3600);
+  let m = Math.floor((timeInSeconds - h * 3600) / 60);
+  let s = Math.floor(timeInSeconds - h * 3600) % 60;
+
+  h = h.toString().padStart(padStart.hours, '0');
+  m = m.toString().padStart(padStart.minutes, '0');
+  s = s.toString().padStart(padStart.seconds, '0');
+
+  return {
+    hours: h,
+    minutes: m,
+    seconds: s,
+  };
+};
+
+export const formatTime = (timeInSeconds) => {
+  const {hours, minutes, seconds} = convertSecondsToElementTimeData(
+    timeInSeconds,
+  );
+  return [Number(hours) ? hours : '', minutes, seconds]
+    .join(':')
+    .slice(Number(hours) ? 0 : 1);
+};
+
 export const copyToClipboard = (
   text,
   config = {isShowCopiedMessage: true, copiedMessage: ''},
@@ -30,4 +62,54 @@ export const copyToClipboard = (
     }
     Toast.show(config.copiedMessage);
   }
+};
+
+export const hexToRgbCode = (hex) => {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length == 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
+  }
+  throw new Error('Bad Hex');
+};
+
+export const hexToRgba = (hex, opacity) => {
+  return 'rgba(' + hexToRgbCode(hex).join(',') + ',' + opacity + ')';
+};
+
+export const rgbaToRgbCode = (rgba, background = '#ffffff') => {
+  const [bgRed, bgGreen, bgBlue] = hexToRgbCode(background);
+  const [inputRed, inputGreen, inputBlue, inputAlpha] = rgba
+    .replace(/rgba|\(|\)/g, '')
+    .split(',')
+    .map((value) => Number(value));
+
+  const isCorrectFormat =
+    inputRed >= 0 &&
+    inputRed <= 255 &&
+    inputGreen >= 0 &&
+    inputGreen <= 255 &&
+    inputBlue >= 0 &&
+    inputBlue <= 255 &&
+    inputAlpha >= 0 &&
+    inputAlpha <= 1;
+
+  if (isCorrectFormat) {
+    const getColorChanel = (color, alpha, background) =>
+      color * alpha + background * (1 - alpha);
+
+    const redChanel = getColorChanel(inputRed, inputAlpha, bgRed);
+    const greenChanel = getColorChanel(inputGreen, inputAlpha, bgGreen);
+    const blueChanel = getColorChanel(inputBlue, inputAlpha, bgBlue);
+    return [redChanel, greenChanel, blueChanel];
+  }
+  throw new Error('Bad Rgba');
+};
+
+export const rgbaToRgb = (rgba, background = '#fff') => {
+  return 'rgb(' + rgbaToRgbCode(rgba, background).join(',') + ')';
 };

@@ -15,6 +15,7 @@ import {isValidDate} from 'app-helper';
 
 import Loading from '../Loading';
 import {Container} from '../Layout';
+import {mergeStyles} from 'src/Themes/helper';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
@@ -126,7 +127,7 @@ export default class HorizontalInfoItem extends Component {
             <TouchableOpacity
               onPress={() => this.openDateTimePicker(dateValue)}>
               <Text
-                style={StyleSheet.compose(
+                style={mergeStyles(
                   styles.btnSelectTitle,
                   detailTitleStyle,
                   rightTextStyle,
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
 
   title: {
@@ -289,7 +290,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingVertical: 15,
     // marginVertical: -15,
-
   },
   columnViewContainer: {
     flexDirection: 'column',

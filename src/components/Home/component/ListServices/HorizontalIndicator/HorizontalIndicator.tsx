@@ -51,7 +51,7 @@ class HorizontalIndicator extends Component<HorizontalIndicatorProps> {
         return {
             backgroundColor: this.props.foregroundColor ||
                 //@ts-ignore
-                hexToRgbA(this.props.color, .25)
+                hexToRgba(this.props.color, .25)
         }
     }
 

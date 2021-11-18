@@ -33,6 +33,11 @@ import {
   PACKAGE_OPTIONS_TYPE,
 } from '../../helper/packageOptionsHandler';
 import Posts from 'src/containers/Social/Posts';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+import {Container} from '../base';
+import {hexToRgbCode} from 'app-helper/';
+import {mergeStyles} from 'src/Themes/helper';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -55,6 +60,8 @@ const {
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 class Home extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     sites: PropTypes.array,
     title_sites: PropTypes.string,
@@ -158,6 +165,10 @@ class Home extends Component {
     }
   };
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get hasServices() {
     return (
       Array.isArray(this.props.listService) && this.props.listService.length > 0
@@ -235,34 +246,34 @@ class Home extends Component {
     EXTRAPOLATE_RANGE / 2,
   );
 
-  wrapperAnimatedStyle = {
-    opacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
-      outputRange: [0, 1],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    ...elevationShadowStyle(3),
-    elevation: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-      outputRange: [0, 0, 5],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    shadowOpacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-      outputRange: [0, 0, 0.15],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    backgroundColor: color(
-      255,
-      255,
-      255,
-      interpolate(this.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 1],
+  get wrapperAnimatedStyle() {
+    return {
+      opacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
+        outputRange: [0, 1],
         extrapolate: Extrapolate.CLAMP,
       }),
-    ),
-  };
+      ...elevationShadowStyle(3),
+      elevation: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 5],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+      shadowOpacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 0.15],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+      backgroundColor: color(
+        ...hexToRgbCode(this.theme.color.surface),
+        interpolate(this.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+          outputRange: [0, 0, 1],
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
+    };
+  }
 
   headerAnimatedStyle = {
     opacity: interpolate(this.animatedHeaderValue, {
@@ -280,39 +291,39 @@ class Home extends Component {
     }),
   };
 
-  headerIconStyle = {
-    color:
-      this.homeThemes('styles.home.header_search_wrapper_active')
-        ?.backgroundColor || appConfig.colors.primary,
-    opacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE],
-      outputRange: [0, 1],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-  };
+  get headerIconStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+      opacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE],
+        outputRange: [0, 1],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+    };
+  }
 
-  searchWrapperStyle = [
-    this.homeThemes('styles.home.header_search_wrapper_active'),
-    {
-      backgroundColor: color(
-        ...hexToRgbCode(
-          this.homeThemes('styles.home.header_search_wrapper_active')
-            ?.backgroundColor || '#f5f5f5',
+  get searchWrapperStyle() {
+    return [
+      this.homeThemes('styles.home.header_search_wrapper_active'),
+      {
+        backgroundColor: color(
+          ...hexToRgbCode(this.theme.color.contentBackground),
+          interpolate(this.animatedHeaderValue, {
+            inputRange: [0, EXTRAPOLATE_RANGE],
+            outputRange: [0, 1],
+            extrapolate: Extrapolate.CLAMP,
+          }),
         ),
-        interpolate(this.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP,
-        }),
-      ),
-    },
-  ];
+      },
+    ];
+  }
 
   headerContainerStyle = {
     opacity: this.animatedHeaderContainerValue,
   };
 
   render() {
+    const theme = this.theme;
     const {t} = this.props;
     const name = this.props.userInfo
       ? this.props.userInfo.name
@@ -326,23 +337,31 @@ class Home extends Component {
         ? -5 + (!!appConfig.device.bottomSpace ? -10 : 0)
         : 0);
 
+    const containerStyle = mergeStyles(styles.container, {
+      backgroundColor: theme.color.background,
+    });
+
+    const headerBackgroundStyle = mergeStyles(
+      [styles.headerBackground, this.headerBackgroundOpacity],
+      {backgroundColor: theme.color.primary},
+    );
+
     return (
-      <View style={styles.container}>
+      <View style={containerStyle}>
         {/* <LoadingComponent loading={this.props.apiFetching} /> */}
         {/* <StatusBar
           // barStyle={this.state.statusBarStyle}
           backgroundColor={appConfig.colors.primary}
         /> */}
 
-        <Animated.View
-          style={[styles.headerBackground, this.headerBackgroundOpacity]}>
+        <Container reanimated style={headerBackgroundStyle}>
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
               source={{uri: this.props.site.app_event_banner_image}}
             />
           )}
-        </Animated.View>
+        </Container>
 
         <Animated.View
           style={[styles.headerContainerStyle, this.headerContainerStyle]}>
@@ -426,7 +445,10 @@ class Home extends Component {
                       ? this.props.primaryActions
                       : null
                   }
-                  onPressItem={this.props.onActionPress}
+                  // onPressItem={this.props.onActionPress}
+                  onPressItem={() =>
+                    this.context.toggleTheme(BASE_DARK_THEME_ID)
+                  }
                   onSurplusNext={this.props.onSurplusNext}
                   onPressCommission={this.props.onPressCommission}
                 />
@@ -634,7 +656,7 @@ let styles = StyleSheet.create({
     backgroundColor: appConfig.colors.sceneBackground,
   },
   headerBackground: {
-    backgroundColor: appConfig.colors.primary,
+    // backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
     overflow: 'hidden',
     width: appConfig.device.width * 3,
@@ -674,7 +696,7 @@ let styles = StyleSheet.create({
   },
 
   servicesBlock: {
-    backgroundColor: appConfig.colors.sceneBackground,
+    // backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },

@@ -14,11 +14,18 @@ import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
 import {isOutOfStock} from 'app-helper/product';
 import {hasVideo} from 'app-helper/product/product';
+import {Card, Container, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
+import {TypographyType} from 'src/components/base/Typography/constants';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
 
 class ProductItem extends PureComponent {
+  static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
     this.CTAProduct = new CTAProduct(props.t, this);
@@ -50,6 +57,10 @@ class ProductItem extends PureComponent {
     loading: false,
   };
   unmounted = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   isServiceProduct(product = {}) {
     return product.order_type === ORDER_TYPES.BOOKING;
@@ -88,123 +99,145 @@ class ProductItem extends PureComponent {
     const {containerStyle, item, horizontal} = this.props;
     const extraContainerStyle = horizontal && styles.containerHorizontal;
     const extraImageStyle = horizontal && styles.imageHorizontal;
+
+    const brandTagContainerStyle = mergeStyles(styles.brandTagContainer, {
+      borderColor: this.theme.color.border,
+    });
+
     return (
       <View style={[styles.container, extraContainerStyle, containerStyle]}>
         <TouchableOpacity
+          style={styles.wrapper}
           onPress={this.handlePress}
-          activeOpacity={0.8}
-          style={[styles.wrapper, this.props.wrapperStyle]}>
-          {this.props.renderContent ? (
-            this.props.renderContent()
-          ) : (
-            <>
-              <View>
-                <FastImage
-                  source={{
-                    uri: this.props.image,
-                  }}
-                  style={[styles.image, extraImageStyle]}
-                  resizeMode="cover"
-                />
-                {(!!item.brand || hasVideo(item)) && (
-                  <View pointerEvents="none" style={styles.overlayContainer}>
-                    {hasVideo(item) && (
-                      <View style={styles.videoContainer}>
-                        <Icon name="play" style={styles.iconVideo} />
-                      </View>
-                    )}
-                    {!!item.brand && (
-                      <View style={styles.brandTagContainer}>
-                        <Text numberOfLines={1} style={styles.brandTag}>
-                          {item.brand}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                )}
-              </View>
-
-              {this.props.discount_percent > 0 && (
-                <DiscountBadge
-                  containerStyle={styles.saleContainer}
-                  contentContainerStyle={styles.saleContentContainer}
-                  tailSpace={4}
-                  label={saleFormat(this.props.discount_percent)}
-                />
-              )}
-              <View style={[styles.infoWrapper]}>
-                <Text style={styles.name} numberOfLines={2}>
-                  {this.props.name}
-                </Text>
-
-                <View style={styles.priceWrapper}>
-                  <View style={styles.priceContainer}>
-                    {!!this.props.item.commission_value && (
-                      <Text style={styles.commissionText} numberOfLines={1}>
-                        {this.props.item.commission_value_view}
-                      </Text>
-                    )}
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                      {this.props.discount_percent > 0 && (
-                        <Text style={styles.discount}>
-                          <Text style={styles.deletedTitle}>
-                            {this.props.discount_view}
-                          </Text>
-                          {/* / {this.props.unit_name} */}
-                        </Text>
+          activeOpacity={0.8}>
+          <Card style={[styles.wrapper, this.props.wrapperStyle]}>
+            {this.props.renderContent ? (
+              this.props.renderContent()
+            ) : (
+              <>
+                <View>
+                  <Image
+                    source={{
+                      uri: this.props.image,
+                    }}
+                    style={[styles.image, extraImageStyle]}
+                    resizeMode="cover"
+                  />
+                  {(!!item.brand || hasVideo(item)) && (
+                    <View pointerEvents="none" style={styles.overlayContainer}>
+                      {hasVideo(item) && (
+                        <View style={styles.videoContainer}>
+                          <Icon name="play" style={styles.iconVideo} />
+                        </View>
+                      )}
+                      {!!item.brand && (
+                        <Container style={brandTagContainerStyle}>
+                          <Typography
+                            type={TypographyType.DESCRIPTION_SMALL_PRIMARY}
+                            numberOfLines={1}
+                            style={styles.brandTag}>
+                            {item.brand}
+                          </Typography>
+                        </Container>
                       )}
                     </View>
-                    <View style={[styles.priceBox]}>
-                      <Text style={[styles.price]}>
-                        {this.props.price_view}
-                        {!!item.unit_name && (
-                          <View>
-                            <Text style={styles.unitName}>
-                              {'/ ' + item.unit_name_view}
-                            </Text>
-                          </View>
-                        )}
-                      </Text>
+                  )}
+                </View>
 
-                      <TouchableOpacity
-                        disabled={isOutOfStock(item)}
-                        style={styles.item_add_cart_box}
-                        onPress={this.handlePressActionBtnProduct}
-                        hitSlop={HIT_SLOP}>
-                        <View
-                          style={{
-                            width: 20,
-                            height: 20,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}>
-                          {this.state.buying ? (
-                            <Indicator size="small" />
-                          ) : this.isServiceProduct(item) ? (
-                            <Icon name="calendar-plus-o" style={styles.icon} />
-                          ) : (
-                            <MaterialIcons
-                              name="add-shopping-cart"
-                              style={[
-                                styles.icon,
-                                isOutOfStock(item) && styles.iconDisabled,
-                              ]}
-                            />
+                {this.props.discount_percent > 0 && (
+                  <DiscountBadge
+                    containerStyle={styles.saleContainer}
+                    contentContainerStyle={styles.saleContentContainer}
+                    tailSpace={4}
+                    label={saleFormat(this.props.discount_percent)}
+                  />
+                )}
+                <View style={[styles.infoWrapper]}>
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={styles.name}
+                    numberOfLines={2}>
+                    {this.props.name}
+                  </Typography>
+
+                  <View style={styles.priceWrapper}>
+                    <View style={styles.priceContainer}>
+                      {!!this.props.item.commission_value && (
+                        <Text style={styles.commissionText} numberOfLines={1}>
+                          {this.props.item.commission_value_view}
+                        </Text>
+                      )}
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        {this.props.discount_percent > 0 && (
+                          <Typography
+                            type={TypographyType.DESCRIPTION_MEDIUM}
+                            style={styles.discount}>
+                            <Text style={styles.deletedTitle}>
+                              {this.props.discount_view}
+                            </Text>
+                            {/* / {this.props.unit_name} */}
+                          </Typography>
+                        )}
+                      </View>
+                      <View style={[styles.priceBox]}>
+                        <Typography
+                          type={TypographyType.LABEL_LARGE_PRIMARY}
+                          style={[styles.price]}>
+                          {this.props.price_view}
+                          {!!item.unit_name && (
+                            <View>
+                              <Typography
+                                type={TypographyType.DESCRIPTION_SMALL}
+                                style={styles.unitName}>
+                                {'/ ' + item.unit_name_view}
+                              </Typography>
+                            </View>
                           )}
-                        </View>
-                      </TouchableOpacity>
+                        </Typography>
+
+                        <TouchableOpacity
+                          disabled={isOutOfStock(item)}
+                          style={styles.item_add_cart_box}
+                          onPress={this.handlePressActionBtnProduct}
+                          hitSlop={HIT_SLOP}>
+                          <View
+                            style={{
+                              width: 20,
+                              height: 20,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            {this.state.buying ? (
+                              <Indicator size="small" />
+                            ) : this.isServiceProduct(item) ? (
+                              <Icon
+                                name="calendar-plus-o"
+                                style={styles.icon}
+                              />
+                            ) : (
+                              <MaterialIcons
+                                name="add-shopping-cart"
+                                style={[
+                                  styles.icon,
+                                  isOutOfStock(item) && styles.iconDisabled,
+                                ]}
+                              />
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
-              </View>
-            </>
-          )}
+              </>
+            )}
+          </Card>
         </TouchableOpacity>
       </View>
     );
@@ -227,8 +260,8 @@ let styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    borderRadius: 8,
-    backgroundColor: '#fff',
+    // borderRadius: 8,
+    // backgroundColor: '#fff',
     ...appConfig.styles.shadow,
   },
   image: {
@@ -247,7 +280,7 @@ let styles = StyleSheet.create({
   name: {
     flex: 1,
     marginBottom: 8,
-    ...appConfig.styles.typography.text,
+    // ...appConfig.styles.typography.text,
   },
   priceWrapper: {
     width: '100%',
@@ -263,7 +296,7 @@ let styles = StyleSheet.create({
   },
   discount: {
     marginTop: 4,
-    ...appConfig.styles.typography.secondary,
+    // ...appConfig.styles.typography.secondary,
   },
   priceBox: {
     marginTop: 4,
@@ -274,8 +307,9 @@ let styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
     paddingRight: 5,
-    ...appConfig.styles.typography.heading3,
-    color: appConfig.colors.primary,
+    fontWeight: '600'
+    // ...appConfig.styles.typography.heading3,
+    // color: appConfig.colors.primary,
   },
   loading: {
     height: '100%',
@@ -291,7 +325,7 @@ let styles = StyleSheet.create({
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: hexToRgbA('#ffffff', 0.8),
+    // backgroundColor: hexToRgba('#ffffff', 0.8),
     paddingVertical: 2,
   },
 
@@ -336,7 +370,7 @@ let styles = StyleSheet.create({
     left: appConfig.device.isIOS ? 1.5 : 0.75,
   },
   brandTagContainer: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     paddingVertical: 2,
     paddingHorizontal: 5,
     borderTopLeftRadius: 4,
@@ -350,13 +384,13 @@ let styles = StyleSheet.create({
     marginBottom: -5,
   },
   brandTag: {
-    color: appConfig.colors.primary,
+    // color: appConfig.colors.primary,
     fontWeight: '500',
-    fontSize: 12,
+    // fontSize: 12,
   },
   unitName: {
-    fontSize: 11,
-    color: '#888',
+    // fontSize: 11,
+    // color: '#888',
     marginTop: appConfig.device.isIOS ? 2 : 0,
     top: appConfig.device.isAndroid ? 2 : undefined,
     lineHeight: appConfig.device.isAndroid ? 11 : undefined,

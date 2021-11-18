@@ -7,8 +7,13 @@ import {HOME_CARD_TYPE} from '../../constants';
 import appConfig from 'app-config';
 import ProductItem from './ProductItem';
 import Button from 'react-native-button';
+import {ThemeContext} from 'src/Themes/Theme.context';
+import { Typography } from 'src/components/base';
+import { TypographyType } from 'src/components/base/Typography/constants';
 
 class ListProducts extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     title: PropTypes.string,
@@ -78,7 +83,7 @@ class ListProducts extends Component {
   renderItemHorizontal = ({item: product, index}) => {
     const extraProps = {
       last: this.props.data.length - 1 === index,
-      horizontal: true
+      horizontal: true,
     };
     return this.renderProduct(product, extraProps);
   };
@@ -113,9 +118,9 @@ class ListProducts extends Component {
     return this.hasProducts ? (
       <View style={[styles.container, this.props.containerStyle]}>
         <View style={styles.headingWrapper}>
-          <Text numberOfLines={2} style={styles.heading}>
+          <Typography type={TypographyType.TITLE_LARGE} numberOfLines={2} style={styles.heading}>
             {this.props.title}
-          </Text>
+          </Typography>
           {!!this.props.onShowAll && (
             <Button underlayColor="transparent" onPress={this.props.onShowAll}>
               <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
@@ -138,12 +143,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   heading: {
     flex: 1,
     marginRight: 20,
-    ...appConfig.styles.typography.heading1,
+    // ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
     paddingHorizontal: 7.5,

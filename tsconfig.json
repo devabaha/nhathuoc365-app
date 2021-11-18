@@ -10,6 +10,7 @@
       "app-config": ["./src/config.js"],
       "app-packages/*": ["./src/packages/*"],
       "app-helper/*": ["./src/helper/*"]
+      "app-helper": ["./src/helper"]
     },
     "jsx": "react",
     "esModuleInterop": true,

@@ -352,7 +352,7 @@ class Orders extends Component {
               <Icon
                 name="shopping-basket"
                 size={32}
-                color={hexToRgbA(appConfig.colors.primary, 0.6)}
+                color={hexToRgba(appConfig.colors.primary, 0.6)}
               />
               <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
 

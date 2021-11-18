@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: Util.pixel,
   },
   uncheckOverlay: {
-    backgroundColor: hexToRgbA('#000', 0.03),
+    backgroundColor: hexToRgba('#000', 0.03),
   },
 
   imageContainer: {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 15,
     borderColor: '#ccc',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.05),
   },
   distanceIcon: {
     fontSize: 11,

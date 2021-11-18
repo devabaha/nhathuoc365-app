@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#fafafa',
   },
   infoButtonContainer: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.1),
     borderRadius: 4,
     overflow: 'hidden',
     paddingVertical: 3,

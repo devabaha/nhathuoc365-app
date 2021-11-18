@@ -73,7 +73,7 @@ const ResetPassword = props => {
           <View style={styles.nav}>
             <LinearGradient
               style={styles.mask}
-              colors={[hexToRgbA('#fafafa', 0.3), hexToRgbA('#fafafa', 0)]}
+              colors={[hexToRgba('#fafafa', 0.3), hexToRgba('#fafafa', 0)]}
               locations={[0, 1]}
             />
 

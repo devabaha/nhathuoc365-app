@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   confirmContainer: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     paddingVertical: 15,
     paddingBottom: appConfig.device.bottomSpace || 15,
   },

@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
   },
   chat_content_right: {
     marginRight: 8,
-    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.5)
+    backgroundColor: hexToRgba(DEFAULT_COLOR, 0.5)
   },
   chat_content_text: {
     fontSize: 14,

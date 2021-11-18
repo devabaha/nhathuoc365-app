@@ -72,7 +72,7 @@ class NotifyItemComponent extends Component {
               <Animated.View
                 style={{
                   ...StyleSheet.absoluteFillObject,
-                  backgroundColor: hexToRgbA(appConfig.colors.primary, 0.15),
+                  backgroundColor: hexToRgba(appConfig.colors.primary, 0.15),
                 }}
               />
             )}
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   loadingWrapper: {
-    backgroundColor: hexToRgbA('#ddd', 0.3),
+    backgroundColor: hexToRgba('#ddd', 0.3),
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     paddingTop: 10,

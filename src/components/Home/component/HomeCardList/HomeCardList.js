@@ -4,17 +4,27 @@ import Button from 'react-native-button';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 
 import appConfig from 'app-config';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {Typography} from 'src/components/base';
+import {TypographyType} from 'src/components/base/Typography/constants';
 class HomeCardList extends Component {
+  static contextType = ThemeContext;
   render() {
+    const theme = getTheme(this);
     const props = this.props;
     const {t} = props;
 
-    const contentContainerStyle = [styles.listContentContainer, this.props.contentContainerStyle]
+    const contentContainerStyle = [
+      styles.listContentContainer,
+      this.props.contentContainerStyle,
+    ];
 
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>{props.title}</Text>
+          <Typography type={TypographyType.TITLE_LARGE} style={styles.title}>
+            {props.title}
+          </Typography>
 
           {props.onShowAll ? (
             <Button
@@ -63,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    ...appConfig.styles.typography.heading1,
+    // ...appConfig.styles.typography.heading1,
     flex: 1,
     marginRight: 20,
   },

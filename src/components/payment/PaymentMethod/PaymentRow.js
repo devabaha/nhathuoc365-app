@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   },
   copyIcon: {
     alignSelf: 'center',
-    color: hexToRgbA(DEFAULT_COLOR, 0.7),
+    color: hexToRgba(DEFAULT_COLOR, 0.7),
     fontSize: 16,
   },
   bankMainContent: {

@@ -7,6 +7,7 @@ import {
   SectionList,
   TouchableHighlight,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
 
 import HorizontalInfoItem from './HorizontalInfoItem';
@@ -22,6 +23,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from '../../network/Entity';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import { OutlinedButton } from '../base/Button';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -518,7 +520,7 @@ const styles = StyleSheet.create({
   },
 
   btnContainer: {
-    backgroundColor: appConfig.colors.sceneBackground,
+    // backgroundColor: appConfig.colors.sceneBackground,
   },
 });
 

@@ -9,6 +9,8 @@ import Loading from '../../../Loading';
 import {SERVICES_TYPE} from '../../../../helper/servicesHandler';
 
 import appConfig from 'app-config';
+import Typography from 'src/components/base/Typography/Typography';
+import {TypographyType} from 'src/components/base/Typography/constants';
 
 const styles = StyleSheet.create({
   buttonWrapper: {
@@ -35,7 +37,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginTop: BASE_TITLE_MARGIN,
-    ...appConfig.styles.typography.sub
+    // ...appConfig.styles.typography.sub,
   },
   notifyWrapper: {
     right: -8,
@@ -120,7 +122,12 @@ class Service extends Component {
               animation
             />
           </View>
-          <Text style={[styles.title, titleStyle]}>{service.title}</Text>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            onBackground
+            style={[styles.title, titleStyle]}>
+            {service.title}
+          </Typography>
         </View>
       </Button>
     );

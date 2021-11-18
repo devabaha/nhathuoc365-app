@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   spreadingShadow: {
     top: 55,
-    backgroundColor: hexToRgbA(appConfig.colors.logo.addition, 0.2),
+    backgroundColor: hexToRgba(appConfig.colors.logo.addition, 0.2),
     borderRadius: 7.5,
     width: 15,
     height: 15,

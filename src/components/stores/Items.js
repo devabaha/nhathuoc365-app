@@ -235,8 +235,8 @@ const styles = StyleSheet.create({
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: hexToRgbA('#ffffff', 0.8),
-    // backgroundColor: hexToRgbA("#0eac24", .6),
+    backgroundColor: hexToRgba('#ffffff', 0.8),
+    // backgroundColor: hexToRgba("#0eac24", .6),
     paddingVertical: 2,
     // borderTopLeftRadius: 15,
     // padding: 10,

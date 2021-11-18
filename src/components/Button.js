@@ -1,8 +1,20 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import appConfig from 'app-config';
+import {
+  AppPrimaryButton,
+  FilledTonalButton,
+  FilledButton,
+  AppFilledButton,
+  AppFilledTonalButton,
+  AppOutlinedButton,
+  OutlinedButton,
+} from './base/Button';
+import {Container} from './base';
 
 const Button = ({
+  showBackground,
+
   disabled,
   shadow,
 
@@ -19,12 +31,30 @@ const Button = ({
   iconLeft,
   iconRight,
   children,
+  ...props
 }) => {
   const defaultTitleStyle = [styles.text, titleStyle];
   return (
-    <View style={[styles.container, containerStyle]}>
+    <Container
+      style={[
+        styles.container,
+        !showBackground && styles.hideBackground,
+        containerStyle,
+      ]}>
       {renderBefore}
-      <TouchableOpacity
+      <AppPrimaryButton
+        style={[styles.btn, btnContainerStyle]}
+        titleStyle={defaultTitleStyle}
+        disabled={disabled}
+        shadow={shadow}
+        iconLeft={iconLeft}
+        iconRight={iconRight}
+        renderTitleComponent={renderTitleComponent}
+        onPress={onPress}
+        {...props}>
+        {children || title}
+      </AppPrimaryButton>
+      {/* <TouchableOpacity
         style={[
           styles.btn,
           shadow && styles.shadow,
@@ -40,8 +70,8 @@ const Button = ({
           <Text style={defaultTitleStyle}>{children || title}</Text>
         )}
         {iconRight}
-      </TouchableOpacity>
-    </View>
+      </TouchableOpacity> */}
+    </Container>
   );
 };
 
@@ -56,9 +86,9 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '100%',
-    backgroundColor: appConfig.colors.primary,
+    // backgroundColor: appConfig.colors.primary,
     paddingVertical: 15,
-    borderRadius: 10,
+    // borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -78,10 +108,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   text: {
-    color: '#ffffff',
+    // color: '#ffffff',
     textTransform: 'uppercase',
     fontWeight: '600',
     fontSize: 16,
+  },
+  hideBackground: {
+    backgroundColor: 'transparent',
   },
 });
 

@@ -94,13 +94,13 @@ class Highlight extends Component<SkeletonLoadingProps> {
         const opacity = this.props.highlightOpacity || .4;
         return [
             //@ts-ignore
-            hexToRgbA(color, 0),
+            hexToRgba(color, 0),
             //@ts-ignore
-            hexToRgbA(color, opacity),
+            hexToRgba(color, opacity),
             //@ts-ignore
-            hexToRgbA(color, opacity),
+            hexToRgba(color, opacity),
             //@ts-ignore
-            hexToRgbA(color, 0),
+            hexToRgba(color, 0),
         ]
     }
 

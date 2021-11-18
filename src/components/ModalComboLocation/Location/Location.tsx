@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   containerSelected: {
     //@ts-ignore
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.1),
   },
 });
 

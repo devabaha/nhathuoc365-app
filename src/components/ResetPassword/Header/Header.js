@@ -12,7 +12,7 @@ const Header = () => {
         <Svg style={styles.iconBackground}>
           <Circle
             strokeWidth={10}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.3)}
+            stroke={hexToRgba(DEFAULT_COLOR, 0.3)}
             cx={CENTER_POINT_COOR}
             cy={CENTER_POINT_COOR}
             r="50"
@@ -20,7 +20,7 @@ const Header = () => {
           />
           <Circle
             strokeWidth={3}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.4)}
+            stroke={hexToRgba(DEFAULT_COLOR, 0.4)}
             strokeDasharray={[3, 15]}
             strokeLinecap="round"
             cx={CENTER_POINT_COOR}
@@ -30,7 +30,7 @@ const Header = () => {
           />
           <Circle
             strokeWidth={2.5}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.3)}
+            stroke={hexToRgba(DEFAULT_COLOR, 0.3)}
             cx={13}
             cy={CENTER_POINT_COOR - 8}
             r={8}

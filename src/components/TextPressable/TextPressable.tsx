@@ -7,7 +7,7 @@ import appConfig from 'app-config';
 const styles = StyleSheet.create({
   highlight: {
     // @ts-ignore
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.2),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.2),
   },
 });
 

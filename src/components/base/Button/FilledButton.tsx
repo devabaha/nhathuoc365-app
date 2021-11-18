@@ -1,0 +1,114 @@
+import React, {forwardRef, memo, MutableRefObject, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+
+import {FilledButtonProps} from '.';
+import {Theme} from 'src/Themes/interface';
+
+import {useTheme} from 'src/Themes/Theme.context';
+import Button from './Button';
+import {mergeStyles} from 'src/Themes/helper';
+import {ButtonRoundedType} from './constants';
+
+const createStyles = (theme: Theme) => {
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      backgroundColor: theme.color.persistTextPrimary,
+    },
+    primary: {
+      backgroundColor: theme.color.persistPrimary,
+    },
+    secondary: {
+      backgroundColor: theme.color.persistSecondary,
+    },
+    disabled: {
+      backgroundColor: theme.color.disabled,
+    },
+    shadow: {
+      shadowColor: theme.color.shadow,
+      ...theme.layout.shadow,
+    },
+    [ButtonRoundedType.SMALL]: {
+      borderRadius: theme.layout.borderRadiusSmall,
+    },
+    [ButtonRoundedType.MEDIUM]: {
+      borderRadius: theme.layout.borderRadiusMedium,
+    },
+    [ButtonRoundedType.LARGE]: {
+      borderRadius: theme.layout.borderRadiusLarge,
+    },
+    text: {
+      color: theme.color.onPersistPrimary,
+    },
+    textDisabled: {
+      color: theme.color.onDisabled,
+    },
+  });
+
+  return styles;
+};
+
+const FilledButton = forwardRef(
+  (
+    {
+      titleStyle,
+      style,
+
+      ...props
+    }: FilledButtonProps,
+    ref: MutableRefObject<any>,
+  ) => {
+    const {theme} = useTheme();
+
+    const styles = useMemo(() => {
+      const baseStyles: any = createStyles(theme);
+
+      return baseStyles;
+    }, [theme]);
+
+    const buttonStyles = useMemo(() => {
+      return mergeStyles(
+        [
+          styles.container,
+          props.shadow && styles.shadow,
+          props.rounded && styles[props.rounded],
+          props.primary && styles.primary,
+          props.secondary && styles.secondary,
+          // disabled should be the last overridden style
+          props.disabled && styles.disabled,
+        ],
+        style,
+      );
+    }, [
+      styles,
+      style,
+      props.shadow,
+      props.rounded,
+      props.primary,
+      props.secondary,
+      props.disabled,
+    ]);
+
+    const titleStyles = useMemo(
+      () =>
+        mergeStyles(
+          [styles.text, props.disabled && styles.textDisabled],
+          titleStyle,
+        ),
+      [styles, titleStyle, props.disabled],
+    );
+    console.log(props);
+    return (
+      <Button
+        ref={ref}
+        {...props}
+        style={buttonStyles}
+        titleStyle={titleStyles}
+      />
+    );
+  },
+);
+
+export default memo(FilledButton);

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   mask: {
     flex: 1,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.05),
     borderColor: appConfig.colors.primary,
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.1),
     transform: [{scale: 1.5}],
   },
   titleWrapper: {

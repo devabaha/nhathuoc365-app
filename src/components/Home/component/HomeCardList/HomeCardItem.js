@@ -12,12 +12,23 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import appConfig from 'app-config';
 import {hasVideo} from 'app-helper/product/product';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {TypographyType} from 'src/components/base/Typography/constants';
+import {Card, Typography} from 'src/components/base';
+import { mergeStyles } from 'src/Themes/helper';
 
 class HomeCardItem extends Component {
+  static contextType = ThemeContext;
+
   state = {
     loading: false,
   };
   unmounted = false;
+
+  get theme() {
+    return getTheme(this);
+  }
+
   handlePress = () => {
     if (!!this.props.selfRequest) {
       this.setState({
@@ -37,39 +48,52 @@ class HomeCardItem extends Component {
 
   render() {
     const props = this.props;
+
+    const titleStyle = mergeStyles(styles.title, props.titleStyle);
+
+    const imageBackgroundStyle = mergeStyles([styles.image, {
+      backgroundColor: this.theme.color.contentBackground
+    }], props.imageStyle);
+
     return (
       <View style={[styles.container, this.props.containerStyle]}>
         <TouchableOpacity
+          activeOpacity={0.8}
           disabled={this.state.loading}
           onPress={this.handlePress}
-          style={[styles.containerBtn]}>
-          <ImageBackground
-            style={[styles.image, props.imageStyle]}
-            source={{uri: props.imageUrl}}>
-            {hasVideo(props) && (
-              <View style={styles.videoContainer}>
-                <Icon name="play" style={styles.iconVideo} />
-              </View>
-            )}
-            {this.state.loading && (
-              <Loading color="#fff" containerStyle={styles.loading} />
-            )}
-          </ImageBackground>
-          <View style={[styles.titleWrapper, props.textWrapperStyle]}>
-            <Text numberOfLines={2} style={[styles.title, props.titleStyle]}>
-              {props.title}
-            </Text>
-            {!!props.subTitle && (
-              <Text style={[styles.subTitle, props.subTitleStyle]}>
-                {this.props.iconSubTitle}
-                {!!this.props.iconSubTitle && ` `}
-                <Text style={styles.specialSubTitle}>
-                  {props.specialSubTitle}
+          style={[styles.wrapperBtn]}>
+          <Card style={styles.containerBtn}>
+            <ImageBackground
+              style={imageBackgroundStyle}
+              source={{uri: props.imageUrl}}>
+              {hasVideo(props) && (
+                <View style={styles.videoContainer}>
+                  <Icon name="play" style={styles.iconVideo} />
+                </View>
+              )}
+              {this.state.loading && (
+                <Loading color="#fff" containerStyle={styles.loading} />
+              )}
+            </ImageBackground>
+            <View style={[styles.titleWrapper, props.textWrapperStyle]}>
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                numberOfLines={2}
+                style={titleStyle}>
+                {props.title}
+              </Typography>
+              {!!props.subTitle && (
+                <Text style={[styles.subTitle, props.subTitleStyle]}>
+                  {this.props.iconSubTitle}
+                  {!!this.props.iconSubTitle && ` `}
+                  <Text style={styles.specialSubTitle}>
+                    {props.specialSubTitle}
+                  </Text>
+                  {props.subTitle}
                 </Text>
-                {props.subTitle}
-              </Text>
-            )}
-          </View>
+              )}
+            </View>
+          </Card>
         </TouchableOpacity>
       </View>
     );
@@ -77,10 +101,13 @@ class HomeCardItem extends Component {
 }
 
 const styles = StyleSheet.create({
+  wrapperBtn: {
+    flex: 1,
+  },
   containerBtn: {
     width: 280,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    // backgroundColor: '#fff',
+    // borderRadius: 8,
     flexDirection: 'column',
     flex: 1,
     ...appConfig.styles.shadow,
@@ -103,7 +130,7 @@ const styles = StyleSheet.create({
     // paddingVertical: 15,
   },
   title: {
-    ...appConfig.styles.typography.heading3,
+    // ...appConfig.styles.typography.heading3,
   },
   specialSubTitle: {
     ...appConfig.styles.typography.heading1,

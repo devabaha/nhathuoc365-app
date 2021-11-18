@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   statusContainer: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    backgroundColor: hexToRgbA(appConfig.colors.status.success, 0.1),
+    backgroundColor: hexToRgba(appConfig.colors.status.success, 0.1),
     borderRadius: 4,
   },
   status: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
 
   expiredContainer: {
-    backgroundColor: hexToRgbA(appConfig.colors.status.danger, 0.1),
+    backgroundColor: hexToRgba(appConfig.colors.status.danger, 0.1),
   },
   expired: {
     color: appConfig.colors.status.danger,

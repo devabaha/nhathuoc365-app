@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.15),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.15),
     flexDirection: 'row',
     paddingVertical: 3,
     paddingHorizontal: 5,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   },
 
   removeTagContainer: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.85),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.85),
     margin: -5,
     padding: 3,
     marginLeft: 5,

@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
     width: Util.size.width,
     paddingVertical: 5,
     paddingHorizontal: 20,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 0.05),
     alignItems: 'center',
     justifyContent: 'center',
   },

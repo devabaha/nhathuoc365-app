@@ -284,7 +284,7 @@ class NewPass extends Component {
               styles.address_continue_content,
               {
                 backgroundColor: finish_loading
-                  ? hexToRgbA(DEFAULT_COLOR, 0.6)
+                  ? hexToRgba(DEFAULT_COLOR, 0.6)
                   : DEFAULT_COLOR
               }
             ]}

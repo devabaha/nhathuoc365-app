@@ -340,7 +340,7 @@ global.sub_string = (s, n, a) => {
   return s.substring(0, cut) + '...';
 };
 
-global.hexToRgbA = (hex, opacity) => {
+global.hexToRgba = (hex, opacity) => {
   var c;
   if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
     c = hex.substring(1).split('');

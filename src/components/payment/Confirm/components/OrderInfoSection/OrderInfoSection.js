@@ -101,7 +101,7 @@ const OrderInfoSection = ({
             <View style={styles.cartTypeContainer}>
               <Tag
                 label={paymentStatusView}
-                fill={hexToRgbA(
+                fill={hexToRgba(
                   appConfig.colors.paymentStatus[paymentStatusCode],
                   0.1,
                 )}

@@ -195,7 +195,7 @@ class StoreOrders extends Component {
             <Icon
               name="shopping-basket"
               size={32}
-              color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+              color={hexToRgba(DEFAULT_COLOR, 0.6)}
             />
             <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
 

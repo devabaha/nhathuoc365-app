@@ -60,6 +60,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ModalWholesale from './ModalWholesale';
 import Video from '../Video';
 import MediaCarousel from './MediaCarousel';
+import {ButtonRoundedType} from '../base';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -1324,7 +1325,7 @@ class Item extends Component {
                     onSizeUpdated={this.handleWebviewContentLayout}
                     containerStyle={[
                       {
-                        width: '100%'
+                        width: '100%',
                       },
                       this.state.isWebviewContentCollapsed !== undefined &&
                         !!this.state.isWebviewContentCollapsed &&
@@ -1403,6 +1404,7 @@ class Item extends Component {
                 btnContainerStyle={styles.goToStoreBtn}
                 titleStyle={styles.goToStoreTxt}
                 title={t('goToStore')}
+                rounded={ButtonRoundedType.SMALL}
               />
             </View>
           </Animated.ScrollView>
@@ -1622,7 +1624,7 @@ const styles = StyleSheet.create({
   },
   goToStoreBtn: {
     paddingVertical: 10,
-    borderRadius: 6,
+    // borderRadius: 6,
   },
   goToStoreTxt: {
     fontSize: 14,
@@ -1686,7 +1688,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0.4,
-    backgroundColor: hexToRgbA(LightenColor(appConfig.colors.primary, 20), 0.5),
+    backgroundColor: hexToRgba(LightenColor(appConfig.colors.primary, 20), 0.5),
   },
 
   productsLeftContainer: {},
@@ -1792,7 +1794,7 @@ const styles = StyleSheet.create({
   },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   shortContentItem: {
     ...appConfig.styles.typography.text,

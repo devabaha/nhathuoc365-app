@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(3),
   },
   track: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 1),
+    backgroundColor: hexToRgba(appConfig.colors.primary, 1),
     width: TRACK_CONTENT_WIDTH,
     height: '100%',
   },

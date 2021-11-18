@@ -6,8 +6,15 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import {NotiBadge} from '../Badges';
 import {BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME} from 'src/constants';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {Typography} from '../base';
+import {TypographyType} from '../base/Typography/constants';
+import FoodHubCartButton from '../FoodHubCartButton';
+import {mergeStyles} from 'src/Themes/helper';
 
 class TabIcon extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     iconBundle: PropTypes.string,
     focused: PropTypes.bool,
@@ -26,16 +33,25 @@ class TabIcon extends Component {
     iconSize: 24,
   };
 
+  get theme() {
+    return getTheme(this);
+  }
+
   renderLabel() {
     return (
-      <Text
+      <Typography
+        type={TypographyType.LABEL_EXTRA_SMALL}
         numberOfLines={1}
         style={[
-          this.props.focused ? styles.labelSelected : styles.label,
           styles.labelDefault,
+          {
+            color: this.props.focused
+              ? this.theme.color.primaryHighlight
+              : this.theme.color.iconInactive,
+          },
         ]}>
         {this.props.iconLabel}
-      </Text>
+      </Typography>
     );
   }
 
@@ -44,6 +60,13 @@ class TabIcon extends Component {
     const SVGIconSize = this.props.iconSVGSize || 18;
 
     const Icon = BUNDLE_ICON_SETS[this.props.iconBundle];
+
+    const iconColor = this.props.focused
+      ? this.theme.color.primaryHighlight
+      : this.theme.color.iconInactive;
+
+    const iconStyle = {color: iconColor};
+
     return (
       <View
         style={[
@@ -56,11 +79,11 @@ class TabIcon extends Component {
             height={SVGIconSize}
             // stroke="#888"
             // strokeWidth={this.props.strokeWidth || 2}
-            fill={this.props.focused ? appConfig.colors.primary : '#888'}
+            fill={iconColor}
           />
         ) : (
           <Icon
-            style={this.props.focused ? styles.labelSelected : styles.label}
+            style={iconStyle}
             name={this.props.iconName}
             size={this.props.iconSize}
           />
@@ -83,11 +106,21 @@ class TabIcon extends Component {
   }
 
   render() {
+    const tabIconStyle = mergeStyles(styles.tabIcon, {
+      backgroundColor: this.theme.color.surface,
+      borderColor: this.theme.color.border,
+    });
     return (
-      <View style={styles.tabIcon}>
-        {this.renderIcon()}
-        {this.renderLabel()}
-        {this.renderNotifyCount()}
+      <View style={tabIconStyle}>
+        {this.props.storeIcon ? (
+          <FoodHubCartButton />
+        ) : (
+          <>
+            {this.renderIcon()}
+            {this.renderLabel()}
+            {this.renderNotifyCount()}
+          </>
+        )}
       </View>
     );
   }
@@ -95,6 +128,8 @@ class TabIcon extends Component {
 
 const styles = StyleSheet.create({
   tabIcon: {
+    borderTopWidth: appConfig.device.pixel,
+    width: appConfig.device.width / 5,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -107,10 +142,11 @@ const styles = StyleSheet.create({
     color: '#7f7f7f',
   },
   labelDefault: {
-    fontSize: 10,
+    // fontSize: 10,
     marginTop: 2,
     fontWeight: '400',
     width: '90%',
+    textAlign: 'center',
   },
   iconBox: {
     justifyContent: 'center',
