@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Titles of Pricing and Promotion Section in Confirm by [kienluu612@gmail.com]
+- Titles of Pricing and Promotion Section in Confirm by [kienluu612@gmail.com].
+- [CU-1rx6vh1] History content when searching products by [kienluu612@gmail.com].
 ### Fixed
 - [Android] can not share url in Notify by [lamah.dev@gmail.com].
 
