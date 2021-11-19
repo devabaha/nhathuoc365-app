@@ -190,9 +190,10 @@ const ProgressBar = ({
 
   useCode(() => {
     return [
-      cond(eq(tapState, State.ACTIVE), [
-        set(isStartChangeProgressManually, 1),
+      cond(
+        eq(tapState, State.ACTIVE),
         [
+          set(isStartChangeProgressManually, 1),
           set(
             panPositionX,
             cond(
@@ -206,7 +207,8 @@ const ProgressBar = ({
             ),
           ),
         ],
-      ]),
+      ),
+
       cond(eq(panState, State.BEGAN), [
         // call([panState, longPressState], ([x, y]) =>
         //   console.log('start', x, y),
@@ -269,7 +271,7 @@ const ProgressBar = ({
         ),
       ),
     ];
-  }, [containerWidth]);
+  }, [containerWidth, isFullscreen]);
 
   useCode(() => {
     return [

@@ -38,6 +38,13 @@ export class Video extends Component<VideoProps> {
       });
     }
 
+    if(!nextState.isPlay) {
+      if(this.refYoutubePlayer.current){
+        this.refYoutubePlayer.current.pauseVideo();
+      }
+    }
+
+
     return true;
   }
 

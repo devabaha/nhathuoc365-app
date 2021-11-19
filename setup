@@ -14,17 +14,26 @@ declare src_youtube_iframe="${rn_youtube_iframe}/src";
 declare dist_youtube_iframe="${rn_youtube_iframe}/dist";
 declare js_youtube_iframe="${rn_youtube_iframe}/src/YoutubeIframe.js";
 declare refSign=".*\(() => ({\).*";
-declare webviewInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoLoadedFraction', data: player.getVideoLoadedFraction()}));true;\`";
+declare getVideoLoadedFractionInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoLoadedFraction', data: player.getVideoLoadedFraction()}));true;\`";
+declare getVideoCurrentTimeInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoCurrentTime', data: player.getCurrentTime()}));true;\`";
 declare replaceCode="    () => ({playVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.playVideo),
         pauseVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.pauseVideo),
         getWebViewRef: () => {
             return webViewRef.current;
         },
+        getVideoCurrentTime: () => {
+            eventEmitter.current.removeAllListeners('getVideoCurrentTime');
+            webViewRef.current.injectJavaScript($getVideoCurrentTimeInjectedJs);
+            return new Promise(resolve => {
+                eventEmitter.current.once('getVideoCurrentTime', resolve);
+            });
+        },
         getVideoLoadedFraction: () => {
-            webViewRef.current.injectJavaScript($webviewInjectedJs);
-                    return new Promise(resolve => {
-                        eventEmitter.current.once('getVideoLoadedFraction', resolve);});
-                        },";
+            eventEmitter.current.removeAllListeners('getVideoLoadedFraction');
+            webViewRef.current.injectJavaScript($getVideoLoadedFractionInjectedJs);
+            return new Promise(resolve => {
+                eventEmitter.current.once('getVideoLoadedFraction', resolve);});
+        },";
 sed -i '' "/${refSign}/ s//${replaceCode//$'\n'/}/" $js_youtube_iframe
 cd $rn_youtube_iframe && npm run build && cd -
 

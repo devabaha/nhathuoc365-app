@@ -72,7 +72,8 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   isAnimateFullscreenLandscape = false;
   isUnmounted = false;
 
-  getYoutubeTimerInterval: any = () => {};
+  getYoutubeTimerInterval: any = '';
+  getYoutubeLoadedFractionInterval: any = '';
   animatedFullscreenLandscapeValue = new Animated.Value(
     this.state.isFullscreenLandscape ? 1 : 0,
   );
@@ -163,6 +164,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
   componentWillUnmount() {
     this.isUnmounted = true;
     clearInterval(this.getYoutubeTimerInterval);
+    clearInterval(this.getYoutubeLoadedFractionInterval);
   }
 
   getAdjustedVideoLayout = (
@@ -196,32 +198,45 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
         // So, to make sure it work, minus 1 second if you want to seek to end of the video.
         this.setState({totalTime: totalTime - 1});
 
-        this.getYoutubeTimerInterval = setInterval(async () => {
-          if (!this.refPlayer.current) {
-            clearInterval(this.getYoutubeTimerInterval);
-            return;
-          }
-
-          const currentTime = await this.refPlayer.current.getCurrentTime();
-          if (!this.isUnmounted && currentTime > this.currentTime) {
-            this.setState({currentTime});
-            this.props.onChangeCurrentTime &&
-              this.props.onChangeCurrentTime(currentTime);
-            this.currentTime = 0;
-          }
-
-          this.refPlayer.current
-            .getVideoLoadedFraction()
-            .then((bufferFraction) => {
-              !this.isUnmounted &&
-                !this.isAnimateFullscreenLandscape &&
-                this.setState({bufferTime: bufferFraction * totalTime});
-            });
-        }, 100);
+        this.getCurrentTime();
+        this.getVideoLoadedFraction(totalTime);
       } catch (error) {
         console.log('youtube_iframe_get_timer', error);
       }
     }
+  };
+
+  getCurrentTime = () => {
+    clearInterval(this.getYoutubeTimerInterval);
+    this.getYoutubeTimerInterval = setInterval(async () => {
+      if (!this.refPlayer.current) {
+        clearInterval(this.getYoutubeTimerInterval);
+        return;
+      }
+
+      const currentTime = await this.refPlayer.current.getVideoCurrentTime();
+      if (!this.isUnmounted && currentTime > this.currentTime) {
+        this.setState({currentTime});
+        this.props.onChangeCurrentTime &&
+          this.props.onChangeCurrentTime(currentTime);
+        this.currentTime = 0;
+      }
+    }, 100);
+  };
+
+  getVideoLoadedFraction = (totalTime = this.state.totalTime) => {
+    clearInterval(this.getYoutubeLoadedFractionInterval);
+    this.getYoutubeLoadedFractionInterval = setInterval(async () => {
+      if (!this.refPlayer.current) {
+        clearInterval(this.getYoutubeLoadedFractionInterval);
+        return;
+      }
+
+      const bufferFraction = await this.refPlayer.current.getVideoLoadedFraction();
+      !this.isUnmounted &&
+        !this.isAnimateFullscreenLandscape &&
+        this.setState({bufferTime: bufferFraction * totalTime});
+    }, 100);
   };
 
   /**
@@ -290,16 +305,21 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           this.refPlayer.current.playVideo();
         }
       }
+      this.props.onChangeState && this.props.onChangeState(e);
     });
 
-    if (e === 'playing') {
-      if (this.props.currentTime && this.currentTime && this.state.totalTime) {
-        this.handleProgress(this.currentTime / this.state.totalTime);
-        this.currentTime = 0;
-      }
+    switch (e) {
+      case 'playing':
+        if (
+          this.props.currentTime &&
+          this.currentTime &&
+          this.state.totalTime
+        ) {
+          this.handleProgress(this.currentTime / this.state.totalTime);
+          this.currentTime = 0;
+        }
+        break;
     }
-
-    this.props.onChangeState && this.props.onChangeState(e);
   };
 
   handleReady = () => {
@@ -328,6 +348,7 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     }
     this.currentTime = this.state.currentTime;
     clearInterval(this.getYoutubeTimerInterval);
+    clearInterval(this.getYoutubeLoadedFractionInterval);
     this.setState((prevState: any) => {
       const isFullscreen = !prevState.isFullscreen;
       const isFullscreenLandscape = isFullscreen

@@ -147,7 +147,7 @@ const Controls = ({
     if (isPlayProps !== !!isPlay) {
       setPlay(isPlayProps ? 1 : 0);
     }
-  }, [isPlayProps]);
+  }, [isPlayProps, isPlay]);
 
   useEffect(() => {
     if (isEndProps !== !!isEnd || !!isEndProps) {
@@ -189,7 +189,7 @@ const Controls = ({
       clearTimeout(timeoutHideControls.current);
     }
 
-    () => {
+    return () => {
       clearTimeout(timeoutHideControls.current);
     };
   }, [isControlsVisible, isPlay]);
