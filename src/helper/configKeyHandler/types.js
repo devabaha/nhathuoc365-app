@@ -50,4 +50,6 @@ export const CONFIG_KEY = {
   HIDE_WALLET_ACCOUNT_KEY: 'hide_wallet_account_key',
 
   HIDE_VOUCHERS_ACCOUNT_KEY: 'hide_vouchers_account_key',
+
+  HIDE_AFFILIATE_ACCOUNT_KEY: 'hide_affiliate_account_key',
 };

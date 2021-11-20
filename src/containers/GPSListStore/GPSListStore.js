@@ -207,6 +207,52 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     }
   };
 
+  const formatStoreData = (storeType, store) => {
+    const defaultStoreData = {
+      disabled: false,
+      onPress: () => {},
+      name: store.name,
+      image: '',
+      address: store.address,
+      phone: store.phone,
+      lat: store.lat,
+      lng: store.lng,
+      actionBtnTitle: t('goShopping'),
+      actionBtnIconName: 'ios-cart-sharp',
+      onPressActionBtn: undefined,
+    };
+
+    switch (storeType) {
+      case GPS_LIST_TYPE.GPS_LIST_SITE:
+        return {
+          ...defaultStoreData,
+          onPress: () => handlePressSite(store),
+          image: store.image,
+          onPressActionBtn: () => handlePressSite(store),
+        };
+      case GPS_LIST_TYPE.GPS_LIST_STORE:
+        if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
+          return {
+            ...defaultStoreData,
+            disabled: true,
+            image: store.image_url,
+            actionBtnTitle: t('map'),
+            actionBtnIconName: 'ios-map-sharp',
+          };
+        } else
+          return {
+            ...defaultStoreData,
+            disabled: false,
+            onPress: () => handlePressStore(store),
+            image: store.image_url,
+            phone: null,
+            onPressActionBtn: () => handlePressStore(store),
+          };
+      default:
+        return defaultStoreData;
+    }
+  };
+
   const getListStore = async (data) => {
     setLoading(true);
 
@@ -417,48 +463,31 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
 
   const renderStore = ({item: store}) => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
+    const formattedStore = formatStoreData(type, store);
 
     return (
       <TouchableOpacity
         activeOpacity={0.5}
-        disabled={
-          type === GPS_LIST_TYPE.GPS_LIST_STORE
-            ? !isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)
-            : false
-        }
-        onPress={
-          type === GPS_LIST_TYPE.GPS_LIST_STORE
-            ? () => handlePressStore(store)
-            : () => handlePressSite(store)
-        }>
+        disabled={formattedStore.disabled}
+        onPress={formattedStore.onPress}>
         <StoreItem
-          name={store.name}
-          image={
-            type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? store.image_url
-              : store.image
-          }
-          address={store.address}
-          phone={store.phone}
-          lat={store.lat}
-          lng={store.lng}
+          name={formattedStore.name}
+          image={formattedStore.image}
+          address={formattedStore.address}
+          phone={formattedStore.phone}
+          lat={formattedStore.lat}
+          lng={formattedStore.lng}
           enableDistance
           requestLocationLoading={requestLocationLoading}
-          distance={calculateDiffDistance(store.lng, store.lat)}
+          distance={calculateDiffDistance(
+            formattedStore.lng,
+            formattedStore.lat,
+          )}
           disabledDistanceStyle={disabledDistanceStyle}
-          actionBtnTitle={
-            type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? t('map')
-              : t('goShopping')
-          }
-          actionBtnIconName={
-            type === GPS_LIST_TYPE.GPS_LIST_SITE && 'ios-cart-sharp'
-          }
-          onPressActionBtn={
-            type === GPS_LIST_TYPE.GPS_LIST_SITE
-              ? () => handlePressSite(store)
-              : null
-          }
+          actionBtnTitle={formattedStore.actionBtnTitle}
+          actionBtnIconName={formattedStore.actionBtnIconName}
+          onPressActionBtn={formattedStore.onPressActionBtn}
+          pressable={formattedStore.disabled}
         />
       </TouchableOpacity>
     );

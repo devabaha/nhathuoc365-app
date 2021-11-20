@@ -257,7 +257,9 @@ class Account extends Component {
           </Text>
         ),
         desc: user_info.text_invite,
-        isHidden: !user_info.username,
+        isHidden:
+          !user_info.username ||
+          isConfigActive(CONFIG_KEY.HIDE_AFFILIATE_ACCOUNT_KEY),
         rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.affiliate({
@@ -439,7 +441,8 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {

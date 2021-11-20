@@ -289,7 +289,7 @@ class Search extends Component {
   _goItem(item) {
     //STORE_SEARCH_KEY
 
-    this._updateHistory(item);
+    this._updateHistory(this.state.searchValue);
 
     if (this.props.from_item) {
       Actions.pop();
@@ -308,30 +308,39 @@ class Search extends Component {
 
   _insertName(item) {
     Actions.refresh({
-      searchValue: item.name,
+      searchValue: item.keyword,
     });
     this.setState({
-      searchValue: item.name,
+      searchValue: item.keyword,
     });
   }
 
   _onTouchHistory(item) {
     this.setState({isShowFullHistory: false});
     this._insertName(item);
+    this.onSearch(item.keyword);
 
-    this.onSearch(item.name);
+    this.setState((prevState) => {
+      const histories = [...prevState.history];
+      const pressedItemIndex = prevState.history.findIndex(
+        (h) => h.keyword === item.keyword,
+      );
+      const pressedItem = prevState.history[pressedItemIndex];
+      histories.splice(pressedItemIndex, 1);
+      histories.push(pressedItem);
+      return {history: histories};
+    });
   }
 
-  _updateHistory(item) {
+  _updateHistory(keyword) {
     const isExisted =
       this.state.history?.length &&
-      this.state.history.find((history) => history.id === item.id);
+      this.state.history.find((history) => {
+        return history.keyword === keyword;
+      });
     if (isExisted || !this.state.searchValue) return;
 
-    item = {
-      id: item.id,
-      name: item.name,
-    };
+    const item = {keyword: keyword};
 
     // load
     storage
@@ -378,11 +387,12 @@ class Search extends Component {
   removeHistory = (history) => {
     if (!this.state.history?.length) return;
     history = {
-      id: history.id,
-      name: history.name,
+      keyword: history.keyword,
     };
 
-    const histories = this.state.history.filter((h) => h.name !== history.name);
+    const histories = this.state.history.filter(
+      (h) => h.keyword !== history.keyword,
+    );
     this._saveHistory(histories);
   };
 
@@ -622,7 +632,7 @@ class Search extends Component {
       <>
         <ModernList
           headerTitle="Lịch sử tìm kiếm"
-          mainKey="name"
+          mainKey="keyword"
           data={data}
           onPressItem={(item) => this._onTouchHistory(item)}
           containerStyle={{marginTop: 10}}

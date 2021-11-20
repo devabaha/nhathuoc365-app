@@ -27,7 +27,7 @@
       "status": "Trạng thái",
       "recheck": "Thông tin này đã chính xác?",
       "deliveryTitle": "Thông tin đơn giao vận",
-      "POSTitle" : "Thông tin đơn POS"
+      "POSTitle": "Thông tin đơn POS"
     },
     "address": {
       "title": "Địa chỉ giao hàng"
@@ -59,12 +59,12 @@
     },
     "payment": {
       "price": {
-        "temp": "Giá tạm tính",
-        "total": "Thành tiền"
+        "temp": "Tổng tiền hàng",
+        "total": "Tổng thanh toán"
       },
       "discount": {
-        "title": "Khuyến mãi",
-        "add": "Thêm khuyến mãi",
+        "title": "Voucher",
+        "add": "Chọn hoặc nhập mã",
         "prefix": "Giảm"
       }
     },

@@ -23,9 +23,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#eee',
   },
-  infoContainer: {
+  infoWrapper: {
     paddingLeft: 15,
     justifyContent: 'space-between',
+  },
+  infoContainer: {
+    flexDirection: 'row',
+  },
+  infoContentContainer: {
+    flex: 1,
   },
   title: {
     fontWeight: '500',
@@ -35,6 +41,13 @@ const styles = StyleSheet.create({
   description: {
     color: '#666',
     marginTop: 3,
+  },
+  rightIconContainer: {
+    justifyContent: 'center',
+    paddingLeft: 5,
+  },
+  rightIcon: {
+    fontSize: 20,
   },
   mapInfoContainer: {
     justifyContent: 'space-between',
@@ -102,9 +115,19 @@ const StoreItem = ({
   enableDistance = false,
   requestLocationLoading,
   disabledDistanceStyle,
+  actionBtnIconName,
+  onPressActionBtn,
+  pressable,
 }) => {
   const {t} = useTranslation();
-  
+
+  if (!actionBtnIconName) {
+    actionBtnIconName = 'ios-map-sharp';
+  }
+  if (!actionBtnTitle) {
+    actionBtnTitle = t('map');
+  }
+
   const handleCall = () => {
     if (phone && phone != '') {
       Communications.phonecall(phone, true);
@@ -117,10 +140,21 @@ const StoreItem = ({
     <Container row style={styles.storeContainer}>
       <Image source={{uri: image}} style={styles.image} />
 
-      <Container flex centerVertical={false} style={styles.infoContainer}>
-        <Container centerVertical={false}>
-          <Text style={styles.title}>{name}</Text>
-          <Text style={styles.description}>{address}</Text>
+      <Container flex centerVertical={false} style={styles.infoWrapper}>
+        <Container style={styles.infoContainer} centerVertical={false}>
+          <View style={styles.infoContentContainer}>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.description}>{address}</Text>
+          </View>
+
+          {!pressable && (
+            <View style={styles.rightIconContainer}>
+              <Ionicons
+                style={styles.rightIcon}
+                name="ios-chevron-forward-sharp"
+              />
+            </View>
+          )}
         </Container>
 
         <Container flex row style={styles.mapInfoContainer}>
@@ -165,10 +199,12 @@ const StoreItem = ({
             <Container style={styles.btnWrapper}>
               <Button
                 containerStyle={styles.openMapContainer}
-                onPress={() => openMap(lat, lng)}>
+                onPress={() => {
+                  !!onPressActionBtn ? onPressActionBtn() : openMap(lat, lng);
+                }}>
                 <Container row style={styles.openMapBtn}>
-                  <Ionicons name="ios-map-sharp" style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>{actionBtnTitle || t('map')}</Text>
+                  <Ionicons name={actionBtnIconName} style={styles.mapIcon} />
+                  <Text style={styles.openMapTxt}>{actionBtnTitle}</Text>
                 </Container>
               </Button>
             </Container>

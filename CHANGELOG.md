@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.2] - 2021-11-20
+### Added
+- [CU-1tef5vn] hide_affiliate_account_key in Account by [lamah.dev@gmaill.com].
+### Changed
+- Titles of Pricing and Promotion Section in Confirm by [kienluu612@gmail.com]
+- [CU-1t2wc22] UI in GPSListStore by [kienluu612@gmail.com]
+- [CU-1rx6vh1] History content when searching products by [kienluu612@gmail.com].
+### Fixed
+- [Android] can not share url in Notify by [lamah.dev@gmail.com].
+
 ## [r12.2.1] - 2021-11-03
 ### Added
 - [CU-m83pww] Integrate VNPAY SDK by [minhnguyenit14@gmail.com].
