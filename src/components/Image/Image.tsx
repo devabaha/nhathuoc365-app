@@ -19,7 +19,7 @@ const Image = ({
   containerStyle = {},
   onLoadError = () => {},
   onLoadEnd = () => {},
-  renderError = () => {},
+  renderError,
   ...props
 }: ImageProps) => {
   const [isError, setError] = useState(false);
