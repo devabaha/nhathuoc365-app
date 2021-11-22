@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.3] - 2021-11-22
+### Fixed
+- [Android] [CU-1tm27u3] Can not open link in Chat by [lamah.dev@gmail.com].
+
 ## [r12.2.2] - 2021-11-20
 ### Added
 - [CU-1tef5vn] hide_affiliate_account_key in Account by [lamah.dev@gmaill.com].
