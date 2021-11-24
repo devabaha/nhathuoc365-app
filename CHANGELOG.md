@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.4] - 2021-11-24
+### Added
+- [CU-1vdc9bt] [iOS] Language support on the App Store by [lamah.dev@gmail.com].
+
 ## [r12.2.3] - 2021-11-22
 ### Fixed
-- [Android] [CU-1tm27u3] Can not open link in Chat by [lamah.dev@gmail.com].
+- [CU-1tm27u3] [Android] Can not open link in Chat by [lamah.dev@gmail.com].
 
 ## [r12.2.2] - 2021-11-20
 ### Added
