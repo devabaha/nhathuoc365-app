@@ -177,6 +177,8 @@ declare info_plist_path="$root_path/ios/my_food_new/Info.plist"
 declare entitlements_path="$root_path/ios/my_food_new/my_food_new.entitlements"
 declare xcodeproj_path="$root_path/ios/my_food_new.xcodeproj/project.pbxproj"
 declare app_delegate_path="$root_path/ios/my_food_new/AppDelegate.m"
+declare en_info_plist_strings_path="$root_path/ios/en.lproj/InfoPlist.strings"
+declare vi_info_plist_strings_path="$root_path/ios/vi.lproj/InfoPlist.strings"
 
 
 #_____ J.S
@@ -223,7 +225,7 @@ replace_string "$current_version_name" "$version_name" "$app_gradle_build_path"
 
 replace_string "$current_bundle_id" "$bundle_id" "$gradle_properties_path" "$buck_path" "$app_gradle_build_path" "$manifest_path" "$main_activity_path" "$main_application_path" "$info_plist_path" "$xcodeproj_path" "$app_delegate_path"
 
-replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path"
+replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path" "$en_info_plist_strings_path" "$vi_info_plist_strings_path"
 replace_string "$current_app_name_show" "$app_name_show" "$constant_path"
 replace_string "$current_app_name" "$app_name" "$constant_path"
 replace_string "$current_email" "$email" "$constant_path"
