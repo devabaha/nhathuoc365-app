@@ -629,7 +629,6 @@ const styles = StyleSheet.create({
   tabBarStyle: {
     borderTopWidth: 0,
     borderColor: '#cccccc',
-    backgroundColor: '#ffffff',
     opacity: 1,
     shadowColor: 'black',
     shadowOffset: {
@@ -639,6 +638,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOpacity: 0.3,
     elevation: 2,
+    height: 44 + appConfig.device.bottomSpace,
   },
   content: {
     width: Util.size.width,
@@ -741,6 +741,7 @@ class RootRouter extends Component {
                   // activeBackgroundColor={this.theme.color.surface}
                   // inactiveBackgroundColor={this.theme.color.surface}
                   tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
+                  safeAreaInset={{bottom: 'never'}}
                   {...navBarConfig}>
                   {/* ================ HOME TAB ================ */}
                   <Stack
@@ -779,8 +780,7 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={TabIcon}
-                    storeIcon
-                    >
+                    storeIcon>
                     <Scene component={() => null} />
                   </Stack>
 

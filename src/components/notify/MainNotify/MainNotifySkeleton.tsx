@@ -6,12 +6,11 @@ import {
   SKELETON_COLOR,
 } from 'src/components/SkeletonLoading/constants';
 import appConfig from 'app-config';
-import {Container} from 'src/components/Layout';
+import Container from 'src/components/base/Container';
+import Skeleton from 'src/components/base/Skeleton';
 
 const styles = StyleSheet.create({
-  shimmer: {
-    backgroundColor: SKELETON_COLOR,
-  },
+  shimmer: {},
   container: {},
   contentContainer: {
     width: appConfig.device.width,
@@ -23,7 +22,7 @@ const styles = StyleSheet.create({
   },
 
   block: {
-    backgroundColor: CONTENT_SKELETON_COLOR,
+    // backgroundColor: CONTENT_SKELETON_COLOR,
   },
 
   image: {
@@ -56,11 +55,11 @@ const MainNotifySkeleton = ({length = 10, useList = true}) => {
   const renderItem = (item, index) => {
     return (
       <Container row key={index} style={styles.itemContainer}>
-        <View style={[styles.block, styles.image]} />
-        <Container flex centerVertical={false}>
-          <View style={[styles.block, styles.title]} />
-          <View style={[styles.block, styles.subTitle]} />
-          <View style={[styles.block, styles.description]} />
+        <Skeleton content style={[styles.block, styles.image]} />
+        <Container flex>
+          <Skeleton content style={[styles.block, styles.title]} />
+          <Skeleton content style={[styles.block, styles.subTitle]} />
+          <Skeleton content style={[styles.block, styles.description]} />
         </Container>
       </Container>
     );

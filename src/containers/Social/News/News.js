@@ -8,7 +8,7 @@ import {TabView, TabBar} from 'react-native-tab-view';
 import {Actions} from 'react-native-router-flux';
 import store from 'app-store';
 import {reaction} from 'mobx';
-import Button from 'react-native-button';
+// import Button from 'react-native-button';
 
 // components
 import EventTracker from 'app-helper/EventTracker';
@@ -18,6 +18,20 @@ import NewsScene from './NewsScene';
 import {APIRequest} from 'src/network/Entity';
 import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
 import NoResult from 'src/components/NoResult';
+import {
+  getTheme,
+  ThemeContext,
+  updateNavbarTheme,
+} from 'src/Themes/Theme.context';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
+import {
+  AppFilledTonalButton,
+  BaseButton,
+  FilledTonalButton,
+} from 'src/components/base/Button';
+import {Container, Typography, TypographyType} from 'src/components/base';
+import {mergeStyles} from 'src/Themes/helper';
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 
 const MAX_TAB_ITEMS_PER_ROW = 3.5;
 
@@ -28,30 +42,32 @@ const styles = StyleSheet.create({
   },
 
   tabBarContainer: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     paddingHorizontal: 0,
     ...elevationShadowStyle(5),
   },
   tabBarLabel: {
-    minWidth: '100%',
+    // minWidth: '100%',
     flex: appConfig.device.isIOS ? undefined : 1,
-    color: '#333',
+    // color: '#333',
     textAlignVertical: 'center',
     textAlign: 'center',
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     paddingVertical: 10,
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
-    color: appConfig.colors.primary,
+    // color: appConfig.colors.primary,
   },
   indicatorStyle: {
-    backgroundColor: appConfig.colors.primary,
+    // backgroundColor: appConfig.colors.primary,
     height: 2,
   },
 });
 
 class News extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     indexTab: 0,
   };
@@ -83,6 +99,12 @@ class News extends Component {
     this.getListNewsCategoryRequest = new APIRequest();
     this.requests = [this.getListNewsCategoryRequest];
     this.jumpTo = null;
+
+    this.updateNavBarDisposer = () => {};
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -93,6 +115,10 @@ class News extends Component {
     });
 
     this.getListNewsCategory();
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
 
     store.getNotify();
     this.eventTracker.logCurrentView();
@@ -102,6 +128,7 @@ class News extends Component {
     cancelRequests(this.requests);
     this.updateNewsDisposer();
     this.updateSelectedTabIndex();
+    this.updateNavBarDisposer();
     store.resetSocialNews();
     this.eventTracker.clearTracking();
   }
@@ -178,18 +205,23 @@ class News extends Component {
     this.setState({index});
   };
 
-  renderTabBarLabel(props) {
-    const {
-      route: {title, key},
-    } = props;
-    const focused = key === this.state.index;
+  getLabelStyle = (focused) => {
+    return [
+      styles.tabBarLabel,
+      focused
+        ? [styles.tabBarLabelActive, {color: this.theme.color.primary}]
+        : {color: this.theme.color.onSurface},
+    ];
+  };
 
+  renderTabBarLabel(title, focused) {
     return (
-      <Text
+      <Typography
+        type={TypographyType.LABEL_MEDIUM}
         numberOfLines={2}
-        style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}>
+        style={this.getLabelStyle(focused)}>
         {title}
-      </Text>
+      </Typography>
     );
   }
 
@@ -204,27 +236,45 @@ class News extends Component {
       numberOfTabs <= MAX_TAB_ITEMS_PER_ROW
         ? appConfig.device.width / numberOfTabs
         : appConfig.device.width / MAX_TAB_ITEMS_PER_ROW;
+
     return (
       <TabBar
         {...props}
         renderTabBarItem={(props) => {
+          const {
+            route: {title, key},
+          } = props;
+          const focused = key === this.state.index;
+
           return (
-            <Button
-              key={props.key}
-              onPress={() => this.handleIndexChange(props.route.key, true)}
-              containerStyle={{
-                minHeight: 48,
-                width: tabWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {this.renderTabBarLabel(props)}
-            </Button>
+            <BaseButton
+              key={key}
+              onPress={() => this.handleIndexChange(key, true)}
+              style={[
+                {
+                  minHeight: 48,
+                  width: tabWidth,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+                focused && {backgroundColor: this.theme.color.surfaceHighlight},
+              ]}>
+              {this.renderTabBarLabel(title, focused)}
+            </BaseButton>
           );
         }}
-        indicatorStyle={styles.indicatorStyle}
+        indicatorContainerStyle={{zIndex: 1}}
+        indicatorStyle={[
+          {
+            backgroundColor: this.theme.color.primary,
+            height: this.theme.id === BASE_DARK_THEME_ID ? 0 : 2,
+          },
+        ]}
         tabStyle={{width: tabWidth}}
-        style={styles.tabBarContainer}
+        style={[
+          styles.tabBarContainer,
+          {backgroundColor: this.theme.color.surface},
+        ]}
         scrollEnabled
       />
     );
@@ -240,7 +290,7 @@ class News extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         {this.state.loading && <CategoriesSkeleton />}
         {!!this.state.routes.length ? (
           <TabView
@@ -258,7 +308,7 @@ class News extends Component {
             <NoResult iconName="bell-off" message="Chưa có tin tức" />
           )
         )}
-      </View>
+      </ScreenWrapper>
     );
   }
 }

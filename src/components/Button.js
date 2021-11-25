@@ -9,35 +9,39 @@ import {
   AppFilledTonalButton,
   AppOutlinedButton,
   OutlinedButton,
+  BaseButton,
 } from './base/Button';
-import {Container} from './base';
+import {Container, TypographyType} from './base';
+import {useTheme} from 'src/Themes/Theme.context';
 
 const Button = ({
-  showBackground,
+  showBackground = false,
 
-  disabled,
-  shadow,
+  disabled = false,
+  shadow = false,
 
-  title,
+  title = '',
 
-  containerStyle,
-  btnContainerStyle,
-  titleStyle,
+  containerStyle = {},
+  btnContainerStyle = {},
+  titleStyle = {},
 
-  renderTitleComponent,
-  renderBefore,
-  onPress,
+  renderTitleComponent = undefined,
+  renderBefore = undefined,
+  onPress = undefined,
 
-  iconLeft,
-  iconRight,
-  children,
+  iconLeft = null,
+  iconRight = null,
+  children = null,
   ...props
 }) => {
+  const {theme} = useTheme();
   const defaultTitleStyle = [styles.text, titleStyle];
   return (
     <Container
       style={[
         styles.container,
+        {backgroundColor: theme.color.surface},
         !showBackground && styles.hideBackground,
         containerStyle,
       ]}>
@@ -51,6 +55,10 @@ const Button = ({
         iconRight={iconRight}
         renderTitleComponent={renderTitleComponent}
         onPress={onPress}
+        secondary
+        typoProps={{
+          type: TypographyType.LABEL_SMALL,
+        }}
         {...props}>
         {children || title}
       </AppPrimaryButton>
@@ -81,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     alignSelf: 'flex-end',
   },
   btn: {

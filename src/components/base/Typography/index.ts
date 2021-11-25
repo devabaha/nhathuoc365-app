@@ -1,5 +1,7 @@
-import React from 'react';
 import {TextProps} from 'react-native';
+
+import {Children} from '..';
+
 import {TypographyType} from './constants';
 
 export {default} from './Typography';
@@ -12,6 +14,10 @@ export type TypoType =
   | TypographyType.LABEL_LARGE
   | TypographyType.LABEL_MEDIUM
   | TypographyType.LABEL_SMALL
+  | TypographyType.LABEL_EXTRA_SMALL
+  | TypographyType.DESCRIPTION_SMALL_PRIMARY
+  | TypographyType.DESCRIPTION_MEDIUM
+  | TypographyType.DESCRIPTION_SMALL
   | TypographyType.BUTTON_TEXT;
 
 export interface TypographyProps extends TextProps {
@@ -22,5 +28,5 @@ export interface TypographyProps extends TextProps {
   onSurface?: boolean;
   onBackground?: boolean;
 
-  children?: React.ReactNode | React.ReactNode[];
+  children?: Children;
 }

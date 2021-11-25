@@ -11,6 +11,7 @@ import {Typography} from '../base';
 import {TypographyType} from '../base/Typography/constants';
 import FoodHubCartButton from '../FoodHubCartButton';
 import {mergeStyles} from 'src/Themes/helper';
+import Icon from '../base/Icon';
 
 class TabIcon extends Component {
   static contextType = ThemeContext;
@@ -59,7 +60,7 @@ class TabIcon extends Component {
     const SVGIcon = this.props.iconSVG;
     const SVGIconSize = this.props.iconSVGSize || 18;
 
-    const Icon = BUNDLE_ICON_SETS[this.props.iconBundle];
+    // const Icon = BUNDLE_ICON_SETS[this.props.iconBundle];
 
     const iconColor = this.props.focused
       ? this.theme.color.primaryHighlight
@@ -83,6 +84,7 @@ class TabIcon extends Component {
           />
         ) : (
           <Icon
+            bundle={this.props.iconBundle}
             style={iconStyle}
             name={this.props.iconName}
             size={this.props.iconSize}
@@ -129,11 +131,12 @@ class TabIcon extends Component {
 const styles = StyleSheet.create({
   tabIcon: {
     borderTopWidth: appConfig.device.pixel,
-    width: appConfig.device.width / 5,
+    width: appConfig.device.width / 5 + 1,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    paddingBottom: appConfig.device.bottomSpace
   },
   labelSelected: {
     color: appConfig.colors.primary,

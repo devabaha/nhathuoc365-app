@@ -1,5 +1,7 @@
+import {lightenColor} from 'app-helper';
+
 export const CORE_COMMON = {
-  // GREY (Nature)
+  // GREY
   grey50: '#FCFCFC',
   grey100: '#F7F7F7',
   grey200: '#F2F2F2',
@@ -11,7 +13,7 @@ export const CORE_COMMON = {
   grey800: '#4C4C4C',
   grey900: '#2A2A2A',
 
-  // GREEN (nature)
+  // GREEN
   green50: '#e9f6e9',
   green100: '#cae9c8',
   green200: '#a9dba5',
@@ -23,7 +25,7 @@ export const CORE_COMMON = {
   green800: '#30842a',
   green900: '#196516',
 
-  // BLUE (nature)
+  // BLUE
   blue50: '#e2f1ff',
   blue100: '#b9dcff',
   blue200: '#8ac6ff',
@@ -35,11 +37,14 @@ export const CORE_COMMON = {
   blue800: '#1a5ad7',
   blue900: '#2138b8',
 
-  // BLACK (nature)
+  // BLACK
   black: '#000000',
 
-  // WHITE (nature)
+  // WHITE
   white: '#FFFFFF',
+
+  // BLUE GREY
+  blueGray: '#D3DCE2',
 };
 
 export const CORE = {
@@ -48,7 +53,6 @@ export const CORE = {
   // PRIMARY
   primary: '#812384',
   // —— Primary variants ——
-  primary20: '#e6d3e6',
   primaryLight: '#B354B4',
   primaryDark: '#510057',
   onPrimary: '#FFFFFF',
@@ -56,7 +60,6 @@ export const CORE = {
   // SECONDARY
   secondary: '#268423',
   // —— Secondary variants ——
-  secondary20: '#d4e6d3',
   secondaryLight: '#5cb551',
   secondaryDark: '#005600',
   onSecondary: '#FFFFFF',
@@ -68,4 +71,7 @@ export const CORE = {
   onBackground: '#000000',
   surface: '#FFFFFF',
   onSurface: '#000000',
+
+  skeletonContainer: CORE_COMMON.blueGray,
+  skeletonContent: lightenColor(CORE_COMMON.blueGray, -12),
 };

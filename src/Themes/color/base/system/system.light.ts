@@ -1,18 +1,18 @@
-import {hexToRgba} from 'app-helper';
+import {hexToRgba, rgbaToRgb} from 'app-helper';
 import {CORE} from '../core';
 
 const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: CORE.primary,
   // —— Primary variants ——
-  primary20: CORE.primary20,
+  primary20: rgbaToRgb(hexToRgba(CORE.primary, .2)),
   primaryLight: CORE.primaryLight,
   primaryDark: CORE.primaryDark,
   onPrimary: CORE.onPrimary,
 
   secondary: CORE.secondary,
   // —— Secondary variants ——
-  secondary20: CORE.secondary20,
+  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, .2)),
   secondaryLight: CORE.secondaryLight,
   secondaryDark: CORE.secondaryDark,
   onSecondary: CORE.onSecondary,
@@ -39,19 +39,8 @@ export const SYSTEM_LIGHT = {
   overlay60: hexToRgba(CORE.black, 0.6),
   overlay30: hexToRgba(CORE.black, 0.3),
   onOverlay: CORE.white,
-  underlayColor: CORE.grey200, // use for touchableHighlight
+  underlay: CORE.grey200, // use for touchableHighlight
   shadow: CORE.black,
-  //   shadow: {
-  //   shadowColor: CORE.black,
-  //   shadowOffset: {
-  //     width: 0,
-  //     height: 2.25,
-  //   },
-  //   shadowOpacity: 0.161,
-  //   shadowRadius: 3,
-
-  //   elevation: 5,
-  // },
 
   // statusBarBackground: android ? primaryDark : transparent,
   // statusBarStyle: contrast with statusBarBackground,
@@ -67,13 +56,15 @@ export const SYSTEM_LIGHT = {
   onPersistSecondary: CORE.onSecondary,
 
   primaryHighlight: SYSTEM_COMMON.primary,
-  secondaryHighlight: SYSTEM_COMMON.primary,
+  secondaryHighlight: SYSTEM_COMMON.secondary,
+  surfaceHighlight: SYSTEM_COMMON.surface,
 
   // TEXT/ ICON COLOR
   // for text in general, still can use others color like onPrimary and onSecondary for specific purpose.
   persistTextPrimary: SYSTEM_COMMON.persistOnSurface,
   textPrimary: SYSTEM_COMMON.onSurface,
   textSecondary: SYSTEM_COMMON.neutral,
+  textInactive: CORE.grey600,
 
   iconInactive: CORE.grey600,
 };

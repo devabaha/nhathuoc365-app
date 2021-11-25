@@ -1,13 +1,21 @@
-import React, {forwardRef, memo, MutableRefObject, useMemo} from 'react';
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useMemo,
+} from 'react';
 import {StyleSheet} from 'react-native';
 
 import {FilledButtonProps} from '.';
+import {Ref} from '..';
 import {Theme} from 'src/Themes/interface';
 
 import {useTheme} from 'src/Themes/Theme.context';
-import Button from './Button';
 import {mergeStyles} from 'src/Themes/helper';
+
 import {ButtonRoundedType} from './constants';
+
+import Button from './Button';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -58,7 +66,7 @@ const FilledButton = forwardRef(
 
       ...props
     }: FilledButtonProps,
-    ref: MutableRefObject<any>,
+    ref: Ref,
   ) => {
     const {theme} = useTheme();
 
@@ -99,13 +107,20 @@ const FilledButton = forwardRef(
         ),
       [styles, titleStyle, props.disabled],
     );
-    console.log(props);
+
+    const renderTitleComponent = useCallback(() => {
+      return props.renderTitleComponent(titleStyles, buttonStyles);
+    }, [titleStyles, buttonStyles]);
+
     return (
       <Button
         ref={ref}
         {...props}
         style={buttonStyles}
         titleStyle={titleStyles}
+        renderTitleComponent={
+          props.renderTitleComponent && renderTitleComponent
+        }
       />
     );
   },

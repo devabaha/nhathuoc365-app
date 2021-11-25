@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  RefreshControl,
+  // RefreshControl,
   Alert,
   Picker,
   Easing,
@@ -38,6 +38,8 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import {openLink} from 'app-helper';
+import ScreenWrapper from '../base/ScreenWrapper';
+import RefreshControl from '../base/RefreshControl';
 
 const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
@@ -439,7 +441,8 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {
@@ -1084,7 +1087,7 @@ class Account extends Component {
     const siteContentValue = getValueFromConfigKey(CONFIG_KEY.SITE_CONTENT_KEY);
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         <ScrollView
           ref={(ref) => (this.refs_account = ref)}
           refreshControl={
@@ -1092,6 +1095,10 @@ class Account extends Component {
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh.bind(this)}
             />
+            // <RefreshControl
+            //   refreshing={this.state.refreshing}
+            //   onRefresh={this.onRefresh.bind(this)}
+            // />
           }>
           <>
             {is_login ? (
@@ -1278,7 +1285,7 @@ class Account extends Component {
           active={this.state.sticker_flag}
           message={t('avatarPicker.messageUpdateSuccessfully')}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }

@@ -1,7 +1,8 @@
-import React, {forwardRef, memo, MutableRefObject, useMemo} from 'react';
+import React, {forwardRef, memo, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
 import {FilledButtonProps} from '.';
+import {Ref} from '..';
 import {Theme} from 'src/Themes/interface';
 
 import {useTheme} from 'src/Themes/Theme.context';
@@ -46,7 +47,7 @@ const AppPrimaryButton = forwardRef(
 
       ...props
     }: FilledButtonProps,
-    ref: MutableRefObject<any>,
+    ref: Ref,
   ) => {
     const {theme} = useTheme();
 
@@ -60,14 +61,14 @@ const AppPrimaryButton = forwardRef(
       return mergeStyles([styles.container], style);
     }, [styles, style]);
 
-    const titleStyles = [styles.text, titleStyle];
+    const titleStyles = mergeStyles(styles.text, titleStyle);
 
     return (
       <FilledButton
-        ref={ref}
         secondary
         rounded={ButtonRoundedType.MEDIUM}
         {...props}
+        ref={ref}
         style={buttonStyles}
         titleStyle={titleStyles}
       />

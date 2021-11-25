@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Animated, Easing } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SkeletonLoadingProps } from '.';
+import Skeleton from '../base/Skeleton';
 import { SKELETON_COLOR } from './constants';
 
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: SKELETON_COLOR,
+        // backgroundColor: SKELETON_COLOR,
         overflow: 'hidden'
     }
 });
@@ -53,7 +54,7 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
         return (
             <>
                 {loading ? (
-                    <View
+                    <Skeleton
                         pointerEvents="none"
                         onLayout={this.handleContainerLayout}
                         style={[styles.container, style]}
@@ -70,7 +71,7 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
                                 highlightOpacity={highlightOpacity}
                             />
                         )}
-                    </View>
+                    </Skeleton>
                 ) : (
                         children
                     )}

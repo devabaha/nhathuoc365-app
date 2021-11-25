@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, FlatList, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {Actions} from 'react-native-router-flux';
+import FlatList from 'src/components/base/FlatList';
 
 import Items from '../Items';
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+// const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const styles = StyleSheet.create({
   container: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 20,
     paddingBottom: 5,
-  }
+  },
 });
 
 const ListStoreProduct = ({
@@ -62,13 +63,18 @@ const ListStoreProduct = ({
   };
 
   return useList ? (
-    <AnimatedFlatList
+    <FlatList
+      reanimated
       data={products}
       renderItem={renderProduct}
       keyExtractor={(product) => product.id}
       {...listProps}
       style={[listProps.style, containerStyle]}
-      contentContainerStyle={[styles.contentContainer, listProps.contentContainerStyle, contentContainerStyle]}
+      contentContainerStyle={[
+        styles.contentContainer,
+        listProps.contentContainerStyle,
+        contentContainerStyle,
+      ]}
     />
   ) : (
     <View style={[styles.container, containerStyle]}>

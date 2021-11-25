@@ -18,6 +18,9 @@ import {saveImage} from '../../helper/image';
 import {BUNDLE_ICON_SETS} from 'src/constants';
 import {IWrappedComponent} from 'mobx-react';
 import {share} from 'app-helper/share';
+import Icon from '../base/Icon';
+import {BundleIconSetName} from '../base/Icon/constants';
+import Button from '../base/Button/Button';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -58,10 +61,10 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
   get icon() {
     if (this.props.icon) return this.props.icon;
-    let Icon = this.props.iconBundle
-        ? BUNDLE_ICON_SETS[this.props.iconBundle]
-        : Ionicons,
-      iconName = this.props.iconName || '',
+    // let Icon = this.props.iconBundle
+    //     ? BUNDLE_ICON_SETS[this.props.iconBundle]
+    //     : Ionicons,
+    let iconName = this.props.iconName || '',
       extraStyle = {};
 
     if (!iconName) {
@@ -86,6 +89,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
     return (
       <Icon
+        bundle={this.props.iconBundle}
         name={iconName}
         style={[styles.icon, extraStyle, this.props.iconStyle]}
       />
@@ -202,8 +206,8 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
       : TouchableHighlight;
 
     return (
-      <TouchableComponent
-        underlayColor="transparent"
+      <Button
+        // underlayColor="transparent"
         onPress={this.handlePressIcon.bind(this)}>
         <View style={[styles.right_btn_add_store, this.props.containerStyle]}>
           {this.icon}
@@ -214,7 +218,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
             containerStyle={styles.notiContainer}
           />
         </View>
-      </TouchableComponent>
+      </Button>
     );
   }
 }

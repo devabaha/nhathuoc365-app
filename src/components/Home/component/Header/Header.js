@@ -21,7 +21,7 @@ import RightButtonNavBar from '../../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../../RightButtonNavBar/constants';
 import Loading from '../../../Loading';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {Input} from 'src/components/base';
+import {Input, TypographyType} from 'src/components/base';
 import { mergeStyles } from 'src/Themes/helper';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);

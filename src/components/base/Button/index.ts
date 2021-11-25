@@ -1,5 +1,12 @@
-import React from 'react';
-import {StyleProp, TextStyle, TouchableOpacityProps} from 'react-native';
+import {
+  StyleProp,
+  TextStyle,
+  TouchableHighlightProps,
+  TouchableOpacityProps,
+  ViewStyle,
+} from 'react-native';
+
+import {ButtonRoundedType} from './constants';
 
 import {default as BaseButton} from './Button';
 import FilledButton from './FilledButton';
@@ -11,7 +18,9 @@ import AppOutlinedButton from './AppOutlinedButton';
 import FilledTonalButton from './FilledTonalButton';
 import AppFilledTonalButton from './AppFilledTonalButton';
 import AppPrimaryButton from './AppPrimaryButton';
-import {ButtonRoundedType} from './constants';
+import {IconProps} from '../Icon';
+import {Children} from '..';
+import {TypographyProps} from '../Typography';
 
 export {
   BaseButton,
@@ -26,18 +35,26 @@ export {
   TextButton,
 };
 
-export interface BaseButtonProps extends TouchableOpacityProps {
+export interface BaseButtonProps
+  extends TouchableOpacityProps,
+    TouchableHighlightProps {
+  useGestureHandler?: boolean;
+  useTouchableHighlight?: boolean;
+
+  typoProps?: TypographyProps;
+
   title?: string;
 
   titleStyle?: StyleProp<TextStyle>;
 
   renderTitleComponent?: (
     titleStyle: StyleProp<TextStyle>,
-  ) => React.ReactNode | React.ReactNode[];
+    buttonStyle?: StyleProp<ViewStyle>,
+  ) => Children;
 
-  iconLeft?: () => React.ReactNode | React.ReactNode[];
-  iconRight?: () => React.ReactNode | React.ReactNode[];
-  children?: () => React.ReactNode | React.ReactNode[];
+  iconLeft?: () => Children;
+  iconRight?: () => Children;
+  children?: Children;
 }
 
 export interface CommonButtonProps extends BaseButtonProps {
@@ -58,5 +75,10 @@ export interface OutlinedButtonProps extends SolidButtonProps {}
 export interface FilledTonalButtonProps extends SolidButtonProps {}
 export interface FilledButtonProps extends SolidButtonProps {}
 
-export interface IconButtonProps extends CommonButtonProps {}
+export interface IconButtonProps extends CommonButtonProps, IconProps {
+  style: StyleProp<ViewStyle>;
+  iconStyle: StyleProp<TextStyle>;
+
+  iconProps: IconProps;
+}
 export interface TextButtonProps extends CommonButtonProps {}

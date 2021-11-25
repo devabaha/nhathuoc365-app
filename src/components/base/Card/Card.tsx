@@ -1,11 +1,12 @@
-import React, {memo, forwardRef, useMemo, MutableRefObject} from 'react';
+import React, {memo, forwardRef, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
-import {mergeStyles} from 'src/Themes/helper';
+import {CardProps} from '.';
+import {Ref} from '..';
 
 import {useTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
 
-import {CardProps} from '.';
 import Container from '../Container';
 
 const createStyles = (theme) => {
@@ -20,10 +21,7 @@ const createStyles = (theme) => {
 };
 
 const Card = forwardRef(
-  (
-    {children, reanimated, animated, style, ...props}: CardProps,
-    ref: MutableRefObject<any>,
-  ) => {
+  ({children, reanimated, animated, style, ...props}: CardProps, ref: Ref) => {
     const {theme} = useTheme();
 
     const styles = useMemo(() => {

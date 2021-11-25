@@ -5,7 +5,7 @@ import {
   TouchableHighlight,
   StyleSheet,
   Animated,
-  RefreshControl,
+  // RefreshControl,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -60,7 +60,21 @@ import LinearGradient from 'react-native-linear-gradient';
 import ModalWholesale from './ModalWholesale';
 import Video from '../Video';
 import MediaCarousel from './MediaCarousel';
-import {ButtonRoundedType} from '../base';
+import {ButtonRoundedType, Typography, TypographyType} from '../base';
+import {
+  AppFilledButton,
+  AppFilledTonalButton,
+  AppOutlinedButton,
+  AppPrimaryButton,
+  FilledButton,
+  FilledTonalButton,
+  OutlinedButton,
+} from '../base/Button';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper/';
+import ScrollView from '../base/ScrollView';
+import ScreenWrapper from '../base/ScreenWrapper';
+import RefreshControl from '../base/RefreshControl';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -68,6 +82,8 @@ const MIN_WEBVIEW_HEIGHT_TO_COLLAPSE = WEBVIEW_HEIGHT_COLLAPSED * 1.5;
 const WEBVIEW_COLLAPSED_MASK_HEIGHT = WEBVIEW_HEIGHT_COLLAPSED / 4;
 
 class Item extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     showBtnProductStamps: false,
   };
@@ -109,6 +125,10 @@ class Item extends Component {
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
     this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   get product() {
@@ -827,18 +847,30 @@ class Item extends Component {
     const hasImages = !!images.length;
     const isShowButtons = hasImages && images.length > 1;
 
+    const backgroundStyle = {
+      backgroundColor: hexToRgba(
+        LightenColor(this.theme.color.primary, 20),
+        0.5,
+      ),
+    };
+
     return (
       <View>
         <SkeletonLoading
-          style={styles.noImageContainer}
+          style={[styles.noImageContainer, backgroundStyle]}
           loading={this.state.loading}
           height={appConfig.device.width}>
           {!images.length ? (
-            <View style={[styles.noImageContainer, styles.swiper_no_image]}>
+            <View
+              style={[
+                styles.noImageContainer,
+                styles.swiper_no_image,
+                backgroundStyle,
+              ]}>
               <SVGPhotoBroken
                 width="80"
                 height="80"
-                fill={appConfig.colors.primary}
+                fill={this.theme.color.primary}
               />
             </View>
           ) : (
@@ -880,17 +912,23 @@ class Item extends Component {
     );
   }
 
-  renderMainActionBtnIcon(product) {
+  renderMainActionBtnIcon(product, titleStyle) {
     return this.state.buying ? (
       <Indicator size="small" color="#ffffff" />
     ) : this.isServiceProduct(product) ? (
-      <Icon name="calendar-plus-o" style={styles.item_actions_btn_icon} />
+      <Icon
+        name="calendar-plus-o"
+        style={[styles.item_actions_btn_icon, titleStyle]}
+      />
     ) : (
-      <Icon name="cart-plus" style={styles.item_actions_btn_icon} />
+      <Icon
+        name="cart-plus"
+        style={[styles.item_actions_btn_icon, titleStyle]}
+      />
     );
   }
 
-  renderSubActionBtnIcon(product) {
+  renderSubActionBtnIcon(product, titleStyle) {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
     ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
@@ -898,52 +936,72 @@ class Item extends Component {
       <MaterialCommunityIcons
         name="truck-fast"
         size={24}
-        color={this.subActionColor}
+        // color={this.subActionColor}
+        style={titleStyle}
       />
     ) : (
       <Icon
         name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
         size={20}
-        color={this.subActionColor}
+        // color={this.subActionColor}
+        style={titleStyle}
       />
     );
   }
 
+  renderPostForSaleBtnContent = (titleStyle, buttonStyle) => {
+    return (
+      <>
+        <View
+          style={
+            [
+              // styles.postForSaleContainer,
+              // this.state.preparePostForSaleDataLoading &&
+              //   styles.postForSaleContainerLoading,
+            ]
+          }>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={[styles.postForSaleTitle, titleStyle]}>
+            {this.props.t('shopTitle.postForSale')}
+          </Typography>
+        </View>
+        <View
+          style={[
+            styles.postForSaleIconContainer,
+            this.state.preparePostForSaleDataLoading &&
+              styles.postForSaleIconContainerLoading,
+          ]}>
+          {this.state.preparePostForSaleDataLoading ? (
+            <Loading size="small" />
+          ) : (
+            <MaterialCommunityIcons
+              name="share"
+              style={[styles.postForSaleIcon, titleStyle]}
+            />
+          )}
+        </View>
+      </>
+    );
+  };
+
   renderPostForSaleBtn(product) {
     return (
       (!!product?.img?.length || !!product.content) && (
-        <TouchableOpacity
-          hitSlop={HIT_SLOP}
-          disabled={this.state.preparePostForSaleDataLoading}
-          onPress={() => this.handlePostForSale(product)}
-          style={styles.postForSaleWrapper}>
-          <View
+        <Container center>
+          <AppOutlinedButton
+            hitSlop={HIT_SLOP}
+            disabled={this.state.preparePostForSaleDataLoading}
+            onPress={() => this.handlePostForSale(product)}
             style={[
               styles.postForSaleContainer,
               this.state.preparePostForSaleDataLoading &&
                 styles.postForSaleContainerLoading,
-            ]}>
-            <Text style={styles.postForSaleTitle}>
-              {this.props.t('shopTitle.postForSale')}
-            </Text>
-          </View>
-
-          <View
-            style={[
-              styles.postForSaleIconContainer,
-              this.state.preparePostForSaleDataLoading &&
-                styles.postForSaleIconContainerLoading,
-            ]}>
-            {this.state.preparePostForSaleDataLoading ? (
-              <Loading size="small" />
-            ) : (
-              <MaterialCommunityIcons
-                name="share"
-                style={styles.postForSaleIcon}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
+            ]}
+            rounded={ButtonRoundedType.SMALL}
+            renderTitleComponent={this.renderPostForSaleBtnContent}
+          />
+        </Container>
       )
     );
   }
@@ -1068,6 +1126,75 @@ class Item extends Component {
     );
   };
 
+  renderMainActionBtn = (item, titleStyle, buttonStyle) => {
+    const {t} = this.props;
+
+    return (
+      <Container
+        row
+        center
+        style={[
+          styles.item_actions_btn,
+          // styles.item_actions_btn_add_cart,
+          // this.isDisabledBuyingProduct &&
+          //   styles.item_actions_btn_add_cart_disabled,
+        ]}>
+        <View style={styles.item_actions_btn_icon_container}>
+          {this.renderMainActionBtnIcon(item, titleStyle)}
+        </View>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
+          numberOfLines={1}
+          style={[styles.item_actions_title, titleStyle]}>
+          {this.isServiceProduct(item)
+            ? t('shopTitle.book')
+            : this.isDisabledBuyingProduct
+            ? t('shopTitle.outOfStock')
+            : t('shopTitle.buy')}
+        </Typography>
+      </Container>
+    );
+  };
+
+  renderSubActionBtn = (item, titleStyle, buttonStyle) => {
+    const {t} = this.props;
+
+    return (
+      <Container
+        row
+        center
+        style={
+          [
+            // {
+            //   borderColor: this.subActionColor,
+            // },
+          ]
+        }>
+        <View style={styles.item_actions_btn_icon_container}>
+          {this.renderSubActionBtnIcon(item, titleStyle)}
+        </View>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
+          numberOfLines={1}
+          style={[
+            styles.item_actions_title,
+            // styles.item_actions_title_chat,
+            // {
+            //   color: this.subActionColor,
+            // },
+            titleStyle,
+          ]}>
+          {!this.isServiceProduct(item) &&
+          isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+            ? t('shopTitle.dropShip')
+            : is_like
+            ? t('liked')
+            : t('like')}
+        </Typography>
+      </Container>
+    );
+  };
+
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
@@ -1090,7 +1217,7 @@ class Item extends Component {
     };
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
@@ -1100,7 +1227,9 @@ class Item extends Component {
         />
 
         <View style={styles.container}>
-          <Animated.ScrollView
+          <ScrollView
+            animated
+            safeLayout={!store.cart_data}
             ref={(ref) => (this.refs_body_item = ref)}
             onScroll={Animated.event(
               [
@@ -1179,7 +1308,7 @@ class Item extends Component {
               </View>
 
               <View style={styles.item_actions_box}>
-                <TouchableHighlight
+                {/* <TouchableHighlight
                   disabled={this.isDisabledSubBtnAction}
                   onPress={() =>
                     this.handlePressSubAction(
@@ -1218,9 +1347,40 @@ class Item extends Component {
                         : t('like')}
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableHighlight> */}
 
-                <TouchableHighlight
+                <AppOutlinedButton
+                  disabled={this.isDisabledSubBtnAction}
+                  onPress={() =>
+                    this.handlePressSubAction(
+                      item,
+                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                        ? CART_TYPES.DROP_SHIP
+                        : '',
+                    )
+                  }
+                  style={[
+                    styles.item_actions_btn,
+                    styles.item_actions_btn_chat,
+                  ]}
+                  renderTitleComponent={(titleStyle, buttonStyle) =>
+                    this.renderSubActionBtn(item, titleStyle, buttonStyle)
+                  }
+                />
+
+                <AppFilledButton
+                  disabled={this.isDisabledBuyingProduct}
+                  onPress={() =>
+                    this.handlePressMainActionBtnProduct(
+                      item,
+                      CART_TYPES.NORMAL,
+                    )
+                  }
+                  renderTitleComponent={(titleStyle, buttonStyle) =>
+                    this.renderMainActionBtn(item, titleStyle, buttonStyle)
+                  }
+                />
+                {/* <TouchableHighlight
                   disabled={this.isDisabledBuyingProduct}
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
@@ -1247,7 +1407,7 @@ class Item extends Component {
                         : t('shopTitle.buy')}
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableHighlight> */}
               </View>
             </View>
 
@@ -1407,7 +1567,7 @@ class Item extends Component {
                 rounded={ButtonRoundedType.SMALL}
               />
             </View>
-          </Animated.ScrollView>
+          </ScrollView>
         </View>
 
         {this.renderCartFooter(item)}
@@ -1429,7 +1589,7 @@ class Item extends Component {
           data={item.detail_price_steps || []}
           innerRef={(inst) => (this.refModalWholesale.current = inst)}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -1437,7 +1597,7 @@ class Item extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff',
   },
   block: {
     paddingHorizontal: 15,
@@ -1509,14 +1669,14 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
   item_actions_btn: {
-    borderWidth: 0.5,
-    borderColor: appConfig.colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // borderWidth: 0.5,
+    // borderColor: appConfig.colors.primary,
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
     height: 40,
     width: (appConfig.device.width - 45) / 2,
-    borderRadius: 5,
+    // borderRadius: 5,
     paddingHorizontal: 20,
   },
 
@@ -1525,11 +1685,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postForSaleContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: appConfig.colors.primary,
-    borderWidth: 0.5,
-    borderRadius: 5,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // borderColor: appConfig.colors.primary,
+    // borderWidth: 0.5,
+    // borderRadius: 5,
     padding: 5,
     paddingHorizontal: 10,
     marginTop: 10,
@@ -1545,18 +1705,19 @@ const styles = StyleSheet.create({
     minHeight: 20,
     padding: 2,
     top: appConfig.device.isIOS ? -9 : -9,
+    top: '-150%',
     transform: [{rotate: '-30deg'}],
   },
   postForSaleIconContainerLoading: {
     transform: [{rotate: '0deg'}],
   },
   postForSaleIcon: {
-    color: appConfig.colors.primary,
+    // color: appConfig.colors.primary,
     fontSize: 20,
   },
   postForSaleTitle: {
-    color: appConfig.colors.primary,
-    fontSize: 12,
+    // color: appConfig.colors.primary,
+    // fontSize: 12,
     fontWeight: '400',
   },
 
@@ -1568,7 +1729,7 @@ const styles = StyleSheet.create({
   },
   item_actions_btn_icon: {
     fontSize: 20,
-    color: '#fff',
+    // color: '#fff',
   },
   item_actions_btn_chat: {
     marginRight: 15,
@@ -1582,7 +1743,7 @@ const styles = StyleSheet.create({
   },
   item_actions_title: {
     marginLeft: 8,
-    color: '#fff',
+    // color: '#fff',
   },
 
   item_content_box: {},

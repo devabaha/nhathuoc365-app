@@ -1,3 +1,4 @@
+import { hexToRgba, rgbaToRgb } from 'app-helper';
 import {CORE} from '../core';
 import {SYSTEM_LIGHT} from './system.light';
 
@@ -5,14 +6,14 @@ const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: '#212121',
   // —— Primary variants ——
-  primary20: CORE.primary20,
+  primary20: rgbaToRgb(hexToRgba(CORE.primary, .2)),
   primaryLight: '#3d3d3d',
   primaryDark: '#181818',
   onPrimary: '#FFFFFF',
 
   secondary: '#212121',
   // —— Secondary variants ——
-  secondary20: CORE.secondary20,
+  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, .2)),
   secondaryLight: '#3d3d3d',
   secondaryDark: '#181818',
   onSecondary: '#FFFFFF',
@@ -46,12 +47,14 @@ export const SYSTEM_DARK = {
 
   primaryHighlight: SYSTEM_COMMON.onSurface,
   secondaryHighlight: SYSTEM_COMMON.onSurface,
+  surfaceHighlight: SYSTEM_COMMON.onSurface,
 
   // TEXT/ ICON COLOR
   // for text in general, still can use others color like onPrimary and onSecondary for specific purpose.
   persistTextPrimary: SYSTEM_COMMON.persistOnSurface,
   textPrimary: SYSTEM_COMMON.onSurface,
   textSecondary: SYSTEM_COMMON.neutral,
+  textInactive: CORE.grey500,
 
   iconInactive: CORE.grey600,
 };

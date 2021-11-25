@@ -1,4 +1,6 @@
-export const LAYOUT = {
+import {Layout} from '../interface';
+
+export const LAYOUT: Layout = {
   borderWidth: 1,
   borderRadiusSmall: 6,
   borderRadiusMedium: 8,

@@ -7,9 +7,10 @@ import {HOME_CARD_TYPE} from '../../constants';
 import appConfig from 'app-config';
 import ProductItem from './ProductItem';
 import Button from 'react-native-button';
-import {ThemeContext} from 'src/Themes/Theme.context';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import { Typography } from 'src/components/base';
 import { TypographyType } from 'src/components/base/Typography/constants';
+import { TextButton } from 'src/components/base/Button';
 
 class ListProducts extends Component {
   static contextType = ThemeContext;
@@ -27,6 +28,10 @@ class ListProducts extends Component {
     itemsPerRow: 3,
     onShowAll: null,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get hasProducts() {
     return Array.isArray(this.props.data) && this.props.data.length !== 0;
@@ -122,9 +127,12 @@ class ListProducts extends Component {
             {this.props.title}
           </Typography>
           {!!this.props.onShowAll && (
-            <Button underlayColor="transparent" onPress={this.props.onShowAll}>
-              <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
-            </Button>
+            <TextButton titleStyle={{color: this.theme.color.accent2}} onPress={this.props.onShowAll}>
+              {this.props.t('viewAll')}
+            </TextButton>
+            // <Button underlayColor="transparent" onPress={this.props.onShowAll}>
+            //   <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
+            // </Button>
           )}
         </View>
         {this.renderFlatList()}

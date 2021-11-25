@@ -1,10 +1,11 @@
-import React, {memo, forwardRef, useMemo, MutableRefObject} from 'react';
+import React, {memo, forwardRef, useMemo} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
-import { mergeStyles } from 'src/Themes/helper';
-
-import {useTheme} from 'src/Themes/Theme.context';
 
 import {InputProps} from '.';
+import {Ref} from '..';
+
+import {useTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
 
 const createStyles = (theme) => {
   const styles = StyleSheet.create({
@@ -16,22 +17,20 @@ const createStyles = (theme) => {
   return styles;
 };
 
-const Input = forwardRef(
-  ({style, ...props}: InputProps, ref: MutableRefObject<any>) => {
-    const {theme} = useTheme();
+const Input = forwardRef(({style, type, ...props}: InputProps, ref: Ref) => {
+  const {theme} = useTheme();
 
-    const styles = useMemo(() => {
-      const baseStyles: any = createStyles(theme);
+  const styles = useMemo(() => {
+    const baseStyles: any = createStyles(theme);
 
-      return baseStyles.primary;
-    }, [theme]);
+    return mergeStyles(baseStyles.primary, theme.typography[type]);
+  }, [theme]);
 
-    const componentStyle = useMemo(() => {
-      return mergeStyles(styles, style);
-    }, [styles, style]);
+  const componentStyle = useMemo(() => {
+    return mergeStyles(styles, style);
+  }, [styles, style]);
 
-    return <TextInput ref={ref} {...props} style={componentStyle} />;
-  },
-);
+  return <TextInput ref={ref} {...props} style={componentStyle} />;
+});
 
 export default memo(Input);

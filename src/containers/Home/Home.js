@@ -328,7 +328,7 @@ class Home extends Component {
             categories: null,
             category_id: 0,
             category_name: '',
-            autoFocus: true
+            autoFocus: true,
           });
         } else {
           flashShowMessage({
@@ -347,6 +347,7 @@ class Home extends Component {
   render() {
     return (
       <HomeComponent
+        navigation={this.props.navigation}
         site={this.state.site}
         sites={this.state.sites}
         title_sites={this.state.title_sites}

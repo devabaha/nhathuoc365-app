@@ -23,9 +23,12 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from '../../network/Entity';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import { OutlinedButton } from '../base/Button';
+import {OutlinedButton} from '../base/Button';
+import ScreenWrapper from '../base/ScreenWrapper';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 class EditProfile extends Component {
+  static contextType = ThemeContext;
   constructor(props) {
     super(props);
 
@@ -47,6 +50,10 @@ class EditProfile extends Component {
       props.t('sections.gender.other'),
       props.t('sections.gender.cancel'),
     ];
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   get sections() {
@@ -445,8 +452,15 @@ class EditProfile extends Component {
   render() {
     const {t} = this.props;
 
+    const btnStyle = {
+      backgroundColor: this.theme.color.background,
+      bottom: store.keyboardTop
+        ? store.keyboardTop - appConfig.device.bottomSpace
+        : 0,
+    };
+
     return (
-      <>
+      <ScreenWrapper safeLayout>
         <KeyboardAwareSectionList
           extraHeight={300}
           style={{flex: 1}}
@@ -459,12 +473,9 @@ class EditProfile extends Component {
         />
 
         <Button
-          containerStyle={[
-            styles.btnContainer,
-            {
-              bottom: store.keyboardTop || appConfig.device.bottomSpace,
-            },
-          ]}
+        useGestureHandler
+        useTouchableHighlight
+          containerStyle={[styles.btnContainer, btnStyle]}
           title={t('saveChanges')}
           onPress={this._onSaveProfile}
         />
@@ -476,7 +487,7 @@ class EditProfile extends Component {
         />
         {this.state.loading && <Loading center />}
         {/* {appConfig.device.isIOS && <KeyboardSpacer />} */}
-      </>
+      </ScreenWrapper>
     );
   }
 }

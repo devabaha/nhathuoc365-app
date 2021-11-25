@@ -1,15 +1,14 @@
 import {
-  CART_TYPES,
-  DELIVERY_STATUS_CODE,
-  CART_STATUS,
-  CART_PAYMENT_STATUS,
+  CartType,
+  DeliveryStatusCode,
+  CartStatus,
+  CartPaymentStatus,
 } from 'src/constants/cart';
 import {CORE} from '../core';
 
 export const ADDITION_LIGHT = {
   //     STATUS COLOR
   // @todo: for flash message - api message.
-
   danger: '#ef476f',
   warning: '#ffd166',
   success: '#06d6a0',
@@ -22,38 +21,46 @@ export const ADDITION_LIGHT = {
   youtube: '#FF0000',
 
   // CART TYPE COLOR
-  [CART_TYPES.NORMAL]: '#B0C0F0',
-  [CART_TYPES.DROP_SHIP]: '#FF9F1C',
-  [CART_TYPES.BOOKING]: '#53917E',
+  cartTypes: {
+    [CartType.NORMAL]: '#B0C0F0',
+    [CartType.DROP_SHIP]: '#FF9F1C',
+    [CartType.BOOKING]: '#53917E',
+  },
 
   // DELIVERY STATUS COLOR
-  [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
-  [DELIVERY_STATUS_CODE.SYSTEM_RECEIVED_ORDER]: '#9FA4C4',
-  [DELIVERY_STATUS_CODE.SHIPPER_RECEIVED_ORDER]: '#95AFBA',
-  [DELIVERY_STATUS_CODE.SHIPPER_GETTING_PACKAGES]: '#0F7173',
-  [DELIVERY_STATUS_CODE.FAIL_TO_GETTING_PACKAGES]: '#EF798A',
-  [DELIVERY_STATUS_CODE.DELIVERING]: '#ffd166',
-  [DELIVERY_STATUS_CODE.DELIVERY_SUCCESS]: '#06d6a0',
-  [DELIVERY_STATUS_CODE.DELIVERY_FAIL]: '#ef476f',
-  [DELIVERY_STATUS_CODE.ORDER_RETURNING]: '#92817A',
-  [DELIVERY_STATUS_CODE.ORDER_RETURNED]: '#6C7D47',
-  [DELIVERY_STATUS_CODE.FOR_CONTROL]: '#17A398',
+  deliveryStatus: {
+    [DeliveryStatusCode.CANCEL]: '#DED9E2',
+    [DeliveryStatusCode.SYSTEM_RECEIVED_ORDER]: '#9FA4C4',
+    [DeliveryStatusCode.SHIPPER_RECEIVED_ORDER]: '#95AFBA',
+    [DeliveryStatusCode.SHIPPER_GETTING_PACKAGES]: '#0F7173',
+    [DeliveryStatusCode.FAIL_TO_GETTING_PACKAGES]: '#EF798A',
+    [DeliveryStatusCode.DELIVERING]: '#ffd166',
+    [DeliveryStatusCode.DELIVERY_SUCCESS]: '#06d6a0',
+    [DeliveryStatusCode.DELIVERY_FAIL]: '#ef476f',
+    [DeliveryStatusCode.ORDER_RETURNING]: '#92817A',
+    [DeliveryStatusCode.ORDER_RETURNED]: '#6C7D47',
+    [DeliveryStatusCode.FOR_CONTROL]: '#17A398',
+  },
 
   // ORDER STATUS COLOR
-  [CART_STATUS.CART_STATUS_CANCEL_1]: '#ef476f',
-  [CART_STATUS.CART_STATUS_CANCEL]: '#ef476f',
-  [CART_STATUS.CART_STATUS_ORDERING]: '#6F7C12',
-  [CART_STATUS.CART_STATUS_READY]: '#812384',
-  [CART_STATUS.CART_STATUS_ACCEPTED]: '#F46036',
-  [CART_STATUS.CART_STATUS_PROCESSING]: '#986d60',
-  [CART_STATUS.CART_STATUS_DELIVERY]: '#EEAA21',
-  [CART_STATUS.CART_STATUS_COMPLETED]: '#06d6a0',
-  [CART_STATUS.CART_STATUS_CLOSED]: '#aaaaaa',
+  cartStatus: {
+    [CartStatus.CANCEL_1]: '#ef476f',
+    [CartStatus.CANCEL]: '#ef476f',
+    [CartStatus.ORDERING]: '#6F7C12',
+    [CartStatus.READY]: '#812384',
+    [CartStatus.ACCEPTED]: '#F46036',
+    [CartStatus.PROCESSING]: '#986d60',
+    [CartStatus.DELIVERY]: '#EEAA21',
+    [CartStatus.COMPLETED]: '#06d6a0',
+    [CartStatus.CLOSED]: '#aaaaaa',
+  },
 
   // PAYMENT STATUS COLOR
-  [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
-  [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
-  [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
+  cartPaymentStatus: {
+    [CartPaymentStatus.UNPAID]: '#EEAA21',
+    [CartPaymentStatus.PAID]: '#06d6a0',
+    [CartPaymentStatus.CANCEL]: '#ef476f',
+  },
 
   // MEMBERSHIP
   standard: ['#333333', '#cccccc'],

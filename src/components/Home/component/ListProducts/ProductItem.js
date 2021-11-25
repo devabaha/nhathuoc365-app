@@ -19,6 +19,8 @@ import Image from 'src/components/Image';
 import {TypographyType} from 'src/components/base/Typography/constants';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {IconButton} from 'src/components/base/Button';
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -102,6 +104,10 @@ class ProductItem extends PureComponent {
 
     const brandTagContainerStyle = mergeStyles(styles.brandTagContainer, {
       borderColor: this.theme.color.border,
+    });
+
+    const iconBuyStyle = mergeStyles(styles.icon, {
+      color: this.theme.color.accent1,
     });
 
     return (
@@ -201,7 +207,37 @@ class ProductItem extends PureComponent {
                           )}
                         </Typography>
 
-                        <TouchableOpacity
+                        <Container
+                          style={{
+                            minWidth: 20,
+                            minHeight: 24,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          {this.state.buying ? (
+                            <Indicator size="small" />
+                          ) : (
+                            <IconButton
+                              disabled={isOutOfStock(item)}
+                              style={styles.item_add_cart_box}
+                              onPress={this.handlePressActionBtnProduct}
+                              hitSlop={HIT_SLOP}
+                              bundle={
+                                this.isServiceProduct(item)
+                                  ? BundleIconSetName.FONT_AWESOME
+                                  : BundleIconSetName.MATERIAL_ICONS
+                              }
+                              name={
+                                this.isServiceProduct(item)
+                                  ? 'calendar-plus-o'
+                                  : 'add-shopping-cart'
+                              }
+                              iconStyle={iconBuyStyle}
+                            />
+                          )}
+                        </Container>
+
+                        {/* <TouchableOpacity
                           disabled={isOutOfStock(item)}
                           style={styles.item_add_cart_box}
                           onPress={this.handlePressActionBtnProduct}
@@ -230,7 +266,7 @@ class ProductItem extends PureComponent {
                               />
                             )}
                           </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </View>
                     </View>
                   </View>
@@ -307,7 +343,7 @@ let styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
     paddingRight: 5,
-    fontWeight: '600'
+    fontWeight: '600',
     // ...appConfig.styles.typography.heading3,
     // color: appConfig.colors.primary,
   },
@@ -359,7 +395,7 @@ let styles = StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: appConfig.colors.highlight[1],
+    // color: appConfig.colors.highlight[1],
   },
   iconDisabled: {
     color: '#ddd',

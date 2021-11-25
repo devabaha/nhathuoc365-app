@@ -1,11 +1,17 @@
 // Theme.context.tsx
-import React from 'react';
+import React, {useEffect} from 'react';
 // import {DARK_THEME, DARK_THEME_ID} from './Theme.dark';
 import {BASE_LIGHT_THEME, BASE_LIGHT_THEME_ID} from './Theme.light';
 import {Theme} from './interface';
 import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from './Theme.dark';
+import EventEmitter from 'eventemitter3';
+
+const themeChangingListener = new EventEmitter();
+
+const THEME_CHANGING_EVENT_NAME = 'theme_changing';
+
 // Our context provider will provide this object shape
-interface ProvidedValue {
+export interface ThemeProvidedValue {
   theme: Theme;
   toggleTheme: () => void;
 }
@@ -14,7 +20,7 @@ interface ProvidedValue {
 // consumer components when there is no rendered context provider
 // in the view hierarchy, so basically it will provide
 // a fallback object
-export const ThemeContext = React.createContext<ProvidedValue>({
+export const ThemeContext = React.createContext<ThemeProvidedValue>({
   theme: BASE_LIGHT_THEME,
   toggleTheme: () => {
     console.log('ThemeProvider is not rendered!');
@@ -47,12 +53,16 @@ export const ThemeProvider = React.memo<Props>((props) => {
   // Building up the provided object
   // We're using the React.useMemo hook for optimization
   const MemoizedValue = React.useMemo(() => {
-    const value: ProvidedValue = {
+    const value: ThemeProvidedValue = {
       theme,
       toggleTheme: ToggleThemeCallback,
     };
     return value;
   }, [theme, ToggleThemeCallback]);
+  // emit an event whenever the theme is changed.
+  useEffect(() => {
+    themeChangingListener.emit(THEME_CHANGING_EVENT_NAME, theme);
+  }, [theme]);
   // Render our context provider by passing it the value to provide
   return (
     <ThemeContext.Provider value={MemoizedValue}>
@@ -62,9 +72,33 @@ export const ThemeProvider = React.memo<Props>((props) => {
 });
 // Creating a custom context consumer hook for function components
 export const useTheme = () => React.useContext(ThemeContext);
-export const getTheme = (scope) => {
+export const getTheme: Theme | {} = (scope: {context: {theme: Theme}}) => {
   if (scope !== undefined) {
     return scope.context?.theme;
   }
-  return undefined;
+  return {};
+};
+
+export const addThemeChangingListener = (listener) => {
+  themeChangingListener.addListener(THEME_CHANGING_EVENT_NAME, listener);
+};
+
+export const removeThemeChangingListener = (listener) => {
+  themeChangingListener.removeListener(THEME_CHANGING_EVENT_NAME, listener);
+};
+
+export const updateNavbarTheme = (navigation, currentTheme) => {
+  const listener = (theme) => {
+    navigation.setParams({
+      headerStyle: {
+        backgroundColor: theme.color.primary,
+      },
+    });
+  };
+
+  listener(currentTheme);
+
+  addThemeChangingListener(listener);
+
+  return () => removeThemeChangingListener(listener);
 };

@@ -1,12 +1,16 @@
-import React, {memo, forwardRef, useMemo, MutableRefObject} from 'react';
-import {StyleSheet, Text, StyleProp, TextStyle} from 'react-native';
-import { mergeStyles } from 'src/Themes/helper';
+import React, {memo, forwardRef, useMemo} from 'react';
+import {StyleSheet, Text} from 'react-native';
+
+import {Ref} from '..';
+import {TypographyProps} from '.';
+import {Theme} from 'src/Themes/interface';
+
+import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 
-import {TypographyProps} from '.';
 import {TypographyFontSize, TypographyType} from './constants';
 
-const createStyles = (theme) => {
+const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     primary: {
       color: theme.color.textPrimary,
@@ -26,54 +30,6 @@ const createStyles = (theme) => {
     onBackground: {
       color: theme.color.onBackground,
     },
-    [TypographyType.TITLE_LARGE]: {
-      fontSize: TypographyFontSize.HEADLINE_MEDIUM,
-      color: theme.color.textPrimary,
-    },
-    [TypographyType.TITLE_MEDIUM]: {
-      fontSize: TypographyFontSize.BODY_LARGE,
-      color: theme.color.textPrimary,
-    },
-
-    [TypographyType.LABEL_LARGE_PRIMARY]: {
-      fontSize: TypographyFontSize.BODY_LARGE,
-      color: theme.color.primaryHighlight,
-    },
-    [TypographyType.LABEL_MEDIUM_PRIMARY]: {
-      fontSize: TypographyFontSize.BODY_MEDIUM,
-      color: theme.color.primaryHighlight,
-    },
-    [TypographyType.LABEL_MEDIUM]: {
-      fontSize: TypographyFontSize.BODY_MEDIUM,
-      color: theme.color.textPrimary,
-    },
-    [TypographyType.LABEL_SMALL]: {
-      fontSize: TypographyFontSize.BODY_SMALL,
-      color: theme.color.textPrimary,
-    },
-    [TypographyType.LABEL_EXTRA_SMALL]: {
-      fontSize: TypographyFontSize.NOTE_LARGE,
-      color: theme.color.textPrimary,
-    },
-
-    [TypographyType.DESCRIPTION_SMALL_PRIMARY]: {
-      fontSize: TypographyFontSize.BODY_SMALL,
-      color: theme.color.primaryHighlight,
-    },
-    [TypographyType.DESCRIPTION_MEDIUM]: {
-      fontSize: TypographyFontSize.BODY_MEDIUM,
-      color: theme.color.textSecondary,
-    },
-    [TypographyType.DESCRIPTION_SMALL]: {
-      fontSize: TypographyFontSize.BODY_SMALL,
-      color: theme.color.textSecondary,
-    },
-
-    [TypographyType.BUTTON_TEXT]: {
-      fontSize: 16,
-      textTransform: 'uppercase',
-      color: theme.color.onPrimary,
-    },
   });
 
   return styles;
@@ -91,14 +47,14 @@ const Typography = forwardRef(
       children,
       ...props
     }: TypographyProps,
-    ref: MutableRefObject<any>,
+    ref: Ref,
   ) => {
     const {theme} = useTheme();
 
     const styles = useMemo(() => {
       const baseStyles = createStyles(theme);
       const finalStyle = mergeStyles(
-        baseStyles[type],
+        theme.typography[type],
         onPrimary
           ? baseStyles.onPrimary
           : onSecondary
@@ -118,7 +74,7 @@ const Typography = forwardRef(
     }, [styles, style]);
 
     return (
-      <Text ref={ref} {...props} style={componentStyle}>
+      <Text {...props} ref={ref} style={componentStyle}>
         {children}
       </Text>
     );

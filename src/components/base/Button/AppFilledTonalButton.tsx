@@ -1,6 +1,9 @@
-import React, {forwardRef, memo, MutableRefObject} from 'react';
+import React, {forwardRef, memo} from 'react';
 import {StyleSheet} from 'react-native';
+
 import {FilledTonalButtonProps} from '.';
+import {Ref} from '..';
+
 import {ButtonRoundedType} from './constants';
 
 import FilledTonalButton from './FilledTonalButton';
@@ -8,7 +11,7 @@ import FilledTonalButton from './FilledTonalButton';
 const styles = StyleSheet.create({});
 
 const AppFilledTonalButton = forwardRef(
-  (props: FilledTonalButtonProps, ref: MutableRefObject<any>) => {
+  (props: FilledTonalButtonProps, ref: Ref) => {
     return (
       <FilledTonalButton
         secondary

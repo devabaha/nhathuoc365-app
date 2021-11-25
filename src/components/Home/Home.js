@@ -38,6 +38,9 @@ import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 import {Container} from '../base';
 import {hexToRgbCode} from 'app-helper/';
 import {mergeStyles} from 'src/Themes/helper';
+import ScreenWrapper from '../base/ScreenWrapper';
+import ThemeProvidedValue from 'src/Themes/Theme.context';
+import {Theme} from 'src/Themes/interface';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -60,7 +63,7 @@ const {
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 class Home extends Component {
-  static contextType = ThemeContext;
+  static contextType: ThemeProvidedValue = ThemeContext;
 
   static propTypes = {
     sites: PropTypes.array,
@@ -165,7 +168,7 @@ class Home extends Component {
     }
   };
 
-  get theme() {
+  get theme(): Theme {
     return getTheme(this);
   }
 
@@ -322,8 +325,32 @@ class Home extends Component {
     opacity: this.animatedHeaderContainerValue,
   };
 
+  renderHeaderComponent = () => {
+    return (
+      <>
+        <Animated.View
+          style={[styles.headerContainerStyle, this.headerContainerStyle]}>
+          <Header
+            wrapperStyle={this.wrapperAnimatedStyle}
+            maskSearchWrapperStyle={this.searchWrapperStyle}
+            maskSubStyle={this.headerAnimatedStyle}
+            iconStyle={this.headerIconStyle}
+            notify={this.props.notify}
+            name={name}
+            showCart={false}
+            onPressNoti={this.props.onPressNoti}
+            goToSearch={this.props.goToSearch}
+            loading={this.props.storeFetching}
+            onContentLayout={this.handleHeaderLayout.bind(this)}
+          />
+        </Animated.View>
+      </>
+    );
+  };
+
   render() {
     const theme = this.theme;
+    console.log(JSON.stringify(theme.color));
     const {t} = this.props;
     const name = this.props.userInfo
       ? this.props.userInfo.name
@@ -343,11 +370,13 @@ class Home extends Component {
 
     const headerBackgroundStyle = mergeStyles(
       [styles.headerBackground, this.headerBackgroundOpacity],
-      {backgroundColor: theme.color.primary},
+      {backgroundColor: this.theme.color.primary},
     );
 
     return (
-      <View style={containerStyle}>
+      <ScreenWrapper
+      // headerComponent={this.renderHeaderComponent()}
+      >
         {/* <LoadingComponent loading={this.props.apiFetching} /> */}
         {/* <StatusBar
           // barStyle={this.state.statusBarStyle}
@@ -636,15 +665,13 @@ class Home extends Component {
                 </HomeCardList>
               ) : this.props.apiFetching ? (
                 <HomeCardListSkeleton />
-              ) : this.props.apiFetching ? (
-                <HomeCardListSkeleton />
               ) : null}
             </View>
           </ScrollView>
         </SafeAreaView>
 
         <StatusBarBackground />
-      </View>
+      </ScreenWrapper>
     );
   }
 }

@@ -1,12 +1,15 @@
-import React, {forwardRef, memo, MutableRefObject, useMemo} from 'react';
+import React, {forwardRef, memo, useCallback, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
 import {IconButtonProps} from '.';
+import {Ref} from '..';
 import {Theme} from 'src/Themes/interface';
 
 import {useTheme} from 'src/Themes/Theme.context';
-import Button from './Button';
 import {mergeStyles} from 'src/Themes/helper';
+
+import Icon from '../Icon';
+import Button from './Button';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -16,29 +19,20 @@ const createStyles = (theme: Theme) => {
       flexDirection: 'row',
     },
     primary: {
-      backgroundColor: theme.color.persistPrimary,
+      color: theme.color.primary,
     },
     secondary: {
-      backgroundColor: theme.color.persistSecondary,
+      color: theme.color.secondary,
     },
     disabled: {
-      backgroundColor: theme.color.disabled,
+      color: theme.color.disabled,
     },
     shadow: {
       shadowColor: theme.color.shadow,
       ...theme.layout.shadow,
     },
-    roundedSmall: {
-      borderRadius: theme.layout.borderRadiusSmall,
-    },
-    roundedMedium: {
-      borderRadius: theme.layout.borderRadiusMedium,
-    },
-    roundedLarge: {
-      borderRadius: theme.layout.borderRadiusLarge,
-    },
     text: {
-      color: theme.color.onPersistPrimary,
+      color: theme.color.textPrimary,
     },
   });
 
@@ -51,9 +45,14 @@ const IconButton = forwardRef(
       titleStyle,
       style,
 
+      name,
+      bundle,
+      iconStyle,
+      iconProps,
+
       ...props
     }: IconButtonProps,
-    ref: MutableRefObject<any>,
+    ref: Ref,
   ) => {
     const {theme} = useTheme();
 
@@ -64,30 +63,51 @@ const IconButton = forwardRef(
     }, [theme]);
 
     const buttonStyles = useMemo(() => {
+      return mergeStyles([styles.container], style);
+    }, [styles, style]);
+
+    const titleStyles = useMemo(() => {
       return mergeStyles(
         [
-          styles.container,
+          styles.text,
           props.shadow && styles.shadow,
-        //   props.roundedSmall && styles.roundedSmall,
-        //   props.roundedMedium && styles.roundedMedium,
-        //   props.roundedLarge && styles.roundedLarge,
           props.primary && styles.primary,
           props.secondary && styles.secondary,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
-        style,
+        titleStyle,
       );
-    }, [styles, style]);
+    }, [
+      props.shadow,
+      props.primary,
+      props.secondary,
+      props.disabled,
+      titleStyle,
+    ]);
 
-    const titleStyles = [styles.text, titleStyle];
+    const renderTitleComponent = useCallback(() => {
+      return props.renderTitleComponent(titleStyles, buttonStyles);
+    }, [titleStyles, buttonStyles]);
+
+    const renderIconComponent = () => {
+      const iconStyles = mergeStyles(titleStyles, iconStyle);
+      return (
+        <Icon name={name} bundle={bundle} style={iconStyles} {...iconProps} />
+      );
+    };
 
     return (
       <Button
-        ref={ref}
+        activeOpacity={0.3}
         {...props}
+        ref={ref}
         style={buttonStyles}
         titleStyle={titleStyles}
+        children={props.children || renderIconComponent()}
+        renderTitleComponent={
+          props.renderTitleComponent && renderTitleComponent
+        }
       />
     );
   },

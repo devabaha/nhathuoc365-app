@@ -289,6 +289,7 @@ class PaymentMethod extends Component {
         </ScrollView>
         {this.props.showSubmit && (
           <Button
+            showBackground
             renderBefore={
               this.props.showPrice && (
                 <TotalPrice t={t} value={this.props.totalPrice} />

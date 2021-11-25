@@ -1,6 +1,7 @@
 import React from 'react';
-import {FlatList, RefreshControl, StyleSheet} from 'react-native';
-import ScreenWrapper from 'src/components/ScreenWrapper';
+import {FlatList, StyleSheet} from 'react-native';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
+import RefreshControl from 'src/components/base/RefreshControl';
 
 import Feeds from './Feeds';
 
