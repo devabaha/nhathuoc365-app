@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [lamah.dev@gmail.com].
 ### Changed
-- [CU-1vk24rt] Title Choose store instead Warehouse in OpRegister by [thanhyagami@gmail.com]
+- [CU-1vk24rt] Title Choose store instead Warehouse in OpRegister by [thanhyagami@gmail.com].
+- [CU-1vrqar8] Logic of choose_store_site_key in GPS List Store by [kienluu612@gmail.com].
 
 ## [r12.2.4] - 2021-11-24
 ### Added
