@@ -114,7 +114,7 @@ class PhoneAuth extends Component {
             if (!!firebaseAuth().currentUser) {
               await firebaseAuth().signOut();
             }
-            
+
             this.setState({
               confirmResult: response,
               message: '',
@@ -261,21 +261,29 @@ class PhoneAuth extends Component {
     this.setState({requestNewOtpCounter: RESEND_OTP_INTERVAL});
   }
 
-  verifyResponse(response) {
-    store.setUserInfo(response.data);
-    store.setAnalyticsUser(response.data);
-    store.resetCartData();
+  verifyResponse = (response) => {
     const {t} = this.props;
-    if (response.data && response.data.fill_info_user) {
-      //hien thi chon site
-      Actions.replace('op_register', {
-        title: t('common:screen.register.mainTitle'),
-        name_props: response.data.name,
-      });
-    } else {
-      Actions.replace(appConfig.routes.primaryTabbar);
+    const user = response.data;
+    store.setUserInfo(user);
+    store.setAnalyticsUser(user);
+    store.resetCartData();
+
+    switch (response.status) {
+      case STATUS_FILL_INFO_USER:
+        Actions.replace('op_register', {
+          title: t('common:screen.register.mainTitle'),
+          name_props: response.data.name,
+          hideBackImage: true,
+        });
+        break;
+      case STATUS_SYNC_FLAG:
+        Actions.replace(appConfig.routes.rootGpsStoreLocation);
+        break;
+      case STATUS_SUCCESS:
+        Actions.replace(appConfig.routes.primaryTabbar);
+        break;
     }
-  }
+  };
 
   handleChangeCodeInput(codeInput) {
     this.setState({codeInput});
