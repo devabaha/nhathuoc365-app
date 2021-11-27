@@ -24,8 +24,8 @@
       "title": "Tỉnh/Thành phố",
       "placeholder": "Chạm để chọn"
     },
-    "warehouse": {
-      "title": "Kho hàng",
+    "chooseStore": {
+      "title": "Chọn cửa hàng",
       "placeholder": "Chạm để chọn"
     }
   },

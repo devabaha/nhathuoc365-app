@@ -24,8 +24,8 @@
       "title": "Province/City",
       "placeholder": "Touch to select"
     },
-    "warehouse": {
-      "title": "Warehouse",
+    "chooseStore": {
+      "title": "Choose store",
       "placeholder": "Touch to select"
     }
   },

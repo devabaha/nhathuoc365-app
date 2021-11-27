@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.2.4';
+    return 'r12.2.5';
   }
 
   get appName() {

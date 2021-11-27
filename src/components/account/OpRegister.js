@@ -379,7 +379,7 @@ class OpRegister extends Component {
       const disable =
         !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
-        title: this.props.t('data.warehouse.title'),
+        title: this.props.t('data.chooseStore.title'),
         value:
           this.state.warehouseSelected?.name ||
           this.props.t('data.warehouse.placeholder'),
@@ -422,7 +422,8 @@ class OpRegister extends Component {
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
       (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && !warehouseSelected.id) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) &&
+        !warehouseSelected.id) ||
       (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
         isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
         !store?.user_info?.invite_user_id &&
