@@ -379,7 +379,7 @@ class OpRegister extends Component {
       const disable =
         !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
-        title: this.props.t('data.warehouse.title'),
+        title: this.props.t('data.chooseStore.title'),
         value:
           this.state.warehouseSelected?.name ||
           this.props.t('data.warehouse.placeholder'),
