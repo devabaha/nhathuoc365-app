@@ -196,7 +196,10 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     // Geolocation.stopObserving();
     AppState.removeEventListener('change', handleAppStateChange);
     cancelRequests(requests);
-    if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
+    if (
+      isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY) &&
+      !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)
+    ) {
       handlePressStore(
         {
           id: 0,
@@ -234,19 +237,19 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
         if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
           return {
             ...defaultStoreData,
-            disabled: true,
-            image: store.image_url,
-            actionBtnTitle: t('map'),
-            actionBtnIconName: 'ios-map-sharp',
-          };
-        } else
-          return {
-            ...defaultStoreData,
             disabled: false,
             onPress: () => handlePressStore(store),
             image: store.image_url,
             phone: null,
             onPressActionBtn: () => handlePressStore(store),
+          };
+        } else
+          return {
+            ...defaultStoreData,
+            disabled: true,
+            image: store.image_url,
+            actionBtnTitle: t('map'),
+            actionBtnIconName: 'ios-map-sharp',
           };
       default:
         return defaultStoreData;
@@ -311,7 +314,6 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     LocationPermission.callPermission(
       LOCATION_PERMISSION_TYPE.REQUEST,
       (result) => {
-        console.log(result);
         if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setRequestLocationErrorCode(result);
           setGotoSetting(false);
@@ -402,6 +404,11 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
       if (response?.status === STATUS_SUCCESS) {
         store.setStoreData(response.data.site);
 
+        if (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
+          Actions.reset(appConfig.routes.sceneWrapper);
+          return;
+        }
+
         if (!isBack) {
           await servicesHandler({
             type: SERVICES_TYPE.OPEN_SHOP,
@@ -421,7 +428,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
         message: t('api.error.message'),
       });
     } finally {
-      !isBack && setLoading(false);
+      isMounted() && !isBack && setLoading(false);
     }
   }, []);
 
