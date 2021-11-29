@@ -69,8 +69,8 @@ const Tracker = ({
           bufferProgress={bufferTime / (totalTime || 1)}
           animatedVisibleValue={animatedVisibleValue}
           thumbStyle={progressBarThumbStyle}
-          onChangedProgress={onChangedProgress}
-          onChangingProgress={onChangingProgress}
+          // onChangedProgress={onChangedProgress}
+          // onChangingProgress={onChangingProgress}
         />
       </Animated.View>
 

@@ -160,7 +160,6 @@ class CustomAutoHeightWebview extends Component {
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
           customStyle={CUSTOM_STYLE + this.props.customStyle}
-          allowsFullscreenVideo={true}
         />
       </View>
     );

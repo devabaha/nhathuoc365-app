@@ -83,6 +83,8 @@ const styles = StyleSheet.create({
   },
   playContainer: {
     position: 'absolute',
+    justifyContent:'center',
+    alignItems: 'center',
   },
   icon: {
     color: themes.colors.primary,
