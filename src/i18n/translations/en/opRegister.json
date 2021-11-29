@@ -39,8 +39,8 @@
     }
   },
   "modal": {
-    "warehouse": {
-      "title": "Select warehouse"
+    "store": {
+      "title": "Select store"
     }
   }
 }
