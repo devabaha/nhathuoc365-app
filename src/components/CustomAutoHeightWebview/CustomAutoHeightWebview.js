@@ -3,6 +3,7 @@ import {Linking, StyleSheet, View} from 'react-native';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 
 import appConfig from 'app-config';
+import {openLink} from 'app-helper';
 
 const ACTION_TYPE = {
   GET_INNER_TEXT: 'webview_get_inner_text',
@@ -17,6 +18,10 @@ const CUSTOM_STYLE = `
   * {
     font-family: 'arial';
   }
+  body {
+    padding-left: 15px;
+    padding-right: 15px;
+  },
   a {
     // pointer-events:none;
     // text-decoration: none !important;
@@ -73,6 +78,31 @@ const CUSTOM_SCRIPT = `
   function getTextOnly(){
     return document.body.innerText;
   }
+
+//   let preventScroll = false;
+
+// function onFullScreenChange() {
+// 	let inFullScreen = Boolean(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+// 	if(inFullScreen) {
+// 		preventScroll = true;
+// 		setTimeout(() => {
+// 			preventScroll = false;
+// 		}, 100);
+// 	}
+// }
+
+// document.addEventListener('fullscreenchange', onFullScreenChange)
+// document.addEventListener('mozfullscreenchange', onFullScreenChange)
+// document.addEventListener('msfullscreenchange', onFullScreenChange)
+// document.addEventListener('webkitfullscreenchange', onFullScreenChange)
+// let y = 0;
+// window.addEventListener("scroll", () => {
+//         if(preventScroll && window.scrollY === 0) {
+// 	        window.scrollTo(0, y);
+// 	        return;
+//         }
+//         y = window.scrollY;
+// });
 `;
 
 const styles = StyleSheet.create({
@@ -106,6 +136,7 @@ class CustomAutoHeightWebview extends Component {
     let data = e?.nativeEvent?.data;
     if (data) {
       data = JSON.parse(data)?.nativeEvent?.data;
+
       if (data?.type) {
         switch (data.type) {
           case ACTION_TYPE.GET_INNER_TEXT:
@@ -117,15 +148,15 @@ class CustomAutoHeightWebview extends Component {
             break;
           case ACTION_TYPE.CLICK_LINK:
             if (data?.message) {
-              Linking.canOpenURL(data.message)
-                .then((supported) => {
-                  if (supported) {
-                    Linking.openURL(data.message);
-                  }
-                })
-                .catch((err) => {
-                  // console.log(err);
-                });
+              // Linking.canOpenURL(data.message)
+              //   .then((supported) => {
+              //     if (supported) {
+              openLink(data.message);
+              // }
+              // })
+              // .catch((err) => {
+              //   // console.log(err);
+              // });
             }
             break;
         }
@@ -160,7 +191,6 @@ class CustomAutoHeightWebview extends Component {
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
           customStyle={CUSTOM_STYLE + this.props.customStyle}
-          allowsFullscreenVideo={true}
         />
       </View>
     );
