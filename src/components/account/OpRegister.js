@@ -300,7 +300,7 @@ class OpRegister extends Component {
   onPressWarehouse = () => {
     Keyboard.dismiss();
     Actions.push(appConfig.routes.modalList, {
-      heading: this.props.t('modal.warehouse.title'),
+      heading: this.props.t('modal.store.title'),
       data: this.state.listWarehouse,
       selectedItem: this.state.warehouseSelected,
       onPressItem: this.onSelectWarehouse,
@@ -329,7 +329,12 @@ class OpRegister extends Component {
     if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
         id: 'ngay_sinh',
-        title: this.props.t('data.birthdate.title'),
+        title: (
+          <Text>
+            {this.props.t('data.birthdate.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value: this.state.birth,
         defaultValue: this.props.t('data.birthdate.defaultValue'),
         select: true,
@@ -352,7 +357,12 @@ class OpRegister extends Component {
     if (this.isActiveCity) {
       const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
-        title: this.props.t('data.province.title'),
+        title: (
+          <Text>
+            {this.props.t('data.province.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value:
           this.state.provinceSelected?.name ||
           this.props.t('data.province.placeholder'),
@@ -379,7 +389,12 @@ class OpRegister extends Component {
       const disable =
         !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
-        title: this.props.t('data.chooseStore.title'),
+        title: (
+          <Text>
+            {this.props.t('data.chooseStore.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value:
           this.state.warehouseSelected?.name ||
           this.props.t('data.warehouse.placeholder'),
@@ -422,7 +437,8 @@ class OpRegister extends Component {
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
       (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && !warehouseSelected.id) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) &&
+        !warehouseSelected.id) ||
       (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
         isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
         !store?.user_info?.invite_user_id &&

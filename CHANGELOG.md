@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r12.2.6] - 2021-11-29
 ### Changed
-- [CU-1vrvxqq] condition to show discount_view in CartItem by [minhnguyenit14@gmail.com]. 
+- [CU-1vrvxqq] condition to show discount_view in CartItem by [minhnguyenit14@gmail.com].
+- Show required sign for input labels in OpRegister by [minhnguyenit14@gmail.com].
 ### Fixed
 - [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [minhnguyenit14@gmail.com].
 

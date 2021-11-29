@@ -39,8 +39,8 @@
     }
   },
   "modal": {
-    "warehouse": {
-      "title": "Chọn kho hàng"
+    "store": {
+      "title": "Chọn cửa hàng"
     }
   }
 }
