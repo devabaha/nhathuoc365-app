@@ -178,32 +178,11 @@ class PhoneAuth extends Component {
   }
 
   firebaseConfirmCode(response) {
-    if (response && response.status == STATUS_SUCCESS) {
-      this.verifyResponse(response);
-    } else {
-      this.setState({
-        message: response.message,
-      });
-    }
+    this.verifyResponse(response);
   }
 
   backUpConfirmCode(response) {
-    this.setState({isShowIndicator: true}, () => {
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState(
-          {
-            message: '',
-            isShowIndicator: false,
-          },
-          () => this.verifyResponse(response),
-        );
-      } else {
-        this.setState({
-          message: response.message,
-          isShowIndicator: false,
-        });
-      }
-    });
+    this.verifyResponse(response);
   }
 
   confirmCode() {
@@ -281,6 +260,11 @@ class PhoneAuth extends Component {
         break;
       case STATUS_SUCCESS:
         Actions.replace(appConfig.routes.primaryTabbar);
+        break;
+      default:
+        this.setState({
+          message: response.message,
+        });
         break;
     }
   };
