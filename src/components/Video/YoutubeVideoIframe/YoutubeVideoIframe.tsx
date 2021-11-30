@@ -392,7 +392,9 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
             meta,
             containerWidth,
           );
-          this.setState({width, height, metaData});
+          this.setState({width, height, metaData}, () => {
+            this.updateIframeSize();
+          });
         })
         .catch((error) => {
           console.log('get_youtube_video_meta_data', error);

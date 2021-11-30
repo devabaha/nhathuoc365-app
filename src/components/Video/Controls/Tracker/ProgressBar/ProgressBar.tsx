@@ -13,8 +13,10 @@ import Animated, {
   add,
   and,
   call,
+  ceil,
   cond,
   eq,
+  greaterOrEq,
   greaterThan,
   lessThan,
   max,
@@ -22,6 +24,7 @@ import Animated, {
   multiply,
   neq,
   or,
+  round,
   set,
   sub,
   useCode,
@@ -107,7 +110,6 @@ const ProgressBar = ({
   const refLongPressGesture = useRef<any>();
 
   const [containerWidth, setContainerWidth] = useState(1);
-  const [containerOffsetX, setContainerOffsetX] = useState(0);
   const [timerWidth, setTimerWidth] = useState(0);
 
   const isStartChangeProgressManually = useValue<number>(0);
@@ -154,7 +156,6 @@ const ProgressBar = ({
       panPositionX.setValue(progress * layout.width);
       positionX.setValue(progress * layout.width);
       setContainerWidth(layout.width || 1);
-      setContainerOffsetX(layout.x);
     }, 0),
     [],
   );
@@ -183,32 +184,29 @@ const ProgressBar = ({
     setTimerWidth(e.nativeEvent.layout.width);
   }, []);
 
-  const handleTapStateChange = useCallback((e) => {
-    tapState.setValue(e.nativeEvent.state);
-    tapPositionX.setValue(e.nativeEvent.x);
-  }, []);
+  const handleTapStateChange = useCallback(
+    (e) => {
+      tapState.setValue(e.nativeEvent.state);
+      if (e.nativeEvent.state === State.ACTIVE) {
+        const tapXValue = e.nativeEvent.x;
+        tapPositionX.setValue(tapXValue);
+        panPositionX.setValue(tapXValue);
+        positionX.setValue(
+          tapXValue > containerWidth
+            ? containerWidth
+            : tapXValue < 0
+            ? 0
+            : tapXValue,
+        );
+
+        onChangedProgress(tapXValue / containerWidth);
+      }
+    },
+    [containerWidth],
+  );
 
   useCode(() => {
     return [
-      cond(
-        eq(tapState, State.ACTIVE),
-        [
-          set(isStartChangeProgressManually, 1),
-          set(
-            panPositionX,
-            cond(
-              lessThan(tapPositionX, 0),
-              0,
-              cond(
-                greaterThan(tapPositionX, containerWidth),
-                containerWidth,
-                tapPositionX,
-              ),
-            ),
-          ),
-        ],
-      ),
-
       cond(eq(panState, State.BEGAN), [
         // call([panState, longPressState], ([x, y]) =>
         //   console.log('start', x, y),
@@ -236,14 +234,14 @@ const ProgressBar = ({
           onChangingProgress(value / containerWidth),
         ),
       ]),
-      cond(or(eq(panState, State.END), eq(tapState, State.ACTIVE)), [
+      cond(eq(panState, State.END), [
         // call([panState, longPressState], ([x, y]) => console.log('end', x, y)),
 
         call([], handleEndChangeProgress),
         cond(eq(isStartChangeProgressManually, 1), [
           set(isStartChangeProgressManually, 0),
           set(positionX, panPositionX),
-          call([positionX, tapPositionX], ([value, b]) => {
+          call([positionX, panPositionX], ([value, panPositionX]) => {
             onChangedProgress(value / containerWidth);
           }),
         ]),
@@ -283,16 +281,12 @@ const ProgressBar = ({
           cond(
             greaterThan(position.x, containerWidth),
             [containerWidth],
-            cond(
-              or(eq(tapState, State.ACTIVE), eq(panState, State.ACTIVE)),
-              position.x,
-              positionX,
-            ),
+            cond(eq(panState, State.ACTIVE), position.x, positionX),
           ),
         ),
       ),
     ];
-  }, [containerOffsetX, containerWidth]);
+  }, [containerWidth]);
 
   useCode(() => {
     return [
@@ -305,17 +299,18 @@ const ProgressBar = ({
   useCode(
     () => [
       cond(
-        neq(panState, State.END),
+        and(neq(panState, State.END), lessThan(tapState, State.BEGAN)),
         [set(positionX, (progress || 0) * containerWidth)],
         [
           set(
             diffProgress,
-            multiply(abs(sub(positionX, (progress || 0) * containerWidth)), 1),
+            abs(sub(positionX, (progress || 0) * containerWidth)),
           ),
           // call([diffProgress], ([value]) => console.log(value)),
           cond(and(lessThan(diffProgress, 0.8), greaterThan(diffProgress, 0)), [
             set(isChangingProgressManually, 0),
             set(panState, State.UNDETERMINED),
+            set(tapState, State.UNDETERMINED),
           ]),
         ],
       ),
@@ -349,14 +344,14 @@ const ProgressBar = ({
   }, [isFullscreen]);
 
   return (
-    <View
+    <Animated.View
       onLayout={handleContainerLayout}
       onStartShouldSetResponder={() => true}
       onResponderTerminationRequest={() => false}
       onStartShouldSetResponderCapture={() => false}
       onMoveShouldSetResponderCapture={() => false}>
       <TapGestureHandler
-        simultaneousHandlers={[refPanGesture]}
+        simultaneousHandlers={refPanGesture}
         waitFor={refLongPressGesture}
         onHandlerStateChange={handleTapStateChange}>
         <Animated.View>
@@ -388,7 +383,7 @@ const ProgressBar = ({
                         style={[
                           styles.background,
                           {
-                            width: positionX,
+                            width: ceil(positionX),
                           },
                           animatedProgressBarFullscreen,
                         ]}
@@ -461,7 +456,7 @@ const ProgressBar = ({
           </LongPressGestureHandler>
         </Animated.View>
       </TapGestureHandler>
-    </View>
+    </Animated.View>
   );
 };
 

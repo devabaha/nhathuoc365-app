@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
 
@@ -38,12 +39,11 @@ export class Video extends Component<VideoProps> {
       });
     }
 
-    if(!nextState.isPlay) {
-      if(this.refYoutubePlayer.current){
+    if (!nextState.isPlay) {
+      if (this.refYoutubePlayer.current) {
         this.refYoutubePlayer.current.pauseVideo();
       }
     }
-
 
     return true;
   }
@@ -71,14 +71,14 @@ export class Video extends Component<VideoProps> {
     }
   };
 
-  handlePressPlay = (isEnd = false) => {
+  handlePressPlay = debounce((isEnd = false) => {
     this.setState((prevState: any) => {
       return {
         isPlay: !prevState.isPlay,
         isEnd,
       };
     });
-  };
+  }, 0);
 
   handlePressMute = () => {
     this.setState((prevState: any) => ({
