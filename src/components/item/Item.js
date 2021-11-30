@@ -60,6 +60,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ModalWholesale from './ModalWholesale';
 import Video from '../Video';
 import MediaCarousel from './MediaCarousel';
+import {reaction} from 'mobx';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -92,6 +93,8 @@ class Item extends Component {
       webviewContentHeight: undefined,
       isWebviewContentCollapsed: undefined,
       selectedIndex: 0,
+
+      canPlayVideo: false,
     };
 
     this.refPlayer = React.createRef();
@@ -103,6 +106,7 @@ class Item extends Component {
     this.refWebview = React.createRef();
     this.refModalWholesale = React.createRef();
     this.productTempData = [];
+    this.disposerIsEnterItem = () => {};
 
     this.CTAProduct = new CTAProduct(props.t, this);
     this.getWarehouseRequest = new APIRequest();
@@ -146,6 +150,10 @@ class Item extends Component {
   }
 
   componentDidMount() {
+    this.disposerIsEnterItem = reaction(
+      () => store.isEnterItem,
+      this.checkEnterItemListener,
+    );
     !this.props.preventUpdate && this._initial(this.props);
     this.getListWarehouse();
   }
@@ -173,8 +181,13 @@ class Item extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.disposerIsEnterItem();
     cancelRequests(this.requests);
   }
+
+  checkEnterItemListener = (isEnterItem) => {
+    this.setState({canPlayVideo: isEnterItem});
+  };
 
   logEventTracking(rootData) {
     if (rootData && !this.state.item_data) {
@@ -783,7 +796,6 @@ class Item extends Component {
   }
 
   renderItem = ({item: image, index}) => {
-    console.log(image)
     return (
       <View style={{width: appConfig.device.width}}>
         {image?.image ? (
@@ -845,6 +857,7 @@ class Item extends Component {
             <MediaCarousel
               height={appConfig.device.width}
               data={this.state.images}
+              canPlayVideo={this.state.canPlayVideo}
             />
             // <Swiper
             //   loop={false}
@@ -1323,7 +1336,7 @@ class Item extends Component {
                     onSizeUpdated={this.handleWebviewContentLayout}
                     containerStyle={[
                       {
-                        width: '100%'
+                        width: '100%',
                       },
                       this.state.isWebviewContentCollapsed !== undefined &&
                         !!this.state.isWebviewContentCollapsed &&
@@ -1791,7 +1804,7 @@ const styles = StyleSheet.create({
   },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   shortContentItem: {
     ...appConfig.styles.typography.text,

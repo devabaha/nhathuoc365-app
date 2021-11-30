@@ -20,6 +20,8 @@ export interface YoutubeVideoIframeProps {
   refPlayer?: (ref: YoutubeIframeRef) => void;
   webviewStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
+  controlsContainerStyle?: StyleProp<ViewProps>;
+  trackerContainerStyle?: StyleProp<ViewProps>;
   autoAdjustLayout?: boolean;
   isEnd?: boolean;
   isFullscreenWithoutModal?: boolean;

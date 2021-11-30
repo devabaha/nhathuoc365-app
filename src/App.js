@@ -1473,6 +1473,12 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     hideNavBar
                     back
+                    onEnter={() => {
+                      store.setEnterItem(true);
+                    }}
+                    onExit={() => {
+                      store.setEnterItem(false);
+                    }}
                   />
                 </Stack>
 

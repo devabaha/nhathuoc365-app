@@ -111,6 +111,7 @@ const Controls = ({
   isFullscreen = false,
   isFullscreenLandscape = false,
   containerStyle = {},
+  trackerContainerStyle = {},
   onChangeControlsVisible = (isControlsVisible: boolean) => {},
   onPressPlay = () => {},
   onPressMute = () => {},
@@ -398,6 +399,7 @@ const Controls = ({
         progressBarStyle={
           isFullscreen && !isChangingProgress && animatedVisibleProgressBarStyle
         }
+        containerStyle={trackerContainerStyle}
         animatedVisibleValue={animatedVisibleMask}
         onPressMute={toggleMute}
         onPressFullscreen={onPressFullscreen}

@@ -50,6 +50,7 @@ class MediaCarousel extends Component {
   static defaultProps = {
     initIndex: 0,
     showPagination: true,
+    canPlayVideo: false,
   };
   state = {
     currentIndex: this.props.initIndex,
@@ -75,6 +76,13 @@ class MediaCarousel extends Component {
         height: this.props.height + THUMB_SIZE,
       },
     ];
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.canPlayVideo !== this.props.canPlayVideo) {
+      this.setState({stopVideo: !nextProps.canPlayVideo});
+    }
+    return true;
   }
 
   handleChangeImageIndex = (index, media) => {

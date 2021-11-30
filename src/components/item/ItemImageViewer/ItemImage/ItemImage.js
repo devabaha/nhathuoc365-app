@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {StyleSheet, Animated, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import ImageZoom from 'react-native-image-pan-zoom';
@@ -41,6 +41,7 @@ const ItemImage = ({
   const isPress = useRef(true);
   const lastEvent = useRef(null);
   const scaleValue = useRef(1);
+  const [isFullscreenLandscape, setFullscreenLandscape] = useState(false);
 
   const handleStartShouldSetPanResponder = useCallback((e) => {
     let refImg = refImage.current;
@@ -149,6 +150,20 @@ const ItemImage = ({
     isPress.current = true;
   }, []);
 
+  const handleRotateFullscreen = useCallback((isFullscreenLandscape) => {
+    onRotateFullscreen(isFullscreenLandscape);
+    setFullscreenLandscape(isFullscreenLandscape);
+  }, []);
+
+  const trackerContainerStyle = useMemo(() => {
+    return (
+      isFullscreenLandscape && {
+        // avoid header
+        paddingLeft: 80,
+      }
+    );
+  }, [isFullscreenLandscape]);
+
   return (
     <View
       onTouchStart={handleTouchStart}
@@ -159,12 +174,13 @@ const ItemImage = ({
           type="youtube"
           videoId={url}
           containerStyle={styles.videoContainer}
+          trackerContainerStyle={trackerContainerStyle}
           autoAdjustLayout
           isFullscreenWithoutModal
           height={appConfig.device.height}
           isPlay={index === selectedIndex}
           onPressFullscreen={Actions.pop}
-          onRotateFullscreen={onRotateFullscreen}
+          onRotateFullscreen={handleRotateFullscreen}
           onChangeControlsVisible={onChangeVideoControlsVisible}
           currentTime={currentTime}
         />

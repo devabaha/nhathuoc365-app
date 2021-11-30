@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import {debounce} from 'lodash';
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
 
@@ -41,7 +41,7 @@ export class Video extends Component<VideoProps> {
 
     if (!nextState.isPlay) {
       if (this.refYoutubePlayer.current) {
-        this.refYoutubePlayer.current.pauseVideo();
+        // this.refYoutubePlayer.current.pauseVideo();
       }
     }
 
@@ -78,7 +78,7 @@ export class Video extends Component<VideoProps> {
         isEnd,
       };
     });
-  }, 0);
+  }, 100);
 
   handlePressMute = () => {
     this.setState((prevState: any) => ({
@@ -107,6 +107,8 @@ export class Video extends Component<VideoProps> {
           currentTime={this.props.currentTime}
           webviewStyle={this.props.webviewStyle}
           containerStyle={this.props.containerStyle}
+          controlsContainerStyle={this.props.controlsContainerStyle}
+          trackerContainerStyle={this.props.trackerContainerStyle}
           autoAdjustLayout={this.props.autoAdjustLayout}
           onChangeState={this.handleChangeState}
           onReady={this.props.onReady}

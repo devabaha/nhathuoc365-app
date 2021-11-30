@@ -556,6 +556,8 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
               isEnd={this.props.isEnd}
               isFullscreen={this.state.isFullscreen}
               isFullscreenLandscape={this.state.isFullscreenLandscape}
+              containerStyle={this.props.controlsContainerStyle}
+              trackerContainerStyle={this.props.trackerContainerStyle}
               onPressPlay={this.handlePressPlay}
               onPressMute={this.props.onPressMute}
               onChangedProgress={this.handleProgress}
