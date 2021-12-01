@@ -424,7 +424,7 @@ class Account extends Component {
         ),
         onPress: () =>
           Actions.push(appConfig.routes.modalList, {
-            heading: this.props.t('opRegister:modal.warehouse.title'),
+            heading: this.props.t('opRegister:modal.store.title'),
             data: this.state.listWarehouse,
             selectedItem: {id: store_id},
             onPressItem: this.onSelectWarehouse,
