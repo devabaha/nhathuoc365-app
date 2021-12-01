@@ -460,7 +460,7 @@ class Item extends Component {
 
   handlePressWarehouse = () => {
     Actions.push(appConfig.routes.modalList, {
-      heading: this.props.t('opRegister:modal.warehouse.title'),
+      heading: this.props.t('opRegister:modal.store.title'),
       data: this.state.listWarehouse,
       selectedItem: {id: store?.user_info?.store_id},
       onPressItem: this.onSelectWarehouse,
@@ -1324,7 +1324,7 @@ class Item extends Component {
                     onSizeUpdated={this.handleWebviewContentLayout}
                     containerStyle={[
                       {
-                        width: '100%'
+                        width: '100%',
                       },
                       this.state.isWebviewContentCollapsed !== undefined &&
                         !!this.state.isWebviewContentCollapsed &&
@@ -1792,7 +1792,7 @@ const styles = StyleSheet.create({
   },
   shortContentBox: {
     backgroundColor: '#f5f5f5',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   shortContentItem: {
     ...appConfig.styles.typography.text,
