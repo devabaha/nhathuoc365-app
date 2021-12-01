@@ -397,7 +397,7 @@ class OpRegister extends Component {
         ),
         value:
           this.state.warehouseSelected?.name ||
-          this.props.t('data.warehouse.placeholder'),
+          this.props.t('data.chooseStore.placeholder'),
         isLoading: this.state.isWarehouseLoading,
         select: true,
         disable,
