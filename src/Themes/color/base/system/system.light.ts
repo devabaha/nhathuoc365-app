@@ -1,18 +1,19 @@
 import {hexToRgba, rgbaToRgb} from 'app-helper';
+import {Platform, PlatformColor} from 'react-native';
 import {CORE} from '../core';
 
 const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: CORE.primary,
   // —— Primary variants ——
-  primary20: rgbaToRgb(hexToRgba(CORE.primary, .2)),
+  primary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   primaryLight: CORE.primaryLight,
   primaryDark: CORE.primaryDark,
   onPrimary: CORE.onPrimary,
 
   secondary: CORE.secondary,
   // —— Secondary variants ——
-  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, .2)),
+  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
   secondaryLight: CORE.secondaryLight,
   secondaryDark: CORE.secondaryDark,
   onSecondary: CORE.onSecondary,
@@ -67,4 +68,7 @@ export const SYSTEM_LIGHT = {
   textInactive: CORE.grey600,
 
   iconInactive: CORE.grey600,
+
+  indicator:
+    Platform.OS === 'ios' ? '#999999' : PlatformColor('?attr/colorAccent'),
 };

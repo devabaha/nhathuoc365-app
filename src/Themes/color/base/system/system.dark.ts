@@ -1,4 +1,5 @@
-import { hexToRgba, rgbaToRgb } from 'app-helper';
+import {hexToRgba, rgbaToRgb} from 'app-helper';
+import {Platform, PlatformColor} from 'react-native';
 import {CORE} from '../core';
 import {SYSTEM_LIGHT} from './system.light';
 
@@ -6,14 +7,14 @@ const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: '#212121',
   // —— Primary variants ——
-  primary20: rgbaToRgb(hexToRgba(CORE.primary, .2)),
+  primary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   primaryLight: '#3d3d3d',
   primaryDark: '#181818',
   onPrimary: '#FFFFFF',
 
   secondary: '#212121',
   // —— Secondary variants ——
-  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, .2)),
+  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
   secondaryLight: '#3d3d3d',
   secondaryDark: '#181818',
   onSecondary: '#FFFFFF',
@@ -26,7 +27,6 @@ const SYSTEM_COMMON = {
   surface: '#2a2a2a',
   onSurface: '#ffffff',
   persistOnSurface: CORE.onSurface,
-
 };
 
 export const SYSTEM_DARK = {
@@ -57,4 +57,5 @@ export const SYSTEM_DARK = {
   textInactive: CORE.grey500,
 
   iconInactive: CORE.grey600,
+  indicator: SYSTEM_COMMON.onSurface,
 };

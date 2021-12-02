@@ -1,4 +1,4 @@
-import {StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {OpaqueColorValue, StyleProp, TextStyle, ViewStyle} from 'react-native';
 
 import {TypographyType} from 'src/components/base';
 import {CartPaymentStatus, CartStatus} from 'src/constants/cart';
@@ -7,6 +7,8 @@ import {CartType, DeliveryStatusCode} from 'src/constants/cart';
 export type Style =
   | StyleProp<ViewStyle | TextStyle>
   | StyleProp<ViewStyle | TextStyle>[];
+
+export type ColorValue = string | OpaqueColorValue;
 
 export type Typography = {
   [TypographyType.TITLE_LARGE]?: Style;
@@ -30,121 +32,122 @@ export type Typography = {
 
 export type Color = {
   // Core
-  grey50: string;
-  grey100: string;
-  grey200: string;
-  grey300: string;
-  grey400: string;
-  grey500: string;
-  grey600: string;
-  grey700: string;
-  grey800: string;
-  grey900: string;
-  green50: string;
-  green100: string;
-  green200: string;
-  green300: string;
-  green400: string;
-  green500: string;
-  green600: string;
-  green700: string;
-  green800: string;
-  green900: string;
-  blue50: string;
-  blue100: string;
-  blue200: string;
-  blue300: string;
-  blue400: string;
-  blue500: string;
-  blue600: string;
-  blue700: string;
-  blue800: string;
-  blue900: string;
-  black: string;
-  white: string;
-  blueGray: string;
-  primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  onPrimary: string;
-  secondary: string;
-  secondaryLight: string;
-  secondaryDark: string;
-  onSecondary: string;
-  neutral: string;
-  background: string;
-  onBackground: string;
-  surface: string;
-  onSurface: string;
-  skeletonContainer: string;
-  skeletonContent: string;
+  grey50: ColorValue;
+  grey100: ColorValue;
+  grey200: ColorValue;
+  grey300: ColorValue;
+  grey400: ColorValue;
+  grey500: ColorValue;
+  grey600: ColorValue;
+  grey700: ColorValue;
+  grey800: ColorValue;
+  grey900: ColorValue;
+  green50: ColorValue;
+  green100: ColorValue;
+  green200: ColorValue;
+  green300: ColorValue;
+  green400: ColorValue;
+  green500: ColorValue;
+  green600: ColorValue;
+  green700: ColorValue;
+  green800: ColorValue;
+  green900: ColorValue;
+  blue50: ColorValue;
+  blue100: ColorValue;
+  blue200: ColorValue;
+  blue300: ColorValue;
+  blue400: ColorValue;
+  blue500: ColorValue;
+  blue600: ColorValue;
+  blue700: ColorValue;
+  blue800: ColorValue;
+  blue900: ColorValue;
+  black: ColorValue;
+  white: ColorValue;
+  blueGray: ColorValue;
+  primary: ColorValue;
+  primaryLight: ColorValue;
+  primaryDark: ColorValue;
+  onPrimary: ColorValue;
+  secondary: ColorValue;
+  secondaryLight: ColorValue;
+  secondaryDark: ColorValue;
+  onSecondary: ColorValue;
+  neutral: ColorValue;
+  background: ColorValue;
+  onBackground: ColorValue;
+  surface: ColorValue;
+  onSurface: ColorValue;
+  skeletonContainer: ColorValue;
+  skeletonContent: ColorValue;
 
   // System
-  primary20: string;
-  secondary20: string;
-  persistOnSurface: string;
-  border: string;
-  placeholder: string;
-  disabled: string;
-  onDisabled: string;
-  overlay60: string;
-  overlay30: string;
-  onOverlay: string;
-  underlay: string;
-  shadow: string;
-  navBarBackground: string;
-  onNavBarBackground: string;
-  contentBackground: string;
-  onContentBackground: string;
-  persistPrimary: string;
-  onPersistPrimary: string;
-  persistSecondary: string;
-  onPersistSecondary: string;
-  primaryHighlight: string;
-  secondaryHighlight: string;
-  surfaceHighlight: string;
-  persistTextPrimary: string;
-  textPrimary: string;
-  textSecondary: string;
-  textInactive: string;
-  iconInactive: string;
+  primary20: ColorValue;
+  secondary20: ColorValue;
+  persistOnSurface: ColorValue;
+  border: ColorValue;
+  placeholder: ColorValue;
+  disabled: ColorValue;
+  onDisabled: ColorValue;
+  overlay60: ColorValue;
+  overlay30: ColorValue;
+  onOverlay: ColorValue;
+  underlay: ColorValue;
+  shadow: ColorValue;
+  navBarBackground: ColorValue;
+  onNavBarBackground: ColorValue;
+  contentBackground: ColorValue;
+  onContentBackground: ColorValue;
+  persistPrimary: ColorValue;
+  onPersistPrimary: ColorValue;
+  persistSecondary: ColorValue;
+  onPersistSecondary: ColorValue;
+  primaryHighlight: ColorValue;
+  secondaryHighlight: ColorValue;
+  surfaceHighlight: ColorValue;
+  persistTextPrimary: ColorValue;
+  textPrimary: ColorValue;
+  textSecondary: ColorValue;
+  textInactive: ColorValue;
+  iconInactive: ColorValue;
+  indicator: ColorValue;
 
   // Addition
   cartTypes: {
-    [type in CartType]: string;
+    [type in CartType]: ColorValue;
   };
 
   // DELIVERY STATUS COLOR
   deliveryStatus: {
-    [status in DeliveryStatusCode]: string;
+    [status in DeliveryStatusCode]: ColorValue;
   };
 
   // ORDER STATUS COLOR
   cartStatus: {
-    [status in CartStatus]: string;
+    [status in CartStatus]: ColorValue;
   };
 
   // PAYMENT STATUS COLOR
   cartPaymentStatus: {
-    [status in CartPaymentStatus]: string;
+    [status in CartPaymentStatus]: ColorValue;
   };
 
-  danger: string;
-  warning: string;
-  success: string;
-  info: string;
-  other: string;
-  facebook: string;
-  youtube: string;
-  standard: string[];
-  gold: string[];
-  platinum: string[];
-  diamond: string[];
-  accent1: string;
-  accent2: string;
-  sale: string;
-  marigold: string;
-  cherry: string;
+  danger: ColorValue;
+  warning: ColorValue;
+  success: ColorValue;
+  info: ColorValue;
+  other: ColorValue;
+  facebook: ColorValue;
+  youtube: ColorValue;
+  standard: ColorValue[];
+  gold: ColorValue[];
+  platinum: ColorValue[];
+  diamond: ColorValue[];
+  accent1: ColorValue;
+  accent2: ColorValue;
+  sale: ColorValue;
+  marigold: ColorValue;
+  cherry: ColorValue;
 };
 
 export type Layout = {
