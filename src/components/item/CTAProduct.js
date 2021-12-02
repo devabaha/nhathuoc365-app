@@ -3,6 +3,9 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import {CART_TYPES} from 'src/constants/cart';
 import {ORDER_TYPES} from 'src/constants';
+import i18n from 'src/i18n';
+import {PRODUCT_BUTTON_ACTION_LOADING_PARAM} from 'src/constants/product';
+import {debounce} from 'lodash';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -14,11 +17,13 @@ class CTAProduct {
   product = null;
   cartType = '';
   actionFunctionName = '';
+  buyParams = {};
+  isBuying = false;
   t = () => {};
   context = this;
 
-  constructor(t, context) {
-    this.t = t;
+  constructor(context, t) {
+    this.t = t || i18n.getFixedT(undefined, ['common', 'product']);
     this.context = context;
   }
 
@@ -69,22 +74,51 @@ class CTAProduct {
     return false;
   };
 
-  handlePressMainActionBtnProduct = (product, cartType) => {
+  handlePressMainActionBtnProduct = ({
+    product,
+    cartType,
+    btnTitle,
+    isOrderNow = false,
+    callbackSuccess,
+  }) => {
     this.actionFunctionName = 'handlePressMainActionBtnProduct';
+
     switch (product.order_type) {
       case ORDER_TYPES.NORMAL:
-        this.handleBuy(product, cartType, this._addCart);
+        this.handleBuy(
+          product,
+          cartType,
+          isOrderNow,
+          (params) => this._addCart({...params, callbackSuccess}),
+          false,
+          btnTitle,
+          callbackSuccess,
+        );
         break;
       case ORDER_TYPES.BOOKING:
         this.goToBooking(product);
         break;
       default:
-        this.handleBuy(product, cartType, this._addCart);
+        this.handleBuy(
+          product,
+          cartType,
+          isOrderNow,
+          (params) => this._addCart({...params, callbackSuccess}),
+          false,
+          btnTitle,
+          callbackSuccess,
+        );
         break;
     }
   };
 
-  handlePressSubAction = (product, cartType) => {
+  handlePressSubAction = ({
+    product,
+    cartType,
+    btnTitle,
+    isOrderNow = true,
+    callbackSuccess,
+  }) => {
     this.actionFunctionName = 'handlePressSubAction';
 
     if (this.isServiceProduct(product)) {
@@ -94,7 +128,13 @@ class CTAProduct {
 
     switch (cartType) {
       case CART_TYPES.DROP_SHIP:
-        this.handleDropShip(product, cartType);
+        this.handleDropShip(
+          product,
+          cartType,
+          btnTitle,
+          isOrderNow,
+          callbackSuccess,
+        );
         break;
       default:
         this._likeHandler(product);
@@ -102,45 +142,93 @@ class CTAProduct {
     }
   };
 
-  handlePressActionBtnProduct = (product, cartType) => {
+  /**
+   * @deprecated not use anymore.
+   */
+  handlePressActionBtnProduct = (product, cartType, isOrderNow) => {
     switch (cartType) {
       case CART_TYPES.NORMAL:
-        this.handlePressMainActionBtnProduct(product, cartType);
+        this.handlePressMainActionBtnProduct(product, cartType, isOrderNow);
         break;
       case CART_TYPES.DROP_SHIP:
-        this.handlePressSubAction(product, cartType);
+        this.handlePressSubAction(product, cartType, isOrderNow);
         break;
       default:
-        this.handlePressMainActionBtnProduct(product, cartType);
+        this.handlePressMainActionBtnProduct(product, cartType, isOrderNow);
         break;
     }
   };
 
-  submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.context.setState({isSubActionLoading: true});
-    this._addCart(product, quantity, modalKey, newPrice, false);
+  submitDropShip = (params) => {
+    this._addCart(params);
   };
 
-  handleDropShip = (product, cartType) => {
-    this.handleBuy(product, cartType, this.submitDropShip, true);
+  handleDropShip = (
+    product,
+    cartType,
+    btnTitle,
+    isOrderNow = false,
+    callbackSuccess = () => {},
+  ) => {
+    this.handleBuy(
+      product,
+      cartType,
+      isOrderNow,
+      (params) => {
+        this._addCart({...params, callbackSuccess});
+      },
+      true,
+      btnTitle,
+      callbackSuccess,
+    );
   };
 
-  handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
+  handleBuy = (
+    product,
+    cartType,
+    isOrderNow,
+    callBack = () => {},
+    isDropShip = false,
+    btnTitle,
+    callbackSuccess,
+  ) => {
     if (this.isActionWillAddDifferentCartType(cartType)) {
       this.product = product;
       this.cartType = cartType;
+      this.buyParams = {
+        product,
+        cartType,
+        isOrderNow,
+        btnTitle,
+        callbackSuccess,
+      };
       return;
     }
 
     if (product.has_attr || isDropShip) {
+      if (this.isBuying) return;
+
+      this.isBuying = true;
+
       Actions.push(appConfig.routes.itemAttribute, {
         isDropShip,
         itemId: product.id,
         product,
-        onSubmit: (...args) => {
+        btnTitle: btnTitle || isOrderNow ? this.t('product:shopTitle.buy') : '',
+        onSubmit: (quantity, model, newPrice) => {
           // Actions.pop();
-
-          callBack(product, ...args);
+          callBack({
+            item: product,
+            quantity,
+            modelKey: model,
+            newPrice,
+            btnTitle,
+            cartType,
+            isOrderNow,
+          });
+        },
+        onUnmounted: () => {
+          this.isBuying = false;
         },
       });
     } else {
@@ -148,7 +236,7 @@ class CTAProduct {
       //   this.saveProductTempData(product, 1, '', null);
       //   return;
       // }
-      callBack(product);
+      callBack({item: product, btnTitle, cartType, isOrderNow});
     }
   };
 
@@ -156,17 +244,42 @@ class CTAProduct {
     this.productTempData = [...args];
   };
 
+  getLoadingParam = (cartType, isOrderNow) => {
+    let loadingParam = '';
+
+    switch (cartType) {
+      case CART_TYPES.NORMAL:
+        if (isOrderNow) {
+          loadingParam = [PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW];
+        } else {
+          loadingParam = [PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART];
+        }
+        break;
+      case CART_TYPES.DROP_SHIP:
+        loadingParam = [PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP];
+        break;
+    }
+
+    return loadingParam;
+  };
+
   // add item vào giỏ hàng
-  _addCart = (
+  _addCart = ({
     item,
     quantity = 1,
-    model = '',
+    modelKey: model = '',
     newPrice = null,
-    buying = true,
-  ) => {
+    isOrderNow = false,
+    cartType,
+
+    btnTitle = '',
+    callbackSuccess = () => {},
+  }) => {
+    const loadingParam = this.getLoadingParam(cartType, isOrderNow);
+
     this.context.setState(
       {
-        buying,
+        [loadingParam]: true,
       },
       async () => {
         const data = {
@@ -191,8 +304,19 @@ class CTAProduct {
             ) {
               Actions.push(appConfig.routes.itemAttribute, {
                 itemId: item.id,
+                btnTitle,
                 onSubmit: (quantity, modal_key) =>
-                  this._addCart(item, quantity, modal_key),
+                  this._addCart({
+                    item,
+                    quantity,
+                    modalKey: modal_key,
+                    newPrice,
+                    isOrderNow,
+                    cartType,
+
+                    btnTitle,
+                    callbackSuccess,
+                  }),
               });
             } else {
               flashShowMessage({
@@ -227,6 +351,8 @@ class CTAProduct {
                 type: 'success',
               });
             }
+
+            callbackSuccess && callbackSuccess();
           } else {
             flashShowMessage({
               message: response.message || this.t('common:api.error.message'),
@@ -243,8 +369,7 @@ class CTAProduct {
           this.productTempData = [];
           if (!this.context.unmounted) {
             this.context.setState({
-              buying: false,
-              isSubActionLoading: false,
+              [loadingParam]: false,
             });
           }
         }
@@ -255,7 +380,7 @@ class CTAProduct {
   _likeHandler(item) {
     this.context.setState(
       {
-        like_loading: true,
+        [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: true,
       },
       async () => {
         try {
@@ -271,7 +396,7 @@ class CTAProduct {
             this.context.setState(
               {
                 like_flag,
-                like_loading: false,
+                [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: false,
               },
               () => {
                 this.context.state.item_data.like_flag = like_flag;
@@ -286,12 +411,21 @@ class CTAProduct {
                 });
               },
             );
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response?.message || this.t('common:api.error.message'),
+            });
           }
         } catch (e) {
           console.log(e + ' site_like');
           flashShowMessage({
             type: 'danger',
             message: this.t('common:api.error.message'),
+          });
+        } finally {
+          this.context.setState({
+            [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: false,
           });
         }
       },
@@ -342,8 +476,9 @@ class CTAProduct {
       //   this._addCart(...this.productTempData);
       // }
       setTimeout(() => {
-        if (this.product) {
-          this[this.actionFunctionName](this.product, this.cartType);
+        if (!!this.buyParams.product) {
+          console.log(this.buyParams);
+          this[this.actionFunctionName](this.buyParams);
         }
       }, 500);
     });
@@ -351,6 +486,7 @@ class CTAProduct {
 
   cancelConfirmCartType = () => {
     this.productTempData = [];
+    this.buyParams = {};
     this.product = null;
     this.cartType = '';
   };
