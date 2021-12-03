@@ -1,4 +1,6 @@
 export enum TypographyType {
+  DISPLAY_SMALL = 'displaySmall',
+
   TITLE_LARGE = 'titleLarge',
   TITLE_MEDIUM = 'titleMedium',
 
@@ -12,8 +14,9 @@ export enum TypographyType {
 
   DESCRIPTION_MEDIUM_PRIMARY = 'descriptionMediumPrimary',
   DESCRIPTION_SMALL_PRIMARY = 'descriptionSmallPrimary',
-  
+
   DESCRIPTION_MEDIUM = 'descriptionMedium',
+  DESCRIPTION_SEMI_MEDIUM = 'descriptionSemiMedium',
   DESCRIPTION_SMALL = 'descriptionSmall',
 
   CAPTION = 'caption',
@@ -31,6 +34,7 @@ export enum TypographyFontSize {
 
   BODY_LARGE = 16,
   BODY_MEDIUM = 14,
+  BODY_SEMI_MEDIUM = 13,
   BODY_SMALL = 12,
 
   NOTE_LARGE = 10,

@@ -39,8 +39,6 @@ import {Container} from '../base';
 import {hexToRgbCode} from 'app-helper/';
 import {mergeStyles} from 'src/Themes/helper';
 import ScreenWrapper from '../base/ScreenWrapper';
-import ThemeProvidedValue from 'src/Themes/Theme.context';
-import {Theme} from 'src/Themes/interface';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -63,7 +61,7 @@ const {
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 class Home extends Component {
-  static contextType: ThemeProvidedValue = ThemeContext;
+  static contextType = ThemeContext;
 
   static propTypes = {
     sites: PropTypes.array,
@@ -168,7 +166,7 @@ class Home extends Component {
     }
   };
 
-  get theme(): Theme {
+  get theme() {
     return getTheme(this);
   }
 
@@ -350,7 +348,6 @@ class Home extends Component {
 
   render() {
     const theme = this.theme;
-    console.log(JSON.stringify(theme.color));
     const {t} = this.props;
     const name = this.props.userInfo
       ? this.props.userInfo.name

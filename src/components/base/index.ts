@@ -2,6 +2,7 @@ import Container from './Container';
 import Card from './Card';
 import Typography from './Typography';
 import Input from './Input';
+import ActivityIndicator from './ActivityIndicator';
 
 import {TypographyFontSize, TypographyType} from './Typography/constants';
 import {ButtonRoundedType} from './Button/constants';
@@ -15,6 +16,7 @@ export {
   TypographyFontSize,
   TypographyType,
   ButtonRoundedType,
+  ActivityIndicator,
 };
 
 export type SingleChildren = ReactChild | ReactChildren;

@@ -1,28 +1,35 @@
 import React, {PureComponent} from 'react';
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  TouchableHighlight,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
+// 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
-import Icon from 'react-native-vector-icons/FontAwesome';
+//context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// config, helper
+import {mergeStyles} from 'src/Themes/helper';
 import EventTracker from '../helper/EventTracker';
-import appConfig from 'app-config';
+// constants
+import {BundleIconSetName} from './base/Icon/constants';
+// custom components
+import Icon from './base/Icon';
+import FlatList from './base/FlatList';
+import {Container, Typography, TypographyType} from './base';
+import {BaseButton} from './base/Button';
 
 class Modal extends PureComponent {
+  static contextType = ThemeContext;
   static defaultProps = {
     entry: 'bottom',
     position: 'bottom',
     footerComponent: () => {},
-    ref_modal: () => {}
+    ref_modal: () => {},
   };
   state = {};
   ref_modal = null;
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
@@ -39,68 +46,128 @@ class Modal extends PureComponent {
   };
 
   renderItem({item}) {
-    if(!item) return;
+    if (!item) return;
     const isSelected =
       this.props.selectedItem && item.id === this.props.selectedItem.id;
-    const extraStyle = isSelected && styles.selectedItemContainer;
-    return (
-      <TouchableHighlight
-        underlayColor="rgba(0,0,0,.1)"
-        onPress={() => this.props.onPressItem(item, this.onClose)}
-        style={styles.container}>
-        <View style={[styles.itemContainer, extraStyle]}>
-          {!!item.image && (
-            <View style={styles.itemImageContainer}>
-              <Image style={styles.itemImage} source={{uri: item.image}} />
-            </View>
-          )}
-          <View style={styles.itemInfoContainer}>
-            <Text style={[styles.title, this.props.titleStyle]}>
-              {item.title}
-            </Text>
-            {!!item.renderDescription
-              ? item.renderDescription(styles.description)
-              : !!item.description && (
-                  <Text style={styles.description}>{item.description}</Text>
-                )}
-          </View>
+    const extraStyle = isSelected && {
+      backgroundColor: this.theme.color.underlay,
+    };
 
-          {isSelected && (
-            <Icon name="dot-circle-o" style={styles.selectedIcon} />
-          )}
-        </View>
-      </TouchableHighlight>
+    const contentContainerStyle = mergeStyles(
+      [
+        styles.itemContainer,
+        {
+          borderBottomColor: this.theme.color.border,
+        },
+      ],
+      extraStyle,
+    );
+
+    const descriptionStyle = mergeStyles(
+      styles.description,
+      this.theme.typography[TypographyType.DESCRIPTION_SEMI_MEDIUM],
+    );
+
+    const selectedIconStyle = mergeStyles(styles.selectedIcon, {
+      color: this.theme.color.primaryHighlight,
+    });
+
+    return (
+      <Container>
+        <BaseButton
+          useTouchableHighlight
+          underlayColor={this.theme.color.underlay}
+          onPress={() => this.props.onPressItem(item, this.onClose)}
+          style={styles.container}>
+          <View style={contentContainerStyle}>
+            {!!item.image && (
+              <View style={styles.itemImageContainer}>
+                <Image style={styles.itemImage} source={{uri: item.image}} />
+              </View>
+            )}
+            <View style={styles.itemInfoContainer}>
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                style={[styles.title, this.props.titleStyle]}>
+                {item.title}
+              </Typography>
+              {!!item.renderDescription
+                ? item.renderDescription(descriptionStyle)
+                : !!item.description && (
+                    <Typography
+                      type={TypographyType.DESCRIPTION_MEDIUM}
+                      style={descriptionStyle}>
+                      {item.description}
+                    </Typography>
+                  )}
+            </View>
+
+            {isSelected && (
+              <Icon
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name="dot-circle-o"
+                style={selectedIconStyle}
+              />
+            )}
+          </View>
+        </BaseButton>
+      </Container>
     );
   }
 
   render() {
+    const headingStyle = mergeStyles(
+      [
+        styles.headingContainer,
+        {
+          borderBottomColor: this.theme.color.border,
+        },
+      ],
+      this.props.headingContainerStyle,
+    );
+
+    const iconStyle = mergeStyles(styles.icon, {
+      color: this.theme.color.iconInactive,
+    });
+
     return (
       <ModalBox
         entry={this.props.entry}
         position={this.props.position}
         style={[styles.modal, this.props.modalStyle]}
         backButtonClose
-        ref={inst => {
+        ref={(inst) => {
           this.props.ref_modal(inst);
           this.ref_modal = inst;
         }}
         isOpen
         onClosed={this.props.onCloseModal}
         useNativeDriver>
-        <View style={[styles.headingContainer, this.props.headingContainerStyle]}>
-          <TouchableOpacity onPress={this.onClose} style={styles.iconContainer}>
-            <Icon name="close" style={styles.icon} />
-          </TouchableOpacity>
-          <Text style={styles.heading}>{this.props.heading}</Text>
-        </View>
-        <FlatList
-          data={this.props.data}
-          renderItem={this.renderItem.bind(this)}
-          keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={this.props.ListEmptyComponent}
-          {...this.props.listProps}
-        />
-        {this.props.footerComponent()}
+        <Container>
+          <View style={headingStyle}>
+            <BaseButton onPress={this.onClose} style={styles.iconContainer}>
+              <Icon
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name="close"
+                style={iconStyle}
+              />
+            </BaseButton>
+            <Typography
+              type={TypographyType.DISPLAY_SMALL}
+              style={styles.heading}>
+              {this.props.heading}
+            </Typography>
+          </View>
+          <FlatList
+            safeLayout
+            data={this.props.data}
+            renderItem={this.renderItem.bind(this)}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={this.props.ListEmptyComponent}
+            {...this.props.listProps}
+          />
+          {this.props.footerComponent()}
+        </Container>
       </ModalBox>
     );
   }
@@ -114,6 +181,7 @@ const styles = StyleSheet.create({
     height: '80%',
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
+    overflow: 'hidden',
   },
   iconContainer: {
     position: 'absolute',
@@ -125,18 +193,18 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 22,
-    color: '#666',
+    // color: '#666',
   },
   headingContainer: {
     padding: 30,
     borderBottomWidth: 1,
     borderStyle: 'solid',
-    borderBottomColor: '#ccc',
+    // borderBottomColor: '#ccc',
   },
   heading: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: '#555',
+    // fontSize: 30,
+    fontWeight: 'bold',
+    // color: '#555',
     letterSpacing: 1.6,
     textAlign: 'right',
   },
@@ -146,10 +214,10 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 15,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
+    // borderBottomColor: '#eee',
   },
   selectedItemContainer: {
-    backgroundColor: '#f5f5f5',
+    // backgroundColor: '#f5f5f5',
   },
   itemImageContainer: {
     width: 55,
@@ -166,19 +234,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
+    // fontSize: 16,
     fontWeight: 'bold',
-    color: '#444',
+    // color: '#444',
     letterSpacing: 1.15,
   },
   description: {
-    fontSize: 13,
-    color: '#666',
+    // fontSize: 13,
+    // color: '#666',
     marginTop: 2,
   },
   selectedIcon: {
     fontSize: 20,
-    color: appConfig.colors.primary,
+    // color: appConfig.colors.primary,
     marginLeft: 15,
   },
 });

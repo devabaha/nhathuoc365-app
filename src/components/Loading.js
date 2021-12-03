@@ -1,22 +1,11 @@
 import React, {Component, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  Text,
-  PlatformColor,
-} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
-import appConfig from 'app-config';
 import Animated, {Easing, useValue} from 'react-native-reanimated';
 
-export default class Loading extends Component {
-  static defaultProps = {
-    color: appConfig.device.isAndroid
-      ? PlatformColor('?attr/colorAccent')
-      : undefined,
-  };
+import {ActivityIndicator} from './base';
 
+export default class Loading extends Component {
   render() {
     return (
       <View
@@ -26,7 +15,9 @@ export default class Loading extends Component {
           this.props.center ? styles.centerContainer : {},
           this.props.wrapperStyle,
         ]}>
-        {!!this.props.blur && <BlurFilter visible blurType={this.props.blurType}/>}
+        {!!this.props.blur && (
+          <BlurFilter visible blurType={this.props.blurType} />
+        )}
         <View
           style={[
             styles.container,
@@ -35,7 +26,6 @@ export default class Loading extends Component {
             this.props.containerStyle,
           ]}>
           <ActivityIndicator
-            animating={true}
             style={[
               styles.loading,
               this.props.style,
