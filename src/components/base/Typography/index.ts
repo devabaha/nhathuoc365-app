@@ -7,6 +7,7 @@ import {TypographyType} from './constants';
 export {default} from './Typography';
 
 export type TypoType =
+  | TypographyType.DISPLAY_SMALL
   | TypographyType.TITLE_LARGE
   | TypographyType.TITLE_MEDIUM
   | TypographyType.LABEL_LARGE_PRIMARY
@@ -17,6 +18,7 @@ export type TypoType =
   | TypographyType.LABEL_EXTRA_SMALL
   | TypographyType.DESCRIPTION_SMALL_PRIMARY
   | TypographyType.DESCRIPTION_MEDIUM
+  | TypographyType.DESCRIPTION_SEMI_MEDIUM
   | TypographyType.DESCRIPTION_SMALL
   | TypographyType.BUTTON_TEXT;
 
