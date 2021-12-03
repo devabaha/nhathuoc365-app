@@ -1,23 +1,33 @@
 import React, {Component} from 'react';
 import {
   StyleSheet,
-  ScrollView,
+  // ScrollView,
   View,
   TouchableOpacity,
   Text,
-  TextInput,
+  // TextInput,
   TouchableWithoutFeedback,
   Image,
 } from 'react-native';
 
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
+import {Theme} from 'src/Themes/interface';
+import {mergeStyles} from 'src/Themes/helper';
+import Typography from 'src/components/base/Typography/Typography';
+import {TypographyType} from 'src/components/base/Typography/constants';
+import ScrollView from 'src/components/base/ScrollView';
+import Input from 'src/components/base/Input';
+
 import appConfig from 'app-config';
+import {Actions} from 'react-native-router-flux';
 
 const LOGO_PATH = require('../../../images/logo-640x410.jpg');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff',
     paddingHorizontal: 16,
   },
   content: {
@@ -29,12 +39,12 @@ const styles = StyleSheet.create({
     top: -30,
   },
   welcomeText: {
-    color: 'black',
+    // color: 'black',
     fontSize: 26,
     fontWeight: '800',
   },
   desText: {
-    color: 'black',
+    // color: 'black',
     fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
@@ -47,7 +57,7 @@ const styles = StyleSheet.create({
   countryContainer: {
     flexDirection: 'row',
     borderRadius: 5,
-    backgroundColor: '#dddddd',
+    // backgroundColor: '#dddddd',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
@@ -55,7 +65,7 @@ const styles = StyleSheet.create({
   phoneTextInput: {
     flex: 1,
     borderRadius: 5,
-    backgroundColor: '#dddddd',
+    // backgroundColor: '#dddddd',
     fontSize: 25,
     padding: 5,
     marginLeft: 10,
@@ -100,6 +110,7 @@ const styles = StyleSheet.create({
 });
 
 class PhoneRegister extends Component {
+  static contextType = ThemeContext;
   static defaultProps = {
     onCloseOTP: () => {},
   };
@@ -113,7 +124,16 @@ class PhoneRegister extends Component {
     this.props.onChangePhoneNumber(phoneNumber);
   }
 
+  onPress() {
+    Actions.push(appConfig.routes.homeTab);
+  }
+
+  get theme(): Theme {
+    return getTheme(this);
+  }
+
   render() {
+    const theme = this.theme;
     const {
       t,
       phoneNumber,
@@ -123,18 +143,43 @@ class PhoneRegister extends Component {
       onSignIn,
     } = this.props;
 
+    const containerStyle = mergeStyles(styles.container, {
+      backgroundColor: theme.color.background,
+    });
+
+    const countryContainerStyle = mergeStyles(styles.countryContainer, {
+      backgroundColor: theme.color.contentBackground,
+    });
+    const phoneTextInputStyle = mergeStyles(styles.phoneTextInput, {
+      backgroundColor: theme.color.contentBackground,
+    });
+
+    const imageStyle = mergeStyles(styles.image, {
+      backgroundColor: theme.color.background,
+    });
+
     return (
       <ScrollView
         keyboardShouldPersistTaps="handled"
         bounces={false}
-        style={styles.container}
+        style={containerStyle}
         contentContainerStyle={styles.content}>
-        <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
-        <Text style={styles.welcomeText}>{t('phoneWelcomeMessage')}</Text>
-        <Text style={styles.desText}>{t('phoneDescription')}</Text>
+        <Image resizeMode="contain" style={imageStyle} source={LOGO_PATH} />
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
+          // onBackground
+          style={styles.welcomeText}>
+          {t('phoneWelcomeMessage')}
+        </Typography>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
+          // onBackground
+          style={styles.desText}>
+          {t('phoneDescription')}
+        </Typography>
         <View style={styles.phoneContainer}>
           <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
-            <View style={styles.countryContainer}>
+            <View style={countryContainerStyle}>
               <Text style={styles.countryCode}>
                 {country ? country.flag : ''}
               </Text>
@@ -146,9 +191,10 @@ class PhoneRegister extends Component {
               </Text>
             </View>
           </TouchableWithoutFeedback>
-          <TextInput
-            style={styles.phoneTextInput}
+          <Input
+            style={phoneTextInputStyle}
             value={phoneNumber}
+            placeholderTextColor={{backgroundColor: theme.color.placeholder}}
             keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             placeholder={t('phonePlaceholder')}
             onChangeText={this.handleChangePhoneNumber.bind(this)}
@@ -172,5 +218,6 @@ class PhoneRegister extends Component {
     );
   }
 }
+// styles = Themes.mergeStyles(styles, homeStyles);
 
 export default withTranslation('phoneAuth')(PhoneRegister);

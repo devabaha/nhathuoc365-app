@@ -8,9 +8,10 @@ import appConfig from 'app-config';
 import ProductItem from './ProductItem';
 import Button from 'react-native-button';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import { Typography } from 'src/components/base';
-import { TypographyType } from 'src/components/base/Typography/constants';
-import { TextButton } from 'src/components/base/Button';
+import {Typography} from 'src/components/base';
+import {TypographyType} from 'src/components/base/Typography/constants';
+import {TextButton} from 'src/components/base/Button';
+import {Actions} from 'react-native-router-flux';
 
 class ListProducts extends Component {
   static contextType = ThemeContext;
@@ -110,6 +111,10 @@ class ListProducts extends Component {
     );
   }
 
+  onPress() {
+    Actions.push(appConfig.routes.phoneAuth);
+  }
+
   renderFlatList() {
     switch (this.props.type) {
       case HOME_CARD_TYPE.VERTICAL:
@@ -123,11 +128,16 @@ class ListProducts extends Component {
     return this.hasProducts ? (
       <View style={[styles.container, this.props.containerStyle]}>
         <View style={styles.headingWrapper}>
-          <Typography type={TypographyType.TITLE_LARGE} numberOfLines={2} style={styles.heading}>
+          <Typography
+            type={TypographyType.TITLE_LARGE}
+            numberOfLines={2}
+            style={styles.heading}>
             {this.props.title}
           </Typography>
           {!!this.props.onShowAll && (
-            <TextButton titleStyle={{color: this.theme.color.accent2}} onPress={this.props.onShowAll}>
+            <TextButton
+              titleStyle={{color: this.theme.color.accent2}}
+              onPress={this.onPress.bind(this)}>
               {this.props.t('viewAll')}
             </TextButton>
             // <Button underlayColor="transparent" onPress={this.props.onShowAll}>

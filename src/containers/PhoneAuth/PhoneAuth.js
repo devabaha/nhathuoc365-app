@@ -17,6 +17,11 @@ import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import firebaseAuth from '@react-native-firebase/auth';
 
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import ThemeProvidedValue from 'src/Themes/Theme.context';
+import {Theme} from 'src/Themes/interface';
+import {mergeStyles} from 'src/Themes/helper';
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
@@ -25,6 +30,7 @@ const styles = StyleSheet.create({
 });
 
 class PhoneAuth extends Component {
+  static contextType: ThemeProvidedValue = ThemeContext;
   static defaultProps = {
     onCloseOTP: () => {},
   };
@@ -78,6 +84,10 @@ class PhoneAuth extends Component {
     }
   }
 
+  get theme(): Theme {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.getGeoCurrentCountry();
     if (this.props.showOTP) {
@@ -114,7 +124,7 @@ class PhoneAuth extends Component {
             if (!!firebaseAuth().currentUser) {
               await firebaseAuth().signOut();
             }
-            
+
             this.setState({
               confirmResult: response,
               message: '',
@@ -304,6 +314,7 @@ class PhoneAuth extends Component {
   }
 
   render() {
+    const theme = this.theme;
     const {
       confirmResult,
       isShowIndicator,
@@ -312,13 +323,17 @@ class PhoneAuth extends Component {
       message,
     } = this.state;
 
+    const containerStyle = mergeStyles(styles.container, {
+      backgroundColor: theme.color.background,
+    });
+
     return (
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         bounces={false}
-        style={styles.container}
+        style={containerStyle}
         contentContainerStyle={{flexGrow: 1}}>
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={containerStyle}>
           {isShowIndicator && <Loading center />}
           {!!confirmResult ? (
             <AuthConfirm
