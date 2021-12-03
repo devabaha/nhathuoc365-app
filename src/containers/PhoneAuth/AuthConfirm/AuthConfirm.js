@@ -7,10 +7,21 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import appConfig from 'app-config';
 import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
+
+import {mergeStyles} from 'src/Themes/helper';
+import {BaseButton} from 'src/components/base/Button';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {Theme} from 'src/Themes/interface';
+import {Typography, TypographyType} from 'src/components/base';
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
+
+import Input from 'src/components/base/Input';
+import Icon from 'src/components/base/Icon';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
 
 const styles = StyleSheet.create({
   container: {},
@@ -29,8 +40,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   desText: {
-    color: 'black',
-    fontSize: 18,
+    // color: 'black',
+    // fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
     fontWeight: '300',
@@ -51,37 +62,39 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   continueText: {
-    color: 'black',
-    fontSize: 20,
+    // color: 'black',
+    // fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
     marginTop: 20,
   },
   backIcon: {
     fontSize: 36,
-    color: '#333',
+    // color: '#333',
   },
   txtDesCode: {
-    fontSize: 17,
+    // fontSize: 17,
     fontWeight: '200',
-    color: 'black',
+    // color: 'black',
     marginTop: 20,
   },
   txtDescription: {
-    fontSize: 17,
+    // fontSize: 17,
     fontWeight: '200',
-    color: 'black',
+    // color: 'black',
     marginTop: 20,
   },
   resSendOTP: {
-    fontSize: 17,
-    color: '#528BC5',
+    // fontSize: 17,
+    // color: '#528BC5',
     fontWeight: '700',
     marginTop: 15,
   },
 });
 
 class AuthConfirm extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     onBackToPhoneInput: () => {},
   };
@@ -103,6 +116,10 @@ class AuthConfirm extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  get theme(): Theme {
+    return getTheme(this);
   }
 
   reStartCountDown() {
@@ -142,6 +159,7 @@ class AuthConfirm extends Component {
   }
 
   render() {
+    const theme = this.theme;
     const {codeInput, requestNewOtpCounter} = this.state;
     const {
       t,
@@ -152,60 +170,96 @@ class AuthConfirm extends Component {
       message,
     } = this.props;
 
+    const resSendOTPStyle = mergeStyles(styles.resSendOTP, {
+      color: theme.color.neutral2,
+    });
+    const styleContinueText = mergeStyles(styles.continueText, {
+      color: !confirmDisabled
+        ? theme.color.onBackground
+        : theme.color.onDisabled,
+    });
+    const txtNoteStyle = mergeStyles(styles.txtNote, {
+      color: theme.color.danger,
+    });
+
     return (
-      <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
-        <View style={styles.header}>
-          <TouchableOpacity onPress={this.onBack.bind(this)}>
-            <Icon name="chevron-left" style={styles.backIcon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.contentContainer}>
-          <Text style={[styles.desText, styles.codeInput]}>
-            {t('verifyCodeInputTitle')}
-          </Text>
-          <Text style={[styles.desText, styles.phoneNumber]}>
-            {phoneNumber}
-          </Text>
-          <TextInput
-            autoFocus
-            onChangeText={onChangeCode}
-            placeholder={t('verifyCodeInputPlaceholder')}
-            value={codeInput}
-            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-            style={styles.txtCode}
-            maxLength={6}
-            onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
-          />
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={onConfirmCode}
-            disabled={confirmDisabled}>
-            <Text
-              style={[
-                styles.continueText,
-                {color: !confirmDisabled ? 'black' : 'lightgray'},
-              ]}>
-              {t('verifyCodeInputConfirmMessage')}
-            </Text>
-          </TouchableOpacity>
-          {!!message && <Text style={styles.txtNote}>{message}</Text>}
-          <Text style={styles.txtDesCode}>{t('notReceiveCode')}</Text>
-          <TouchableOpacity
-            onPress={this.reStartCountDown.bind(this)}
-            disabled={!this.isReSendable}>
-            <Text style={styles.resSendOTP}>
-              {!this.isReSendable
-                ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
-                    requestNewOtpCounter,
-                  )}`
-                : t('requestNewCode')}
-            </Text>
-          </TouchableOpacity>
-          {this.state.showDescription && (
-            <Text style={styles.txtDescription}>{t('description')}</Text>
-          )}
-        </View>
-      </ScrollView>
+      <ScreenWrapper safeLayout>
+        <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
+          <View style={styles.header}>
+            <BaseButton onPress={this.onBack.bind(this)}>
+              <Icon
+                bundle={BundleIconSetName.MATERIAL_ICONS}
+                name="chevron-left"
+                style={styles.backIcon}
+              />
+            </BaseButton>
+          </View>
+          <View style={styles.contentContainer}>
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={[styles.desText, styles.codeInput]}>
+              {t('verifyCodeInputTitle')}
+            </Typography>
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={[styles.desText, styles.phoneNumber]}>
+              {phoneNumber}
+            </Typography>
+            <Input
+              autoFocus
+              onChangeText={onChangeCode}
+              placeholder={t('verifyCodeInputPlaceholder')}
+              value={codeInput}
+              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
+              style={styles.txtCode}
+              maxLength={6}
+              onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
+            />
+            <BaseButton
+              activeOpacity={0.5}
+              onPress={onConfirmCode}
+              disabled={confirmDisabled}>
+              <Typography
+                type={TypographyType.TITLE_LARGE}
+                style={styleContinueText}>
+                {t('verifyCodeInputConfirmMessage')}
+              </Typography>
+            </BaseButton>
+            {!!message && (
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={txtNoteStyle}>
+                {message}
+              </Typography>
+            )}
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={styles.txtDesCode}>
+              {t('notReceiveCode')}
+            </Typography>
+            <BaseButton
+              onPress={this.reStartCountDown.bind(this)}
+              disabled={!this.isReSendable}>
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                style={resSendOTPStyle}>
+                {!this.isReSendable
+                  ? `${t(
+                      'requestNewCodeWithTime',
+                    )} ${this.convertSecondToMinute(requestNewOtpCounter)}`
+                  : t('requestNewCode')}
+              </Typography>
+            </BaseButton>
+            {this.state.showDescription && (
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                style={styles.txtDescription}>
+                {t('description')}
+              </Typography>
+            )}
+          </View>
+        </ScrollView>
+      </ScreenWrapper>
     );
   }
 }

@@ -3,26 +3,28 @@ import {
   StyleSheet,
   // ScrollView,
   View,
-  TouchableOpacity,
+  // TouchableOpacity,
   Text,
-  // TextInput,
+  TextInput,
   TouchableWithoutFeedback,
   Image,
 } from 'react-native';
 
+import appConfig from 'app-config';
+
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import ScreenWrapper from 'src/components/base/ScreenWrapper';
 import {Theme} from 'src/Themes/interface';
 import {mergeStyles} from 'src/Themes/helper';
-import Typography from 'src/components/base/Typography/Typography';
 import {TypographyType} from 'src/components/base/Typography/constants';
+import {TextButton} from 'src/components/base/Button';
+import {Actions} from 'react-native-router-flux';
+import Typography from 'src/components/base/Typography/Typography';
 import ScrollView from 'src/components/base/ScrollView';
 import Input from 'src/components/base/Input';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
+import Container from 'src/components/base/Container';
 
-import appConfig from 'app-config';
-import {Actions} from 'react-native-router-flux';
-
-const LOGO_PATH = require('../../../images/logo-640x410.jpg');
+const LOGO_PATH = require('../../../images/btn-cart.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -40,12 +42,12 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     // color: 'black',
-    fontSize: 26,
+    // fontSize: 26,
     fontWeight: '800',
   },
   desText: {
     // color: 'black',
-    fontSize: 18,
+    // fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
     fontWeight: '300',
@@ -78,20 +80,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   countryCode: {
-    fontSize: 25,
+    // fontSize: 25,
   },
   phoneNumber: {
-    fontSize: 15,
+    // fontSize: 15,
   },
   continueText: {
-    color: 'black',
-    fontSize: 20,
+    // color: 'black',
+    // fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
     marginTop: 20,
   },
   txtNote: {
-    color: 'red',
+    // color: 'red',
     marginTop: 20,
   },
   txtCode: {
@@ -143,81 +145,93 @@ class PhoneRegister extends Component {
       onSignIn,
     } = this.props;
 
-    const containerStyle = mergeStyles(styles.container, {
-      backgroundColor: theme.color.background,
-    });
-
     const countryContainerStyle = mergeStyles(styles.countryContainer, {
-      backgroundColor: theme.color.contentBackground,
-    });
-    const phoneTextInputStyle = mergeStyles(styles.phoneTextInput, {
-      backgroundColor: theme.color.contentBackground,
+      backgroundColor: theme.color.neutral1,
     });
 
-    const imageStyle = mergeStyles(styles.image, {
-      backgroundColor: theme.color.background,
+    const phoneTextInputStyle = mergeStyles(styles.phoneTextInput, {
+      backgroundColor: theme.color.neutral1,
+      color: theme.color.black,
+    });
+
+    const phoneNumberStyle = mergeStyles(styles.phoneNumber, {
+      color: theme.color.black,
+    });
+
+    const txtNoteStyle = mergeStyles(styles.txtNote, {
+      color: theme.color.danger,
     });
 
     return (
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        style={containerStyle}
-        contentContainerStyle={styles.content}>
-        <Image resizeMode="contain" style={imageStyle} source={LOGO_PATH} />
-        <Typography
-          type={TypographyType.LABEL_MEDIUM}
-          // onBackground
-          style={styles.welcomeText}>
-          {t('phoneWelcomeMessage')}
-        </Typography>
-        <Typography
-          type={TypographyType.LABEL_MEDIUM}
-          // onBackground
-          style={styles.desText}>
-          {t('phoneDescription')}
-        </Typography>
-        <View style={styles.phoneContainer}>
-          <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
-            <View style={countryContainerStyle}>
-              <Text style={styles.countryCode}>
-                {country ? country.flag : ''}
-              </Text>
-              <Text style={styles.phoneNumber}>
-                {country
-                  ? (country.idd.root ? country.idd.root : '') +
-                    (country.idd.suffixes[0] ? country.idd.suffixes[0] : '')
-                  : ''}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-          <Input
-            style={phoneTextInputStyle}
-            value={phoneNumber}
-            placeholderTextColor={{backgroundColor: theme.color.placeholder}}
-            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-            placeholder={t('phonePlaceholder')}
-            onChangeText={this.handleChangePhoneNumber.bind(this)}
-            onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
-          />
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={onSignIn}
-          disabled={registerDisabled}>
-          <Text
-            style={[
-              styles.continueText,
-              {color: !registerDisabled ? 'black' : 'lightgray'},
-            ]}>
-            {t('phoneConfirmMessage')}
-          </Text>
-        </TouchableOpacity>
-        {!!message && <Text style={styles.txtNote}>{message}</Text>}
-      </ScrollView>
+      <ScreenWrapper>
+        <ScrollView
+          safeLayout
+          keyboardShouldPersistTaps="handled"
+          bounces={false}
+          style={styles.container}
+          contentContainerStyle={styles.content}>
+          <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
+          <Typography
+            type={TypographyType.DISPLAY_SMALL}
+            style={styles.welcomeText}>
+            {t('phoneWelcomeMessage')}
+          </Typography>
+          <Typography type={TypographyType.TITLE_MEDIUM} style={styles.desText}>
+            {t('phoneDescription')}
+          </Typography>
+          <View style={styles.phoneContainer}>
+            <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
+              <Container style={countryContainerStyle}>
+                <Typography
+                  type={TypographyType.DISPLAY_SMALL}
+                  style={styles.countryCode}>
+                  {country ? country.flag : ''}
+                </Typography>
+                <Typography
+                  type={TypographyType.TITLE_MEDIUM}
+                  style={phoneNumberStyle}>
+                  {country
+                    ? (country.idd.root ? country.idd.root : '') +
+                      (country.idd.suffixes[0] ? country.idd.suffixes[0] : '')
+                    : ''}
+                </Typography>
+              </Container>
+            </TouchableWithoutFeedback>
+            <Input
+              style={phoneTextInputStyle}
+              value={phoneNumber}
+              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
+              placeholder={t('phonePlaceholder')}
+              onChangeText={this.handleChangePhoneNumber.bind(this)}
+              onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
+            />
+          </View>
+          <TextButton
+            activeOpacity={0.5}
+            onPress={onSignIn}
+            disabled={registerDisabled}>
+            <Typography
+              type={TypographyType.TITLE_LARGE}
+              style={[
+                styles.continueText,
+                {
+                  color: !registerDisabled
+                    ? theme.color.onBackground
+                    : theme.color.onDisabled,
+                },
+              ]}>
+              {t('phoneConfirmMessage')}
+            </Typography>
+          </TextButton>
+          {!!message && (
+            <Typography type={TypographyType.LABEL_MEDIUM} style={txtNoteStyle}>
+              {message}
+            </Typography>
+          )}
+        </ScrollView>
+      </ScreenWrapper>
     );
   }
 }
-// styles = Themes.mergeStyles(styles, homeStyles);
 
 export default withTranslation('phoneAuth')(PhoneRegister);

@@ -18,13 +18,14 @@ import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import firebaseAuth from '@react-native-firebase/auth';
 
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import ThemeProvidedValue from 'src/Themes/Theme.context';
 import {Theme} from 'src/Themes/interface';
-import {mergeStyles} from 'src/Themes/helper';
+import ThemeProvidedValue from 'src/Themes/Theme.context';
+import Container from 'src/components/base/Container';
+import ScreenWrapper from 'src/components/base/ScreenWrapper';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     flex: 1,
   },
 });
@@ -323,42 +324,40 @@ class PhoneAuth extends Component {
       message,
     } = this.state;
 
-    const containerStyle = mergeStyles(styles.container, {
-      backgroundColor: theme.color.background,
-    });
-
     return (
-      <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        style={containerStyle}
-        contentContainerStyle={{flexGrow: 1}}>
-        <SafeAreaView style={containerStyle}>
-          {isShowIndicator && <Loading center />}
-          {!!confirmResult ? (
-            <AuthConfirm
-              confirmDisabled={!codeInput}
-              phoneNumber={this.formatPhoneNumber(phoneNumber)}
-              onChangeCode={this.handleChangeCodeInput.bind(this)}
-              onConfirmCode={this.confirmCode.bind(this)}
-              onRequestNewOtp={this.requestOTP.bind(this)}
-              onBackToPhoneInput={this.handleBackToPhoneInput.bind(this)}
-              message={message}
-            />
-          ) : (
-            <PhoneRegister
-              country={this.state.currentCountry}
-              phoneNumber={this.state.phoneNumber}
-              registerDisabled={!this.isPhoneNumberValid}
-              onPressCountry={this.openCountryPicker.bind(this)}
-              onChangePhoneNumber={this.handleChangePhoneNumber.bind(this)}
-              onSignIn={() => this.signIn()}
-              message={message}
-            />
-          )}
-          {appConfig.device.isIOS && <KeyboardSpacer />}
-        </SafeAreaView>
-      </KeyboardAwareScrollView>
+      <ScreenWrapper safeLayout>
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
+          bounces={false}
+          style={styles.container}
+          contentContainerStyle={{flexGrow: 1}}>
+          <Container style={styles.container}>
+            {isShowIndicator && <Loading center />}
+            {!!confirmResult ? (
+              <AuthConfirm
+                confirmDisabled={!codeInput}
+                phoneNumber={this.formatPhoneNumber(phoneNumber)}
+                onChangeCode={this.handleChangeCodeInput.bind(this)}
+                onConfirmCode={this.confirmCode.bind(this)}
+                onRequestNewOtp={this.requestOTP.bind(this)}
+                onBackToPhoneInput={this.handleBackToPhoneInput.bind(this)}
+                message={message}
+              />
+            ) : (
+              <PhoneRegister
+                country={this.state.currentCountry}
+                phoneNumber={this.state.phoneNumber}
+                registerDisabled={!this.isPhoneNumberValid}
+                onPressCountry={this.openCountryPicker.bind(this)}
+                onChangePhoneNumber={this.handleChangePhoneNumber.bind(this)}
+                onSignIn={() => this.signIn()}
+                message={message}
+              />
+            )}
+            {appConfig.device.isIOS && <KeyboardSpacer />}
+          </Container>
+        </KeyboardAwareScrollView>
+      </ScreenWrapper>
     );
   }
 }
