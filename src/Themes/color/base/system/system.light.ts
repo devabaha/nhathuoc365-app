@@ -1,5 +1,5 @@
 import {hexToRgba, rgbaToRgb} from 'app-helper';
-import {Platform, PlatformColor} from 'react-native';
+import {ColorValue, Platform, PlatformColor} from 'react-native';
 import {CORE} from '../core';
 
 const SYSTEM_COMMON = {
@@ -69,6 +69,7 @@ export const SYSTEM_LIGHT = {
 
   iconInactive: CORE.grey600,
 
-  indicator:
-    Platform.OS === 'ios' ? '#999999' : PlatformColor('?attr/colorAccent'),
+  indicator: (Platform.OS === 'android'
+    ? PlatformColor('?attr/colorAccent')
+    : '#999999') as ColorValue,
 };

@@ -8,7 +8,7 @@ import {Theme} from 'src/Themes/interface';
 import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 
-import {TypographyFontSize, TypographyType} from './constants';
+import {TypographyType} from './constants';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({

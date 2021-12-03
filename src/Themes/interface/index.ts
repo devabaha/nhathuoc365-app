@@ -1,4 +1,4 @@
-import {OpaqueColorValue, StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {ColorValue, StyleProp, TextStyle, ViewStyle} from 'react-native';
 
 import {TypographyType} from 'src/components/base';
 import {CartPaymentStatus, CartStatus} from 'src/constants/cart';
@@ -8,9 +8,9 @@ export type Style =
   | StyleProp<ViewStyle | TextStyle>
   | StyleProp<ViewStyle | TextStyle>[];
 
-export type ColorValue = string | OpaqueColorValue;
-
 export type Typography = {
+  [TypographyType.DISPLAY_SMALL]?: Style;
+
   [TypographyType.TITLE_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
 
@@ -25,6 +25,7 @@ export type Typography = {
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
 
   [TypographyType.DESCRIPTION_MEDIUM]?: Style;
+  [TypographyType.DESCRIPTION_SEMI_MEDIUM]?: Style;
   [TypographyType.DESCRIPTION_SMALL]?: Style;
 
   [TypographyType.BUTTON_TEXT]?: Style;
