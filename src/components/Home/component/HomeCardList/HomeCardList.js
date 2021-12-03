@@ -7,10 +7,8 @@ import appConfig from 'app-config';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import {Typography} from 'src/components/base';
 import {TypographyType} from 'src/components/base/Typography/constants';
-import {Actions} from 'react-native-router-flux';
 class HomeCardList extends Component {
   static contextType = ThemeContext;
-
   render() {
     const theme = getTheme(this);
     const props = this.props;

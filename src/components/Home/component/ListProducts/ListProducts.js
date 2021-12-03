@@ -11,7 +11,6 @@ import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import {Typography} from 'src/components/base';
 import {TypographyType} from 'src/components/base/Typography/constants';
 import {TextButton} from 'src/components/base/Button';
-import {Actions} from 'react-native-router-flux';
 
 class ListProducts extends Component {
   static contextType = ThemeContext;
