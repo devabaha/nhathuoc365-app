@@ -11,10 +11,6 @@ import {Actions} from 'react-native-router-flux';
 class HomeCardList extends Component {
   static contextType = ThemeContext;
 
-  onPress() {
-    Actions.push(appConfig.routes.phoneAuth);
-  }
-
   render() {
     const theme = getTheme(this);
     const props = this.props;
@@ -36,7 +32,7 @@ class HomeCardList extends Component {
             <Button
               containerStyle={styles.showAllBtn}
               underlayColor="transparent"
-              onPress={this.onPress.bind(this)}>
+              onPress={props.onShowAll}>
               <Text style={styles.viewAll}>{t('viewAll')}</Text>
             </Button>
           ) : (

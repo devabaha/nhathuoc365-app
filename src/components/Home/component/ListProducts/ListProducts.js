@@ -111,10 +111,6 @@ class ListProducts extends Component {
     );
   }
 
-  onPress() {
-    Actions.push(appConfig.routes.phoneAuth);
-  }
-
   renderFlatList() {
     switch (this.props.type) {
       case HOME_CARD_TYPE.VERTICAL:
@@ -137,7 +133,7 @@ class ListProducts extends Component {
           {!!this.props.onShowAll && (
             <TextButton
               titleStyle={{color: this.theme.color.accent2}}
-              onPress={this.onPress.bind(this)}>
+              onPress={this.props.onShowAll}>
               {this.props.t('viewAll')}
             </TextButton>
             // <Button underlayColor="transparent" onPress={this.props.onShowAll}>
