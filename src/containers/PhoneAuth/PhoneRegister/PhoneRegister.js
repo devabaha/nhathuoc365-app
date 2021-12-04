@@ -130,7 +130,7 @@ class PhoneRegister extends Component {
     Actions.push(appConfig.routes.homeTab);
   }
 
-  get theme(): Theme {
+  get theme() {
     return getTheme(this);
   }
 

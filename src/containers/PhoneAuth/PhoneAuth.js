@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 });
 
 class PhoneAuth extends Component {
-  static contextType: ThemeProvidedValue = ThemeContext;
+  static contextType = ThemeContext;
   static defaultProps = {
     onCloseOTP: () => {},
   };
@@ -85,7 +85,7 @@ class PhoneAuth extends Component {
     }
   }
 
-  get theme(): Theme {
+  get theme() {
     return getTheme(this);
   }
 

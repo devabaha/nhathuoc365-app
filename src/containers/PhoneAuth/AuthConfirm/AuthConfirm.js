@@ -118,7 +118,7 @@ class AuthConfirm extends Component {
     clearInterval(this.timer);
   }
 
-  get theme(): Theme {
+  get theme() {
     return getTheme(this);
   }
 
