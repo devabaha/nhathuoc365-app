@@ -44,7 +44,7 @@ export const goConfirm = () => {
         Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true,
         }),
-        500
+        200
       );
     } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
       Actions.push(appConfig.routes.myAddress, {

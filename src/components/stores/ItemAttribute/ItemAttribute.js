@@ -37,6 +37,7 @@ const MIN_QUANTITY = 1;
 class ItemAttribute extends PureComponent {
   static defaultProps = {
     product: {},
+    onClosed: () => {},
   };
 
   getBaseData = (attrs = {}, models = {}) => {
@@ -380,8 +381,13 @@ class ItemAttribute extends PureComponent {
     if (this.refModal.current) {
       this.refModal.current.close();
     } else {
-      Actions.pop();
+      this.handleClosed();
     }
+  };
+
+  handleClosed = () => {
+    this.props.onClosed();
+    Actions.pop();
   };
 
   handleChangeQuantity = (quantity, min, max) => {
@@ -511,7 +517,7 @@ class ItemAttribute extends PureComponent {
         ref={this.refModal}
         isOpen
         position="top"
-        onClosed={Actions.pop}
+        onClosed={this.handleClosed}
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>

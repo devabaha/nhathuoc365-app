@@ -116,7 +116,7 @@ class CTAProduct {
     product,
     cartType,
     btnTitle,
-    isOrderNow = true,
+    isOrderNow = false,
     callbackSuccess,
   }) => {
     this.actionFunctionName = 'handlePressSubAction';
