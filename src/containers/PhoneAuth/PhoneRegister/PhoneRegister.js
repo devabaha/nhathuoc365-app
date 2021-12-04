@@ -162,6 +162,15 @@ class PhoneRegister extends Component {
       color: theme.color.danger,
     });
 
+    const continueTextStyle = [
+      styles.continueText,
+      {
+        color: !registerDisabled
+          ? theme.color.textPrimary
+          : theme.color.textInactive,
+      },
+    ];
+
     return (
       <ScreenWrapper>
         <ScrollView
@@ -212,14 +221,7 @@ class PhoneRegister extends Component {
             disabled={registerDisabled}>
             <Typography
               type={TypographyType.TITLE_LARGE}
-              style={[
-                styles.continueText,
-                {
-                  color: !registerDisabled
-                    ? theme.color.onBackground
-                    : theme.color.onDisabled,
-                },
-              ]}>
+              style={continueTextStyle}>
               {t('phoneConfirmMessage')}
             </Typography>
           </TextButton>

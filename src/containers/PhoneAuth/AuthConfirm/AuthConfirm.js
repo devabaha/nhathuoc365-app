@@ -3,9 +3,9 @@ import {
   ScrollView,
   View,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
+  // Text,
+  // TextInput,
+  // TouchableOpacity,
 } from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -175,8 +175,8 @@ class AuthConfirm extends Component {
     });
     const styleContinueText = mergeStyles(styles.continueText, {
       color: !confirmDisabled
-        ? theme.color.onBackground
-        : theme.color.onDisabled,
+        ? theme.color.textPrimary
+        : theme.color.textInactive,
     });
     const txtNoteStyle = mergeStyles(styles.txtNote, {
       color: theme.color.danger,
