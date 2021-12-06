@@ -2,11 +2,12 @@ import React, {PureComponent} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 // 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
+// configs
+import {mergeStyles} from 'src/Themes/helper';
+// helpers
+import EventTracker from '../helper/EventTracker';
 //context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-// config, helper
-import {mergeStyles} from 'src/Themes/helper';
-import EventTracker from '../helper/EventTracker';
 // constants
 import {BundleIconSetName} from './base/Icon/constants';
 // custom components

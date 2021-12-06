@@ -1,10 +1,9 @@
-import {ViewProps} from 'react-native';
-
-import { Children } from '..';
+import {Children} from '..';
+import {ContainerProps} from '../Container';
 
 export {default} from './Skeleton';
 
-export interface SkeletonProps extends ViewProps {
+export interface SkeletonProps extends ContainerProps {
   container?: boolean;
   content?: boolean;
 

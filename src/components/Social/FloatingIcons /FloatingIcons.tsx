@@ -1,12 +1,16 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import Container from 'src/components/Layout/Container';
-
-import appConfig from 'app-config';
-import {FloatingIconsProps, Icon} from '.';
-import {BUNDLE_ICON_SETS} from 'src/constants';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// types
+import {FloatingIconsProps, Icon as IconType} from '.';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Icon, Typography} from 'src/components/base';
 
 const ICON_DIMENSIONS = 22;
 const ICON_OVERFLOW_SPACE_DIMENSIONS = 4;
@@ -19,18 +23,13 @@ const styles = StyleSheet.create({
     borderRadius: ICON_DIMENSIONS / 2,
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: appConfig.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   prefixTitle: {
-    fontSize: 12,
-    color: '#666',
-    marginRight: 3
+    marginRight: 3,
   },
   icon: {
-    color: '#fff',
     fontSize: 10,
   },
 });
@@ -43,6 +42,8 @@ const FloatingIcons = ({
   iconContainerStyle,
   iconStyle,
 }: FloatingIconsProps) => {
+  const {theme} = useTheme();
+
   const renderIcons = () => {
     if (Array.isArray(icons)) {
       return icons.map(renderIcon);
@@ -51,16 +52,16 @@ const FloatingIcons = ({
     }
   };
 
-  const renderIcon = (icon: Icon | string, index = 0) => {
+  const renderIcon = (icon: IconType | string, index = 0) => {
     const extraStyle = Array.isArray(icons) && {
       left: index > 0 ? -ICON_OVERFLOW_SPACE_DIMENSIONS : 0,
       zIndex: icons.length - index,
     };
 
-    const IconBundle =
+    const iconBundle =
       typeof icon == 'object'
-        ? BUNDLE_ICON_SETS[icon.bundle] || AntDesignIcon
-        : AntDesignIcon;
+        ? icon.bundle || BundleIconSetName.ANT_DESIGN
+        : BundleIconSetName.ANT_DESIGN;
     let iconName = '';
     let iconExtraStyle = {};
     let iconExtraContainerStyle = {};
@@ -77,19 +78,33 @@ const FloatingIcons = ({
       <Container
         key={index}
         style={[
-          styles.container,
+          iconBaseContainerStyle,
           extraStyle,
           iconExtraContainerStyle,
           iconContainerStyle,
           style,
         ]}>
-        <IconBundle
+        <Icon
+          bundle={iconBundle}
           name={iconName}
-          style={[styles.icon, iconExtraStyle, iconStyle]}
+          style={[iconBaseStyle, iconExtraStyle, iconStyle]}
         />
       </Container>
     );
   };
+
+  const iconBaseContainerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      borderColor: theme.color.surface,
+      backgroundColor: theme.color.persistPrimary,
+    });
+  }, [theme]);
+
+  const iconBaseStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: theme.color.onPersistPrimary,
+    });
+  }, [theme]);
 
   const extraWrapperStyle = Array.isArray(icons) && {
     width:
@@ -99,7 +114,13 @@ const FloatingIcons = ({
 
   return (
     <Container row style={[styles.wrapper, extraWrapperStyle, wrapperStyle]}>
-      {!!prefixTitle && <Text style={[styles.prefixTitle]}>{prefixTitle}</Text>}
+      {!!prefixTitle && (
+        <Typography
+          type={TypographyType.DESCRIPTION_SMALL}
+          style={[styles.prefixTitle]}>
+          {prefixTitle}
+        </Typography>
+      )}
       {renderIcons()}
     </Container>
   );

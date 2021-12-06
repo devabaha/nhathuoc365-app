@@ -1,8 +1,8 @@
-import React from 'react';
-import {TextProps} from 'react-native';
+import {ColorValue, StyleProp, TextProps, TextStyle} from 'react-native';
+import {Children} from '../base';
 
 export {default} from './TextPressable';
 
 export interface TextPressableProps extends TextProps {
-    children: React.ReactNode
+  children: Children;
 }

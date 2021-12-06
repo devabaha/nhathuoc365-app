@@ -1,5 +1,6 @@
 import React, {forwardRef, memo, useMemo} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Animated} from 'react-native';
+import Reanimated from 'react-native-reanimated';
 
 import {Theme} from 'src/Themes/interface';
 import {Ref} from '..';
@@ -35,6 +36,8 @@ const Icon = forwardRef(
     {
       bundle = BundleIconSetName.IONICONS,
       style,
+      reanimated,
+      animated,
       primary,
       secondary,
       disabled,
@@ -44,7 +47,19 @@ const Icon = forwardRef(
   ) => {
     const {theme} = useTheme();
 
-    const IconComponent = useMemo(() => BUNDLE_ICON_SETS[bundle], [bundle]);
+    const IconComponent = useMemo(() => {
+      let IconComp = BUNDLE_ICON_SETS[bundle];
+
+      if (animated) {
+        // @ts-ignore
+        IconComp = Animated.createAnimatedComponent(IconComp);
+      }
+      if (reanimated) {
+        IconComp = Reanimated.createAnimatedComponent(IconComp);
+      }
+
+      return IconComp;
+    }, [bundle, reanimated, animated]);
 
     const styles = useMemo(() => {
       const baseStyles: any = createStyles(theme);

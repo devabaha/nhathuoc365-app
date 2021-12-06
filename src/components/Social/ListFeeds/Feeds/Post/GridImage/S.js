@@ -1,23 +1,14 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
-
-import {IMAGES_WRAPPER_WIDTH, IMAGE_SPACING} from 'src/constants/social';
+import {StyleSheet} from 'react-native';
+// constants
+import {IMAGES_WRAPPER_WIDTH} from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
-  },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
 });
 
@@ -34,12 +25,17 @@ const S = ({images = []}) => {
 
   const renderImage = (uri, style, containerProps) => {
     return (
-      <GridImage images={images} uri={uri} style={style} containerProps={containerProps} />
+      <GridImage
+        images={images}
+        uri={uri}
+        style={style}
+        containerProps={containerProps}
+      />
     );
   };
 
   return (
-    <Container centerVertical={false} style={[styles.container]}>
+    <Container style={[styles.container]}>
       {renderImage(imagesHighlight.url, imageStyle)}
     </Container>
   );

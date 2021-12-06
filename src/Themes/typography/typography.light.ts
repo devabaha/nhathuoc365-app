@@ -1,4 +1,7 @@
-import {TypographyFontSize, TypographyType} from 'src/components/base';
+import {
+  TypographyFontSize,
+  TypographyType,
+} from 'src/components/base/Typography/constants';
 import {BASE_COLOR_LIGHT} from '../color';
 import {Typography} from '../interface';
 
@@ -8,8 +11,17 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.textPrimary,
   },
 
+  [TypographyType.TITLE_MEDIUM_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
+
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
+  [TypographyType.TITLE_SEMI_LARGE]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_LIGHT.textPrimary,
   },
   [TypographyType.TITLE_MEDIUM]: {
@@ -24,6 +36,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
   [TypographyType.LABEL_MEDIUM_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
+  [TypographyType.LABEL_LARGE]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_LIGHT.textPrimary,
   },
   [TypographyType.LABEL_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
@@ -41,6 +57,18 @@ export const TYPOGRAPHY_LIGHT: Typography = {
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
+  [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
+  [TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
+  [TypographyType.DESCRIPTION_SMALL_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
+    color: BASE_COLOR_LIGHT.textTertiary,
   },
   [TypographyType.DESCRIPTION_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,

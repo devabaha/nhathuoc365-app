@@ -1,30 +1,23 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  Modal,
-  View,
-  TouchableOpacity,
-  // FlatList,
-  Text,
-  StyleSheet,
-} from 'react-native';
-
-// import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Modal, View, Text, StyleSheet} from 'react-native';
+// 3-party libs
 import {Actions} from 'react-native-router-flux';
 import countries from 'world-countries';
-
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {Theme} from 'src/Themes/interface';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
-import {TypographyType} from 'src/components/base/Typography/constants';
-import {BaseButton} from 'src/components/base/Button';
-import {BundleIconSetName} from '../base/Icon/constants';
-
-import FlatList from 'src/components/base/FlatList';
-import Typography from 'src/components/base/Typography/Typography';
-import Container from 'src/components/base/Container';
-import ScreenWrapper from '../base/ScreenWrapper';
-import Icon from 'src/components/base/Icon';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  BaseButton,
+  FlatList,
+  Typography,
+  Container,
+  ScreenWrapper,
+  IconButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
@@ -39,49 +32,43 @@ const styles = StyleSheet.create({
   title: {
     textTransform: 'uppercase',
     fontWeight: 'bold',
-    // fontSize: 16,
     letterSpacing: 2,
-    // color: '#fff',
   },
   closeIcon: {
     fontSize: 26,
-    // color: '#fff',
   },
-  listContainer: {
-    // backgroundColor: '#ffffff'
-  },
+  listContainer: {},
   itemContainer: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
   },
   itemFlag: {
-    fontSize: 25,
     marginHorizontal: 10,
   },
   itemTitle: {
-    // fontSize: 16,
     margin: 10,
   },
   separator: {
     height: 1,
     width: '100%',
-    // backgroundColor: '#eee'
   },
 });
 
 class CountryPicker extends Component {
   static contextType = ThemeContext;
+
   static defaultProps = {
     countries,
     onClose: () => {},
     onPressCountry: () => {},
   };
+
   state = {
     countries: this.props.countries,
   };
 
-  get theme(): Theme {
+  get theme() {
     return getTheme(this);
   }
 
@@ -99,7 +86,13 @@ class CountryPicker extends Component {
     return (
       <BaseButton onPress={() => this.onPressCountry(item)}>
         <View style={styles.itemContainer}>
-          {!!item.flag && <Text style={styles.itemFlag}>{item.flag}</Text>}
+          {!!item.flag && (
+            <Typography
+              type={TypographyType.DISPLAY_SMALL}
+              style={styles.itemFlag}>
+              {item.flag}
+            </Typography>
+          )}
           <Typography
             type={TypographyType.TITLE_MEDIUM}
             style={styles.itemTitle}>
@@ -111,24 +104,22 @@ class CountryPicker extends Component {
   }
 
   render() {
-    const theme = this.theme;
     const {t, countries} = this.props;
 
     const separatorStyle = mergeStyles(styles.separator, {
-      backgroundColor: theme.color.textSecondary,
+      backgroundColor: this.theme.color.surface,
     });
 
     return (
       <Modal animationType="slide" visible>
         <ScreenWrapper style={styles.container}>
           <Container style={styles.header}>
-            <BaseButton onPress={this.onClose.bind(this)}>
-              <Icon
-                bundle={BundleIconSetName.MATERIAL_ICONS}
-                name="close"
-                style={styles.closeIcon}
-              />
-            </BaseButton>
+            <IconButton
+              onPress={this.onClose.bind(this)}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              name="close"
+              iconStyle={styles.closeIcon}
+            />
             <Typography
               type={TypographyType.TITLE_MEDIUM}
               style={[styles.title]}>

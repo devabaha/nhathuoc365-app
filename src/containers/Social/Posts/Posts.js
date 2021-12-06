@@ -22,7 +22,7 @@ import Loading from 'src/components/Loading';
 
 import appConfig from 'app-config';
 import {reaction, toJS} from 'mobx';
-import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
+import ActionBarText from 'src/components/Social/ListFeeds/Feeds/ActionBarText';
 import PostsSkeleton from './PostsSkeleton';
 import {debounce} from 'lodash';
 import equal from 'deep-equal';
@@ -208,7 +208,7 @@ const Posts = ({
 
       try {
         const response = await getPostsRequest.promise();
-        console.log('abc', response, data);
+        // console.log('abc', response, data);
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {

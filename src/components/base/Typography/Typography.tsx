@@ -1,5 +1,7 @@
 import React, {memo, forwardRef, useMemo} from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, Animated} from 'react-native';
+
+import Reanimated from 'react-native-reanimated';
 
 import {Ref} from '..';
 import {TypographyProps} from '.';
@@ -38,6 +40,8 @@ const createStyles = (theme: Theme) => {
 const Typography = forwardRef(
   (
     {
+      reanimated,
+      animated,
       onPrimary,
       onSecondary,
       onSurface,
@@ -73,10 +77,21 @@ const Typography = forwardRef(
       return mergeStyles(styles, style);
     }, [styles, style]);
 
+    const TextComponent: any = useMemo(() => {
+      if (animated) {
+        return Animated.Text;
+      }
+      if (reanimated) {
+        return Reanimated.Text;
+      }
+
+      return Text;
+    }, [animated, reanimated]);
+
     return (
-      <Text {...props} ref={ref} style={componentStyle}>
+      <TextComponent {...props} ref={ref} style={componentStyle}>
         {children}
-      </Text>
+      </TextComponent>
     );
   },
 );

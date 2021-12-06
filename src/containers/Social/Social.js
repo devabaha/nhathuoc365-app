@@ -91,7 +91,7 @@ const Social = ({title, siteId = store.store_data?.id}) => {
 
     try {
       const response = await getThumbnailGroupsRequest.promise();
-      console.log(response);
+      // console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {

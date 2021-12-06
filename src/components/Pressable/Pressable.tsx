@@ -5,26 +5,17 @@ import {
   Animated,
   Easing as RNEasing,
 } from 'react-native';
+// types
 import {PressableProps} from '.';
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
   },
-  animatedWrapper: {
-  },
+  animatedWrapper: {},
   container: {
     padding: 15,
     justifyContent: 'center',
-  },
-  icon: {
-    fontSize: 20,
-    color: '#666',
-    marginRight: 10,
-  },
-  title: {
-    color: '#666',
-    fontWeight: '600',
   },
 });
 

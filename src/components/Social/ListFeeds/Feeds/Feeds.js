@@ -1,21 +1,24 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Animated, Text} from 'react-native';
-
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {StyleSheet, Animated} from 'react-native';
+// helpers
+import {hexToRgba} from 'app-helper';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+// custom components
 import Post from './Post';
-import Container from 'src/components/Layout/Container';
+import {Container} from 'src/components/base';
 import ActionContainer from '../../ActionContainer';
 import ProgressBar from 'src/components/ProgressBar';
-
-import appConfig from 'app-config';
 import Loading from 'src/components/Loading';
+import ActionBarText from './ActionBarText';
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-  },
+  container: {},
   postingProgressContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
   },
   postingLoading: {
     position: 'relative',
@@ -34,17 +37,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(255,255,255,.4)',
   },
 
-  errorText: {
-    color: appConfig.colors.status.danger,
-  },
-  actionBarText: {
-    padding: 15,
-    textAlign: 'center',
-    color: '#333',
-  },
+  errorText: {},
 });
 
 const Feeds = ({
@@ -79,6 +74,7 @@ const Feeds = ({
   onPressTotalComments,
   onPressMoreActions,
 }) => {
+  const {theme} = useTheme();
   // console.log('render feeds');
   const {t} = useTranslation('social');
 
@@ -113,14 +109,36 @@ const Feeds = ({
     isPostingCurrentValue.current = isPosting;
   }, [isPosting]);
 
+  const postingProgressContainerStyle = useMemo(() => {
+    return mergeStyles(styles.postingProgressContainer, {
+      borderColor: theme.color.border,
+      borderWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
+
+  const postingMaskStyle = useMemo(() => {
+    return mergeStyles(styles.postingMask, {
+      backgroundColor:
+        theme.id === BASE_DARK_THEME_ID
+          ? theme.color.overlay60
+          : hexToRgba(theme.color.white, 0.4),
+    });
+  }, [theme]);
+
+  const errorTextStyle = useMemo(() => {
+    return mergeStyles(styles.errorText, {
+      color: theme.color.danger,
+    });
+  }, [theme]);
+
   const renderErrorText = () => {
-    return <ActionBarText title={t('errorPosting')} style={styles.errorText} />;
+    return <ActionBarText title={t('errorPosting')} style={errorTextStyle} />;
   };
 
   return (
     <Container
       pointerEvents={!!isPosting ? 'none' : 'auto'}
-      centerVertical={false}
+      animated
       style={[
         styles.container,
         error && styles.error,
@@ -128,18 +146,13 @@ const Feeds = ({
         containerStyle,
       ]}>
       {!!isPosting && (
-        <Container
-          row
-          paddingVertical={10}
-          paddingHorizontal={15}
-          style={styles.postingProgressContainer}>
+        <Container row centerVertical style={postingProgressContainerStyle}>
           <Loading wrapperStyle={styles.postingLoading} size="small" />
           <ProgressBar
             containerStyle={styles.postingProgressBarContainer}
             progress={postingProgress}
             height={5}
-            foregroundColor={appConfig.colors.sceneBackground}
-            backgroundColor={appConfig.colors.primary}
+            backgroundColor={theme.color.persistPrimary}
             onProgressChange={onPostingProgressChange}
             onCompletion={onPostingProgressComplete}
             onAnimatedChange
@@ -147,7 +160,7 @@ const Feeds = ({
         </Container>
       )}
 
-      <Container centerVertical={false}>
+      <Container>
         <Post
           group={group}
           category={category}
@@ -177,14 +190,10 @@ const Feeds = ({
           onPressTotalComments={onPressTotalComments}
         />
 
-        {!!isPosting && <Container style={styles.postingMask} />}
+        {!!isPosting && <Container style={postingMaskStyle} />}
       </Container>
     </Container>
   );
 };
 
 export default React.memo(Feeds);
-
-export const ActionBarText = React.memo(({title, style}) => {
-  return <Text style={[styles.actionBarText, style]}>{title}</Text>;
-});

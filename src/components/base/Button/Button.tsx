@@ -12,12 +12,14 @@ import {
 
 import {Theme} from 'src/Themes/interface';
 import {BaseButtonProps} from '.';
-import {Ref, Typography} from '..';
+import {Ref} from '..';
 
 import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 
 import {TypographyType} from '../Typography/constants';
+
+import Typography from '../Typography';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -62,8 +64,11 @@ const Button = forwardRef(
     }, [theme]);
 
     const titleStyles = useMemo(() => {
-      return mergeStyles(styles.text, [titleStyle, typoProps?.style]);
-    }, [styles, titleStyle, typoProps?.style]);
+      return mergeStyles(
+        typoProps?.type ? theme.typography[typoProps.type] : styles.text,
+        [titleStyle, typoProps?.style],
+      );
+    }, [styles, titleStyle, typoProps?.type, typoProps?.style]);
 
     const Wrapper = useMemo(() => {
       return useTouchableHighlight
@@ -77,7 +82,7 @@ const Button = forwardRef(
 
     return (
       <Wrapper
-        underlayColor={'rgba(0,0,0,.6)'}
+        underlayColor={theme.color.underlay}
         activeOpacity={0.8}
         {...props}
         ref={ref}>
@@ -89,8 +94,7 @@ const Button = forwardRef(
             <Typography
               type={TypographyType.LABEL_MEDIUM}
               {...typoProps}
-              style={titleStyles}
-              >
+              style={titleStyles}>
               {children || title}
             </Typography>
           ) : (

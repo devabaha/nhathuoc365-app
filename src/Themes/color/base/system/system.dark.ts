@@ -34,6 +34,7 @@ export const SYSTEM_DARK = {
   ...SYSTEM_COMMON,
 
   border: CORE.grey700,
+  placeholder: CORE.grey600,
   onOverlay: CORE.white,
   underlay: SYSTEM_COMMON.primaryLight,
 
@@ -41,6 +42,7 @@ export const SYSTEM_DARK = {
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
   contentBackground: SYSTEM_COMMON.neutral,
+  contentBackground1: SYSTEM_COMMON.neutral,
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
@@ -55,6 +57,7 @@ export const SYSTEM_DARK = {
   persistTextPrimary: SYSTEM_COMMON.persistOnSurface,
   textPrimary: SYSTEM_COMMON.onSurface,
   textSecondary: SYSTEM_COMMON.neutral,
+  textTertiary: CORE.grey700,
   textInactive: CORE.grey500,
 
   iconInactive: CORE.grey600,

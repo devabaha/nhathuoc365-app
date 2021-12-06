@@ -14,6 +14,9 @@ const createStyles = (theme) => {
     surface: {
       backgroundColor: theme.color.surface,
     },
+    contentContainer: {
+      backgroundColor: theme.color.contentBackground,
+    },
     flex: {
       flex: 1,
     },
@@ -52,6 +55,8 @@ const Container = forwardRef(
       reanimated,
       animated,
       style,
+      content,
+      noBackground,
       flex,
       row,
       center,
@@ -66,6 +71,9 @@ const Container = forwardRef(
     const styles = useMemo(() => {
       const baseStyles: any = createStyles(theme);
       let additionalStyle: any = {};
+      centerVertical =
+        centerVertical !== undefined ? centerVertical : row ? true : undefined;
+        
       if (flex) {
         additionalStyle = {...additionalStyle, ...baseStyles.flex};
       }
@@ -94,8 +102,15 @@ const Container = forwardRef(
         };
       }
 
-      return mergeStyles(baseStyles.surface, additionalStyle);
-    }, [theme, row, center, centerHorizontal, centerVertical]);
+      return mergeStyles(
+        noBackground
+          ? {}
+          : content
+          ? baseStyles.contentContainer
+          : baseStyles.surface,
+        additionalStyle,
+      );
+    }, [theme, row, center, centerHorizontal, centerVertical, noBackground]);
 
     const componentStyle = useMemo(() => {
       return mergeStyles(styles, style);

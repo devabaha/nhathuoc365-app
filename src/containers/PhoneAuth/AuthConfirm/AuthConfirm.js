@@ -1,27 +1,22 @@
 import React, {Component} from 'react';
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  // Text,
-  // TextInput,
-  // TouchableOpacity,
-} from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {ScrollView, View, StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
-
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
-import {BaseButton} from 'src/components/base/Button';
+// context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {Theme} from 'src/Themes/interface';
-import {Typography, TypographyType} from 'src/components/base';
-import {BundleIconSetName} from 'src/components/base/Icon/constants';
-
-import Input from 'src/components/base/Input';
-import Icon from 'src/components/base/Icon';
-import ScreenWrapper from 'src/components/base/ScreenWrapper';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
+// customs components
+import {
+  Typography,
+  Input,
+  ScreenWrapper,
+  IconButton,
+  TextButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {},
@@ -37,58 +32,47 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     marginBottom: 10,
-    fontSize: 15,
   },
   desText: {
-    // color: 'black',
-    // fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
     fontWeight: '300',
   },
   phoneNumber: {
-    fontSize: 17,
     fontWeight: '500',
     marginTop: 0,
     marginBottom: 20,
   },
   txtNote: {
-    color: 'red',
     marginTop: 20,
   },
   txtCode: {
-    fontWeight: '800',
+    fontWeight: appConfig.device.isIOS ? '800' : 'bold',
     fontSize: 20,
     padding: 10,
   },
   continueText: {
-    // color: 'black',
-    // fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
     marginTop: 20,
   },
   backIcon: {
     fontSize: 36,
-    // color: '#333',
   },
   txtDesCode: {
-    // fontSize: 17,
     fontWeight: '200',
-    // color: 'black',
     marginTop: 20,
   },
   txtDescription: {
-    // fontSize: 17,
     fontWeight: '200',
-    // color: 'black',
     marginTop: 20,
   },
   resSendOTP: {
-    // fontSize: 17,
-    // color: '#528BC5',
     fontWeight: '700',
     marginTop: 15,
+  },
+  buttonStyle: {
+    alignSelf: 'flex-start',
   },
 });
 
@@ -106,6 +90,10 @@ class AuthConfirm extends Component {
   };
   timer = -1;
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get isReSendable() {
     return this.state.requestNewOtpCounter <= 0;
   }
@@ -116,10 +104,6 @@ class AuthConfirm extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
-  }
-
-  get theme() {
-    return getTheme(this);
   }
 
   reStartCountDown() {
@@ -158,8 +142,24 @@ class AuthConfirm extends Component {
     } : ${parseInt(second) < 10 ? '0' + parseInt(second) : parseInt(second)}`;
   }
 
+  resSendOTPStyle = mergeStyles(styles.resSendOTP, {
+    color: this.theme.color.accent2,
+  });
+
+  styleContinueText = mergeStyles(styles.continueText, {
+    color: !this.props.confirmDisabled
+      ? this.theme.color.textPrimary
+      : this.theme.color.textInactive,
+  });
+
+  txtNoteStyle = mergeStyles(styles.txtNote, {
+    color: this.theme.color.danger,
+  });
+
+  resentOTPTypoProps = {type: TypographyType.TITLE_MEDIUM};
+  continueBtnTypoProps = {type: TypographyType.TITLE_LARGE};
+
   render() {
-    const theme = this.theme;
     const {codeInput, requestNewOtpCounter} = this.state;
     const {
       t,
@@ -170,29 +170,17 @@ class AuthConfirm extends Component {
       message,
     } = this.props;
 
-    const resSendOTPStyle = mergeStyles(styles.resSendOTP, {
-      color: theme.color.neutral2,
-    });
-    const styleContinueText = mergeStyles(styles.continueText, {
-      color: !confirmDisabled
-        ? theme.color.textPrimary
-        : theme.color.textInactive,
-    });
-    const txtNoteStyle = mergeStyles(styles.txtNote, {
-      color: theme.color.danger,
-    });
-
     return (
       <ScreenWrapper safeLayout>
         <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
-            <BaseButton onPress={this.onBack.bind(this)}>
-              <Icon
-                bundle={BundleIconSetName.MATERIAL_ICONS}
-                name="chevron-left"
-                style={styles.backIcon}
-              />
-            </BaseButton>
+            <IconButton
+              style={styles.buttonStyle}
+              onPress={this.onBack.bind(this)}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              name="chevron-left"
+              iconStyle={styles.backIcon}
+            />
           </View>
           <View style={styles.contentContainer}>
             <Typography
@@ -215,20 +203,17 @@ class AuthConfirm extends Component {
               maxLength={6}
               onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
             />
-            <BaseButton
-              activeOpacity={0.5}
+            <TextButton
               onPress={onConfirmCode}
-              disabled={confirmDisabled}>
-              <Typography
-                type={TypographyType.TITLE_LARGE}
-                style={styleContinueText}>
-                {t('verifyCodeInputConfirmMessage')}
-              </Typography>
-            </BaseButton>
+              disabled={confirmDisabled}
+              title={t('verifyCodeInputConfirmMessage')}
+              style={this.styleContinueText}
+              typoProps={this.continueBtnTypoProps}
+            />
             {!!message && (
               <Typography
                 type={TypographyType.LABEL_MEDIUM}
-                style={txtNoteStyle}>
+                style={this.txtNoteStyle}>
                 {message}
               </Typography>
             )}
@@ -237,19 +222,19 @@ class AuthConfirm extends Component {
               style={styles.txtDesCode}>
               {t('notReceiveCode')}
             </Typography>
-            <BaseButton
+
+            <TextButton
+              style={styles.buttonStyle}
+              titleStyle={this.resSendOTPStyle}
               onPress={this.reStartCountDown.bind(this)}
-              disabled={!this.isReSendable}>
-              <Typography
-                type={TypographyType.TITLE_MEDIUM}
-                style={resSendOTPStyle}>
-                {!this.isReSendable
-                  ? `${t(
-                      'requestNewCodeWithTime',
-                    )} ${this.convertSecondToMinute(requestNewOtpCounter)}`
-                  : t('requestNewCode')}
-              </Typography>
-            </BaseButton>
+              disabled={!this.isReSendable}
+              typoProps={this.resentOTPTypoProps}>
+              {!this.isReSendable
+                ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
+                    requestNewOtpCounter,
+                  )}`
+                : t('requestNewCode')}
+            </TextButton>
             {this.state.showDescription && (
               <Typography
                 type={TypographyType.TITLE_MEDIUM}

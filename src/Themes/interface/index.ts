@@ -11,7 +11,10 @@ export type Style =
 export type Typography = {
   [TypographyType.DISPLAY_SMALL]?: Style;
 
+  [TypographyType.TITLE_MEDIUM_PRIMARY]?: Style;
+
   [TypographyType.TITLE_LARGE]?: Style;
+  [TypographyType.TITLE_SEMI_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
 
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
@@ -22,12 +25,18 @@ export type Typography = {
   [TypographyType.LABEL_SMALL]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
 
+  [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]?: Style;
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
+
+  [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]?: Style;
+  [TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY]?: Style;
+  [TypographyType.DESCRIPTION_SMALL_TERTIARY]?: Style;
 
   [TypographyType.DESCRIPTION_MEDIUM]?: Style;
   [TypographyType.DESCRIPTION_SEMI_MEDIUM]?: Style;
   [TypographyType.DESCRIPTION_SMALL]?: Style;
 
+  [TypographyType.CAPTION]?: Style;
   [TypographyType.BUTTON_TEXT]?: Style;
 };
 
@@ -98,6 +107,7 @@ export type Color = {
   navBarBackground: ColorValue;
   onNavBarBackground: ColorValue;
   contentBackground: ColorValue;
+  contentBackground1: ColorValue;
   onContentBackground: ColorValue;
   persistPrimary: ColorValue;
   onPersistPrimary: ColorValue;
@@ -109,6 +119,7 @@ export type Color = {
   persistTextPrimary: ColorValue;
   textPrimary: ColorValue;
   textSecondary: ColorValue;
+  textTertiary: ColorValue,
   textInactive: ColorValue;
   iconInactive: ColorValue;
   indicator: ColorValue;
@@ -150,14 +161,16 @@ export type Color = {
   marigold: ColorValue;
   cherry: ColorValue;
   neutral1: ColorValue;
-  neutral2: ColorValue;
 };
 
 export type Layout = {
+  borderWidthPixel: number;
+  borderWidthSmall: number;
   borderWidth: number;
   borderRadiusSmall: number;
   borderRadiusMedium: number;
   borderRadiusLarge: number;
+  borderRadiusHuge: number;
 
   shadow: {
     shadowOffset: {
