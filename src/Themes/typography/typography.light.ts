@@ -6,8 +6,22 @@ import {BASE_COLOR_LIGHT} from '../color';
 import {Typography} from '../interface';
 
 export const TYPOGRAPHY_LIGHT: Typography = {
+  [TypographyType.DISPLAY_SMALL]: {
+    fontSize: TypographyFontSize.DISPLAY_SMALL,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
+
+  [TypographyType.TITLE_MEDIUM_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
+
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
+  [TypographyType.TITLE_SEMI_LARGE]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_LIGHT.textPrimary,
   },
   [TypographyType.TITLE_MEDIUM]: {
