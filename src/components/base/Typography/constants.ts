@@ -1,7 +1,10 @@
 export enum TypographyType {
   DISPLAY_SMALL = 'displaySmall',
 
+  TITLE_MEDIUM_PRIMARY = 'titleMediumPrimary',
+
   TITLE_LARGE = 'titleLarge',
+  TITLE_SEMI_LARGE = 'titleSemiLarge',
   TITLE_MEDIUM = 'titleMedium',
 
   LABEL_LARGE_PRIMARY = 'labelLargePrimary',

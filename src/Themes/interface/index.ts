@@ -11,7 +11,10 @@ export type Style =
 export type Typography = {
   [TypographyType.DISPLAY_SMALL]?: Style;
 
+  [TypographyType.TITLE_MEDIUM_PRIMARY]?: Style;
+
   [TypographyType.TITLE_LARGE]?: Style;
+  [TypographyType.TITLE_SEMI_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
 
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
@@ -166,6 +169,7 @@ export type Layout = {
   borderRadiusSmall: number;
   borderRadiusMedium: number;
   borderRadiusLarge: number;
+  borderRadiusHuge: number;
 
   shadow: {
     shadowOffset: {

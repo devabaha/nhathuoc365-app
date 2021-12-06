@@ -9,6 +9,7 @@ export const LAYOUT: Layout = {
   borderRadiusSmall: 6,
   borderRadiusMedium: 8,
   borderRadiusLarge: 10,
+  borderRadiusHuge: 15,
 
   shadow: {
     shadowOffset: {

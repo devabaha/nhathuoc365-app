@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  memo,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, {forwardRef, memo, useCallback, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
 import {TextButtonProps} from '.';
@@ -29,7 +24,7 @@ const createStyles = (theme: Theme) => {
       color: theme.color.secondary,
     },
     disabled: {
-      color: theme.color.disabled,
+      color: theme.color.onDisabled,
     },
     shadow: {
       shadowColor: theme.color.shadow,
@@ -68,7 +63,6 @@ const TextButton = forwardRef(
     const titleStyles = useMemo(() => {
       return mergeStyles(
         [
-          styles.text,
           props.shadow && styles.shadow,
           props.primary && styles.primary,
           props.secondary && styles.secondary,

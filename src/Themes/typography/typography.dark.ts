@@ -10,8 +10,18 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.DISPLAY_SMALL,
     color: BASE_COLOR_DARK.textPrimary,
   },
+
+  [TypographyType.TITLE_MEDIUM_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_DARK.primaryHighlight,
+  },
+
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
+  [TypographyType.TITLE_SEMI_LARGE]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_DARK.textPrimary,
   },
   [TypographyType.TITLE_MEDIUM]: {

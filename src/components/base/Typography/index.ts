@@ -9,6 +9,7 @@ export {default} from './Typography';
 export type TypoType =
   | TypographyType.DISPLAY_SMALL
   | TypographyType.TITLE_LARGE
+  | TypographyType.TITLE_SEMI_LARGE
   | TypographyType.TITLE_MEDIUM
   | TypographyType.LABEL_LARGE_PRIMARY
   | TypographyType.LABEL_MEDIUM_PRIMARY
