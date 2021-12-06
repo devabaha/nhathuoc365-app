@@ -21,9 +21,9 @@ import {
 } from 'src/helper/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
-// constant
+// constants
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
-// entity
+// entities
 import {APIRequest} from 'src/network/Entity';
 // custom components
 import NewsSceneSkeleton from './NewsSceneSkeleton';
