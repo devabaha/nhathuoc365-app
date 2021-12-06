@@ -317,6 +317,7 @@ class PhoneAuth extends Component {
   }
 
   render() {
+    const theme = this.theme;
     const {
       confirmResult,
       isShowIndicator,

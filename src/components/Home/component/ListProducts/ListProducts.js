@@ -11,7 +11,6 @@ import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import {Typography} from 'src/components/base';
 import {TypographyType} from 'src/components/base/Typography/constants';
 import {TextButton} from 'src/components/base/Button';
-import {Actions} from 'react-native-router-flux';
 
 class ListProducts extends Component {
   static contextType = ThemeContext;
@@ -133,7 +132,7 @@ class ListProducts extends Component {
           {!!this.props.onShowAll && (
             <TextButton
               titleStyle={{color: this.theme.color.accent2}}
-              onPress={() => Actions.push(appConfig.routes.phoneAuth)}>
+              onPress={this.props.onShowAll}>
               {this.props.t('viewAll')}
             </TextButton>
             // <Button underlayColor="transparent" onPress={this.props.onShowAll}>

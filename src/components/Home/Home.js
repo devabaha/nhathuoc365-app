@@ -308,7 +308,7 @@ class Home extends Component {
       this.homeThemes('styles.home.header_search_wrapper_active'),
       {
         backgroundColor: color(
-          ...hexToRgbCode(this.theme.color.contentBackground1),
+          ...hexToRgbCode(this.theme.color.contentBackgroundStrong),
           interpolate(this.animatedHeaderValue, {
             inputRange: [0, EXTRAPOLATE_RANGE],
             outputRange: [0, 1],

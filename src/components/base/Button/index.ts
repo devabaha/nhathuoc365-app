@@ -47,7 +47,15 @@ export interface BaseButtonProps
 
   titleStyle?: StyleProp<TextStyle>;
 
+  renderIconLeft?: (
+    titleStyle: StyleProp<TextStyle>,
+    buttonStyle?: StyleProp<ViewStyle>,
+  ) => Children;
   renderTitleComponent?: (
+    titleStyle: StyleProp<TextStyle>,
+    buttonStyle?: StyleProp<ViewStyle>,
+  ) => Children;
+  renderIconRight?: (
     titleStyle: StyleProp<TextStyle>,
     buttonStyle?: StyleProp<ViewStyle>,
   ) => Children;

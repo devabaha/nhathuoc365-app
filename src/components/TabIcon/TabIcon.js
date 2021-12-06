@@ -41,7 +41,7 @@ class TabIcon extends Component {
   renderLabel() {
     return (
       <Typography
-        type={TypographyType.LABEL_EXTRA_SMALL}
+        type={TypographyType.LABEL_TINY}
         numberOfLines={1}
         style={[
           styles.labelDefault,

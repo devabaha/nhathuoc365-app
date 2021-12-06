@@ -1,5 +1,4 @@
 import {hexToRgba, rgbaToRgb} from 'app-helper';
-import {Platform, PlatformColor} from 'react-native';
 import {CORE} from '../core';
 import {SYSTEM_LIGHT} from './system.light';
 
@@ -7,6 +6,7 @@ const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: '#212121',
   // —— Primary variants ——
+  primary5: rgbaToRgb(hexToRgba(CORE.primary, 0.05)),
   primary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   primaryLight: '#3d3d3d',
   primaryDark: '#181818',
@@ -14,6 +14,7 @@ const SYSTEM_COMMON = {
 
   secondary: '#212121',
   // —— Secondary variants ——
+  secondary5: rgbaToRgb(hexToRgba(CORE.secondary, 0.05)),
   secondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
   secondaryLight: '#3d3d3d',
   secondaryDark: '#181818',
@@ -41,8 +42,9 @@ export const SYSTEM_DARK = {
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
+  contentBackgroundWeak: CORE.grey800,
   contentBackground: SYSTEM_COMMON.neutral,
-  contentBackground1: SYSTEM_COMMON.neutral,
+  contentBackgroundStrong: CORE.grey600,
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
@@ -57,7 +59,7 @@ export const SYSTEM_DARK = {
   persistTextPrimary: SYSTEM_COMMON.persistOnSurface,
   textPrimary: SYSTEM_COMMON.onSurface,
   textSecondary: SYSTEM_COMMON.neutral,
-  textTertiary: CORE.grey700,
+  textTertiary: CORE.grey600,
   textInactive: CORE.grey500,
 
   iconInactive: CORE.grey600,

@@ -103,12 +103,12 @@ class PhoneRegister extends Component {
   continueBtnTypoProps = {type: TypographyType.TITLE_LARGE};
 
   countryContainerStyle = mergeStyles(styles.countryContainer, {
-    backgroundColor: this.theme.color.contentBackground1,
+    backgroundColor: this.theme.color.contentBackgroundStrong,
     borderRadius: this.theme.layout.borderRadiusSmall,
   });
 
   phoneTextInputStyle = mergeStyles(styles.phoneTextInput, {
-    backgroundColor: this.theme.color.contentBackground1,
+    backgroundColor: this.theme.color.contentBackgroundStrong,
     borderRadius: this.theme.layout.borderRadiusSmall,
   });
 

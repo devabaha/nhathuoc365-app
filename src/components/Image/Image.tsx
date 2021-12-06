@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+// 3-party libs
 import FastImage from 'react-native-fast-image';
 import Lightbox from 'react-native-lightbox';
+// types
 import {ImageProps} from '.';
+//context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   image: {
@@ -22,6 +26,8 @@ const Image = ({
   renderError = () => {},
   ...props
 }: ImageProps) => {
+  const {theme} = useTheme();
+
   const [isError, setError] = useState(false);
   const [isOpenLightBox, setOpenLightBox] = useState(false);
   const [isLoadEnd, setLoadEnd] = useState(false);
@@ -49,6 +55,14 @@ const Image = ({
     setOpenLightBox(false);
   };
 
+  const isErrorStyle = useMemo(() => {
+    return {backgroundColor: errorColor || theme.color.disabled};
+  }, [theme, errorColor]);
+
+  const isLoadEndStyle = useMemo(() => {
+    return {backgroundColor: loadingColor || theme.color.disabled};
+  }, [theme, loadingColor]);
+
   return isError && !!renderError ? (
     renderError()
   ) : canTouch ? (
@@ -66,15 +80,13 @@ const Image = ({
           onLoadEnd={handleLoadEnd}
           resizeMode={isOpenLightBox ? 'contain' : 'cover'}
           {...props}
-          style={[
-            styles.image,
-            style,
-            isError && {backgroundColor: errorColor || '#eee'},
-          ]}
+          // @ts-ignore
+          style={[styles.image, style, isError && isErrorStyle]}
         />
       </Lightbox>
     </View>
   ) : (
+    // @ts-ignore
     <FastImage
       onLoadStart={handleStartLoading}
       onError={handleError}
@@ -83,8 +95,8 @@ const Image = ({
       style={[
         styles.image,
         style,
-        !isLoadEnd && {backgroundColor: loadingColor || '#eee'},
-        isError && {backgroundColor: errorColor || '#eee'},
+        !isLoadEnd && isLoadEndStyle,
+        isError && isErrorStyle,
       ]}
     />
   );

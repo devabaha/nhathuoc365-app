@@ -106,6 +106,10 @@ class AuthConfirm extends Component {
     clearInterval(this.timer);
   }
 
+  get theme() {
+    return getTheme(this);
+  }
+
   reStartCountDown() {
     this.props.onRequestNewOtp();
     this.setState(

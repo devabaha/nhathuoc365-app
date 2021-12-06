@@ -30,7 +30,14 @@ const Input = forwardRef(({style, type, ...props}: InputProps, ref: Ref) => {
     return mergeStyles(styles, style);
   }, [styles, style]);
 
-  return <TextInput ref={ref} placeholderTextColor={theme.color.placeholder} {...props} style={componentStyle} />;
+  return (
+    <TextInput
+      ref={ref}
+      placeholderTextColor={theme.color.placeholder}
+      {...props}
+      style={componentStyle}
+    />
+  );
 });
 
 export default memo(Input);
