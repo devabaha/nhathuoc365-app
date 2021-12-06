@@ -1,9 +1,11 @@
 import React from 'react';
-import {ScrollView, View, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-import {SKELETON_COLOR} from 'src/components/SkeletonLoading/constants';
+// configs
 import appConfig from 'app-config';
-import Container from 'src/components/Layout/Container';
+// custom components
+import {Container, Skeleton, ScrollView} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,16 +16,12 @@ const styles = StyleSheet.create({
   },
 
   itemContainer: {
-    backgroundColor: SKELETON_COLOR,
     marginBottom: 15,
     padding: 15,
     paddingBottom: 80,
   },
 
-  block: {
-    //@ts-ignore
-    backgroundColor: LightenColor(SKELETON_COLOR, -12),
-  },
+  block: {},
 
   header: {
     marginBottom: 10,
@@ -67,20 +65,29 @@ const ITEM_LENGTH = 6;
 const NewsSceneSkeleton = () => {
   const renderItem = (item, index) => {
     return (
-      <View key={index} style={styles.itemContainer}>
-        <Container row style={styles.header}>
-          <View style={[styles.block, styles.avatarContainer]} />
+      <Skeleton container key={index} style={styles.itemContainer}>
+        <Container noBackground row centerVertical style={styles.header}>
+          <Skeleton content style={[styles.block, styles.avatarContainer]} />
 
-          <Container centerVertical={false}>
-            <View style={[styles.block, styles.userName]} />
-            <View style={[styles.block, styles.description]} />
+          <Container noBackground>
+            <Skeleton content style={[styles.block, styles.userName]} />
+            <Skeleton content style={[styles.block, styles.description]} />
           </Container>
         </Container>
 
-        <View style={[styles.block, styles.content, styles.content1]} />
-        <View style={[styles.block, styles.content, styles.content2]} />
-        <View style={[styles.block, styles.content, styles.content3]} />
-      </View>
+        <Skeleton
+          content
+          style={[styles.block, styles.content, styles.content1]}
+        />
+        <Skeleton
+          content
+          style={[styles.block, styles.content, styles.content2]}
+        />
+        <Skeleton
+          content
+          style={[styles.block, styles.content, styles.content3]}
+        />
+      </Skeleton>
     );
   };
 

@@ -22,12 +22,18 @@ export type Typography = {
   [TypographyType.LABEL_SMALL]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
 
+  [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]?: Style;
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
+
+  [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]?: Style;
+  [TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY]?: Style;
+  [TypographyType.DESCRIPTION_SMALL_TERTIARY]?: Style;
 
   [TypographyType.DESCRIPTION_MEDIUM]?: Style;
   [TypographyType.DESCRIPTION_SEMI_MEDIUM]?: Style;
   [TypographyType.DESCRIPTION_SMALL]?: Style;
 
+  [TypographyType.CAPTION]?: Style;
   [TypographyType.BUTTON_TEXT]?: Style;
 };
 
@@ -98,6 +104,7 @@ export type Color = {
   navBarBackground: ColorValue;
   onNavBarBackground: ColorValue;
   contentBackground: ColorValue;
+  contentBackground1: ColorValue;
   onContentBackground: ColorValue;
   persistPrimary: ColorValue;
   onPersistPrimary: ColorValue;
@@ -109,6 +116,7 @@ export type Color = {
   persistTextPrimary: ColorValue;
   textPrimary: ColorValue;
   textSecondary: ColorValue;
+  textTertiary: ColorValue,
   textInactive: ColorValue;
   iconInactive: ColorValue;
   indicator: ColorValue;
@@ -152,6 +160,8 @@ export type Color = {
 };
 
 export type Layout = {
+  borderWidthPixel: number;
+  borderWidthSmall: number;
   borderWidth: number;
   borderRadiusSmall: number;
   borderRadiusMedium: number;

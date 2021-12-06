@@ -1,29 +1,20 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
-
+// constants
 import {IMAGES_WRAPPER_WIDTH, IMAGE_SPACING} from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
+
+const NUM_OF_HIGHLIGHT = 2;
+const NUM_OF_NORMAL = 3;
+const MAX_NUM_OF_VISIBLE = NUM_OF_HIGHLIGHT + NUM_OF_NORMAL;
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
   },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
 });
-
-const NUM_OF_HIGHLIGHT = 2;
-const NUM_OF_NORMAL = 3;
-const MAX_NUM_OF_VISIBLE = NUM_OF_HIGHLIGHT + NUM_OF_NORMAL;
 
 const H2 = ({images = []}) => {
   const imagesHighlight = useMemo(() => {
@@ -93,8 +84,10 @@ const H2 = ({images = []}) => {
   };
 
   return (
-    <Container centerVertical={false} style={styles.container}>
-      <Container row>{renderHighlight()}</Container>
+    <Container style={styles.container}>
+      <Container row>
+        {renderHighlight()}
+      </Container>
       <Container flex row>
         {renderNormal()}
       </Container>

@@ -4,8 +4,9 @@ import {View, StyleSheet, Image} from 'react-native';
 import {default as ModalBox} from 'react-native-modalbox';
 //context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-// config, helper
+// configs
 import {mergeStyles} from 'src/Themes/helper';
+// helpers
 import EventTracker from '../helper/EventTracker';
 // constants
 import {BundleIconSetName} from './base/Icon/constants';

@@ -6,28 +6,30 @@ import React, {
   useRef,
 } from 'react';
 import {StyleSheet} from 'react-native';
+// 3-party libs
 import {Actions} from 'react-native-router-flux';
-
-import {ListFeeds} from 'src/components/Social';
-import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import {reaction} from 'mobx';
 import {Observer} from 'mobx-react';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
-
+// configs
 import store from 'app-store';
-
-import NewsSceneSkeleton from './NewsSceneSkeleton';
-import NoResult from 'src/components/NoResult';
-
-import {APIRequest} from 'src/network/Entity';
+// helpers
 import {
   calculateLikeCountFriendly,
   getSocialLikeCount,
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// constant
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+// entity
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import NewsSceneSkeleton from './NewsSceneSkeleton';
+import NoResult from 'src/components/NoResult';
+import {ListFeeds} from 'src/components/Social';
+import Feeds from 'src/components/Social/ListFeeds/Feeds';
 
 const styles = StyleSheet.create({
   feedsContainer: {

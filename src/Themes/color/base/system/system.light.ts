@@ -48,7 +48,8 @@ export const SYSTEM_LIGHT = {
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
-  contentBackground: CORE.grey400,
+  contentBackground: CORE.grey300,
+  contentBackground1: CORE.grey400,
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
@@ -65,6 +66,7 @@ export const SYSTEM_LIGHT = {
   persistTextPrimary: SYSTEM_COMMON.persistOnSurface,
   textPrimary: SYSTEM_COMMON.onSurface,
   textSecondary: SYSTEM_COMMON.neutral,
+  textTertiary: CORE.grey700,
   textInactive: CORE.grey600,
 
   iconInactive: CORE.grey600,

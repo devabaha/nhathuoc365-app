@@ -1,35 +1,26 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
-
+import {StyleSheet} from 'react-native';
+// constants
 import {
   IMAGES_WRAPPER_WIDTH,
   IMAGE_SPACING,
   IMAGES_WRAPPER_HEIGHT,
   IMAGE_HORIZONTAL_HIGHLIGHT_DIMENSIONS,
 } from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
+
+const NUM_OF_HIGHLIGHT = 1;
+const NUM_OF_NORMAL = 3;
+const MAX_NUM_OF_VISIBLE = NUM_OF_HIGHLIGHT + NUM_OF_NORMAL;
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
     height: IMAGES_WRAPPER_HEIGHT,
   },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
 });
-
-const NUM_OF_HIGHLIGHT = 1;
-const NUM_OF_NORMAL = 3;
-const MAX_NUM_OF_VISIBLE = NUM_OF_HIGHLIGHT + NUM_OF_NORMAL;
 
 const V1 = ({images = []}) => {
   const imagesHighlight = useMemo(() => {

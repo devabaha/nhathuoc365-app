@@ -1,32 +1,22 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
-
+import {StyleSheet} from 'react-native';
+// constants
 import {
   IMAGES_WRAPPER_WIDTH,
-  IMAGE_SPACING,
   IMAGES_WRAPPER_HEIGHT,
 } from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
+
+const NUM_OF_HIGHLIGHT = 2;
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
     height: IMAGES_WRAPPER_HEIGHT,
   },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
 });
-
-const NUM_OF_HIGHLIGHT = 2;
 
 const V2o = ({images = []}) => {
   const imagesHighlight = useMemo(() => {
@@ -59,11 +49,7 @@ const V2o = ({images = []}) => {
     });
   };
 
-  return (
-    <Container centerVertical={false} style={styles.container}>
-      {renderHighlight()}
-    </Container>
-  );
+  return <Container style={styles.container}>{renderHighlight()}</Container>;
 };
 
 export default React.memo(V2o);
