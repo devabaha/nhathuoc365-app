@@ -37,6 +37,14 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
+  [TypographyType.LABEL_SMALL_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
+  [TypographyType.LABEL_EXTRA_SMALL_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_EXTRA_SMALL,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
   [TypographyType.LABEL_LARGE]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_LIGHT.textPrimary,
@@ -50,6 +58,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.textPrimary,
   },
   [TypographyType.LABEL_EXTRA_SMALL]: {
+    fontSize: TypographyFontSize.BODY_EXTRA_SMALL,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
+  [TypographyType.LABEL_TINY]: {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_LIGHT.textPrimary,
   },

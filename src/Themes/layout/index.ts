@@ -6,6 +6,7 @@ export const LAYOUT: Layout = {
   borderWidthPixel: appConfig.device.pixel,
   borderWidthSmall: 0.5,
   borderWidth: 1,
+  borderWidthLarge: 2,
   borderRadiusSmall: 6,
   borderRadiusMedium: 8,
   borderRadiusLarge: 10,

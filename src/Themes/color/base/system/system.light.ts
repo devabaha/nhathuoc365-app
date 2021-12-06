@@ -6,6 +6,7 @@ const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: CORE.primary,
   // —— Primary variants ——
+  primary5: rgbaToRgb(hexToRgba(CORE.primary, 0.05)),
   primary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   primaryLight: CORE.primaryLight,
   primaryDark: CORE.primaryDark,
@@ -13,6 +14,7 @@ const SYSTEM_COMMON = {
 
   secondary: CORE.secondary,
   // —— Secondary variants ——
+  secondary5: rgbaToRgb(hexToRgba(CORE.secondary, 0.05)),
   secondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
   secondaryLight: CORE.secondaryLight,
   secondaryDark: CORE.secondaryDark,
@@ -48,8 +50,9 @@ export const SYSTEM_LIGHT = {
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
+  contentBackgroundWeak: CORE.grey200,
   contentBackground: CORE.grey300,
-  contentBackground1: CORE.grey400,
+  contentBackgroundStrong: CORE.grey400,
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,

@@ -9,7 +9,7 @@ import {TypographyType} from 'src/components/base';
 // custom components
 import {Container, Typography} from 'src/components/base';
 import Pressable from 'src/components/Pressable';
-import FloatingIcons from 'src/components/Social/FloatingIcons ';
+import FloatingIcons from 'src/components/Social/FloatingIcons';
 
 const styles = StyleSheet.create({
   container: {

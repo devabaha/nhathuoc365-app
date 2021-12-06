@@ -6,6 +6,7 @@
   },
   "address": {
     "title": "1. Địa chỉ",
+    "myAddress": "Địa chỉ của tôi",
     "receive": "Địa chỉ nhận hàng",
     "new": "Thêm địa chỉ mới",
     "delivery": "Giao tới địa chỉ này",

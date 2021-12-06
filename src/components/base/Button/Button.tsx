@@ -45,7 +45,9 @@ const Button = forwardRef(
 
       titleStyle,
 
+      renderIconLeft,
       renderTitleComponent,
+      renderIconRight,
 
       iconLeft,
       iconRight,
@@ -88,6 +90,8 @@ const Button = forwardRef(
         ref={ref}>
         <>
           {iconLeft}
+          {!!renderIconLeft && renderIconLeft(titleStyles)}
+
           {renderTitleComponent ? (
             renderTitleComponent(titleStyles)
           ) : typeof children === 'string' || !!title ? (
@@ -100,6 +104,7 @@ const Button = forwardRef(
           ) : (
             children
           )}
+          {!!renderIconRight && renderIconRight(titleStyles)}
           {iconRight}
         </>
       </Wrapper>

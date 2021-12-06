@@ -5,9 +5,9 @@ import {mergeStyles} from 'src/Themes/helper';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
-import {BundleIconSetName} from 'src/components/base/Icon/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
-import {Icon, Typography, TypographyType} from 'src/components/base';
+import {Icon, Typography} from 'src/components/base';
 
 const NoResult = ({
   icon = null,
