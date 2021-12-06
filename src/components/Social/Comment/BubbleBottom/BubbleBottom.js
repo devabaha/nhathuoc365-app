@@ -5,7 +5,7 @@ import Container from 'src/components/Layout/Container';
 import Pressable from 'src/components/Pressable';
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import appConfig from 'app-config';
-import FloatingIcons from '../../FloatingIcons ';
+import FloatingIcons from '../../FloatingIcons';
 
 const styles = StyleSheet.create({
   wrapperContainer: {

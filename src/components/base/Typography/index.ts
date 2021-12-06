@@ -17,6 +17,7 @@ export type TypoType =
   | TypographyType.LABEL_MEDIUM
   | TypographyType.LABEL_SMALL
   | TypographyType.LABEL_EXTRA_SMALL
+  | TypographyType.LABEL_TINY
   | TypographyType.DESCRIPTION_SMALL_PRIMARY
   | TypographyType.DESCRIPTION_MEDIUM
   | TypographyType.DESCRIPTION_SEMI_MEDIUM

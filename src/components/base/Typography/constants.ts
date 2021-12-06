@@ -9,11 +9,14 @@ export enum TypographyType {
 
   LABEL_LARGE_PRIMARY = 'labelLargePrimary',
   LABEL_MEDIUM_PRIMARY = 'labelMediumPrimary',
+  LABEL_SMALL_PRIMARY = 'labelSmallPrimary',
+  LABEL_EXTRA_SMALL_PRIMARY = 'labelExtraSmallPrimary',
 
   LABEL_LARGE = 'labelLarge',
   LABEL_MEDIUM = 'labelMedium',
   LABEL_SMALL = 'labelSmall',
   LABEL_EXTRA_SMALL = 'labelExtraSmall',
+  LABEL_TINY = 'labelTiny',
 
   DESCRIPTION_MEDIUM_PRIMARY = 'descriptionMediumPrimary',
   DESCRIPTION_SMALL_PRIMARY = 'descriptionSmallPrimary',
@@ -43,6 +46,7 @@ export enum TypographyFontSize {
   BODY_MEDIUM = 14,
   BODY_SEMI_MEDIUM = 13,
   BODY_SMALL = 12,
+  BODY_EXTRA_SMALL = 11,
 
   NOTE_LARGE = 10,
   NOTE_MEDIUM = 8,

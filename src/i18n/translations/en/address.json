@@ -6,6 +6,7 @@
   },
   "address": {
     "title": "1. Address",
+    "myAddress": "My addresses",
     "receive": "SHIPPING ADDRESS",
     "new": "Add new address",
     "delivery": "Deliver to this address",

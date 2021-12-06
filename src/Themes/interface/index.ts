@@ -19,11 +19,14 @@ export type Typography = {
 
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
   [TypographyType.LABEL_MEDIUM_PRIMARY]: Style;
+  [TypographyType.LABEL_SMALL_PRIMARY]: Style;
+  [TypographyType.LABEL_EXTRA_SMALL_PRIMARY]: Style;
 
   [TypographyType.LABEL_LARGE]?: Style;
   [TypographyType.LABEL_MEDIUM]?: Style;
   [TypographyType.LABEL_SMALL]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
+  [TypographyType.LABEL_TINY]?: Style;
 
   [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]?: Style;
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
@@ -92,7 +95,9 @@ export type Color = {
   skeletonContent: ColorValue;
 
   // System
+  primary5: ColorValue;
   primary20: ColorValue;
+  secondary5: ColorValue;
   secondary20: ColorValue;
   persistOnSurface: ColorValue;
   border: ColorValue;
@@ -106,8 +111,9 @@ export type Color = {
   shadow: ColorValue;
   navBarBackground: ColorValue;
   onNavBarBackground: ColorValue;
+  contentBackgroundWeak: ColorValue;
   contentBackground: ColorValue;
-  contentBackground1: ColorValue;
+  contentBackgroundStrong: ColorValue;
   onContentBackground: ColorValue;
   persistPrimary: ColorValue;
   onPersistPrimary: ColorValue;
@@ -166,6 +172,7 @@ export type Layout = {
   borderWidthPixel: number;
   borderWidthSmall: number;
   borderWidth: number;
+  borderWidthLarge: number,
   borderRadiusSmall: number;
   borderRadiusMedium: number;
   borderRadiusLarge: number;
