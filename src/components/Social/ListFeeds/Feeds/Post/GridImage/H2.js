@@ -85,9 +85,7 @@ const H2 = ({images = []}) => {
 
   return (
     <Container style={styles.container}>
-      <Container row>
-        {renderHighlight()}
-      </Container>
+      <Container row>{renderHighlight()}</Container>
       <Container flex row>
         {renderNormal()}
       </Container>

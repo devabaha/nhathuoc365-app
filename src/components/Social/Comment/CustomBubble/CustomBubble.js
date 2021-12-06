@@ -28,9 +28,7 @@ const MAX_COLLAPSED_HEIGHT =
 const SHOW_FULL_MESSAGE_TOP_SPACING =
   MAX_COLLAPSED_HEIGHT -
   LINE_HEIGHT_OF_CONTENT -
-  (appConfig.device.isIOS
-    ? LINE_HEIGHT_OF_CONTENT
-    : 10) +
+  (appConfig.device.isIOS ? LINE_HEIGHT_OF_CONTENT : 10) +
   5.5;
 
 const MIN_WIDTH_MESSAGE = 120;
@@ -65,7 +63,7 @@ const styles = StyleSheet.create({
   },
   btnShowFullMessageContainer: {
     // top: SHOW_FULL_MESSAGE_TOP_SPACING,
-    bottom: LINE_HEIGHT_OF_CONTENT-15,
+    bottom: LINE_HEIGHT_OF_CONTENT - 15,
     zIndex: 1,
   },
   btnShowFullMessageTitle: {
