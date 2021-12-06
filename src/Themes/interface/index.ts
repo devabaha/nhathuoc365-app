@@ -166,6 +166,8 @@ export type Color = {
   sale: ColorValue;
   marigold: ColorValue;
   cherry: ColorValue;
+  neutral1: ColorValue;
+  neutral2: ColorValue;
 };
 
 export type Layout = {

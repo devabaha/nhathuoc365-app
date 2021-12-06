@@ -74,4 +74,6 @@ export const ADDITION_LIGHT = {
   sale: '#FD0D1B',
   marigold: '#EEAA21',
   cherry: '#da3560',
+  neutral1: '#dddddd',
+  neutral2: '#528BC5'
 };

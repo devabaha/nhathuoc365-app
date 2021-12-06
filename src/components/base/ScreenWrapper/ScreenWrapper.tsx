@@ -48,10 +48,12 @@ const ScreenWrapper = forwardRef(
 
     return (
       <Container {...props} ref={ref} style={styles}>
-        {!!headerComponent && (
+        {!!headerComponent ? (
           <SafeAreaView style={[{zIndex: 999}, headerComponent && {flex: 1}]}>
             {headerComponent}
           </SafeAreaView>
+        ) : (
+          <SafeAreaView />
         )}
         {children}
       </Container>
