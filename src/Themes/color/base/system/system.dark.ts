@@ -35,7 +35,7 @@ export const SYSTEM_DARK = {
   ...SYSTEM_COMMON,
 
   border: CORE.grey700,
-  placeholder: CORE.grey600,
+  placeholder: CORE.grey500,
   onOverlay: CORE.white,
   underlay: SYSTEM_COMMON.primaryLight,
 
