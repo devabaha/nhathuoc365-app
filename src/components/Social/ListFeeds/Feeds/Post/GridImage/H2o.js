@@ -1,27 +1,18 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
-
+// constants
 import {IMAGES_WRAPPER_WIDTH, IMAGE_SPACING} from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
+
+const NUM_OF_HIGHLIGHT = 2;
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
   },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
 });
-
-const NUM_OF_HIGHLIGHT = 2;
 
 const H2o = ({images = []}) => {
   const imagesHighlight = useMemo(() => {
@@ -61,8 +52,10 @@ const H2o = ({images = []}) => {
   };
 
   return (
-    <Container centerVertical={false} style={styles.container}>
-      <Container row>{renderHighlight()}</Container>
+    <Container style={styles.container}>
+      <Container row centerVertical>
+        {renderHighlight()}
+      </Container>
     </Container>
   );
 };

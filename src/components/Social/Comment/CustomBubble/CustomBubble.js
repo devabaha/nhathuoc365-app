@@ -28,7 +28,9 @@ const MAX_COLLAPSED_HEIGHT =
 const SHOW_FULL_MESSAGE_TOP_SPACING =
   MAX_COLLAPSED_HEIGHT -
   LINE_HEIGHT_OF_CONTENT -
-  (appConfig.device.isIOS ? LINE_HEIGHT_OF_CONTENT : 10) +
+  (appConfig.device.isIOS
+    ? LINE_HEIGHT_OF_CONTENT
+    : 10) +
   5.5;
 
 const MIN_WIDTH_MESSAGE = 120;
@@ -62,7 +64,8 @@ const styles = StyleSheet.create({
     height: undefined,
   },
   btnShowFullMessageContainer: {
-    top: SHOW_FULL_MESSAGE_TOP_SPACING,
+    // top: SHOW_FULL_MESSAGE_TOP_SPACING,
+    bottom: LINE_HEIGHT_OF_CONTENT-15,
     zIndex: 1,
   },
   btnShowFullMessageTitle: {
@@ -115,7 +118,7 @@ class CustomBubble extends Component {
   static defaultProps = {
     seeMoreTitle: 'Xem thêm',
     isUpdate: true,
-    onCustomBubbleLongPress: () => {}
+    onCustomBubbleLongPress: () => {},
   };
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
@@ -333,7 +336,8 @@ class CustomBubble extends Component {
               this.renderMessageText(props, bgColor)
             }
             touchableProps={{
-              onPress: () => props.onCustomBubbleLongPress(undefined, props.currentMessage),
+              onPress: () =>
+                props.onCustomBubbleLongPress(undefined, props.currentMessage),
             }}
             onLongPress={props.onCustomBubbleLongPress}
             wrapperStyle={wrapperStyle}

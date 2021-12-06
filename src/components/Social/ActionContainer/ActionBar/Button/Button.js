@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import Reanimated from 'react-native-reanimated';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import Container from 'src/components/Layout/Container';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon} from 'src/components/base';
 import Pressable from 'src/components/Pressable';
-
-const AnimatedAntDesignIcon = Reanimated.createAnimatedComponent(AntDesignIcon);
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -21,11 +23,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: '#666',
     marginRight: 10,
   },
   title: {
-    color: '#666',
     fontWeight: '600',
   },
 });
@@ -40,17 +40,35 @@ const Button = ({
   onPress,
 }) => {
   // console.log('render button');
+  const {theme} = useTheme();
+
+  const iconBaseStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.icon,
+        {
+          color: theme.color.textTertiary,
+        },
+      ],
+      iconStyle,
+    );
+  }, [theme, iconStyle]);
 
   return (
     <Pressable onPress={onPress} style={[styles.wrapper, containerStyle]}>
       <Container reanimated row style={[styles.container, style]}>
-        <AnimatedAntDesignIcon
+        <Icon
+          bundle={BundleIconSetName.ANT_DESIGN}
+          reanimated
           name={iconName}
-          style={[styles.icon, iconStyle]}
+          style={iconBaseStyle}
         />
-        <Reanimated.Text style={[styles.title, titleStyle]}>
+        <Typography
+          reanimated
+          type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+          style={[styles.title, titleStyle]}>
           {title}
-        </Reanimated.Text>
+        </Typography>
       </Container>
     </Pressable>
   );

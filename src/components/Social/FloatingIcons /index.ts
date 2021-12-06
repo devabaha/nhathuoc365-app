@@ -1,4 +1,5 @@
 import {StyleProp, TextProps, ViewProps} from 'react-native';
+import { BundleIconSetName } from 'src/components/base/Icon/constants';
 
 export {default} from './FloatingIcons';
 
@@ -6,21 +7,7 @@ export type Icon = {
   name: string;
   containerStyle?: StyleProp<ViewProps>;
   style?: StyleProp<TextProps>;
-  bundle?:
-    | 'AntDesign'
-    | 'Entypo'
-    | 'EvilIcons'
-    | 'Feather'
-    | 'FontAwesome'
-    | 'FontAwesome5'
-    | 'Fontisto'
-    | 'Foundation'
-    | 'Ionicons'
-    | 'MaterialIcons'
-    | 'MaterialCommunityIcons'
-    | 'Octicons'
-    | 'Zocial'
-    | 'SimpleLineIcons';
+  bundle?: BundleIconSetName;
 };
 
 export interface FloatingIconsProps {

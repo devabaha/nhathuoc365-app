@@ -1,9 +1,7 @@
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
-import ScreenWrapper from 'src/components/base/ScreenWrapper';
-import RefreshControl from 'src/components/base/RefreshControl';
-
-import Feeds from './Feeds';
+import {StyleSheet} from 'react-native';
+// custom components
+import {FlatList, ScreenWrapper, RefreshControl} from 'src/components/base';
 
 const styles = StyleSheet.create({
   contentContainer: {

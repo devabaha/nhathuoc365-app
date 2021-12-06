@@ -20,6 +20,8 @@ export type BUNDLE_ICON_TYPE =
   | BundleIconSetName.ZOCIAL;
 
 export interface IconProps extends RNIconProps {
+  reanimated?: boolean;
+  animated?: boolean;
   primary?: boolean;
   secondary?: boolean;
   disabled?: boolean;

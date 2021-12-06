@@ -12,12 +12,14 @@ import {
 
 import {Theme} from 'src/Themes/interface';
 import {BaseButtonProps} from '.';
-import {Ref, Typography} from '..';
+import {Ref} from '..';
 
 import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 
 import {TypographyType} from '../Typography/constants';
+
+import Typography from '../Typography';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({

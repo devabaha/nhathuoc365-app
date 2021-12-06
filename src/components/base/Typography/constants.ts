@@ -15,6 +15,10 @@ export enum TypographyType {
   DESCRIPTION_MEDIUM_PRIMARY = 'descriptionMediumPrimary',
   DESCRIPTION_SMALL_PRIMARY = 'descriptionSmallPrimary',
 
+  DESCRIPTION_MEDIUM_TERTIARY = 'descriptionMediumTertiary',
+  DESCRIPTION_SEMI_MEDIUM_TERTIARY = 'descriptionSemiMediumTertiary',
+  DESCRIPTION_SMALL_TERTIARY = 'descriptionSmallTertiary',
+
   DESCRIPTION_MEDIUM = 'descriptionMedium',
   DESCRIPTION_SEMI_MEDIUM = 'descriptionSemiMedium',
   DESCRIPTION_SMALL = 'descriptionSmall',

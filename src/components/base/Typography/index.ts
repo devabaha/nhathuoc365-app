@@ -25,6 +25,8 @@ export type TypoType =
 export interface TypographyProps extends TextProps {
   type?: TypoType;
 
+  reanimated?: boolean;
+  animated?: boolean;
   onPrimary?: boolean;
   onSecondary?: boolean;
   onSurface?: boolean;

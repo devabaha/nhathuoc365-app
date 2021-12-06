@@ -1,25 +1,49 @@
-import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {BUNDLE_ICON_SETS, BUNDLE_ICON_SETS_NAME} from 'src/constants';
-
-const NO_RESULT_COLOR = '#909090';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
+// custom components
+import {Icon, Typography, TypographyType} from 'src/components/base';
 
 const NoResult = ({
   icon = null,
-  iconBundle = BUNDLE_ICON_SETS_NAME.MaterialCommunityIcons,
+  iconBundle = BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
   iconName = 'file-remove',
   message = '',
   contentContainerStyle = {},
   containerStyle = {},
   textStyle = {},
 }) => {
-  const Icon = BUNDLE_ICON_SETS[iconBundle];
+  const {theme} = useTheme();
+
+  const textColorStyle = useMemo(() => {
+    return {
+      color: theme.color.iconInactive,
+    };
+  }, [theme]);
+
+  const titleStyle = useMemo(() => {
+    return mergeStyles([styles.text, textColorStyle], textStyle);
+  }, [theme, textColorStyle, textStyle]);
 
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.contentContainer, contentContainerStyle]}>
-        {icon || <Icon name={iconName} size={72} color={NO_RESULT_COLOR} />}
-        <Text style={[styles.text, textStyle]}>{message}</Text>
+        {icon || (
+          <Icon
+            bundle={iconBundle}
+            name={iconName}
+            size={72}
+            style={textColorStyle}
+          />
+        )}
+        <Typography type={TypographyType.HEADLINE_MEDIUM} style={titleStyle}>
+          {message}
+        </Typography>
       </View>
     </View>
   );
@@ -40,9 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: NO_RESULT_COLOR,
     paddingTop: 15,
-    // paddingBottom: 100,
     fontSize: 20,
     fontWeight: '500',
   },

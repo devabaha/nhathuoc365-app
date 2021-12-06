@@ -1,11 +1,13 @@
 import React, {forwardRef, memo, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
-import {Container, Ref} from '..';
+import {Ref} from '..';
 import {SkeletonProps} from '.';
 
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+
+import Container from '../Container';
 
 const createStyles = (theme) => {
   return StyleSheet.create({

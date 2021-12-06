@@ -42,14 +42,12 @@ const styles = StyleSheet.create({
   },
 
   tabBarContainer: {
-    // backgroundColor: '#fff',
     paddingHorizontal: 0,
-    ...elevationShadowStyle(5),
+    // ...elevationShadowStyle(5),
   },
   tabBarLabel: {
     // minWidth: '100%',
     flex: appConfig.device.isIOS ? undefined : 1,
-    // color: '#333',
     textAlignVertical: 'center',
     textAlign: 'center',
     paddingHorizontal: 10,
@@ -57,10 +55,8 @@ const styles = StyleSheet.create({
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
-    // color: appConfig.colors.primary,
   },
   indicatorStyle: {
-    // backgroundColor: appConfig.colors.primary,
     height: 2,
   },
 });
@@ -237,6 +233,12 @@ class News extends Component {
         ? appConfig.device.width / numberOfTabs
         : appConfig.device.width / MAX_TAB_ITEMS_PER_ROW;
 
+    const tabBarContainerStyle = mergeStyles(styles.tabBarContainer, {
+      backgroundColor: this.theme.color.surface,
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    });
+
     return (
       <TabBar
         {...props}
@@ -257,7 +259,12 @@ class News extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 },
-                focused && {backgroundColor: this.theme.color.surfaceHighlight},
+                focused && {
+                  backgroundColor:
+                    this.theme.id === BASE_DARK_THEME_ID
+                      ? this.theme.color.surfaceHighlight
+                      : this.theme.color.surface,
+                },
               ]}>
               {this.renderTabBarLabel(title, focused)}
             </BaseButton>
@@ -271,10 +278,7 @@ class News extends Component {
           },
         ]}
         tabStyle={{width: tabWidth}}
-        style={[
-          styles.tabBarContainer,
-          {backgroundColor: this.theme.color.surface},
-        ]}
+        style={tabBarContainerStyle}
         scrollEnabled
       />
     );

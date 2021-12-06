@@ -1,16 +1,10 @@
-import React, {useCallback, useState, useEffect, useRef} from 'react';
-import {StyleSheet} from 'react-native';
-import Animated, {Easing, useValue, timing} from 'react-native-reanimated';
-
+import React, {useCallback, useState, useEffect, useRef, useMemo} from 'react';
+// 3-party libs
+import {Easing, useValue, timing} from 'react-native-reanimated';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
 import Button from '../Button';
-
-import appConfig from 'app-config';
-
-const styles = StyleSheet.create({
-  highlight: {
-    color: appConfig.colors.primary,
-  },
-});
 
 const Reaction = ({
   title,
@@ -21,6 +15,7 @@ const Reaction = ({
   titleStyle,
   isLiked: isLikedProp,
 }) => {
+  const {theme} = useTheme();
   //   console.log('render reaction');
   const isDidMount = useRef(false);
 
@@ -80,8 +75,14 @@ const Reaction = ({
     ],
   };
 
+  const highlightStyle = useMemo(() => {
+    return {
+      color: theme.color.persistPrimary,
+    };
+  }, [theme]);
+
   const animatedIconStyle = [
-    isLiked && styles.highlight,
+    isLiked && highlightStyle,
     {
       transform: [
         {
@@ -100,7 +101,7 @@ const Reaction = ({
     },
   ];
 
-  const titleExtraStyle = isLiked && styles.highlight;
+  const titleExtraStyle = isLiked && highlightStyle;
 
   return (
     <Button

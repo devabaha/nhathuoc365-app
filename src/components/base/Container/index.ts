@@ -8,6 +8,8 @@ export interface ContainerProps extends ViewProps {
   reanimated?: boolean;
   animated?: boolean;
 
+  content?: boolean;
+  noBackground?: boolean;
   flex?: boolean;
   row?: boolean;
   center?: boolean;

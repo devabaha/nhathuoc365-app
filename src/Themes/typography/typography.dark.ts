@@ -1,4 +1,7 @@
-import {TypographyFontSize, TypographyType} from 'src/components/base';
+import {
+  TypographyFontSize,
+  TypographyType,
+} from 'src/components/base/Typography/constants';
 import {BASE_COLOR_DARK} from '../color';
 import {Typography} from '../interface';
 
@@ -24,6 +27,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
+  [TypographyType.LABEL_LARGE]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
   [TypographyType.LABEL_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textPrimary,
@@ -40,6 +47,18 @@ export const TYPOGRAPHY_DARK: Typography = {
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.primaryHighlight,
+  },
+  [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
+  [TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
+  [TypographyType.DESCRIPTION_SMALL_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
+    color: BASE_COLOR_DARK.textTertiary,
   },
   [TypographyType.DESCRIPTION_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
