@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    paddingBottom: appConfig.device.bottomSpace
+    paddingBottom: appConfig.device.bottomSpace,
   },
   labelSelected: {
     color: appConfig.colors.primary,

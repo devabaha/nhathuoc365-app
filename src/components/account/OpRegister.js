@@ -1,63 +1,80 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Keyboard,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, Keyboard, Alert} from 'react-native';
+// 3-party libs
 import {reaction} from 'mobx';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
-import store from '../../store/Store';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
-import Button from 'react-native-button';
-import EventTracker from '../../helper/EventTracker';
-import {APIRequest} from '../.../../../network/Entity';
+// helper
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import EventTracker from 'app-helper/EventTracker';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {
+  getTheme,
+  ThemeContext,
+  updateNavbarTheme,
+} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// customs components
 import HorizontalInfoItem from './HorizontalInfoItem';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import Loading from '../Loading';
-
+import {
+  Container,
+  Typography,
+  ScrollView,
+  Input,
+  Icon,
+  ScreenWrapper,
+  IconButton,
+} from 'src/components/base';
+import Button from 'src/components/Button';
 class OpRegister extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: props.name_props || '',
-      // email: props.email_props || '',
-      // password: props.password_props || '',
-      refer: props.refer_props || store.refer_code,
-      loading: false,
-      isCityLoading: false,
-      isWarehouseLoading: false,
-      referCodeEditable:
-        !isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
-        !store?.user_info?.invite_user_id &&
-        !store?.refer_code,
-      provinceSelected: {
-        name: store.user_info ? store.user_info.city : '',
-        id: store.user_info ? store.user_info.city_id : '',
-      },
-      warehouseSelected: {id: store?.user_info?.store_id},
-      licenseChecked: false,
-      birth: store.user_info ? store.user_info.birth : '',
-      cities: [],
-      listWarehouse: [],
-    };
+  static contextType = ThemeContext;
 
-    this.updateReferCodeDisposer = reaction(
-      () => store.refer_code,
-      this.updateReferCode.bind(this),
-    );
+  state = {
+    name: this.props.name_props || '',
+    // email: props.email_props || '',
+    // password: props.password_props || '',
+    refer: this.props.refer_props || store.refer_code,
+    loading: false,
+    isCityLoading: false,
+    isWarehouseLoading: false,
+    referCodeEditable:
+      !isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
+      !store?.user_info?.invite_user_id &&
+      !store?.refer_code,
+    provinceSelected: {
+      name: store.user_info ? store.user_info.city : '',
+      id: store.user_info ? store.user_info.city_id : '',
+    },
+    warehouseSelected: {id: store?.user_info?.store_id},
+    licenseChecked: false,
+    birth: store.user_info ? store.user_info.birth : '',
+    cities: [],
+    listWarehouse: [],
+  };
 
-    this.eventTracker = new EventTracker();
-    this.getUserCityRequest = new APIRequest();
-    this.getWarehouseRequest = new APIRequest();
-    this.requests = [this.getUserCityRequest, this.getWarehouseRequest];
+  updateReferCodeDisposer = reaction(
+    () => store.refer_code,
+    this.updateReferCode.bind(this),
+  );
 
-    this.unmounted = false;
+  eventTracker = new EventTracker();
+  getUserCityRequest = new APIRequest();
+  getWarehouseRequest = new APIRequest();
+  requests = [this.getUserCityRequest, this.getWarehouseRequest];
+
+  updateNavBarDisposer = () => {};
+
+  unmounted = false;
+
+  get theme() {
+    return getTheme(this);
   }
 
   get isActiveCity() {
@@ -89,6 +106,11 @@ class OpRegister extends Component {
       }, 500);
     }
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
@@ -96,6 +118,7 @@ class OpRegister extends Component {
     cancelRequests(this.requests);
     this.updateReferCodeDisposer();
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
   _unMount() {
@@ -338,7 +361,7 @@ class OpRegister extends Component {
       return (
         <HorizontalInfoItem
           titleStyle={styles.input_label}
-          containerStyle={styles.infoContainer}
+          containerStyle={this.infoContainerStyle}
           data={dobData}
           onSelectedDate={this.onSelectedDate}
         />
@@ -364,7 +387,7 @@ class OpRegister extends Component {
       return (
         <HorizontalInfoItem
           titleStyle={styles.input_label}
-          containerStyle={styles.infoContainer}
+          containerStyle={this.infoContainerStyle}
           data={cityData}
           onSelectedValue={this.onPressSelectProvince}
         />
@@ -397,7 +420,7 @@ class OpRegister extends Component {
       return (
         <HorizontalInfoItem
           titleStyle={styles.input_label}
-          containerStyle={styles.infoContainer}
+          containerStyle={this.infoContainerStyle}
           data={wareHouseData}
           onSelectedValue={this.onPressWarehouse}
         />
@@ -406,6 +429,74 @@ class OpRegister extends Component {
 
     return null;
   }
+
+  renderTitleButton(titleStyle) {
+    const {t} = this.props;
+    return (
+      <Container
+        row
+        noBackground
+        style={[
+          styles.address_continue_content,
+          // !this.props.disabled && styles.btnDisabled,
+        ]}>
+        <View
+          style={{
+            minWidth: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icon
+            bundle={BundleIconSetName.FONT_AWESOME}
+            name={this.state.edit_mode ? 'save' : 'user-plus'}
+            style={[styles.iconContinue, titleStyle]}
+          />
+        </View>
+
+        <Typography
+          type={TypographyType.TITLE_SEMI_LARGE}
+          style={[styles.address_continue_title, titleStyle]}>
+          {this.state.edit_mode
+            ? t('confirm.save.title')
+            : t('confirm.register.title')}
+        </Typography>
+      </Container>
+    );
+  }
+
+  extraReferCodeStyle =
+    !this.state.referCodeEditable &&
+    mergeStyles(styles.input_text_disabled, {
+      borderColor: this.theme.color.onDisabled,
+      color: this.theme.color.onDisabled,
+    });
+
+  inputIconContainerStyle = mergeStyles(styles.inputIconContainer, {
+    borderColor: this.theme.color.persistPrimary,
+    borderWidth: this.theme.layout.borderWidth,
+  });
+
+  textRequiredStyle = mergeStyles(styles.textRequired, {
+    color: this.theme.color.danger,
+  });
+
+  inputBoxStyle = mergeStyles(styles.input_box, {
+    borderBottomColor: this.theme.color.border,
+    borderBottomWidth: this.theme.layout.borderWidthPixel,
+  });
+
+  referInputWrapperDisableStyle = mergeStyles(styles.referInputWrapperDisable, {
+    backgroundColor: this.theme.color.disabled,
+  });
+
+  inputIconStyle = mergeStyles(styles.inputIcon, {
+    color: this.theme.color.persistPrimary,
+  });
+
+  infoContainerStyle = mergeStyles(styles.infoContainer, {
+    borderBottomWidth: this.theme.layout.borderWidthPixel,
+    borderColor: this.theme.color.border,
+  });
 
   render() {
     const {
@@ -422,41 +513,46 @@ class OpRegister extends Component {
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
       (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && !warehouseSelected.id) ||
+      (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) &&
+        !warehouseSelected.id) ||
       (!isConfigActive(CONFIG_KEY.HIDE_REGISTER_REFERRAL_CODE_KEY) &&
         isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) &&
         !store?.user_info?.invite_user_id &&
         !this.state.refer);
 
     const referCodeTitle = (
-      <Text>
+      <>
         {t('data.referCode.title')}{' '}
         {isConfigActive(CONFIG_KEY.NEED_INVITE_ID_FLAG) ? (
-          <Text style={styles.textRequired}>*</Text>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={this.textRequiredStyle}>
+            *
+          </Typography>
         ) : (
           `(${t('data.referCode.optional')})`
         )}
-      </Text>
+      </>
     );
 
-    const extraReferCodeStyle =
-      !this.state.referCodeEditable && styles.input_text_disabled;
-
     return (
-      <View style={styles.container}>
+      <ScreenWrapper safeLayout={!store.keyboardTop}>
         {loading && <Loading center />}
-        <ScrollView
-          style={{
-            marginBottom: store.keyboardTop + 60,
-          }}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.input_box}>
-            <Text style={styles.input_label}>
-              {t('data.name.title')} <Text style={styles.textRequired}>*</Text>
-            </Text>
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <Container style={this.inputBoxStyle}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.input_label}>
+              {t('data.name.title')}{' '}
+              <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={this.textRequiredStyle}>
+                *
+              </Typography>
+            </Typography>
 
-            <View style={styles.input_text_box}>
-              <TextInput
+            <Container style={styles.input_text_box}>
+              <Input
                 ref={(ref) => (this.refs_name = ref)}
                 style={styles.input_text}
                 keyboardType="default"
@@ -481,8 +577,8 @@ class OpRegister extends Component {
                 }}
                 returnKeyType="next"
               />
-            </View>
-          </View>
+            </Container>
+          </Container>
 
           {this.renderDOB()}
           {this.renderCity()}
@@ -490,31 +586,33 @@ class OpRegister extends Component {
 
           {this.isActiveReferCode && (
             <>
-              <View
+              <Container
                 style={[
-                  styles.input_box,
+                  this.inputBoxStyle,
                   styles.referInputWrapper,
                   !this.state.referCodeEditable &&
-                    styles.referInputWrapperDisable,
+                    this.referInputWrapperDisableStyle,
                 ]}>
-                <Text
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_TERTIARY}
                   style={[
                     styles.input_label,
                     styles.referInputLabel,
-                    extraReferCodeStyle,
+                    this.extraReferCodeStyle,
                   ]}>
                   {referCodeTitle}
-                </Text>
+                </Typography>
 
-                <View
+                <Container
+                  noBackground
                   style={[styles.input_text_box, styles.referInputContainer]}>
-                  <TextInput
+                  <Input
                     editable={this.state.referCodeEditable}
                     ref={(ref) => (this.refs_refer = ref)}
                     style={[
                       styles.input_text,
                       styles.referInput,
-                      extraReferCodeStyle,
+                      this.extraReferCodeStyle,
                     ]}
                     keyboardType="default"
                     maxLength={30}
@@ -528,119 +626,52 @@ class OpRegister extends Component {
                     value={this.state.refer}
                   />
 
-                  <TouchableOpacity
+                  <IconButton
                     disabled={!this.state.referCodeEditable}
                     hitSlop={HIT_SLOP}
                     onPress={this.onPressScanInvitationCode}
-                    style={[styles.inputIconContainer, extraReferCodeStyle]}>
-                    <Icon
-                      name="qrcode"
-                      style={[styles.inputIcon, extraReferCodeStyle]}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {/* <Text style={styles.disclaimerText}>
+                    style={[
+                      this.inputIconContainerStyle,
+                      this.extraReferCodeStyle,
+                    ]}
+                    bundle={BundleIconSetName.FONT_AWESOME}
+                    name="qrcode"
+                    iconStyle={[this.inputIconStyle, this.extraReferCodeStyle]}
+                  />
+                </Container>
+              </Container>
+              {/* <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={styles.disclaimerText}>
                 {t('encourageMessage', {appName: APP_NAME_SHOW})}
-              </Text> */}
+              </Typography> */}
             </>
           )}
         </ScrollView>
 
         <Button
+          shadow
           onPress={this._onSave.bind(this)}
           disabled={disabled}
           containerStyle={[
             styles.address_continue,
             {bottom: store.keyboardTop},
-          ]}>
-          <View
-            style={[
-              styles.address_continue_content,
-              disabled && styles.btnDisabled,
-            ]}>
-            <View
-              style={{
-                minWidth: 20,
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {/* {this.state.loading ? (
-                <Indicator size="small" color="#ffffff" />
-              ) : ( */}
-              <Icon
-                name={this.state.edit_mode ? 'save' : 'user-plus'}
-                size={20}
-                color="#ffffff"
-              />
-              {/* )} */}
-            </View>
-
-            <Text style={styles.address_continue_title}>
-              {this.state.edit_mode
-                ? t('confirm.save.title')
-                : t('confirm.register.title')}
-            </Text>
-          </View>
-        </Button>
-      </View>
+          ]}
+          renderTitleComponent={(titleStyle) =>
+            this.renderTitleButton(titleStyle)
+          }
+        />
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    width: '90%',
-    height: 210,
-    borderRadius: 2,
-    marginTop: -(NAV_HEIGHT / 2),
-    alignItems: 'center',
-  },
-  verify_title: {
-    fontSize: 14,
-    marginTop: 16,
-  },
-  verify_desc: {
-    marginTop: 8,
-    fontSize: 12,
-    paddingHorizontal: 16,
-    color: '#666666',
-  },
-  input_text_verify: {
-    borderWidth: Util.pixel,
-    borderColor: '#cccccc',
-    marginTop: 20,
-    height: 40,
-    width: '69%',
-    paddingHorizontal: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#404040',
-  },
-  verify_btn: {
-    backgroundColor: DEFAULT_COLOR,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 2,
-    marginTop: 20,
-    flexDirection: 'row',
-  },
-  verify_btn_title: {
-    color: '#ffffff',
-    marginLeft: 4,
-  },
-
   container: {
     flex: 1,
-    backgroundColor: appConfig.colors.sceneBackground,
     marginBottom: 0,
   },
   input_box: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -649,79 +680,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input_label: {
-    color: '#888',
     paddingHorizontal: 15,
   },
   input_text: {
     flex: 1,
     padding: 15,
     paddingVertical: 15,
-    color: '#242424',
     textAlign: 'right',
   },
-  input_text_disabled: {
-    color: '#aaa',
-    borderColor: '#aaa',
-  },
+  input_text_disabled: {},
   inputIconContainer: {
     marginHorizontal: 15,
     width: appConfig.device.isIOS ? 26 : 28,
     height: appConfig.device.isIOS ? 26 : 28,
-    borderWidth: 1,
-    borderColor: appConfig.colors.primary,
     borderStyle: 'dashed',
     borderBottomLeftRadius: 0,
-    borderRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   inputIcon: {
-    color: appConfig.colors.primary,
     fontSize: appConfig.device.isIOS ? 20 : 22,
     top: 1,
     left: 0.1,
   },
-  input_address_box: {
-    width: '100%',
-    minHeight: 100,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
-  },
-  input_label_help: {
-    fontSize: 12,
-    marginTop: 2,
-    color: '#666666',
-  },
-  input_address_text: {
-    width: '100%',
-    color: '#000000',
-    fontSize: 14,
-    marginTop: 4,
-    paddingVertical: 0,
-  },
 
-  address_continue: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-    height: 60,
-  },
-  address_continue_content: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: DEFAULT_COLOR,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
+  address_continue: {},
+  address_continue_content: {},
   address_continue_title: {
-    color: '#ffffff',
-    fontSize: 18,
     marginLeft: 8,
   },
 
@@ -729,39 +714,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 15,
     marginRight: 15,
-    fontSize: 13,
-    color: '#555',
   },
   link: {
-    color: appConfig.colors.primary,
     textDecorationLine: 'underline',
   },
 
-  placeNameWrapper: {
-    alignItems: 'center',
-    padding: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    backgroundColor: '#f0f0f0',
-  },
-  placeName: {
-    color: '#455',
-  },
   placeDropDownIcon: {
     marginTop: 4,
-  },
-  license: {
-    marginTop: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   btnDisabled: {
     backgroundColor: '#aaa',
   },
 
   infoContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
     marginRight: -5,
     paddingLeft: 15,
   },
@@ -770,23 +735,21 @@ const styles = StyleSheet.create({
     flexDirection: undefined,
     alignItems: undefined,
   },
-  referInputWrapperDisable: {
-    backgroundColor: '#eee',
-  },
+  referInputWrapperDisable: {},
   referInputLabel: {
-    paddingTop: 10,
+    paddingTop: 15,
   },
   referInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: -5,
   },
   referInput: {
     textAlign: 'left',
   },
 
-  textRequired: {
-    color: appConfig.colors.status.danger,
+  textRequired: {},
+  iconContinue: {
+    fontSize: 20,
   },
 });
 

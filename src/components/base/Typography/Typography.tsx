@@ -32,6 +32,9 @@ const createStyles = (theme: Theme) => {
     onBackground: {
       color: theme.color.onBackground,
     },
+    onDisabled: {
+      color: theme.color.onDisabled,
+    },
   });
 
   return styles;
@@ -46,6 +49,7 @@ const Typography = forwardRef(
       onSecondary,
       onSurface,
       onBackground,
+      onDisabled,
       type = TypographyType.LABEL_MEDIUM,
       style,
       children,
@@ -59,7 +63,9 @@ const Typography = forwardRef(
       const baseStyles = createStyles(theme);
       const finalStyle = mergeStyles(
         theme.typography[type],
-        onPrimary
+        onDisabled
+          ? baseStyles.onDisabled
+          : onPrimary
           ? baseStyles.onPrimary
           : onSecondary
           ? baseStyles.onSecondary
@@ -71,7 +77,15 @@ const Typography = forwardRef(
       );
 
       return finalStyle;
-    }, [theme, type, onPrimary, onSecondary, onSurface, onBackground]);
+    }, [
+      theme,
+      type,
+      onPrimary,
+      onSecondary,
+      onSurface,
+      onBackground,
+      onDisabled,
+    ]);
 
     const componentStyle = useMemo(() => {
       return mergeStyles(styles, style);

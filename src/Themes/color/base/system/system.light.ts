@@ -36,7 +36,7 @@ export const SYSTEM_LIGHT = {
   // —— GREY variants ——
   border: CORE.grey300,
   placeholder: CORE.grey500,
-  disabled: CORE.grey300,
+  disabled: '#eeeeee',
   onDisabled: CORE.grey500,
 
   overlay60: hexToRgba(CORE.black, 0.6),

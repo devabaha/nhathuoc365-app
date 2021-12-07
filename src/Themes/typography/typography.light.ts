@@ -45,6 +45,12 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_EXTRA_SMALL,
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
+
+  [TypographyType.LABEL_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
+
   [TypographyType.LABEL_LARGE]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_LIGHT.textPrimary,
