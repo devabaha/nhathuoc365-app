@@ -28,6 +28,7 @@ import ListAddressStore from 'src/containers/ListAddressStore';
 import AddressItem from './AddressItem';
 import Loading from 'src/components/Loading';
 import Button from 'src/components/Button';
+import Indicator from 'src/components/Indicator';
 import {
   Container,
   Typography,

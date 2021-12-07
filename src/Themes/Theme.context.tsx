@@ -89,7 +89,7 @@ export const removeThemeChangingListener = (listener) => {
 
 export const updateNavbarTheme = (navigation, currentTheme) => {
   const listener = (theme) => {
-    navigation.setParams({
+    navigation && navigation.setParams({
       headerStyle: {
         backgroundColor: theme.color.primary,
       },

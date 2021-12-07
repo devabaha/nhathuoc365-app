@@ -1,12 +1,16 @@
-import React from 'react';
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import appConfig from 'app-config';
+import React, {useMemo, useCallback} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+//context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon, FilledButton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   permission: {
-    backgroundColor: '#fff',
     paddingHorizontal: 12,
     paddingVertical: 30,
     alignItems: 'center',
@@ -15,30 +19,22 @@ const styles = StyleSheet.create({
   permissionNoLocationIcon: {
     fontSize: 45,
     marginBottom: 15,
-    color: '#666',
   },
   permissionTitle: {
-    fontSize: 15,
     marginBottom: 10,
-    color: '#666',
   },
   permissionConfirm: {
-    backgroundColor: '#eaeaea',
     alignItems: 'center',
     paddingVertical: 5,
     paddingHorizontal: 15,
-    borderRadius: 20,
     flexDirection: 'row',
   },
   permissionSettingIcon: {
     fontSize: 14,
     marginRight: 8,
-    color: '#666',
   },
   permissionConfirmText: {
     fontWeight: '500',
-    fontSize: 13,
-    color: '#666',
   },
 });
 
@@ -50,33 +46,80 @@ function NoResult({
   onPress,
   renderTitle,
 }) {
+  const {theme} = useTheme();
+
+  const inactiveStyle = useMemo(() => {
+    return {
+      color: theme.color.iconInactive,
+    };
+  }, [theme]);
+
+  const permissionNoLocationIconStyle = useMemo(() => {
+    return mergeStyles(styles.permissionNoLocationIcon, inactiveStyle);
+  }, [inactiveStyle]);
+
+  const permissionNoLocationTitleStyle = useMemo(() => {
+    return mergeStyles(styles.permissionTitle, inactiveStyle);
+  }, [inactiveStyle]);
+
+  const permissionConfirmStyle = useMemo(() => {
+    return mergeStyles(styles.permissionConfirm, {
+      backgroundColor: theme.color.contentBackgroundWeak,
+      borderRadius: theme.layout.borderRadiusHuge
+    });
+  }, [theme]);
+
+  const permissionConfirmTitleStyle = useMemo(() => {
+    return mergeStyles(styles.permissionConfirmText, inactiveStyle);
+  }, [theme]);
+
+  const renderIconLeft = useCallback((titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name={btnIconName}
+        style={[styles.permissionSettingIcon, titleStyle]}
+      />
+    );
+  }, []);
+
+  const permissionConfirmTypoProps = useMemo(() => {
+    return {
+      type: TypographyType.DESCRIPTION_SEMI_MEDIUM,
+    };
+  }, []);
+
   return (
-    <View style={styles.permission}>
+    <Container style={styles.permission}>
       {!!iconName && (
-        <MaterialCommunityIcons
+        <Icon
+          bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
           name={iconName}
-          style={styles.permissionNoLocationIcon}
+          style={permissionNoLocationIconStyle}
         />
       )}
       {typeof renderTitle === 'function' ? (
         renderTitle()
       ) : (
-        <Text style={styles.permissionTitle}>{message}</Text>
+        <Typography
+          type={TypographyType.DESCRIPTION_MEDIUM}
+          style={permissionNoLocationTitleStyle}>
+          {message}
+        </Typography>
       )}
 
       {!!btnTitle && (
-        <TouchableOpacity
+        <FilledButton
           hitSlop={HIT_SLOP}
-          style={styles.permissionConfirm}
-          onPress={onPress}>
-          <AntDesignIcon
-            name={btnIconName}
-            style={styles.permissionSettingIcon}
-          />
-          <Text style={styles.permissionConfirmText}>{btnTitle}</Text>
-        </TouchableOpacity>
+          titleStyle={permissionConfirmTitleStyle}
+          style={permissionConfirmStyle}
+          typoProps={permissionConfirmTypoProps}
+          onPress={onPress}
+          renderIconLeft={renderIconLeft}>
+          {btnTitle}
+        </FilledButton>
       )}
-    </View>
+    </Container>
   );
 }
 
