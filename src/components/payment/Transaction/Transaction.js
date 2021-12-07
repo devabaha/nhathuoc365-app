@@ -215,7 +215,11 @@ const Transaction = ({
     !transaction?.data_va?.length;
 
   useEffect(() => {
-    getTransactionData(true);
+    getTransactionData().then((transData) => {
+      if (transData) {
+        handleOpenTransaction(transData);
+      }
+    });
 
     return () => {
       getTransactionDataRequest.cancel();
@@ -289,48 +293,47 @@ const Transaction = ({
     };
   }, []);
 
-  const getTransactionData = useCallback(
-    async (isOpenTransaction = false) => {
-      getTransactionDataRequest.data = APIHandler.payment_cart_payment(
-        siteId,
-        cartId,
-      );
-      try {
-        const response = await getTransactionDataRequest.promise();
-        // console.log(response, siteId, cartId);
-        if (response) {
-          if (response.status === STATUS_SUCCESS) {
-            if (response.data) {
-              setTransactionData(response.data);
-              if (isActiveWebview(response.data) && isOpenTransaction) {
-                handleOpenTransaction(response.data);
-              }
+  const getTransactionData = useCallback(async () => {
+    getTransactionDataRequest.data = APIHandler.payment_cart_payment(
+      siteId,
+      cartId,
+    );
+    try {
+      const response = await getTransactionDataRequest.promise();
+      // console.log(response, siteId, cartId);
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            setTransactionData(response.data);
+            if (isActiveWebview(response.data)) {
+              return response.data;
             }
-          } else {
-            flashShowMessage({
-              type: 'danger',
-              message: response.message || t('api.error.message'),
-            });
           }
         } else {
           flashShowMessage({
             type: 'danger',
-            message: t('api.error.message'),
+            message: response.message || t('api.error.message'),
           });
         }
-      } catch (error) {
-        console.log('get_transaction_data', error);
+      } else {
         flashShowMessage({
           type: 'danger',
           message: t('api.error.message'),
         });
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
       }
-    },
-    [isPaid],
-  );
+      return null;
+    } catch (error) {
+      console.log('get_transaction_data', error);
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+      return null;
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [isPaid]);
 
   const handleSavePhoto = async (dataURL) => {
     await saveImage(undefined, dataURL, 'png');
@@ -399,12 +402,28 @@ const Transaction = ({
     }
   };
 
+  const vnPayMerchantListener = (e) => {
+    switch (e.resultCode) {
+      // user press back
+      case -1:
+      // transaction fail
+      case 98:
+      // user press cancel transaction
+      case 99:
+        break;
+    }
+  };
+
   const handleOpenTransaction = useCallback(
-    (transData = transactionData) => {
-      if (transData.url) {
+    async (transData) => {
+      if (!transData) {
+        setLoading(true);
+        transData = await getTransactionData();
+      }
+      if (transData?.url) {
         switch (transData?.payment_method?.gateway) {
           case PAYMENT_METHOD_GATEWAY.VNPAY:
-            const vnPayMerchant = new VNPayMerchant();
+            const vnPayMerchant = new VNPayMerchant(vnPayMerchantListener);
             vnPayMerchant.show({
               isSandbox: !!transData.isSandbox,
               paymentUrl: transData.url,
@@ -591,14 +610,7 @@ const Transaction = ({
 
       <ScreenWrapper containerStyle={styles.container}>
         {/* <BlurFilter visible={isLoading} /> */}
-        {isLoading ||
-          (isImageSavingLoading && (
-            <Loading
-              center
-              // highlight={isLoading}
-              // message={isLoading && SAVE_IMAGE_MESSAGE}
-            />
-          ))}
+        {(isLoading || isImageSavingLoading) && <Loading center />}
         {renderPaidStatus()}
 
         <ScrollView

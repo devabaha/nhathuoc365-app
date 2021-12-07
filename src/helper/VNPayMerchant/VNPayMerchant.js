@@ -14,8 +14,6 @@ const VNPAY_MERCHANT_PAYMENT_BACK_EVENT_NAME = 'PaymentBack';
 class VNPayMerchant {
   listener = (e) => {
     console.log('vnpay_merchant_payment_back', e);
-
-    this.removeListener();
   };
 
   constructor(listener = this.listener) {
@@ -23,7 +21,11 @@ class VNPayMerchant {
   }
 
   addListener(listener = this.listener) {
-    this.listener = listener;
+    this.listener = (e) => {
+      listener(e);
+      this.removeListener();
+    };
+
     console.log('vnpay_merchant_add_listener');
     eventEmitter.addListener(
       VNPAY_MERCHANT_PAYMENT_BACK_EVENT_NAME,
