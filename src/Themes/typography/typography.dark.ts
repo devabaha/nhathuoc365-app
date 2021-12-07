@@ -6,12 +6,17 @@ import {BASE_COLOR_DARK} from '../color';
 import {Typography} from '../interface';
 
 export const TYPOGRAPHY_DARK: Typography = {
-  [TypographyType.DISPLAY_SMALL]: {
+  [TypographyType.LABEL_DISPLAY_SMALL]: {
     fontSize: TypographyFontSize.DISPLAY_SMALL,
     color: BASE_COLOR_DARK.textPrimary,
   },
+
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
+  [TypographyType.TITLE_SEMI_LARGE]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_DARK.textPrimary,
   },
   [TypographyType.TITLE_MEDIUM]: {

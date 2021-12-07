@@ -1,7 +1,8 @@
 import {IconProps as RNIconProps} from 'react-native-vector-icons/Icon';
-import {BundleIconSetName} from './constants';
+import {BundleIconSetName, BUNDLE_ICON_SETS} from './constants';
 
 export {default} from './Icon';
+export {BundleIconSetName, BUNDLE_ICON_SETS};
 
 export type BUNDLE_ICON_TYPE =
   | BundleIconSetName.ANT_DESIGN

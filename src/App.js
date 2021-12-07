@@ -204,9 +204,8 @@ import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
-import {getTheme, ThemeContext, ThemeProvider} from './Themes/Theme.context';
+import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
-
 /**
  * Not allow font scaling
  */
@@ -665,15 +664,9 @@ export default withTranslation()(
 );
 
 class RootRouter extends Component {
-  // static contextType = ThemeContext;
-
   state = {
     tabVisible: {},
   };
-
-  get theme() {
-    return getTheme(this);
-  }
 
   shouldComponentUpdate(nextProps, nextState) {
     const isTabVisbleChange = Object.keys(nextState.tabVisible).some(

@@ -1,19 +1,32 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
-import {APIRequest} from 'src/network/Entity';
-import store from 'app-store';
-import {SocialPleasePost} from 'src/components/Social/components';
 import {Actions} from 'react-native-router-flux';
-
+// configs
 import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {getNewsFeedSize} from 'app-helper/image';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import {SocialPleasePost} from 'src/components/Social/components';
 import Posts from '../Posts';
-import Container from 'src/components/Layout/Container';
+import {
+  Card,
+  CardBorderRadiusType,
+  Container,
+  ScreenWrapper,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
 import Image from 'src/components/Image';
-
-import {getNewsFeedSize} from '../../../helper/image';
+// skeleton
 import GroupHeaderSkeleton from './GroupHeaderSkeleton';
-import { servicesHandler, SERVICES_TYPE } from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   titleContainer: {
@@ -40,34 +53,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  headerInfoContainer: {
-    backgroundColor: '#fff',
-  },
+  headerInfoContainer: {},
   bannerContainer: {
     ...getNewsFeedSize(),
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
   },
   groupInfoContainer: {
     padding: 15,
   },
   groupName: {
-    fontSize: 26,
     fontWeight: 'bold',
-    color: '#242424',
   },
   groupDescription: {
-    fontSize: 16,
     marginTop: 10,
-    color: '#333',
   },
   pleasePostContainer: {
-    marginBottom: 10,
-    marginTop: 5,
+    marginVertical: 3,
   },
 });
 
 const Group = ({id, groupName, siteId = store.store_data?.id}) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation();
 
@@ -75,7 +81,6 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
   const isTitleInvisible = useRef(true);
 
   const [isLoading, setLoading] = useState(true);
-  const [isRefreshing, setRefreshing] = useState(false);
   const [getGroupInfoRequest] = useState(new APIRequest());
 
   const [groupInfo, setGroupInfo] = useState({});
@@ -103,15 +108,20 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
   const renderTitle = () => {
     return (
       <Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
-        <View style={styles.titleImageContainer}>
+        <Card
+          borderRadiusSize={CardBorderRadiusType.EXTRA_SMALL}
+          style={styles.titleImageContainer}>
           <Image
             source={{uri: groupInfo?.banner || ''}}
             style={styles.titleImage}
           />
-        </View>
-        <Text numberOfLines={2} style={styles.title}>
+        </Card>
+        <Typography
+          type={TypographyType.TITLE_SEMI_LARGE}
+          numberOfLines={2}
+          style={styles.title}>
           {groupInfo?.name || groupName}
-        </Text>
+        </Typography>
       </Animated.View>
     );
   };
@@ -151,7 +161,6 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
     } finally {
       if (isMounted()) {
         setLoading(false);
-        setRefreshing(false);
       }
     }
   };
@@ -167,13 +176,7 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
         group_id: groupInfo.id,
         site_id: groupInfo.site_id,
         isOpenImagePicker,
-      })
-      // Actions.push(appConfig.routes.socialCreatePost, {
-      //   // group: groupInfo,
-      //   groupId: groupInfo.id,
-      //   siteId: groupInfo.site_id,
-      //   isOpenImagePicker,
-      // });
+      });
     },
     [groupInfo],
   );
@@ -202,22 +205,32 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
     }
   }, []);
 
-  renderGroupHeader = () => {
+  const renderGroupHeader = () => {
     return isLoading ? (
       <GroupHeaderSkeleton />
     ) : (
-      <Container centerVertical={false}>
-        <View style={styles.headerInfoContainer}>
-          <Image
-            canTouch
-            source={{uri: groupInfo.banner}}
-            containerStyle={styles.bannerContainer}
-          />
-          <View style={styles.groupInfoContainer}>
-            <Text style={styles.groupName}>{groupInfo.name}</Text>
-            <Text style={styles.groupDescription}>{groupInfo.desc}</Text>
+      <>
+        <Container>
+          <View style={styles.headerInfoContainer}>
+            <Image
+              canTouch
+              source={{uri: groupInfo.banner}}
+              containerStyle={bannerContainerStyle}
+            />
+            <View style={styles.groupInfoContainer}>
+              <Typography
+                type={TypographyType.LABEL_DISPLAY_SMALL}
+                style={styles.groupName}>
+                {groupInfo.name}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.groupDescription}>
+                {groupInfo.desc}
+              </Typography>
+            </View>
           </View>
-        </View>
+        </Container>
 
         <SocialPleasePost
           avatar={store.user_info.img}
@@ -225,17 +238,27 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
           onPressImages={() => handlePressContent(true)}
           containerStyle={styles.pleasePostContainer}
         />
-      </Container>
+      </>
     );
   };
 
+  const bannerContainerStyle = useMemo(() => {
+    return mergeStyles(styles.bannerContainer, {
+      borderBottomWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
-    <Posts
-      groupId={id}
-      onRefresh={onRefresh}
-      onScroll={handleScroll}
-      ListHeaderComponent={renderGroupHeader()}
-    />
+    <ScreenWrapper>
+      <Posts
+        safeLayout
+        groupId={id}
+        onRefresh={onRefresh}
+        onScroll={handleScroll}
+        ListHeaderComponent={renderGroupHeader()}
+      />
+    </ScreenWrapper>
   );
 };
 

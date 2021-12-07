@@ -1,12 +1,18 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
 import {Actions} from 'react-native-router-flux';
-
-import {APIRequest} from 'src/network/Entity';
+import equal from 'deep-equal';
+import {Observer} from 'mobx-react';
+import {debounce} from 'lodash';
+import {reaction, toJS} from 'mobx';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import Feeds from 'src/components/Social/ListFeeds/Feeds';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
+import {servicesHandler} from 'app-helper/servicesHandler';
 import {
   formatStoreSocialPosts,
   getRelativeTime,
@@ -14,18 +20,22 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
-import {Observer} from 'mobx-react';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
 import NoResult from 'src/components/NoResult';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import Loading from 'src/components/Loading';
-
-import appConfig from 'app-config';
-import {reaction, toJS} from 'mobx';
+import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import ActionBarText from 'src/components/Social/ListFeeds/Feeds/ActionBarText';
+import {FlatList, RefreshControl} from 'src/components/base';
+// skeleton
 import PostsSkeleton from './PostsSkeleton';
-import {debounce} from 'lodash';
-import equal from 'deep-equal';
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -35,19 +45,13 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingVertical: 10,
   },
-  statusText: {
-    padding: 15,
-    textAlign: 'center',
-    color: '#333',
-    fontStyle: 'italic',
-  },
-
   feedsContainer: {
     marginBottom: 10,
   },
 });
 
 const Posts = ({
+  safeLayout,
   groupId,
   posts: postsProp,
   siteId = store.store_data?.id,
@@ -59,6 +63,8 @@ const Posts = ({
   onRefresh: onRefreshProp = () => {},
   ListHeaderComponent,
 }) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
   const moreActionOptions = [t('edit'), t('delete'), t('cancel')];
@@ -397,7 +403,7 @@ const Posts = ({
       style={
         feeds.is_accepted !== undefined &&
         !feeds.is_accepted && {
-          color: appConfig.colors.status.warning,
+          color: theme.color.warning,
         }
       }
     />
@@ -471,6 +477,7 @@ const Posts = ({
 
   return (
     <FlatList
+      safeLayout={safeLayout}
       contentContainerStyle={styles.contentContainer}
       data={posts}
       renderItem={renderPost}

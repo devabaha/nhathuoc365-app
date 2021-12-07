@@ -8,6 +8,7 @@ import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
 
 import Container from '../Container';
+import {CardBorderRadiusType} from './constants';
 
 const createStyles = (theme) => {
   const styles = StyleSheet.create({
@@ -15,19 +16,41 @@ const createStyles = (theme) => {
       backgroundColor: theme.color.surface,
       borderRadius: theme.layout.borderRadiusMedium,
     },
+    [CardBorderRadiusType.EXTRA_SMALL]: {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    },
+    [CardBorderRadiusType.SMALL]: {
+      borderRadius: theme.layout.borderRadiusSmall,
+    },
+    [CardBorderRadiusType.MEDIUM]: {
+      borderRadius: theme.layout.borderRadiusMedium,
+    },
+    [CardBorderRadiusType.LARGE]: {
+      borderRadius: theme.layout.borderRadiusLarge,
+    },
   });
 
   return styles;
 };
 
 const Card = forwardRef(
-  ({children, reanimated, animated, style, ...props}: CardProps, ref: Ref) => {
+  (
+    {
+      children,
+      reanimated,
+      animated,
+      borderRadiusSize = CardBorderRadiusType.MEDIUM,
+      style,
+      ...props
+    }: CardProps,
+    ref: Ref,
+  ) => {
     const {theme} = useTheme();
 
     const styles = useMemo(() => {
       const baseStyles: any = createStyles(theme);
 
-      return baseStyles.surface;
+      return [baseStyles.surface, baseStyles[borderRadiusSize]];
     }, [theme]);
 
     const componentStyle = useMemo(() => {

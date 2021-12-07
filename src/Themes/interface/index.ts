@@ -9,9 +9,10 @@ export type Style =
   | StyleProp<ViewStyle | TextStyle>[];
 
 export type Typography = {
-  [TypographyType.DISPLAY_SMALL]?: Style;
+  [TypographyType.LABEL_DISPLAY_SMALL]?: Style;
 
   [TypographyType.TITLE_LARGE]?: Style;
+  [TypographyType.TITLE_SEMI_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
 
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
@@ -116,7 +117,7 @@ export type Color = {
   persistTextPrimary: ColorValue;
   textPrimary: ColorValue;
   textSecondary: ColorValue;
-  textTertiary: ColorValue,
+  textTertiary: ColorValue;
   textInactive: ColorValue;
   iconInactive: ColorValue;
   indicator: ColorValue;
@@ -163,6 +164,7 @@ export type Layout = {
   borderWidthPixel: number;
   borderWidthSmall: number;
   borderWidth: number;
+  borderRadiusExtraSmall: number;
   borderRadiusSmall: number;
   borderRadiusMedium: number;
   borderRadiusLarge: number;

@@ -7,7 +7,6 @@ import appConfig from 'app-config';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
-import {GPS_LIST_TYPE} from 'src/constants';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -17,8 +16,7 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
-
-import SearchNavBar from '../../components/stores/SearchNavBar';
+import {push} from 'app-helper/routing';
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -430,10 +428,14 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     /** Social Group */
     case SERVICES_TYPE.SOCIAL_GROUP:
-      Actions.push(appConfig.routes.socialGroup, {
-        id: service.id,
-        groupName: service.name,
-      });
+      push(
+        appConfig.routes.socialGroup,
+        {
+          id: service.id,
+          groupName: service.name,
+        },
+        service.theme,
+      );
       break;
     /** Social Create Post */
     case SERVICES_TYPE.SOCIAL_CREATE_POST:

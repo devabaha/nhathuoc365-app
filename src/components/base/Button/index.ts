@@ -5,6 +5,7 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
+import {ImageProps, ImageSource, ImageStyle} from 'src/components/Image';
 
 import {ButtonRoundedType} from './constants';
 
@@ -12,6 +13,7 @@ import {default as BaseButton} from './Button';
 import FilledButton from './FilledButton';
 import AppFilledButton from './AppFilledButton';
 import IconButton from './IconButton';
+import ImageButton from './ImageButton';
 import TextButton from './TextButton';
 import OutlinedButton from './OutlinedButton';
 import AppOutlinedButton from './AppOutlinedButton';
@@ -32,7 +34,9 @@ export {
   AppFilledTonalButton,
   AppPrimaryButton,
   IconButton,
+  ImageButton,
   TextButton,
+  ButtonRoundedType,
 };
 
 export interface BaseButtonProps
@@ -81,4 +85,16 @@ export interface IconButtonProps extends CommonButtonProps, IconProps {
 
   iconProps: IconProps;
 }
+
+export interface ImageButtonProps extends CommonButtonProps {
+  source: ImageSource;
+
+  style?: StyleProp<ViewStyle>;
+  imageStyle?: ImageStyle;
+
+  imageProps?: ImageProps;
+
+  children?: Children;
+}
+
 export interface TextButtonProps extends CommonButtonProps {}
