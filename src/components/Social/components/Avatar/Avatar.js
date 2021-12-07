@@ -1,10 +1,11 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ImageButton} from 'src/components/base/Button';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
+import {StyleSheet} from 'react-native';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
+// context
 import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {ImageButton} from 'src/components/base/Button';
 
 const styles = StyleSheet.create({
   container: {
