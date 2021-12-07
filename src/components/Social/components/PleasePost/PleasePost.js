@@ -1,15 +1,23 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Container from 'src/components/Layout/Container';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {
+  BundleIconSetName,
+  Container,
+  IconButton,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
 import Pressable from 'src/components/Pressable';
 import Avatar from '../Avatar';
-import IonicIcons from 'react-native-vector-icons/Ionicons';
-
-import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    padding: 15,
   },
   textContainer: {
     flex: 1,
@@ -17,18 +25,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   placeholder: {
-    color: '#666',
     paddingVertical: 5,
   },
   icon: {
     fontSize: 24,
-    color: appConfig.colors.status.success,
   },
 
   title: {
     fontWeight: '600',
-    color: '#333',
-    fontSize: 16
   },
 });
 
@@ -41,19 +45,46 @@ const PleasePost = ({
   onPressContent,
   onPressImages,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('social');
   placeholder === undefined && (placeholder = t('pleasePost'));
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: theme.color.success,
+    });
+  }, [theme]);
+
   return (
-    <Container row padding={15} style={[styles.container, containerStyle]}>
+    <Container row style={[styles.container, containerStyle]}>
       <Avatar url={avatar} onPress={onPressAvatar} />
       <Pressable style={styles.textContainer} onPress={onPressContent}>
-        {!!title && <Text numberOfLines={2} style={styles.title}>{title}</Text>}
-        {!!placeholder && <Text style={styles.placeholder}>{placeholder}</Text>}
+        {!!title && (
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            numberOfLines={2}
+            style={styles.title}>
+            {title}
+          </Typography>
+        )}
+        {!!placeholder && (
+          <Typography
+            type={TypographyType.DESCRIPTION_MEDIUM}
+            style={styles.placeholder}>
+            {placeholder}
+          </Typography>
+        )}
       </Pressable>
 
-      <TouchableOpacity disabled={!onPressImages} hitSlop={HIT_SLOP} onPress={onPressImages}>
-        <IonicIcons name="images" style={styles.icon} />
-      </TouchableOpacity>
+      <IconButton
+        disabled={!onPressImages}
+        hitSlop={HIT_SLOP}
+        onPress={onPressImages}
+        bundle={BundleIconSetName.IONICONS}
+        name="images"
+        iconStyle={iconStyle}
+      />
     </Container>
   );
 };

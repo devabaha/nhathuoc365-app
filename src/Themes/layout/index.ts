@@ -7,6 +7,7 @@ export const LAYOUT: Layout = {
   borderWidthSmall: 0.5,
   borderWidth: 1,
   borderWidthLarge: 2,
+  borderRadiusExtraSmall: 4,
   borderRadiusSmall: 6,
   borderRadiusMedium: 8,
   borderRadiusLarge: 10,

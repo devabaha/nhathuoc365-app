@@ -2,9 +2,10 @@ import {TextProps} from 'react-native';
 
 import {Children} from '..';
 
-import {TypographyType} from './constants';
+import {TypographyType, TypographyFontSize} from './constants';
 
 export {default} from './Typography';
+export {TypographyType, TypographyFontSize};
 
 export type TypoType =
   | TypographyType.DISPLAY_SMALL

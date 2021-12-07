@@ -1,7 +1,14 @@
 import {StyleProp, ViewProps} from 'react-native';
-import {FastImageProps} from 'react-native-fast-image';
+import {
+  FastImageProps,
+  ImageStyle as FIImageStyle,
+  Source,
+} from 'react-native-fast-image';
 
 export {default} from './Image';
+
+export type ImageStyle = FIImageStyle;
+export type ImageSource = Source | number;
 
 export interface ImageProps extends FastImageProps {
   renderError?: Function;

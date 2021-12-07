@@ -10,6 +10,7 @@ import {Actions} from 'react-native-router-flux';
 
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import ListGroupThumbnailSkeleton from './ListGroupThumbnailSkeleton';
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   container: {
@@ -58,6 +59,8 @@ const styles = StyleSheet.create({
 });
 
 const Social = ({title, siteId = store.store_data?.id}) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation();
 
@@ -132,6 +135,7 @@ const Social = ({title, siteId = store.store_data?.id}) => {
       type: SERVICES_TYPE.SOCIAL_GROUP,
       id: group.id,
       name: group.name,
+      theme,
     });
   }, []);
 

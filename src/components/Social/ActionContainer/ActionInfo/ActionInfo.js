@@ -64,12 +64,13 @@ const ActionInfo = ({
   return (
     <Container
       row
+      noBackground
       style={[
         styles.container,
         (hasInfoExtraBottom || hasContent) && extraBottomStyle,
       ]}>
       {!!isLiked || !!totalReaction ? (
-        <Container row style={styles.block}>
+        <Container row noBackground style={styles.block}>
           <FloatingIcons
             icons={FLOATING_ICONS}
             wrapperStyle={styles.floatingIcons}
@@ -89,7 +90,7 @@ const ActionInfo = ({
 
       {!disableComment && !!totalComments && (
         <Pressable style={styles.end} onPress={onPressTotalComments}>
-          <Container row style={styles.block}>
+          <Container row noBackground style={styles.block}>
             <Typography
               type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
               style={styles.text}>

@@ -56,7 +56,7 @@ const Button = ({
 
   return (
     <Pressable onPress={onPress} style={[styles.wrapper, containerStyle]}>
-      <Container reanimated row style={[styles.container, style]}>
+      <Container noBackground reanimated row style={[styles.container, style]}>
         <Icon
           bundle={BundleIconSetName.ANT_DESIGN}
           reanimated

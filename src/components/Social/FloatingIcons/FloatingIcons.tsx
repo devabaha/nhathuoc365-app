@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     height: ICON_DIMENSIONS,
     borderRadius: ICON_DIMENSIONS / 2,
     overflow: 'hidden',
-    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -76,6 +75,7 @@ const FloatingIcons = ({
 
     return (
       <Container
+        noBackground
         key={index}
         style={[
           iconBaseContainerStyle,
@@ -96,6 +96,7 @@ const FloatingIcons = ({
   const iconBaseContainerStyle = useMemo(() => {
     return mergeStyles(styles.container, {
       borderColor: theme.color.surface,
+      borderWidth: theme.layout.borderWidthLarge,
       backgroundColor: theme.color.persistPrimary,
     });
   }, [theme]);
@@ -113,7 +114,10 @@ const FloatingIcons = ({
   };
 
   return (
-    <Container row style={[styles.wrapper, extraWrapperStyle, wrapperStyle]}>
+    <Container
+      noBackground
+      row
+      style={[styles.wrapper, extraWrapperStyle, wrapperStyle]}>
       {!!prefixTitle && (
         <Typography
           type={TypographyType.DESCRIPTION_SMALL}

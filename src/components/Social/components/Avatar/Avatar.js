@@ -1,7 +1,11 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {ImageButton} from 'src/components/base/Button';
 
 const styles = StyleSheet.create({
   container: {
@@ -9,8 +13,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 30,
     overflow: 'hidden',
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
   },
   image: {
     width: '100%',
@@ -19,16 +21,24 @@ const styles = StyleSheet.create({
 });
 
 const Avatar = ({url, containerStyle, imageStyle, imageProps, onPress}) => {
+  const {theme} = useTheme();
+
+  const containerBaseStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      borderWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
-    <TouchableOpacity disabled={!onPress} onPress={onPress}>
-      <Container style={[styles.container, containerStyle]}>
-        <Image
-          source={{uri: url}}
-          style={[styles.image, imageStyle]}
-          {...imageProps}
-        />
-      </Container>
-    </TouchableOpacity>
+    <ImageButton
+      disabled={!onPress}
+      source={{uri: url}}
+      onPress={onPress}
+      style={[containerBaseStyle, containerStyle]}
+      imageStyle={[styles.image, imageStyle]}
+      imageProps={imageProps}
+    />
   );
 };
 

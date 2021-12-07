@@ -25,7 +25,7 @@ const ActionBar = ({
   }, []);
 
   return (
-    <Container row style={styles.container}>
+    <Container noBackground row style={styles.container}>
       <Reaction
         title={t('like')}
         iconName="like2"
