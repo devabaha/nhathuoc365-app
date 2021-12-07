@@ -44,7 +44,7 @@ const ScreenWrapper = forwardRef(
         [baseStyles.container, safeLayout && baseStyles.safeLayout],
         style,
       );
-    }, [theme, style]);
+    }, [theme, style, safeLayout]);
 
     return (
       <Container {...props} ref={ref} style={styles}>

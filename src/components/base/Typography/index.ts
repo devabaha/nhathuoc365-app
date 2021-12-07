@@ -33,6 +33,7 @@ export interface TypographyProps extends TextProps {
   onSecondary?: boolean;
   onSurface?: boolean;
   onBackground?: boolean;
+  onDisabled?: boolean;
 
   children?: Children;
 }
