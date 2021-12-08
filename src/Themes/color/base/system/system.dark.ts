@@ -6,16 +6,12 @@ const SYSTEM_COMMON = {
   // ACCENT (Nature)
   primary: '#212121',
   // —— Primary variants ——
-  primary5: rgbaToRgb(hexToRgba(CORE.primary, 0.05)),
-  primary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   primaryLight: '#3d3d3d',
   primaryDark: '#181818',
   onPrimary: '#FFFFFF',
 
   secondary: '#212121',
   // —— Secondary variants ——
-  secondary5: rgbaToRgb(hexToRgba(CORE.secondary, 0.05)),
-  secondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
   secondaryLight: '#3d3d3d',
   secondaryDark: '#181818',
   onSecondary: '#FFFFFF',
@@ -34,6 +30,12 @@ export const SYSTEM_DARK = {
   ...SYSTEM_LIGHT,
   ...SYSTEM_COMMON,
 
+  primary5: rgbaToRgb(hexToRgba(SYSTEM_COMMON.primary, 0.05)),
+  primary20: rgbaToRgb(hexToRgba(SYSTEM_COMMON.primary, 0.2)),
+
+  secondary5: rgbaToRgb(hexToRgba(SYSTEM_COMMON.secondary, 0.05)),
+  secondary20: rgbaToRgb(hexToRgba(SYSTEM_COMMON.secondary, 0.2)),
+
   border: CORE.grey700,
   placeholder: CORE.grey500,
   disabled: '#444444',
@@ -50,7 +52,9 @@ export const SYSTEM_DARK = {
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
+  persistPrimary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   persistSecondary: CORE.secondary,
+  persistSecondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
 
   primaryHighlight: SYSTEM_COMMON.onSurface,
   secondaryHighlight: SYSTEM_COMMON.onSurface,

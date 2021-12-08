@@ -183,10 +183,6 @@ export default class HorizontalInfoItem extends Component {
     this.props.data?.columnView && styles.columnViewValue,
   ];
 
-  containerDisabledStyle = {
-    backgroundColor: this.theme.color.disabled,
-  };
-
   render() {
     const {
       data: {
@@ -217,13 +213,16 @@ export default class HorizontalInfoItem extends Component {
     if (isHidden) return null;
 
     const extraContainerStyle = columnView && styles.columnViewContainer;
+    const containerDisabledStyle = {
+      backgroundColor: this.theme.color.disabled,
+    };
 
     return (
       <Container
         style={[
           styles.container,
           extraContainerStyle,
-          disable && this.containerDisabledStyle,
+          disable && containerDisabledStyle,
           containerStyle,
           dataContainerStyle,
         ]}>

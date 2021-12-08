@@ -40,10 +40,15 @@ import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import {openLink} from 'app-helper';
 import ScreenWrapper from '../base/ScreenWrapper';
 import RefreshControl from '../base/RefreshControl';
+import {push} from 'app-helper/routing';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 
 const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
 class Account extends Component {
+  static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
 
@@ -63,6 +68,12 @@ class Account extends Component {
     this.updateWarehouseRequest = new APIRequest();
     this.requests = [this.getWarehouseRequest];
     this.unmounted = false;
+
+    this.updateNavBarDisposer = () => {};
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   get options() {
@@ -372,9 +383,13 @@ class Account extends Component {
         desc: t('options.myAdress.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
-          Actions.push(appConfig.routes.myAddress, {
-            from_page: 'account',
-          }),
+          push(
+            appConfig.routes.myAddress,
+            {
+              from_page: 'account',
+            },
+            this.theme,
+          ),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -826,6 +841,11 @@ class Account extends Component {
       store.parentTab = `${appConfig.routes.accountTab}_1`;
     });
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
@@ -833,6 +853,7 @@ class Account extends Component {
     this.userInfoDisposer();
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
+    this.updateNavBarDisposer();
   }
 
   async getListWarehouse() {
