@@ -1,24 +1,40 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import ProgressBar from './src/components/ProgressBar';
+import {View, StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import Button from './src/components/Button';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ScrollView, TypographyType} from 'src/components/base';
+// images
 import SVGRocket from './src/images/rocket.svg';
+// customs components
+import {Typography, Container} from 'src/components/base';
+import ProgressBar from './src/components/ProgressBar';
+import Button from './src/components/Button';
 
 const styles = StyleSheet.create({
   container: {
-    // maxWidth: appConfig.device.width * 0.7,
-    padding: 15,
-    marginBottom: -20,
-    overflow: 'hidden',
+    ...StyleSheet.absoluteFillObject,
+    marginHorizontal: '-100%',
+    marginVertical: '-100%',
+  },
+  contentContainer: {
+    paddingHorizontal: 15,
+    paddingTop: 30,
+    paddingBottom: 15,
+    marginHorizontal: -20,
+  },
+  suggestContainer: {
+    maxHeight: appConfig.device.height * 0.28,
   },
   titleContainer: {
     flexWrap: 'wrap',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 0.5,
     paddingBottom: 10,
     marginBottom: 20,
     overflow: 'hidden',
@@ -26,17 +42,13 @@ const styles = StyleSheet.create({
   title: {
     textTransform: 'uppercase',
     fontWeight: '600',
-    fontSize: 18,
     textAlign: 'center',
-    color: '#666',
   },
   description: {
     textAlign: 'center',
-    color: '#242424',
   },
   progressBar: {
     marginTop: 25,
-    marginHorizontal: -15,
   },
   btnContainer: {
     paddingHorizontal: 0,
@@ -51,11 +63,8 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     marginTop: 20,
-    marginHorizontal: -15,
   },
   suggest: {
-    color: '#333',
-    fontSize: 13,
     fontWeight: '300',
     lineHeight: 18,
     paddingHorizontal: 15,
@@ -64,23 +73,24 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 15,
     paddingVertical: 10,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 4,
     marginHorizontal: 15,
   },
   note: {
-    color: '#242424',
-    fontSize: 12,
     fontWeight: '300',
     fontStyle: 'italic',
   },
 });
 
 class AppCodePush extends Component {
+  static contextType = ThemeContext;
   state = {
     remainingTime: 5,
   };
   counter = null;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -119,57 +129,100 @@ class AppCodePush extends Component {
     clearInterval(this.counter);
   }
 
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
+  get contentContainerStyle() {
+    return mergeStyles(styles.contentContainer, {
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get noteContainerStyle() {
+    return mergeStyles(styles.noteContainer, {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get titleContainerStyle() {
+    return mergeStyles(styles.titleContainer, {
+      borderBottomColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    });
+  }
+
   render() {
     const confirmBtnTitle =
       this.props.confirmBtnTitle || this.props.t('codePush.runInBackground');
     return (
-      <View style={styles.container}>
-        {!!this.props.title && (
-          <View style={styles.titleContainer}>
-            <View style={styles.rocketContainer}>
-              <SVGRocket width="100%" height="100%" />
+      <>
+        <View style={this.containerStyle} />
+        <Container style={this.contentContainerStyle}>
+          {!!this.props.title && (
+            <Container noBackground style={this.titleContainerStyle}>
+              <View style={styles.rocketContainer}>
+                <SVGRocket width="100%" height="100%" />
+              </View>
+              <Typography
+                type={TypographyType.TITLE_SEMI_LARGE_TERTIARY}
+                style={styles.title}>
+                {this.props.title}
+              </Typography>
+            </Container>
+          )}
+
+          {!!this.props.description && (
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.description}>
+              {this.props.description}
+            </Typography>
+          )}
+
+          {!!this.props.progress && (
+            <View style={styles.progressBar}>
+              <ProgressBar
+                progress={this.props.progress}
+                height={7}
+                backgroundColor={this.theme.color.persistPrimary}
+                onCompletion={this.props.onProgressComplete}
+              />
             </View>
-            <Text style={styles.title}>{this.props.title}</Text>
-          </View>
-        )}
+          )}
 
-        {!!this.props.description && (
-          <Text style={styles.description}>{this.props.description}</Text>
-        )}
-
-        {!!this.props.progress && (
-          <View style={styles.progressBar}>
-            <ProgressBar
-              progress={this.props.progress}
-              height={7}
-              backgroundColor={appConfig.colors.primary}
-              onCompletion={this.props.onProgressComplete}
+          <View style={styles.footerContainer}>
+            <ScrollView style={styles.suggestContainer}>
+              <Typography
+                type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+                style={styles.suggest}>
+                {this.props.t('codePush.alert.suggestMessage', {
+                  btnTitle: confirmBtnTitle,
+                })}
+              </Typography>
+            </ScrollView>
+            <Container style={this.noteContainerStyle}>
+              <Typography type={TypographyType.LABEL_SMALL} style={styles.note}>
+                {this.props.t('codePush.alert.noteMessage')}
+              </Typography>
+            </Container>
+            <Button
+              disabled={!!this.state.remainingTime}
+              title={
+                confirmBtnTitle +
+                (this.state.remainingTime
+                  ? ` (${this.state.remainingTime})`
+                  : '')
+              }
+              containerStyle={styles.btnContainer}
+              onPress={this.props.onPressConfirm}
             />
           </View>
-        )}
-
-        <View style={styles.footerContainer}>
-          <Text style={styles.suggest}>
-            {this.props.t('codePush.alert.suggestMessage', {
-              btnTitle: confirmBtnTitle,
-            })}
-          </Text>
-          <View style={styles.noteContainer}>
-            <Text style={styles.note}>
-              {this.props.t('codePush.alert.noteMessage')}
-            </Text>
-          </View>
-          <Button
-            disabled={!!this.state.remainingTime}
-            title={
-              confirmBtnTitle +
-              (this.state.remainingTime ? ` (${this.state.remainingTime})` : '')
-            }
-            containerStyle={styles.btnContainer}
-            onPress={this.props.onPressConfirm}
-          />
-        </View>
-      </View>
+        </Container>
+      </>
     );
   }
 }
