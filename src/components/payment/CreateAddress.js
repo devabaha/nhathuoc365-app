@@ -716,7 +716,6 @@ class CreateAddress extends Component {
             noConfirm={this._closePopupConfirm.bind(this)}
             yesConfirm={this._removeAddressItem.bind(this)}
             otherClose={false}
-            isConfirm
           />
         </View>
         {appConfig.device.isIOS && <KeyboardSpacer />}
