@@ -55,9 +55,6 @@ const ListAddressStore = ({
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
 
-  const errContent =
-    'Vui lòng cho phép truy cập vị trí để hiển thị cửa hàng theo thứ tự gần nhất!';
-
   const {t} = useTranslation(['address', 'common']);
 
   useEffect(() => {
@@ -217,7 +214,7 @@ const ListAddressStore = ({
     isGoToSetting.current = true;
     LocationPermission.openPermissionAskingModal({
       errCode,
-      errContent,
+      errContent: t('address.errMsgNotAllowLocationPermission'),
     });
   };
 
