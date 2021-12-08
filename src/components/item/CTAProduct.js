@@ -55,7 +55,6 @@ class CTAProduct {
         Actions.push(appConfig.routes.modalConfirm, {
           message: modalTitle,
           type: 'warning',
-          isConfirm: true,
           yesTitle: CONTINUE_ORDER_CONFIRM,
           titleStyle: {textAlign: 'left'},
           noConfirm: this.cancelConfirmCartType,

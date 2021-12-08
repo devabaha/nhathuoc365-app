@@ -638,7 +638,6 @@ const Transaction = ({
           type="warning"
           noConfirm={closePopUp}
           yesConfirm={() => confirmPopUp()}
-          isConfirm
         />
       </ScreenWrapper>
     </>
