@@ -111,10 +111,6 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.textSecondary,
   },
-  [TypographyType.DESCRIPTION_SEMI_MEDIUM]: {
-    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
-    color: BASE_COLOR_LIGHT.textSecondary,
-  },
   [TypographyType.DESCRIPTION_SMALL]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.textSecondary,

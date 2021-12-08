@@ -46,10 +46,6 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
-  [TypographyType.LABEL_SEMI_MEDIUM]: {
-    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
-    color: BASE_COLOR_DARK.textPrimary,
-  },
   [TypographyType.LABEL_SMALL_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.primaryHighlight,
@@ -70,6 +66,10 @@ export const TYPOGRAPHY_DARK: Typography = {
   },
   [TypographyType.LABEL_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
+  [TypographyType.LABEL_SEMI_MEDIUM]: {
+    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
     color: BASE_COLOR_DARK.textPrimary,
   },
   [TypographyType.LABEL_SMALL]: {
