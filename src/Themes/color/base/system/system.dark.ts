@@ -28,6 +28,9 @@ const SYSTEM_COMMON = {
   surface: '#2a2a2a',
   onSurface: '#ffffff',
   persistOnSurface: CORE.onSurface,
+
+  // OTHERS
+  coreOverlay: CORE.black
 };
 
 export const SYSTEM_DARK = {

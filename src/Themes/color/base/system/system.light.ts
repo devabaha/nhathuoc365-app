@@ -28,6 +28,9 @@ const SYSTEM_COMMON = {
   surface: CORE.surface,
   onSurface: CORE.onSurface,
   persistOnSurface: CORE.onSurface,
+
+  // OTHERS
+  coreOverlay: CORE.black,
 };
 
 export const SYSTEM_LIGHT = {
@@ -39,8 +42,8 @@ export const SYSTEM_LIGHT = {
   disabled: '#eeeeee',
   onDisabled: CORE.grey500,
 
-  overlay60: hexToRgba(CORE.black, 0.6),
-  overlay30: hexToRgba(CORE.black, 0.3),
+  overlay60: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.6),
+  overlay30: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.3),
   onOverlay: CORE.white,
   underlay: CORE.grey200, // use for touchableHighlight
   shadow: CORE.black,

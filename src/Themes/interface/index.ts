@@ -28,6 +28,7 @@ export type Typography = {
 
   [TypographyType.LABEL_LARGE]?: Style;
   [TypographyType.LABEL_MEDIUM]?: Style;
+  [TypographyType.LABEL_SEMI_MEDIUM]?: Style;
   [TypographyType.LABEL_SMALL]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
   [TypographyType.LABEL_TINY]?: Style;
@@ -97,6 +98,7 @@ export type Color = {
   onSurface: ColorValue;
   skeletonContainer: ColorValue;
   skeletonContent: ColorValue;
+  coreOverlay?: ColorValue;
 
   // System
   primary5: ColorValue;
@@ -177,7 +179,7 @@ export type Layout = {
   borderWidthPixel: number;
   borderWidthSmall: number;
   borderWidth: number;
-  borderWidthLarge: number,
+  borderWidthLarge: number;
   borderRadiusExtraSmall: number;
   borderRadiusSmall: number;
   borderRadiusMedium: number;
