@@ -375,7 +375,6 @@ const Posts = ({
         case 1:
           Actions.push(appConfig.routes.modalConfirm, {
             message: t('social:postDeleteConfirmMessage'),
-            isConfirm: true,
             yesTitle: t('delete'),
             noTitle: t('cancel'),
             yesConfirm: () => deletePost(feeds.id),

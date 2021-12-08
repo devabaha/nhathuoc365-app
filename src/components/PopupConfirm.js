@@ -1,13 +1,16 @@
-/* @flow */
-
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-
-//library
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Modal from 'react-native-modalbox';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// customs components
+import {Typography, TextButton, Container, Icon} from 'src/components/base';
 
 const POPUP_TYPES = {
   WARNING: 'warning',
@@ -15,8 +18,12 @@ const POPUP_TYPES = {
   SUCCESS: 'success',
   INFO: 'info',
 };
+
 class PopupConfirm extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
+    dangerConfirm: PropTypes.bool,
     type: PropTypes.oneOf([
       POPUP_TYPES.WARNING,
       POPUP_TYPES.DANGER,
@@ -24,6 +31,14 @@ class PopupConfirm extends Component {
       POPUP_TYPES.INFO,
     ]),
   };
+
+  textButtonTypoProps = {
+    type: TypographyType.TITLE_MEDIUM,
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   renderBadge() {
     if (this.props.type) {
@@ -42,17 +57,74 @@ class PopupConfirm extends Component {
           name = 'ios-information';
           break;
       }
-      const extraStyle = {
-        backgroundColor: appConfig.colors.status[this.props.type],
-      };
+
       return (
-        <View style={[styles.badgeContainer, extraStyle]}>
-          <Ionicons name={name} style={styles.badge} />
+        <View style={this.iconContainerStyle}>
+          <Icon
+            bundle={BundleIconSetName.IONICONS}
+            name={name}
+            style={this.iconStyle}
+          />
         </View>
       );
     }
 
     return null;
+  }
+
+  get iconContainerStyle() {
+    return mergeStyles(styles.badgeContainer, {
+      backgroundColor: this.theme.color[this.props.type],
+    });
+  }
+
+  get iconStyle() {
+    return mergeStyles(styles.badge, {
+      color: this.theme.color.onPrimary,
+    });
+  }
+
+  get modalConfirmActionsStyle() {
+    return mergeStyles(styles.modal_confirm_actions, {
+      borderBottomLeftRadius: this.theme.layout.borderRadiusSmall,
+      borderBottomRightRadius: this.theme.layout.borderRadiusSmall,
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get modalCancelLabelStyle() {
+    return mergeStyles(styles.modal_cancel_label, {
+      color: this.theme.color.textTertiary,
+    });
+  }
+
+  get modalConfirmLabelStyle() {
+    return mergeStyles(styles.modal_confirm_label, {
+      color: this.props.dangerConfirm
+        ? this.theme.color.danger
+        : this.theme.color.primaryHighlight,
+    });
+  }
+
+  get modalConfirmBtnLeftStyle() {
+    return mergeStyles(styles.modal_confirm_btn_left, {
+      borderRightWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get modalCancelBtnStyle() {
+    return mergeStyles(styles.modal_cancel_btn, {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    });
+  }
+
+  get contentContainerStyle() {
+    return mergeStyles(styles.contentContainer, {
+      borderTopLeftRadius: this.theme.layout.borderRadiusSmall,
+      borderTopRightRadius: this.theme.layout.borderRadiusSmall,
+    });
   }
 
   render() {
@@ -83,42 +155,45 @@ class PopupConfirm extends Component {
         {this.props.content ? (
           this.props.content(this.props.title)
         ) : (
-          <Text
-            style={[
-              styles.modal_confirm_title,
-              !!this.props.type && {marginTop: 28},
-              this.props.titleStyle,
-            ]}>
-            {this.props.title}
-          </Text>
+          <Container style={this.contentContainerStyle}>
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={[
+                styles.modal_confirm_title,
+                !!this.props.type && {marginTop: 28},
+                this.props.titleStyle,
+              ]}>
+              {this.props.title}
+            </Typography>
+          </Container>
         )}
 
-        <View style={styles.modal_confirm_actions}>
-          <TouchableHighlight
-            style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left, this.props.isConfirm&& styles.model_cancel_btn]}
-            underlayColor="transparent"
-            onPress={this.props.noConfirm}>
-            <Text
-              style={[
-                styles.modal_confirm_label,
-                this.props.isConfirm && styles.modal_cancel_label
-                // {
-                //   color: this.props.noBlur ? '#999999' : DEFAULT_COLOR,
-                // },
-              ]}>
-              {this.props.noTitle || t('popupConfirm.no')}
-            </Text>
-          </TouchableHighlight>
+        <Container style={this.modalConfirmActionsStyle}>
+          <TextButton
+            style={[
+              styles.modal_confirm_btn,
+              this.modalConfirmBtnLeftStyle,
+              this.modalCancelBtnStyle,
+            ]}
+            onPress={this.props.noConfirm}
+            typoProps={this.textButtonTypoProps}
+            titleStyle={[
+              this.modalCancelLabelStyle,
+              // {
+              //   color: this.props.noBlur ? '#999999' : DEFAULT_COLOR,
+              // },
+            ]}>
+            {this.props.noTitle || t('popupConfirm.no')}
+          </TextButton>
 
-          <TouchableHighlight
+          <TextButton
             style={styles.modal_confirm_btn}
-            underlayColor="transparent"
-            onPress={this.props.yesConfirm}>
-            <Text style={styles.modal_confirm_label}>
-              {this.props.yesTitle || t('popupConfirm.yes')}
-            </Text>
-          </TouchableHighlight>
-        </View>
+            typoProps={this.textButtonTypoProps}
+            onPress={this.props.yesConfirm}
+            titleStyle={this.modalConfirmLabelStyle}>
+            {this.props.yesTitle || t('popupConfirm.yes')}
+          </TextButton>
+        </Container>
       </Modal>
     );
   }
@@ -148,56 +223,39 @@ const styles = StyleSheet.create({
     width: '80%',
     height: null,
     // minHeight: 110,
-    borderRadius: 3,
     justifyContent: 'space-between',
+    backgroundColor: 'transparent',
   },
   modal_confirm_title: {
     paddingHorizontal: 20,
     marginTop: 16,
     textAlign: 'center',
-    color: '#333',
-    fontSize: 14,
   },
   modal_confirm_actions: {
-    paddingTop: 16,
-    // position: 'absolute',
+    overflow: 'hidden',
     width: '100%',
-    // height: 42,
-    // left: 0,
-    // bottom: 0,
-    // right: 0,
-    backgroundColor: '#ffffff',
     flexDirection: 'row',
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
   },
   modal_confirm_btn: {
     justifyContent: 'center',
     alignItems: 'center',
     width: '50%',
     height: 42,
-
-    borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd',
   },
-  model_cancel_btn: {
-    backgroundColor: '#f5f5f5'
-  },
-  modal_confirm_btn_left: {
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#dddddd',
-  },
+  modal_cancel_btn: {},
+  modal_confirm_btn_left: {},
   modal_confirm_label: {
-    fontSize: 16,
-    color: appConfig.colors.primary,
     lineHeight: 20,
-    fontWeight: '500'
+    fontWeight: '500',
   },
-  modal_cancel_label: {
-    color: '#888',
+  modal_cancel_label: {},
+
+  contentContainer: {
+    paddingBottom: 16,
   },
 
   badgeContainer: {
+    zIndex: 1,
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -209,7 +267,6 @@ const styles = StyleSheet.create({
   },
   badge: {
     fontSize: 30,
-    color: '#fff',
   },
 });
 

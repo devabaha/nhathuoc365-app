@@ -65,7 +65,7 @@ function NoResult({
   const permissionConfirmStyle = useMemo(() => {
     return mergeStyles(styles.permissionConfirm, {
       backgroundColor: theme.color.contentBackgroundWeak,
-      borderRadius: theme.layout.borderRadiusHuge
+      borderRadius: theme.layout.borderRadiusHuge,
     });
   }, [theme]);
 

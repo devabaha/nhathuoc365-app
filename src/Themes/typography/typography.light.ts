@@ -20,6 +20,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_LIGHT.textTertiary,
   },
+  [TypographyType.TITLE_SEMI_LARGE_TERTIARY]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
 
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,

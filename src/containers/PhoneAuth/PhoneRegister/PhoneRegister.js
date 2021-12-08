@@ -134,7 +134,6 @@ class PhoneRegister extends Component {
     return (
       <ScreenWrapper>
         <ScrollView
-          safeLayout
           keyboardShouldPersistTaps="handled"
           bounces={false}
           style={styles.container}

@@ -864,7 +864,6 @@ class Comment extends Component {
       setTimeout(() => {
         Actions.push(appConfig.routes.modalConfirm, {
           message: this.props.t('social:commentDeleteConfirmMessage'),
-          isConfirm: true,
           yesTitle: this.props.t('delete'),
           noTitle: this.props.t('cancel'),
           yesConfirm: async () => {

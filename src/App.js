@@ -206,6 +206,7 @@ import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
 import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
+
 /**
  * Not allow font scaling
  */
@@ -598,6 +599,7 @@ class App extends Component {
             closeOnHardwareBackPress={false}
             showCancelButton={false}
             showConfirmButton={false}
+            contentContainerStyle={styles.awesomeAlertContainer}
             customView={
               <AppCodePush
                 title={
@@ -654,6 +656,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: appConfig.colors.primary,
+  },
+  awesomeAlertContainer: {
+    backgroundColor: 'transparent',
   },
 });
 
