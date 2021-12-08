@@ -141,7 +141,7 @@ class PhoneRegister extends Component {
           contentContainerStyle={styles.content}>
           <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
           <Typography
-            type={TypographyType.DISPLAY_SMALL}
+            type={TypographyType.LABEL_DISPLAY_SMALL}
             style={styles.welcomeText}>
             {t('phoneWelcomeMessage')}
           </Typography>
@@ -152,7 +152,7 @@ class PhoneRegister extends Component {
             <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
               <Container style={this.countryContainerStyle}>
                 <Typography
-                  type={TypographyType.DISPLAY_SMALL}
+                  type={TypographyType.LABEL_DISPLAY_SMALL}
                   style={styles.countryCode}>
                   {country ? country.flag : ''}
                 </Typography>

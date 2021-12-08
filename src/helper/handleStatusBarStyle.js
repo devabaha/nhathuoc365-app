@@ -4,6 +4,43 @@ import {config as bgrStatusBarConfig} from 'app-packages/tickid-bgr-status-bar';
 import appConfig from 'app-config';
 import store from 'app-store';
 
+export const darkStatusBarScenes = [
+  appConfig.routes.domainSelector,
+
+  appConfig.routes.phoneAuth,
+  appConfig.routes.qrBarCode,
+  appConfig.routes.qrBarCodeInputable,
+  appConfig.routes.modalWebview,
+  appConfig.routes.transaction,
+  appConfig.routes.modalComment,
+  appConfig.routes.modalEditImages,
+  appConfig.routes.socialCreatePost,
+
+  appConfig.routes.myVoucher,
+  appConfig.routes.voucherDetail,
+  appConfig.routes.voucherScanner,
+  appConfig.routes.alreadyVoucher,
+  appConfig.routes.voucherShowBarcode,
+  appConfig.routes.voucherEnterCodeManual,
+
+  appConfig.routes.tickidRada,
+  appConfig.routes.tickidRadaListService,
+  appConfig.routes.tickidRadaServiceDetail,
+  appConfig.routes.tickidRadaBooking,
+
+  appConfig.routes.schedule,
+  appConfig.routes.scheduleConfirm,
+
+  appConfig.routes.resetPassword,
+  appConfig.routes.item,
+
+  appConfig.routes.premiumInfo,
+
+  appConfig.routes.itemAttribute,
+  appConfig.routes.accountTab,
+  appConfig.routes.personalProfile,
+];
+
 export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) {
     if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
@@ -26,43 +63,6 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     }
     return;
   }
-
-  const darkStatusBarScenes = [
-    appConfig.routes.domainSelector,
-
-    appConfig.routes.phoneAuth,
-    appConfig.routes.qrBarCode,
-    appConfig.routes.qrBarCodeInputable,
-    appConfig.routes.modalWebview,
-    appConfig.routes.transaction,
-    appConfig.routes.modalComment,
-    appConfig.routes.modalEditImages,
-    appConfig.routes.socialCreatePost,
-
-    appConfig.routes.myVoucher,
-    appConfig.routes.voucherDetail,
-    appConfig.routes.voucherScanner,
-    appConfig.routes.alreadyVoucher,
-    appConfig.routes.voucherShowBarcode,
-    appConfig.routes.voucherEnterCodeManual,
-
-    appConfig.routes.tickidRada,
-    appConfig.routes.tickidRadaListService,
-    appConfig.routes.tickidRadaServiceDetail,
-    appConfig.routes.tickidRadaBooking,
-
-    appConfig.routes.schedule,
-    appConfig.routes.scheduleConfirm,
-
-    appConfig.routes.resetPassword,
-    appConfig.routes.item,
-
-    appConfig.routes.premiumInfo,
-
-    appConfig.routes.itemAttribute,
-    appConfig.routes.accountTab,
-    appConfig.routes.personalProfile,
-  ];
 
   switch (action.type) {
     case 'Navigation/JUMP_TO':

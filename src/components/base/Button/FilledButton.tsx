@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  memo,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, {forwardRef, memo, useCallback, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 
 import {FilledButtonProps} from '.';
@@ -37,6 +32,9 @@ const createStyles = (theme: Theme) => {
     shadow: {
       shadowColor: theme.color.shadow,
       ...theme.layout.shadow,
+    },
+    [ButtonRoundedType.EXTRA_SMALL]: {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
     },
     [ButtonRoundedType.SMALL]: {
       borderRadius: theme.layout.borderRadiusSmall,

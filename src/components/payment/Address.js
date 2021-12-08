@@ -8,8 +8,9 @@ import appConfig from 'app-config';
 // helpers
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
-import {updateNavbarTheme, getTheme} from 'src/Themes/Theme.context';
+import {getTheme} from 'src/Themes/Theme.context';
 import {isConfigActive} from 'app-helper/configKeyHandler';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants

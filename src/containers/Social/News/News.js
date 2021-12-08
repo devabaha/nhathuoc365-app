@@ -12,17 +12,14 @@ import {reaction} from 'mobx';
 
 // components
 import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 
 import appConfig from 'app-config';
 import NewsScene from './NewsScene';
 import {APIRequest} from 'src/network/Entity';
 import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
 import NoResult from 'src/components/NoResult';
-import {
-  getTheme,
-  ThemeContext,
-  updateNavbarTheme,
-} from 'src/Themes/Theme.context';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import ScreenWrapper from 'src/components/base/ScreenWrapper';
 import {
   AppFilledTonalButton,

@@ -1,18 +1,24 @@
 import {Actions} from 'react-native-router-flux';
 import {Theme} from 'src/Themes/interface';
 import {
+  checkIsNextSceneNavBarSurfaceMode,
+  getNavBarTheme,
+} from 'src/Themes/helper/updateNavBarTheme';
+import {
   RoutingCommonFunction,
   RoutingPopFunction,
   RoutingRefreshFunction,
 } from '.';
 
-export const formatSceneProps = (props: any = {}, theme?: Theme) => {
+export const formatSceneProps = (
+  sceneKey: string,
+  props: any = {},
+  theme?: Theme,
+) => {
   if (theme) {
     props = {
       ...props,
-      headerStyle: {
-        backgroundColor: theme.color.primary,
-      },
+      ...getNavBarTheme(theme, checkIsNextSceneNavBarSurfaceMode(sceneKey)),
     };
   }
 
@@ -20,7 +26,7 @@ export const formatSceneProps = (props: any = {}, theme?: Theme) => {
 };
 
 export const push: RoutingCommonFunction = (sceneKey, props, theme) => {
-  const formattedProps = formatSceneProps(props, theme);
+  const formattedProps = formatSceneProps(sceneKey, props, theme);
 
   Actions.push(sceneKey, formattedProps);
 };

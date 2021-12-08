@@ -5,6 +5,8 @@ import {Children} from '..';
 export {default} from './Container';
 
 export interface ContainerProps extends ViewProps {
+  safeLayout?: boolean,
+  
   reanimated?: boolean;
   animated?: boolean;
 
