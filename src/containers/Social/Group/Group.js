@@ -176,9 +176,10 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
         group_id: groupInfo.id,
         site_id: groupInfo.site_id,
         isOpenImagePicker,
+        theme,
       });
     },
-    [groupInfo],
+    [groupInfo, theme],
   );
 
   const handleScroll = useCallback((e) => {

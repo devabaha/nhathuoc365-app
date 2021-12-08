@@ -10,12 +10,10 @@ import appConfig from 'app-config';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/helper';
 // context
-import {
-  getTheme,
-  ThemeContext,
-  updateNavbarTheme,
-} from 'src/Themes/Theme.context';
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 // entities

@@ -5,10 +5,11 @@ import {BASE_LIGHT_THEME, BASE_LIGHT_THEME_ID} from './Theme.light';
 import {Theme} from './interface';
 import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from './Theme.dark';
 import EventEmitter from 'eventemitter3';
+import {darkStatusBarScenes} from 'app-helper/handleStatusBarStyle';
 
-const themeChangingListener = new EventEmitter();
+export const themeChangingListener = new EventEmitter();
 
-const THEME_CHANGING_EVENT_NAME = 'theme_changing';
+export const THEME_CHANGING_EVENT_NAME = 'theme_changing';
 
 // Our context provider will provide this object shape
 export interface ThemeProvidedValue {
@@ -77,28 +78,4 @@ export const getTheme: Theme | {} = (scope: {context: {theme: Theme}}) => {
     return scope.context?.theme;
   }
   return {};
-};
-
-export const addThemeChangingListener = (listener) => {
-  themeChangingListener.addListener(THEME_CHANGING_EVENT_NAME, listener);
-};
-
-export const removeThemeChangingListener = (listener) => {
-  themeChangingListener.removeListener(THEME_CHANGING_EVENT_NAME, listener);
-};
-
-export const updateNavbarTheme = (navigation, currentTheme) => {
-  const listener = (theme) => {
-    navigation && navigation.setParams({
-      headerStyle: {
-        backgroundColor: theme.color.primary,
-      },
-    });
-  };
-
-  listener(currentTheme);
-
-  addThemeChangingListener(listener);
-
-  return () => removeThemeChangingListener(listener);
 };

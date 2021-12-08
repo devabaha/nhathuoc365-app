@@ -16,6 +16,11 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
 
+  [TypographyType.TITLE_LARGE_TERTIARY]: {
+    fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
+
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_LIGHT.textPrimary,
@@ -72,10 +77,15 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.textPrimary,
   },
 
+  [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
+
   [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.textTertiary,
@@ -88,6 +98,7 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.textTertiary,
   },
+
   [TypographyType.DESCRIPTION_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.textSecondary,

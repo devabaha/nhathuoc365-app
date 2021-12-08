@@ -1,18 +1,42 @@
 import React, {Component} from 'react';
 import {
   Modal,
-  TouchableOpacity,
-  Text,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
   BackHandler,
 } from 'react-native';
-
-import {CameraPermission, PhotoLibraryPermission} from '../../../../helper/permissionHelper';
+// helpers
+import {
+  CameraPermission,
+  PhotoLibraryPermission,
+} from 'app-helper/permissionHelper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Container,
+  Typography,
+  TextButton,
+  IconButton,
+} from 'src/components/base';
 
 class ModalGalleryOptionAndroid extends Component {
+  static contextType = ThemeContext;
+
   state = {};
+
+  optionTypoProps = {
+    type: TypographyType.TITLE_MEDIUM,
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.visible !== this.props.visible) {
@@ -59,12 +83,31 @@ class ModalGalleryOptionAndroid extends Component {
         PhotoLibraryPermission.openPermissionAskingModal();
       }, 500);
     }
-  }
+  };
 
   handleBackPress = () => {
     this.props.onClose();
     return false;
   };
+
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
+  get titleContainerStyle() {
+    return mergeStyles(styles.titleContainer, {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get iconStyle() {
+    return mergeStyles(styles.icon, {
+      color: this.theme.color.textSecondary,
+    });
+  }
 
   render() {
     return (
@@ -74,18 +117,34 @@ class ModalGalleryOptionAndroid extends Component {
         visible={this.props.visible}
         onRequestClose={this.props.onRequestClose}>
         <TouchableWithoutFeedback onPress={this.props.onClose}>
-          <View style={styles.container}>
-            <View style={styles.content}>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Chọn ảnh từ</Text>
-              </View>
-              <TouchableOpacity onPress={this.handleOpenCamera}>
-                <Text style={styles.option}>Camera</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleOpenLibrary}>
-                <Text style={styles.option}>Mở thư viện</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={this.containerStyle}>
+            <Container safeLayout style={styles.content}>
+              <Container noBackground row style={this.titleContainerStyle}>
+                <Typography
+                  type={TypographyType.TITLE_LARGE_TERTIARY}
+                  style={styles.title}>
+                  {this.props.t('selectPhotoLabel')}
+                </Typography>
+                <IconButton
+                  bundle={BundleIconSetName.IONICONS}
+                  name="close"
+                  iconStyle={this.iconStyle}
+                  onPress={this.props.onClose}
+                />
+              </Container>
+              <TextButton
+                onPress={this.handleOpenCamera}
+                titleStyle={styles.option}
+                typoProps={this.optionTypoProps}>
+                {this.props.t('cameraLabel')}
+              </TextButton>
+              <TextButton
+                onPress={this.handleOpenLibrary}
+                titleStyle={styles.option}
+                typoProps={this.optionTypoProps}>
+                {this.props.t('photoLibraryLabel')}
+              </TextButton>
+            </Container>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -97,30 +156,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,.3)',
   },
   content: {
-    backgroundColor: '#fff',
     paddingHorizontal: 15,
   },
-  titleContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
-  },
+  titleContainer: {},
   title: {
-    fontSize: 20,
     paddingVertical: 15,
-    color: '#888',
     textTransform: 'uppercase',
     fontWeight: 'bold',
     letterSpacing: 1,
+    flex: 1,
   },
   option: {
     width: '100%',
     paddingVertical: 10,
-    fontSize: 16,
-    color: '#333',
+  },
+  icon: {
+    fontSize: 26,
   },
 });
 
-export default ModalGalleryOptionAndroid;
+export default withTranslation()(ModalGalleryOptionAndroid);

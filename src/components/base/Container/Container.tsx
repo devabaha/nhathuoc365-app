@@ -6,6 +6,8 @@ import Reanimated from 'react-native-reanimated';
 import {ContainerProps} from '.';
 import {Ref} from '..';
 
+import appConfig from 'app-config';
+
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
 
@@ -43,6 +45,9 @@ const createStyles = (theme) => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    safeLayout: {
+      paddingBottom: appConfig.device.bottomSpace,
+    },
   });
 
   return styles;
@@ -52,6 +57,7 @@ const Container = forwardRef(
   (
     {
       children,
+      safeLayout,
       reanimated,
       animated,
       style,
@@ -73,7 +79,7 @@ const Container = forwardRef(
       let additionalStyle: any = {};
       centerVertical =
         centerVertical !== undefined ? centerVertical : row ? true : undefined;
-        
+
       if (flex) {
         additionalStyle = {...additionalStyle, ...baseStyles.flex};
       }
@@ -108,7 +114,7 @@ const Container = forwardRef(
           : content
           ? baseStyles.contentContainer
           : baseStyles.surface,
-        additionalStyle,
+        [safeLayout && baseStyles.safeLayout, additionalStyle],
       );
     }, [theme, row, center, centerHorizontal, centerVertical, noBackground]);
 

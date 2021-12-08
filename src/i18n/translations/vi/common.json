@@ -290,5 +290,8 @@
   "cantOpenLink": "Không mở được link!",
   "noStoreFound": "Không tìm thấy cửa hàng",
   "map": "Bản đồ",
-  "goShopping": "Vào mua hàng"
+  "goShopping": "Vào mua hàng",
+  "selectPhotoLabel": "Chọn ảnh",
+  "cameraLabel": "Camera",
+  "photoLibraryLabel": "Thư viện ảnh"
 }

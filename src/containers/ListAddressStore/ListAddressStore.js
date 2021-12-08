@@ -13,8 +13,9 @@ import {
   LOCATION_PERMISSION_TYPE,
   REQUEST_RESULT_TYPE,
 } from 'app-helper/permissionHelper';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // context
-import {updateNavbarTheme, useTheme} from 'src/Themes/Theme.context';
+import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType} from 'src/components/base';
 // entities
@@ -61,7 +62,7 @@ const ListAddressStore = ({
 
   useEffect(() => {
     if (!navigation) return;
-    
+
     const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
 
     return updateNavBarDisposer;

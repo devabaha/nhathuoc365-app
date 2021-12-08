@@ -1,33 +1,37 @@
-import React, {useCallback, useRef, useState, useEffect} from 'react';
-import {
-  Alert,
-  BackHandler,
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-
-import appConfig from 'app-config';
-
-import ScreenWrapper from 'src/components/ScreenWrapper';
-import {Actions} from 'react-native-router-flux';
-import {renderGridImages} from 'app-helper/social';
-import PleasePost from '../components/PleasePost';
-import store from 'app-store';
+import React, {useCallback, useRef, useState, useEffect, useMemo} from 'react';
+import {Alert, BackHandler, Keyboard, StyleSheet, View} from 'react-native';
 import {reaction} from 'mobx';
-import MultilineTextInput from './MultilineTextInput';
+import {Actions} from 'react-native-router-flux';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {openCamera, openLibrary} from 'app-helper/image';
 import {formatPostStoreData} from 'app-helper/social';
-import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
+import {renderGridImages} from 'app-helper/social';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {MAX_TOTAL_UPLOAD_IMAGES} from 'src/constants/social/post';
+import {TypographyType} from 'src/components/base';
+// custom components
+import {
+  AppFilledButton,
+  BaseButton,
+  ButtonRoundedType,
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+} from 'src/components/base';
+import PleasePost from '../components/PleasePost';
+import MultilineTextInput from './MultilineTextInput';
+import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
 
 const styles = StyleSheet.create({
   list: {
     flexGrow: 1,
-    backgroundColor: '#fff',
   },
 
   block: {
@@ -37,13 +41,9 @@ const styles = StyleSheet.create({
   btnPostContainer: {
     padding: 10,
     paddingVertical: 5,
-    borderRadius: 4,
     right: 12,
   },
-  btnPost: {
-    color: '#fff',
-    fontSize: 16,
-  },
+  btnPost: {},
 
   extraListBottom: {
     width: '100%',
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
 
   overImagesContainer: {
     position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,.7)',
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -59,18 +58,16 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   overImagesTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
   },
   overImagesDescription: {
     textAlign: 'center',
-    color: '#eee',
     marginTop: 15,
   },
 });
 
 const CreatePost = ({
+  navigation,
   // group = {},
   groupId,
   postId,
@@ -82,6 +79,8 @@ const CreatePost = ({
   images: imagesProp,
   isOpenImagePicker: isOpenImagePickerProp = false,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['common', 'social']);
 
   const isUnmounted = useRef(false);
@@ -102,6 +101,14 @@ const CreatePost = ({
   const [editable, setEditable] = useState(true);
 
   const [keyboardHeight, setKeyboardHeight] = useState(store.keyboardTop);
+
+  useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -219,30 +226,6 @@ const CreatePost = ({
     }
   };
 
-  const renderPostBtn = () => {
-    const isDisabled =
-      (!contentText && !images?.length) ||
-      images.length > MAX_TOTAL_UPLOAD_IMAGES;
-
-    const isEditMode = !!contentTextProp || !!imagesProp;
-
-    return (
-      <TouchableOpacity
-        onPress={handlePost}
-        disabled={isDisabled}
-        style={[
-          styles.btnPostContainer,
-          {
-            backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
-          },
-        ]}>
-        <Text style={styles.btnPost}>
-          {isEditMode ? t('save') : t('social:post')}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
   const clearRequests = useCallback(() => {
     uploadRequest.current.map((request) => request?.cancel && request.cancel());
   }, [uploadRequest.current]);
@@ -269,7 +252,7 @@ const CreatePost = ({
 
   const goToEditImages = useCallback(() => {
     Actions.push(appConfig.routes.modalEditImages, {
-      title: 'Chỉnh sửa',
+      title: t('social:createPostEditImagesTitle'),
       images,
       maxImages: MAX_TOTAL_UPLOAD_IMAGES,
       onOverMaxImages: (images, max) => {
@@ -331,31 +314,79 @@ const CreatePost = ({
     }
   };
 
-  const renderOveImagesMessage = () => {
+  const isOverNumberOfUploadImages =
+    !!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES;
+
+  const renderPostBtn = () => {
+    const isDisabled =
+      (!contentText && !images?.length) ||
+      images.length > MAX_TOTAL_UPLOAD_IMAGES;
+
+    const isEditMode = !!contentTextProp || !!imagesProp;
+
     return (
-      !!images?.length &&
-      images.length > MAX_TOTAL_UPLOAD_IMAGES && (
-        <View style={styles.overImagesContainer}>
-          <Text style={styles.overImagesTitle}>
+      <AppFilledButton
+        onPress={handlePost}
+        disabled={isDisabled}
+        rounded={ButtonRoundedType.EXTRA_SMALL}
+        style={styles.btnPostContainer}>
+        {isEditMode ? t('save') : t('social:post')}
+      </AppFilledButton>
+    );
+  };
+
+  const renderOverLengthImagesMessage = () => {
+    return (
+      isOverNumberOfUploadImages && (
+        <View style={overImagesContainerStyle}>
+          <Typography
+            type={TypographyType.TITLE_LARGE}
+            style={overImagesTitleStyle}>
             {t('social:maxTotalPostImagesWarning')}
-          </Text>
-          <Text style={styles.overImagesDescription}>
+          </Typography>
+          <Typography
+            type={TypographyType.DESCRIPTION_MEDIUM}
+            style={overImagesDescriptionStyle}>
             {t('social:maxTotalPostImagesDescription', {
               max: MAX_TOTAL_UPLOAD_IMAGES,
             })}
-          </Text>
+          </Typography>
         </View>
       )
     );
   };
 
-  //   console.log('render');
+  const overImagesContainerStyle = useMemo(() => {
+    return mergeStyles(styles.overImagesContainer, {
+      backgroundColor: theme.color.overlay60,
+    });
+  }, [theme]);
+
+  const overImagesTitleStyle = useMemo(() => {
+    return mergeStyles(styles.overImagesTitle, {
+      color: theme.color.onOverlay,
+    });
+  }, [theme]);
+
+  const overImagesDescriptionStyle = useMemo(() => {
+    return mergeStyles(styles.overImagesDescription, {
+      color: theme.color.onOverlay,
+    });
+  }, [theme]);
+
+  const listStyle = useMemo(() => {
+    return mergeStyles(styles.list, {
+      backgroundColor: theme.color.surface,
+    });
+  }, [theme]);
+
   return (
     <ScreenWrapper>
       <ScrollView
+        safeLayout={!store.keyboardTop}
         ref={refScrollView}
         scrollEventThrottle={16}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={listStyle}
         keyboardShouldPersistTaps="handled"
         onLayout={handleListLayout}
         onScrollBeginDrag={handleScrollBeginDrag}
@@ -381,10 +412,13 @@ const CreatePost = ({
               },
             ]}
           />
-          <TouchableOpacity onPress={goToEditImages} style={styles.block}>
+          <BaseButton
+            disabled={!isOverNumberOfUploadImages}
+            onPress={goToEditImages}
+            style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
-            {renderOveImagesMessage()}
-          </TouchableOpacity>
+            {renderOverLengthImagesMessage()}
+          </BaseButton>
         </View>
 
         <View style={[styles.extraListBottom, {height: keyboardHeight}]} />
