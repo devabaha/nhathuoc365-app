@@ -6,16 +6,13 @@ import {BASE_COLOR_DARK} from '../color';
 import {Typography} from '../interface';
 
 export const TYPOGRAPHY_DARK: Typography = {
-  [TypographyType.LABEL_DISPLAY_SMALL]: {
-    fontSize: TypographyFontSize.DISPLAY_SMALL,
-    color: BASE_COLOR_DARK.textPrimary,
-  },
-
+  // TITLE
+  // PRIMARY
   [TypographyType.TITLE_MEDIUM_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
-
+  // TERTIARY
   [TypographyType.TITLE_LARGE_TERTIARY]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,
@@ -24,7 +21,7 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_DARK.textTertiary,
   },
-
+  // NORMAL
   [TypographyType.TITLE_LARGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_DARK.textPrimary,
@@ -37,7 +34,8 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.textPrimary,
   },
-
+  // LABEL
+  // PRIMARY
   [TypographyType.LABEL_HUGE_PRIMARY]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_DARK.primaryHighlight,
@@ -58,12 +56,21 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_EXTRA_SMALL,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
-
+  // TERTIARY
   [TypographyType.LABEL_MEDIUM_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,
   },
-
+  // SECONDARY
+  [TypographyType.LABEL_MEDIUM_SECONDARY]: {
+    fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_DARK.textSecondary,
+  },
+  // NORMAL
+  [TypographyType.LABEL_DISPLAY_SMALL]: {
+    fontSize: TypographyFontSize.DISPLAY_SMALL,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
   [TypographyType.LABEL_HUGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_DARK.textPrimary,
@@ -92,7 +99,8 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_DARK.textPrimary,
   },
-
+  // DESCRIPTION
+  // PRIMARY
   [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.primaryHighlight,
@@ -101,7 +109,7 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
-
+  // TERTIARY
   [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,
@@ -114,7 +122,7 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.textTertiary,
   },
-
+  // NORMAL
   [TypographyType.DESCRIPTION_MEDIUM]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textSecondary,
@@ -127,7 +135,7 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.textSecondary,
   },
-
+  // OTHERS
   [TypographyType.BUTTON_TEXT]: {
     fontSize: 16,
     textTransform: 'uppercase',

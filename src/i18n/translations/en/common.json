@@ -291,7 +291,12 @@
   "noStoreFound": "No stores found",
   "map": "Map",
   "goShopping": "Go shopping",
+  "enterToSearch": "Search...",
   "selectPhotoLabel": "Select photo",
   "cameraLabel": "Camera",
-  "photoLibraryLabel": "Photo Library"
+  "photoLibraryLabel": "Photo library",
+  "selectProvinceCity": "Select province/ city",
+  "selectDistrict": "Select district",
+  "selectWard": "Select ward"
+
 }

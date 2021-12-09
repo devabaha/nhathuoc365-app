@@ -1,25 +1,34 @@
-import React, {useRef, useEffect, useState} from 'react';
-import {StyleSheet, FlatList} from 'react-native';
+import React, {useRef, useEffect, useState, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import {useTranslation} from 'react-i18next';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-
+import useIsMounted from 'react-is-mounted-hook';
+import {debounce} from 'lodash';
+// types
+import {ModalComboAddressProps} from '.';
+// configs
 import appConfig from 'app-config';
-
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+//constants
+import {COMBO_LOCATION_TYPE, LOCATION_HEIGHT} from './constants';
+// emtities
+import {APIRequest} from '../../network/Entity';
+// custom components
 import NavBar from './NavBar';
 import Location from './Location';
 import Loading from '../Loading';
 import Search from './Search';
+import {FlatList} from 'src/components/base';
 
-import {ModalComboAddressProps} from '.';
-
-import APIHandler from '../../network/APIHandler';
-import {APIRequest} from '../../network/Entity';
-
-import {COMBO_LOCATION_TYPE, LOCATION_HEIGHT} from './constants';
-import {debounce} from 'lodash';
-import useIsMounted from 'react-is-mounted-hook';
+const PROVINCE_TYPE_QUERRY_PARAM = 'province';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,11 +36,8 @@ const styles = StyleSheet.create({
   },
   modal: {
     height: appConfig.device.height * 0.8,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  contentContainer: {
-    paddingBottom: appConfig.device.bottomSpace,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
 });
 
@@ -44,12 +50,14 @@ const ModalComboLocation = ({
   provinceName,
   districtName,
   wardsName,
-  modalStyle,
+  modalStyle: modalStyleProp,
   onCloseModal,
   onSelectProvince,
   onSelectDistrict,
   onSelectWards,
 }: ModalComboAddressProps) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const getDefaultLocation = () => {
     let id: any = '';
@@ -148,11 +156,11 @@ const ModalComboLocation = ({
   const getTitle = () => {
     switch (selectedType) {
       case COMBO_LOCATION_TYPE.PROVINCE:
-        return 'Chọn tỉnh/ thành phố';
+        return t('common:selectProvinceCity');
       case COMBO_LOCATION_TYPE.DISTRICT:
-        return 'Chọn quận/ huyện';
+        return t('common:selectDistrict');
       case COMBO_LOCATION_TYPE.WARDS:
-        return 'Chọn phường/ xã';
+        return t('common:selectWard');
     }
   };
 
@@ -167,7 +175,7 @@ const ModalComboLocation = ({
     }
 
     if (type === COMBO_LOCATION_TYPE.PROVINCE) {
-      data.type = 'province';
+      data.type = PROVINCE_TYPE_QUERRY_PARAM;
     }
 
     getLocationRequest.data = APIHandler.user_location(data);
@@ -323,11 +331,25 @@ const ModalComboLocation = ({
     );
   };
 
+  const modalStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.modal,
+        {
+          borderTopLeftRadius: theme.layout.borderRadiusHuge,
+          borderTopRightRadius: theme.layout.borderRadiusHuge,
+          backgroundColor: theme.color.surface,
+        },
+      ],
+      modalStyleProp,
+    );
+  }, [theme, modalStyleProp]);
+
   return (
     <ModalBox
       entry="bottom"
       position="bottom"
-      style={[styles.modal, modalStyle]}
+      style={modalStyle}
       backButtonClose
       ref={refModal}
       isOpen
@@ -342,9 +364,9 @@ const ModalComboLocation = ({
       />
       <Search value={searchValue} onChangeText={onChangeSearch} />
       <FlatList
+        safeLayout
         ref={refList}
         bounces={canListBounce}
-        contentContainerStyle={styles.contentContainer}
         data={!!searchLocations.length ? searchLocations : locations}
         renderItem={renderLocation}
         getItemLayout={(data, index) => ({

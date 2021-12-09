@@ -11,6 +11,8 @@ import {mergeStyles} from 'src/Themes/helper';
 import EventTracker from 'app-helper/EventTracker';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -297,38 +299,39 @@ class CreateAddress extends Component {
 
   handlePressComboAddress(data, type, location, parentId) {
     Keyboard.dismiss();
-
-    Actions.push(appConfig.routes.modalComboLocation, {
-      type,
-      parentId,
-      provinceId: this.state.province_id,
-      districtId: this.state.district_id,
-      wardsId: this.state.ward_id,
-      provinceName: this.state.province_name,
-      districtName: this.state.district_name,
-      wardsName: this.state.ward_name,
-      onCloseModal: (province, district, wards) => {
-        // console.log(province, district, wards);
-      },
-      onSelectProvince: (province) => {
-        this.setState({
-          province_id: province.id,
-          province_name: province.name,
-        });
-      },
-      onSelectDistrict: (district) => {
-        this.setState({
-          district_id: district.id,
-          district_name: district.name,
-        });
-      },
-      onSelectWards: (wards) => {
-        this.setState({
-          ward_id: wards.id,
-          ward_name: wards.name,
-        });
-      },
-    });
+    setTimeout(() => {
+      push(appConfig.routes.modalComboLocation, {
+        type,
+        parentId,
+        provinceId: this.state.province_id,
+        districtId: this.state.district_id,
+        wardsId: this.state.ward_id,
+        provinceName: this.state.province_name,
+        districtName: this.state.district_name,
+        wardsName: this.state.ward_name,
+        onCloseModal: (province, district, wards) => {
+          // console.log(province, district, wards);
+        },
+        onSelectProvince: (province) => {
+          this.setState({
+            province_id: province.id,
+            province_name: province.name,
+          });
+        },
+        onSelectDistrict: (district) => {
+          this.setState({
+            district_id: district.id,
+            district_name: district.name,
+          });
+        },
+        onSelectWards: (wards) => {
+          this.setState({
+            ward_id: wards.id,
+            ward_name: wards.name,
+          });
+        },
+      });
+    }, 200);
   }
 
   _onSave() {

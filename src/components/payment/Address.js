@@ -451,7 +451,7 @@ class Address extends Component {
     const {t} = this.props;
 
     return (
-      <ScreenWrapper safeLayout>
+      <ScreenWrapper safeLayout={single}>
         {this.state.loading && <Loading center />}
         {single && (
           <Container row style={this.paymentNavStyle}>
@@ -504,6 +504,7 @@ class Address extends Component {
         )}
 
         <ScrollView
+          safeLayout={!single}
           ref={this.refScrollView}
           contentContainerStyle={{
             paddingTop: single ? 15 : 0,

@@ -49,6 +49,7 @@ export const SYSTEM_DARK = {
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
+  contentBackgroundPrimary: rgbaToRgb(hexToRgba(SYSTEM_COMMON.primary, 0.8)),
   contentBackgroundWeak: CORE.grey800,
   contentBackground: SYSTEM_COMMON.neutral,
   contentBackgroundStrong: CORE.grey600,

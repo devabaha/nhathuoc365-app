@@ -291,7 +291,11 @@
   "noStoreFound": "Không tìm thấy cửa hàng",
   "map": "Bản đồ",
   "goShopping": "Vào mua hàng",
+  "enterToSearch": "Nhập để tìm kiếm...",
   "selectPhotoLabel": "Chọn ảnh",
   "cameraLabel": "Camera",
-  "photoLibraryLabel": "Thư viện ảnh"
+  "photoLibraryLabel": "Thư viện ảnh",
+  "selectProvinceCity": "Chọn tỉnh/ thành phố",
+  "selectDistrict": "Chọn quận/ huyện",
+  "selectWard": "Chọn phường/ xã"
 }

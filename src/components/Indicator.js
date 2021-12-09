@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 import PropTypes from 'prop-types';
-//3 parties
-import {ActivityIndicator} from './base';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {ActivityIndicator} from './base';
 
 const FADE_SHOW_VALUE = 1;
 const FADE_HIDE_VALUE = 0;
