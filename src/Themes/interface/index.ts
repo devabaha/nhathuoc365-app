@@ -20,6 +20,7 @@ export type Typography = {
   [TypographyType.TITLE_SEMI_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
 
+  [TypographyType.LABEL_HUGE_PRIMARY]: Style;
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
   [TypographyType.LABEL_MEDIUM_PRIMARY]: Style;
   [TypographyType.LABEL_SMALL_PRIMARY]: Style;
@@ -27,6 +28,7 @@ export type Typography = {
 
   [TypographyType.LABEL_MEDIUM_TERTIARY]: Style;
 
+  [TypographyType.LABEL_HUGE]?: Style;
   [TypographyType.LABEL_LARGE]?: Style;
   [TypographyType.LABEL_MEDIUM]?: Style;
   [TypographyType.LABEL_SEMI_MEDIUM]?: Style;

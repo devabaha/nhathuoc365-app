@@ -38,6 +38,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     color: BASE_COLOR_DARK.textPrimary,
   },
 
+  [TypographyType.LABEL_HUGE_PRIMARY]: {
+    fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.primaryHighlight,
+  },
   [TypographyType.LABEL_LARGE_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.primaryHighlight,
@@ -60,6 +64,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     color: BASE_COLOR_DARK.textTertiary,
   },
 
+  [TypographyType.LABEL_HUGE]: {
+    fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
   [TypographyType.LABEL_LARGE]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.textPrimary,
