@@ -11,6 +11,8 @@ import {openCamera, openLibrary} from 'app-helper/image';
 import {formatPostStoreData} from 'app-helper/social';
 import {renderGridImages} from 'app-helper/social';
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -251,26 +253,30 @@ const CreatePost = ({
   };
 
   const goToEditImages = useCallback(() => {
-    Actions.push(appConfig.routes.modalEditImages, {
-      title: t('social:createPostEditImagesTitle'),
-      images,
-      maxImages: MAX_TOTAL_UPLOAD_IMAGES,
-      onOverMaxImages: (images, max) => {
-        Alert.alert(
-          t('social:maxTotalPostImagesWarning'),
-          t('social:maxTotalPostImagesDescription', {max}),
-          [
-            {
-              text: t('social:maxTotalPostImagesConfirm'),
-            },
-          ],
-        );
+    push(
+      appConfig.routes.modalEditImages,
+      {
+        title: t('social:createPostEditImagesTitle'),
+        images,
+        maxImages: MAX_TOTAL_UPLOAD_IMAGES,
+        onOverMaxImages: (images, max) => {
+          Alert.alert(
+            t('social:maxTotalPostImagesWarning'),
+            t('social:maxTotalPostImagesDescription', {max}),
+            [
+              {
+                text: t('social:maxTotalPostImagesConfirm'),
+              },
+            ],
+          );
+        },
+        onChangeImages: (images) => {
+          setImages(images);
+        },
       },
-      onChangeImages: (images) => {
-        setImages(images);
-      },
-    });
-  }, [images]);
+      theme,
+    );
+  }, [images, theme]);
 
   const handleListLayout = (e) => {
     containerHeight.current = e.nativeEvent.layout.height;
