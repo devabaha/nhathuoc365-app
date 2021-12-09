@@ -53,6 +53,7 @@ export const SYSTEM_LIGHT = {
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 
+  contentBackgroundPrimary: SYSTEM_COMMON.primary20,
   contentBackgroundWeak: CORE.grey200,
   contentBackground: CORE.grey300,
   contentBackgroundStrong: CORE.grey400,

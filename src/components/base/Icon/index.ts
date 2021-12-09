@@ -25,6 +25,7 @@ export interface IconProps extends RNIconProps {
   animated?: boolean;
   primary?: boolean;
   secondary?: boolean;
+  neutral?: boolean;
   disabled?: boolean;
 
   bundle?: BUNDLE_ICON_TYPE;

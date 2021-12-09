@@ -1,28 +1,26 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableHighlight} from 'react-native';
-import Container from '../../../components/Layout/Container';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import appConfig from 'app-config';
-import {LocationProps} from './index';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// types
+import {LocationProps} from '.';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {LOCATION_HEIGHT} from '../constants';
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon, BaseButton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     height: LOCATION_HEIGHT,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
+    paddingHorizontal: 15,
+    flex: 1,
   },
   title: {
     flex: 1,
     paddingRight: 15,
-  },
-  icon: {
-    fontSize: 20,
-    color: appConfig.colors.primary,
-  },
-  containerSelected: {
-    //@ts-ignore
-    backgroundColor: hexToRgba(appConfig.colors.primary, 0.1),
   },
 });
 
@@ -32,18 +30,48 @@ const Location = ({
 
   onPress,
 }: LocationProps) => {
+  const {theme} = useTheme();
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.container,
+        {
+          borderBottomWidth: theme.layout.borderWidthSmall,
+          borderColor: theme.color.border,
+        },
+      ],
+      selected && {backgroundColor: theme.color.contentBackgroundPrimary},
+    );
+  }, [theme, selected]);
+
+  const iconStyle = useMemo(() => {
+    return {color: theme.color.primaryHighlight, fontSize: 20};
+  }, [theme]);
+
   return (
-    <TouchableHighlight onPress={onPress} underlayColor="rgba(0,0,0,.05)">
-      <Container
-        paddingHorizontal={15}
-        row
-        style={[styles.container, selected && styles.containerSelected]}>
-        <Text style={styles.title} numberOfLines={2}>
-          {title}
-        </Text>
-        {selected && <AntDesign name="check" style={styles.icon} />}
-      </Container>
-    </TouchableHighlight>
+    <Container row>
+      <BaseButton
+        useTouchableHighlight
+        onPress={onPress}
+        style={containerStyle}>
+        <Container noBackground flex row>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={styles.title}
+            numberOfLines={2}>
+            {title}
+          </Typography>
+          {selected && (
+            <Icon
+              bundle={BundleIconSetName.ANT_DESIGN}
+              name="check"
+              style={iconStyle}
+            />
+          )}
+        </Container>
+      </BaseButton>
+    </Container>
   );
 };
 

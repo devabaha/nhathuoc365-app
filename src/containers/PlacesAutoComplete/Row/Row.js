@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Typography, Container, Icon} from 'src/components/base';
 
 class Row extends Component {
   state = {};
@@ -32,57 +35,63 @@ class Row extends Component {
     });
 
     return (
-      <Text numberOfLines={1} style={[styles.title, this.props.titleStyle]}>
-        <Text style={styles.active}>{searchingText || remainText}</Text>
+      <Typography
+        type={TypographyType.LABEL_LARGE}
+        numberOfLines={1}
+        style={this.props.titleStyle}>
+        <Typography type={TypographyType.LABEL_MEDIUM_SECONDARY}>
+          {searchingText || remainText}
+        </Typography>
         {searchingText ? remainText : ''}
-      </Text>
+      </Typography>
     );
   }
 
   render() {
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <Container
+        noBackground
+        row
+        style={[styles.container, this.props.containerStyle]}>
         <View style={styles.infor}>
           {this.renderTitle()}
           {!!this.props.description && (
-            <Text numberOfLines={1} style={styles.description}>
+            <Typography
+              type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+              numberOfLines={1}
+              style={styles.description}>
               {this.props.description}
-            </Text>
+            </Typography>
           )}
         </View>
-        <Icon name="arrow-up-left" style={styles.icon} />
-      </View>
+        <Icon
+          bundle={BundleIconSetName.FEATHER}
+          name="arrow-up-left"
+          style={styles.icon}
+          neutral
+        />
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   infor: {
-    flex: 1
-  },
-  title: {
-    fontSize: 16,
-    color: '#242424'
-  },
-  active: {
-    color: '#666'
+    flex: 1,
   },
   description: {
     marginTop: 3,
-    fontSize: 13,
-    color: '#909090'
   },
   icon: {
     fontSize: 20,
     marginLeft: 15,
-    color: '#666'
-  }
+  },
 });
 
 export default Row;

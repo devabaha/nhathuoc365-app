@@ -1,26 +1,39 @@
 import React, {Component} from 'react';
 import {
   StyleSheet,
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Animated,
   Easing,
   Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
 import Modal from 'react-native-modalbox';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Row from './Row';
+// configs
 import appConfig from 'app-config';
-import EventTracker from '../../helper/EventTracker';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import Row from './Row';
+import {
+  Container,
+  IconButton,
+  ScreenWrapper,
+  Typography,
+} from 'src/components/base';
 
 const API_KEYS = 'AIzaSyBZfS1WyeCgdWk9D6RVMT65RXl5ZOptJAQ';
 
 class PlacesAutoComplete extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     minLengthToSearch: PropTypes.number,
     onPressItem: PropTypes.func,
@@ -39,6 +52,10 @@ class PlacesAutoComplete extends Component {
   refAutoComplete = React.createRef();
   ref_modal = React.createRef();
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.showResult !== this.state.showResult) {
@@ -173,6 +190,58 @@ class PlacesAutoComplete extends Component {
     Keyboard.dismiss();
   }
 
+  get modalStyle() {
+    return mergeStyles(styles.modal, {
+      borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+      borderTopRightRadius: this.theme.layout.borderRadiusHuge,
+    });
+  }
+
+  get headerContainerStyle() {
+    return mergeStyles(styles.headerContainer, {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get textInputContainerStyle() {
+    return mergeStyles(styles.textInputContainer, {
+      backgroundColor: this.theme.color.surface,
+      borderColor: this.theme.color.persistPrimary,
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    });
+  }
+
+  get textInputStyle() {
+    return mergeStyles(styles.textInput, {
+      backgroundColor: this.theme.color.surface,
+      color: this.theme.color.textPrimary,
+    });
+  }
+
+  get contentContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.surface,
+      paddingBottom: appConfig.device.bottomSpace,
+    };
+  }
+
+  get rowContentPredefinedStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+    };
+  }
+  get clearBtnStyle() {
+    return {
+      color: this.theme.color.textTertiary,
+      fontSize: 16,
+    };
+  }
+  get placeholderTextColor() {
+    return this.theme.color.placeholder;
+  }
+
   renderClearButton() {
     const extraStyle = {
       transform: [
@@ -188,9 +257,13 @@ class PlacesAutoComplete extends Component {
 
     return (
       <Animated.View style={[styles.clearContainer, extraStyle]}>
-        <TouchableOpacity onPress={this.clearText.bind(this)}>
-          <Icon name="close-circle" style={styles.clearIcon} />
-        </TouchableOpacity>
+        <IconButton
+          name="close-circle"
+          bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+          iconStyle={this.clearBtnStyle}
+          neutral
+          onPress={this.clearText.bind(this)}
+        />
       </Animated.View>
     );
   }
@@ -238,7 +311,7 @@ class PlacesAutoComplete extends Component {
       <Modal
         entry="bottom"
         position="bottom"
-        style={[styles.modal]}
+        style={this.modalStyle}
         animationDuration={200}
         backButtonClose
         ref={this.ref_modal}
@@ -248,17 +321,22 @@ class PlacesAutoComplete extends Component {
         useNativeDriver
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
         <TouchableWithoutFeedback onPress={this.onPressOutSide.bind(this)}>
-          <SafeAreaView style={styles.container}>
-            <View style={styles.headerContainer}>
-              <TouchableOpacity
+          <ScreenWrapper style={styles.container}>
+            <Container style={styles.headerContainer}>
+              <IconButton
+                name="close"
+                bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
                 onPress={this.onClose}
-                style={styles.iconContainer}>
-                <Icon name="close" style={styles.icon} />
-              </TouchableOpacity>
-              <Text style={styles.heading}>
+                style={styles.iconContainer}
+                iconStyle={styles.icon}
+                neutral
+              />
+              <Typography
+                type={TypographyType.TITLE_LARGE}
+                style={styles.heading}>
                 {t('common:screen.searchPlaces.mainTitle')}
-              </Text>
-            </View>
+              </Typography>
+            </Container>
             <GooglePlacesAutocomplete
               ref={this.refAutoComplete}
               placeholder={t('input.placeholder')}
@@ -287,16 +365,18 @@ class PlacesAutoComplete extends Component {
               styles={{
                 row: styles.rowContainer,
                 loader: styles.loader,
-                textInputContainer: styles.textInputContainer,
-                textInput: styles.textInput,
+                textInputContainer: this.textInputContainerStyle,
+                textInput: this.textInputStyle,
                 description: styles.rowContent,
                 separator: styles.separator,
-                predefinedPlacesDescription: styles.rowContentPredefined,
+                predefinedPlacesDescription: this.rowContentPredefinedStyle,
                 listView: styles.listView,
               }}
+              contentContainerStyle={this.contentContainerStyle}
               enablePoweredByContainer={false}
               placeholderTextColor={appConfig.colors.placeholder}
               textInputProps={{
+                placeholderTextColor: this.placeholderTextColor,
                 clearButtonMode: 'never',
                 onChangeText: this.handleChangeText.bind(this),
                 onBlur: () => {},
@@ -332,7 +412,7 @@ class PlacesAutoComplete extends Component {
               // renderLeftButton={() => <Image source={require('path/custom/left-icon')} />}
               // renderRightButton={() => <Text>Custom text after the input</Text>}
             />
-          </SafeAreaView>
+          </ScreenWrapper>
         </TouchableWithoutFeedback>
       </Modal>
     );
@@ -341,9 +421,6 @@ class PlacesAutoComplete extends Component {
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     overflow: 'hidden',
     height: '70%',
   },
@@ -352,9 +429,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     padding: 15,
-    backgroundColor: '#fafafa',
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
     alignItems: 'center',
     zIndex: 1,
   },
@@ -369,12 +443,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 22,
-    color: '#666',
   },
   heading: {
-    fontSize: 20,
     textAlign: 'center',
-    color: '#333',
     fontWeight: '500',
   },
   footerContainer: {
@@ -389,27 +460,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   rowContainer: {
-    paddingVertical: 11,
+    padding: 0,
     height: null,
   },
   textInputContainer: {
     width: '100%',
-    backgroundColor: '#fff',
     height: null,
     marginTop: 0,
     borderTopWidth: 0,
     paddingVertical: 10,
-    shadowColor: '#000',
     borderLeftWidth: 5,
-    borderColor: hexToRgba(DEFAULT_COLOR, 0.9),
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-
-    elevation: 5,
   },
   textInput: {
     marginTop: 0,
@@ -418,16 +478,12 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     paddingRight: 30,
     borderRadius: 0,
-    backgroundColor: '#fff',
   },
   listView: {
     flex: 1,
   },
   rowContent: {
     width: '100%',
-  },
-  rowContentPredefined: {
-    color: DEFAULT_COLOR,
   },
   separator: {
     marginLeft: 13,
@@ -440,10 +496,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     alignSelf: 'center',
     right: 15,
-  },
-  clearIcon: {
-    fontSize: 16,
-    color: '#888',
   },
 });
 
