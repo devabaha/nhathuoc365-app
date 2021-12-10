@@ -10,7 +10,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType} from 'src/components/base';
-// customs components
+// custom components
 import {
   TextButton,
   Typography,

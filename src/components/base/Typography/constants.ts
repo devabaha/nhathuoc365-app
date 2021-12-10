@@ -18,6 +18,7 @@ export enum TypographyType {
   LABEL_EXTRA_SMALL_PRIMARY = 'labelExtraSmallPrimary',
 
   LABEL_MEDIUM_TERTIARY = 'labelMediumTertiary',
+  LABEL_TINY_TERTIARY = 'labelTinyTertiary',
 
   LABEL_MEDIUM_SECONDARY = 'labelMediumSecondary',
   

@@ -52,6 +52,9 @@ const Typography = forwardRef(
       onDisabled,
       type = TypographyType.LABEL_MEDIUM,
       style,
+
+      renderIconBefore,
+      renderIconAfter,
       children,
       ...props
     }: TypographyProps,
@@ -103,9 +106,13 @@ const Typography = forwardRef(
     }, [animated, reanimated]);
 
     return (
-      <TextComponent {...props} ref={ref} style={componentStyle}>
-        {children}
-      </TextComponent>
+      <>
+        {renderIconBefore && renderIconBefore(componentStyle)}
+        <TextComponent {...props} ref={ref} style={componentStyle}>
+          {children}
+        </TextComponent>
+        {renderIconAfter && renderIconAfter(componentStyle)}
+      </>
     );
   },
 );

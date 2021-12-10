@@ -38,6 +38,7 @@ export type Typography = {
   [TypographyType.LABEL_SMALL]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
   [TypographyType.LABEL_TINY]?: Style;
+  [TypographyType.LABEL_TINY_TERTIARY]?: Style;
 
   [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]?: Style;
   [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
@@ -146,7 +147,7 @@ export type Color = {
   indicator: ColorValue;
 
   // Addition
-  cartTypes: {
+  cartType: {
     [type in CartType]: ColorValue;
   };
 
@@ -182,6 +183,7 @@ export type Color = {
   marigold: ColorValue;
   cherry: ColorValue;
   neutral1: ColorValue;
+  goldenYellow: ColorValue;
 };
 
 export type Layout = {

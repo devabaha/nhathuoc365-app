@@ -21,7 +21,7 @@ export const ADDITION_LIGHT = {
   youtube: '#FF0000',
 
   // CART TYPE COLOR
-  cartTypes: {
+  cartType: {
     [CartType.NORMAL]: '#B0C0F0',
     [CartType.DROP_SHIP]: '#FF9F1C',
     [CartType.BOOKING]: '#53917E',
@@ -75,4 +75,5 @@ export const ADDITION_LIGHT = {
   marigold: '#EEAA21',
   cherry: '#da3560',
   neutral1: '#dddddd',
+  goldenYellow: '#ffeb00',
 };

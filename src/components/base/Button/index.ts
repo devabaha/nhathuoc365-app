@@ -78,10 +78,7 @@ export interface CommonButtonProps extends BaseButtonProps {
 }
 
 export interface SolidButtonProps extends CommonButtonProps {
-  rounded?:
-    | ButtonRoundedType.SMALL
-    | ButtonRoundedType.MEDIUM
-    | ButtonRoundedType.LARGE;
+  rounded?: ButtonRoundedType;
 }
 
 export interface OutlinedButtonProps extends SolidButtonProps {}
@@ -106,4 +103,6 @@ export interface ImageButtonProps extends CommonButtonProps {
   children?: Children;
 }
 
-export interface TextButtonProps extends CommonButtonProps {}
+export interface TextButtonProps extends CommonButtonProps {
+  column?: boolean;
+}

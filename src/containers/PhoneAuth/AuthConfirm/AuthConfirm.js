@@ -9,7 +9,7 @@ import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
-// customs components
+// custom components
 import {
   Typography,
   Input,

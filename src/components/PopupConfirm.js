@@ -9,7 +9,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
-// customs components
+// custom components
 import {Typography, TextButton, Container, Icon} from 'src/components/base';
 
 const POPUP_TYPES = {

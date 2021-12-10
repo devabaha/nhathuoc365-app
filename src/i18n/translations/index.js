@@ -62,6 +62,8 @@ import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
 import vi_request from './vi/request.json';
 import en_request from './en/request.json';
+import vi_rating from './vi/rating.json';
+import en_rating from './en/rating.json';
 
 export default {
   [languages.vi.value]: {
@@ -96,6 +98,7 @@ export default {
     salesReport: vi_salesReport,
     progressTracking: vi_progressTracking,
     request: vi_request,
+    rating: vi_rating,
   },
   [languages.en.value]: {
     common: en_common,
@@ -129,5 +132,6 @@ export default {
     salesReport: en_salesReport,
     progressTracking: en_progressTracking,
     request: en_request,
+    rating: en_rating,
   },
 };
