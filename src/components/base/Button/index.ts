@@ -86,10 +86,10 @@ export interface FilledTonalButtonProps extends SolidButtonProps {}
 export interface FilledButtonProps extends SolidButtonProps {}
 
 export interface IconButtonProps extends CommonButtonProps, IconProps {
-  style: StyleProp<ViewStyle>;
-  iconStyle: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
+  iconStyle?: StyleProp<TextStyle>;
 
-  iconProps: IconProps;
+  iconProps?: Omit<IconProps, 'name'> & {name?: string};
 }
 
 export interface ImageButtonProps extends CommonButtonProps {

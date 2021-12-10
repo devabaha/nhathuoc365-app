@@ -1,15 +1,12 @@
-import React, {forwardRef, memo, useMemo} from 'react';
-import {StyleSheet, FlatList as RNFlatList, Animated} from 'react-native';
-
+import React, {memo, useMemo, forwardRef} from 'react';
+import {Animated, SectionList as RNSectionList, StyleSheet} from 'react-native';
 import Reanimated from 'react-native-reanimated';
-
 import {Theme} from 'src/Themes/interface';
-import {FlatListProps} from '.';
-import {Ref} from '..';
-
 import appConfig from 'app-config';
+import {Ref} from '..';
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+import {SectionListProps} from '.';
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
@@ -20,7 +17,7 @@ const createStyles = (theme: Theme) => {
   });
 };
 
-const FlatList = forwardRef(
+const SectionList = forwardRef(
   (
     {
       safeLayout,
@@ -28,7 +25,7 @@ const FlatList = forwardRef(
       animated,
       contentContainerStyle,
       ...props
-    }: FlatListProps,
+    }: SectionListProps,
     ref: Ref,
   ) => {
     const {theme} = useTheme();
@@ -45,10 +42,10 @@ const FlatList = forwardRef(
     const Wrapper: any = useMemo(
       () =>
         reanimated
-          ? Reanimated.createAnimatedComponent(FlatList)
+          ? Reanimated.createAnimatedComponent(SectionList)
           : animated
-          ? Animated.FlatList
-          : RNFlatList,
+          ? Animated.SectionList
+          : RNSectionList,
       [reanimated, animated],
     );
 
@@ -62,4 +59,4 @@ const FlatList = forwardRef(
   },
 );
 
-export default memo(FlatList);
+export default memo(SectionList);

@@ -1812,7 +1812,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="amazing_chat">
+                <Stack key={appConfig.routes.amazingChat}>
                   <Scene
                     key="amazing_chat_1"
                     hideNavBar={false}

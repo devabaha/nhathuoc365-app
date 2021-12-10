@@ -67,6 +67,7 @@ export const SYSTEM_LIGHT = {
   onPersistSecondary: CORE.onSecondary,
 
   primaryHighlight: SYSTEM_COMMON.primary,
+  onPrimaryHighlight: CORE.onPrimary,
   secondaryHighlight: SYSTEM_COMMON.secondary,
   surfaceHighlight: SYSTEM_COMMON.surface,
 

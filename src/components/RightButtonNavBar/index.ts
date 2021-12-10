@@ -3,15 +3,14 @@ import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 
 import {BundleIconSetName} from '../base/Icon/constants';
 import {ModalActionSheetProps} from '../ModalActionSheet';
-
-export type RightButtonNavBar = 'shopping_cart' | 'chat' | 'share';
+import {RightButtonNavbarType} from './constants';
 
 export interface RightButtonNavBarProps {
-  type: RightButtonNavBar;
+  type: RightButtonNavbarType;
   icon?: JSX.Element;
   iconBundle?: BundleIconSetName;
   iconName?: string;
-  touchableOpacity?: boolean;
+  touchableHighlight?: boolean;
   iconStyle?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   onPress?: Function;

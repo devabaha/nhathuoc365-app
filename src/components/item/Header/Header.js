@@ -220,7 +220,6 @@ class Header extends Component {
       return (
         <Animated.View key={index} style={narrowRightGapStyle}>
           <RightButtonNavBar
-            touchableOpacity
             type={btn.type}
             shareTitle={this.props.item.name}
             shareURL={this.props.item.url}

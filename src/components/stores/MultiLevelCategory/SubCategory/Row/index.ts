@@ -1,6 +1,6 @@
-import { GestureResponderEvent, StyleProp, ViewStyle } from "react-native";
+import {GestureResponderEvent, StyleProp, ViewStyle} from 'react-native';
 
-export { default } from "./Row";
+export {default} from './Row';
 
 export interface RowProps {
   image?: string;
@@ -16,4 +16,6 @@ export interface RowProps {
   headerContainerStyle?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   onPressTitle: (e: GestureResponderEvent) => void;
+  
+  children: any;
 }

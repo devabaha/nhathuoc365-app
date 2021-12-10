@@ -8,6 +8,4 @@ export interface FlatListProps extends RNFlatListProps<any> {
   safeLayout?: boolean;
   reanimated?: boolean;
   animated?: boolean;
-
-  children?: Children;
 }

@@ -73,9 +73,8 @@ export const ThemeProvider = React.memo<Props>((props) => {
 });
 // Creating a custom context consumer hook for function components
 export const useTheme = () => React.useContext(ThemeContext);
-export const getTheme: Theme | {} = (scope: {context: {theme: Theme}}) => {
-  if (scope !== undefined) {
-    return scope.context?.theme;
-  }
-  return {};
+export const getTheme: (scope: {context: {theme: Theme}}) => Theme = (
+  scope,
+) => {
+  return scope.context?.theme;
 };

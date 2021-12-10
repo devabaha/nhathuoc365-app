@@ -136,6 +136,7 @@ export type Color = {
   persistSecondary20: ColorValue;
   onPersistSecondary: ColorValue;
   primaryHighlight: ColorValue;
+  onPrimaryHighlight: ColorValue;
   secondaryHighlight: ColorValue;
   surfaceHighlight: ColorValue;
   persistTextPrimary: ColorValue;
@@ -196,6 +197,7 @@ export type Layout = {
   borderRadiusMedium: number;
   borderRadiusLarge: number;
   borderRadiusHuge: number;
+  borderRadiusGigantic: number;
 
   shadow: {
     shadowOffset: {

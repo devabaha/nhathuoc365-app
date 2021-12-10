@@ -95,6 +95,8 @@ class CreateAddress extends Component {
     }
   }
 
+  updateNavBarDisposer = () => {};
+
   get theme() {
     return getTheme(this);
   }

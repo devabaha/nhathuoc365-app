@@ -12,6 +12,7 @@ export const LAYOUT: Layout = {
   borderRadiusMedium: 8,
   borderRadiusLarge: 10,
   borderRadiusHuge: 15,
+  borderRadiusGigantic: 20,
 
   shadow: {
     shadowOffset: {

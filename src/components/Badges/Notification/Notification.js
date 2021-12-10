@@ -1,17 +1,29 @@
 import React, {PureComponent} from 'react';
-import {StyleSheet, Text, Animated, Easing} from 'react-native';
+import {StyleSheet, Animated, Easing} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 class Notification extends PureComponent {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     animation: false,
     show: false,
     alert: false,
-    color: 'red',
-    alertColor: 'red',
   };
   state = {};
   animatedShowValue = new Animated.Value(0);
   animatedNotifyValue = new Animated.Value(0);
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.animating();
@@ -71,13 +83,23 @@ class Notification extends PureComponent {
         style={[
           styles.alertContainer,
           {
-            borderColor: this.props.alertColor,
+            borderColor: this.alertColor,
+            borderWidth: this.theme.layout.borderWidthSmall,
+            borderRadius: this.theme.layout.borderRadiusSmall,
           },
           animatedAlerting,
         ]}>
         <Animated.View />
       </Animated.View>
     );
+  }
+
+  get alertColor() {
+    return this.props.alertColor || this.theme.color.danger;
+  }
+
+  get color() {
+    return this.props.color || this.theme.color.danger;
   }
 
   render() {
@@ -102,14 +124,17 @@ class Notification extends PureComponent {
           style={[
             styles.container,
             {
-              backgroundColor: this.props.color,
+              backgroundColor: this.color,
             },
             this.props.containerStyle,
           ]}>
           {this.renderAlert()}
-          <Text style={[styles.label, this.props.labelStyle]}>
+          <Typography
+            type={TypographyType.LABEL_TINY}
+            onPrimary
+            style={this.props.labelStyle}>
             {this.props.label}
-          </Text>
+          </Typography>
         </Animated.View>
       </Animated.View>
     );
@@ -132,17 +157,10 @@ const styles = StyleSheet.create({
     height: 15,
     minWidth: 15,
   },
-  label: {
-    color: '#fff',
-    fontSize: 10,
-  },
   alertContainer: {
     position: 'absolute',
     width: 10,
     height: 10,
-    borderColor: 'red',
-    borderWidth: 0.5,
-    borderRadius: 5,
   },
 });
 
