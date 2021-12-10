@@ -16,6 +16,7 @@ export type Typography = {
   [TypographyType.TITLE_LARGE_TERTIARY]?: Style;
   [TypographyType.TITLE_SEMI_LARGE_TERTIARY]?: Style;
 
+  [TypographyType.TITLE_HUGE]?: Style;
   [TypographyType.TITLE_LARGE]?: Style;
   [TypographyType.TITLE_SEMI_LARGE]?: Style;
   [TypographyType.TITLE_MEDIUM]?: Style;
