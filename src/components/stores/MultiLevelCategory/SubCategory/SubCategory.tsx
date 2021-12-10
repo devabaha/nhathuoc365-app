@@ -1,30 +1,38 @@
 import React, {Component} from 'react';
-import {Image} from 'react-native';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  SectionList,
-  FlatList,
-} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-
+import {withTranslation} from 'react-i18next';
+// types
 import {SubCategoryProps} from '.';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {CATEGORY_TYPE} from '../constants';
+import {
+  BundleIconSetName,
+  ImageButton,
+  TextButton,
+  TypographyType,
+} from 'src/components/base';
+// images
+//@ts-ignore
+import SVGEmptyBoxOpen from 'src/images/empty-box-open.svg';
+// custom components
 import Category from '../Category';
 import Row from './Row';
-//@ts-ignore
-import appConfig from 'app-config';
-import {CATEGORY_TYPE} from '../constants';
-import Container from '../../../Layout/Container';
-//@ts-ignore
-import SVGEmptyBoxOpen from '../../../../images/empty-box-open.svg';
-import NoResult from '../../../NoResult';
+import NoResult from 'src/components/NoResult';
+import {Container, Icon, FlatList, SectionList} from 'src/components/base';
 
 const MIN_ITEM_WIDTH = 120;
 const ITEMS_PER_ROW = 2;
-const CATEGORY_DIMENSIONS = ((appConfig.device.width - 1) * 3) / 4 / ITEMS_PER_ROW;
+const CATEGORY_DIMENSIONS =
+  ((appConfig.device.width - 1) * 3) / 4 / ITEMS_PER_ROW;
 
 const styles = StyleSheet.create({
   container: {
@@ -32,8 +40,9 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: appConfig.colors.primary,
+  },
+  headerIcon: {
+    fontSize: 16,
   },
   bannerContainer: {
     marginTop: 10,
@@ -45,19 +54,14 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   titleContainer: {
-    marginTop: 15,
-    marginBottom: 12,
+    paddingTop: 15,
+    paddingBottom: 13,
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
     flex: 1,
-  },
-  body: {
-    flex: 1,
-    backgroundColor: '#fcfcfc',
   },
   categoryWrapper: {
     justifyContent: 'center',
@@ -66,7 +70,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   categoryContainer: {
-    borderRadius: 8,
     borderBottomWidth: 0,
     overflow: 'hidden',
   },
@@ -75,26 +78,23 @@ const styles = StyleSheet.create({
     padding: 10,
     overflow: 'hidden',
   },
-  rowHeaderContainer: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 0.5,
-  },
   subCategoriesContainer: {
     flexGrow: 1,
     flexWrap: 'wrap',
-    flexDirection: 'row',
     borderBottomColor: '#eee',
     borderBottomWidth: 0.5,
   },
   contentContainerStyle: {},
-  icon: {
-    fontSize: 16,
-    color: '#777',
-  },
-
   noResultContainer: {
+    flex: 1,
+  },
+  noResultSectionListContainer: {
+    height: '80%',
+    flex: undefined,
+  },
+  noResultSectionListWithoutBannerContainer: {
     height: '100%',
+    flex: undefined,
   },
   noResult: {
     flexGrow: 1,
@@ -105,6 +105,8 @@ const styles = StyleSheet.create({
 });
 
 class SubCategory extends Component<SubCategoryProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     categories: [],
     image: '',
@@ -126,6 +128,10 @@ class SubCategory extends Component<SubCategoryProps> {
     subCategoriesWidth: 0,
     itemsPerRow: ITEMS_PER_ROW,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps: SubCategoryProps, nextState: any) {
     if (nextState !== this.state) {
@@ -189,6 +195,18 @@ class SubCategory extends Component<SubCategoryProps> {
     );
   }
 
+  renderRightIconSectionHeader = () => {
+    return (
+      <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
+        <Icon
+          bundle={BundleIconSetName.FONT_AWESOME}
+          name="angle-double-right"
+          style={this.headerIconStyle}
+        />
+      </Shimmer>
+    );
+  };
+
   renderSectionHeader = () => {
     const bannerLayout = this.state.bannerLayout.width && {
       width: this.state.bannerLayout.width,
@@ -196,39 +214,53 @@ class SubCategory extends Component<SubCategoryProps> {
     };
 
     return (
-      <View style={styles.header}>
+      <Container style={this.sectionHeaderStyle}>
         {!!this.props.image && (
-          <TouchableOpacity onPress={() => this.props.onPressBanner()}>
-            <View
-              onLayout={this.handleBannerLayout.bind(this)}
-              style={[styles.bannerContainer, bannerLayout]}>
-              <Image style={styles.banner} source={{uri: this.props.image}} />
-            </View>
-          </TouchableOpacity>
+          <View
+            onLayout={this.handleBannerLayout.bind(this)}
+            style={[styles.bannerContainer, bannerLayout]}>
+            <ImageButton
+              source={{uri: this.props.image}}
+              style={{flex: 1}}
+              imageStyle={styles.banner}
+              onPress={() => this.props.onPressBanner()}
+            />
+          </View>
         )}
-        <TouchableOpacity onPress={() => this.props.onPressTitle(null)}>
-          <Container row center style={styles.titleContainer}>
-            <Text style={styles.title}>{this.props.title}</Text>
-            <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
-              <FontAwesomeIcon name="angle-double-right" style={styles.icon} />
-            </Shimmer>
-          </Container>
-        </TouchableOpacity>
-      </View>
+        <TextButton
+          typoProps={{type: TypographyType.TITLE_MEDIUM}}
+          style={styles.titleContainer}
+          titleStyle={styles.title}
+          onPress={() => this.props.onPressTitle(null)}
+          renderIconRight={this.renderRightIconSectionHeader}>
+          {this.props.title}
+        </TextButton>
+      </Container>
     );
   };
 
   renderSectionFooter = ({section}) => {
-    return !section.data.length ? (
-      <View style={styles.noResultContainer}>
+    if (!!section.data?.length) {
+      return null;
+    }
+
+    const extraStyle = [
+      this.props.type === CATEGORY_TYPE.FIX_2_LEVEL &&
+        styles.noResultSectionListContainer,
+      !this.props.image && styles.noResultSectionListWithoutBannerContainer,
+    ];
+
+    return (
+      <View style={[styles.noResultContainer, ...extraStyle]}>
         <NoResult
           containerStyle={styles.noResult}
-          textStyle={styles.noResultTxt}
-          icon={<SVGEmptyBoxOpen fill="#aaa" width="80" height="80" />}
-          message="Chưa có danh mục"
+          icon={
+            <SVGEmptyBoxOpen fill={this.emptyBoxColor} width="80" height="80" />
+          }
+          message={this.props.t('noCategory')}
         />
       </View>
-    ) : null;
+    );
   };
 
   renderCategoryBlock = ({item: category, index, section}) => {
@@ -280,14 +312,14 @@ class SubCategory extends Component<SubCategoryProps> {
             extraContainerStyle = {
               ...extraContainerStyle,
               //@ts-ignore
-              backgroundColor: '#f5f5f5',
+              ...this.subCategoriesExtraStyle,
             };
           }
           return this.renderCategory(
             category,
             index,
             extraWrapperStyle,
-            styles.categoryContainer,
+            this.categoryContainerStyle,
             extraContainerStyle,
           );
         })}
@@ -306,7 +338,7 @@ class SubCategory extends Component<SubCategoryProps> {
       <Row
         key={index}
         title={category.name}
-        headerContainerStyle={styles.rowHeaderContainer}
+        headerContainerStyle={this.menuFix3LevelRowHeaderContainerStyle}
         totalHeight={contentHeight}
         defaultOpenChild={this.props.fullData}
         fullMode={this.props.fullData}
@@ -326,7 +358,8 @@ class SubCategory extends Component<SubCategoryProps> {
       : {};
 
     return Array.isArray(category.list) ? (
-      <View
+      <Container
+        row
         key={index}
         style={[
           styles.subCategoriesContainer,
@@ -342,7 +375,7 @@ class SubCategory extends Component<SubCategoryProps> {
             extraStyle = {
               ...extraStyle,
               //@ts-ignore
-              backgroundColor: '#eee',
+              ...this.subCategoriesExtraStyle,
               //@ts-ignore
               padding: 7,
             };
@@ -355,7 +388,7 @@ class SubCategory extends Component<SubCategoryProps> {
             extraStyle,
           );
         })}
-      </View>
+      </Container>
     ) : null;
   }
 
@@ -367,22 +400,59 @@ class SubCategory extends Component<SubCategoryProps> {
     categoryContainerStyle = {},
   ) => {
     return (
-      <View key={index} style={[styles.categoryWrapper, containerStyle]}>
+      <Container key={index} style={[styles.categoryWrapper, containerStyle]}>
         <Category
           numberOfLines={3}
           disabled={!category}
           title={category?.name}
           image={category?.image}
           wrapperStyle={categoryWrapperStyle}
-          containerStyle={[styles.categoryContainer, categoryContainerStyle]}
+          containerStyle={[this.categoryContainerStyle, categoryContainerStyle]}
           onPress={() => this.props.onPressTitle(category)}></Category>
-      </View>
+      </Container>
     );
   };
+
+  get categoryContainerStyle() {
+    return mergeStyles(styles.categoryContainer, {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    });
+  }
+
+  get subCategoriesExtraStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    };
+  }
+
+  get menuFix3LevelRowHeaderContainerStyle() {
+    return {
+      borderBottomColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
+  get sectionHeaderStyle() {
+    return mergeStyles(styles.header, {
+      borderBottomWidth: this.theme.layout.borderWidthLarge,
+      borderBottomColor: this.theme.color.primaryHighlight,
+    });
+  }
+
+  get headerIconStyle() {
+    return mergeStyles(styles.headerIcon, {
+      color: this.theme.color.iconInactive,
+    });
+  }
+
+  get emptyBoxColor() {
+    return this.theme.color.iconInactive;
+  }
 
   render() {
     return this.props.type === CATEGORY_TYPE.FIX_2_LEVEL ? (
       <SectionList
+        safeLayout
         // onLayout={this.handleCategoriesLayout.bind(this)}
         contentContainerStyle={styles.container}
         sections={this.sectionListData}
@@ -395,6 +465,7 @@ class SubCategory extends Component<SubCategoryProps> {
       />
     ) : (
       <FlatList
+        safeLayout
         // onLayout={this.handleCategoriesLayout.bind(this)}
         contentContainerStyle={styles.container}
         data={this.props.categories}
@@ -419,4 +490,4 @@ class SubCategory extends Component<SubCategoryProps> {
   }
 }
 
-export default SubCategory;
+export default withTranslation('stores')(SubCategory);

@@ -46,6 +46,7 @@ export const SERVICES_TYPE = {
 
   /** ACCOUNT */
   MY_ADDRESS: 'my_address',
+  CREATE_ADDRESS: 'create_address',
 
   /** NEWS */
   NEWS: 'news',

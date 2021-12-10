@@ -157,7 +157,6 @@ class ItemImageViewer extends Component {
                     <View pointerEvents="none">
                       <RightButtonNavBar
                         ref={this.refButtonDownloadImage}
-                        touchableOpacity
                         type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
                         containerStyle={styles.headerRightBtnContainer}
                         imageUrl={this.props.images[currentIndex].url}

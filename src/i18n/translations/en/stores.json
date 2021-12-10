@@ -17,5 +17,6 @@
   "noProduct": "No items",
   "item": {
     "more": "MORE"
-  }
+  },
+  "noCategory" : "No category yet"
 }

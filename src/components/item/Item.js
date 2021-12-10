@@ -135,14 +135,17 @@ class Item extends Component {
     return this.state.item_data || this.state.item || {};
   }
 
+  get isLiked() {
+    return this.state.like_flag == 1;
+  }
+
   get subActionColor() {
-    const is_like = this.state.like_flag == 1;
     return this.isDisabledSubBtnAction
       ? '#ccc'
       : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
         !this.isServiceProduct(this.product)
       ? appConfig.colors.primary
-      : is_like
+      : this.isLiked
       ? appConfig.colors.primary
       : appConfig.colors.primary;
   }
@@ -1187,7 +1190,7 @@ class Item extends Component {
           {!this.isServiceProduct(item) &&
           isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
             ? t('shopTitle.dropShip')
-            : is_like
+            : this.isLiked
             ? t('liked')
             : t('like')}
         </Typography>

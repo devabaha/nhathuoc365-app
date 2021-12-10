@@ -250,6 +250,7 @@ class Config {
       store: 'store',
       searchStore: 'searchStore',
       myAddress: 'myAddress',
+      createAddress: 'create_address',
 
       storeOrders: 'store_orders',
       ordersChat: 'ordersChat',
@@ -372,6 +373,7 @@ class Config {
       listChat: 'listChat',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
+      amazingChat: 'amazing_chat',
 
       listAddressStore: 'listAddressStore',
 

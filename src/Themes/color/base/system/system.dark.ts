@@ -61,6 +61,7 @@ export const SYSTEM_DARK = {
   persistSecondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
 
   primaryHighlight: SYSTEM_COMMON.onSurface,
+  onPrimaryHighlight: SYSTEM_COMMON.surface,
   secondaryHighlight: SYSTEM_COMMON.onSurface,
   surfaceHighlight: SYSTEM_COMMON.onSurface,
 

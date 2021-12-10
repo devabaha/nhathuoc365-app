@@ -41,7 +41,7 @@ const NoResult = ({
             style={textColorStyle}
           />
         )}
-        <Typography type={TypographyType.HEADLINE_MEDIUM} style={titleStyle}>
+        <Typography type={TypographyType.TITLE_LARGE} style={titleStyle}>
           {message}
         </Typography>
       </View>
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingTop: 15,
-    fontSize: 20,
     fontWeight: '500',
   },
 });

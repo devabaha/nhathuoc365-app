@@ -188,6 +188,21 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         from_page: 'account',
       });
       break;
+    case SERVICES_TYPE.CREATE_ADDRESS:
+      push(
+        appConfig.routes.createAddress,
+        {
+          from_page: service.from_page,
+          edit_data: service.edit_data,
+          title: service.edit_data
+            ? t('common:screen.address.editTitle')
+            : t('common:screen.address.createTitle'),
+          addressReload: service.addressReload,
+          redirect: service.redirect,
+        },
+        service.theme,
+      );
+      break;
 
     /** NEWS */
     case SERVICES_TYPE.NEWS:

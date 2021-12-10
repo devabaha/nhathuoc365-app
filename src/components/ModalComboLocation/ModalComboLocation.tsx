@@ -2,7 +2,6 @@ import React, {useRef, useEffect, useState, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 // 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
-import {Actions} from 'react-native-router-flux';
 import {useTranslation} from 'react-i18next';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import useIsMounted from 'react-is-mounted-hook';
@@ -15,6 +14,8 @@ import appConfig from 'app-config';
 import APIHandler from 'src/network/APIHandler';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 //constants
@@ -318,7 +319,7 @@ const ModalComboLocation = ({
   };
 
   const onClosedModal = () => {
-    Actions.pop();
+    pop();
   };
 
   const renderLocation = ({item: location}) => {

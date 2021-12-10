@@ -32,7 +32,9 @@ export const push: RoutingCommonFunction = (sceneKey, props, theme) => {
 };
 
 export const refresh: RoutingRefreshFunction = (props, theme) => {
-  Actions.refresh(props);
+  const formattedProps = formatSceneProps(props, theme);
+  
+  Actions.refresh(formattedProps);
 };
 
 export const replace: RoutingCommonFunction = (sceneKey, props, theme) => {

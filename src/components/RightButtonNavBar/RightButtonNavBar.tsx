@@ -1,26 +1,31 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import appConfig from '../../config';
-import store from '../../store';
-import {RightButtonNavBarProps} from '.';
-import {RIGHT_BUTTON_TYPE} from './constants';
-import {NotiBadge} from '../Badges';
+import {StyleSheet, TouchableHighlight, View} from 'react-native';
+// 3-party libs
 import {autorun} from 'mobx';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {saveImage} from '../../helper/image';
-import {BUNDLE_ICON_SETS} from 'src/constants';
+import {Actions} from 'react-native-router-flux';
 import {IWrappedComponent} from 'mobx-react';
+// types
+import {RightButtonNavBarProps} from '.';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
 import {share} from 'app-helper/share';
-import Icon from '../base/Icon';
-import {BundleIconSetName} from '../base/Icon/constants';
-import Button from '../base/Button/Button';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {saveImage} from 'app-helper/image';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {RIGHT_BUTTON_TYPE} from './constants';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {NotiBadge} from '../Badges';
+import {BaseButton, Icon} from 'src/components/base';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -30,26 +35,31 @@ const styles = StyleSheet.create({
     paddingTop: appConfig.device.isAndroid ? 4 : 0,
   },
   icon: {
-    color: '#fff',
     fontSize: 26,
   },
   notiContainer: {
     right: -4,
     top: appConfig.device.isAndroid ? -2 : -4,
-    borderColor: '#fff',
-    borderWidth: 0.5,
     height: 16,
     minWidth: 16,
-    //@ts-ignore
-    // ...elevationShadowStyle(2)
   },
 });
 
 class RightButtonNavBar extends Component<RightButtonNavBarProps> {
+  static contextType = ThemeContext;
+
+  static defaultProps = {
+    iconBundle: BundleIconSetName.IONICONS,
+  };
+
   state = {
     noti: 0,
   };
   autoUpdateDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.updateNoti();
@@ -61,9 +71,6 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
   get icon() {
     if (this.props.icon) return this.props.icon;
-    // let Icon = this.props.iconBundle
-    //     ? BUNDLE_ICON_SETS[this.props.iconBundle]
-    //     : Ionicons,
     let iconName = this.props.iconName || '',
       extraStyle = {};
 
@@ -91,7 +98,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
       <Icon
         bundle={this.props.iconBundle}
         name={iconName}
-        style={[styles.icon, extraStyle, this.props.iconStyle]}
+        style={[this.iconStyle, extraStyle, this.props.iconStyle]}
       />
     );
   }
@@ -123,22 +130,32 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   handlePressCart() {
     if (store.cart_data && store.cart_products) {
       if (store.cart_data.address_id != 0) {
-        Actions.push(appConfig.routes.paymentConfirm, {
-          goConfirm: true,
-        });
+        push(
+          appConfig.routes.paymentConfirm,
+          {
+            goConfirm: true,
+          },
+          this.theme,
+        );
       } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
-        Actions.push(appConfig.routes.myAddress, {
-          redirect: 'confirm',
-          goBack: true,
-          isVisibleStoreAddress: true,
-        });
+        push(
+          appConfig.routes.myAddress,
+          {
+            redirect: 'confirm',
+            goBack: true,
+            isVisibleStoreAddress: true,
+          },
+          this.theme,
+        );
       } else {
-        Actions.create_address({
+        servicesHandler({
+          type: SERVICES_TYPE.CREATE_ADDRESS,
+          theme: this.theme,
           redirect: 'confirm',
         });
       }
     } else {
-      Actions.push(appConfig.routes.ordersTab);
+      push(appConfig.routes.ordersTab, {}, this.theme);
     }
   }
 
@@ -147,13 +164,17 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     const user_info = store.user_info || {};
     const site_id = this.props.siteId || store_data.id;
 
-    Actions.amazing_chat({
-      titleStyle: {width: 220},
-      phoneNumber: store_data.tel,
-      title: store_data.name,
-      site_id: site_id,
-      user_id: user_info.id,
-    });
+    push(
+      appConfig.routes.amazingChat,
+      {
+        titleStyle: {width: 220},
+        phoneNumber: store_data.tel,
+        title: store_data.name,
+        site_id: site_id,
+        user_id: user_info.id,
+      },
+      this.theme,
+    );
   }
 
   async handlePressShare() {
@@ -197,17 +218,27 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     });
   }
 
-  render() {
-    if (this.props.type === RIGHT_BUTTON_TYPE.SHARE && !this.props.shareURL)
-      return null;
+  get notiContainerStyle() {
+    return mergeStyles(styles.notiContainer, {
+      borderColor: this.theme.color.onPrimary,
+      borderWidth: this.theme.layout.borderWidthSmall,
+    });
+  }
 
-    const TouchableComponent = this.props.touchableOpacity
-      ? TouchableOpacity
-      : TouchableHighlight;
+  get iconStyle() {
+    return mergeStyles(styles.icon, {
+      color: this.theme.color.onPrimary,
+    });
+  }
+
+  render() {
+    if (this.props.type === RIGHT_BUTTON_TYPE.SHARE && !this.props.shareURL) {
+      return null;
+    }
 
     return (
-      <Button
-        // underlayColor="transparent"
+      <BaseButton
+        useTouchableHighlight={this.props.touchableHighlight}
         onPress={this.handlePressIcon.bind(this)}>
         <View style={[styles.right_btn_add_store, this.props.containerStyle]}>
           {this.icon}
@@ -215,10 +246,10 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
             animation
             show={this.state.noti}
             label={this.state.noti}
-            containerStyle={styles.notiContainer}
+            containerStyle={this.notiContainerStyle}
           />
         </View>
-      </Button>
+      </BaseButton>
     );
   }
 }
