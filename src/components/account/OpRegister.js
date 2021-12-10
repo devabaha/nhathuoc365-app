@@ -18,7 +18,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
-// customs components
+// custom components
 import HorizontalInfoItem from './HorizontalInfoItem';
 import Loading from '../Loading';
 import {

@@ -17,6 +17,9 @@ const createStyles = (theme: Theme) => {
       alignItems: 'center',
       flexDirection: 'row',
     },
+    column: {
+      flexDirection: 'column',
+    },
     primary: {
       color: theme.color.primary,
     },
@@ -43,6 +46,7 @@ const TextButton = forwardRef(
     {
       titleStyle,
       style,
+      column,
 
       ...props
     }: TextButtonProps,
@@ -57,8 +61,8 @@ const TextButton = forwardRef(
     }, [theme]);
 
     const buttonStyles = useMemo(() => {
-      return mergeStyles([styles.container], style);
-    }, [styles, style]);
+      return mergeStyles([styles.container, column && styles.column], style);
+    }, [styles, style, column]);
 
     const titleStyles = useMemo(() => {
       return mergeStyles(

@@ -1348,9 +1348,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="create_address">
+                <Stack key={appConfig.routes.createAddress}>
                   <Scene
-                    key="create_address_1"
+                    key={`${appConfig.routes.createAddress}_1`}
                     // title="Thêm địa chỉ"
                     component={CreateAddress}
                     {...navBarConfig}
