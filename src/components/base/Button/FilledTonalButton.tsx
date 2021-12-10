@@ -29,6 +29,9 @@ const createStyles = (theme: Theme) => {
     secondary: {
       backgroundColor: rgbaToRgb(hexToRgba(theme.color.persistSecondary, 0.2)),
     },
+    neutral: {
+      backgroundColor: rgbaToRgb(hexToRgba(theme.color.contentBackgroundStrong, 0.2)),
+    },
     disabled: {
       backgroundColor: theme.color.disabled,
     },
@@ -91,6 +94,7 @@ const FilledTonalButton = forwardRef(
           props.rounded && styles[props.rounded],
           props.primary && styles.primary,
           props.secondary && styles.secondary,
+          props.neutral && styles.neutral,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
@@ -103,6 +107,7 @@ const FilledTonalButton = forwardRef(
       props.rounded,
       props.primary,
       props.secondary,
+      props.neutral,
       props.disabled,
     ]);
 
