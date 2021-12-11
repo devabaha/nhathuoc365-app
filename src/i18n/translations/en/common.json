@@ -297,5 +297,6 @@
   "photoLibraryLabel": "Photo library",
   "selectProvinceCity": "Select province/ city",
   "selectDistrict": "Select district",
-  "selectWard": "Select ward"
+  "selectWard": "Select ward",
+  "noNotification": "No notification yet"
 }

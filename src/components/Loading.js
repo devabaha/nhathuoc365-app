@@ -22,23 +22,18 @@ export default class Loading extends PureComponent {
   }
 
   render() {
-    const wrapperStyle = mergeStyles(
-      [
-        styles.wrapper,
-        {
-          borderRadius: this.theme.layout.borderRadiusLarge,
-        },
-      ],
-      [
-        this.props.center ? styles.centerContainer : {},
-        this.props.wrapperStyle,
-      ],
-    );
+    const wrapperStyle = mergeStyles(styles.wrapper, [
+      this.props.center ? styles.centerContainer : {},
+      this.props.wrapperStyle,
+    ]);
 
     const containerStyle = mergeStyles(styles.container, [
       (this.props.blur || this.props.highlight) && [
         styles.blurContentContainer,
-        {backgroundColor: this.theme.color.background},
+        {
+          backgroundColor: this.theme.color.background,
+          borderRadius: this.theme.layout.borderRadiusLarge,
+        },
       ],
       this.props.containerStyle,
     ]);

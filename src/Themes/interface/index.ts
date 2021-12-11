@@ -30,7 +30,7 @@ export type Typography = {
   [TypographyType.LABEL_MEDIUM_TERTIARY]: Style;
 
   [TypographyType.LABEL_MEDIUM_SECONDARY]: Style;
-  
+
   [TypographyType.LABEL_HUGE]?: Style;
   [TypographyType.LABEL_LARGE]?: Style;
   [TypographyType.LABEL_MEDIUM]?: Style;
@@ -130,6 +130,7 @@ export type Color = {
   contentBackgroundStrong: ColorValue;
   onContentBackground: ColorValue;
   persistPrimary: ColorValue;
+  persistPrimary5: ColorValue;
   persistPrimary20: ColorValue;
   onPersistPrimary: ColorValue;
   persistSecondary: ColorValue;

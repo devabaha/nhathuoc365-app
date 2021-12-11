@@ -1,61 +1,63 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-} from 'react-native';
+import {View, StyleSheet, StatusBar} from 'react-native';
+// 3-party libs
 import {reaction} from 'mobx';
 import {Actions} from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
+// helpers
 import EventTracker from 'app-helper/EventTracker';
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {BundleIconSetName} from 'src/components/base';
+// entities
 import {APIRequest} from 'src/network/Entity';
-
-import {BUNDLE_ICON_SETS_NAME} from 'src/constants';
-
-import SelectionList from 'src/components/SelectionList';
+// custom components
 import NotifyItemComponent from '../NotifyItemComponent';
 import NoResult from 'src/components/NoResult';
+import {FlatList, ScreenWrapper, RefreshControl} from 'src/components/base';
+import Indicator from 'src/components/Indicator';
+// skeleton
 import MainNotifySkeleton from './MainNotifySkeleton';
-import {servicesHandler} from 'app-helper/servicesHandler';
 
 class MainNotify extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      navigators: null,
-      listNotice: [],
-      loading: true,
-      refreshing: false,
-      isLoadingMore: false,
-    };
+  state = {
+    navigators: null,
+    listNotice: [],
+    loading: true,
+    refreshing: false,
+    isLoadingMore: false,
+  };
 
-    // reaction(
-    //   () => store.notify,
-    //   () => {
-    //     this._setOptionList();
-    //   },
-    // );
-    this.page = 1;
-    this.limit = 30;
-    this.canLoadMore = 1;
+  // reaction(
+  //   () => store.notify,
+  //   () => {
+  //     this._setOptionList();
+  //   },
+  // );
+  page = 1;
+  limit = 30;
+  canLoadMore = 1;
 
-    this.autoUpdateNotifyDisposer = null;
-    this.autoUpdateNotifyCountDisposer = null;
+  autoUpdateNotifyDisposer = null;
+  autoUpdateNotifyCountDisposer = null;
 
-    this.updateReadFlagNotifyRequest = new APIRequest();
-    this.getNotifyRequest = new APIRequest();
-    this.requests = [this.updateReadFlagNotifyRequest, this.getNotifyRequest];
+  updateReadFlagNotifyRequest = new APIRequest();
+  getNotifyRequest = new APIRequest();
+  requests = [this.updateReadFlagNotifyRequest, this.getNotifyRequest];
 
-    this.eventTracker = new EventTracker();
+  eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   _setOptionList() {
@@ -100,12 +102,17 @@ class MainNotify extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    this._setOptionList();
+    // this._setOptionList();
   }
 
   componentDidMount() {
     this.getListNotice(this.page, this.limit, 1);
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
@@ -114,6 +121,7 @@ class MainNotify extends Component {
     !!this.autoUpdateNotifyCountDisposer &&
       this.autoUpdateNotifyCountDisposer();
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
   async getListNotice(
@@ -216,7 +224,11 @@ class MainNotify extends Component {
       this.updateNotifyReadFlag(notify);
     }
 
-    servicesHandler({...notify, ...service}, this.props.t, callback);
+    servicesHandler(
+      {...notify, ...service, theme: this.theme},
+      this.props.t,
+      callback,
+    );
   };
 
   handleLoadMore = () => {
@@ -237,14 +249,14 @@ class MainNotify extends Component {
 
   renderListEmpty = () => {
     return (
-      !this.state.loading && (
-        <NoResult
-          iconBundle={BUNDLE_ICON_SETS_NAME.Ionicons}
-          iconName="notifications-off"
-          message="Chưa có thông báo"
-        />
-      )
+      // !this.state.loading && (
+      <NoResult
+        iconBundle={BundleIconSetName.IONICONS}
+        iconName="notifications-off"
+        message={this.props.t('common:noNotification')}
+      />
     );
+    // );
   };
 
   renderNotify = ({item: notify}) => {
@@ -279,7 +291,7 @@ class MainNotify extends Component {
     return this.state.loading ? (
       <MainNotifySkeleton />
     ) : (
-      <View style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && <Indicator />}
         {/* <ScrollView
           onScroll={event => {
@@ -308,12 +320,9 @@ class MainNotify extends Component {
         <FlatList
           ref={(ref) => (this.refs_main_notify = ref)}
           data={this.state.listNotice || []}
-          style={[styles.profile_list_opt]}
-          contentContainerStyle={styles.contentContainer}
           initialNumToRender={20}
           renderItem={this.renderNotify}
           ListEmptyComponent={this.renderListEmpty}
-          ItemSeparatorComponent={this.renderNotifySeparator}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -326,35 +335,29 @@ class MainNotify extends Component {
           ListFooterComponent={this.renderFooter}
         />
         {/* </ScrollView> */}
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  defaultBox: {
-    width: '100%',
-    height: 120,
-    backgroundColor: '#ffffff',
-    marginBottom: 8,
-  },
-
   container: {
     flex: 1,
-    backgroundColor: appConfig.colors.white,
   },
+  contentContainer: {
+    flexGrow: 1,
+  },
+
   boxIconStyle: {
     backgroundColor: appConfig.colors.primary,
     marginRight: 10,
     marginLeft: 6,
     borderRadius: 15,
   },
-
   boxTop: {
     width: '100%',
     height: 4,
   },
-
   headding_box: {
     paddingHorizontal: 15,
     paddingVertical: 8,
@@ -366,51 +369,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20,
-  },
-
-  notice_box: {
-    width: '100%',
-  },
-
-  empty_box: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  empty_box_title: {
-    fontSize: 12,
-    marginTop: 8,
-    color: '#404040',
-  },
-  empty_box_btn: {
-    borderWidth: Util.pixel,
-    borderColor: appConfig.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 12,
-    borderRadius: 5,
-    backgroundColor: appConfig.colors.primary,
-  },
-  empty_box_btn_title: {
-    color: '#ffffff',
-  },
-
-  separator: {
-    width: appConfig.device.width,
-    height: appConfig.device.pixel,
-    backgroundColor: appConfig.colors.border,
-    left: 15,
-  },
-
-  profile_list_opt: {
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
-
-  contentContainer: {
-    flexGrow: 1,
   },
 });
 

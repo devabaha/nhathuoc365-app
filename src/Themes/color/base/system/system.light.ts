@@ -60,6 +60,7 @@ export const SYSTEM_LIGHT = {
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
+  persistPrimary5: SYSTEM_COMMON.primary5,
   persistPrimary20: SYSTEM_COMMON.primary20,
   onPersistPrimary: CORE.onPrimary,
   persistSecondary: CORE.secondary,

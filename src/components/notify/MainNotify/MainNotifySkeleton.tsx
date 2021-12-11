@@ -1,13 +1,17 @@
-import React from 'react';
-import {ScrollView, View, StyleSheet, Text} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-import {
-  CONTENT_SKELETON_COLOR,
-  SKELETON_COLOR,
-} from 'src/components/SkeletonLoading/constants';
+// configs
 import appConfig from 'app-config';
-import Container from 'src/components/base/Container';
-import Skeleton from 'src/components/base/Skeleton';
+// custom components
+import {
+  ScrollView,
+  Typography,
+  Container,
+  Skeleton,
+  ScreenWrapper,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   shimmer: {},
@@ -54,9 +58,9 @@ const styles = StyleSheet.create({
 const MainNotifySkeleton = ({length = 10, useList = true}) => {
   const renderItem = (item, index) => {
     return (
-      <Container row key={index} style={styles.itemContainer}>
+      <Container noBackground row key={index} style={styles.itemContainer}>
         <Skeleton content style={[styles.block, styles.image]} />
-        <Container flex>
+        <Container noBackground flex>
           <Skeleton content style={[styles.block, styles.title]} />
           <Skeleton content style={[styles.block, styles.subTitle]} />
           <Skeleton content style={[styles.block, styles.description]} />
@@ -67,17 +71,19 @@ const MainNotifySkeleton = ({length = 10, useList = true}) => {
 
   return (
     <Shimmer style={[useList && styles.shimmer]}>
-      <Text style={styles.container}>
-        {useList ? (
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.contentContainer}>
-            {Array.from({length}).map(renderItem)}
-          </ScrollView>
-        ) : (
-          Array.from({length}).map(renderItem)
-        )}
-      </Text>
+      <Typography style={styles.container}>
+        <ScreenWrapper>
+          {useList ? (
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.contentContainer}>
+              {Array.from({length}).map(renderItem)}
+            </ScrollView>
+          ) : (
+            Array.from({length}).map(renderItem)
+          )}
+        </ScreenWrapper>
+      </Typography>
     </Shimmer>
   );
 };
