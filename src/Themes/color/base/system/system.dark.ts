@@ -56,6 +56,7 @@ export const SYSTEM_DARK = {
   onContentBackground: SYSTEM_COMMON.onSurface,
 
   persistPrimary: CORE.primary,
+  persistPrimary5: rgbaToRgb(hexToRgba(CORE.primary, 0.05)),
   persistPrimary20: rgbaToRgb(hexToRgba(CORE.primary, 0.2)),
   persistSecondary: CORE.secondary,
   persistSecondary20: rgbaToRgb(hexToRgba(CORE.secondary, 0.2)),
