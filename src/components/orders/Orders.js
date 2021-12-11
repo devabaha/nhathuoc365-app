@@ -1,23 +1,36 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  StatusBar,
-} from 'react-native';
+import {StyleSheet, StatusBar} from 'react-native';
+// 3-party libs
 import {reaction} from 'mobx';
+// configs
 import appConfig from 'app-config';
-import store from '../../store/Store';
-import PopupConfirm from '../PopupConfirm';
-import {Actions} from 'react-native-router-flux';
+import store from 'app-store';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push, jump} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, ButtonRoundedType} from 'src/components/base';
+// custom components
+import {
+  FlatList,
+  AppFilledButton,
+  ScreenWrapper,
+  RefreshControl,
+} from 'src/components/base';
 import OrdersItemComponent from './OrdersItemComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import EventTracker from '../../helper/EventTracker';
+import NoResult from '../NoResult';
+import Indicator from '../Indicator';
 
 class Orders extends Component {
+  static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
 
@@ -38,6 +51,12 @@ class Orders extends Component {
     // refresh
     reaction(() => store.orders_key_change, this._getData);
     this.eventTracker = new EventTracker();
+
+    this.updateNavBarDisposer = () => {};
+  }
+
+  get theme() {
+    getTheme(this);
   }
 
   componentDidMount() {
@@ -46,12 +65,19 @@ class Orders extends Component {
     store.is_stay_orders = true;
     store.parentTab = `${appConfig.routes.newsTab}_1`;
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
     this.autoUpdateDisposer && this.autoUpdateDisposer();
+
+    this.updateNavBarDisposer();
   }
 
   UNSAFE_componentWillReceiveProps() {
@@ -117,11 +143,15 @@ class Orders extends Component {
           );
           if (item) {
             store.setStoreData(item.site);
-            Actions.orders_item({
-              data: item,
-              title: `#${item.cart_code}`,
-              tel: item.tel,
-            });
+            push(
+              appConfig.routes.ordersDetail,
+              {
+                data: item,
+                title: `#${item.cart_code}`,
+                tel: item.tel,
+              },
+              this.theme,
+            );
           } else {
             flashShowMessage({
               type: 'danger',
@@ -327,59 +357,61 @@ class Orders extends Component {
     );
   }
 
+  goToStore() {
+    jump(appConfig.routes.homeTab);
+  }
+
+  renderFooterEmptyComponent = () => {
+    return (
+      <AppFilledButton
+        rounded={ButtonRoundedType.EXTRA_SMALL}
+        onPress={this.goToStore.bind(this)}
+        style={styles.empty_box_btn}
+        titleStyle={styles.empty_box_btn_title}>
+        {this.props.t('encourageMessage')}
+      </AppFilledButton>
+    );
+  };
+
+  ListEmptyComponent() {
+    return (
+      <NoResult
+        iconBundle={BundleIconSetName.FONT_AWESOME}
+        iconName="shopping-basket"
+        message={this.props.t('emptyMessage')}
+        renderFooterComponent={this.renderFooterEmptyComponent}
+      />
+    );
+  }
+
+  renderItem({item, index}) {
+    return (
+      <OrdersItemComponent
+        confirmCancelCart={this.confirmCancelCart.bind(this)}
+        confirmCoppyCart={this.confirmCoppyCart.bind(this)}
+        confirmEditCart={this.confirmEditCart.bind(this)}
+        item={item}
+        index={index}
+      />
+    );
+  }
+
   render() {
     const {loading, data} = this.state;
-    const {t} = this.props;
-
     if (loading) {
       return <Indicator />;
     }
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         <FlatList
+          safeLayout
           scrollIndicatorInsets={{right: 0.01}}
           style={styles.items_box}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: appConfig.device.bottomSpace,
-          }}
           data={data || []}
           extraData={this.state}
-          // ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-          ListEmptyComponent={
-            <View style={styles.empty_box}>
-              <Icon
-                name="shopping-basket"
-                size={32}
-                color={hexToRgba(appConfig.colors.primary, 0.6)}
-              />
-              <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
-
-              <TouchableHighlight
-                onPress={() => {
-                  Actions.jump(appConfig.routes.homeTab);
-                }}
-                underlayColor="transparent">
-                <View style={styles.empty_box_btn}>
-                  <Text style={styles.empty_box_btn_title}>
-                    {t('encourageMessage')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            </View>
-          }
-          renderItem={({item, index}) => {
-            return (
-              <OrdersItemComponent
-                confirmCancelCart={this.confirmCancelCart.bind(this)}
-                confirmCoppyCart={this.confirmCoppyCart.bind(this)}
-                confirmEditCart={this.confirmEditCart.bind(this)}
-                item={item}
-                index={index}
-              />
-            );
-          }}
+          ListEmptyComponent={this.ListEmptyComponent.bind(this)}
+          renderItem={this.renderItem.bind(this)}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl
@@ -388,74 +420,12 @@ class Orders extends Component {
             />
           }
         />
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_cancel_cart = ref)}
-          title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
-          height={110}
-          noConfirm={this._closePopupConfirm.bind(this)}
-          yesConfirm={this._cancelCart.bind(this)}
-          otherClose={false}
-        />
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_coppy_cart = ref)}
-          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
-          height={110}
-          noConfirm={this._closePopupCoppy.bind(this)}
-          yesConfirm={this._coppyCart.bind(this)}
-          otherClose={false}
-        />
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_edit_cart = ref)}
-          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
-          height={110}
-          noConfirm={this._closePopupEdit.bind(this)}
-          yesConfirm={this._editCart.bind(this)}
-          otherClose={false}
-        />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  right_btn_add_store: {
-    paddingVertical: 1,
-    paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0,
-  },
-  right_btn_box: {
-    flexDirection: 'row',
-  },
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
-    backgroundColor: 'red',
-    top: isAndroid ? 0 : -4,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8,
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-
-  separator: {
-    width: '100%',
-    height: appConfig.device.pixel,
-    backgroundColor: '#dddddd',
-  },
   items_box: {
     flex: 1,
   },
@@ -463,26 +433,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginTop: 200,
-  },
-  empty_box_title: {
-    fontSize: 12,
-    marginTop: 8,
-    color: '#404040',
   },
   empty_box_btn: {
-    borderWidth: appConfig.device.pixel,
-    borderColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
-    marginTop: 12,
-    borderRadius: 5,
-    backgroundColor: appConfig.colors.primary,
+    marginTop: 30,
   },
-  empty_box_btn_title: {
-    color: '#ffffff',
+  empty_box_btn_title: {},
+  iconShoppingBasket: {
+    fontSize: 32,
   },
 });
 

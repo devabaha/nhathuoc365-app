@@ -13,10 +13,13 @@ const NoResult = ({
   icon = null,
   iconBundle = BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
   iconName = 'file-remove',
+  iconSize = 72,
   message = '',
   contentContainerStyle = {},
   containerStyle = {},
   textStyle = {},
+
+  renderFooterComponent = () => null,
 }) => {
   const {theme} = useTheme();
 
@@ -37,13 +40,14 @@ const NoResult = ({
           <Icon
             bundle={iconBundle}
             name={iconName}
-            size={72}
+            size={iconSize}
             style={textColorStyle}
           />
         )}
         <Typography type={TypographyType.TITLE_LARGE} style={titleStyle}>
           {message}
         </Typography>
+        {renderFooterComponent && renderFooterComponent()}
       </View>
     </View>
   );

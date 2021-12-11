@@ -154,7 +154,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.ORDERS:
     case SERVICES_TYPE.ORDERS_TAB:
-      Actions.push(appConfig.routes.ordersTab);
+      push(appConfig.routes.ordersTab, {}, service.theme);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
       store.setDeepLinkData({id: service.id});
