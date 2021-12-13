@@ -10,8 +10,9 @@ import appConfig from 'app-config';
 
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+import {Theme} from 'src/Themes/interface';
 
-const createStyles = (theme) => {
+const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     surface: {
       backgroundColor: theme.color.surface,
@@ -48,6 +49,10 @@ const createStyles = (theme) => {
     safeLayout: {
       paddingBottom: appConfig.device.bottomSpace,
     },
+    shadow: {
+      shadowColor: theme.color.shadow,
+      ...theme.layout.shadow,
+    },
   });
 
   return styles;
@@ -63,6 +68,7 @@ const Container = forwardRef(
       style,
       content,
       noBackground,
+      shadow,
       flex,
       row,
       center,
@@ -114,9 +120,21 @@ const Container = forwardRef(
           : content
           ? baseStyles.contentContainer
           : baseStyles.surface,
-        [safeLayout && baseStyles.safeLayout, additionalStyle],
+        [
+          safeLayout && baseStyles.safeLayout,
+          shadow && baseStyles.shadow,
+          additionalStyle,
+        ],
       );
-    }, [theme, row, center, centerHorizontal, centerVertical, noBackground]);
+    }, [
+      theme,
+      row,
+      center,
+      shadow,
+      centerHorizontal,
+      centerVertical,
+      noBackground,
+    ]);
 
     const componentStyle = useMemo(() => {
       return mergeStyles(styles, style);

@@ -1,0 +1,24 @@
+{
+  "body": {
+    "date": "Date",
+    "code": "Code",
+    "noCode": "No code yet",
+    "rulesTitle": "Rules",
+    "prizeStructureTitle": "Prize structure",
+    "codeList": "Your Code List"
+  },
+  "footer": {
+    "title": "Pick number",
+    "sendNumber": "Send",
+    "resultsSubmittedTitle": "The number you chose",
+    "moreTitle": "See more",
+    "closeTitle": "Close",
+    "openTitle": "Open",
+    "placeholder": "Enter your number...",
+    "freeTurn": "free turn(s)",
+    "remainTurnTitle": "Remaining",
+    "remainPointTitle": "Your remaining point:",
+    "pointOfUse": "Point of use:",
+    "noResult": "You have not selected a number yet"
+  }
+}

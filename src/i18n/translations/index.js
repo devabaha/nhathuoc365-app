@@ -64,6 +64,8 @@ import vi_request from './vi/request.json';
 import en_request from './en/request.json';
 import vi_rating from './vi/rating.json';
 import en_rating from './en/rating.json';
+import vi_lotteryGame from './vi/lotteryGame.json';
+import en_lotteryGame from './en/lotteryGame.json';
 
 export default {
   [languages.vi.value]: {
@@ -99,6 +101,7 @@ export default {
     progressTracking: vi_progressTracking,
     request: vi_request,
     rating: vi_rating,
+    lotteryGame: vi_lotteryGame,
   },
   [languages.en.value]: {
     common: en_common,
@@ -133,5 +136,6 @@ export default {
     progressTracking: en_progressTracking,
     request: en_request,
     rating: en_rating,
+    lotteryGame: en_lotteryGame,
   },
 };
