@@ -23,7 +23,7 @@ const Image = ({
   containerStyle = {},
   onLoadError = () => {},
   onLoadEnd = () => {},
-  renderError = () => {},
+  renderError,
   ...props
 }: ImageProps) => {
   const {theme} = useTheme();

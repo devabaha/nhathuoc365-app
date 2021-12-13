@@ -421,6 +421,8 @@ class Account extends Component {
           },
         ],
         isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
+        isHidden: false
+
       },
       {
         key: 'warehouse',

@@ -1,13 +1,6 @@
-import React, {Component, useRef} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  TouchableOpacity,
-  Keyboard,
-  Image,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
 import {compose} from 'recompose';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -16,117 +9,116 @@ import {
   withNextInputAutoFocusForm,
   withNextInputAutoFocusInput,
 } from 'react-native-formik';
-import {Actions} from 'react-native-router-flux';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import appConfig from 'app-config';
-import Loading from '../../components/Loading';
-import Button from '../../components/Button';
-import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
+import ImagePicker from 'react-native-image-picker';
+import {observer} from 'mobx-react';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import FloatingLabelInput from 'src/components/FloatingLabelInput';
+import Loading from 'src/components/Loading';
+import Button from 'src/components/Button';
+import MyInputTouchable from './MyInputTouchable';
+import {Container, ScreenWrapper, ScrollView} from 'src/components/base';
 
 const MyInput = compose(
   handleTextInput,
   withNextInputAutoFocusInput,
 )(FloatingLabelInput);
 
-const Form = withNextInputAutoFocusForm(View);
-
-const FORM_DATA = {
-  EMAIL: {
-    label: 'Email *',
-    name: 'email',
-    serverName: 'gold_member_email',
-    type: 'email',
-  },
-  ID_CARD: {
-    label: 'Số CMND *',
-    name: 'id_card',
-    type: 'number',
-  },
-  IMAGE_ID_CARD_FRONT: {
-    label: 'Ảnh CMND (mặt trước) *',
-    name: 'image_id_card_front',
-    serverName: 'gold_member_image_id_card_front',
-    type: 'name',
-  },
-  IMAGE_ID_CARD_BACK: {
-    label: 'Ảnh CMND (mặt sau) *',
-    name: 'image_id_card_back',
-    serverName: 'gold_member_image_id_card_back',
-    type: 'name',
-  },
-  BANK_ACCOUNT: {
-    label:
-      'Tài khoản ngân hàng (cú pháp: [số tk], [tên chủ tk], [tên ngân hàng]) *',
-    name: 'bank_account',
-    type: 'name',
-  },
-  // ADDRESS: {
-  //   label: 'Địa chỉ kinh doanh *',
-  //   name: 'address',
-  //   serverName: 'gold_member_address',
-  //   type: 'name'
-  // },
-  // EXPERT_ID: {
-  //   label: 'Ngành nghề kinh doanh *',
-  //   name: 'expert_id',
-  //   type: 'name'
-  // },
-  // BRAND: {
-  //   label: 'Thương hiệu kinh doanh *',
-  //   name: 'brand',
-  //   type: 'name'
-  // }
-};
-
-const REQUIRED_MESSAGE = 'Vui lòng nhập trường này';
-const EMAIL_REQUIRED = 'Vui lòng nhập đúng định dạng email';
-const validationSchema = Yup.object().shape({
-  [FORM_DATA.EMAIL.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .email(EMAIL_REQUIRED)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.ID_CARD.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_BACK.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.BANK_ACCOUNT.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.EXPERT_ID.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.BRAND.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE)
-});
+const Form = withNextInputAutoFocusForm(Container);
 
 class AgencyInformationRegister extends Component {
+  static contextType = ThemeContext;
+
+  formData = {
+    EMAIL: {
+      label: this.props.t('formData.email'),
+      name: 'email',
+      serverName: 'gold_member_email',
+      type: 'email',
+    },
+    ID_CARD: {
+      label: this.props.t('formData.IDCard'),
+      name: 'id_card',
+      type: 'number',
+    },
+    IMAGE_ID_CARD_FRONT: {
+      label: this.props.t('formData.imageIDCardFront'),
+      name: 'image_id_card_front',
+      serverName: 'gold_member_image_id_card_front',
+      type: 'name',
+    },
+    IMAGE_ID_CARD_BACK: {
+      label: this.props.t('formData.imageIDCardBack'),
+      name: 'image_id_card_back',
+      serverName: 'gold_member_image_id_card_back',
+      type: 'name',
+    },
+    BANK_ACCOUNT: {
+      label: this.props.t('formData.bankAccount'),
+      name: 'bank_account',
+      type: 'name',
+    },
+  };
+
+  requiredMessage = this.props.t('requiredField');
+  emailRequired = this.props.t('emailFomartRequried');
+  validationSchema = Yup.object().shape({
+    [this.formData.EMAIL.name]: Yup.string()
+      .required(this.requiredMessage)
+      .email(this.emailRequired)
+      .nullable(this.requiredMessage),
+    [this.formData.ID_CARD.name]: Yup.string()
+      .required(this.requiredMessage)
+      .nullable(this.requiredMessage),
+    [this.formData.IMAGE_ID_CARD_FRONT.name]: Yup.string()
+      .required(this.requiredMessage)
+      .nullable(this.requiredMessage),
+    [this.formData.IMAGE_ID_CARD_BACK.name]: Yup.string()
+      .required(this.requiredMessage)
+      .nullable(this.requiredMessage),
+    [this.formData.BANK_ACCOUNT.name]: Yup.string()
+      .required(this.requiredMessage)
+      .nullable(this.requiredMessage),
+  });
+
   userInfo = store.user_info || {};
   state = {
     loading: false,
     professions: [],
     // selectedProfession: {
-    //   value: this.userInfo[FORM_DATA.EXPERT_ID.name]
+    //   value: this.userInfo[this.formData.EXPERT_ID.name]
     // },
-    formData: FORM_DATA,
-    [FORM_DATA.IMAGE_ID_CARD_FRONT?.name]: this.userInfo[
-      FORM_DATA.IMAGE_ID_CARD_FRONT?.serverName
+    formData: this.formData,
+    [this.formData.IMAGE_ID_CARD_FRONT?.name]: this.userInfo[
+      this.formData.IMAGE_ID_CARD_FRONT?.serverName
     ],
-    [FORM_DATA.IMAGE_ID_CARD_BACK?.name]: this.userInfo[
-      FORM_DATA.IMAGE_ID_CARD_BACK?.serverName
+    [this.formData.IMAGE_ID_CARD_BACK?.name]: this.userInfo[
+      this.formData.IMAGE_ID_CARD_BACK?.serverName
     ],
-    // address: this.userInfo[FORM_DATA.ADDRESS.serverName],
+    // address: this.userInfo[this.formData.ADDRESS.serverName],
     latitude: this.userInfo.gold_member_latitude,
     longitude: this.userInfo.gold_member_longitude,
   };
   unmounted = false;
   refForm = React.createRef();
   takePicture = this.takePicture.bind(this);
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get initialValues() {
     const values = {};
@@ -136,7 +128,7 @@ class AgencyInformationRegister extends Component {
       let itemValue = '';
       if (user_info) {
         itemValue = user_info[value.name];
-        if (value.name === FORM_DATA.EMAIL.name) {
+        if (value.name === this.formData.EMAIL.name) {
           itemValue = user_info[value.serverName];
         }
       }
@@ -147,18 +139,25 @@ class AgencyInformationRegister extends Component {
 
   componentDidMount() {
     // this.getProfessions();
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.updateNavBarDisposer();
   }
 
   takePicture(key) {
+    const {t} = this.props;
+
     const options = {
-      title: 'Chụp ảnh CMND',
-      cancelButtonTitle: 'Hủy',
-      takePhotoButtonTitle: 'Chụp ảnh',
-      chooseFromLibraryButtonTitle: 'Mở thư viện',
+      title: t('takePicture.title'),
+      cancelButtonTitle: t('takePicture.cancel'),
+      takePhotoButtonTitle: t('takePicture.takePhoto'),
+      chooseFromLibraryButtonTitle: t('takePicture.chooseFromLibrary'),
       rotation: 360,
       storageOptions: {
         skipBackup: true,
@@ -286,7 +285,7 @@ class AgencyInformationRegister extends Component {
       if (!this.unmounted) {
         if (response.status === STATUS_SUCCESS && response.data) {
           // Actions.replace(appConfig.routes.skv_goldMemberSuccess);
-          Actions.pop();
+          pop();
           flashShowMessage({
             type: 'success',
             message: response.message,
@@ -337,7 +336,7 @@ class AgencyInformationRegister extends Component {
     const selectedProfession = this.state.professions.find(
       (profession) => profession.id === profession_id,
     );
-    this.handleSetValueFormData(FORM_DATA.EXPERT_ID.name, profession_id);
+    this.handleSetValueFormData(this.formData.EXPERT_ID.name, profession_id);
     this.setState({
       selectedProfession,
     });
@@ -346,29 +345,29 @@ class AgencyInformationRegister extends Component {
   goToProfessionSelection = () => {
     Keyboard.dismiss();
 
-    Actions.push(appConfig.routes.modalPicker, {
+    push(appConfig.routes.modalPicker, {
       data: this.state.professions,
-      title: 'Chọn ngành nghề',
+      title: this.props.t('chooseCareer'),
       onSelect: this.onSelectProfession,
       selectedLabel: this.state.selectedProfession.name,
       selectedValue: this.state.selectedProfession.id,
       defaultValue: this.state.professions[0].id,
-      onClose: () => this.forceTouchFormData(FORM_DATA.EXPERT_ID.name),
+      onClose: () => this.forceTouchFormData(this.formData.EXPERT_ID.name),
     });
   };
 
   goToMapSuggestion = () => {
     Keyboard.dismiss();
 
-    Actions.push(appConfig.routes.modalSearchPlaces, {
-      onCloseModal: Actions.pop,
+    push(appConfig.routes.modalSearchPlaces, {
+      onCloseModal: pop,
       onPressItem: this.onSelectAddress,
     });
   };
 
   onSelectAddress = ({map_address}) => {
     this.handleSetValueFormData(
-      FORM_DATA.ADDRESS.name,
+      this.formData.ADDRESS.name,
       map_address.description,
     );
     this.setState({
@@ -380,33 +379,22 @@ class AgencyInformationRegister extends Component {
 
   onInputFocus = (type) => {
     switch (type) {
-      // case FORM_DATA.EXPERT_ID.name:
+      // case this.formData.EXPERT_ID.name:
       //   this.goToProfessionSelection();
       //   break;
-      case FORM_DATA.ADDRESS.name:
+      case this.formData.ADDRESS.name:
         this.goToMapSuggestion();
         break;
     }
   };
 
   renderFormData({values}) {
-    return Object.keys(FORM_DATA).map((key, index) => {
-      const {label, name, type} = FORM_DATA[key];
+    return Object.keys(this.formData).map((key, index) => {
+      const {label, name, type} = this.formData[key];
       let extraProps = null;
 
       switch (name) {
-        // case FORM_DATA.EXPERT_ID.name:
-        //   return (
-        //     <MyInputTouchable
-        //       label={label}
-        //       name={name}
-        //       type={type}
-        //       onFocus={() => this.onInputFocus(FORM_DATA.EXPERT_ID.name)}
-        //       onPress={this.goToProfessionSelection}
-        //       value={this.state.selectedProfession.name}
-        //     />
-        //   );
-        case FORM_DATA.IMAGE_ID_CARD_FRONT?.name:
+        case this.formData.IMAGE_ID_CARD_FRONT?.name:
           return (
             <MyInputTouchable
               key={index}
@@ -415,11 +403,11 @@ class AgencyInformationRegister extends Component {
               type={type}
               onPress={this.takePicture}
               editable={false}
-              uri={this.state[FORM_DATA.IMAGE_ID_CARD_FRONT.name]}
-              value={values[FORM_DATA.IMAGE_ID_CARD_FRONT.name]}
+              uri={this.state[this.formData.IMAGE_ID_CARD_FRONT.name]}
+              value={values[this.formData.IMAGE_ID_CARD_FRONT.name]}
             />
           );
-        case FORM_DATA.IMAGE_ID_CARD_BACK?.name:
+        case this.formData.IMAGE_ID_CARD_BACK?.name:
           return (
             <MyInputTouchable
               key={index}
@@ -427,23 +415,12 @@ class AgencyInformationRegister extends Component {
               name={name}
               type={type}
               onPress={this.takePicture}
-              uri={this.state[FORM_DATA.IMAGE_ID_CARD_BACK.name]}
+              uri={this.state[this.formData.IMAGE_ID_CARD_BACK.name]}
               editable={false}
-              value={values[FORM_DATA.IMAGE_ID_CARD_BACK.name]}
+              value={values[this.formData.IMAGE_ID_CARD_BACK.name]}
             />
           );
-        // case FORM_DATA.ADDRESS.name:
-        //   return (
-        //     <MyInputTouchable
-        //       label={label}
-        //       name={name}
-        //       type={type}
-        //       onFocus={() => this.onInputFocus(FORM_DATA.ADDRESS.name)}
-        //       onPress={this.goToMapSuggestion}
-        //       value={this.state.address}
-        //     />
-        //   );
-        case FORM_DATA.ID_CARD?.name:
+        case this.formData.ID_CARD?.name:
           extraProps = {
             keyboardType: appConfig.device.isIOS ? 'number-pad' : 'numeric',
           };
@@ -461,130 +438,56 @@ class AgencyInformationRegister extends Component {
     });
   }
 
+  get containerStyle() {
+    return {
+      // backgroundColor: this.theme.color.surface,
+    };
+  }
+
   render() {
     return (
-      <View style={styles.container}>
+      <ScreenWrapper
+        safeLayout={!store.keyboardTop}
+        style={this.containerStyle}>
         {this.state.loading && <Loading center />}
-        <SafeAreaView style={styles.wrapper}>
-          <Formik
-            initialValues={this.initialValues}
-            onSubmit={this.onSubmit}
-            validationSchema={validationSchema}
-            innerRef={this.refForm}>
-            {(props) => {
-              const disabled = !(props.isValid && props.dirty);
-              return (
-                <>
-                  <ScrollView
-                    keyboardDismissMode="interactive"
-                    keyboardShouldPersistTaps="handled">
-                    <Form style={styles.formContainer}>
-                      {this.renderFormData(props)}
-                    </Form>
-                  </ScrollView>
+        <Formik
+          initialValues={this.initialValues}
+          onSubmit={this.onSubmit}
+          validationSchema={this.validationSchema}
+          innerRef={this.refForm}>
+          {(props) => {
+            const disabled = !(props.isValid && props.dirty);
+            return (
+              <>
+                <ScrollView
+                  keyboardDismissMode="interactive"
+                  keyboardShouldPersistTaps="handled">
+                  <Form style={styles.formContainer}>
+                    {this.renderFormData(props)}
+                  </Form>
+                </ScrollView>
 
-                  <Button
-                    title="Đăng ký"
-                    onPress={props.handleSubmit}
-                    disabled={disabled}
-                    btnContainerStyle={disabled && styles.btnDisabled}
-                  />
-                </>
-              );
-            }}
-          </Formik>
-          {appConfig.device.isIOS && <KeyboardSpacer />}
-        </SafeAreaView>
-      </View>
+                <Button
+                  title={this.props.t('register')}
+                  onPress={props.handleSubmit}
+                  disabled={disabled}
+                />
+              </>
+            );
+          }}
+        </Formik>
+        {appConfig.device.isIOS && <KeyboardSpacer />}
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  wrapper: {
-    flex: 1,
-  },
   formContainer: {
     paddingTop: 30,
   },
-  title: {
-    fontSize: 20,
-    letterSpacing: 1,
-    paddingHorizontal: 15,
-    color: '#555',
-    marginBottom: 15,
-  },
-  btn: {
-    padding: 15,
-    backgroundColor: '#444',
-    marginVertical: 30,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 150,
-  },
-  btnTitle: {
-    color: '#fff',
-    fontSize: 20,
-    textTransform: 'uppercase',
-  },
-  btnDisabled: {
-    backgroundColor: '#ccc',
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#fcfcfc',
-    marginRight: 10,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  inputTouchableWrapper: {
-    flexDirection: 'row',
-  },
 });
 
-export default withTranslation()(AgencyInformationRegister);
-
-const MyInputTouchable = ({
-  onPress,
-  // key,
-  label,
-  name,
-  type,
-  onFocus,
-  value,
-  style,
-  uri,
-  ...props
-}) => {
-  return (
-    <TouchableOpacity onPress={() => onPress(name)}>
-      <View style={[styles.inputTouchableWrapper, style]} pointerEvents="none">
-        <MyInput
-          label={label}
-          name={name}
-          type={type}
-          onFocus={onFocus}
-          value={value}
-          containerStyle={{flex: 1}}
-          {...props}
-        />
-        {!!uri && (
-          <View style={styles.imageContainer}>
-            <Image source={{uri}} style={styles.image} />
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
+export default withTranslation('agencyInformationRegister')(
+  observer(AgencyInformationRegister),
+);
