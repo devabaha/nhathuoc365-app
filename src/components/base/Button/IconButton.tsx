@@ -16,7 +16,6 @@ const createStyles = (theme: Theme) => {
     container: {
       justifyContent: 'center',
       alignItems: 'center',
-      flexDirection: 'row',
     },
     primary: {
       color: theme.color.primary,
