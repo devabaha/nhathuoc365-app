@@ -2,7 +2,7 @@ import React, {useMemo, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
-//context
+// context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';

@@ -2,7 +2,7 @@ import React, {useCallback, useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
-//context
+// context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {
