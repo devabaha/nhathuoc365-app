@@ -1,34 +1,34 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  SectionList,
-  TouchableHighlight,
-  Keyboard,
-  TouchableOpacity,
-} from 'react-native';
-
-import HorizontalInfoItem from './HorizontalInfoItem';
-import {Actions} from 'react-native-router-flux';
+import {View, StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
 import {KeyboardAwareSectionList} from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 import {isEmpty} from 'lodash';
-import Loading from '../Loading';
-import Button from '../Button';
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import EventTracker from '../../helper/EventTracker';
-import {APIRequest} from '../../network/Entity';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {OutlinedButton} from '../base/Button';
-import ScreenWrapper from '../base/ScreenWrapper';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push, pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import HorizontalInfoItem from './HorizontalInfoItem';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import {ScreenWrapper} from 'src/components/base';
+import Loading from '../Loading';
+import Button from '../Button';
 
 class EditProfile extends Component {
   static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
 
@@ -50,6 +50,8 @@ class EditProfile extends Component {
       props.t('sections.gender.other'),
       props.t('sections.gender.cancel'),
     ];
+
+    this.updateNavBarDisposer = () => {};
   }
 
   get theme() {
@@ -170,24 +172,19 @@ class EditProfile extends Component {
   componentDidMount() {
     this.eventTracker.logCurrentView();
     isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
     this.getUserCityRequest.cancel();
-  }
 
-  _renderRightButton = () => {
-    const {t} = this.props;
-    return (
-      <TouchableHighlight
-        style={styles.rightBtnEdit}
-        underlayColor="transparent"
-        onPress={this._onSaveProfile}>
-        <Text style={styles.txtEdit}>{t('save')}</Text>
-      </TouchableHighlight>
-    );
-  };
+    this.updateNavBarDisposer();
+  }
 
   _onSaveProfile = async () => {
     let name = '';
@@ -282,7 +279,7 @@ class EditProfile extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this.props.refresh();
-          Actions.pop();
+          pop();
         }
 
         if (response) {
@@ -342,13 +339,13 @@ class EditProfile extends Component {
   };
 
   onPressProvince = () => {
-    Actions.push(appConfig.routes.voucherSelectProvince, {
+    push(appConfig.routes.voucherSelectProvince, {
       provinceSelected: this.state.provinceSelected.name,
       onSelectProvince: (provinceSelected) => {
         this.setState({provinceSelected});
         this._onUpdateSections('thanh_pho', provinceSelected.name);
       },
-      onClose: Actions.pop,
+      onClose: pop,
       listCities: this.state.cities,
       dataKey: 'name',
       allOption: false,
@@ -449,6 +446,12 @@ class EditProfile extends Component {
     this.setState({sections: _sections});
   };
 
+  get separatorItemStyle() {
+    return mergeStyles(styles.separatorItem, {
+      backgroundColor: this.theme.color.border,
+    });
+  }
+
   render() {
     const {t} = this.props;
 
@@ -473,8 +476,8 @@ class EditProfile extends Component {
         />
 
         <Button
-        useGestureHandler
-        useTouchableHighlight
+          useGestureHandler
+          useTouchableHighlight
           containerStyle={[styles.btnContainer, btnStyle]}
           title={t('saveChanges')}
           onPress={this._onSaveProfile}
@@ -495,43 +498,15 @@ class EditProfile extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     marginBottom: 0,
     width: '100%',
-    backgroundColor: appConfig.colors.sceneBackground,
   },
-
   separatorSection: {
     width: '100%',
     height: 5,
   },
-
   separatorItem: {
     height: 1,
-    backgroundColor: '#EFEFF4',
-  },
-
-  rightBtnEdit: {
-    width: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-  },
-
-  txtEdit: {
-    fontSize: 14,
-    color: '#ffffff',
-  },
-
-  mainScroll: {
-    flex: 1,
-  },
-
-  btnContainer: {
-    // backgroundColor: appConfig.colors.sceneBackground,
   },
 });
 
