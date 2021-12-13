@@ -45,7 +45,7 @@ export const SYSTEM_LIGHT = {
   overlay60: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.6),
   overlay30: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.3),
   onOverlay: CORE.white,
-  underlay: CORE.grey200, // use for touchableHighlight
+  underlay: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.1), // use for touchableHighlight
   shadow: CORE.black,
 
   // statusBarBackground: android ? primaryDark : transparent,
