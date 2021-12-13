@@ -1,32 +1,33 @@
 import React, {Component} from 'react';
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  Image,
-  Keyboard,
-} from 'react-native';
+import {View, StyleSheet, Image, Keyboard} from 'react-native';
 import appConfig from 'app-config';
+// 3-party libs
 import Animated, {Easing} from 'react-native-reanimated';
-import Button from '../../../../components/Button';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+//context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Container,
+  Typography,
+  ScrollView,
+  Input,
+  Icon,
+} from 'src/components/base';
+import Button from 'src/components/Button';
 
-import {MAIN_COLOR, SUB_COLOR} from '../constants';
-import {GAME_TYPE} from '../../constants';
-
-const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const {concat, Extrapolate} = Animated;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: '#fff',
-    ...elevationShadowStyle(appConfig.device.isIOS ? 10 : 24, 0, -1),
   },
   borderTop: {
     height: 2,
@@ -53,45 +54,33 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   noteContainer: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 4,
     paddingVertical: 3,
     paddingHorizontal: 7,
     marginBottom: 5,
   },
   note: {
     fontStyle: 'italic',
-    fontSize: 12,
   },
   highlight: {
-    color: MAIN_COLOR,
     fontWeight: 'bold',
-    fontSize: 14,
   },
   title: {
-    fontSize: 14,
     fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    color: '#666',
     marginRight: 7,
     marginBottom: 5,
   },
   pointTitle: {
     marginTop: 5,
     marginRight: 20,
-    fontSize: 12,
     fontWeight: '300',
   },
   totalPoint: {
-    fontSize: 14,
     fontWeight: '500',
-    color: SUB_COLOR,
   },
   feePoint: {
-    fontSize: 14,
     fontWeight: '500',
-    color: MAIN_COLOR,
   },
   collapseContainer: {
     top: -3,
@@ -114,7 +103,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   collapseText: {
-    fontSize: 12,
     fontWeight: '300',
   },
   row: {
@@ -124,12 +112,8 @@ const styles = StyleSheet.create({
   content: {
     padding: 15,
     paddingBottom: 0,
-    borderColor: '#ddd',
-    borderTopWidth: 1,
   },
   inputContainer: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
     borderTopLeftRadius: 0,
   },
   textInput: {
@@ -139,10 +123,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 2,
     fontWeight: 'bold',
-    color: SUB_COLOR,
   },
   btnContainer: {
-    backgroundColor: 'transparent',
     width: null,
     paddingVertical: 0,
     paddingHorizontal: 0,
@@ -156,7 +138,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   resultsContainer: {
-    flex: 1,
     maxHeight: 300,
   },
   results: {
@@ -165,36 +146,28 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   resultsSubmittedTitle: {
-    fontSize: 12,
     marginRight: 10,
     marginTop: 10,
   },
   resultContainer: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    borderRadius: 4,
-    backgroundColor: SUB_COLOR,
     marginRight: 7,
     marginTop: 10,
   },
   result: {
-    color: '#fff',
     fontStyle: 'italic',
-    fontSize: 12,
     fontWeight: 'bold',
   },
   messageContainer: {
     marginHorizontal: -15,
     marginTop: -15,
     padding: 15,
-    backgroundColor: MAIN_COLOR,
   },
   message: {
     textAlign: 'center',
-    fontSize: 15,
     letterSpacing: 0.3,
     fontWeight: '500',
-    color: '#fff',
   },
 });
 
@@ -204,13 +177,19 @@ const animatedConfig = {
 };
 
 class Footer extends Component {
+  static contextType = ThemeContext;
+
   state = {
     containerHeight: undefined,
     isCollapsed: false,
-    collapseText: 'Đóng',
+    collapseText: this.props.t('footer.closeTitle'),
     number: '',
   };
   translateY = new Animated.Value(0);
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get submitDisabled() {
     return Number.isNaN(this.state.number) || this.state.number === '';
@@ -244,7 +223,9 @@ class Footer extends Component {
     });
     this.setState({
       isCollapsed: !this.state.isCollapsed,
-      collapseText: !this.state.isCollapsed ? 'Mở' : 'Đóng',
+      collapseText: !this.state.isCollapsed
+        ? this.props.t('footer.openTitle')
+        : this.props.t('footer.closeTitle'),
     });
   };
 
@@ -262,16 +243,95 @@ class Footer extends Component {
   renderResults() {
     if (!this.props.hasResults) {
       return (
-        <View style={styles.resultContainer}>
-          <Text style={styles.result}>Bạn chưa chọn số</Text>
-        </View>
+        <Container style={this.resultContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={this.resultStyle}>
+            {this.props.t('footer.noResult')}
+          </Typography>
+        </Container>
       );
     }
     return this.props.results.map((result, index) => (
-      <View key={index} style={styles.resultContainer}>
-        <Text style={styles.result}>{result}</Text>
+      <View key={index} style={this.resultContainerStyle}>
+        <Typography type={TypographyType.LABEL_SMALL} style={this.resultStyle}>
+          {result}
+        </Typography>
       </View>
     ));
+  }
+
+  get noteContainerStyle() {
+    return mergeStyles(styles.noteContainer, {
+      backgroundColor: this.theme.color.contentBackground,
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get collapseIconStyle() {
+    return mergeStyles(styles.collapseIcon, {
+      color: this.theme.color.onSurface,
+    });
+  }
+
+  get contentStyle() {
+    return mergeStyles(styles.content, {
+      borderColor: this.theme.color.border,
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+    });
+  }
+
+  get inputContainerStyle() {
+    return mergeStyles(styles.inputContainer, {
+      backgroundColor: this.theme.color.contentBackground,
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    });
+  }
+
+  get feePointStyle() {
+    return mergeStyles(styles.feePoint, {color: this.theme.color.marigold});
+  }
+
+  get totalPointStyle() {
+    return mergeStyles(styles.totalPoint, {color: this.theme.color.cherry});
+  }
+
+  get highlightStyle() {
+    return mergeStyles(styles.highlight, {color: this.theme.color.marigold});
+  }
+
+  get textInputStyle() {
+    return mergeStyles(styles.textInput, {
+      color: this.theme.color.primaryHighlight,
+    });
+  }
+
+  get resultContainerStyle() {
+    return mergeStyles(styles.resultContainer, {
+      backgroundColor: this.theme.color.cherry,
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get resultStyle() {
+    return mergeStyles(styles.result, {
+      color: this.theme.color.onPersistPrimary,
+    });
+  }
+
+  get messageContainerStyle() {
+    return mergeStyles(styles.messageContainer, {
+      backgroundColor: this.theme.color.marigold,
+    });
+  }
+  get messageStyle() {
+    return mergeStyles(styles.message, {
+      color: this.theme.color.onPersistPrimary,
+    });
+  }
+
+  get linearGradientColor() {
+    return [this.theme.color.cherry, this.theme.color.marigold];
   }
 
   render() {
@@ -299,8 +359,9 @@ class Footer extends Component {
         },
       ],
     };
+
     return (
-      <Animated.View style={[styles.container, translateYStyle]}>
+      <Container reanimated shadow style={[styles.container, translateYStyle]}>
         <Shimmer
           animating
           opacity={1}
@@ -309,7 +370,7 @@ class Footer extends Component {
           <View>
             <LinearGradient
               style={styles.borderTop}
-              colors={[SUB_COLOR, MAIN_COLOR]}
+              colors={this.linearGradientColor}
               locations={[0, 1]}
               useAngle
               angle={135}
@@ -324,29 +385,51 @@ class Footer extends Component {
           />
           <View style={[styles.titleContainer]}>
             <View style={[styles.row, styles.mainTitleContainer]}>
-              <Text style={styles.title}>{this.props.title}</Text>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={styles.title}>
+                {this.props.title}
+              </Typography>
               {!!this.props.isActive && (
-                <View style={styles.noteContainer}>
-                  <Text style={styles.note}>
-                    còn{' '}
-                    <Text style={styles.highlight}>{this.props.maxTurn}</Text>{' '}
-                    lượt miễn phí
-                  </Text>
-                </View>
+                <Container style={this.noteContainerStyle}>
+                  <Typography
+                    type={TypographyType.LABEL_SMALL}
+                    style={styles.note}>
+                    {this.props.t('footer.remainTurnTitle')}{' '}
+                    <Typography
+                      type={TypographyType.LABEL_MEDIUM}
+                      style={this.highlightStyle}>
+                      {this.props.maxTurn}
+                    </Typography>{' '}
+                    {this.props.t('footer.freeTurn')}
+                  </Typography>
+                </Container>
               )}
             </View>
             <View style={styles.row}>
               {!!this.props.totalPoint && (
-                <Text style={styles.pointTitle}>
-                  Bạn còn:{' '}
-                  <Text style={styles.totalPoint}>{this.props.totalPoint}</Text>
-                </Text>
+                <Typography
+                  type={TypographyType.LABEL_SMALL}
+                  style={styles.pointTitle}>
+                  {this.props.t('footer.remainPointTitle')}{' '}
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={this.totalPointStyle}>
+                    {this.props.totalPoint}
+                  </Typography>
+                </Typography>
               )}
               {!!this.props.feePoint && (
-                <Text style={styles.pointTitle}>
-                  Điểm sử dụng:{' '}
-                  <Text style={styles.feePoint}>{this.props.feePoint}</Text>
-                </Text>
+                <Typography
+                  type={TypographyType.LABEL_SMALL}
+                  style={styles.pointTitle}>
+                  {this.props.t('footer.pointOfUse')}{' '}
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={this.feePointStyle}>
+                    {this.props.feePoint}
+                  </Typography>
+                </Typography>
               )}
             </View>
           </View>
@@ -354,11 +437,15 @@ class Footer extends Component {
           <Button
             iconLeft={
               <View style={styles.collapseWrapper}>
-                <Text style={styles.collapseText}>
+                <Typography
+                  type={TypographyType.LABEL_SMALL}
+                  style={styles.collapseText}>
                   {this.state.collapseText}
-                </Text>
-                <AnimatedIcon
-                  style={[styles.collapseIcon, rotateStyle]}
+                </Typography>
+                <Icon
+                  reanimated
+                  bundle={BundleIconSetName.MATERIAL_ICONS}
+                  style={[this.collapseIconStyle, rotateStyle]}
                   name="arrow-drop-down"
                 />
               </View>
@@ -369,18 +456,20 @@ class Footer extends Component {
           />
         </View>
 
-        <View style={styles.content} onLayout={this.handleContentLayout}>
+        <Container
+          style={this.contentStyle}
+          onLayout={this.handleContentLayout}>
           <>
             {this.props.isActive ? (
-              <View style={[styles.row, styles.inputContainer]}>
-                <TextInput
-                  style={styles.textInput}
+              <Container style={[styles.row, this.inputContainerStyle]}>
+                <Input
+                  style={this.textInputStyle}
                   keyboardType={
                     appConfig.device.isIOS ? 'number-pad' : 'numeric'
                   }
                   maxLength={this.props.maxLengthInput || 3}
-                  selectionColor={SUB_COLOR}
-                  placeholder="Nhập số của bạn..."
+                  selectionColor={this.theme.color.cherry}
+                  placeholder={this.props.t('footer.placeholder')}
                   value={this.state.number}
                   onChangeText={this.onChangeText}
                 />
@@ -391,10 +480,14 @@ class Footer extends Component {
                   containerStyle={styles.btnContainer}
                   btnContainerStyle={styles.submitBtnContainer}
                 />
-              </View>
+              </Container>
             ) : (
-              <View style={[styles.messageContainer]}>
-                <Text style={styles.message}>{this.props.message}</Text>
+              <View style={[this.messageContainerStyle]}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={this.messageStyle}>
+                  {this.props.message}
+                </Typography>
               </View>
             )}
 
@@ -402,17 +495,19 @@ class Footer extends Component {
               style={[styles.footer, styles.resultsContainer]}
               contentContainerStyle={[styles.results]}>
               <View style={[styles.row, styles.results]}>
-                <Text style={styles.resultsSubmittedTitle}>
+                <Typography
+                  type={TypographyType.LABEL_SMALL}
+                  style={styles.resultsSubmittedTitle}>
                   {this.props.resultsSubmittedTitle}
-                </Text>
+                </Typography>
                 {this.renderResults()}
               </View>
             </ScrollView>
           </>
-        </View>
-      </Animated.View>
+        </Container>
+      </Container>
     );
   }
 }
 
-export default Footer;
+export default withTranslation('lotteryGame')(Footer);

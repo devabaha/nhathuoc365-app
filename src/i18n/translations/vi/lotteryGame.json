@@ -1,0 +1,24 @@
+{
+  "body": {
+    "date": "Ngày",
+    "code": "Mã",
+    "noCode": "Chưa có mã",
+    "rulesTitle": "Thể lệ",
+    "prizeStructureTitle": "Cơ cấu giải thưởng",
+    "codeList": "Danh sách mã của bạn"
+  },
+  "footer": {
+    "title": "Chọn số nhanh",
+    "sendNumber": "Gửi số",
+    "resultsSubmittedTitle": "Số bạn đã chọn",
+    "moreTitle": "Xem Thêm",
+    "closeTitle": "Đóng",
+    "openTitle": "Mở",
+    "placeholder": "Nhập số của bạn...",
+    "freeTurn": "lượt miễn phí",
+    "remainTurnTitle": "Còn",
+    "remainPointTitle": "Bạn còn:",
+    "pointOfUse": "Điểm sử dụng:",
+    "noResult": "Bạn chưa chọn số"
+  }
+}

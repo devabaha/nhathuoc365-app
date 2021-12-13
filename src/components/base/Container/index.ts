@@ -12,6 +12,7 @@ export interface ContainerProps extends ViewProps {
 
   content?: boolean;
   noBackground?: boolean;
+  shadow?: boolean;
   flex?: boolean;
   row?: boolean;
   center?: boolean;
