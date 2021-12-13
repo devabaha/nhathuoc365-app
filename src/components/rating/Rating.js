@@ -10,7 +10,7 @@ import EventTracker from 'app-helper/EventTracker';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // routing
 import {push, pop} from 'app-helper/routing';
-//context
+// context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName} from 'src/components/base/Icon/constants';

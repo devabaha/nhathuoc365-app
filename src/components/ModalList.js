@@ -4,16 +4,17 @@ import {View, StyleSheet, Image} from 'react-native';
 import {default as ModalBox} from 'react-native-modalbox';
 // configs
 import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
 // helpers
 import EventTracker from '../helper/EventTracker';
-//context
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {BundleIconSetName} from './base/Icon/constants';
+import {BundleIconSetName, TypographyType} from './base/Icon/constants';
 // custom components
 import Icon from './base/Icon';
 import FlatList from './base/FlatList';
-import {Container, Typography, TypographyType} from './base';
+import {Container, Typography} from './base';
 import {BaseButton} from './base/Button';
 
 class Modal extends PureComponent {
@@ -235,19 +236,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    // fontSize: 16,
     fontWeight: 'bold',
-    // color: '#444',
     letterSpacing: 1.15,
   },
   description: {
-    // fontSize: 13,
-    // color: '#666',
     marginTop: 2,
   },
   selectedIcon: {
     fontSize: 20,
-    // color: appConfig.colors.primary,
     marginLeft: 15,
   },
 });

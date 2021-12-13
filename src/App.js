@@ -1814,7 +1814,7 @@ class RootRouter extends Component {
 
                 <Stack key={appConfig.routes.amazingChat}>
                   <Scene
-                    key="amazing_chat_1"
+                    key={`${appConfig.routes.amazingChat}_1`}
                     hideNavBar={false}
                     component={AmazingChat}
                     setHeader={this.setHeader.bind(this)}

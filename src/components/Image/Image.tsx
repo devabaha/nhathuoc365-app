@@ -5,7 +5,7 @@ import FastImage from 'react-native-fast-image';
 import Lightbox from 'react-native-lightbox';
 // types
 import {ImageProps} from '.';
-//context
+// context
 import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({

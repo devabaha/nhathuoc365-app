@@ -146,11 +146,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** ORDER */
     case SERVICES_TYPE.STORE_ORDERS:
-      Actions.push(appConfig.routes.storeOrders, {
-        tel: service.tel,
-        title: service.site_name,
-        store_id: service.store_id,
-      });
+      push(
+        appConfig.routes.storeOrders,
+        {
+          tel: service.tel,
+          title: service.site_name,
+          store_id: service.store_id,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.ORDERS:
     case SERVICES_TYPE.ORDERS_TAB:

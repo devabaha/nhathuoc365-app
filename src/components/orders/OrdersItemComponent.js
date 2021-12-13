@@ -9,7 +9,7 @@ import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {mergeStyles} from 'src/Themes/helper';
 // routing
 import {push, pop} from 'app-helper/routing';
-//context
+// context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';

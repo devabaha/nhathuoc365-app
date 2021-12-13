@@ -6,6 +6,7 @@
   },
   "emptyMessage": "No orders yet",
   "encourageMessage": "Shop now!",
+  "goStore": "Go to Store",
   "item": {
     "title": "Orders #{{code}}",
     "next": "Continue",
@@ -27,7 +28,7 @@
       "status": "Status",
       "recheck": "Is this information correct?",
       "deliveryTitle": "Delivery information",
-      "POSTitle" : "POS information"
+      "POSTitle": "POS information"
     },
     "address": {
       "title": "Delivery address"
@@ -100,5 +101,10 @@
       "title": "Copy",
       "success": "Copied"
     }
+  },
+  "callErrorAlert": {
+    "cantCall": "Unable to contact",
+    "notRegisterPhoneYet": "User{{username}} not registered phone number",
+    "confirm": "OK"
   }
 }

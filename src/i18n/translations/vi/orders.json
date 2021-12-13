@@ -6,6 +6,7 @@
   },
   "emptyMessage": "Chưa có đơn hàng nào",
   "encourageMessage": "Mua sắm ngay",
+  "goStore": "Vào cửa hàng",
   "item": {
     "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
@@ -27,7 +28,7 @@
       "status": "Trạng thái",
       "recheck": "Thông tin này đã chính xác?",
       "deliveryTitle": "Thông tin đơn giao vận",
-      "POSTitle" : "Thông tin đơn POS"
+      "POSTitle": "Thông tin đơn POS"
     },
     "address": {
       "title": "Địa chỉ giao hàng"
@@ -100,5 +101,10 @@
       "title": "Sao chép",
       "success": "Sao chép thành công"
     }
+  },
+  "callErrorAlert": {
+    "cantCall": "Không thể liên lạc",
+    "notRegisterPhoneYet": "Người dùng{{username}} chưa đăng ký số điện thoại",
+    "confirm": "Đã hiểu"
   }
 }
