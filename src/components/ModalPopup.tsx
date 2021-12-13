@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
   maskPressing: {
     position: 'absolute',
     zIndex: 999,
-    // backgroundColor: 'red'
   },
 });
 
