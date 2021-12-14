@@ -421,8 +421,7 @@ class Account extends Component {
           },
         ],
         isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
-        isHidden: false
-
+        isHidden: false,
       },
       {
         key: 'warehouse',
@@ -471,7 +470,8 @@ class Account extends Component {
         label: t('options.commissionIncomeStatement.label'),
         desc: t('options.commissionIncomeStatement.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
+        onPress: () =>
+          push(appConfig.routes.commissionIncomeStatement, {}, this.theme),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -492,7 +492,7 @@ class Account extends Component {
         label: t('options.salesReport.label'),
         desc: t('options.salesReport.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.salesReport),
+        onPress: () => push(appConfig.routes.salesReport, {}, this.theme),
         boxIconStyle: [
           styles.boxIconStyle,
           {

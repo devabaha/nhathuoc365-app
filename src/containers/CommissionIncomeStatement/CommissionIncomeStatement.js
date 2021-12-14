@@ -1,81 +1,66 @@
-import React, {useEffect, useState} from 'react';
-
-import {
-  Text,
-  ScrollView,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
-import Button from 'react-native-button';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import {Table, TableWrapper, Row} from 'react-native-table-component';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Actions} from 'react-native-router-flux';
-
-import APIHandler from '../../network/APIHandler';
-import {APIRequest} from '../../network/Entity';
-import ScreenWrapper from '../../components/ScreenWrapper';
-import Loading from '../../components/Loading';
-import Container from '../../components/Layout/Container';
-
-import appConfig from 'app-config';
-import NoResult from '../../components/NoResult';
+import React, {useEffect, useMemo, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {Table, Row} from 'react-native-table-component';
 import {isEmpty} from 'lodash';
+// configs
+import appConfig from 'app-config';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push, refresh} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import {
+  BaseButton,
+  Container,
+  ScreenWrapper,
+  Icon,
+  Typography,
+  FlatList,
+  ScrollView,
+  IconButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   title: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    fontSize: 20,
-    color: '#333',
     fontWeight: 'bold',
   },
   reload: {
     fontSize: 22,
-    color: '#fff',
     right: 12,
   },
   headingWrapper: {
-    backgroundColor: '#fff',
     paddingTop: 15,
     paddingHorizontal: 15,
   },
   headingContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
     paddingBottom: 15,
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-    paddingTop: 30,
-    backgroundColor: '#fff',
   },
   header: {
     height: 50,
-    backgroundColor: appConfig.colors.primary,
-  },
-  yearMonthBtnContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    borderWidth: 0.5,
-    borderColor: '#333',
   },
   selectMonthContainer: {
     overflow: 'hidden',
-    borderRadius: 4,
   },
   yearMonthIcon: {
     height: '100%',
     fontSize: 18,
-    color: '#fff',
     padding: 10,
-    backgroundColor: appConfig.colors.primary,
   },
   yearMonthTxt: {
-    color: '#333',
     padding: 10,
   },
   totalIncomeContainer: {
@@ -83,47 +68,33 @@ const styles = StyleSheet.create({
   },
   totalIncomeTitle: {
     textTransform: 'uppercase',
-    fontSize: 10,
     fontWeight: '500',
     letterSpacing: 1,
-    color: '#333',
     marginBottom: 3,
   },
   incomeTxt: {
-    fontSize: 18,
     fontWeight: 'bold',
-    color: appConfig.colors.primary,
     letterSpacing: 0.6,
   },
   incomeUnitTxt: {
     fontWeight: '300',
-    color: '#333',
-    fontSize: 12,
     letterSpacing: 0,
   },
 
   tableHeadingText: {
     textAlign: 'center',
-    color: '#fff',
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   tableCellText: {
     textAlign: 'center',
-    color: '#333',
   },
   dataWrapper: {
     marginTop: -1,
   },
   row: {
     height: 40,
-    backgroundColor: '#fff',
-  },
-
-  tableBorder: {
-    borderWidth: 0.5,
-    borderColor: '#888',
   },
 
   noResultContainer: {
@@ -132,12 +103,9 @@ const styles = StyleSheet.create({
   itemsRose: {
     flex: 1,
     justifyContent: 'center',
-    borderColor: '#888',
   },
   heading: {
-    fontSize: 12,
     textAlign: 'center',
-    color: '#333',
     textTransform: 'uppercase',
   },
   roseValueContainer: {
@@ -146,24 +114,13 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   valueText: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     textAlign: 'center',
-  },
-  divider: {
-    width: 20,
-    height: 100,
-    backgroundColor: 'red',
   },
 
   roseHeaderContainer: {
-    backgroundColor: '#f5f5f5',
     paddingHorizontal: 5,
     paddingVertical: 10,
-  },
-  roseContentContainer: {
-    backgroundColor: '#fff',
   },
   roseSeparator: {
     position: 'absolute',
@@ -179,29 +136,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 7,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#f5f5f5',
   },
   nextRevenueTitle: {
-    fontSize: 15,
-    color: 'red',
     paddingVertical: 10,
-    backgroundColor: '#fff',
     textAlign: 'center',
   },
 });
 
-const CommissionIncomeStatement = (props) => {
+const CommissionIncomeStatement = ({navigation}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['commissionIncomeStatement', 'common']);
 
   const getCommissionRequest = new APIRequest();
   const requests = [getCommissionRequest];
 
   const tableHead = [
-    'Mã đơn',
-    'Giá trị đơn',
-    '% Hoa hồng',
-    'Hoa hồng',
-    'Vị trí',
+    t('tableHead.orderCode'),
+    t('tableHead.orderPrice'),
+    t('tableHead.incomePercent'),
+    t('tableHead.income'),
+    t('tableHead.position'),
   ];
 
   const tableRose = ['total_revenue', 'level', 'total_commission_month'];
@@ -223,6 +178,14 @@ const CommissionIncomeStatement = (props) => {
   };
 
   useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
+
+  useEffect(() => {
     didMount();
 
     return unMount;
@@ -231,7 +194,7 @@ const CommissionIncomeStatement = (props) => {
   const didMount = () => {
     getCommissions();
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         right: renderRight(),
       }),
     );
@@ -293,8 +256,8 @@ const CommissionIncomeStatement = (props) => {
 
   const openYearMonthPicker = () => {
     if (months.length === 0) return;
-    Actions.push(appConfig.routes.modalPicker, {
-      title: 'Chọn tháng',
+    push(appConfig.routes.modalPicker, {
+      title: t('chooseMonth'),
       selectedValue: selectedMonth,
       selectedLabel: selectedMonth,
       data: months,
@@ -309,98 +272,225 @@ const CommissionIncomeStatement = (props) => {
 
   const renderRight = () => {
     return (
-      <TouchableOpacity hitSlop={HIT_SLOP} onPress={onHardRefresh}>
-        <Ionicons name="ios-reload" style={styles.reload} />
-      </TouchableOpacity>
+      <IconButton
+        bundle={BundleIconSetName.IONICONS}
+        name="ios-reload"
+        iconStyle={rightButtonIconStyle}
+        hitSlop={HIT_SLOP}
+        onPress={onHardRefresh}
+      />
     );
   };
 
   const renderColumRose = ({item, index}) => {
     return (
-      <View style={[styles.itemsRose]}>
+      <View style={columnRoseStyle}>
         <Container flex center style={styles.roseHeaderContainer}>
-          <Text style={styles.heading}>
+          <Typography type={TypographyType.LABEL_SMALL} style={styles.heading}>
             {index === 0 ? monthBonus['total_revenue_title'] : t(item)}
-          </Text>
+          </Typography>
 
-          {index > 0 && <View style={[styles.roseSeparator]} />}
+          {index > 0 && <View style={roseSeparatorStyle} />}
         </Container>
-        <Container style={[styles.roseValueContainer]}>
-          <Text style={styles.valueText} numberOfLines={2}>
+        <Container noBackground style={[styles.roseValueContainer]}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={styles.valueText}
+            numberOfLines={2}>
             {monthBonus[item]}
-          </Text>
+          </Typography>
         </Container>
       </View>
     );
   };
 
+  const headingContainerStyle = useMemo(() => {
+    return mergeStyles(styles.headingContainer, {
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const yearMonthBtnContainerStyle = useMemo(() => {
+    return {
+      borderWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+      borderRadius: theme.layout.borderRadiusSmall,
+    };
+  }, [theme]);
+
+  const selectMonthContainerStyle = useMemo(() => {
+    return mergeStyles(styles.selectMonthContainer, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, [theme]);
+
+  const yearMonthIconStyle = useMemo(() => {
+    return mergeStyles(styles.yearMonthIcon, {
+      color: theme.color.onPrimaryHighlight,
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const tableBorderStyle = useMemo(() => {
+    return {
+      borderWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
+
+  const tableHeaderStyle = useMemo(() => {
+    return mergeStyles(styles.header, {
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const tableHeadingTextStyle = useMemo(() => {
+    return mergeStyles(styles.tableHeadingText, {
+      color: theme.color.onPrimaryHighlight,
+    });
+  }, [theme]);
+
+  const tableCellTextStyle = useMemo(() => {
+    return mergeStyles(styles.tableCellText, {
+      color: theme.color.textPrimary,
+    });
+  }, [theme]);
+
+  const commissionRowStyle = useMemo(() => {
+    return mergeStyles(styles.row, {backgroundColor: theme.color.surface});
+  }, [theme]);
+
+  const evenCommissionRowStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.contentBackgroundWeak,
+    };
+  }, [theme]);
+
+  const nextRevenueTitleStyle = useMemo(() => {
+    return mergeStyles(styles.nextRevenueTitle, {
+      color: theme.color.danger,
+      backgroundColor: theme.color.surface,
+    });
+  }, [theme]);
+
+  const rightButtonIconStyle = useMemo(() => {
+    return mergeStyles(styles.reload, {
+      color: theme.color.onNavBarBackground,
+    });
+  }, [theme]);
+
+  const columnRoseStyle = useMemo(() => {
+    return mergeStyles(styles.itemsRose, {
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const roseContentContainerStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.surface,
+    };
+  }, [theme]);
+
+  const roseSeparatorStyle = useMemo(() => {
+    return mergeStyles(styles.roseSeparator, {
+      borderBottomColor: theme.color.contentBackgroundWeak,
+    });
+  }, [theme]);
+
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
       <Container style={styles.headingWrapper}>
-        <Container row style={styles.headingContainer}>
-          <Button
-            containerStyle={styles.yearMonthBtnContainer}
+        <Container noBackground row style={headingContainerStyle}>
+          <BaseButton
+            style={yearMonthBtnContainerStyle}
             onPress={openYearMonthPicker}>
-            <Container row centerVertical style={styles.selectMonthContainer}>
-              <AntDesignIcon name="calendar" style={styles.yearMonthIcon} />
-              <Text style={styles.yearMonthTxt}>{selectedMonth}</Text>
+            <Container
+              noBackground
+              row
+              centerVertical
+              style={selectMonthContainerStyle}>
+              <Icon
+                bundle={BundleIconSetName.ANT_DESIGN}
+                name="calendar"
+                style={yearMonthIconStyle}
+              />
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.yearMonthTxt}>
+                {selectedMonth}
+              </Typography>
             </Container>
-          </Button>
+          </BaseButton>
 
           <Container flex style={styles.totalIncomeContainer}>
-            <Text style={styles.totalIncomeTitle}>Tổng hoa hồng</Text>
-            <Text style={styles.incomeTxt}>
+            <Typography
+              type={TypographyType.LABEL_TINY}
+              style={styles.totalIncomeTitle}>
+              {t('totalCommissionIncome')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
+              style={styles.incomeTxt}>
               {stats.total_commission_month}
-              <Text style={styles.incomeUnitTxt}>
+              <Typography
+                type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+                style={styles.incomeUnitTxt}>
                 {' '}
                 /{stats.total_cart_accept}
-              </Text>
-            </Text>
+              </Typography>
+            </Typography>
           </Container>
         </Container>
       </Container>
       {!isEmpty(monthBonus) && (
-        <View>
+        <Container>
           <FlatList
-            contentContainerStyle={styles.roseContentContainer}
             data={tableRose}
             keyExtractor={(i) => i}
             renderItem={renderColumRose}
             numColumns={3}
             scrollEnabled={false}
           />
-          <Text style={styles.nextRevenueTitle}>
+          <Typography
+            type={TypographyType.DESCRIPTION_MEDIUM}
+            style={nextRevenueTitleStyle}>
             {monthBonus.next_total_revenue_title}
-          </Text>
-        </View>
+          </Typography>
+        </Container>
       )}
 
-      <Text style={styles.title}>Danh sách đơn hàng</Text>
+      <Typography type={TypographyType.TITLE_LARGE} style={styles.title}>
+        {t('listOrders')}
+      </Typography>
 
       <ScrollView horizontal>
         <View>
-          <Table borderStyle={styles.tableBorder}>
+          <Table borderStyle={tableBorderStyle}>
             <Row
               data={tableHead}
               widthArr={widthArr}
-              style={styles.header}
-              textStyle={styles.tableHeadingText}
+              style={tableHeaderStyle}
+              textStyle={tableHeadingTextStyle}
             />
           </Table>
           {hasCommissions() && (
-            <ScrollView style={styles.dataWrapper}>
-              <Table borderStyle={styles.tableBorder}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              safeLayout
+              style={styles.dataWrapper}>
+              <Table borderStyle={tableBorderStyle}>
                 {commissions.map((rowData, index) => (
                   <Row
                     key={index}
                     data={rowData}
                     widthArr={widthArr}
                     style={[
-                      styles.row,
-                      index % 2 && {backgroundColor: '#f5f5f5'},
+                      commissionRowStyle,
+                      index % 2 && evenCommissionRowStyle,
                     ]}
-                    textStyle={styles.tableCellText}
+                    textStyle={tableCellTextStyle}
                   />
                 ))}
               </Table>
@@ -412,7 +502,7 @@ const CommissionIncomeStatement = (props) => {
         <View
           pointerEvents="none"
           style={[StyleSheet.absoluteFill, styles.noResultContainer]}>
-          <NoResult message="Chưa có đơn hàng" />
+          <NoResult message={t('noOrder')} />
         </View>
       )}
     </ScreenWrapper>

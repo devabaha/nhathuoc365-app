@@ -4,7 +4,19 @@
       "title": "Chọn tháng"
     }
   },
+  "tableHead": {
+    "orderCode": "Mã đơn",
+    "orderPrice": "Giá trị đơn",
+    "incomePercent": "% Hoa hồng",
+    "income": "Hoa hồng",
+    "position": "Vị trí"
+  },
+
   "total_revenue": "Tổng F1",
   "level": "Mức thưởng",
-  "total_commission_month": "Thưởng"
+  "total_commission_month": "Thưởng",
+  "noOrder": "Chưa có đơn hàng",
+  "listOrders": "Danh sách đơn hàng",
+  "chooseMonth": "Chọn tháng",
+  "totalCommissionIncome": "Tổng hoa hồng"
 }
