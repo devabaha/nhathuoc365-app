@@ -31,12 +31,14 @@ export type Typography = {
   [TypographyType.LABEL_MEDIUM_TERTIARY]: Style;
 
   [TypographyType.LABEL_MEDIUM_SECONDARY]: Style;
+  [TypographyType.LABEL_SMALL_SECONDARY]: Style;
 
   [TypographyType.LABEL_HUGE]?: Style;
   [TypographyType.LABEL_LARGE]?: Style;
   [TypographyType.LABEL_MEDIUM]?: Style;
   [TypographyType.LABEL_SEMI_MEDIUM]?: Style;
   [TypographyType.LABEL_SMALL]?: Style;
+  [TypographyType.LABEL_SMALL_TERTIARY]?: Style;
   [TypographyType.LABEL_EXTRA_SMALL]?: Style;
   [TypographyType.LABEL_TINY]?: Style;
   [TypographyType.LABEL_TINY_TERTIARY]?: Style;

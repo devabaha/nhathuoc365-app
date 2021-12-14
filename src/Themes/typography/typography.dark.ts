@@ -69,6 +69,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,
   },
+  [TypographyType.LABEL_SMALL_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
   [TypographyType.LABEL_TINY_TERTIARY]: {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_DARK.textTertiary,
@@ -77,6 +81,10 @@ export const TYPOGRAPHY_DARK: Typography = {
   // SECONDARY
   [TypographyType.LABEL_MEDIUM_SECONDARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_DARK.textSecondary,
+  },
+  [TypographyType.LABEL_SMALL_SECONDARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.textSecondary,
   },
   // NORMAL

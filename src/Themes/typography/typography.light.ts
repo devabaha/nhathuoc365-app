@@ -69,6 +69,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.textTertiary,
   },
+  [TypographyType.LABEL_SMALL_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
   [TypographyType.LABEL_TINY_TERTIARY]: {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_LIGHT.textTertiary,
@@ -77,6 +81,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
   // SECONDARY
   [TypographyType.LABEL_MEDIUM_SECONDARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
+    color: BASE_COLOR_LIGHT.textSecondary,
+  },
+  [TypographyType.LABEL_SMALL_SECONDARY]: {
+    fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.textSecondary,
   },
   // NORNAL
