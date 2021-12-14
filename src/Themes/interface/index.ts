@@ -22,6 +22,7 @@ export type Typography = {
   [TypographyType.TITLE_MEDIUM]?: Style;
 
   [TypographyType.LABEL_HUGE_PRIMARY]: Style;
+  [TypographyType.LABEL_SEMI_HUGE_PRIMARY]: Style;
   [TypographyType.LABEL_LARGE_PRIMARY]: Style;
   [TypographyType.LABEL_MEDIUM_PRIMARY]: Style;
   [TypographyType.LABEL_SMALL_PRIMARY]: Style;

@@ -5,5 +5,8 @@
   "totalOrders": "Số đơn hàng",
   "referralOrders": "Đơn hàng giới thiệu",
   "newReferralMembers": "Thành viên giới thiệu",
-  "joiningDate": "Ngày tham gia"
+  "joiningDate": "Ngày tham gia",
+  "noReportList": "Chưa có danh sách",
+  "totalTurnover": "Tổng doanh số",
+  "chooseMonth": "Chọn tháng"
 }
