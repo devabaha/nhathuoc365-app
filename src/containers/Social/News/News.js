@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet} from 'react-native';
 // 3-party libs
 import {TabView, TabBar} from 'react-native-tab-view';
-import {Actions} from 'react-native-router-flux';
 import {reaction} from 'mobx';
 // configs
 import appConfig from 'app-config';
@@ -12,6 +11,8 @@ import EventTracker from 'app-helper/EventTracker';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {refresh} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -95,7 +96,7 @@ class News extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         title: this.props.title || this.props.t('common:screen.news.mainTitle'),
       });
     });

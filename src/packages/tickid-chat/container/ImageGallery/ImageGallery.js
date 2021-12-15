@@ -20,6 +20,7 @@ import CameraRoll from '@react-native-community/cameraroll';
 import ImagePicker from 'react-native-image-picker';
 // helpers
 import {setStater, willUpdateState} from '../../helper';
+import {getTheme} from 'src/Themes/Theme.context';
 // constants
 import {
   HEIGHT,
@@ -47,7 +48,6 @@ import HeaderLayout from './HeaderLayout';
 import SendImage from './SendImage';
 import PermissionLibraryNotGranted from './PermissionLibraryNotGranted';
 import ImageItemContainer from './ImageItemContainer';
-import {getTheme} from 'src/Themes/Theme.context';
 
 const PERMISSIONS_TYPE = {
   CAMERA: 'camera-permission',

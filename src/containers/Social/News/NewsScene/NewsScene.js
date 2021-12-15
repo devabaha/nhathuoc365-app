@@ -7,10 +7,10 @@ import React, {
 } from 'react';
 import {StyleSheet} from 'react-native';
 // 3-party libs
-import {Actions} from 'react-native-router-flux';
 import {reaction} from 'mobx';
 import {Observer} from 'mobx-react';
 // configs
+import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
 import {
@@ -21,6 +21,8 @@ import {
 } from 'src/helper/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -44,6 +46,7 @@ const styles = StyleSheet.create({
 
 const NewsScene = ({id, isFetching = false}) => {
   const {theme} = useTheme();
+
   const {t} = useTranslation(['news', 'common']);
 
   const reactionDisposer = useRef(() => {});
@@ -123,10 +126,14 @@ const NewsScene = ({id, isFetching = false}) => {
             (newsItem) => newsItem.id === store.deep_link_data.id,
           );
           if (news) {
-            Actions.notify_item({
-              title: news.title,
-              data: news,
-            });
+            push(
+              appConfig.routes.notifyDetail,
+              {
+                title: news.title,
+                data: news,
+              },
+              theme,
+            );
           } else {
             flashShowMessage({
               type: 'danger',
@@ -162,9 +169,19 @@ const NewsScene = ({id, isFetching = false}) => {
     });
   }, []);
 
-  const handleActionBarPress = useCallback((type, feeds) => {
-    handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, feeds);
-  }, []);
+  const handleActionBarPress = useCallback(
+    (type, feeds) => {
+      handleSocialActionBarPress(
+        SOCIAL_DATA_TYPES.NEWS,
+        type,
+        feeds,
+        undefined,
+        undefined,
+        theme,
+      );
+    },
+    [theme],
+  );
 
   const renderFeeds = ({item: feeds, index}) => {
     return (

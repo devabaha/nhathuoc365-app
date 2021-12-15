@@ -20,9 +20,9 @@ const ActionBar = ({
 }) => {
   const {t} = useTranslation('social');
 
-  const onActionPress = useCallback((type) => {
+  const onActionPress = (type) => {
     onActionBarPress(type);
-  }, []);
+  };
 
   return (
     <Container noBackground row style={styles.container}>
