@@ -67,7 +67,6 @@ import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/Home/SearchStore';
 import ListStore from './components/Home/ListStore';
 import ScanQRCode from './components/Home/ScanQRCode';
-import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import ChooseLocation from './components/Home/ChooseLocation';
@@ -1616,10 +1615,6 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     back
                   />
-                </Stack>
-
-                <Stack key="chat">
-                  <Scene key="chat_1" component={Chat} {...navBarConfig} back />
                 </Stack>
 
                 <Stack key={appConfig.routes.webview}>
