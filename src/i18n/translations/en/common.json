@@ -50,7 +50,7 @@
     "qrBarCode": {
       "mainTitle": "Account code",
       "walletAddressTitle": "Wallet address",
-      "scanTitle": "Scan QRCode",
+      "scanTitle": "QRCode",
       "enterCodeProduct": "Enter code product",
       "enterCode": "Enter code",
       "scanCode": "Scan code"
@@ -91,6 +91,9 @@
     "ordersDetail": {
       "mainTitle": "Orders detail",
       "confirmTitle": "Confirmation"
+    },
+    "viewOrdersItem": {
+      "mainTitle": "Information order"
     },
     "feedback": {
       "mainTitle": "Thank you!"

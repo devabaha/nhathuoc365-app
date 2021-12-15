@@ -6,11 +6,11 @@ import {default as ModalBox} from 'react-native-modalbox';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 // helpers
-import EventTracker from '../helper/EventTracker';
+import EventTracker from 'app-helper/EventTracker';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {BundleIconSetName, TypographyType} from './base/Icon/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
 import Icon from './base/Icon';
 import FlatList from './base/FlatList';

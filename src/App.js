@@ -1505,10 +1505,10 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="view_orders_item">
+                <Stack key={appConfig.routes.viewOrdersItem}>
                   <Scene
-                    key="view_orders_item_1"
-                    title="Thông tin đơn hàng"
+                    key={`${appConfig.routes.viewOrdersItem}_1`}
+                    title={t('screen.viewOrdersItem.mainTitle')}
                     component={ViewOrdersItem}
                     {...navBarConfig}
                     back
@@ -1624,7 +1624,7 @@ class RootRouter extends Component {
 
                 <Stack key={appConfig.routes.webview}>
                   <Scene
-                    key="webview_1"
+                    key={`${appConfig.routes.webview}_1`}
                     component={WebView}
                     {...navBarConfig}
                     back
@@ -2103,6 +2103,7 @@ class RootRouter extends Component {
               <Scene
                 key={`${appConfig.routes.modalWebview}_1`}
                 component={WebView}
+                {...whiteNavBarConfig}
                 renderBackButton={CloseButton}
                 back
               />

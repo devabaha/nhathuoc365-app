@@ -92,6 +92,9 @@
       "mainTitle": "Chi tiết đơn hàng",
       "confirmTitle": "Xác nhận"
     },
+    "viewOrdersItem": {
+      "mainTitle": "Thông tin đơn hàng"
+    },
     "feedback": {
       "mainTitle": "Cảm ơn quý khách!"
     },

@@ -90,12 +90,16 @@ const IconButton = forwardRef(
       titleStyle,
     ]);
 
+    const iconStyles = useMemo(() => mergeStyles(titleStyles, iconStyle), [
+      titleStyles,
+      iconStyle,
+    ]);
+
     const renderTitleComponent = useCallback(() => {
-      return props.renderTitleComponent(titleStyles, buttonStyles);
+      return props.renderTitleComponent(iconStyles, buttonStyles);
     }, [titleStyles, buttonStyles]);
 
     const renderIconComponent = () => {
-      const iconStyles = mergeStyles(titleStyles, iconStyle);
       return (
         <Icon name={name} bundle={bundle} style={iconStyles} {...iconProps} />
       );
