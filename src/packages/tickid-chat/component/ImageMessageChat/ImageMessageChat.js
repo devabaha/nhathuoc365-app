@@ -4,9 +4,11 @@ import {StyleSheet, View, Animated, Easing, ViewPropTypes} from 'react-native';
 // 3-party libs
 import {withTranslation} from 'react-i18next';
 import RNFetchBlob from 'rn-fetch-blob';
-import {Actions} from 'react-native-router-flux';
+// configs
+import appConfig from 'app-config';
 // helpers
 import {getBase64Image, setStater} from '../../helper';
+import {push} from 'app-helper/routing';
 // constants
 import {
   BundleIconSetName,
@@ -166,7 +168,7 @@ class ImageMessageChat extends Component {
   }
 
   handleViewImage() {
-    Actions.item_image_viewer({
+    push(appConfig.routes.itemImageViewer, {
       images: [{url: this.props.lowQualityUri}],
     });
   }

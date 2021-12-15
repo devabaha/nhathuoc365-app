@@ -1,5 +1,4 @@
 import store from 'app-store';
-import {Actions} from 'react-native-router-flux';
 import {
   SOCIAL_BUTTON_TYPES,
   SOCIAL_DATA_TYPES,
@@ -147,7 +146,6 @@ export const handleSocialActionBarPress = (
       push(
         appConfig.routes.modalComment,
         {
-          // title: 'Bình luận',
           title: feeds.title || feeds.name,
           object: feeds?.object,
           object_id: feeds?.object_id || feeds?.id,

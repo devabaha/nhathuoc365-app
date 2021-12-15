@@ -2,6 +2,8 @@ import React, {useMemo} from 'react';
 import {StyleSheet, View, Animated} from 'react-native';
 // types
 import {Style} from 'src/Themes/interface';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {isIos, WIDTH} from 'app-packages/tickid-chat/constants';
 // custom components
@@ -11,7 +13,6 @@ import {
   Typography,
   TypographyType,
 } from 'src/components/base';
-import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   center: {

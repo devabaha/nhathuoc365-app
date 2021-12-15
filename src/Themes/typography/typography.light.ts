@@ -91,7 +91,7 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.textSecondary,
   },
-  // NORNAL
+  // NORMAL
   [TypographyType.LABEL_DISPLAY_SMALL]: {
     fontSize: TypographyFontSize.DISPLAY_SMALL,
     color: BASE_COLOR_LIGHT.textPrimary,

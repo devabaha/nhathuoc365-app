@@ -79,7 +79,7 @@ class MasterToolBar extends Component {
   animatedValue = 0;
 
   getAnimatedEffectValue = (type) => {
-    animatedValue = this.getAnimatedComponentValue(type);
+    const animatedValue = this.getAnimatedComponentValue(type);
     return animatedValue;
   };
 

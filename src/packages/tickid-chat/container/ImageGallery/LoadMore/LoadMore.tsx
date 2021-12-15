@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {Animated, Easing, StyleSheet} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
 // constants
 import {WIDTH} from '../../../constants';
 import {TypographyType} from 'src/components/base';
 // custom components
 import {Typography} from 'src/components/base';
-import {withTranslation} from 'react-i18next';
 
 const styles = StyleSheet.create({
   deepLoading: {

@@ -27,7 +27,6 @@ const Avatar = ({url, containerStyle, imageStyle, imageProps, onPress}) => {
     return mergeStyles(styles.container, {
       borderWidth: theme.layout.borderWidthPixel,
       borderColor: theme.color.border,
-      backgroundColor: 'red'
     });
   }, [theme]);
 
@@ -36,7 +35,7 @@ const Avatar = ({url, containerStyle, imageStyle, imageProps, onPress}) => {
       disabled={!onPress}
       source={{uri: url}}
       onPress={onPress}
-      style={[containerBaseStyle,{width: 100}, containerStyle]}
+      style={[containerBaseStyle, containerStyle]}
       imageStyle={[styles.image, imageStyle]}
       imageProps={imageProps}
     />

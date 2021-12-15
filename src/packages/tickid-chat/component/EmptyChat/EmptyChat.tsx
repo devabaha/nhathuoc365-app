@@ -6,13 +6,10 @@ import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {WINDOW_HEIGHT} from 'app-packages/tickid-chat/constants';
+
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
-import {
-  Icon,
-  BundleIconSetName,
-  TypographyType,
-  Typography,
-} from 'src/components/base';
+import {Icon, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   emptyChatContainer: {

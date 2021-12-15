@@ -1,7 +1,9 @@
 import React, {useMemo} from 'react';
-import {useTranslation} from 'react-i18next';
 import {StyleSheet} from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
 import {RESULTS} from 'react-native-permissions';
+// custom components
 import {Container, Typography, TypographyType} from 'src/components/base';
 
 const styles = StyleSheet.create({
