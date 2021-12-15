@@ -5,6 +5,7 @@ import {
   CartPaymentStatus,
 } from 'src/constants/cart';
 import {CORE} from '../core';
+import { SYSTEM_LIGHT } from '../system';
 
 export const ADDITION_LIGHT = {
   //     STATUS COLOR
@@ -76,4 +77,7 @@ export const ADDITION_LIGHT = {
   cherry: '#da3560',
   neutral1: '#dddddd',
   goldenYellow: '#ffeb00',
+  backgroundBubbleLeft: SYSTEM_LIGHT.contentBackgroundWeak,
+  backgroundBubbleRight: '#198bfe',
+  backgroundBubbleLeftHighlight: SYSTEM_LIGHT.contentBackground,
 };

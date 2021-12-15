@@ -301,5 +301,7 @@
   "selectProvinceCity": "Chọn tỉnh/ thành phố",
   "selectDistrict": "Chọn quận/ huyện",
   "selectWard": "Chọn phường/ xã",
+  "errorAndTryAgain": "Lỗi! chạm để thử lại",
+  "settings": "Cài đặt",
   "noNotification": "Chưa có thông báo"
 }

@@ -1452,6 +1452,7 @@ class Item extends Component {
                     productWithSocialDataFormat,
                     true,
                     extraSocialProps,
+                    this.theme,
                   )
                 }
                 hasInfoExtraBottom={false}
@@ -1462,6 +1463,7 @@ class Item extends Component {
                     productWithSocialDataFormat,
                     false,
                     extraSocialProps,
+                    this.theme,
                   )
                 }
               />

@@ -15,11 +15,11 @@ const MIN_WIDTH_MESSAGE = 120;
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    minWidth: MIN_WIDTH_MESSAGE,
-    alignItems: 'flex-end',
-    alignSelf: 'flex-end',
-    zIndex: 1,
+    // position: 'absolute',
+    // minWidth: MIN_WIDTH_MESSAGE,
+    // alignItems: 'flex-end',
+    // alignSelf: 'flex-end',
+    // zIndex: 1,
   },
   btnContainer: {
     right: 0,
@@ -67,14 +67,14 @@ const SeeMoreBtn = ({
   const renderTitle = useCallback(() => {
     return (
       <>
-        <LinearGradient
+        {/* <LinearGradient
           style={styles.mask}
           colors={[hexToRgba(bgColor, 1), hexToRgba(bgColor, 0)]}
           locations={[0.77, 1]}
           angle={-90}
           useAngle
-        />
-        <Typography type={TypographyType.DESCRIPTION_MEDIUM} style={labelStyle}>
+        /> */}
+        <Typography type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY} style={labelStyle}>
           {title || t('seeMore')}
         </Typography>
       </>
@@ -85,7 +85,6 @@ const SeeMoreBtn = ({
     <View style={[styles.container, containerStyle]}>
       <TextButton
         hitSlop={HIT_SLOP}
-        activeOpacity={0.9}
         onPress={onPress}
         style={styles.btnContainer}
         renderTitleComponent={renderTitle}

@@ -21,7 +21,7 @@ import {
   FilledTonalButton,
   AppFilledTonalButton,
   ButtonRoundedType,
-  ImageButton
+  ImageButton,
 } from './Button';
 import Icon, {BundleIconSetName, BUNDLE_ICON_SETS} from './Icon';
 

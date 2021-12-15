@@ -17,6 +17,7 @@ import {
 
 export default class Loading extends PureComponent {
   static contextType = ThemeContext;
+
   get theme() {
     return getTheme(this);
   }

@@ -7,6 +7,7 @@ import equal from 'deep-equal';
 import {Observer} from 'mobx-react';
 import {debounce} from 'lodash';
 import {reaction, toJS} from 'mobx';
+import Clipboard from '@react-native-community/clipboard';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -67,7 +68,7 @@ const Posts = ({
 
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
-  const moreActionOptions = [t('edit'), t('delete'), t('cancel')];
+  const moreActionOptions = [t('edit'), t('copy'), t('delete'), t('cancel')];
 
   const limit = useRef(limitProp);
   const page = useRef(1);
@@ -373,6 +374,10 @@ const Posts = ({
           });
           break;
         case 1:
+          Clipboard.setString(feeds.content);
+          Toast.show(t('copied'));
+          break;
+        case 2:
           Actions.push(appConfig.routes.modalConfirm, {
             message: t('social:postDeleteConfirmMessage'),
             yesTitle: t('delete'),
@@ -389,7 +394,7 @@ const Posts = ({
     (feeds) => {
       Actions.push(appConfig.routes.modalActionSheet, {
         options: moreActionOptions,
-        destructiveButtonIndex: 1,
+        destructiveButtonIndex: moreActionOptions.length - 2,
         onPress: (index) => handlePressMoreActionOption(index, feeds),
       });
     },
@@ -456,6 +461,8 @@ const Posts = ({
                   SOCIAL_BUTTON_TYPES.COMMENT,
                   feeds,
                   false,
+                  undefined,
+                  theme,
                 )
               }
               onPressMoreActions={() => handlePressMoreActions(feeds)}

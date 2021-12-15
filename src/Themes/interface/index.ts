@@ -4,58 +4,12 @@ import {TypographyType} from 'src/components/base';
 import {CartPaymentStatus, CartStatus} from 'src/constants/cart';
 import {CartType, DeliveryStatusCode} from 'src/constants/cart';
 
-export type Style =
-  | StyleProp<ViewStyle | TextStyle>
-  | StyleProp<ViewStyle | TextStyle>[];
+export type ItemStyle = ViewStyle | TextStyle;
+
+export type Style = StyleProp<ItemStyle> | StyleProp<ItemStyle>[];
 
 export type Typography = {
-  [TypographyType.LABEL_DISPLAY_SMALL]?: Style;
-
-  [TypographyType.TITLE_MEDIUM_PRIMARY]?: Style;
-
-  [TypographyType.TITLE_LARGE_TERTIARY]?: Style;
-  [TypographyType.TITLE_SEMI_LARGE_TERTIARY]?: Style;
-
-  [TypographyType.TITLE_HUGE]?: Style;
-  [TypographyType.TITLE_LARGE]?: Style;
-  [TypographyType.TITLE_SEMI_LARGE]?: Style;
-  [TypographyType.TITLE_MEDIUM]?: Style;
-
-  [TypographyType.LABEL_HUGE_PRIMARY]: Style;
-  [TypographyType.LABEL_SEMI_HUGE_PRIMARY]: Style;
-  [TypographyType.LABEL_LARGE_PRIMARY]: Style;
-  [TypographyType.LABEL_MEDIUM_PRIMARY]: Style;
-  [TypographyType.LABEL_SMALL_PRIMARY]: Style;
-  [TypographyType.LABEL_EXTRA_SMALL_PRIMARY]: Style;
-
-  [TypographyType.LABEL_MEDIUM_TERTIARY]: Style;
-
-  [TypographyType.LABEL_MEDIUM_SECONDARY]: Style;
-  [TypographyType.LABEL_SMALL_SECONDARY]: Style;
-
-  [TypographyType.LABEL_HUGE]?: Style;
-  [TypographyType.LABEL_LARGE]?: Style;
-  [TypographyType.LABEL_MEDIUM]?: Style;
-  [TypographyType.LABEL_SEMI_MEDIUM]?: Style;
-  [TypographyType.LABEL_SMALL]?: Style;
-  [TypographyType.LABEL_SMALL_TERTIARY]?: Style;
-  [TypographyType.LABEL_EXTRA_SMALL]?: Style;
-  [TypographyType.LABEL_TINY]?: Style;
-  [TypographyType.LABEL_TINY_TERTIARY]?: Style;
-
-  [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]?: Style;
-  [TypographyType.DESCRIPTION_SMALL_PRIMARY]?: Style;
-
-  [TypographyType.DESCRIPTION_MEDIUM_TERTIARY]?: Style;
-  [TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY]?: Style;
-  [TypographyType.DESCRIPTION_SMALL_TERTIARY]?: Style;
-
-  [TypographyType.DESCRIPTION_MEDIUM]?: Style;
-  [TypographyType.DESCRIPTION_SEMI_MEDIUM]?: Style;
-  [TypographyType.DESCRIPTION_SMALL]?: Style;
-
-  [TypographyType.CAPTION]?: Style;
-  [TypographyType.BUTTON_TEXT]?: Style;
+  [type in TypographyType]?: Style;
 };
 
 export type Color = {
@@ -189,6 +143,9 @@ export type Color = {
   cherry: ColorValue;
   neutral1: ColorValue;
   goldenYellow: ColorValue;
+  backgroundBubbleLeft: ColorValue;
+  backgroundBubbleRight: ColorValue;
+  backgroundBubbleLeftHighlight: ColorValue;
 };
 
 export type Layout = {

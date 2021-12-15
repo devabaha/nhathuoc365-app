@@ -1,7 +1,10 @@
-import React, {useEffect, useReducer, useRef, useCallback} from 'react';
+import React, {useEffect, useReducer, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import {Message} from 'react-native-gifted-chat';
+// constants
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+// custom components
 import CustomBubble from '../CustomBubble';
 
 const styles = StyleSheet.create({

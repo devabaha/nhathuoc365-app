@@ -10,6 +10,7 @@ import {servicesHandler} from '../../helper/servicesHandler';
 import {languages} from '../../i18n/constants';
 import {APIRequest} from '../../network/Entity';
 import EventTracker from '../../helper/EventTracker';
+import {Container} from 'src/components/base';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -376,9 +377,9 @@ class Chat extends Component {
         pinListNotify={this.state.pinListNotify}
       />
     ) : (
-      <View style={styles.container}>
+      <Container flex>
         <Indicator size="small" />
-      </View>
+      </Container>
     );
   }
 }

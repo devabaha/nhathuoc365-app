@@ -9,11 +9,8 @@ import {
 import PropTypes from 'prop-types';
 import {
   isAndroid,
-  isIos,
-  WIDTH,
   HEIGHT,
   HEADER_HEIGHT,
-  MIN_HEIGHT_COMPOSER,
   BOTTOM_SPACE_IPHONE_X,
   BOTTOM_OFFSET_GALLERY,
   isAndroidEmulator,

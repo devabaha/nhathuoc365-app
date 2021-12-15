@@ -1,11 +1,16 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Animated, Easing, StyleSheet, Text} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Container from 'src/components/Layout/Container';
-import Pressable from 'src/components/Pressable';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+// custom components
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+import {Container, Icon, Typography} from 'src/components/base';
 import FloatingIcons from '../../FloatingIcons';
+import ActionBtn from './ActionBtn';
 
 const styles = StyleSheet.create({
   wrapperContainer: {
@@ -15,30 +20,9 @@ const styles = StyleSheet.create({
   wrapper: {
     justifyContent: 'space-between',
   },
-  container: {
-    // alignItems: 'flex-end',
-  },
+  container: {},
   time: {
-    fontSize: 13,
-    color: '#777',
     marginRight: 15,
-  },
-  actionTitle: {
-    fontWeight: '600',
-    color: '#666',
-  },
-
-  actionBtnContainer: {
-    marginRight: 15,
-  },
-  maskBtn: {
-    backgroundColor: '#ccc',
-    width: '150%',
-    height: '150%',
-    left: '-25%',
-    top: '-25%',
-    position: 'absolute',
-    borderRadius: 4,
   },
 
   pendingContainer: {
@@ -47,17 +31,12 @@ const styles = StyleSheet.create({
   },
   pendingIcon: {
     fontSize: 7,
-    color: appConfig.colors.status.warning,
     marginRight: 5,
   },
-  pendingMessage: {
-    fontSize: 12,
-    color: appConfig.colors.status.warning,
-  },
+  pendingMessage: {},
   icon: {
     position: 'absolute',
     right: 0,
-    // bottom:0
   },
 });
 
@@ -71,6 +50,8 @@ const BubbleBottom = ({
   totalReaction,
   onActionPress = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('social');
   const [liked, setLiked] = useState(isLiked);
 
@@ -93,17 +74,39 @@ const BubbleBottom = ({
     [liked],
   );
 
+  const renderPendingIcon = useCallback((titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="circle"
+        style={[titleStyle, styles.pendingIcon]}
+      />
+    );
+  }, []);
+
+  const pendingMessageStyle = useMemo(() => {
+    return {color: theme.color.warning};
+  }, [theme]);
+
   return (
-    <Container centerVertical={false} style={styles.wrapperContainer}>
+    <Container noBackground style={styles.wrapperContainer}>
       {isPending && (
-        <Container row style={styles.pendingContainer}>
-          <FontAwesomeIcon name="circle" style={styles.pendingIcon} />
-          <Text style={styles.pendingMessage}>{pendingMessage}</Text>
+        <Container noBackground row style={styles.pendingContainer}>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={pendingMessageStyle}
+            renderIconBefore={renderPendingIcon}>
+            {pendingMessage}
+          </Typography>
         </Container>
       )}
-      <Container row style={styles.wrapper}>
-        <Container row style={styles.container}>
-          <Text style={[styles.time, bottomMainTitleStyle]}>{message}</Text>
+      <Container noBackground row style={styles.wrapper}>
+        <Container noBackground row style={styles.container}>
+          <Typography
+            type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+            style={[styles.time, bottomMainTitleStyle]}>
+            {message}
+          </Typography>
 
           {!isLoading && (
             <>
@@ -133,87 +136,3 @@ const BubbleBottom = ({
 };
 
 export default React.memo(BubbleBottom);
-
-export const ActionBtn = React.memo(
-  ({
-    title,
-    highlight,
-    style,
-    contentStyle,
-    titleStyle,
-    maskStyle,
-    onPress = () => {},
-  }) => {
-    const [animationValue, setAnimation] = useState(new Animated.Value(0));
-    const animatedPressing = useRef(new Animated.Value(0));
-
-    const setAnimationValue = useCallback((animatedValue) => {
-      setAnimation(animatedValue);
-    }, []);
-
-    const animatedMaskStyle = {
-      opacity: animationValue,
-    };
-
-    const animatedPressingStyle = {
-      opacity: animatedPressing.current.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0, 1, 0],
-      }),
-      transform: [
-        {
-          scale: animatedPressing.current.interpolate({
-            inputRange: [0, 0.5, 1],
-            outputRange: [1, 1.1, 1],
-          }),
-        },
-      ],
-    };
-
-    const animatedTextPressingStyle = {
-      transform: [
-        {
-          scale: animatedPressing.current.interpolate({
-            inputRange: [0, 0.5, 1],
-            outputRange: [1, 1.1, 1],
-          }),
-        },
-      ],
-    };
-
-    const handlePress = useCallback(() => {
-      Animated.spring(animatedPressing.current, {
-        toValue: 1,
-        speed: 1.5,
-        useNativeDriver: true,
-      }).start(() => {
-        animatedPressing.current.setValue(0);
-      });
-      onPress();
-    }, [highlight]);
-
-    const titleExtraStyle = highlight && {color: appConfig.colors.primary};
-
-    return (
-      <Pressable
-        onPress={handlePress}
-        refAnimationValue={setAnimationValue}
-        style={[styles.actionBtnContainer, style]}
-        contentStyle={contentStyle}>
-        <Animated.View
-          style={[styles.maskBtn, animatedPressingStyle, maskStyle]}
-        />
-        <Animated.View style={[styles.maskBtn, animatedMaskStyle, maskStyle]} />
-        <Animated.Text
-          style={[
-            styles.actionTitle,
-            titleExtraStyle,
-            animatedTextPressingStyle,
-            titleStyle,
-          ]}>
-          {title}
-        </Animated.Text>
-      </Pressable>
-    );
-  },
-);

@@ -1,3 +1,4 @@
+import {ReactElement} from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -64,8 +65,10 @@ export interface BaseButtonProps
     buttonStyle?: StyleProp<ViewStyle>,
   ) => Children;
 
-  iconLeft?: () => Children;
-  iconRight?: () => Children;
+  renderContentContainerComponent?: (children: any) => ReactElement;
+
+  iconLeft?: Children;
+  iconRight?: Children;
   children?: Children;
 }
 

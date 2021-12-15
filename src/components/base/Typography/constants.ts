@@ -3,6 +3,8 @@ export enum TypographyType {
 
   TITLE_MEDIUM_PRIMARY = 'titleMediumPrimary',
 
+  TITLE_LARGE_SECONDARY = 'titleLargeSecondary',
+
   TITLE_LARGE_TERTIARY = 'titleLargeTertiary',
   TITLE_SEMI_LARGE_TERTIARY = 'titleSemiLargeTertiary',
 
@@ -24,8 +26,10 @@ export enum TypographyType {
 
   LABEL_MEDIUM_SECONDARY = 'labelMediumSecondary',
   LABEL_SMALL_SECONDARY = 'labelSmallSecondary',
+  
   LABEL_HUGE = 'labelHuge',
   LABEL_LARGE = 'labelLarge',
+  LABEL_SEMI_LARGE = 'labelSemiLarge',
   LABEL_MEDIUM = 'labelMedium',
   LABEL_SEMI_MEDIUM = 'labelSemiMedium',
   LABEL_SMALL = 'labelSmall',
@@ -57,6 +61,7 @@ export enum TypographyFontSize {
   HEADLINE_SMALL = 18,
 
   BODY_LARGE = 16,
+  BODY_SEMI_LARGE = 15,
   BODY_MEDIUM = 14,
   BODY_SEMI_MEDIUM = 13,
   BODY_SMALL = 12,

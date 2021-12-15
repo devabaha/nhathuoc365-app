@@ -1,0 +1,16 @@
+{
+  "imageGallery": {
+    "noSupportLibrary": "Platform does not support Library access",
+    "libraryAccessRequestUnavailable": "Library access is not available",
+    "libraryAccessRequestError": "Error requesting Library access",
+    "noSupportCamera": "Platform does not support Camera access",
+    "cameraAccessRequestUnavailable": "Camera access is not available",
+    "cameraAccessRequestError": "Error requesting Camera access",
+    "cantAccessSetting": "App can't access Settings!"
+  },
+  "takePhoto": "Take photo",
+  "needCameraAccess": "App need Camera access",
+  "needLibraryAccess": "App need Library access",
+  "loadingMore": "Loading more...",
+  "makeConversation": "Let's chat!"
+}

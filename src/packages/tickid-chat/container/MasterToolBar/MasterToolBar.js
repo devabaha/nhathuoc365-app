@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
-import { Animated } from 'react-native';
-
-import GestureWrapper from '../../component/GestureWrapper';
+import React, {Component} from 'react';
+import {Animated} from 'react-native';
+import PropTypes from 'prop-types';
+// constants
 import {
   COMPONENT_TYPE,
   BOTTOM_OFFSET_GALLERY,
   DURATION_SHOW_GALLERY,
-  HAS_NOTCH,
-  ANDROID_STATUS_BAR_HEIGHT
 } from '../../constants';
+// custom components
+import GestureWrapper from '../../component/GestureWrapper';
 import ImageGallery from '../ImageGallery';
-import PropTypes from 'prop-types';
 import PinList from '../PinList';
 
 const defaultListener = () => {};
@@ -22,47 +21,47 @@ class MasterToolBar extends Component {
     visible: PropTypes.bool,
     baseViewHeight: PropTypes.number,
     durationShowGallery: PropTypes.number,
+    defaultStatusBarColor: PropTypes.string,
     galleryProps: PropTypes.exact({
       visible: PropTypes.bool,
-      defaultStatusBarColor: PropTypes.string,
       setHeader: PropTypes.func,
       onExpandedBodyContent: PropTypes.func,
       onCollapsingBodyContent: PropTypes.func,
       onCollapsedBodyContent: PropTypes.func,
       onSendImage: PropTypes.func,
-      onToggleImage: PropTypes.func
+      onToggleImage: PropTypes.func,
     }),
     pinListProps: PropTypes.exact({
       visible: PropTypes.bool,
       pinList: PropTypes.array,
       itemsPerRow: PropTypes.number,
       onPinPress: PropTypes.func,
-      pinListNotify: PropTypes.object
+      pinListNotify: PropTypes.object,
     }),
     extraData: PropTypes.any,
-    extraHeight: PropTypes.number
+    extraHeight: PropTypes.number,
   };
+
   static defaultProps = {
     selectedType: COMPONENT_TYPE._NONE,
     visible: false,
     baseViewHeight: BOTTOM_OFFSET_GALLERY,
     durationShowGallery: DURATION_SHOW_GALLERY,
     galleryProps: {
-      defaultStatusBarColor: '#000',
       setHeader: defaultListener,
       onExpandedBodyContent: defaultListener,
       onCollapsingBodyContent: defaultListener,
       onCollapsedBodyContent: defaultListener,
       onSendImage: defaultListener,
-      onToggleImage: defaultListener
+      onToggleImage: defaultListener,
     },
     pinListProps: {
       pinList: [],
       itemsPerRow: ITEMS_PER_ROW,
       onPinPress: defaultListener,
-      pinListNotify: {}
+      pinListNotify: {},
     },
-    extraData: null
+    extraData: null,
   };
 
   state = {
@@ -70,7 +69,7 @@ class MasterToolBar extends Component {
     expandContent: false,
     selectedType: this.props.selectedType,
     galleryChangingEffect: new Animated.Value(0),
-    pinChangingEffect: new Animated.Value(0)
+    pinChangingEffect: new Animated.Value(0),
   };
   unmounted = false;
 
@@ -79,12 +78,12 @@ class MasterToolBar extends Component {
   refGestureWrapper = React.createRef();
   animatedValue = 0;
 
-  getAnimatedEffectValue = type => {
+  getAnimatedEffectValue = (type) => {
     animatedValue = this.getAnimatedComponentValue(type);
     return animatedValue;
   };
 
-  getAnimatedComponentValue = type => {
+  getAnimatedComponentValue = (type) => {
     switch (type) {
       case COMPONENT_TYPE.GALLERY:
         return this.state.galleryChangingEffect;
@@ -101,10 +100,10 @@ class MasterToolBar extends Component {
       nextProps.selectedType !== COMPONENT_TYPE._NONE
     ) {
       const animatePrevValue = this.getAnimatedComponentValue(
-        this.props.selectedType
+        this.props.selectedType,
       );
       const animateNextValue = this.getAnimatedComponentValue(
-        nextProps.selectedType
+        nextProps.selectedType,
       );
 
       Animated.spring(animatePrevValue, {
@@ -112,11 +111,11 @@ class MasterToolBar extends Component {
         // (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0),
         overshootClamping: true,
         duration: 200,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start(() => {
         animatePrevValue.setValue(0);
         this.setState({
-          selectedType: nextProps.selectedType
+          selectedType: nextProps.selectedType,
         });
       });
       animateNextValue.setValue(0);
@@ -155,46 +154,47 @@ class MasterToolBar extends Component {
       case COMPONENT_TYPE.GALLERY.id:
         return {
           refGallery: this.refImageGallery,
-          refGesture: this.refGestureWrapper
+          refGesture: this.refGestureWrapper,
         };
       case COMPONENT_TYPE.PIN.id:
         return this.refPin;
     }
   }
 
-  handleChangePanResponderStatus = isActivePanResponder => {
-    this.setState({ isActivePanResponder });
+  handleChangePanResponderStatus = (isActivePanResponder) => {
+    this.setState({isActivePanResponder});
   };
 
-  handleVisibleAnimation = visible => {
+  handleVisibleAnimation = (visible) => {
     if (!visible) this.props.galleryProps.onCollapsedBodyContent();
   };
 
   handleCollapsingGesture = () => {
-    this.setState({ expandContent: false });
+    this.setState({expandContent: false});
     this.props.galleryProps.onCollapsingBodyContent();
   };
 
   handleExpandingGallery = () => {
-    this.setState({ expandContent: true });
+    this.setState({expandContent: true});
   };
 
-  handleSendImage = images => {
+  handleSendImage = (images) => {
     this.handleCollapsingGesture();
     this.props.galleryProps.onSendImage(images);
   };
 
-  handlePinPress = pin => {
+  handlePinPress = (pin) => {
     this.props.pinListProps.onPinPress(pin);
   };
 
   render() {
     console.log('* render master');
-    const { galleryProps, pinListProps } = this.props;
+    const {galleryProps, pinListProps} = this.props;
     const extraData =
       this.state.selectedType.id +
       '|' +
       JSON.stringify(this.props.pinListProps.pinListNotify);
+
     return (
       <GestureWrapper
         ref={this.refGestureWrapper}
@@ -210,8 +210,7 @@ class MasterToolBar extends Component {
         defaultStatusBarColor={this.props.defaultStatusBarColor}
         onExpandedBodyContent={galleryProps.onExpandedBodyContent}
         onExpandingBodyContent={this.handleExpandingGallery}
-        onFinishVisibleAnimation={this.handleVisibleAnimation}
-      >
+        onFinishVisibleAnimation={this.handleVisibleAnimation}>
         {!!galleryProps && galleryProps.visible && (
           <ImageGallery
             ref={this.refImageGallery}
@@ -230,7 +229,7 @@ class MasterToolBar extends Component {
             baseViewHeight={this.props.baseViewHeight}
             durationShowGallery={this.props.durationShowGallery}
             animatedEffectValue={this.getAnimatedEffectValue(
-              COMPONENT_TYPE.GALLERY
+              COMPONENT_TYPE.GALLERY,
             )}
           />
         )}
@@ -242,7 +241,7 @@ class MasterToolBar extends Component {
             pinList={pinListProps.pinList}
             itemsPerRow={pinListProps.itemsPerRow}
             animatedEffectValue={this.getAnimatedEffectValue(
-              COMPONENT_TYPE.PIN
+              COMPONENT_TYPE.PIN,
             )}
             onPinPress={this.handlePinPress}
             pinListNotify={pinListProps.pinListNotify}

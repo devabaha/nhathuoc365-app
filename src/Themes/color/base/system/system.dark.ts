@@ -44,7 +44,7 @@ export const SYSTEM_DARK = {
   disabled: '#444444',
 
   onOverlay: CORE.white,
-  underlay: SYSTEM_COMMON.primaryLight,
+  // underlay: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.2),
 
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,

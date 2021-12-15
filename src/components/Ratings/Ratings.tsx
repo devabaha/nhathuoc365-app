@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import {Rating, AirbnbRating} from 'react-native-ratings';
-
-import appConfig from 'app-config';
-
+// types
 import {RatingsProps} from '.';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({});
 
@@ -14,6 +15,8 @@ const Ratings = ({
   ratingCount = 5,
   ...props
 }: RatingsProps) => {
+  const {theme} = useTheme();
+
   return type === 'rating' ? (
     <Rating
       startingValue={ratingCount}
@@ -21,16 +24,20 @@ const Ratings = ({
       minValue={1}
       showRating={false}
       ratingBackgroundColor="transparent"
-      ratingColor={appConfig.colors.status.warning}
-      tintColor={appConfig.colors.sceneBackground}
+      // @ts-ignore
+      ratingColor={theme.color.warning}
+      // @ts-ignore
+      tintColor={theme.color.background}
       {...props}
     />
   ) : (
     <AirbnbRating
       showRating={false}
       defaultRating={count}
-      selectedColor={appConfig.colors.status.warning}
-      reviewColor={appConfig.colors.sceneBackground}
+      // @ts-ignore
+      selectedColor={theme.color.warning}
+      // @ts-ignore
+      reviewColor={theme.color.background}
       {...props}
     />
   );
