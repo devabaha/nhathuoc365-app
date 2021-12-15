@@ -12,8 +12,12 @@ import {
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
 import {formatStoreSocialPosts} from 'app-helper/social';
+import {push} from 'app-helper/routing';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 class Home extends Component {
+  static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
 
@@ -44,6 +48,10 @@ class Home extends Component {
     this.eventTracker = new EventTracker();
   }
   homeDataLoaded = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.getHomeDataFromApi();
@@ -266,13 +274,17 @@ class Home extends Component {
 
   handlePressButtonChat = () => {
     if (store.user_info && this.state.site) {
-      Actions.amazing_chat({
-        titleStyle: {width: 220},
-        phoneNumber: this.state.site.tel,
-        title: this.state.site.name,
-        site_id: this.state.site.id,
-        user_id: store.user_info.id,
-      });
+      push(
+        appConfig.routes.amazingChat,
+        {
+          titleStyle: {width: 220},
+          phoneNumber: this.state.site.tel,
+          title: this.state.site.name,
+          site_id: this.state.site.id,
+          user_id: store.user_info.id,
+        },
+        this.theme,
+      );
     }
   };
 

@@ -1,13 +1,9 @@
 import React, {PureComponent} from 'react';
-import {
-  TouchableOpacity,
-  TextInput,
-  Animated,
-  StyleSheet,
-  View,
-  Platform,
-} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
+// constants
 import {MIN_HEIGHT_COMPOSER} from '../../constants';
+// custom components
+import {Container, Input, BaseButton} from 'src/components/base';
 
 class CustomComposer extends PureComponent {
   static defaultProps = {
@@ -21,7 +17,6 @@ class CustomComposer extends PureComponent {
   componentDidMount() {
     this.props.autoFocus && this.props.onFocusInput();
   }
-  
 
   onContentSizeChange = (e) => {
     const {contentSize} = e.nativeEvent;
@@ -47,7 +42,7 @@ class CustomComposer extends PureComponent {
   render() {
     const props = this.props;
     return (
-      <View
+      <Container
         style={[
           styles.container,
           {
@@ -55,15 +50,15 @@ class CustomComposer extends PureComponent {
           },
         ]}>
         {props.showInput ? (
-          <TouchableOpacity
+          <BaseButton
             activeOpacity={1}
-            style={[styles.containerInput]}
+            style={styles.containerInput}
             onPress={props.onFocusInput}>
             <View
               pointerEvents={props.editable ? 'auto' : 'none'}
-              style={[styles.containerInput]}>
-              <TextInput
-                style={[styles.input]}
+              style={styles.containerInput}>
+              <Input
+                style={styles.input}
                 ref={props.refInput}
                 placeholder={props.placeholder}
                 onChange={props.onTyping}
@@ -76,26 +71,23 @@ class CustomComposer extends PureComponent {
                 onKeyPress={this.props.onKeyPress}
               />
             </View>
-          </TouchableOpacity>
+          </BaseButton>
         ) : (
           <Animated.View
             onStartShouldSetResponder={() => true}
-            style={[
-              styles.containerBack,
-              {
-                opacity: props.animatedBtnBackValue,
-                transform: [
-                  {
-                    scale: props.animatedBtnBackValue.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1.2, 1],
-                    }),
-                  },
-                ],
-              },
-            ]}></Animated.View>
+            style={{
+              opacity: props.animatedBtnBackValue,
+              transform: [
+                {
+                  scale: props.animatedBtnBackValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1.2, 1],
+                  }),
+                },
+              ],
+            }}></Animated.View>
         )}
-      </View>
+      </Container>
     );
   }
 }
@@ -118,7 +110,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 0,
     paddingBottom: 0,
-    color: '#404040',
   },
 });
 

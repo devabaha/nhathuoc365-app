@@ -1,4 +1,5 @@
 import {ViewProps} from 'react-native';
+import { Style } from 'src/Themes/interface';
 
 import {Children} from '..';
 

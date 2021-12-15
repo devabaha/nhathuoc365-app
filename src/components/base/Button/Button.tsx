@@ -1,8 +1,9 @@
-import React, {forwardRef, memo, useMemo} from 'react';
+import React, {forwardRef, Fragment, memo, useMemo} from 'react';
 import {
   StyleSheet,
   TouchableHighlight as RNTouchableHighlight,
   TouchableOpacity as RNTouchableOpacity,
+  View,
 } from 'react-native';
 
 import {
@@ -12,7 +13,7 @@ import {
 
 import {Theme} from 'src/Themes/interface';
 import {BaseButtonProps} from '.';
-import {Ref} from '..';
+import {Container, Ref} from '..';
 
 import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
@@ -53,6 +54,8 @@ const Button = forwardRef(
       iconRight,
       children,
 
+      renderContentContainerComponent,
+
       ...props
     }: BaseButtonProps,
     ref: Ref,
@@ -82,12 +85,8 @@ const Button = forwardRef(
         : RNTouchableOpacity;
     }, [useTouchableHighlight, useGestureHandler]);
 
-    return (
-      <Wrapper
-        underlayColor={theme.color.underlay}
-        activeOpacity={0.8}
-        {...props}
-        ref={ref}>
+    const renderContent = () => {
+      return (
         <>
           {iconLeft}
           {!!renderIconLeft && renderIconLeft(titleStyles)}
@@ -107,6 +106,18 @@ const Button = forwardRef(
           {!!renderIconRight && renderIconRight(titleStyles)}
           {iconRight}
         </>
+      );
+    };
+
+    return (
+      <Wrapper
+        underlayColor={theme.color.underlay}
+        activeOpacity={0.8}
+        {...props}
+        ref={ref}>
+        {renderContentContainerComponent
+          ? renderContentContainerComponent(renderContent())
+          : renderContent()}
       </Wrapper>
     );
   },

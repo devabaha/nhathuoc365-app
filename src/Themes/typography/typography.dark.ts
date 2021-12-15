@@ -21,6 +21,11 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_DARK.textTertiary,
   },
+  // SECONDARY
+  [TypographyType.TITLE_LARGE_SECONDARY]: {
+    fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.textSecondary,
+  },
   // NORMAL
   [TypographyType.TITLE_HUGE]: {
     fontSize: TypographyFontSize.HEADLINE_LARGE,
@@ -77,7 +82,6 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_DARK.textTertiary,
   },
-
   // SECONDARY
   [TypographyType.LABEL_MEDIUM_SECONDARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
@@ -98,6 +102,10 @@ export const TYPOGRAPHY_DARK: Typography = {
   },
   [TypographyType.LABEL_LARGE]: {
     fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
+  [TypographyType.LABEL_SEMI_LARGE]: {
+    fontSize: TypographyFontSize.BODY_SEMI_LARGE,
     color: BASE_COLOR_DARK.textPrimary,
   },
   [TypographyType.LABEL_MEDIUM]: {

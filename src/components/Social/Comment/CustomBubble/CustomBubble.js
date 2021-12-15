@@ -1,22 +1,29 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Animated} from 'react-native';
-
-import {ImageMessageChat} from 'app-packages/tickid-chat/component';
-import BubbleBottom from '../BubbleBottom';
+import {StyleSheet, View, Animated} from 'react-native';
+// 3-party libs
 import {Bubble, MessageText} from 'react-native-gifted-chat';
-
+// configs
 import appConfig from 'app-config';
-
+// helpers
+import {getRelativeTime, isShowFullContent} from 'app-helper/social';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 import {
   LINE_HEIGHT_OF_CONTENT,
   MAX_LINE_OF_CONTENT,
 } from 'src/constants/social/post';
-import {getRelativeTime, isShowFullContent} from 'app-helper/social';
-
+import {TypographyType} from 'src/components/base';
+// custom components
+import {ImageMessageChat} from 'app-packages/tickid-chat/component';
+import BubbleBottom from '../BubbleBottom';
 import SeeMoreBtn from '../../SeeMoreBtn';
 import BubbleEditing from './BubbleEditing';
 import TextPressable from 'src/components/TextPressable';
+import {Typography} from 'src/components/base';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
@@ -46,16 +53,11 @@ const styles = StyleSheet.create({
     marginRight: 0,
     overflow: 'hidden',
     paddingVertical: 3,
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
   },
   bubbleContainer: {
     // flex: 0,
   },
   imageContainer: {
-    borderRadius: 15,
-    borderWidth: 0.5,
-    borderColor: '#ddd',
     flex: 1,
     maxHeight: IMAGE_COMMENT_HEIGHT,
     width: '100%',
@@ -63,27 +65,15 @@ const styles = StyleSheet.create({
   },
   btnShowFullMessageContainer: {
     // top: SHOW_FULL_MESSAGE_TOP_SPACING,
-    bottom: LINE_HEIGHT_OF_CONTENT - 15,
+    // bottom: LINE_HEIGHT_OF_CONTENT - 15,
     zIndex: 1,
   },
   btnShowFullMessageTitle: {
     paddingRight: 12,
+    top: (appConfig.device.pixel * 16) / 2,
   },
   text: {
     lineHeight: LINE_HEIGHT_OF_CONTENT,
-    color: '#242424',
-    fontSize: 15,
-  },
-  labelShowFulMessage: {
-    color: '#777',
-    paddingLeft: 20,
-    paddingRight: 15,
-    lineHeight: LINE_HEIGHT_OF_CONTENT,
-  },
-  maskShowFullMessage: {
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
   },
   messageTextContainer: {
     minWidth: MIN_WIDTH_MESSAGE,
@@ -93,28 +83,13 @@ const styles = StyleSheet.create({
 
   titleMention: {
     fontWeight: '500',
-    color: appConfig.colors.primary,
-  },
-
-  maskMessageAndroid: {
-    width: '100%',
-    height: 3,
-    bottom: 0,
-    position: 'absolute',
   },
 });
 
-const bubbleWrapperStyle = {
-  left: styles.bubbleWrapper,
-};
-
-const bubbleContainerStyle = {
-  left: styles.bubbleContainer,
-};
-
 class CustomBubble extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
-    seeMoreTitle: 'Xem thêm',
     isUpdate: true,
     onCustomBubbleLongPress: () => {},
   };
@@ -129,6 +104,10 @@ class CustomBubble extends Component {
       (truncatedContent) => (this.truncatedContent = truncatedContent),
     ),
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.currentMessage?.content !== this.content) {
@@ -193,14 +172,20 @@ class CustomBubble extends Component {
   }
 
   renderMessageText = (props, bgColor) => {
-    props.customTextStyle = styles.text;
+    props.customTextStyle = this.textStyle;
 
     let content = !this.state.isShowFullMessage
       ? this.truncatedContent
       : props.currentMessage.content;
 
     if (!this.state.isShowFullMessage) {
-      content = <Text style={styles.text}>{content}</Text>;
+      content = (
+        <Typography
+          type={TypographyType.LABEL_SEMI_LARGE}
+          style={this.textStyle}>
+          {content}
+        </Typography>
+      );
     }
 
     if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
@@ -208,17 +193,20 @@ class CustomBubble extends Component {
         <>
           <TextPressable
             onPress={this.props.onPressRepliedUserName}
-            style={styles.titleMention}>
+            style={this.titleMentionStyle}>
             {props.currentMessage?.reply?.name}
           </TextPressable>{' '}
-          <Text style={styles.text}>{content}</Text>
+          <Typography
+            type={TypographyType.LABEL_SEMI_LARGE}
+            style={this.textStyle}>
+            {content}
+          </Typography>
         </>
       );
     }
-    props.currentMessage.text = content;
-
-    return (
-      <View style={styles.messageTextContainer}>
+    props.currentMessage.text = (
+      <>
+        {content}{' '}
         {!this.state.isShowFullMessage && (
           <SeeMoreBtn
             title={this.props.seeMoreTitle}
@@ -229,6 +217,21 @@ class CustomBubble extends Component {
             titleStyle={styles.btnShowFullMessageTitle}
           />
         )}
+      </>
+    );
+
+    return (
+      <View style={this.messageTextContainerStyle}>
+        {/* {!this.state.isShowFullMessage && (
+          <SeeMoreBtn
+            title={this.props.seeMoreTitle}
+            lineHeight={LINE_HEIGHT_OF_CONTENT}
+            bgColor={bgColor}
+            onPress={this.openFullMessage}
+            containerStyle={styles.btnShowFullMessageContainer}
+            titleStyle={styles.btnShowFullMessageTitle}
+          />
+        )} */}
         <MessageText {...props} currentMessage={{...props.currentMessage}} />
       </View>
     );
@@ -246,7 +249,7 @@ class CustomBubble extends Component {
     };
     return (
       <ImageMessageChat
-        containerStyle={[styles.imageContainer, imageStyle]}
+        containerStyle={[this.imageContainerStyle, imageStyle]}
         uploadURL={props.uploadURL}
         isUploadData={props.currentMessage.isUploadData}
         image={props.currentMessage.rawImage}
@@ -295,6 +298,46 @@ class CustomBubble extends Component {
     );
   };
 
+  get bubbleWrapperStyle() {
+    return {
+      left: mergeStyles(styles.bubbleWrapper, {
+        borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+        borderBottomLeftRadius: this.theme.layout.borderRadiusHuge,
+      }),
+    };
+  }
+
+  get bubbleContainerStyle() {
+    return {left: styles.bubbleContainer};
+  }
+
+  get messageTextContainerStyle() {
+    return mergeStyles(styles.messageTextContainer, {
+      borderBottomRightRadius: this.theme.layout.borderRadiusHuge,
+    });
+  }
+
+  get titleMentionStyle() {
+    return mergeStyles(styles.titleMention, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
+
+  get imageContainerStyle() {
+    return mergeStyles(styles.imageContainer, {
+      borderRadius: this.theme.layout.borderRadiusHuge,
+      borderWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get textStyle() {
+    return mergeStyles(
+      styles.text,
+      this.theme.typography[TypographyType.LABEL_LARGE],
+    );
+  }
+
   render() {
     const {
       onPressBubbleBottom,
@@ -308,13 +351,13 @@ class CustomBubble extends Component {
     const hasText = props.currentMessage.text;
     const bgColor = hasText
       ? isHighlight
-        ? BG_HIGHLIGHT_COLOR
-        : BG_COLOR
+        ? this.theme.color.contentBackground
+        : this.theme.color.contentBackgroundWeak
       : 'transparent';
 
     const wrapperStyle = {
       left: {
-        ...bubbleWrapperStyle.left,
+        ...this.bubbleWrapperStyle.left,
         backgroundColor: bgColor,
       },
     };
@@ -339,7 +382,7 @@ class CustomBubble extends Component {
             }}
             onLongPress={props.onCustomBubbleLongPress}
             wrapperStyle={wrapperStyle}
-            containerStyle={bubbleContainerStyle}
+            containerStyle={this.bubbleContainerStyle}
           />
           {this.renderImages(props, props.currentMessage.image)}
         </Animated.View>

@@ -64,6 +64,8 @@ import vi_request from './vi/request.json';
 import en_request from './en/request.json';
 import vi_rating from './vi/rating.json';
 import en_rating from './en/rating.json';
+import vi_chat from './vi/chat.json';
+import en_chat from './en/chat.json';
 import vi_agencyInformationRegister from './vi/agencyInformationRegister.json';
 import en_agencyInformationRegister from './en/agencyInformationRegister.json';
 import vi_lotteryGame from './vi/lotteryGame.json';
@@ -105,6 +107,7 @@ export default {
     progressTracking: vi_progressTracking,
     request: vi_request,
     rating: vi_rating,
+    chat: vi_chat,
     agencyInformationRegister: vi_agencyInformationRegister,
     lotteryGame: vi_lotteryGame,
     productStamp: vi_productStamp,
@@ -142,6 +145,7 @@ export default {
     progressTracking: en_progressTracking,
     request: en_request,
     rating: en_rating,
+    chat: en_chat,
     agencyInformationRegister: en_agencyInformationRegister,
     lotteryGame: en_lotteryGame,
     productStamp: en_productStamp,

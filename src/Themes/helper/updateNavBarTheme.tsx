@@ -37,6 +37,7 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
       return (
         <Typography
           type={TypographyType.TITLE_SEMI_LARGE}
+          numberOfLines={1}
           style={{
             color: tintColor,
             fontWeight: appConfig.device.isIOS ? '500' : 'bold',
@@ -58,19 +59,13 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
 export const updateNavbarTheme = (navigation: any, currentTheme: Theme) => {
   const listener = (theme: Theme) => {
     if (!navigation?.setParams) return;
-    const navigationBarStyle = navigation.getParam('navigationBarStyle', {});
+    // const navigationBarStyle = navigation.getParam('navigationBarStyle', {});
     const navBarTheme = getNavBarTheme(
       theme,
       !!navigation.state?.params?.surfaceMode,
     );
 
-    if (
-      !!navBarTheme?.headerStyle?.backgroundColor &&
-      navigationBarStyle?.backgroundColor !==
-        navBarTheme?.headerStyle?.backgroundColor
-    ) {
-      navigation.setParams(navBarTheme);
-    }
+    navigation.setParams(navBarTheme);
   };
 
   listener(currentTheme);

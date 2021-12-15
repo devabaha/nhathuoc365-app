@@ -1,34 +1,29 @@
-/* @flow */
-
-import React, {Component, useCallback, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-
-// library
+import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import {TabView, TabBar} from 'react-native-tab-view';
 import {Actions} from 'react-native-router-flux';
-import store from 'app-store';
 import {reaction} from 'mobx';
-// import Button from 'react-native-button';
-
-// components
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
 import EventTracker from 'app-helper/EventTracker';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
-
-import appConfig from 'app-config';
-import NewsScene from './NewsScene';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+import {TypographyType} from 'src/components/base';
+// entities
 import {APIRequest} from 'src/network/Entity';
+// custom components
+import NewsScene from './NewsScene';
 import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
 import NoResult from 'src/components/NoResult';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import ScreenWrapper from 'src/components/base/ScreenWrapper';
-import {
-  AppFilledTonalButton,
-  BaseButton,
-  FilledTonalButton,
-} from 'src/components/base/Button';
-import {Container, Typography, TypographyType} from 'src/components/base';
-import {mergeStyles} from 'src/Themes/helper';
-import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+import {BaseButton, Typography, ScreenWrapper} from 'src/components/base';
 
 const MAX_TAB_ITEMS_PER_ROW = 3.5;
 
@@ -40,10 +35,8 @@ const styles = StyleSheet.create({
 
   tabBarContainer: {
     paddingHorizontal: 0,
-    // ...elevationShadowStyle(5),
   },
   tabBarLabel: {
-    // minWidth: '100%',
     flex: appConfig.device.isIOS ? undefined : 1,
     textAlignVertical: 'center',
     textAlign: 'center',
@@ -306,7 +299,7 @@ class News extends Component {
           />
         ) : (
           !this.state.loading && (
-            <NoResult iconName="bell-off" message="Chưa có tin tức" />
+            <NoResult iconName="bell-off" message={this.props.t('noNews')} />
           )
         )}
       </ScreenWrapper>

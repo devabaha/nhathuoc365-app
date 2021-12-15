@@ -21,6 +21,8 @@ import {
 } from 'src/helper/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 // entities
@@ -41,6 +43,7 @@ const styles = StyleSheet.create({
 });
 
 const NewsScene = ({id, isFetching = false}) => {
+  const {theme} = useTheme();
   const {t} = useTranslation(['news', 'common']);
 
   const reactionDisposer = useRef(() => {});
@@ -188,6 +191,8 @@ const NewsScene = ({id, isFetching = false}) => {
                   SOCIAL_BUTTON_TYPES.COMMENT,
                   feeds,
                   false,
+                  undefined,
+                  theme,
                 )
               }
             />

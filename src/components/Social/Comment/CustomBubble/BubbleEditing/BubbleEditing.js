@@ -1,21 +1,33 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
-
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
-import {Container} from 'src/components/Layout';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {TypographyType} from 'src/components/base';
+import {
+  AppFilledButton,
+  AppOutlinedButton,
+  Container,
+  Input,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
-  input: {
+  inputContainer: {
     width: '100%',
-    height: 150,
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 15,
+    overflow: 'hidden',
+  },
+  input: {
+    textAlignVertical: 'top',
+    height: 150,
     paddingHorizontal: 15,
     paddingTop: 15,
     paddingBottom: 15,
-    textAlignVertical: 'top',
   },
   footerContainer: {
     alignSelf: 'flex-end',
@@ -25,28 +37,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingVertical: 7,
     paddingHorizontal: 15,
-    borderWidth: 1,
-    borderColor: appConfig.colors.primary,
-    borderRadius: 4,
-  },
-  btnPrimary: {
-    backgroundColor: appConfig.colors.primary,
   },
   btnTitle: {
-    color: appConfig.colors.primary,
     fontWeight: '500',
-    fontSize: 13,
-  },
-  btnTitlePrimary: {
-    color: appConfig.colors.white,
-  },
-  disabled: {
-    backgroundColor: appConfig.colors.disabled,
-    borderColor: appConfig.colors.disabled,
   },
 });
 
 const BubbleEditing = ({value: valueProp, onEdit, onCancel}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation();
   const refTextInput = useRef();
 
@@ -76,34 +75,40 @@ const BubbleEditing = ({value: valueProp, onEdit, onCancel}) => {
 
   const editDisabled = value === valueProp;
 
+  const inputContainerStyle = useMemo(() => {
+    return mergeStyles(styles.inputContainer, {
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
-    <Container flex centerVertical={false}>
-      <TextInput
-        ref={refTextInput}
-        autoFocus={appConfig.device.isIOS}
-        multiline
-        style={styles.input}
-        value={value}
-        onChangeText={handleChangeText}
-      />
-      <Container centerVertical={false}>
-        <Container row style={styles.footerContainer}>
-          <TouchableOpacity style={styles.btn} onPress={onCancel}>
-            <Text style={styles.btnTitle}>{t('cancel')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            disabled={editDisabled}
-            style={[
-              styles.btn,
-              styles.btnPrimary,
-              editDisabled && styles.disabled,
-            ]}
-            onPress={handlePressEdit}>
-            <Text style={[styles.btnTitle, styles.btnTitlePrimary]}>
-              {t('edit')}
-            </Text>
-          </TouchableOpacity>
-        </Container>
+    <Container noBackground flex>
+      <Container style={inputContainerStyle}>
+        <Input
+          ref={refTextInput}
+          autoFocus={appConfig.device.isIOS}
+          multiline
+          style={styles.input}
+          value={value}
+          onChangeText={handleChangeText}
+        />
+      </Container>
+      <Container noBackground row style={styles.footerContainer}>
+        <AppOutlinedButton
+          typoProps={{type: TypographyType.LABEL_SEMI_MEDIUM}}
+          style={styles.btn}
+          titleStyle={styles.btnTitle}
+          onPress={onCancel}>
+          {t('cancel')}
+        </AppOutlinedButton>
+        <AppFilledButton
+          typoProps={{type: TypographyType.LABEL_SEMI_MEDIUM}}
+          disabled={editDisabled}
+          style={styles.btn}
+          titleStyle={styles.btnTitle}
+          onPress={handlePressEdit}>
+          {t('edit')}
+        </AppFilledButton>
       </Container>
     </Container>
   );

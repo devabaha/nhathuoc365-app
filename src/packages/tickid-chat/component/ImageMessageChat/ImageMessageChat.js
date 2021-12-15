@@ -1,23 +1,22 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  View,
-  Animated,
-  Image,
-  Easing,
-  TouchableOpacity,
-  Text,
-  ViewPropTypes,
-  TouchableHighlight,
-} from 'react-native';
-import Lightbox from 'react-native-lightbox';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {StyleSheet, View, Animated, Easing, ViewPropTypes} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
 import RNFetchBlob from 'rn-fetch-blob';
-import {getBase64Image, setStater} from '../../helper';
 import {Actions} from 'react-native-router-flux';
-// import FastImage from 'react-native-fast-image';
-// import { isIos } from '../../constants';
+// helpers
+import {getBase64Image, setStater} from '../../helper';
+// constants
+import {
+  BundleIconSetName,
+  TextButton,
+  TypographyType,
+} from 'src/components/base';
+// custom components
+import {Icon, ImageButton, Container} from 'src/components/base';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 const CONTAINER_WIDTH = 150;
 const CONTAINER_HEIGHT = 100;
@@ -29,6 +28,8 @@ const UPLOAD_STATUS_TYPE = {
 };
 
 class ImageMessageChat extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     lowQualityUri: PropTypes.string.isRequired,
     highQualityUri: PropTypes.string,
@@ -49,6 +50,17 @@ class ImageMessageChat extends Component {
     uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT,
   };
   unmounted = false;
+
+  imageProps = {
+    resizeMode: this.state.isOpenLightBox ? 'contain' : 'cover',
+  };
+  errorTypoProps = {
+    type: TypographyType.LABEL_SMALL,
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -159,13 +171,51 @@ class ImageMessageChat extends Component {
     });
   }
 
+  renderErrorIcon = (titleStyle) => (
+    <Icon
+      bundle={BundleIconSetName.IONICONS}
+      name="ios-refresh"
+      style={[titleStyle, styles.errorIcon]}
+    />
+  );
+
+  get imageStyle() {
+    return mergeStyles(styles.image, {
+      borderRadius: this.theme.layout.borderRadiusHuge,
+    });
+  }
+
+  get maskStyle() {
+    return mergeStyles(styles.mask, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
+  get progressBarForegroundStyle() {
+    return {
+      backgroundColor: this.theme.color.grey700,
+    };
+  }
+
+  get progressBarBackgroundStyle() {
+    return mergeStyles(styles.progressBar, {
+      backgroundColor: this.theme.color.grey400,
+    });
+  }
+
+  get errorTitleStyle() {
+    return mergeStyles(styles.errorText, {
+      color: this.theme.color.onOverlay,
+    });
+  }
+
   render() {
     const lowQualityUri = this.props.lowQualityUri;
     const highQualityUri =
       this.props.highQualityUri || this.props.lowQualityUri;
 
-    let progress = null,
-      opacity = null;
+    let progress = 0,
+      opacity = 1;
     if (this.props.image) {
       progress = this.state.progress.interpolate({
         inputRange: [0, 1],
@@ -178,68 +228,67 @@ class ImageMessageChat extends Component {
       });
     }
 
-    // const ImageComponent = isIos ? Image : FastImage;
-
     return (
       <View
-        style={[styles.image, this.props.containerStyle]}
+        style={[this.imageStyle, this.props.containerStyle]}
         pointerEvents={
           this.state.uploadStatus !== UPLOAD_STATUS_TYPE.UPLOADING
             ? 'auto'
             : 'none'
         }>
-        <TouchableHighlight
-          underlayColor="transparent"
+        <ImageButton
+          useTouchableHighlight
+          imageStyle={this.props.imageStyle}
           onLongPress={this.props.onLongPress}
-          onPress={this.handleViewImage.bind(this)}>
-          {/* <Lightbox
-          springConfig={{overshootClamping: true}}
-          onOpen={this.handleOpen.bind(this)}
-          willClose={this.handleWillClose.bind(this)}> */}
-          <Image
-            resizeMode={this.state.isOpenLightBox ? 'contain' : 'cover'}
-            source={{
-              uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri,
-            }}
-            style={[{width: '100%', height: '100%'}, this.props.imageStyle]}
-          />
-          {/* </Lightbox> */}
-        </TouchableHighlight>
+          imageProps={this.imageProps}
+          source={{
+            uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri,
+          }}
+          onPress={this.handleViewImage.bind(this)}
+        />
 
         {!!this.props.image &&
           this.state.uploadStatus === UPLOAD_STATUS_TYPE.UPLOADING && (
             <>
               <Animated.View
                 pointerEvents={'none'}
-                style={[styles.mask, {opacity}]}
+                style={[this.maskStyle, {opacity}]}
               />
-              <Animated.View style={[styles.progessBar, {opacity}]}>
-                <Animated.View
+              <Container
+                animated
+                style={[this.progressBarBackgroundStyle, {opacity}]}>
+                <Container
+                  animated
                   pointerEvents="none"
-                  style={{
-                    height: '100%',
-                    transform: [
-                      {
-                        translateX: progress,
-                      },
-                    ],
-                    backgroundColor: '#909090',
-                  }}
+                  style={[
+                    this.progressBarForegroundStyle,
+                    {
+                      height: '100%',
+                      transform: [
+                        {
+                          translateX: progress,
+                        },
+                      ],
+                    },
+                  ]}
                 />
-              </Animated.View>
+              </Container>
             </>
           )}
+
         {!!this.props.image &&
           this.state.uploadStatus === UPLOAD_STATUS_TYPE.ERROR && (
-            <TouchableOpacity
-              style={styles.errorContainer}
+            <TextButton
+              column
+              bundle={BundleIconSetName.IONICONS}
+              name="ios-refresh"
+              style={this.maskStyle}
+              titleStyle={this.errorTitleStyle}
+              typoProps={this.errorTypoProps}
               onPress={this.uploadImage.bind(this, true)}
-              activeOpacity={0.5}>
-              <>
-                <Icon name="ios-refresh" size={24} color="white" />
-                <Text style={styles.errorText}>Lỗi! chạm để gửi lại</Text>
-              </>
-            </TouchableOpacity>
+              renderIconLeft={this.renderErrorIcon}>
+              {this.props.t('errorAndTryAgain')}
+            </TextButton>
           )}
       </View>
     );
@@ -250,7 +299,6 @@ const styles = StyleSheet.create({
   image: {
     width: CONTAINER_WIDTH,
     height: CONTAINER_HEIGHT,
-    borderRadius: 13,
     margin: 3,
     overflow: 'hidden',
   },
@@ -258,27 +306,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mask: {
-    backgroundColor: 'rgba(0,0,0,.5)',
     position: 'absolute',
     width: '100%',
     height: '100%',
     zIndex: 1,
     flex: 1,
   },
-  progessBar: {
+  progressBar: {
     height: 3,
     width: '90%',
     position: 'absolute',
     alignSelf: 'center',
     bottom: 5,
     zIndex: 2,
-    backgroundColor: 'white',
     borderRadius: 3,
     overflow: 'hidden',
   },
   errorContainer: {
     zIndex: 1,
-    backgroundColor: 'rgba(0,0,0,.5)',
     width: '100%',
     height: '100%',
     alignItems: 'center',
@@ -286,11 +331,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   errorText: {
-    color: 'white',
     textAlign: 'center',
-    fontSize: 13,
     marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  errorIcon: {
+    fontSize: 24,
   },
 });
 
-export default ImageMessageChat;
+export default withTranslation()(ImageMessageChat);

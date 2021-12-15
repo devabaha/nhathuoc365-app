@@ -21,6 +21,7 @@ import {
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
 import TextPressable from 'src/components/TextPressable';
 import Image from 'src/components/Image';
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   container: {},
@@ -90,6 +91,9 @@ const styles = StyleSheet.create({
     bottom: 0.5,
     marginRight: 0,
     right: 0,
+  },
+  seeMore: {
+    top: (appConfig.device.pixel * 16) / 2,
   },
 
   moreContainer: {
@@ -243,20 +247,31 @@ const Post = ({
         <Container>
           {!!content && (
             <Container style={styles.contentContainer}>
-              <TouchableWithoutFeedback onPress={handleToggleExpandMessage}>
+              <TouchableWithoutFeedback
+                onLongPress={() => {}}
+                onPress={handleToggleExpandMessage}>
                 <Typography
                   type={TypographyType.LABEL_LARGE}
                   selectable
                   style={styles.content}>
-                  {isShowFullMessage ? content : truncatedContent.current}
+                  {isShowFullMessage ? content : truncatedContent.current}{' '}
+                  {canShowFullMessage.current && !isShowFullMessage && (
+                    <SeeMoreBtn
+                      containerStyle={styles.seeMoreContainer}
+                      lineHeight={LINE_HEIGHT_OF_CONTENT}
+                      titleStyle={styles.seeMore}
+                      onPress={handleShowFullMessage}
+                    />
+                  )}
                 </Typography>
               </TouchableWithoutFeedback>
-              {canShowFullMessage.current && !isShowFullMessage && (
+
+              {/* {canShowFullMessage.current && !isShowFullMessage && (
                 <SeeMoreBtn
                   containerStyle={styles.seeMoreContainer}
                   onPress={handleShowFullMessage}
                 />
-              )}
+              )} */}
             </Container>
           )}
 

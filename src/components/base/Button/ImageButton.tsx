@@ -1,24 +1,24 @@
-import React, {forwardRef, memo, useCallback, useMemo} from 'react';
-import {StyleSheet} from 'react-native';
-
+import React, {forwardRef, memo, useMemo} from 'react';
+import {StyleSheet, View, TouchableWithoutFeedback} from 'react-native';
+// types
 import {ImageButtonProps} from '.';
-import {Ref} from '..';
+import {Container, Ref} from '..';
 import {Theme} from 'src/Themes/interface';
-
-import {useTheme} from 'src/Themes/Theme.context';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
-
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
 import Image from 'src/components/Image';
 import Button from './Button';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
-    container: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
+    container: {},
+    image: {
+      width: '100%',
+      height: '100%',
     },
-    image: {},
   });
 
   return styles;
@@ -47,7 +47,7 @@ const ImageButton = forwardRef(
     }, [theme]);
 
     const buttonStyles = useMemo(() => {
-      return mergeStyles([styles.container], style);
+      return mergeStyles(styles.container, style);
     }, [styles, style]);
 
     const imageStyles = useMemo(() => {
@@ -59,14 +59,19 @@ const ImageButton = forwardRef(
       return <Image source={source} style={imageStyles} {...imageProps} />;
     };
 
+    const renderImageButtonContentContainer = (children) => {
+      return <View>{children}</View>;
+    };
+
     return (
       <Button
         activeOpacity={0.3}
+        renderContentContainerComponent={renderImageButtonContentContainer}
         {...props}
         ref={ref}
-        style={buttonStyles}
-        children={props.children || renderImageComponent()}
-      />
+        style={buttonStyles}>
+        {props.children || renderImageComponent()}
+      </Button>
     );
   },
 );

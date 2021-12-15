@@ -1,5 +1,5 @@
 import React, {useState, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Image as RNImage, View} from 'react-native';
 // 3-party libs
 import FastImage from 'react-native-fast-image';
 import Lightbox from 'react-native-lightbox';
@@ -19,11 +19,13 @@ const Image = ({
   errorColor = '',
   loadingColor = '',
   canTouch = false,
+  useNative = false,
   style = {},
   containerStyle = {},
   onLoadError = () => {},
   onLoadEnd = () => {},
   renderError,
+  lightBoxProps = {},
   ...props
 }: ImageProps) => {
   const {theme} = useTheme();
@@ -63,6 +65,10 @@ const Image = ({
     return {backgroundColor: loadingColor || theme.color.disabled};
   }, [theme, loadingColor]);
 
+  const ImageComponent: any = useMemo(() => {
+    return useNative ? RNImage : FastImage;
+  }, [useNative]);
+
   return isError && !!renderError ? (
     renderError()
   ) : canTouch ? (
@@ -73,8 +79,9 @@ const Image = ({
         underlayColor="transparent"
         springConfig={{overshootClamping: true}}
         onOpen={handleOpen}
-        willClose={handleWillClose}>
-        <FastImage
+        willClose={handleWillClose}
+        {...lightBoxProps}>
+        <ImageComponent
           onLoadStart={handleStartLoading}
           onError={handleError}
           onLoadEnd={handleLoadEnd}
@@ -87,7 +94,7 @@ const Image = ({
     </View>
   ) : (
     // @ts-ignore
-    <FastImage
+    <ImageComponent
       onLoadStart={handleStartLoading}
       onError={handleError}
       onLoadEnd={handleLoadEnd}

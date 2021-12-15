@@ -1,20 +1,24 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, ViewPropTypes, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  ViewPropTypes,
-  StyleSheet,
-  Image
-} from 'react-native';
-import Lightbox from 'react-native-lightbox';
-import FastImage from 'react-native-fast-image';
-import { isIos, config } from '../../constants';
+// helpers
+import {getColorTheme} from 'app-packages/tickid-chat/helper';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {isIos} from '../../constants';
+import {TypographyType} from 'src/components/base';
+// custom components
+import Image from 'src/components/Image';
+import {BaseButton, Typography} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class ImageItem extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     containerStyle: ViewPropTypes.style,
     onOpenLightBox: PropTypes.func,
@@ -23,7 +27,7 @@ class ImageItem extends Component {
     resizeMode: PropTypes.oneOf(['contain', 'cover', 'stretch', 'center']),
     isSelected: PropTypes.bool,
     onToggleItem: PropTypes.func,
-    selectedMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    selectedMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
   static defaultProps = {
     resizeMode: 'cover',
@@ -32,9 +36,21 @@ class ImageItem extends Component {
     onCloseLightBox: defaultListener,
     onToggleItem: defaultListener,
     isSelected: false,
-    selectedMessage: ''
+    selectedMessage: '',
   };
   state = {};
+
+  lightBoxProps = {
+    springConfig: {overshootClamping: true},
+    style: styles.lightboxContainer,
+    onOpen: this.props.onOpenLightBox,
+    onClose: this.props.onCloseLightBox,
+    activeProps: {resizeMode: 'contain'},
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -57,57 +73,73 @@ class ImageItem extends Component {
     this.props.onToggleItem();
   }
 
+  get selectedMaskStyle() {
+    return mergeStyles(styles.selectedMask, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
+  get selectedMessageStyle() {
+    return {color: this.theme.color.white};
+  }
+
+  get shadowStyle() {
+    return {backgroundColor: this.theme.color.overlay30};
+  }
+
+  get outerStyle() {
+    return {borderColor: this.theme.color.white};
+  }
+
   render() {
     const {
       containerStyle,
-      onOpenLightBox,
-      onCloseLightBox,
       resizeMode,
       source,
       isSelected,
-      selectedMessage
+      selectedMessage,
     } = this.props;
-
-    const ImageComponent = isIos ? Image : FastImage;
 
     return (
       <View style={[styles.imageItemContainer, containerStyle]}>
-        <Lightbox
-          springConfig={{ overshootClamping: true }}
-          style={[styles.lightboxContainer]}
-          onOpen={onOpenLightBox}
-          onClose={onCloseLightBox}
-          activeProps={{ resizeMode: 'contain' }}
-        >
-          <ImageComponent
-            source={source}
-            style={[styles.fastImage]}
-            resizeMode={resizeMode}
-          />
-        </Lightbox>
+        <Image
+          useNative={isIos}
+          canTouch
+          source={source}
+          resizeMode={resizeMode}
+          lightBoxProps={this.lightBoxProps}
+        />
         {isSelected && (
-          <View pointerEvents="none" style={[styles.selectedMask]}></View>
+          <View pointerEvents="none" style={this.selectedMaskStyle}></View>
         )}
-        <TouchableOpacity
-          style={[styles.imageTouchable]}
-          onPress={this.onSelectItem.bind(this)}
-        >
+        <BaseButton
+          style={styles.imageTouchable}
+          onPress={this.onSelectItem.bind(this)}>
           {isSelected && (
-            <Text style={[styles.selectedMessage]}>{selectedMessage}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={[styles.selectedMessage, this.selectedMessageStyle]}>
+              {selectedMessage}
+            </Typography>
           )}
           <View
             style={[
               styles.selectTouchable,
               styles.outerStyle,
+              this.outerStyle,
               {
                 backgroundColor: isSelected
-                  ? config.focusColor
-                  : 'rgba(0,0,0,0)'
-              }
+                  ? getColorTheme(this.theme).focusColor
+                  : 'transparent',
+              },
             ]}
           />
-          <View pointerEvents="none" style={styles.shadow} />
-        </TouchableOpacity>
+
+          <View
+            pointerEvents="none"
+            style={[styles.shadow, this.shadowStyle]}
+          />
+        </BaseButton>
       </View>
     );
   }
@@ -115,22 +147,21 @@ class ImageItem extends Component {
 
 const styles = StyleSheet.create({
   imageItemContainer: {
-    flex: 1
+    flex: 1,
   },
   lightboxContainer: {
-    width: '100%'
+    width: '100%',
   },
   fastImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   selectedMask: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.6)',
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   },
   imageTouchable: {
     borderRadius: 50,
@@ -142,31 +173,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0)'
   },
   selectedMessage: {
     position: 'absolute',
-    color: 'white',
     fontWeight: '600',
-    zIndex: 2
+    zIndex: 2,
   },
   shadow: {
     borderRadius: 50,
-    backgroundColor: 'rgba(0,0,0,0.2)',
     width: '110%',
     height: '110%',
-    position: 'absolute'
+    position: 'absolute',
   },
   selectTouchable: {
     borderRadius: 50,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   outerStyle: {
     zIndex: 1,
     borderWidth: 2,
-    borderColor: 'white'
-  }
+  },
 });
 
 export default ImageItem;
