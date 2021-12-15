@@ -1,37 +1,53 @@
 import React, {Component} from 'react';
-import Proptypes from 'prop-types';
-import {View, StyleSheet, Linking, Alert} from 'react-native';
+import {StyleSheet, Linking, Alert} from 'react-native';
+import PropTypes from 'prop-types';
+// 3-party libs
 import {WebView as RNWebView} from 'react-native-webview';
-
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {Container} from 'src/components/base';
 import Loading from '../Loading';
-import EventTracker from '../../helper/EventTracker';
 
 class WebView extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
-    url: Proptypes.string.isRequired,
-    renderAfter: Proptypes.node,
-    showLoading: Proptypes.bool,
+    url: PropTypes.string.isRequired,
+    renderAfter: PropTypes.node,
+    showLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     showLoading: true,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    showLoading: false,
+  };
+  eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
 
-    this.state = {
-      showLoading: false,
-    };
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
   handleShouldStartLoadWithRequest = (request) => {
@@ -60,15 +76,19 @@ class WebView extends Component {
       });
   }
 
+  get webviewStyle() {
+    return {backgroundColor: this.theme.color.background};
+  }
+
   render() {
     return (
-      <View style={[styles.container, this.props.style]}>
+      <Container style={[styles.container, this.props.style]}>
         <RNWebView
           onLoadStart={this.onLoadStart.bind(this)}
           onLoadEnd={this.onLoadEnd.bind(this)}
           onLoad={this.onLoadEnd.bind(this)}
           source={{uri: this.props.url}}
-          style={styles.webView}
+          style={[styles.webView, this.webviewStyle]}
           onMessage={() => {}}
           originWhitelist={['*']}
           onShouldStartLoadWithRequest={this.handleShouldStartLoadWithRequest}
@@ -77,7 +97,7 @@ class WebView extends Component {
         {this.state.showLoading == true && <Loading center />}
         {typeof this.props.renderAfter === 'function' &&
           this.props.renderAfter()}
-      </View>
+      </Container>
     );
   }
 }
@@ -85,27 +105,11 @@ class WebView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
 
     marginBottom: 0,
   },
   webView: {
     flex: 1,
-  },
-  loadingBox: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#ebebeb',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingTitle: {
-    fontSize: 14,
-    marginTop: 4,
-    color: '#404040',
   },
 });
 

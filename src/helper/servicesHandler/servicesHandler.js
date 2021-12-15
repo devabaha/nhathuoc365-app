@@ -87,17 +87,25 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
-      Actions.push(appConfig.routes.qrBarCode, {
-        title: t('common:screen.qrBarCode.mainTitle'),
-      });
+      push(
+        appConfig.routes.qrBarCode,
+        {
+          title: t('common:screen.qrBarCode.mainTitle'),
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.QRCODE_SCAN_TYPE:
     case SERVICES_TYPE.QRCODE_SCAN:
-      Actions.push(appConfig.routes.qrBarCode, {
-        index: 1,
-        title: t('common:screen.qrBarCode.scanTitle'),
-        wallet: store.user_info.default_wallet,
-      });
+      push(
+        appConfig.routes.qrBarCode,
+        {
+          index: 1,
+          title: t('common:screen.qrBarCode.scanTitle'),
+          wallet: store.user_info.default_wallet,
+        },
+        service.theme,
+      );
       break;
 
     /** VOUCHER */

@@ -57,7 +57,7 @@
     "cancel": "Cancel",
     "close": "Close",
     "province": {
-      "title": "Select Province/City",
+      "title": "Select Province/ City",
       "placeholder": "Search",
       "notFound": "No result for \"{{searchText}}\""
     },

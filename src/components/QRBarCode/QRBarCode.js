@@ -1,71 +1,54 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-  Alert,
-  Dimensions,
-} from 'react-native';
+import {View, StyleSheet, Alert, Dimensions} from 'react-native';
+// 3-party libs
 import ScreenBrightness from 'react-native-screen-brightness';
-import {
-  check,
-  PERMISSIONS,
-  RESULTS,
-  openSettings,
-} from 'react-native-permissions';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Actions, ActionConst} from 'react-native-router-flux';
+import {openSettings} from 'react-native-permissions';
 import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
-import appConfig from 'app-config';
 import timer from 'react-native-timer';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import EventTracker from '../../helper/EventTracker';
-import {APIRequest} from 'src/network/Entity';
+// network
 import APIHandler from 'src/network/APIHandler';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push, pop, refresh, replace} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import {
+  TextButton,
+  ScreenWrapper,
+  Container,
+  Typography,
+  ScrollView,
+  Icon,
+} from 'src/components/base';
+import Button from 'src/components/Button';
 import QRScanner from './QRScanner';
-import Button from '../../components/Button';
-import config from '../../packages/tickid-voucher/config';
-import Loading from '../Loading';
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
-const isAndroid = Platform.OS === 'android';
-const isIos = Platform.OS === 'ios';
 
-const DEFAULT_CAMERA_RATIO = 4 / 3;
-const CONTAINER_QR_WIDTH = Dimensions.get('window').width;
 const CONTAINER_QR_HEIGHT = Dimensions.get('window').height;
-const DEFAULT_CAMERA_WIDTH = CONTAINER_QR_HEIGHT / DEFAULT_CAMERA_RATIO;
 
 const BOTTOM_HEIGHT =
   CONTAINER_QR_HEIGHT * 0.1 > 100 ? 100 : CONTAINER_QR_HEIGHT * 0.1;
 
-const SCAN_AREA_WIDTH = CONTAINER_QR_WIDTH * 0.6;
-const SCAN_AREA_HEIGHT = CONTAINER_QR_WIDTH * 0.6;
-
-const SCAN_AREA_TOP_PERCENT =
-  (CONTAINER_QR_HEIGHT - SCAN_AREA_HEIGHT - BOTTOM_HEIGHT * 2) /
-  CONTAINER_QR_HEIGHT /
-  2;
-const SCAN_AREA_TOP = CONTAINER_QR_HEIGHT * SCAN_AREA_TOP_PERCENT;
-const SCAN_AREA_LEFT = CONTAINER_QR_WIDTH * 0.2;
-const SCAN_AREA_LEFT_PERCENT =
-  ((DEFAULT_CAMERA_WIDTH - CONTAINER_QR_WIDTH) / 2 + SCAN_AREA_LEFT) /
-  DEFAULT_CAMERA_WIDTH;
-
-const QR_SCAN_AREA = {
-  x: SCAN_AREA_TOP_PERCENT,
-  y: SCAN_AREA_LEFT_PERCENT,
-  width: SCAN_AREA_HEIGHT / CONTAINER_QR_HEIGHT,
-  height: 1 - SCAN_AREA_LEFT_PERCENT * 2,
-};
-
 class QRBarCode extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     mobxStore: PropTypes.object,
     topContentText: PropTypes.string,
@@ -77,7 +60,7 @@ class QRBarCode extends Component {
 
   static defaultProps = {
     onCloseEnterCode: () => {},
-    isVisibleTabBar: true
+    isVisibleTabBar: true,
   };
 
   constructor(props) {
@@ -103,6 +86,11 @@ class QRBarCode extends Component {
     this.eventTracker = new EventTracker();
     this.checkProductRequest = new APIRequest();
     this.requests = [this.checkProductRequest];
+    this.updateNavBarDisposer = () => {};
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -117,6 +105,11 @@ class QRBarCode extends Component {
 
     this.handleBrightness();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
@@ -125,20 +118,22 @@ class QRBarCode extends Component {
     ScreenBrightness.setBrightness(this.state.originLuminous);
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
+
+    this.updateNavBarDisposer();
   }
 
   enterCodeManual = () => {
     const {t} = this.props;
-    Actions.push(appConfig.routes.voucherEnterCodeManual, {
+    push(appConfig.routes.voucherEnterCodeManual, {
       heading: t('common:screen.qrBarCode.enterCodeProduct'),
       placeholder: t('common:screen.qrBarCode.enterCode'),
       onClose: () => {
-        Actions.pop();
+        pop();
         this.props.onCloseEnterCode();
       },
       onSendCode: (code) => {
         this.checkProductCode(code);
-        Actions.pop();
+        pop();
       },
     });
   };
@@ -264,14 +259,18 @@ class QRBarCode extends Component {
                     loading: false,
                   },
                   () => {
-                    Actions.pop();
-                    Actions.push('pay_account', {
-                      title: t('common:screen.payAccount.mainTitle'),
-                      barcode: barcode,
-                      wallet: response.data.account.default_wallet,
-                      account: response.data.account,
-                      app: response.data.app,
-                    });
+                    pop();
+                    push(
+                      'pay_account',
+                      {
+                        title: t('common:screen.payAccount.mainTitle'),
+                        barcode: barcode,
+                        wallet: response.data.account.default_wallet,
+                        account: response.data.account,
+                        app: response.data.app,
+                      },
+                      this.theme,
+                    );
 
                     flashShowMessage({
                       type: 'success',
@@ -327,31 +326,34 @@ class QRBarCode extends Component {
                 if (receiverTel.slice(0, 2) === '84') {
                   receiverTel = receiverTel.replace('84', '0');
                 }
-                Actions.pop();
+                pop();
                 console.log(response.data);
-                Actions.push(appConfig.routes.transferPayment, {
-                  title: t('transfer:transferPaymentTitle', {
-                    walletName: receiverInfo.name,
-                  }),
-                  wallet,
-                  showWallet: true,
-                  receiver: {
-                    id: receiverInfo.id,
-                    walletAddress: receiverInfo.wallet_address,
-                    name: receiverInfo.name,
-                    walletName: receiverInfo.name,
-                    tel: receiverTel,
-                    originTel: receiverInfo.tel,
-                    avatar: receiverInfo.logo_url,
-                    address: receiverInfo.address,
-                    notInContact: true,
+                push(
+                  appConfig.routes.transferPayment,
+                  {
+                    title: t('transfer:transferPaymentTitle', {
+                      walletName: receiverInfo.name,
+                    }),
+                    wallet,
+                    showWallet: true,
+                    receiver: {
+                      id: receiverInfo.id,
+                      walletAddress: receiverInfo.wallet_address,
+                      name: receiverInfo.name,
+                      walletName: receiverInfo.name,
+                      tel: receiverTel,
+                      originTel: receiverInfo.tel,
+                      avatar: receiverInfo.logo_url,
+                      address: receiverInfo.address,
+                      notInContact: true,
+                    },
                   },
-                });
-                // Actions.push(appConfig.routes.payWallet, {
+                  this.theme,
+                );
+                // replace(appConfig.routes.payWallet, {
                 //   title: "Chuyển khoản",
                 //   wallet: response.data.wallet,
                 //   address: data[0],
-                //   type: ActionConst.REPLACE,
                 // });
                 Toast.show(response.message, Toast.SHORT);
               },
@@ -379,26 +381,31 @@ class QRBarCode extends Component {
       });
     }
 
-    Actions.push(appConfig.routes.store, {
-      title: item.name,
-      goCategory: category_id,
-      type: ActionConst.REPLACE,
-    });
+    replace(
+      appConfig.routes.store,
+      {
+        title: item.name,
+        goCategory: category_id,
+      },
+      this.theme,
+    );
   }
   _goProduct(item) {
-    Actions.item({
+    replace(appConfig.routes.item, {
       title: item.name,
       item,
-      type: ActionConst.REPLACE,
     });
   }
 
   _goNewsDetail(item) {
-    Actions.notify_item({
-      title: item.title,
-      data: item,
-      type: ActionConst.REPLACE,
-    });
+    replace(
+      appConfig.routes.notifyDetail,
+      {
+        title: item.title,
+        data: item,
+      },
+      this.theme,
+    );
   }
 
   /***
@@ -423,26 +430,26 @@ class QRBarCode extends Component {
                   },
                   () => {
                     if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
-                      Actions.pop();
+                      pop();
                       // setTimeout(() => {
-                      //   Actions.push(appConfig.routes.payWallet, {
+                      //   push(appConfig.routes.payWallet, {
                       //     title: 'Chuyển khoản',
                       //     wallet: this.state.wallet,
                       //     address: barcode
                       //   });
-                      // }, 0);
+                      // }, this.theme);
                       this.goToPayment(barcode);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._goStores(response.data.item);
                       }, 0);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_SITE
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._goStores(response.data.item);
                       }, 0);
@@ -450,7 +457,7 @@ class QRBarCode extends Component {
                       response.data.object.type ==
                       OBJECT_TYPE_KEY_PRODUCT_CATEGORY
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._goStores(
                           response.data.item,
@@ -460,39 +467,43 @@ class QRBarCode extends Component {
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_PRODUCT
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._goProduct(response.data.item);
                       }, 0);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_NEWS
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._goNewsDetail(response.data.item);
                       }, 0);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_CART
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
-                        Actions.view_orders_item({
+                        push(appConfig.routes.viewOrdersItem, {
                           data: response.data.item,
                           title: '#' + response.data.item.cart_code,
                         });
-                      }, 0);
+                      }, this.theme);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_CAMPAIGN
                     ) {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
-                        Actions.push(appConfig.routes.voucherDetail, {
-                          title: response.data.item.title,
-                          campaignId: response.data.item.id,
-                        });
+                        push(
+                          appConfig.routes.voucherDetail,
+                          {
+                            title: response.data.item.title,
+                            campaignId: response.data.item.id,
+                          },
+                          this.theme,
+                        );
                       }, 0);
                     } else {
-                      Actions.pop();
+                      pop();
                       setTimeout(() => {
                         this._search_store(barcode);
                       }, 0);
@@ -531,11 +542,11 @@ class QRBarCode extends Component {
                   loading: false,
                 },
                 () => {
-                  Actions.view_orders_item({
+                  replace(appConfig.routes.viewOrdersItem, {
                     data: response.data,
                     title: '#' + barcode,
                     tel: response.data.tel,
-                    type: ActionConst.REPLACE,
+                    // type: ActionConst.REPLACE,
                   });
                   // Toast.show(response.message, Toast.SHORT);
                 },
@@ -557,13 +568,13 @@ class QRBarCode extends Component {
   }
 
   _open_webview(link) {
-    Actions.pop();
+    pop();
     setTimeout(() => {
-      Actions.webview({
+      push(appConfig.routes.webview, {
         title: link,
         url: link,
       });
-    }, 0);
+    }, this.theme);
   }
 
   _proccessQRCodeResult = (event) => {
@@ -574,7 +585,7 @@ class QRBarCode extends Component {
 
       if (this.props.getQRCode) {
         this.props.getQRCode(text_result);
-        Actions.pop();
+        pop();
         return;
       }
 
@@ -587,11 +598,11 @@ class QRBarCode extends Component {
           }
         } else if (isWalletAddress(text_result)) {
           if (from == appConfig.routes.transfer) {
-            // Actions.push(appConfig.routes.payWallet, {
+            // push(appConfig.routes.payWallet, {
             //   title: 'Chuyển khoản',
             //   wallet: wallet,
             //   address: text_result
-            // });
+            // }, this.theme);
             this.goToPayment(text_result);
           } else {
             this._check_address(text_result);
@@ -625,17 +636,21 @@ class QRBarCode extends Component {
 
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          Actions.pop();
-          Actions.push(appConfig.routes.item, {
-            item: response.data.product,
-            title: response.data.name,
-            preventUpdate: true,
-            showBtnProductStamps: true,
-          });
+          pop();
+          push(
+            appConfig.routes.item,
+            {
+              item: response.data.product,
+              title: response.data.name,
+              preventUpdate: true,
+              showBtnProductStamps: true,
+            },
+            this.theme,
+          );
         } else {
-          // Actions.push(appConfig.routes.searchStore, {
+          // push(appConfig.routes.searchStore, {
           //   qr_code: qrcode,
-          // });
+          // }, this.theme);
           flashShowMessage({
             type: 'danger',
             message: response.message || t('common:api.error.message'),
@@ -666,23 +681,27 @@ class QRBarCode extends Component {
   goToPayment = (wallet_address) => {
     const {t} = this.props;
     this.getUserInfo(wallet_address, (receiverInfo) => {
-      Actions.pop();
+      pop();
       setTimeout(() => {
         const wallet = this.props.wallet || store.user_info.default_wallet;
-        Actions.push(appConfig.routes.transferPayment, {
-          title: t('transferPaymentTitle', {walletName: wallet.name}),
-          wallet,
-          receiver: {
-            id: receiverInfo.id,
-            walletAddress: receiverInfo.wallet_address,
-            name: receiverInfo.name,
-            walletName: receiverInfo.name,
-            tel: receiverInfo.tel,
-            originTel: receiverInfo.tel,
-            avatar: receiverInfo.avatar,
-            notInContact: true,
+        push(
+          appConfig.routes.transferPayment,
+          {
+            title: t('transferPaymentTitle', {walletName: wallet.name}),
+            wallet,
+            receiver: {
+              id: receiverInfo.id,
+              walletAddress: receiverInfo.wallet_address,
+              name: receiverInfo.name,
+              walletName: receiverInfo.name,
+              tel: receiverInfo.tel,
+              originTel: receiverInfo.tel,
+              avatar: receiverInfo.avatar,
+              notInContact: true,
+            },
           },
-        });
+          this.theme,
+        );
       });
     });
   };
@@ -717,36 +736,68 @@ class QRBarCode extends Component {
     return <QRScanner onRead={this._proccessQRCodeResult} />;
   }
 
+  renderIconBefore(titleStyle) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+        style={[titleStyle, styles.iconReload]}
+        name="reload"
+      />
+    );
+  }
+
   renderMyQRCode() {
     const {barcode} = this.state;
     const {t} = this.props;
     return (
       <ScrollView contentContainerStyle={styles.myQRCodeContainer}>
-        <Text style={styles.headerText}>{' ' + t('POSGuideMessage')}</Text>
+        <Typography
+          type={TypographyType.TITLE_MEDIUM}
+          style={styles.headerText}>
+          {' ' + t('POSGuideMessage')}
+        </Typography>
         <View style={{marginLeft: 30, marginRight: 30}}>
           <Barcode
+            lineColor={this.theme.color.onBackground}
             value={barcode}
             format="CODE128"
             width={1.5}
             height={80}
-            background="transparent"
+            background={this.theme.color.background}
           />
         </View>
-        <Text style={styles.barcodeText}>{barcode}</Text>
+        <Typography type={TypographyType.LABEL_HUGE} style={styles.barcodeText}>
+          {barcode}
+        </Typography>
         <View style={styles.qrCodeView}>
           <QRCode
+            color={this.theme.color.onBackground}
+            backgroundColor={this.theme.color.background}
             style={{flex: 1}}
             value={barcode}
             size={appConfig.device.width / 3}
             logoBackgroundColor="transparent"
           />
         </View>
-        <Text style={[styles.barcodeText, {fontSize: 16}]}>
-          <Icon name="reload" size={16} color="#000" />
-          {t('reload')}
-        </Text>
-        <Text style={styles.descText}>{t('accountDescription')}</Text>
-        <Text style={styles.descText}>{t('cashbackDescription')}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={[styles.barcodeText]}
+            renderIconBefore={this.renderIconBefore}>
+            {t('reload')}
+          </Typography>
+        </View>
+        <Typography type={TypographyType.LABEL_MEDIUM} style={styles.descText}>
+          {t('accountDescription')}
+        </Typography>
+        <Typography type={TypographyType.LABEL_MEDIUM} style={styles.descText}>
+          {t('cashbackDescription')}
+        </Typography>
       </ScrollView>
     );
   }
@@ -755,7 +806,11 @@ class QRBarCode extends Component {
     const {barcode, content} = this.state;
     return (
       <ScrollView contentContainerStyle={styles.myQRCodeContainer}>
-        <Text style={styles.addressText}>{barcode}</Text>
+        <Typography
+          type={TypographyType.TITLE_MEDIUM}
+          style={styles.addressText}>
+          {barcode}
+        </Typography>
         <View style={styles.addressQrCodeView}>
           <QRCode
             style={{flex: 1}}
@@ -764,25 +819,93 @@ class QRBarCode extends Component {
             logoBackgroundColor="transparent"
           />
         </View>
-        <Text style={styles.addressText}>● {content}</Text>
+        <Typography
+          type={TypographyType.TITLE_MEDIUM}
+          style={styles.addressText}>
+          • {content}
+        </Typography>
       </ScrollView>
     );
   }
 
+  renderIconQRCode = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+        name="barcode-scan"
+        style={[titleStyle, styles.iconQR]}
+      />
+    );
+  };
+
+  renderIconScanQRCode = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+        name="qrcode-scan"
+        style={[titleStyle, styles.iconQR]}
+      />
+    );
+  };
+
   onPressTabButton(index) {
     if (index == 0) {
-      Actions.refresh({title: this.state.title, address: this.props.address});
+      refresh({title: this.state.title, address: this.props.address});
     } else {
       const {t} = this.props;
-      Actions.refresh({title: t('common:screen.qrBarCode.scanTitle')});
+      refresh({title: t('common:screen.qrBarCode.scanTitle')});
     }
     this.setState({index: index});
   }
 
+  getButtonBackgroundStyle = (focused) => {
+    return [
+      styles.bottomButton,
+      focused &&
+        this.theme.id === BASE_DARK_THEME_ID && {
+          backgroundColor: this.theme.color.surfaceHighlight,
+        },
+    ];
+  };
+
+  getButtonTitleStyle = (focused) => {
+    return (
+      focused && {
+        color:
+          this.theme.id === BASE_DARK_THEME_ID
+            ? this.theme.color.primary
+            : this.theme.color.persistPrimary,
+      }
+    );
+  };
+
+  get titleBtnLeftStyle() {
+    return mergeStyles(styles.titleStyle, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
+
+  get iconQRStyle() {
+    return mergeStyles(styles.iconQR, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
+
+  get bottomViewStyle() {
+    return mergeStyles(styles.bottomView, {
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
   render() {
     const {index, title} = this.state;
+
+    const isQRCodeFocused = this.state.index === 0;
+    const isScanQRCodeFocused = this.state.index === 1;
+
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <View style={styles.contentView}>
           {index == 0
             ? this.props.address
@@ -799,49 +922,27 @@ class QRBarCode extends Component {
           />
         ) : (
           !!this.props.isVisibleTabBar && (
-            <View style={styles.bottomView}>
-              <TouchableOpacity
-                style={styles.bottomButton}
-                onPress={() => this.onPressTabButton(0)}
-                activeOpacity={1}>
-                <Icon
-                  name="barcode-scan"
-                  size={20}
-                  color={index == 0 ? global.DEFAULT_COLOR : '#000'}
-                />
-                <Text
-                  style={[
-                    styles.titleBottomButton,
-                    index == 0
-                      ? {color: global.DEFAULT_COLOR}
-                      : {color: '#000'},
-                  ]}>
-                  {title}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.bottomButton}
-                onPress={() => this.onPressTabButton(1)}
-                activeOpacity={1}>
-                <Icon
-                  name="qrcode-scan"
-                  size={20}
-                  color={index == 1 ? global.DEFAULT_COLOR : '#000'}
-                />
-                <Text
-                  style={[
-                    styles.titleBottomButton,
-                    index == 1
-                      ? {color: global.DEFAULT_COLOR}
-                      : {color: '#000'},
-                  ]}>
-                  Scan QRCode
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <Container style={this.bottomViewStyle}>
+              <TextButton
+                column
+                renderIconLeft={this.renderIconQRCode}
+                style={this.getButtonBackgroundStyle(isQRCodeFocused)}
+                titleStyle={this.getButtonTitleStyle(isQRCodeFocused)}
+                onPress={() => this.onPressTabButton(0)}>
+                {title}
+              </TextButton>
+              <TextButton
+                column
+                renderIconLeft={this.renderIconScanQRCode}
+                style={this.getButtonBackgroundStyle(isScanQRCodeFocused)}
+                titleStyle={this.getButtonTitleStyle(isScanQRCodeFocused)}
+                onPress={() => this.onPressTabButton(1)}>
+                {this.props.t('scanQRCode')}
+              </TextButton>
+            </Container>
           )
         )}
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -851,7 +952,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#fff',
   },
 
   enterCodeBtn: {
@@ -859,74 +959,41 @@ const styles = StyleSheet.create({
     bottom: appConfig.device.bottomSpace,
   },
 
-  getVoucherBtn: {
-    flex: 1,
-    backgroundColor: appConfig.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14,
-    marginHorizontal: 7,
-    paddingHorizontal: 12,
-  },
-  getVoucherTitle: {
-    color: appConfig.colors.white,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  btnContentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
   topContent: {
     paddingVertical: 16,
     paddingTop: '50%',
     alignItems: 'center',
   },
-  centerText: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#404040',
-    marginLeft: 8,
-    paddingHorizontal: 15,
-  },
   contentView: {
-    height: Util.size.height - 49 - global.NAV_HEIGHT,
+    height: appConfig.device.height - 49 - NAV_HEIGHT,
   },
   myQRCodeContainer: {
     paddingBottom: 100,
     flexGrow: 1,
   },
   bottomView: {
-    backgroundColor: '#fff',
     position: 'absolute',
     height: BOTTOM_HEIGHT,
     bottom: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
-    paddingVertical: 15,
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
   },
   bottomButton: {
     flex: 1,
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
+    paddingVertical: 15,
   },
   titleBottomButton: {
-    color: '#000',
     fontSize: 14,
-    marginTop: 2,
   },
   headerText: {
-    fontSize: 15,
-    color: '#000',
     marginTop: 20,
     marginLeft: 30,
     marginRight: 20,
+    textAlign: 'center',
   },
   qrCodeView: {
     marginTop: 0,
@@ -935,37 +1002,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   barcodeText: {
-    fontSize: 20,
-    color: '#000',
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 5,
   },
   descText: {
-    fontSize: 14,
-    color: '#000',
     marginTop: 20,
     marginLeft: 70,
     marginRight: 70,
   },
   addressText: {
-    fontSize: 16,
-    color: '#000',
     marginTop: 20,
     marginBottom: 20,
     marginLeft: 20,
     marginRight: 20,
     textAlign: 'center',
     fontWeight: 'bold',
-  },
-  poweredText: {
-    fontSize: 14,
-    color: '#000',
-    bottom: 20,
-    textAlign: 'center',
   },
   addressQrCodeView: {
     marginTop: 0,
@@ -974,6 +1028,13 @@ const styles = StyleSheet.create({
     height: appConfig.device.width / 1.5,
     alignSelf: 'center',
   },
+  iconReload: {
+    fontSize: 16,
+  },
+  iconQR: {
+    fontSize: 20,
+  },
+  titleStyle: {},
 });
 
 export default withTranslation(['qrBarCode', 'transfer', 'common'])(QRBarCode);

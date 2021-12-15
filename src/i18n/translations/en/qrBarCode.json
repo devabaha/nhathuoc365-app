@@ -8,6 +8,7 @@
   "qrGuideMessage": "Point your camera towards the QR Code to explore",
   "POSGuideMessage": "Give the QRCode code to the cashier to earn points",
   "reload": "Auto update every 60s",
-  "accountDescription": "● This is the bar code representing your account",
-  "cashbackDescription": "● Use this barcode to get a cashback from the store"
+  "accountDescription": "• This is the bar code representing your account",
+  "cashbackDescription": "• Use this barcode to get a cashback from the store",
+  "scanQRCode": "Scan QRCode"
 }

@@ -57,7 +57,7 @@
     "cancel": "Hủy",
     "close": "Đóng",
     "province": {
-      "title": "Chọn Tỉnh/Thành phố",
+      "title": "Chọn Tỉnh/ Thành phố",
       "placeholder": "Tìm kiếm",
       "notFound": "Không có kết quả phù hợp cho \"{{searchText}}\""
     },
