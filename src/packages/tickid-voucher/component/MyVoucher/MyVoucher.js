@@ -1,17 +1,32 @@
 import React, {Component} from 'react';
-import IonicsIcon from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Button from 'react-native-button';
+import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
+// 3-party libs
 import LoadingComponent from '@tickid/tickid-rn-loading';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  Container,
+  FlatList,
+  ScreenWrapper,
+  Icon,
+  RefreshControl,
+} from 'src/components/base';
 import MyVoucherItem from './MyVoucherItem';
 import NoResult from '../NoResult';
+import Button from 'src/components/Button';
 
 const defaultListener = () => {};
 
 class MyVoucher extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onPressVoucher: PropTypes.func,
     onPressEnterVoucher: PropTypes.func,
@@ -34,6 +49,12 @@ class MyVoucher extends Component {
     campaigns: [],
   };
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   get totalCampaigns() {
     return this.props.campaigns.length;
   }
@@ -42,12 +63,32 @@ class MyVoucher extends Component {
     return this.totalCampaigns > 0;
   }
 
+  componentDidMount() {
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+  }
+  componentWillUnmount() {
+    this.updateNavBarDisposer();
+  }
+
   renderMyVouchers() {
     return (
       <FlatList
-        data={this.props.campaigns}
+        data={this.props.campaigns || []}
         keyExtractor={(item) => `${item.data.id}`}
         renderItem={this.renderMyVoucher}
+        ListEmptyComponent={
+          !this.props.apiFetching && (
+            <NoResult
+              title={this.props.t('my.noVoucher.title')}
+              text={this.props.t('my.noVoucher.description', {
+                appName: APP_NAME_SHOW,
+              })}
+            />
+          )
+        }
         refreshControl={
           <RefreshControl
             refreshing={this.props.refreshing}
@@ -73,88 +114,71 @@ class MyVoucher extends Component {
     );
   };
 
+  renderIconBtnEnterCode = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_ICONS}
+        name="text-fields"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  renderIconBtnScanCode = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.IONICONS}
+        name="scan"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
   render() {
     const {t} = this.props;
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         {this.props.apiFetching && <LoadingComponent loading />}
-        {this.hasCampaigns && this.renderMyVouchers()}
+        {this.renderMyVouchers()}
 
-        {!this.props.apiFetching && !this.hasCampaigns && (
-          <NoResult
-            title={t('my.noVoucher.title')}
-            text={t('my.noVoucher.description', {appName: APP_NAME_SHOW})}
-          />
-        )}
-
-        <View style={styles.getVoucherWrapper}>
+        <Container safeLayout style={styles.getVoucherWrapper}>
           <Button
             containerStyle={styles.getVoucherBtn}
-            style={styles.getVoucherTitle}
-            icon
             onPress={() => {
               this.props.onPressEnterCode();
-            }}>
-            <View style={styles.btnContentContainer}>
-              <MaterialIcons name="text-fields" style={styles.icon} />
-              <Text style={styles.getVoucherTitle}>{t('scan.enterCode')}</Text>
-            </View>
+            }}
+            renderIconLeft={this.renderIconBtnEnterCode}
+            // renderTitleComponent={this.renderTitleBtnEnterCode}
+          >
+            {this.props.t('common:screen.qrBarCode.enterCode')}
           </Button>
+
           <Button
             containerStyle={styles.getVoucherBtn}
-            style={styles.getVoucherTitle}
             onPress={() => {
               this.props.onPressEnterVoucher();
-            }}>
-            <View style={styles.btnContentContainer}>
-              <IonicsIcon name="scan" style={styles.icon} />
-              <Text style={styles.getVoucherTitle}>{t('scan.message')}</Text>
-            </View>
+            }}
+            renderIconLeft={this.renderIconBtnScanCode}>
+            {this.props.t('common:screen.qrBarCode.scanCode')}
           </Button>
-        </View>
-      </View>
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: config.colors.sceneBackground,
-    justifyContent: 'flex-end'
-  },
   getVoucherWrapper: {
-    backgroundColor: config.colors.white,
-    // minHeight: 62,
     paddingHorizontal: 7.5,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 10,
-    paddingBottom: config.device.bottomSpace + 10,
   },
   getVoucherBtn: {
     flex: 1,
-    backgroundColor: config.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14,
-    marginHorizontal: 7.5,
-    paddingHorizontal: 12,
-  },
-  getVoucherTitle: {
-    color: config.colors.white,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  btnContentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   icon: {
     fontSize: 20,
-    color: config.colors.white,
     marginRight: 10,
   },
 });

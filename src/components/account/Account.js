@@ -364,10 +364,14 @@ class Account extends Component {
         ),
         rightIcon: <IconAngleRight />,
         onPress: () =>
-          Actions.push(appConfig.routes.myVoucher, {
-            title: t('common:screen.myVoucher.mainTitle'),
-            from: 'home',
-          }),
+          push(
+            appConfig.routes.myVoucher,
+            {
+              title: t('common:screen.myVoucher.mainTitle'),
+              from: 'home',
+            },
+            this.theme,
+          ),
         boxIconStyle: [
           styles.boxIconStyle,
           {

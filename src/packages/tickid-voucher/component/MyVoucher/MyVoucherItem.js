@@ -1,139 +1,189 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, Image, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet, Platform } from 'react-native';
-import Button from 'react-native-button';
-import config from '../../config';
-
-function renderDotsLeft() {
-  const output = [];
-  for (let i = 0; i < 8; i++) {
-    output.push(<View key={i} style={styles.dotLeft} />);
-  }
-  return <View style={styles.dotLeftWrapper}>{output}</View>;
-}
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
+import {useTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {
+  Container,
+  Typography,
+  TextButton,
+  BaseButton,
+} from 'src/components/base';
 
 function MyVoucherItem(props) {
-  return (
-    <Button
-      onPress={props.onPress}
-      containerStyle={[
-        styles.btnWrapper,
-        { marginBottom: props.last ? 16 : 0 }
-      ]}
-    >
-      <View style={[styles.dotLarge, styles.dotTop]} />
-      <View style={[styles.dotLarge, styles.dotBottom]} />
+  const {t} = useTranslation();
 
-      <View style={styles.container}>
+  const {theme} = useTheme();
+
+  const renderDotsLeft = () => {
+    const output = [];
+
+    for (let i = 0; i < 8; i++) {
+      output.push(
+        <View
+          key={i}
+          style={[
+            styles.dotLeft,
+            {
+              backgroundColor: theme.color.background,
+            },
+          ]}
+        />,
+      );
+    }
+    return <View style={styles.dotLeftWrapper}>{output}</View>;
+  };
+
+  const quantityContainerStyle = useMemo(() => {
+    return mergeStyles(styles.quantityContainer, {
+      backgroundColor: theme.color.primaryHighlight,
+      borderTopLeftRadius: theme.layout.borderRadiusMedium,
+      borderBottomRightRadius: theme.layout.borderRadiusMedium,
+    });
+  }, [theme]);
+
+  const quantityStyle = useMemo(() => {
+    return mergeStyles(styles.quantity, {
+      color: theme.color.onPrimaryHighlight,
+    });
+  }, [theme]);
+
+  const btnTypoProps = useMemo(() => {
+    return {type: TypographyType.LABEL_SEMI_MEDIUM};
+  }, []);
+
+  const useNowTitleStyle = useMemo(() => {
+    return mergeStyles(styles.useNowTitle, {
+      color: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const dotStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.background,
+      borderRadius: theme.layout.borderRadiusMedium,
+    };
+  }, [theme]);
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      borderRadius: theme.layout.borderRadiusMedium,
+    });
+  }, [theme]);
+
+  return (
+    <BaseButton
+      onPress={props.onPress}
+      containerStyle={[styles.btnWrapper, {marginBottom: props.last ? 16 : 0}]}>
+      <View style={[styles.dotLarge, styles.dotTop, dotStyle]} />
+      <View style={[styles.dotLarge, styles.dotBottom, dotStyle]} />
+
+      <Container style={containerStyle}>
         <View style={styles.avatarWrapper}>
-          <Image style={styles.avatar} source={{ uri: props.avatar }} />
+          <Image style={styles.avatar} source={{uri: props.avatar}} />
           {renderDotsLeft()}
         </View>
 
         <View style={styles.infoWrapper}>
-          <Text style={styles.title}>{props.title}</Text>
+          <Typography
+            type={TypographyType.LABEL_SEMI_LARGE}
+            style={styles.title}>
+            {props.title}
+          </Typography>
           <View style={styles.additionalInfo}>
             {!!props.remaining && (
-              <Text style={styles.remaining}>{props.remaining}</Text>
+              <Typography type={TypographyType.DESCRIPTION_SEMI_MEDIUM}>
+                {props.remaining}
+              </Typography>
             )}
             {props.isUseOnlineMode && (
-              <Button
+              <TextButton
+                typoProps={btnTypoProps}
                 onPress={props.onPressUseOnline}
-                style={styles.useNowTitle}
-              >
-                Sử dụng bây giờ
-              </Button>
+                titleStyle={useNowTitleStyle}>
+                {t('voucher:detail.useNow')}
+              </TextButton>
             )}
           </View>
         </View>
 
-
-        <View style={styles.quantityContainer}>
-          <Text style={styles.quantity}>x{props.quantity}</Text>
+        <View style={quantityContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_EXTRA_SMALL}
+            style={quantityStyle}>
+            x{props.quantity}
+          </Typography>
         </View>
-      </View>
-    </Button>
+      </Container>
+    </BaseButton>
   );
 }
 
 const styles = StyleSheet.create({
   btnWrapper: {
-    position: 'relative'
+    position: 'relative',
   },
   dotLarge: {
     position: 'absolute',
     width: 14,
     height: 16,
-    borderRadius: 8,
-    backgroundColor: '#f1f1f1',
     left: 98,
-    zIndex: 1
+    zIndex: 1,
   },
   dotTop: {
-    top: 12
+    top: 12,
   },
   dotBottom: {
-    bottom: -4
+    bottom: -4,
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     marginHorizontal: 16,
     paddingHorizontal: 16,
     marginTop: 16,
-    borderRadius: 8,
     position: 'relative',
     height: 106,
     flexDirection: 'row',
-    ...Platform.select({
-      ios: {
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5
-      },
-      android: {
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: '#E1E1E1'
-      }
-    })
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
   },
   avatarWrapper: {
     flexDirection: 'row',
     width: 74,
     justifyContent: 'center',
     position: 'relative',
-    paddingRight: 16
+    paddingRight: 16,
   },
   avatar: {
     width: 48,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   infoWrapper: {
     flex: 1,
     justifyContent: 'center',
-    paddingLeft: 16
+    paddingLeft: 16,
   },
   additionalInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   title: {
-    fontSize: 15,
     fontWeight: '500',
-    color: config.colors.black
   },
   remaining: {
-    fontSize: 13,
     fontWeight: '400',
-    color: '#666'
   },
   useNowTitle: {
-    fontSize: 13,
     fontWeight: '600',
     paddingVertical: 8,
-    color: '#00a5cf'
   },
   quantityContainer: {
     position: 'absolute',
@@ -141,14 +191,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     right: 2,
     bottom: 2,
-    backgroundColor: config.colors.primary,
-    borderTopLeftRadius: 8,
-    borderBottomRightRadius: 8,
   },
   quantity: {
-    fontSize: 11,
     fontWeight: '500',
-    color: config.colors.white
   },
   dotLeftWrapper: {
     position: 'absolute',
@@ -157,17 +202,16 @@ const styles = StyleSheet.create({
     bottom: 18,
     width: 2,
     flexDirection: 'column',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   dotLeft: {
     width: 2,
     height: 2,
     borderRadius: 2,
-    backgroundColor: '#d6d6d6'
-  }
+  },
 });
 
-const defaultListener = () => { };
+const defaultListener = () => {};
 
 MyVoucherItem.propTypes = {
   avatar: PropTypes.string,
@@ -176,7 +220,7 @@ MyVoucherItem.propTypes = {
   last: PropTypes.bool,
   isUseOnlineMode: PropTypes.bool,
   onPress: PropTypes.func,
-  onPressUseOnline: PropTypes.func
+  onPressUseOnline: PropTypes.func,
 };
 
 MyVoucherItem.defaultProps = {
@@ -186,7 +230,7 @@ MyVoucherItem.defaultProps = {
   last: false,
   isUseOnlineMode: false,
   onPress: defaultListener,
-  onPressUseOnline: defaultListener
+  onPressUseOnline: defaultListener,
 };
 
-export default MyVoucherItem;
+export default withTranslation('voucher')(MyVoucherItem);

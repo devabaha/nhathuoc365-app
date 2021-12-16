@@ -205,6 +205,7 @@ import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
 import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
+import {pop, push, reset} from 'app-helper/routing';
 
 /**
  * Not allow font scaling
@@ -264,26 +265,30 @@ initializeVoucherModule({
     endpoint: () => BaseAPI.apiDomain,
   },
   route: {
-    push: Actions.push,
-    pop: Actions.pop,
-    backToMainAndOpenShop: (siteData) => {
+    push,
+    pop,
+    backToMainAndOpenShop: (siteData, theme) => {
       addJob(() => {
-        action(() => {
-          store.setStoreData(siteData);
-          Actions.push(appConfig.routes.store, {
-            title: siteData.name,
-          });
-        })();
-      });
-      Actions.reset(appConfig.routes.primaryTabbar);
-    },
-    pushToStoreBySiteData: (siteData) => {
-      action(() => {
         store.setStoreData(siteData);
-        Actions.push(appConfig.routes.store, {
+        push(
+          appConfig.routes.store,
+          {
+            title: siteData.name,
+          },
+          theme,
+        );
+      });
+      reset(appConfig.routes.primaryTabbar);
+    },
+    pushToStoreBySiteData: (siteData, theme) => {
+      store.setStoreData(siteData);
+      push(
+        appConfig.routes.store,
+        {
           title: siteData.name,
-        });
-      })();
+        },
+        theme,
+      );
     },
   },
 });
