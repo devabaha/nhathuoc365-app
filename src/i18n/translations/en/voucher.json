@@ -83,6 +83,7 @@
         "shop": "shop"
       }
     },
-    "providedBy": "Provided by"
+    "providedBy": "Provided by",
+    "map": "Map"
   }
 }

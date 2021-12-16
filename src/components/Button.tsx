@@ -1,18 +1,18 @@
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import appConfig from 'app-config';
-import {
-  AppPrimaryButton,
-  FilledTonalButton,
-  FilledButton,
-  AppFilledButton,
-  AppFilledTonalButton,
-  AppOutlinedButton,
-  OutlinedButton,
-  BaseButton,
-} from './base/Button';
-import {Container, TypographyType} from './base';
+import {StyleSheet} from 'react-native';
+import {AppPrimaryButton} from './base/Button';
+import {Children, Container, TypographyType} from './base';
+import {FilledButtonProps} from 'src/components/base/Button';
 import {useTheme} from 'src/Themes/Theme.context';
+import {Style} from 'src/Themes/interface';
+
+interface ButtonProps extends FilledButtonProps {
+  showBackground?: boolean;
+
+  containerStyle?: Style;
+  btnContainerStyle?: Style;
+  renderBefore?: Children;
+}
 
 const Button = ({
   showBackground = false,
@@ -34,7 +34,7 @@ const Button = ({
   iconRight = null,
   children = null,
   ...props
-}) => {
+}: ButtonProps) => {
   const {theme} = useTheme();
   const defaultTitleStyle = [styles.text, titleStyle];
   return (
@@ -62,23 +62,6 @@ const Button = ({
         {...props}>
         {children || title}
       </AppPrimaryButton>
-      {/* <TouchableOpacity
-        style={[
-          styles.btn,
-          shadow && styles.shadow,
-          disabled && styles.btnDisabled,
-          btnContainerStyle,
-        ]}
-        onPress={onPress}
-        disabled={disabled}>
-        {iconLeft}
-        {renderTitleComponent ? (
-          renderTitleComponent(defaultTitleStyle)
-        ) : (
-          <Text style={defaultTitleStyle}>{children || title}</Text>
-        )}
-        {iconRight}
-      </TouchableOpacity> */}
     </Container>
   );
 };
@@ -89,20 +72,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     justifyContent: 'center',
-    // alignItems: 'center',
     alignSelf: 'flex-end',
   },
   btn: {
     width: '100%',
-    // backgroundColor: appConfig.colors.primary,
     paddingVertical: 15,
-    // borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-  },
-  btnDisabled: {
-    backgroundColor: '#ccc',
   },
   shadow: {
     shadowColor: '#000',
@@ -116,7 +93,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   text: {
-    // color: '#ffffff',
     textTransform: 'uppercase',
     fontWeight: '600',
     fontSize: 16,
