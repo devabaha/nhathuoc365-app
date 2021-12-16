@@ -1,19 +1,28 @@
 import React, {Component} from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  Animated,
-  Alert,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {View, StyleSheet, StatusBar, Animated, Alert} from 'react-native';
+// 3-party libs
 import ImagePicker from 'react-native-image-crop-picker';
-import ImageItem from './ImageItem';
-import {Actions} from 'react-native-router-flux';
+// configs
 import appConfig from 'app-config';
-import ProfileContext from '../ProfileContext';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import ProfileContext from 'src/containers/Profile/ProfileContext';
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import ImageItem from './ImageItem';
+import {
+  Typography,
+  Icon,
+  Container,
+  FlatList,
+  TextButton,
+} from 'src/components/base';
 
 const MAX_IMAGE_UPLOADED = 30;
 const ORIGIN_PADDING = 5;
@@ -27,22 +36,12 @@ const CHOOSE_PHOTO_TYPE = {
   LIBRARY: 'library',
 };
 
-const CHOOSE_PHOTO_DATA = [
-  {
-    type: CHOOSE_PHOTO_TYPE.CAMERA,
-    title: 'Máy ảnh',
-  },
-  {
-    type: CHOOSE_PHOTO_TYPE.LIBRARY,
-    title: 'Thư viện',
-  },
-];
-
 class Gallery extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     renderHeader: () => {},
   };
-  static contextType = ProfileContext;
 
   state = {
     headingHeight: undefined,
@@ -55,28 +54,25 @@ class Gallery extends Component {
   uploaded = false;
 
   moreActions = [this.props.t('common:delete'), this.props.t('common:cancel')];
-  destructiveButtonIndex = 0; // index of delete action.
+  destructiveButtonIndex = this.moreActions.length - 2; // index of delete action.
+
+  choosePhotoData = [
+    {
+      type: CHOOSE_PHOTO_TYPE.CAMERA,
+      title: this.props.t('common:cameraLabel'),
+    },
+    {
+      type: CHOOSE_PHOTO_TYPE.LIBRARY,
+      title: this.props.t('common:photoLibraryLabel'),
+    },
+  ];
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get imagesLength() {
     return this.props.data?.length || 0;
-  }
-
-  get paddingAnimatedArea() {
-    const {upperLayout} = this.context;
-    return upperLayout
-      ? ORIGIN_HEIGHT * 0.8 - (ORIGIN_HEIGHT - upperLayout)
-      : 0;
-  }
-
-  get containerHeight() {
-    let currentheight = ORIGIN_HEIGHT * 0.8;
-    if (this.state.headingHeight && this.state.galleryHeight) {
-      currentheight = this.state.headingHeight + this.state.galleryHeight;
-    }
-    if (currentheight >= ORIGIN_HEIGHT * 0.8) {
-      currentheight = ORIGIN_HEIGHT * 0.8;
-    }
-    return currentheight - (this.state.headingHeight || 0);
   }
 
   componentWillUnmount() {
@@ -88,16 +84,20 @@ class Gallery extends Component {
 
   handleOpenUploadSelection = () => {
     if (this.imagesLength >= MAX_IMAGE_UPLOADED) {
-      Alert.alert(`Bạn chỉ có thể upload tối đa ${MAX_IMAGE_UPLOADED} ảnh`);
+      Alert.alert(
+        this.props.t('profileDetail:limitPhotosUploadNoti', {
+          maxImagesUpload: MAX_IMAGE_UPLOADED,
+        }),
+      );
       return;
     }
 
-    Actions.push(appConfig.routes.modalList, {
+    push(appConfig.routes.modalList, {
       onPressItem: this.onPressChoosePhotoType,
-      data: CHOOSE_PHOTO_DATA,
-      onCloseModal: Actions.pop,
+      data: this.choosePhotoData,
+      onCloseModal: pop,
       modalStyle: {height: undefined},
-      heading: 'Chọn ảnh',
+      heading: this.props.t('common:selectPhotoLabel'),
     });
   };
 
@@ -119,7 +119,7 @@ class Gallery extends Component {
       includeBase64: true,
       mediaType: 'photo',
     }).then((images) => {
-      Actions.pop();
+      pop();
       this.uploaded = true;
       const imgs = this.nomarlizeImages(images);
       this.props.uploadMultiTempImage(imgs);
@@ -131,7 +131,7 @@ class Gallery extends Component {
       includeExif: true,
       includeBase64: true,
     }).then((image) => {
-      Actions.pop();
+      pop();
       this.uploaded = true;
       const img = this.nomarlizeImages([image])[0];
       this.props.uploadTempImage(img);
@@ -150,14 +150,14 @@ class Gallery extends Component {
   handlePressAction = (image, actionIndex) => {
     switch (actionIndex) {
       case this.destructiveButtonIndex:
-        Actions.pop();
+        pop();
         this.props.onDeleteImage(image.id);
         break;
     }
   };
 
   handlePressImage = (image, index) => {
-    Actions.push(appConfig.routes.itemImageViewer, {
+    push(appConfig.routes.itemImageViewer, {
       images: this.props.data,
       index,
       moreActionSheetOptions: {
@@ -202,46 +202,74 @@ class Gallery extends Component {
   };
 
   renderHeader = () => {
-    const {isMainUser} = this.context;
-
     return (
       <>
         {this.props.renderHeader()}
-        <Animated.View
+        <Container
+          animated
           onLayout={this.onHeadingLayout}
-          style={[styles.headerContainer]}>
+          style={styles.headerContainer}>
           {this.props.headerComponent}
 
-          <View style={[styles.row]}>
-            <Text style={styles.title}>Ảnh {`(${this.imagesLength})`}</Text>
-            {isMainUser && (
-              <TouchableOpacity onPress={this.handleOpenUploadSelection}>
-                <Text style={styles.uploadText}>
-                  <Icon name="upload" size={13} />
-                  {`  `}Tải thêm ảnh
-                </Text>
-              </TouchableOpacity>
-            )}
+          <View style={this.headerRowStyle}>
+            <Typography type={TypographyType.LABEL_LARGE} style={styles.title}>
+              {this.props.t('profileDetail:photoLabel')}{' '}
+              {`(${this.imagesLength})`}
+            </Typography>
+            <ProfileContext.Consumer>
+              {({isMainUser}) =>
+                isMainUser && (
+                  <TextButton
+                    onPress={this.handleOpenUploadSelection}
+                    typoProps={{type: TypographyType.LABEL_MEDIUM_TERTIARY}}
+                    renderIconLeft={(titleStyle) => {
+                      return (
+                        <Icon
+                          bundle={BundleIconSetName.ANT_DESIGN}
+                          name="upload"
+                          size={13}
+                          style={titleStyle}
+                        />
+                      );
+                    }}>
+                    {this.props.t('profileDetail:uploadPhotos')}
+                  </TextButton>
+                )
+              }
+            </ProfileContext.Consumer>
           </View>
-        </Animated.View>
+        </Container>
       </>
     );
   };
 
   renderEmpty = () => {
     return (
-      <View style={styles.emptyContainerStyle}>
-        <Text style={styles.noImage}>Chưa có ảnh</Text>
-      </View>
+      <Container flex center>
+        <Typography
+          type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+          style={styles.noImage}>
+          {this.props.t('profileDetail:noPhoto')}
+        </Typography>
+      </Container>
     );
   };
 
+  get headerRowStyle() {
+    return mergeStyles(styles.row, {
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+      borderTopColor: this.theme.color.border,
+    });
+  }
+
   render() {
-    console.log(this.props.data)
     return (
       <>
-        <View onLayout={this.onGalleryLayout} style={[styles.container]}>
-          <Animated.FlatList
+        <Container flex>
+          <FlatList
+            animated
+            safeLayout
+            onLayout={this.onGalleryLayout}
             showsVerticalScrollIndicator={false}
             data={this.props.data || []}
             scrollEventThrottle={16}
@@ -250,27 +278,16 @@ class Gallery extends Component {
             keyExtractor={(item, index) => index.toString()}
             columnWrapperStyle={styles.columnWrapperStyle}
             ListHeaderComponent={this.renderHeader}
-            {...this.props.listProps}
+            // {...this.props.listProps}
           />
-        </View>
+        </Container>
       </>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fcfcfc',
-  },
-  emptyContainerStyle: {
-    flex: 1,
-    backgroundColor: '#fafafa',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   headerContainer: {
-    backgroundColor: '#f5f5f5',
     zIndex: 2,
   },
   row: {
@@ -278,31 +295,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     padding: 15,
-    borderTopColor: appConfig.colors.border,
-    borderTopWidth: 0.5,
   },
   title: {
     fontWeight: '600',
-    color: '#333',
-    fontSize: 16,
     letterSpacing: 1,
   },
-  uploadText: {
-    color: '#777',
-  },
   columnWrapperStyle: {
-    // justifyContent: 'space-between',
     paddingLeft: ORIGIN_PADDING,
-    backgroundColor: '#fcfcfc',
   },
   noImage: {
     padding: 15,
-    fontSize: 13,
     fontStyle: 'italic',
-    color: '#666',
     fontWeight: '300',
     textAlign: 'center',
   },
 });
 
-export default withTranslation(['account', 'common'])(Gallery);
+export default withTranslation(['account', 'common', 'profileDetail'])(Gallery);

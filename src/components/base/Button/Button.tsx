@@ -89,7 +89,7 @@ const Button = forwardRef(
       return (
         <>
           {iconLeft}
-          {!!renderIconLeft && renderIconLeft(titleStyles)}
+          {!!renderIconLeft && renderIconLeft(titleStyles, {})}
 
           {renderTitleComponent ? (
             renderTitleComponent(titleStyles)

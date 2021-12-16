@@ -133,3 +133,17 @@ export const lightenColor = (color, percent) => {
       .slice(1)
   );
 };
+
+export const elevationShadowStyle = (
+  elevation,
+  width = 0,
+  height = 0,
+  shadowOpacity = 0.25,
+  shadowColor = 'black',
+) => ({
+  elevation,
+  shadowColor,
+  shadowOffset: {width: width, height: height || 0.5 * elevation},
+  shadowOpacity,
+  shadowRadius: 0.8 * elevation,
+});

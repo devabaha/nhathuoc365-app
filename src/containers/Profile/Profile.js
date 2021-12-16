@@ -1,27 +1,30 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Animated,
-  Easing,
-  Alert,
-  View,
-  RefreshControl,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import {StyleSheet, Animated, Easing, Alert, View} from 'react-native';
+// 3-party libs
 import ImagePicker from 'react-native-image-picker';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import RNFetchBlob from 'rn-fetch-blob';
+import Communications from 'react-native-communications';
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
+// helpers
+import EventTracker from 'src/helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push, reset} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+import {ProfileProvider} from './ProfileContext';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
 import Header from './Header';
-import ComboButton from './ComboButton';
 import Gallery from './Gallery';
 import Loading from 'src/components/Loading';
-import RNFetchBlob from 'rn-fetch-blob';
-import {ProfileProvider} from './ProfileContext';
-import Communications from 'react-native-communications';
 import Intro from './Intro';
 import NavBar from './NavBar';
-import EventTracker from 'src/helper/EventTracker';
+import {Icon, RefreshControl} from 'src/components/base';
+import ComboButton from './ComboButton';
 
 const IMAGE_TYPE = {
   COVER: 'cover',
@@ -29,6 +32,8 @@ const IMAGE_TYPE = {
 };
 
 class Profile extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     isMainUser: false,
   };
@@ -48,17 +53,21 @@ class Profile extends Component {
 
   eventTracker = new EventTracker();
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get introData() {
     const {userInfo} = this.state;
     let data = [];
     if (userInfo.premium != MEMBERSHIP_TYPE.STANDARD) {
       data = data.concat([
         {
-          title: 'Ngành nghề',
+          title: this.props.t('profession'),
           value: userInfo.name_profession,
         },
         {
-          title: 'Thương hiệu',
+          title: this.props.t('brand'),
           value: userInfo.brand,
         },
       ]);
@@ -67,9 +76,10 @@ class Profile extends Component {
       {
         title: this.props.t('editProfile:sections.facebook.title'),
         leftTitle: (
-          <AntDesignIcon
+          <Icon
+            bundle={BundleIconSetName.ANT_DESIGN}
             name="facebook-square"
-            style={[styles.introIcon, styles.facebookIcon]}
+            style={[styles.introIcon, this.facebookIconStyle]}
           />
         ),
         select: true,
@@ -79,9 +89,10 @@ class Profile extends Component {
       {
         title: this.props.t('editProfile:sections.youtube.title'),
         leftTitle: (
-          <AntDesignIcon
+          <Icon
+            bundle={BundleIconSetName.ANT_DESIGN}
             name="youtube"
-            style={[styles.introIcon, styles.youtubeIcon]}
+            style={[styles.introIcon, this.youtubeIconStyle]}
           />
         ),
         select: true,
@@ -167,10 +178,14 @@ class Profile extends Component {
   };
 
   handleEdit = () => {
-    Actions.push(appConfig.routes.editProfile, {
-      user_info: this.state.userInfo,
-      refresh: this.getProfile,
-    });
+    push(
+      appConfig.routes.editProfile,
+      {
+        user_info: this.state.userInfo,
+        refresh: this.getProfile,
+      },
+      this.theme,
+    );
   };
 
   handleLogout = () => {
@@ -208,7 +223,7 @@ class Profile extends Component {
             message: t('account:signOut.successMessage'),
             type: 'info',
           });
-          Actions.reset(appConfig.routes.sceneWrapper);
+          reset(appConfig.routes.sceneWrapper);
           break;
         default:
           console.log('default');
@@ -227,18 +242,26 @@ class Profile extends Component {
     if (!Object.keys(this.state.userInfo).length === 0) {
       return;
     }
-    let userName = this.state.userInfo.tel;
-    if (this.state.userInfo.name) {
-      userName += ' ' + this.state.userInfo.name.trim();
-    }
 
     if (this.state.userInfo.tel && this.state.userInfo.tel != '') {
       Communications.phonecall(this.state.userInfo.tel, true);
     } else {
+      let userName = '';
+
+      if (this.state.userInfo.tel) {
+        userName += ' ' + this.state.userInfo.tel;
+      }
+
+      if (this.state.userInfo.name) {
+        userName += ' ' + this.state.userInfo.name.trim();
+      }
+
       Alert.alert(
-        'Không thể liên lạc',
-        userName + ' chưa đăng ký số điện thoại',
-        [{text: 'Đã hiểu'}],
+        this.props.t('orders:callErrorAlert.cantCall'),
+        this.props.t('orders:callErrorAlert.notRegisterPhoneYet', {
+          username: userName,
+        }),
+        [{text: this.props.t('orders:callErrorAlert.confirm')}],
       );
     }
   };
@@ -258,7 +281,7 @@ class Profile extends Component {
       const response = await APIHandler.user_create_conversation(data);
 
       if (response && response.status === STATUS_SUCCESS && response.data) {
-        Actions.push(appConfig.routes.amazingUserChat, {
+        push(appConfig.routes.amazingUserChat, {
           user: response.data.user,
           title: response.data.user.name,
           conversation_id: response.data.conversation_id,
@@ -325,7 +348,7 @@ class Profile extends Component {
   uploadTempImage = (response, type, resolve, reject) => {
     this.setState(
       {
-        loading: true,
+        coverLoading: true,
       },
       () => {
         const {t} = this.props;
@@ -363,7 +386,7 @@ class Profile extends Component {
                   type: 'danger',
                   message: response.message || t('common:api.error.message'),
                 });
-                !this.unmounted && this.setState({loading: false});
+                !this.unmounted && this.setState({coverLoading: false});
               }
             }
           })
@@ -375,7 +398,7 @@ class Profile extends Component {
               type: 'danger',
               message: t('common:api.error.message'),
             });
-            !this.unmounted && this.setState({loading: false});
+            !this.unmounted && this.setState({coverLoading: false});
           });
       },
     );
@@ -578,6 +601,7 @@ class Profile extends Component {
       !this.unmounted &&
         this.setState({
           loading: false,
+          coverLoading: false,
         });
     }
   }
@@ -597,6 +621,7 @@ class Profile extends Component {
         <View onLayout={this.onUpperLayout}>
           <Header
             avatarLoading={this.state.avatarLoading}
+            coverLoading={this.state.coverLoading}
             avatar={this.state.userInfo.avatar}
             cover={this.state.userInfo.image_cover}
             name={this.state.userInfo.name}
@@ -618,7 +643,6 @@ class Profile extends Component {
   };
 
   listGalleryProps = {
-    contentContainerStyle: styles.contentContainer,
     // onScroll: Animated.event(
     //   [
     //     {
@@ -642,6 +666,18 @@ class Profile extends Component {
     ),
   };
 
+  get facebookIconStyle() {
+    return {
+      color: this.theme.color.facebook,
+    };
+  }
+
+  get youtubeIconStyle() {
+    return {
+      color: this.theme.color.youtube,
+    };
+  }
+
   render() {
     const data = {
       isMainUser: this.props.isMainUser,
@@ -654,12 +690,12 @@ class Profile extends Component {
     return (
       <ProfileProvider value={data}>
         <NavBar
+          navigation={this.props.navigation}
           onChat={this.handleChat}
           onEdit={this.handleEdit}
           onLogout={this.handleLogout}
           title={this.state.userInfo.name || this.props.title}
         />
-
         {this.state.loading && <Loading center />}
 
         <Gallery
@@ -668,14 +704,9 @@ class Profile extends Component {
           onDeleteImage={this.deleteImage}
           data={this.state.gallery}
           renderHeader={this.renderPersonalInfo}
-          listProps={this.listGalleryProps}
           // headerComponent={
           //   this.props.isMainUser || (
-          //     <ComboButton
-          //       style={styles.comboBtn}
-          //       onCall={this.onCall}
-          //       onChat={this.handleChat}
-          //     />
+          //     <ComboButton onCall={this.onCall} onChat={this.handleChat} />
           //   )
           // }
         />
@@ -690,28 +721,9 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  contentContainer: {
-    paddingBottom: appConfig.device.bottomSpace,
-  },
-  icon: {
-    color: '#fff',
-    fontSize: 22,
-    paddingHorizontal: 10,
-    ...elevationShadowStyle(7),
-  },
-  comboBtn: {
-    backgroundColor: '#f9f9f9',
-  },
-
   introIcon: {
     marginRight: 7,
     fontSize: 15,
-  },
-  facebookIcon: {
-    color: appConfig.colors.brand.facebook,
-  },
-  youtubeIcon: {
-    color: appConfig.colors.brand.youtube,
   },
 });
 

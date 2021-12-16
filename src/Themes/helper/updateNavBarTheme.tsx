@@ -1,7 +1,7 @@
 import React from 'react';
 import {Typography, TypographyType} from 'src/components/base';
 
-import {Theme} from '../interface';
+import {Style, Theme} from '../interface';
 
 import appConfig from 'app-config';
 import {
@@ -32,6 +32,16 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
     ? theme.color.onSurface
     : theme.color.onPrimary;
 
+  const titleStyle: Style = {
+    ...(theme.typography[TypographyType.TITLE_SEMI_LARGE] as {}),
+    fontWeight: appConfig.device.isIOS ? '500' : 'bold',
+    color: tintColor,
+  };
+
+  const iconStyle: Style = {
+    color: tintColor,
+  };
+
   return {
     renderTitle: (props) => {
       return (
@@ -46,6 +56,8 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
         </Typography>
       );
     },
+    titleStyle,
+    iconStyle,
     headerStyle: {
       backgroundColor: isSurfaceMode
         ? theme.color.surface

@@ -1,1 +1,1 @@
-export {default} from './NavBarAction';
+export {default} from './NavBarButton';
