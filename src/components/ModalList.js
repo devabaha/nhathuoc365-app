@@ -12,10 +12,13 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
-import Icon from './base/Icon';
-import FlatList from './base/FlatList';
-import {Container, Typography} from './base';
-import {BaseButton} from './base/Button';
+import {
+  Icon,
+  FlatList,
+  Container,
+  Typography,
+  BaseButton,
+} from 'src/components/base';
 
 class Modal extends PureComponent {
   static contextType = ThemeContext;

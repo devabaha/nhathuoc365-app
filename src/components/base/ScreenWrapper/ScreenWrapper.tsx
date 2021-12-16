@@ -20,6 +20,9 @@ const createStyles = (theme: Theme) => {
     safeLayout: {
       paddingBottom: appConfig.device.bottomSpace,
     },
+    noBackground: {
+      backgroundColor: undefined,
+    },
   });
 
   return styles;
@@ -31,6 +34,7 @@ const ScreenWrapper = forwardRef(
       children,
       style,
       safeLayout,
+      noBackground,
       headerComponent = null,
       ...props
     }: ScreenWrapperProps,
@@ -41,10 +45,14 @@ const ScreenWrapper = forwardRef(
       const baseStyles = createStyles(theme);
 
       return mergeStyles(
-        [baseStyles.container, safeLayout && baseStyles.safeLayout],
+        [
+          baseStyles.container,
+          safeLayout && baseStyles.safeLayout,
+          noBackground && baseStyles.noBackground,
+        ],
         style,
       );
-    }, [theme, style, safeLayout]);
+    }, [theme, style, safeLayout, noBackground]);
 
     return (
       <Container {...props} ref={ref} style={styles}>
