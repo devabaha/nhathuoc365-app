@@ -7,5 +7,12 @@
     "tempPrice": "Temporary price",
     "totalPrice": "Total price"
   },
+  "bankTransfer": {
+    "owner": "Owner: ",
+    "accountNumber": "Account number: ",
+    "branch": "Branch: "
+  },
+
+  "copyCompleteMessage": "Account number is copied to clipboard",
   "confirm": "Next"
 }

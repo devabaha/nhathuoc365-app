@@ -1,23 +1,31 @@
 import React, {Component} from 'react';
-import {
-  View,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  Animated,
-  Image,
-  TouchableHighlight,
-} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
+// 3-party libs
 import Svg, {Path} from 'react-native-svg';
-import extractBrush from 'react-native-svg/lib/module/lib/extract/extractBrush';
 import {separate, splitPathString} from 'flubber';
-import appConfig from 'app-config';
-import Ionicon from 'react-native-vector-icons/Ionicons';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import LinearGradient from 'react-native-linear-gradient';
-import {default as Reanimated, Easing} from 'react-native-reanimated';
+import Reanimated, {Easing} from 'react-native-reanimated';
 import Clipboard from '@react-native-community/clipboard';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import extractBrush from 'react-native-svg/lib/module/lib/extract/extractBrush';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import GradientView from './GradientView';
+import Image from 'src/components/Image';
+import {
+  Typography,
+  Icon,
+  IconButton,
+  Container,
+  BaseButton,
+  ScrollView,
+  Card,
+} from 'src/components/base';
 
 const CIRCLE_PATH =
   'M23 12c0-3.037-1.232-5.789-3.222-7.778s-4.741-3.222-7.778-3.222-5.789 1.232-7.778 3.222-3.222 4.741-3.222 7.778 1.232 5.789 3.222 7.778 4.741 3.222 7.778 3.222 5.789-1.232 7.778-3.222 3.222-4.741 3.222-7.778zM21 12c0 2.486-1.006 4.734-2.636 6.364s-3.878 2.636-6.364 2.636-4.734-1.006-6.364-2.636-2.636-3.878-2.636-6.364 1.006-4.734 2.636-6.364 3.878-2.636 6.364-2.636 4.734 1.006 6.364 2.636 2.636 3.878 2.636 6.364z';
@@ -32,9 +40,9 @@ const pathInterpolate = separate(
   },
 );
 
-const AnimatedIconAntDesign = Animated.createAnimatedComponent(IconAntDesign);
-
 class PaymentRow extends Component {
+  static contextType = ThemeContext;
+
   state = {
     animated: new Animated.Value(0),
     animatedHeight: new Reanimated.Value(0),
@@ -48,6 +56,10 @@ class PaymentRow extends Component {
   _refCheckBox = null;
   collapsed = true;
   unmounted = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.state.animated.addListener(this.animationListener);
@@ -86,7 +98,9 @@ class PaymentRow extends Component {
         useNativeDriver: true,
       }).start();
       this._refCheckBox.setNativeProps({
-        fill: extractBrush(nextProps.active ? DEFAULT_COLOR : '#555'),
+        fill: extractBrush(
+          nextProps.active ? this.checkBoxActiveColor : this.checkBoxFillColor,
+        ),
       });
     }
 
@@ -139,39 +153,65 @@ class PaymentRow extends Component {
 
   onCopyBankAccountNumber = (bankAccountNumber) => {
     Clipboard.setString(bankAccountNumber);
-    Toast.show('Đã sao chép số TK vào bộ nhớ tạm');
+    Toast.show(this.props.t('copyCompleteMessage'));
   };
 
   renderBankAccounts = () => {
+    const {t} = this.props;
+
     return this.props.bankTransferData.map((bank, index) => {
       const extraStyle = index === this.props.bankTransferData.length - 1 && {
         marginRight: 15,
       };
 
       return (
-        <View key={index} style={[styles.bankTransferContainer, extraStyle]}>
-          <Text style={styles.bankTransferName}>{bank.name}</Text>
-          <Text style={styles.bankTransferLabel}>
-            Chủ TK:{' '}
-            <Text style={styles.bankTransferInfo}>{bank.account_holder}</Text>
-          </Text>
+        <Card key={index} style={[styles.bankTransferContainer, extraStyle]}>
+          <Typography
+            type={TypographyType.TITLE_SEMI_LARGE}
+            style={styles.bankTransferName}>
+            {bank.name}
+          </Typography>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.bankTransferLabel}>
+            {t('bankTransfer.owner')}
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.bankTransferInfo}>
+              {bank.account_holder}
+            </Typography>
+          </Typography>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={styles.bankTransferLabel}>
-              Số TK:{' '}
-              <Text style={styles.bankTransferInfo}>{bank.account_number}</Text>
-            </Text>
-            <TouchableOpacity
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.bankTransferLabel}>
+              {t('bankTransfer.accountNumber')}
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.bankTransferInfo}>
+                {bank.account_number}
+              </Typography>
+            </Typography>
+            <IconButton
               hitSlop={HIT_SLOP}
               style={{marginHorizontal: 7}}
-              onPress={() => this.onCopyBankAccountNumber(bank.account_number)}>
-              <Ionicon name="ios-copy" style={styles.copyIcon} />
-            </TouchableOpacity>
+              onPress={() => this.onCopyBankAccountNumber(bank.account_number)}
+              bundle={BundleIconSetName.IONICONS}
+              name="ios-copy"
+              iconStyle={this.iconCopyStyle}
+            />
           </View>
-          <Text style={styles.bankTransferLabel}>
-            Chi nhánh:{' '}
-            <Text style={styles.bankTransferInfo}>{bank.branch}</Text>
-          </Text>
-        </View>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.bankTransferLabel}>
+            {t('bankTransfer.branch')}
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.bankTransferInfo}>
+              {bank.branch}
+            </Typography>
+          </Typography>
+        </Card>
       );
     });
   };
@@ -213,12 +253,18 @@ class PaymentRow extends Component {
 
     return (
       <View style={styles.directionIcons}>
-        <AnimatedIconAntDesign
+        <Icon
+          animated
+          bundle={BundleIconSetName.ANT_DESIGN}
           name="swapleft"
+          neutral
           style={[styles.bankDirectionIcon, animatedLeftIconStyle]}
         />
-        <AnimatedIconAntDesign
+        <Icon
+          animated
+          bundle={BundleIconSetName.ANT_DESIGN}
           name="swapright"
+          neutral
           style={[styles.bankDirectionIcon, animatedRightIconStyle]}
         />
       </View>
@@ -264,10 +310,10 @@ class PaymentRow extends Component {
           style={[animatedHeightStyle, animatedOpacityStyle]}>
           {this.state.scrollable && this.renderDirectionIcons()}
           <GradientView start />
-          <Animated.ScrollView
+          <ScrollView
+            animated
             style={styles.bankTransferScrollView}
             onLayout={this.onBankTransferScrollLayout}
-            contentContainerStyle={{flexGrow: 1}}
             scrollEventThrottle={16}
             onScroll={Animated.event(
               [
@@ -287,11 +333,28 @@ class PaymentRow extends Component {
               onLayout={this.onBankContentScrollLayout}>
               {this.renderBankAccounts()}
             </View>
-          </Animated.ScrollView>
+          </ScrollView>
           <GradientView end />
         </Reanimated.View>
       )
     );
+  }
+
+  get iconCopyStyle() {
+    return [
+      styles.copyIcon,
+      {
+        color: this.theme.color.primaryHighlight,
+      },
+    ];
+  }
+
+  get checkBoxFillColor() {
+    return this.theme.color.iconInactive;
+  }
+
+  get checkBoxActiveColor() {
+    return this.theme.color.primaryHighlight;
   }
 
   render() {
@@ -303,8 +366,8 @@ class PaymentRow extends Component {
     };
 
     return (
-      <View>
-        <TouchableHighlight underlayColor="#eee" onPress={this.props.onPress}>
+      <Container>
+        <BaseButton useTouchableHighlight onPress={this.props.onPress}>
           <View style={styles.paymentContainer}>
             <View onLayout={this.onPaymentRowLayout} style={styles.row}>
               <Svg width="20" height="20">
@@ -312,33 +375,37 @@ class PaymentRow extends Component {
                   ref={(inst) => (this._refCheckBox = inst)}
                   d={CIRCLE_PATH}
                   strokeWidth={0}
-                  fill="#555"
+                  fill={this.checkBoxFillColor}
                   scale={0.8}
                 />
               </Svg>
               <View style={styles.bankMainContent}>
                 {!!this.props.image && (
-                  <View style={[styles.bankImage, imageStyle]}>
-                    <Image source={{uri: this.props.image}} style={{flex: 1}} />
-                  </View>
+                  <Container style={[styles.bankImage, imageStyle]}>
+                    <Image source={{uri: this.props.image}} />
+                  </Container>
                 )}
                 <View style={styles.paymentMethodTextContainer}>
-                  <Text style={styles.paymentMethodLabel}>
+                  <Typography
+                    type={TypographyType.LABEL_SEMI_LARGE}
+                    style={styles.paymentMethodLabel}>
                     {this.props.title}
-                  </Text>
+                  </Typography>
                   {!!this.props.subTitle && (
-                    <Text style={styles.subPaymentMethodLabel}>
+                    <Typography
+                      type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
+                      style={styles.subPaymentMethodLabel}>
                       {this.props.subTitle}
-                    </Text>
+                    </Typography>
                   )}
                 </View>
               </View>
             </View>
             {this.props.renderRight}
           </View>
-        </TouchableHighlight>
+        </BaseButton>
         {!!this.props.bankTransferData && this.renderBankTransferData()}
-      </View>
+      </Container>
     );
   }
 }
@@ -360,32 +427,21 @@ const styles = StyleSheet.create({
     // flexWrap: 'wrap'
   },
   paymentMethodLabel: {
-    fontSize: 15,
     fontWeight: appConfig.device.isIOS ? '500' : '500',
-    color: appConfig.colors.text,
     marginBottom: 3,
   },
-  subPaymentMethodLabel: {
-    fontSize: 13,
-    color: '#8c8c8c',
-  },
+  subPaymentMethodLabel: {},
   bankTransferName: {
-    fontSize: 18,
     letterSpacing: 1.5,
     fontWeight: '800',
-    color: '#333',
     marginBottom: 7,
   },
   bankTransferLabel: {
-    fontSize: 14,
     fontWeight: appConfig.device.isIOS ? '400' : '200',
-    color: '#555',
     marginBottom: appConfig.device.isIOS ? 3 : 0,
   },
   bankTransferInfo: {
-    fontSize: 16,
     fontWeight: appConfig.device.isIOS ? '500' : '400',
-    color: '#242424',
   },
   bankTransferScrollView: {
     flex: 1,
@@ -414,7 +470,6 @@ const styles = StyleSheet.create({
   },
   copyIcon: {
     alignSelf: 'center',
-    color: hexToRgba(DEFAULT_COLOR, 0.7),
     fontSize: 16,
   },
   bankMainContent: {
@@ -428,7 +483,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginRight: 7,
     resizeMode: 'contain',
-    backgroundColor: '#f7f7f7',
     width: 30,
     height: 30,
   },
@@ -442,29 +496,7 @@ const styles = StyleSheet.create({
   },
   bankDirectionIcon: {
     fontSize: 35,
-    color: '#ccc',
   },
 });
 
-export default PaymentRow;
-
-const GradientView = (props) => (
-  <LinearGradient
-    colors={[
-      'rgba(255,255,255,0)',
-      'rgba(255,255,255,.25)',
-      'rgba(255,255,255,.5)',
-    ]}
-    locations={[
-      props.start ? 1 : 0,
-      props.start ? 0.45 : 0.55,
-      props.start ? 0 : 1,
-    ]}
-    angle={90}
-    useAngle
-    style={[
-      styles.gradient,
-      props.start ? styles.gradientStart : props.end ? styles.gradientEnd : {},
-    ]}
-  />
-);
+export default withTranslation('paymentMethod')(PaymentRow);

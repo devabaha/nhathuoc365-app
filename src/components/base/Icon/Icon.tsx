@@ -19,6 +19,9 @@ const createStyles = (theme: Theme) => {
     secondary: {
       color: theme.color.persistSecondary,
     },
+    neutral: {
+      color: theme.color.iconInactive,
+    },
     disabled: {
       color: theme.color.disabled,
     },
@@ -40,6 +43,7 @@ const Icon = forwardRef(
       animated,
       primary,
       secondary,
+      neutral,
       disabled,
       ...props
     }: IconProps,
@@ -73,11 +77,12 @@ const Icon = forwardRef(
           styles.icon,
           primary && styles.primary,
           secondary && styles.secondary,
+          neutral && styles.neutral,
           disabled && styles.disabled,
         ],
         style,
       );
-    }, [styles, style]);
+    }, [styles, primary, secondary, neutral, disabled, style]);
 
     return <IconComponent {...props} ref={ref} style={iconStyles} />;
   },

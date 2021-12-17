@@ -8,6 +8,7 @@ import {Style} from 'src/Themes/interface';
 
 interface ButtonProps extends FilledButtonProps {
   showBackground?: boolean;
+  safeLayout?: boolean;
 
   containerStyle?: Style;
   btnContainerStyle?: Style;
@@ -19,6 +20,7 @@ const Button = ({
 
   disabled = false,
   shadow = false,
+  safeLayout = false,
 
   title = '',
 
@@ -39,6 +41,7 @@ const Button = ({
   const defaultTitleStyle = [styles.text, titleStyle];
   return (
     <Container
+      safeLayout={safeLayout}
       style={[
         styles.container,
         {backgroundColor: theme.color.surface},
