@@ -65,7 +65,7 @@ const Typography = forwardRef(
     const styles = useMemo(() => {
       const baseStyles = createStyles(theme);
       const finalStyle = mergeStyles(
-        theme.typography[type],
+        [theme.typography[type], style],
         onDisabled
           ? baseStyles.onDisabled
           : onPrimary
@@ -83,6 +83,7 @@ const Typography = forwardRef(
     }, [
       theme,
       type,
+      style,
       onPrimary,
       onSecondary,
       onSurface,
@@ -107,11 +108,11 @@ const Typography = forwardRef(
 
     return (
       <>
-        {renderIconBefore && renderIconBefore(componentStyle)}
-        <TextComponent {...props} ref={ref} style={componentStyle}>
+        {renderIconBefore && renderIconBefore(styles)}
+        <TextComponent {...props} ref={ref} style={styles}>
           {children}
         </TextComponent>
-        {renderIconAfter && renderIconAfter(componentStyle)}
+        {renderIconAfter && renderIconAfter(styles)}
       </>
     );
   },
