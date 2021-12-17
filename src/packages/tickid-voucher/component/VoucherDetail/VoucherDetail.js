@@ -209,13 +209,10 @@ class VoucherDetail extends Component {
     };
   }
 
-  get tabColorStyle() {
+  get tabTitleStyle() {
     return {color: this.theme.color.onSurface};
   }
 
-  get tabTitleStyle() {
-    return {color: this.theme.color.textInactive};
-  }
   get tabContainerStyle() {
     return {
       backgroundColor: this.theme.color.surface,
@@ -375,11 +372,11 @@ class VoucherDetail extends Component {
             <Container style={styles.contentWrapper}>
               {!!tabs.length && (
                 <Tabs
-                  activeTabTitleStyle={this.tabColorStyle}
+                  activeTabTitleStyle={this.tabTitleStyle}
                   tabTitleStyle={this.tabTitleStyle}
-                  tabContainerStyle={this.tabContainerStyle}
+                  tabContainerStyle={styles.tabBackground}
                   activeLineColor={colorLineActive}
-                  tabBodyStyle={this.tabColorStyle}>
+                  tabBodyStyle={styles.tabBackground}>
                   {tabs}
                 </Tabs>
               )}

@@ -111,6 +111,9 @@ const styles = StyleSheet.create({
   addressAccordion: {
     marginTop: 12,
   },
+  tabBackground: {
+    backgroundColor: 'transparent',
+  },
 });
 
 export default styles;
