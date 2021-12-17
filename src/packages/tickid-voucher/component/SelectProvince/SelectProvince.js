@@ -1,21 +1,28 @@
 import React, {Component} from 'react';
+import {View, Image, StyleSheet, Animated, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
+// configs
 import config from '../../config';
-import Button from 'react-native-button';
-import {
-  View,
-  Text,
-  TextInput,
-  Image,
-  ScrollView,
-  FlatList,
-  StyleSheet,
-  Animated,
-  Keyboard,
-} from 'react-native';
-import Header from './Header';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// images
 import iconSearch from '../../assets/images/icon_search.png';
 import iconChecked from '../../assets/images/icon_checked.png';
+// custom components
+import {
+  Container,
+  Input,
+  FlatList,
+  BaseButton,
+  Typography,
+  TextButton,
+} from 'src/components/base';
+import Header from './Header';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
@@ -23,6 +30,8 @@ const ANIMATION_CLOSE_TIME = 150;
 const defaultListener = () => {};
 
 class SelectProvince extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onClose: PropTypes.func,
     onSelect: PropTypes.func,
@@ -49,6 +58,10 @@ class SelectProvince extends Component {
       keyboardHeight: 0,
       searchText: '',
     };
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -121,58 +134,24 @@ class SelectProvince extends Component {
       : province;
     const isActive = this.props.provinceSelected === displayProvince;
     return (
-      <Button
-        containerStyle={[
-          styles.provinceItemWrap,
+      <TextButton
+        style={[
+          this.provinceItemWrapStyle,
           {
             borderBottomWidth: this.props.last ? 0 : 1,
-            backgroundColor: isActive ? '#f7f6fb' : config.colors.white,
+            backgroundColor: isActive
+              ? this.theme.color.contentBackgroundWeak
+              : this.theme.color.surface,
           },
         ]}
-        style={styles.provinceItem}
+        type={TypographyType.LABEL_SEMI_LARGE}
         onPress={() => this.onSelect(province)}>
-        <Text numberOfLines={2} style={[styles.provinceItem]}>
-          {displayProvince}
-        </Text>
+        <Typography style={[styles.provinceItem]}>{displayProvince}</Typography>
+
         {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
-      </Button>
+      </TextButton>
     );
   };
-
-  get containerStyle() {
-    const containerStyle = {
-      opacity: this.state.opacity,
-      bottom: this.state.bottom,
-    };
-    if (this.state.keyboardShow) {
-      containerStyle.top = 0;
-    }
-    return containerStyle;
-  }
-
-  get contentStyle() {
-    const contentStyle = {};
-
-    if (this.state.keyboardShow) {
-      if (config.device.isIphoneX) {
-        const iPhoneXBuffer =
-          config.device.statusBarHeight + config.device.bottomSpace;
-        contentStyle.height = Math.floor(
-          config.device.height - this.state.keyboardHeight - iPhoneXBuffer,
-        );
-      } else {
-        contentStyle.height = Math.floor(
-          config.device.height -
-            this.state.keyboardHeight -
-            config.device.statusBarHeight,
-        );
-      }
-    } else {
-      contentStyle.height = 360;
-      contentStyle.paddingBottom = config.device.bottomSpace;
-    }
-    return contentStyle;
-  }
 
   handleSearch = (searchText) => {
     this.setState({searchText});
@@ -205,16 +184,71 @@ class SelectProvince extends Component {
     return 0;
   }
 
+  get containerStyle() {
+    const containerStyle = {
+      opacity: this.state.opacity,
+      bottom: this.state.bottom,
+    };
+    if (this.state.keyboardShow) {
+      containerStyle.top = 0;
+    }
+    return mergeStyles(containerStyle, {
+      backgroundColor: this.theme.color.overlay30,
+    });
+  }
+
+  get contentStyle() {
+    const contentStyle = {};
+
+    if (this.state.keyboardShow) {
+      if (config.device.isIphoneX) {
+        const iPhoneXBuffer =
+          config.device.statusBarHeight + config.device.bottomSpace;
+        contentStyle.height = Math.floor(
+          config.device.height - this.state.keyboardHeight - iPhoneXBuffer,
+        );
+      } else {
+        contentStyle.height = Math.floor(
+          config.device.height -
+            this.state.keyboardHeight -
+            config.device.statusBarHeight,
+        );
+      }
+    } else {
+      contentStyle.height = 360;
+      contentStyle.paddingBottom = config.device.bottomSpace;
+    }
+
+    return mergeStyles(contentStyle, {
+      borderTopLeftRadius: this.theme.layout.borderRadiusSmall,
+      borderTopRightRadius: this.theme.layout.borderRadiusSmall,
+    });
+  }
+
+  get searchInputStyle() {
+    return mergeStyles(styles.searchInput, {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    });
+  }
+
+  get provinceItemWrapStyle() {
+    return mergeStyles(styles.provinceItemWrap, {
+      borderColor: this.theme.color.border,
+    });
+  }
+
   render() {
     const {t} = this.props;
     return (
-      <Animated.View style={[styles.container, this.containerStyle]}>
-        <Button
+      <Container animated style={[styles.container, this.containerStyle]}>
+        <BaseButton
           containerStyle={styles.btnCloseTransparent}
           onPress={this.onClose}
         />
 
-        <View style={[styles.content, this.contentStyle]}>
+        <Container style={[styles.content, this.contentStyle]}>
           <Header
             closeTitle={t('modal.close')}
             title={t('modal.province.title')}
@@ -223,8 +257,8 @@ class SelectProvince extends Component {
 
           <View style={styles.searchWrapper}>
             <Image style={styles.searchIcon} source={iconSearch} />
-            <TextInput
-              style={styles.searchInput}
+            <Input
+              style={this.searchInputStyle}
               placeholder={t('modal.province.placeholder')}
               onChangeText={this.handleSearch}
               value={this.state.searchText}
@@ -248,15 +282,17 @@ class SelectProvince extends Component {
             />
           ) : (
             <View style={styles.noResultWrapper}>
-              <Text style={styles.noResult}>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.noResult}>
                 {t('modal.province.notFound', {
                   searchText: this.state.searchText,
                 })}
-              </Text>
+              </Typography>
             </View>
           )}
-        </View>
-      </Animated.View>
+        </Container>
+      </Container>
     );
   }
 }
@@ -268,7 +304,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   btnCloseTransparent: {
     position: 'absolute',
@@ -283,10 +318,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: config.colors.white,
     minHeight: 40,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
     zIndex: 2,
   },
   searchWrapper: {
@@ -301,25 +333,18 @@ const styles = StyleSheet.create({
     height: 20,
   },
   searchInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
     marginVertical: 16,
     paddingVertical: 11,
     paddingLeft: 34,
     paddingRight: 8,
-    fontSize: 14,
-    color: '#666',
   },
   provinceItemWrap: {
     justifyContent: 'space-between',
-    borderColor: '#fafafa',
     height: 50,
+    flexDirection: 'row',
   },
   provinceItem: {
-    fontSize: 15,
     fontWeight: '400',
-    color: '#444',
     padding: 15,
     flex: 1,
   },
@@ -327,14 +352,13 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 15,
+    alignSelf: 'center',
   },
   noResultWrapper: {
     marginHorizontal: 16,
     paddingVertical: 20,
   },
   noResult: {
-    fontSize: 16,
-    color: '#666',
     fontWeight: '400',
   },
 });

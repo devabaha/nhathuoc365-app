@@ -26,6 +26,9 @@ const createStyles = (theme: Theme) => {
     secondary: {
       color: theme.color.secondary,
     },
+    neutral: {
+      color: theme.color.textInactive,
+    },
     disabled: {
       color: theme.color.onDisabled,
     },
@@ -70,6 +73,7 @@ const TextButton = forwardRef(
           props.shadow && styles.shadow,
           props.primary && styles.primary,
           props.secondary && styles.secondary,
+          props.neutral && styles.neutral,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
@@ -79,6 +83,7 @@ const TextButton = forwardRef(
       props.shadow,
       props.primary,
       props.secondary,
+      props.neutral,
       props.disabled,
       titleStyle,
     ]);
