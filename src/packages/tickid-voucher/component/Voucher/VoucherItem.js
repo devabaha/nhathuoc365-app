@@ -1,75 +1,117 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import Button from 'react-native-button';
-import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {Card, TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 function VoucherItem(props) {
+  const {theme} = useTheme();
 
   const getPoint = () => {
     const point = Number(props.point);
     return !isNaN(point) ? numberFormat(point) : props.point;
-  }
+  };
+
+  const avatarStyle = useMemo(() => {
+    return mergeStyles(styles.avatar, {
+      borderRadius: theme.layout.borderRadiusSmall,
+      borderWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const discountWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.discountWrapper, {
+      backgroundColor: theme.color.accent1,
+    });
+  }, [theme]);
+
+  const discountStyle = useMemo(() => {
+    return mergeStyles(styles.discount, {
+      color: theme.color.white,
+    });
+  }, [theme]);
+
+  const pointStyle = useMemo(() => {
+    return mergeStyles(styles.point, {
+      color: theme.color.accent1,
+    });
+  }, [theme]);
 
   return (
-    <Button onPress={props.onPress} containerStyle={styles.containerBtn}>
-      <View
+    <BaseButton onPress={props.onPress} style={styles.containerBtn}>
+      <Card
         style={[
           styles.container,
           {
-            marginBottom: props.last ? 16 : 0
-          }
-        ]}
-      >
-        <Image source={{ uri: props.image }} style={styles.thumbnail} />
+            marginBottom: props.last ? 16 : 0,
+          },
+        ]}>
+        <Image
+          source={{
+            uri: props.image,
+          }}
+          style={styles.thumbnail}
+        />
         <View style={styles.infoWrapper}>
-          <Text style={styles.title}>{props.title}</Text>
+          <Typography
+            type={TypographyType.LABEL_SEMI_LARGE}
+            style={styles.title}>
+            {props.title}
+          </Typography>
 
           {!!props.point && props.point !== '0' && (
-            <Text style={styles.pointWrapper}>
-              <Text style={styles.point}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.pointWrapper}>
+              <Typography type={TypographyType.LABEL_LARGE} style={pointStyle}>
                 {getPoint()}
-              </Text>
+              </Typography>
               {` ${props.pointCurrency}`}
-            </Text>
+            </Typography>
           )}
         </View>
-        <Image source={{ uri: props.logoImage }} style={styles.avatar} />
+        <Image source={{uri: props.logoImage}} style={avatarStyle} />
 
         {!!props.discount && (
-          <View style={styles.discountWrapper}>
-            <Text style={styles.discount}>{props.discount}</Text>
+          <View style={discountWrapperStyle}>
+            <Typography type={TypographyType.TITLE_LARGE} style={discountStyle}>
+              {props.discount}
+            </Typography>
           </View>
         )}
-      </View>
-    </Button>
+      </Card>
+    </BaseButton>
   );
 }
 
 const styles = StyleSheet.create({
   containerBtn: {
-    marginTop: 16
+    marginTop: 16,
   },
   container: {
-    backgroundColor: '#fff',
     marginHorizontal: 16,
-    borderRadius: 8,
     overflow: 'hidden',
-    position: 'relative'
+    position: 'relative',
   },
   thumbnail: {
     width: '100%',
     height: 180,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   infoWrapper: {
-    padding: 16
+    padding: 16,
   },
   title: {
-    fontSize: 15,
-    color: '#000',
     fontWeight: '500',
-    marginTop: 4
+    marginTop: 4,
   },
   avatar: {
     position: 'absolute',
@@ -77,9 +119,6 @@ const styles = StyleSheet.create({
     left: 16,
     width: 46,
     height: 46,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#fff'
   },
   discountWrapper: {
     position: 'absolute',
@@ -87,25 +126,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     top: -60,
     left: -20,
-    backgroundColor: '#7fc845',
     width: 120,
     height: 120,
-    borderRadius: 60
+    borderRadius: 60,
   },
   discount: {
-    fontSize: 22,
     fontWeight: '600',
-    color: '#fff',
-    marginBottom: 20
+    marginBottom: 20,
   },
   pointWrapper: {
-    marginTop: 5
+    marginTop: 5,
   },
   point: {
-    fontSize: 16,
     fontWeight: '600',
-    color: '#00b140'
-  }
+  },
 });
 
 const defaultListener = () => {};
@@ -116,7 +150,7 @@ VoucherItem.propTypes = {
   discount: PropTypes.string,
   logoImage: PropTypes.string,
   last: PropTypes.bool,
-  onPress: PropTypes.func
+  onPress: PropTypes.func,
 };
 
 VoucherItem.defaultProps = {
@@ -125,7 +159,7 @@ VoucherItem.defaultProps = {
   discount: '',
   logoImage: '',
   last: false,
-  onPress: defaultListener
+  onPress: defaultListener,
 };
 
 export default VoucherItem;
