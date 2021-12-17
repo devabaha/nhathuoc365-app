@@ -20,13 +20,14 @@ export enum TypographyType {
   LABEL_SMALL_PRIMARY = 'labelSmallPrimary',
   LABEL_EXTRA_SMALL_PRIMARY = 'labelExtraSmallPrimary',
 
+  LABEL_LARGE_TERTIARY = 'labelLargeTertiary',
   LABEL_MEDIUM_TERTIARY = 'labelMediumTertiary',
   LABEL_SMALL_TERTIARY = 'labelSmallTertiary',
   LABEL_TINY_TERTIARY = 'labelTinyTertiary',
 
   LABEL_MEDIUM_SECONDARY = 'labelMediumSecondary',
   LABEL_SMALL_SECONDARY = 'labelSmallSecondary',
-  
+
   LABEL_HUGE = 'labelHuge',
   LABEL_LARGE = 'labelLarge',
   LABEL_SEMI_LARGE = 'labelSemiLarge',

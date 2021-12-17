@@ -70,6 +70,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     color: BASE_COLOR_DARK.primaryHighlight,
   },
   // TERTIARY
+  [TypographyType.LABEL_LARGE_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
   [TypographyType.LABEL_MEDIUM_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,

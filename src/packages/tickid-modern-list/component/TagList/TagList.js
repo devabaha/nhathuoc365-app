@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// custom components
+import {ScrollView} from 'src/components/base';
 import Tag from './Tag';
 
 class TagList extends Component {
@@ -67,7 +69,6 @@ class TagList extends Component {
 
 const styles = StyleSheet.create({
   contentContainerStyle: {
-    flexGrow: 1,
     paddingHorizontal: 5,
     paddingVertical: 10,
     flexWrap: 'wrap',

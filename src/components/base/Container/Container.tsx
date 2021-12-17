@@ -47,7 +47,7 @@ const createStyles = (theme: Theme) => {
       justifyContent: 'center',
     },
     safeLayout: {
-      paddingBottom: appConfig.device.bottomSpace,
+      paddingBottom: appConfig.device.bottomSpace || undefined,
     },
     shadow: {
       shadowColor: theme.color.shadow,

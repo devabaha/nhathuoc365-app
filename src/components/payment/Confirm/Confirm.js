@@ -49,8 +49,12 @@ import {
 import AddressSection from './components/AddressSection';
 import {debounce} from 'lodash';
 import POSSection from './components/POSSection';
+import {push} from 'app-helper/routing';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 class Confirm extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     orderEdited: () => {},
   };
@@ -83,6 +87,10 @@ class Confirm extends Component {
     this.requests = [this.getShippingInfoRequest, this.reorderRequest];
     this.eventTracker = new EventTracker();
     this.refNoteModalInput = null;
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   get isSiteUseShipNotConfirming() {
@@ -528,20 +536,24 @@ class Confirm extends Component {
   };
 
   _goPaymentMethod = (cart_data) => {
-    Actions.push(appConfig.routes.paymentMethod, {
-      selectedMethod: cart_data.payment_method,
-      selectedPaymentMethodDetail: cart_data.payment_method_detail,
-      price: cart_data.total_before_view,
-      totalPrice: cart_data.total_selected,
-      extraFee: cart_data.item_fee,
-      store_id: cart_data.site_id,
-      cart_id: cart_data.id,
-      onUpdatePaymentMethod: (data) => {
-        if (!this.state.single) {
-          this.setState({data});
-        }
+    push(
+      appConfig.routes.paymentMethod,
+      {
+        selectedMethod: cart_data.payment_method,
+        selectedPaymentMethodDetail: cart_data.payment_method_detail,
+        price: cart_data.total_before_view,
+        totalPrice: cart_data.total_selected,
+        extraFee: cart_data.item_fee,
+        store_id: cart_data.site_id,
+        cart_id: cart_data.id,
+        onUpdatePaymentMethod: (data) => {
+          if (!this.state.single) {
+            this.setState({data});
+          }
+        },
       },
-    });
+      this.theme,
+    );
   };
 
   onConfirmPaymentMethod = (method, extraData) => {

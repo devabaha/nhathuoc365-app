@@ -1,15 +1,22 @@
 import React, {Component} from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  TouchableHighlight,
-  View,
-  Text,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {BaseButton, Typography, Icon, FlatList} from 'src/components/base';
 
 class NormalList extends Component {
+  static contextType = ThemeContext;
+
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   renderItem = ({item, index}) => {
     if (this.props.renderItem) {
@@ -27,19 +34,38 @@ class NormalList extends Component {
       const text = this.props.mainKey ? item[this.props.mainKey] : item;
 
       return (
-        <TouchableHighlight
+        <BaseButton
+          useTouchableHighlight
           key={index}
-          underlayColor="#eee"
           onPress={() => this.props.onPressItem(item)}
-          style={[styles.rowWrapper, styles.row, extraStyle]}>
-          <View style={[styles.rowContent, styles.row, extraStyleContent]}>
+          style={[
+            styles.rowWrapper,
+            styles.row,
+            this.rowBorderStyle,
+            extraStyle,
+          ]}>
+          <View
+            style={[
+              styles.rowContent,
+              styles.row,
+              this.rowBorderStyle,
+              extraStyleContent,
+            ]}>
             {item.iconLeft}
-            <Text style={[styles.text, item.titleStyle]}>{text}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={[styles.text, item.titleStyle]}>
+              {text}
+            </Typography>
             {item.iconRight || (
-              <Icon name="arrow-up-left" style={styles.rightIcon} />
+              <Icon
+                bundle={BundleIconSetName.FEATHER}
+                name="arrow-up-left"
+                style={[styles.rightIcon, this.rowBorderStyle]}
+              />
             )}
           </View>
-        </TouchableHighlight>
+        </BaseButton>
       );
     }
   };
@@ -60,7 +86,9 @@ class NormalList extends Component {
   }
 
   renderNonList() {
-    return this.props.data.map((item, index) => this.renderItem({item, index}));
+    return !this.props.data?.length
+      ? this.props.listEmptyComponent
+      : this.props.data.map((item, index) => this.renderItem({item, index}));
   }
 
   renderList() {
@@ -69,6 +97,21 @@ class NormalList extends Component {
     } else {
       return this.renderNonList();
     }
+  }
+
+  get rowBorderStyle() {
+    return {
+      borderColor: this.theme.color.textPrimary,
+    };
+  }
+
+  get iconRighStyle() {
+    return [
+      styles.rightIcon,
+      {
+        color: this.theme.color.iconInactive,
+      },
+    ];
   }
 
   render() {
@@ -81,7 +124,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderColor: '#f0f0f0',
   },
   rowWrapper: {
     paddingLeft: 15,
@@ -102,11 +144,9 @@ const styles = StyleSheet.create({
   },
   rightIcon: {
     fontSize: 20,
-    color: '#8c8c8c',
   },
   text: {
     fontWeight: '500',
-    color: '#333',
     flex: 1,
   },
 });

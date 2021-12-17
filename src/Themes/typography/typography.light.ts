@@ -70,6 +70,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
   // TERTIARY
+  [TypographyType.LABEL_LARGE_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_LIGHT.textTertiary,
+  },
   [TypographyType.LABEL_MEDIUM_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.textTertiary,
