@@ -67,6 +67,8 @@ class Gallery extends Component {
     },
   ];
 
+  headerButtonTypoProps = {type: TypographyType.LABEL_MEDIUM_TERTIARY};
+
   get theme() {
     return getTheme(this);
   }
@@ -201,6 +203,17 @@ class Gallery extends Component {
     this.setState({galleryHeight: e.nativeEvent.layout.height});
   };
 
+  renderHeaderBtnIconLeft = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="upload"
+        size={13}
+        style={titleStyle}
+      />
+    );
+  };
+
   renderHeader = () => {
     return (
       <>
@@ -221,17 +234,8 @@ class Gallery extends Component {
                 isMainUser && (
                   <TextButton
                     onPress={this.handleOpenUploadSelection}
-                    typoProps={{type: TypographyType.LABEL_MEDIUM_TERTIARY}}
-                    renderIconLeft={(titleStyle) => {
-                      return (
-                        <Icon
-                          bundle={BundleIconSetName.ANT_DESIGN}
-                          name="upload"
-                          size={13}
-                          style={titleStyle}
-                        />
-                      );
-                    }}>
+                    typoProps={this.headerButtonTypoProps}
+                    renderIconLeft={this.renderHeaderBtnIconLeft}>
                     {this.props.t('profileDetail:uploadPhotos')}
                   </TextButton>
                 )
