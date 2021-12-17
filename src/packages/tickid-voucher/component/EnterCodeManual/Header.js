@@ -19,10 +19,6 @@ function Header(props) {
   const title = props.title || t('modal.province.title');
   const closeTitle = props.closeTitle || t('modal.close');
 
-  const btnCloseTypoProps = useMemo(() => {
-    return {type: TypographyType.LABEL_MEDIUM};
-  }, []);
-
   const closeTitleStyle = useMemo(() => {
     return mergeStyles(styles.closeTitle, {color: theme.color.textInactive});
   }, [theme]);
@@ -37,7 +33,6 @@ function Header(props) {
   return (
     <Container style={headerStyle}>
       <TextButton
-        typoProps={btnCloseTypoProps}
         onPress={props.onClose}
         style={styles.btnClose}
         titleStyle={closeTitleStyle}>
