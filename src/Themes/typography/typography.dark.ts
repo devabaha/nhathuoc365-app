@@ -104,6 +104,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_DARK.textPrimary,
   },
+  [TypographyType.LABEL_SEMI_HUGE]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
   [TypographyType.LABEL_LARGE]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.textPrimary,

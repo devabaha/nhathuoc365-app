@@ -24,12 +24,12 @@ class NormalList extends Component {
     } else {
       const extraStyle =
         index === 0
-          ? styles.first
+          ? this.firstStyle
           : index === this.props.data.length - 1
-          ? styles.last
+          ? this.lastStyle
           : {};
 
-      const extraStyleContent = index !== 0 && styles.content;
+      const extraStyleContent = index !== 0 && this.contentStyle;
 
       const text = this.props.mainKey ? item[this.props.mainKey] : item;
 
@@ -114,6 +114,24 @@ class NormalList extends Component {
     ];
   }
 
+  get firstStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
+  get lastStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
+  get contentStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidthPixel,
+    };
+  }
+  
   render() {
     return this.renderList();
   }
@@ -132,15 +150,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingRight: 15,
-  },
-  first: {
-    borderTopWidth: 0.5,
-  },
-  last: {
-    borderBottomWidth: 0.5,
-  },
-  content: {
-    borderTopWidth: 0.2,
   },
   rightIcon: {
     fontSize: 20,
