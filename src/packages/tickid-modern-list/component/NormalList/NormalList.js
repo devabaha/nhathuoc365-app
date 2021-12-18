@@ -131,7 +131,7 @@ class NormalList extends Component {
       borderTopWidth: this.theme.layout.borderWidthPixel,
     };
   }
-  
+
   render() {
     return this.renderList();
   }

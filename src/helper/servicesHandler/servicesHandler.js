@@ -110,38 +110,58 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** VOUCHER */
     case SERVICES_TYPE.LIST_VOUCHER:
-      Actions.push(appConfig.routes.mainVoucher, {
-        from: 'home',
-      });
+      push(
+        appConfig.routes.mainVoucher,
+        {
+          from: 'home',
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.MY_VOUCHER_TYPE:
     case SERVICES_TYPE.MY_VOUCHER:
-      Actions.push(appConfig.routes.myVoucher, {
-        title: t('common:screen.myVoucher.mainTitle'),
-        from: 'home',
-      });
+      push(
+        appConfig.routes.myVoucher,
+        {
+          title: t('common:screen.myVoucher.mainTitle'),
+          from: 'home',
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.MY_VOUCHER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.myVoucher, {
-        title: t('common:screen.myVoucher.mainTitle'),
-        from: 'home',
-        onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
-        onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure,
-      });
+      push(
+        appConfig.routes.myVoucher,
+        {
+          title: t('common:screen.myVoucher.mainTitle'),
+          from: 'home',
+          onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
+          onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.VOUCHER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.mainVoucher, {
-        from: 'deeplink',
-      });
+      push(
+        appConfig.routes.mainVoucher,
+        {
+          from: 'deeplink',
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.VOUCHER_CAMPAIGN_DETAIL:
-      Actions.push(appConfig.routes.voucherDetail, {
-        voucherId: service.voucherId,
-        campaignId: service.campaignId,
-        title: service.name,
-      });
+      push(
+        appConfig.routes.voucherDetail,
+        {
+          voucherId: service.voucherId,
+          campaignId: service.campaignId,
+          title: service.name,
+        },
+        service.theme,
+      );
       break;
 
     /** TRANSACTION */

@@ -1,22 +1,45 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import { View, Text, StyleSheet } from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, TextButton, Typography} from 'src/components/base';
 
 function Header(props) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('voucher');
+
+  const title = props.title || t('modal.noTitle');
+  const closeTitle = props.closeTitle;
+
+  const headerStyle = useMemo(() => {
+    return mergeStyles(styles.header, {
+      borderBottomWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    });
+  });
+
   return (
-    <View style={styles.header}>
+    <Container style={headerStyle}>
       {!props.hideCloseTitle && (
-        <Button
-          onPress={props.onClose}
-          containerStyle={styles.btnClose}
-          style={styles.closeTitle}
-        >
-          {props.closeTitle}
-        </Button>
+        <TextButton neutral onPress={props.onClose} style={styles.btnClose}>
+          {closeTitle}
+        </TextButton>
       )}
-      <Text style={styles.headerTitle}>{props.title}</Text>
-    </View>
+      <Typography
+        type={TypographyType.LABEL_SEMI_LARGE}
+        style={styles.headerTitle}>
+        {title}
+      </Typography>
+    </Container>
   );
 }
 
@@ -24,14 +47,14 @@ Header.propTypes = {
   title: PropTypes.string,
   closeTitle: PropTypes.string,
   onClose: PropTypes.func,
-  hideCloseTitle: PropTypes.bool
+  hideCloseTitle: PropTypes.bool,
 };
 
 Header.defaultProps = {
-  title: 'Chưa có tiêu đề',
-  closeTitle: 'Đóng',
+  title: '',
+  closeTitle: '',
   onClose: () => {},
-  hideCloseTitle: false
+  hideCloseTitle: false,
 };
 
 const styles = StyleSheet.create({
@@ -40,13 +63,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f1f1'
   },
   headerTitle: {
-    fontSize: 15,
-    color: '#333',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   btnClose: {
     position: 'absolute',
@@ -54,13 +73,8 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
-  closeTitle: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '600'
-  }
 });
 
 export default Header;

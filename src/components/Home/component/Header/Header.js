@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // top: 0,
     // width: '100%'
-
   },
   container: {
     // padding: 15,
