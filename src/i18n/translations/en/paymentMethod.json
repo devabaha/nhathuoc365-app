@@ -12,7 +12,11 @@
     "accountNumber": "Account number: ",
     "branch": "Branch: "
   },
-
+  "detailModal": {
+    "searchPlaceholder": "Search...",
+    "informationNotFound": "None of information found",
+    "noInformation": "No information yet"
+  },
   "copyCompleteMessage": "Account number is copied to clipboard",
   "confirm": "Next"
 }
