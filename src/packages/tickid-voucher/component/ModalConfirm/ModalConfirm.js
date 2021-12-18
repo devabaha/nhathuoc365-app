@@ -1,9 +1,14 @@
 import React from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import Button from 'react-native-button';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography} from 'src/components/base';
+import Button from 'src/components/Button';
 import ModalOverlay from '../ModalOverlay';
-import { View, Text, StyleSheet } from 'react-native';
 
 const defaultFn = () => {};
 
@@ -15,90 +20,67 @@ ModalConfirm.propTypes = {
   cancelLabel: PropTypes.string,
   confirmLabel: PropTypes.string,
   onCancel: PropTypes.func,
-  onConfirm: PropTypes.func
+  onConfirm: PropTypes.func,
 };
 
 function ModalConfirm({
+  t = useTranslation('voucher'),
+
   visible = false,
   hideCloseTitle = false,
   heading = '',
-  textMessage = 'Message mặc định!',
-  cancelLabel = 'Hủy',
-  confirmLabel = 'Xác nhận',
+  textMessage = t('modal.message'),
+  cancelLabel = t('modal.cancel'),
+  confirmLabel = t('modal.accept'),
   onCancel = defaultFn,
-  onConfirm = defaultFn
+  onConfirm = defaultFn,
 }) {
   return (
     <ModalOverlay
       heading={heading}
       visible={visible}
       onClose={onCancel}
-      hideCloseTitle={hideCloseTitle}
-    >
-      <View style={styles.confirmContent}>
-        <Text style={styles.confirmText}>{textMessage}</Text>
+      hideCloseTitle={hideCloseTitle}>
+      <Container safeLayout style={styles.confirmContent}>
+        <Typography
+          type={TypographyType.LABEL_LARGE}
+          style={styles.confirmText}>
+          {textMessage}
+        </Typography>
 
         <View style={styles.confirmBtnWrap}>
           <Button
-            style={[styles.confirmBtn, styles.btnCancel]}
-            containerStyle={[
-              styles.confirmBtnContainer,
-              styles.btnContainerCancel
-            ]}
-            onPress={onCancel}
-          >
+            neutral
+            containerStyle={styles.confirmBtnContainer}
+            onPress={onCancel}>
             {cancelLabel}
           </Button>
           <Button
-            style={[styles.confirmBtn, styles.btnOk]}
-            containerStyle={[styles.confirmBtnContainer, styles.btnContainerOk]}
-            onPress={onConfirm}
-          >
+            containerStyle={styles.confirmBtnContainer}
+            onPress={onConfirm}>
             {confirmLabel}
           </Button>
         </View>
-      </View>
+      </Container>
     </ModalOverlay>
   );
 }
 
 const styles = StyleSheet.create({
-  confirmContent: {
-    padding: 16
-  },
+  confirmContent: {},
   confirmText: {
-    fontSize: 15,
     fontWeight: '400',
-    color: '#666'
+    padding: 15,
   },
   confirmBtnWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 32
+    marginTop: 15,
   },
   confirmBtnContainer: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#666',
-    paddingVertical: 8,
-    borderRadius: 6
   },
-  btnContainerCancel: {
-    marginRight: 8
-  },
-  btnContainerOk: {
-    marginLeft: 8,
-    borderColor: config.colors.primary,
-    backgroundColor: config.colors.primary
-  },
-  confirmBtn: {},
-  btnCancel: {
-    color: '#666'
-  },
-  btnOk: {
-    color: '#fff'
-  }
 });
 
 export default ModalConfirm;
