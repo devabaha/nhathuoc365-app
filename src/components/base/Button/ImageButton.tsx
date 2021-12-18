@@ -1,8 +1,8 @@
 import React, {forwardRef, memo, useMemo} from 'react';
-import {StyleSheet, View, TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 // types
 import {ImageButtonProps} from '.';
-import {Container, Ref} from '..';
+import {Ref} from '..';
 import {Theme} from 'src/Themes/interface';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';

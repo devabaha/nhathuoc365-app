@@ -107,6 +107,7 @@
     "react-native-redash": "14.2.2",
     "react-native-render-html": "^5.0.1",
     "react-native-router-flux": "^4.2.0",
+    "react-native-safe-area-context": "^3.3.2",
     "react-native-screen-brightness": "^2.0.0-alpha",
     "react-native-screens": "^2.16.1",
     "react-native-share": "^6.3.0",
@@ -158,7 +159,8 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "@react-native-community/cli-debugger-ui": "^4.13.1"
+    "@react-native-community/cli-debugger-ui": "^4.13.1",
+    "react-native-safe-area-context": "^3.3.2"
   },
   "husky": {
     "hooks": {

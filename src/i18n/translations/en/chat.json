@@ -12,5 +12,6 @@
   "needCameraAccess": "App need Camera access",
   "needLibraryAccess": "App need Library access",
   "loadingMore": "Loading more...",
-  "makeConversation": "Let's chat!"
+  "makeConversation": "Let's chat!",
+  "noConversations": "You don't have any chats yet!"
 }

@@ -211,6 +211,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
+    service.theme = this.theme;
 
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);

@@ -5,6 +5,7 @@ export {default} from './ScreenWrapper';
 
 export interface ScreenWrapperProps extends ViewProps {
   safeLayout?: boolean;
+  safeTopLayout?: boolean;
   noBackground?: boolean;
 
   headerComponent?: Children;

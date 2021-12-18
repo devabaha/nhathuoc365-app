@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
 import appConfig from 'app-config';
-import { Header, Item, Text } from 'native-base';
-import { Actions } from 'react-native-router-flux';
+import {Header, Item, Text} from 'native-base';
+import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const defaultListener = () => {};
@@ -14,8 +14,7 @@ class ListNavBar extends Component {
     onChangeSearch: PropTypes.func,
     onClearText: PropTypes.func,
     rightTitle: PropTypes.string,
-    searchPlaceholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
@@ -23,12 +22,11 @@ class ListNavBar extends Component {
     onChangeSearch: defaultListener,
     onClearText: defaultListener,
     rightTitle: '',
-    searchPlaceholder: 'Tìm kiếm khách hàng...',
-    searchValue: ''
+    searchValue: '',
   };
 
   state = {
-    focus: false
+    focus: false,
   };
   refInput = null;
 
@@ -43,15 +41,14 @@ class ListNavBar extends Component {
   render() {
     const iconProps = {
       color: '#fff',
-      fontSize: 24
+      fontSize: 24,
     };
     return (
       <Header
         iosBarStyle="light-content"
         style={[styles.container]}
         searchBar
-        rounded
-      >
+        rounded>
         <Item style={[styles.searchInput]}>
           <TouchableOpacity onPress={this.handleBack.bind(this)}>
             <View style={styles.iconWrapper}>
@@ -76,30 +73,30 @@ class ListNavBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: appConfig.colors.primary
+    backgroundColor: appConfig.colors.primary,
   },
   searchInput: {
     backgroundColor: 'rgba(0,0,0,0)',
-    color: appConfig.colors.white
+    color: appConfig.colors.white,
   },
   leftWrapper: {
     height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8
+    marginLeft: 8,
   },
   textButton: {
-    color: appConfig.colors.white
+    color: appConfig.colors.white,
   },
   iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1
+    flex: 1,
   },
   icon: {
     color: appConfig.colors.white,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   btnClearText: {
     backgroundColor: '#999',
@@ -108,16 +105,16 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8
+    marginRight: 8,
   },
   closeIcon: {
     position: 'relative',
-    top: -1
+    top: -1,
   },
   btnCancel: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10
+    marginLeft: 10,
   },
   inputAnimatedWrapper: {
     flex: 1,
@@ -127,19 +124,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   input: {
     flex: 1,
     width: '100%',
     height: '100%',
-    padding: 0
+    padding: 0,
   },
   title: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default ListNavBar;

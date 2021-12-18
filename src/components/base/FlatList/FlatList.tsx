@@ -1,22 +1,20 @@
 import React, {forwardRef, memo, useMemo} from 'react';
 import {StyleSheet, FlatList as RNFlatList, Animated} from 'react-native';
-
+// 3-party libs
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Reanimated from 'react-native-reanimated';
-
+// types
 import {Theme} from 'src/Themes/interface';
 import {FlatListProps} from '.';
 import {Ref} from '..';
-
-import appConfig from 'app-config';
-import {useTheme} from 'src/Themes/Theme.context';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     contentContainer: {flexGrow: 1},
-    safeLayout: {
-      paddingBottom: appConfig.device.bottomSpace,
-    },
   });
 };
 
@@ -33,14 +31,23 @@ const FlatList = forwardRef(
   ) => {
     const {theme} = useTheme();
 
+    const insets = useSafeAreaInsets();
+
+    const safeLayoutStyle = useMemo(
+      () => ({
+        paddingBottom: insets.bottom,
+      }),
+      [insets],
+    );
+
     const contentContainerStyles = useMemo(() => {
       const baseStyles = createStyles(theme);
 
       return mergeStyles(
-        [baseStyles.contentContainer, safeLayout && baseStyles.safeLayout],
+        [baseStyles.contentContainer, safeLayout && safeLayoutStyle],
         contentContainerStyle,
       );
-    }, [theme, safeLayout, contentContainerStyle]);
+    }, [theme, safeLayout, safeLayoutStyle, contentContainerStyle]);
 
     const Wrapper: any = useMemo(
       () =>

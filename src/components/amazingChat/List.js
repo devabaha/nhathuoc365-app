@@ -1,26 +1,30 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  View,
-  ActivityIndicator,
-  SafeAreaView,
-  TouchableOpacity
-} from 'react-native';
-import store from '../../store/Store';
+import {StyleSheet} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
+import {APIRequest} from '../../network/Entity';
+// custom components
 import NoResult from '../NoResult';
 import ChatRow from './ChatRow';
-import {Actions} from 'react-native-router-flux';
-import appConfig from 'app-config';
-import {setStater} from '../../packages/tickid-chat/helper';
-import {APIRequest} from '../../network/Entity';
-import EventTracker from '../../helper/EventTracker';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {FlatList, RefreshControl, ScreenWrapper} from 'src/components/base';
+import Loading from '../Loading';
 
 class List extends Component {
+  static contextType = ThemeContext;
+
   state = {
     loading: true,
+    loadingMore: true,
     refreshing: false,
     customers: [],
   };
@@ -33,13 +37,11 @@ class List extends Component {
   getListCustomerAPI = new APIRequest();
   eventTracker = new EventTracker();
 
-  componentDidMount() {
-    setTimeout(() =>
-      Actions.refresh({
-        right: this.renderRightNavBar,
-      }),
-    );
+  get theme() {
+    return getTheme(this);
+  }
 
+  componentDidMount() {
     this.getListCustomer();
     this.eventTracker.logCurrentView();
   }
@@ -49,20 +51,6 @@ class List extends Component {
     this.getListCustomerAPI.cancel();
     clearTimeout(this.timeoutGetListCustomer);
     this.eventTracker.clearTracking();
-  }
-
-  renderRightNavBar = () => {
-    return (
-      <TouchableOpacity onPress={this.handleSearch.bind(this)}>
-        <View style={styles.iconWrapper}>
-          <Icon name="ios-search" style={styles.icon} />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  handleSearch() {
-    Actions.search_chat();
   }
 
   startTimeoutGetCustomers() {
@@ -129,14 +117,9 @@ class List extends Component {
       if (!this.unmounted) {
         this.setState({
           refreshing: false,
+          loading: false,
+          loadingMore: false,
         });
-        setTimeout(
-          () =>
-            setStater(this, this.unmounted, {
-              loading: false,
-            }),
-          1000,
-        );
       }
     }
   }
@@ -152,34 +135,41 @@ class List extends Component {
     if (!this.isLoadMore) {
       this.offset += this.limit;
       this.isLoadMore = true;
-      this.setState({loading: true});
+      this.setState({loadingMore: true});
       this.getListCustomer();
     }
   }
 
   handlePressCustomer(item) {
-    Actions.amazing_chat({
-      site_id: item.site_id,
-      user_id: item.user_id,
-      phoneNumber: item.tel,
-      title: item.name,
-    });
+    push(
+      appConfig.routes.amazingChat,
+      {
+        site_id: item.site_id,
+        user_id: item.user_id,
+        phoneNumber: item.tel,
+        title: item.name,
+      },
+      this.theme,
+    );
   }
 
   render() {
     const customers = [...this.state.customers];
     customers.push({id: 'chat'});
     return (
-      <SafeAreaView style={{flex: 1}}>
+      <ScreenWrapper>
+        {this.state.loading && <Loading center />}
         {this.state.customers.length === 0 ? (
-          !!!this.state.loading && (
+          !this.state.loading &&
+          !this.state.loadingMore && (
             <NoResult
               iconName="message-text-outline"
-              message="Bạn chưa có lịch sử chat"
+              message={this.props.t('noConversations')}
             />
           )
         ) : (
           <FlatList
+            safeLayout
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -187,20 +177,14 @@ class List extends Component {
               />
             }
             ListFooterComponent={
-              this.state.loading ? (
-                <View
-                  style={{
-                    height: 45,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <ActivityIndicator animating />
-                </View>
+              this.state.loadingMore ? (
+                <Loading
+                  wrapperStyle={styles.loadingMoreWrapper}
+                  size="small"
+                />
               ) : null
             }
-            style={styles.list}
             showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
             data={this.state.customers}
             keyExtractor={(item) => item.id.toString()}
             onEndReached={this.onLoadMore.bind(this)}
@@ -232,55 +216,18 @@ class List extends Component {
             }}
           />
         )}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  list: {
-    width: Util.size.width,
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    paddingBottom: 15,
-    backgroundColor: BGR_SCREEN_COLOR,
-  },
-  loadingWrapper: {
-    position: 'absolute',
-    width: '100%',
-    height: appConfig.device.isAndroid ? '100%' : appConfig.device.height,
-  },
-  button: {
-    marginTop: 20,
-    marginBottom: 30,
-    height: 40,
-    backgroundColor: DEFAULT_COLOR,
-    alignSelf: 'center',
+  loadingMoreWrapper: {
+    position: undefined,
+    height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5,
-    minWidth: 150,
-    maxWidth: 220,
-    width: Util.size.width * 0.5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontFamily: 'Helvetica',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  iconWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  icon: {
-    color: appConfig.colors.white,
-    paddingHorizontal: 12,
-    fontSize: 24
   },
 });
 
-export default observer(List);
+export default withTranslation('chat')(observer(List));

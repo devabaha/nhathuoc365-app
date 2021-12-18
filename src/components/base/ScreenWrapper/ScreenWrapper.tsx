@@ -1,14 +1,16 @@
 import React, {forwardRef, memo, useMemo} from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
-
+import {StyleSheet} from 'react-native';
+// 3-party libs
+import {Edge, SafeAreaView} from 'react-native-safe-area-context';
+// types
 import {Ref} from '..';
 import {ScreenWrapperProps} from '.';
 import {Theme} from 'src/Themes/interface';
-
-import appConfig from 'app-config';
-import {useTheme} from 'src/Themes/Theme.context';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
-
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
 import Container from '../Container';
 
 const createStyles = (theme: Theme) => {
@@ -16,9 +18,6 @@ const createStyles = (theme: Theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.color.background,
-    },
-    safeLayout: {
-      paddingBottom: appConfig.device.bottomSpace,
     },
     noBackground: {
       backgroundColor: undefined,
@@ -34,6 +33,8 @@ const ScreenWrapper = forwardRef(
       children,
       style,
       safeLayout,
+
+      safeTopLayout,
       noBackground,
       headerComponent = null,
       ...props
@@ -41,29 +42,33 @@ const ScreenWrapper = forwardRef(
     ref: Ref,
   ) => {
     const {theme} = useTheme();
+
     const styles = useMemo(() => {
       const baseStyles = createStyles(theme);
 
       return mergeStyles(
-        [
-          baseStyles.container,
-          safeLayout && baseStyles.safeLayout,
-          noBackground && baseStyles.noBackground,
-        ],
+        [baseStyles.container, noBackground && baseStyles.noBackground],
         style,
       );
-    }, [theme, style, safeLayout, noBackground]);
+    }, [theme, style, noBackground]);
+
+    const edges: Array<Edge> = useMemo(() => {
+      const directions: Array<Edge> = ['left', 'right'];
+      if (safeLayout) {
+        directions.push('bottom');
+      }
+      if (safeTopLayout) {
+        directions.push('top');
+      }
+      return directions;
+    }, [safeLayout, safeTopLayout]);
 
     return (
       <Container {...props} ref={ref} style={styles}>
-        {!!headerComponent ? (
-          <SafeAreaView style={[{zIndex: 999}, headerComponent && {flex: 1}]}>
-            {headerComponent}
-          </SafeAreaView>
-        ) : (
-          <SafeAreaView />
-        )}
-        {children}
+        {!!headerComponent && headerComponent}
+        <SafeAreaView style={styles} edges={edges}>
+          {children}
+        </SafeAreaView>
       </Container>
     );
   },

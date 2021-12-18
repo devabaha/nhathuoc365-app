@@ -153,20 +153,23 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // top: 0,
     // width: '100%'
+
   },
   container: {
-    padding: 15,
-    paddingBottom: 0,
+    // padding: 15,
+    // paddingBottom: 0,
     flexDirection: 'row',
-    paddingTop: Platform.select({
-      ios: appConfig.device.statusBarHeight * 1.5,
-    }),
+    // paddingTop: Platform.select({
+    //   ios: appConfig.device.statusBarHeight * 1.5,
+    // }),
     alignItems: 'center',
   },
   contentContainer: {
+    padding: 15,
+
     flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: 15,
+    // paddingBottom: 15,
   },
   maskMain: {
     width: '100%',
