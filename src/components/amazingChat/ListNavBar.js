@@ -1,21 +1,29 @@
-import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+// configs
 import appConfig from 'app-config';
-import { Header, Item, Text } from 'native-base';
-import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/Ionicons';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {NavBar} from 'src/components/base';
+import {BundleIconSetName, IconButton} from '../base';
 
 const defaultListener = () => {};
 
 class ListNavBar extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onRight: PropTypes.func,
     onChangeSearch: PropTypes.func,
     onClearText: PropTypes.func,
     rightTitle: PropTypes.string,
-    searchPlaceholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
@@ -23,123 +31,73 @@ class ListNavBar extends Component {
     onChangeSearch: defaultListener,
     onClearText: defaultListener,
     rightTitle: '',
-    searchPlaceholder: 'Tìm kiếm khách hàng...',
-    searchValue: ''
+    searchValue: '',
   };
 
   state = {
-    focus: false
+    focus: false,
   };
   refInput = null;
 
+  get theme() {
+    return getTheme(this);
+  }
+
   handleSearch() {
-    Actions.search_chat();
+    push(appConfig.routes.searchChat, {}, this.theme);
   }
 
   handleBack() {
-    Actions.pop();
+    pop();
+  }
+
+  renderBack = () => {
+    return (
+      <IconButton
+        bundle={BundleIconSetName.IONICONS}
+        name="ios-arrow-back"
+        iconStyle={[styles.icon, this.iconStyle]}
+        onPress={this.handleBack.bind(this)}
+      />
+    );
+  };
+
+  renderSearch = () => {
+    return (
+      <IconButton
+        bundle={BundleIconSetName.IONICONS}
+        name="ios-search"
+        iconStyle={[styles.icon, this.iconStyle]}
+        onPress={this.handleSearch.bind(this)}
+      />
+    );
+  };
+
+  get containerStyle() {
+    return this.props.navigationBarStyle;
+  }
+
+  get iconStyle() {
+    return {color: this.props.navBarButtonColor};
   }
 
   render() {
-    const iconProps = {
-      color: '#fff',
-      fontSize: 24
-    };
     return (
-      <Header
-        iosBarStyle="light-content"
-        style={[styles.container]}
-        searchBar
-        rounded
-      >
-        <Item style={[styles.searchInput]}>
-          <TouchableOpacity onPress={this.handleBack.bind(this)}>
-            <View style={styles.iconWrapper}>
-              <Icon name="ios-arrow-back" style={[styles.icon, iconProps]} />
-            </View>
-          </TouchableOpacity>
-
-          <View style={[styles.inputAnimatedWrapper]}>
-            <Text style={styles.title}>{this.props.title}</Text>
-          </View>
-
-          <TouchableOpacity onPress={this.handleSearch.bind(this)}>
-            <View style={styles.iconWrapper}>
-              <Icon name="ios-search" style={[styles.icon, iconProps]} />
-            </View>
-          </TouchableOpacity>
-        </Item>
-      </Header>
+      <NavBar
+        navigation={this.props}
+        title={this.props.title}
+        renderLeft={this.renderBack}
+        renderRight={this.renderSearch}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: appConfig.colors.primary
-  },
-  searchInput: {
-    backgroundColor: 'rgba(0,0,0,0)',
-    color: appConfig.colors.white
-  },
-  leftWrapper: {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8
-  },
-  textButton: {
-    color: appConfig.colors.white
-  },
-  iconWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1
-  },
   icon: {
-    color: appConfig.colors.white,
-    paddingHorizontal: 5
-  },
-  btnClearText: {
-    backgroundColor: '#999',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8
-  },
-  closeIcon: {
-    position: 'relative',
-    top: -1
-  },
-  btnCancel: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10
-  },
-  inputAnimatedWrapper: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    borderRadius: 5,
     paddingHorizontal: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
+    fontSize: 24,
   },
-  input: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    padding: 0
-  },
-  title: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600'
-  }
 });
 
 export default ListNavBar;

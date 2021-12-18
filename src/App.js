@@ -205,6 +205,7 @@ import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
 import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {pop, push, reset} from 'app-helper/routing';
 
 /**
@@ -585,7 +586,7 @@ class App extends Component {
   render() {
     return (
       <ThemeProvider initial={BASE_LIGHT_THEME}>
-        <View style={{overflow: 'scroll', flex: 1}}>
+        <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
           {/* <GPSStoreLocation /> */}
           {this.state.header}
           <NetWorkInfo />
@@ -620,7 +621,7 @@ class App extends Component {
               />
             }
           />
-        </View>
+        </SafeAreaProvider>
       </ThemeProvider>
     );
   }
@@ -1794,17 +1795,17 @@ class RootRouter extends Component {
 
                 <Stack key={appConfig.routes.listChat}>
                   <Scene
-                    hideNavBar={false}
                     key={`${appConfig.routes.listChat}_1`}
                     title="Danh sách Chat"
                     component={ListChat}
                     navBar={ListChatNavBar}
+                    // hideNavBar
                     {...navBarConfig}
                     back
                   />
                   <Scene
                     hideNavBar={false}
-                    key="search_chat"
+                    key={appConfig.routes.searchChat}
                     component={SearchChat}
                     navBar={SearchChatNavBar}
                     {...navBarConfig}

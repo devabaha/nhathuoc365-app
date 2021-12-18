@@ -256,7 +256,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.LIST_CHAT:
-      Actions.push(appConfig.routes.listChat, {
+      push(appConfig.routes.listChat, {
         titleStyle: {width: 220},
       });
       break;
@@ -438,11 +438,14 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /** GAMIFICATION */
     /** Lottery */
     case SERVICES_TYPE.LOTTERY_GAME:
-      console.log(service);
-      Actions.push(appConfig.routes.lotteryGame, {
-        title: service.news?.title || service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.lotteryGame,
+        {
+          title: service.news?.title || service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** SOCIAL */

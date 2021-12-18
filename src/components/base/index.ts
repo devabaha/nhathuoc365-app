@@ -24,6 +24,7 @@ import {
   ImageButton,
 } from './Button';
 import Icon, {BundleIconSetName, BUNDLE_ICON_SETS} from './Icon';
+import NavBar, {NavBarWrapper} from './NavBar';
 
 import {Ref as RNRef, ReactChild, ReactChildren} from 'react';
 
@@ -57,6 +58,8 @@ export {
   BundleIconSetName,
   BUNDLE_ICON_SETS,
   CardBorderRadiusType,
+  NavBar,
+  NavBarWrapper,
 };
 
 export type SingleChildren = ReactChild | ReactChildren;
