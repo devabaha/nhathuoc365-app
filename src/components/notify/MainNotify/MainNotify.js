@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, StyleSheet, StatusBar} from 'react-native';
 // 3-party libs
 import {reaction} from 'mobx';
-import {Actions} from 'react-native-router-flux';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -11,6 +10,8 @@ import EventTracker from 'app-helper/EventTracker';
 import {servicesHandler} from 'app-helper/servicesHandler';
 import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 //constants
@@ -70,9 +71,13 @@ class MainNotify extends Component {
           icon: 'bookmark',
           notify: 'new_site_news',
           onPress: () => {
-            Actions.notifies({
-              news_type: '/1',
-            });
+            push(
+              appConfig.routes.notifies,
+              {
+                news_type: '/1',
+              },
+              this.theme,
+            );
           },
           boxIconStyle: [
             styles.boxIconStyle,
@@ -89,10 +94,14 @@ class MainNotify extends Component {
           icon: 'lemon-o',
           notify: 'new_sys_news',
           onPress: () => {
-            Actions.notifies({
-              title: 'Từ ' + APP_NAME_SHOW,
-              news_type: '/2',
-            });
+            push(
+              appConfig.routes.notifies,
+              {
+                title: 'Từ ' + APP_NAME_SHOW,
+                news_type: '/2',
+              },
+              this.theme,
+            );
           },
           boxIconStyle: [styles.boxIconStyle],
           iconColor: '#ffffff',

@@ -1,31 +1,35 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {hexToRgba} from 'app-helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {MEDIA_TYPE} from 'src/constants';
+import {TypographyType} from 'src/components/base';
+// custom components
 import Carousel from 'src/components/Carousel';
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
-import {Actions} from 'react-native-router-flux';
-import {MEDIA_TYPE} from 'src/constants';
+import {BaseButton, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   wrapper: {
     // height: appConfig.device.height / 2,
   },
   paginationContainer: {
-    borderRadius: 20,
     position: 'absolute',
     bottom: 15,
     right: 15,
-    backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  paginationText: {
-    fontSize: 12,
-    color: '#444',
-  },
+  paginationText: {},
 
   mediaContainer: {
     width: appConfig.device.width,
@@ -40,8 +44,6 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     justifyContent: 'center',
-    // height: appConfig.device.height / 2,
-    backgroundColor: '#000',
   },
 });
 
@@ -52,16 +54,21 @@ const MediaCarousel = ({
   showPagination = true,
   initIndex = 0,
 }) => {
+  const {theme} = useTheme();
+
   const [currentIndex, setCurrentIndex] = useState(initIndex);
 
   const videoContainerStyle = useMemo(() => {
-    return [
-      styles.videoContainer,
-      {
-        height,
-      },
-    ];
-  }, [height]);
+    return mergeStyles(
+      [
+        styles.videoContainer,
+        {
+          height,
+        },
+      ],
+      {backgroundColor: theme.color.black},
+    );
+  }, [height, theme]);
 
   const wrapperMixStyle = useMemo(() => {
     return [
@@ -73,6 +80,13 @@ const MediaCarousel = ({
     ];
   }, [height, wrapperStyle]);
 
+  const paginationContainerStyle = useMemo(() => {
+    return mergeStyles(styles.paginationContainer, {
+      backgroundColor: hexToRgba(theme.color.white, 0.6),
+      borderRadius: theme.layout.borderRadiusGigantic,
+    });
+  }, [theme]);
+
   const handleChangeImageIndex = useCallback((index, media) => {
     setCurrentIndex(index);
   }, []);
@@ -81,8 +95,12 @@ const MediaCarousel = ({
     if (!showPagination) return null;
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
-      <View pointerEvents="none" style={styles.paginationContainer}>
-        <Text style={styles.paginationText}>{pagingMess}</Text>
+      <View pointerEvents="none" style={paginationContainerStyle}>
+        <Typography
+          type={TypographyType.LABEL_SEMI_MEDIUM}
+          style={styles.paginationText}>
+          {pagingMess}
+        </Typography>
       </View>
     );
   };
@@ -105,10 +123,10 @@ const MediaCarousel = ({
   const renderItem = useCallback(
     ({item: media, index}) => {
       return (
-        <TouchableHighlight
-          underlayColor="transparent"
+        <BaseButton
+          useTouchableHighlight
           onPress={() => {
-            Actions.item_image_viewer({
+            push(appConfig.routes.itemImageViewer, {
               images: data,
               index: index,
             });
@@ -127,7 +145,7 @@ const MediaCarousel = ({
               renderVideo(media, index)
             )}
           </View>
-        </TouchableHighlight>
+        </BaseButton>
       );
     },
     [currentIndex],

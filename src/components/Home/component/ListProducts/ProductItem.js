@@ -1,26 +1,35 @@
 import React, {PureComponent} from 'react';
+import {View, StyleSheet, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet, TouchableOpacity, Keyboard} from 'react-native';
-import FastImage from 'react-native-fast-image';
+// 3-party libs
+import {debounce} from 'lodash';
+// configs
 import appConfig from 'app-config';
-import {DiscountBadge} from '../../../Badges';
-import Themes from 'src/Themes';
-import Indicator from 'src/components/Indicator';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+// helpers
+import {isOutOfStock, hasVideo} from 'app-helper/product';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
+// entities
+import Themes from 'src/Themes';
 import CTAProduct from 'src/components/item/CTAProduct';
-import {debounce} from 'lodash';
-import {isOutOfStock} from 'app-helper/product';
-import {hasVideo} from 'app-helper/product/product';
-import {Card, Container, Typography} from 'src/components/base';
+// custom components
+import {DiscountBadge} from 'src/components/Badges';
+import Indicator from 'src/components/Indicator';
 import Image from 'src/components/Image';
-import {TypographyType} from 'src/components/base/Typography/constants';
-import {mergeStyles} from 'src/Themes/helper';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {IconButton} from 'src/components/base/Button';
-import {BundleIconSetName} from 'src/components/base/Icon/constants';
+import {
+  BaseButton,
+  IconButton,
+  Icon,
+  Card,
+  Container,
+  Typography,
+} from 'src/components/base';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -97,184 +106,204 @@ class ProductItem extends PureComponent {
     });
   };
 
+  get videoContainerStyle() {
+    return mergeStyles(styles.videoContainer, {
+      backgroundColor: this.theme.color.overlay30,
+    });
+  }
+
+  get iconVideoStyle() {
+    return mergeStyles(styles.iconVideo, {color: this.theme.color.onOverlay});
+  }
+
+  get brandTagContainerStyle() {
+    return mergeStyles(styles.brandTagContainer, {
+      borderColor: this.theme.color.border,
+      borderWidth: this.theme.layout.borderWidthPixel,
+      borderTopLeftRadius: this.theme.layout.borderRadiusExtraSmall,
+      borderBottomLeftRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  getIconBuyStyle(disabled) {
+    return mergeStyles(
+      styles.icon,
+      !disabled && {
+        color: this.theme.color.accent1,
+      },
+    );
+  }
+
+  get commissionTextStyle() {
+    return mergeStyles(styles.commissionText, {
+      color: this.theme.color.cherry,
+    });
+  }
+
+  get saleContentContainerStyle() {
+    return mergeStyles(styles.saleContentContainer, {
+      borderTopRightRadius: this.theme.layout.borderRadiusExtraSmall,
+      borderBottomRightRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get imageStyle() {
+    return mergeStyles(styles.image, {
+      borderTopLeftRadius: this.theme.layout.borderRadiusMedium,
+      borderTopRightRadius: this.theme.layout.borderRadiusMedium,
+    });
+  }
+
   render() {
     const {containerStyle, item, horizontal} = this.props;
     const extraContainerStyle = horizontal && styles.containerHorizontal;
     const extraImageStyle = horizontal && styles.imageHorizontal;
-
-    const brandTagContainerStyle = mergeStyles(styles.brandTagContainer, {
-      borderColor: this.theme.color.border,
-    });
-
-    const iconBuyStyle = mergeStyles(styles.icon, {
-      color: this.theme.color.accent1,
-    });
+    const disabled = isOutOfStock(item);
 
     return (
       <View style={[styles.container, extraContainerStyle, containerStyle]}>
-        <TouchableOpacity
-          style={styles.wrapper}
-          onPress={this.handlePress}
-          activeOpacity={0.8}>
-          <Card style={[styles.wrapper, this.props.wrapperStyle]}>
-            {this.props.renderContent ? (
-              this.props.renderContent()
-            ) : (
-              <>
-                <View>
-                  <Image
-                    source={{
-                      uri: this.props.image,
-                    }}
-                    style={[styles.image, extraImageStyle]}
-                    resizeMode="cover"
-                  />
-                  {(!!item.brand || hasVideo(item)) && (
-                    <View pointerEvents="none" style={styles.overlayContainer}>
-                      {hasVideo(item) && (
-                        <View style={styles.videoContainer}>
-                          <Icon name="play" style={styles.iconVideo} />
-                        </View>
-                      )}
-                      {!!item.brand && (
-                        <Container style={brandTagContainerStyle}>
-                          <Typography
-                            type={TypographyType.DESCRIPTION_SMALL_PRIMARY}
-                            numberOfLines={1}
-                            style={styles.brandTag}>
-                            {item.brand}
-                          </Typography>
-                        </Container>
-                      )}
-                    </View>
-                  )}
-                </View>
-
-                {this.props.discount_percent > 0 && (
-                  <DiscountBadge
-                    containerStyle={styles.saleContainer}
-                    contentContainerStyle={styles.saleContentContainer}
-                    tailSpace={4}
-                    label={saleFormat(this.props.discount_percent)}
-                  />
-                )}
-                <View style={[styles.infoWrapper]}>
-                  <Typography
-                    type={TypographyType.LABEL_MEDIUM}
-                    style={styles.name}
-                    numberOfLines={2}>
-                    {this.props.name}
-                  </Typography>
-
-                  <View style={styles.priceWrapper}>
-                    <View style={styles.priceContainer}>
-                      {!!this.props.item.commission_value && (
-                        <Text style={styles.commissionText} numberOfLines={1}>
-                          {this.props.item.commission_value_view}
-                        </Text>
-                      )}
-
+        <BaseButton style={styles.wrapper} onPress={this.handlePress}>
+          <Card shadow flex>
+            <Card flex>
+              {this.props.renderContent ? (
+                this.props.renderContent()
+              ) : (
+                <>
+                  <View>
+                    <Image
+                      source={{
+                        uri: this.props.image,
+                      }}
+                      style={[this.imageStyle, extraImageStyle]}
+                      resizeMode="cover"
+                    />
+                    {(!!item.brand || hasVideo(item)) && (
                       <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                        }}>
-                        {this.props.discount_percent > 0 && (
-                          <Typography
-                            type={TypographyType.DESCRIPTION_MEDIUM}
-                            style={styles.discount}>
-                            <Text style={styles.deletedTitle}>
-                              {this.props.discount_view}
-                            </Text>
-                            {/* / {this.props.unit_name} */}
-                          </Typography>
+                        pointerEvents="none"
+                        style={styles.overlayContainer}>
+                        {hasVideo(item) && (
+                          <View style={this.videoContainerStyle}>
+                            <Icon
+                              bundle={BundleIconSetName.FONT_AWESOME}
+                              name="play"
+                              style={this.iconVideoStyle}
+                            />
+                          </View>
+                        )}
+                        {!!item.brand && (
+                          <Container style={this.brandTagContainerStyle}>
+                            <Typography
+                              type={TypographyType.LABEL_SMALL_PRIMARY}
+                              numberOfLines={1}
+                              style={styles.brandTag}>
+                              {item.brand}
+                            </Typography>
+                          </Container>
                         )}
                       </View>
-                      <View style={[styles.priceBox]}>
-                        <Typography
-                          type={TypographyType.LABEL_LARGE_PRIMARY}
-                          style={[styles.price]}>
-                          {this.props.price_view}
-                          {!!item.unit_name && (
-                            <View>
-                              <Typography
-                                type={TypographyType.DESCRIPTION_SMALL}
-                                style={styles.unitName}>
-                                {'/ ' + item.unit_name_view}
-                              </Typography>
-                            </View>
-                          )}
-                        </Typography>
+                    )}
+                  </View>
 
-                        <Container
+                  {this.props.discount_percent > 0 && (
+                    <DiscountBadge
+                      containerStyle={styles.saleContainer}
+                      contentContainerStyle={this.saleContentContainerStyle}
+                      tailSpace={4}
+                      label={saleFormat(this.props.discount_percent)}
+                    />
+                  )}
+                  <View style={styles.infoWrapper}>
+                    <Typography
+                      type={TypographyType.LABEL_MEDIUM}
+                      style={styles.name}
+                      numberOfLines={2}>
+                      {this.props.name}
+                    </Typography>
+
+                    <View style={styles.priceWrapper}>
+                      <View style={styles.priceContainer}>
+                        {!!this.props.item.commission_value && (
+                          <Typography
+                            type={TypographyType.LABEL_MEDIUM}
+                            style={this.commissionTextStyle}
+                            numberOfLines={1}>
+                            {this.props.item.commission_value_view}
+                          </Typography>
+                        )}
+
+                        <View
                           style={{
-                            minWidth: 20,
-                            minHeight: 24,
-                            justifyContent: 'center',
+                            flexDirection: 'row',
                             alignItems: 'center',
+                            justifyContent: 'space-between',
                           }}>
-                          {this.state.buying ? (
-                            <Indicator size="small" />
-                          ) : (
-                            <IconButton
-                              disabled={isOutOfStock(item)}
-                              style={styles.item_add_cart_box}
-                              onPress={this.handlePressActionBtnProduct}
-                              hitSlop={HIT_SLOP}
-                              bundle={
-                                this.isServiceProduct(item)
-                                  ? BundleIconSetName.FONT_AWESOME
-                                  : BundleIconSetName.MATERIAL_ICONS
-                              }
-                              name={
-                                this.isServiceProduct(item)
-                                  ? 'calendar-plus-o'
-                                  : 'add-shopping-cart'
-                              }
-                              iconStyle={iconBuyStyle}
-                            />
+                          {this.props.discount_percent > 0 && (
+                            <Typography
+                              type={TypographyType.DESCRIPTION_MEDIUM}
+                              style={styles.discount}>
+                              <Typography
+                                type={TypographyType.DESCRIPTION_MEDIUM}
+                                style={styles.deletedTitle}>
+                                {this.props.discount_view}
+                              </Typography>
+                              {/* {'/ ' + this.props.unit_name} */}
+                            </Typography>
                           )}
-                        </Container>
+                        </View>
+                        <View style={styles.priceBox}>
+                          <Typography
+                            type={TypographyType.LABEL_LARGE_PRIMARY}
+                            style={styles.price}>
+                            {this.props.price_view}
+                            {!!item.unit_name && (
+                              <View>
+                                <Typography
+                                  type={TypographyType.DESCRIPTION_SMALL}
+                                  style={styles.unitName}>
+                                  {'/ ' + item.unit_name_view}
+                                </Typography>
+                              </View>
+                            )}
+                          </Typography>
 
-                        {/* <TouchableOpacity
-                          disabled={isOutOfStock(item)}
-                          style={styles.item_add_cart_box}
-                          onPress={this.handlePressActionBtnProduct}
-                          hitSlop={HIT_SLOP}>
-                          <View
+                          <Container
                             style={{
-                              width: 20,
-                              height: 20,
+                              minWidth: 20,
+                              minHeight: 24,
                               justifyContent: 'center',
                               alignItems: 'center',
                             }}>
                             {this.state.buying ? (
                               <Indicator size="small" />
-                            ) : this.isServiceProduct(item) ? (
-                              <Icon
-                                name="calendar-plus-o"
-                                style={styles.icon}
-                              />
                             ) : (
-                              <MaterialIcons
-                                name="add-shopping-cart"
-                                style={[
-                                  styles.icon,
-                                  isOutOfStock(item) && styles.iconDisabled,
-                                ]}
+                              <IconButton
+                                disabled={disabled}
+                                style={styles.item_add_cart_box}
+                                onPress={this.handlePressActionBtnProduct}
+                                hitSlop={HIT_SLOP}
+                                bundle={
+                                  this.isServiceProduct(item)
+                                    ? BundleIconSetName.FONT_AWESOME
+                                    : BundleIconSetName.MATERIAL_ICONS
+                                }
+                                name={
+                                  this.isServiceProduct(item)
+                                    ? 'calendar-plus-o'
+                                    : 'add-shopping-cart'
+                                }
+                                iconStyle={this.getIconBuyStyle(disabled)}
                               />
                             )}
-                          </View>
-                        </TouchableOpacity> */}
+                          </Container>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              </>
-            )}
+                </>
+              )}
+            </Card>
           </Card>
-        </TouchableOpacity>
+        </BaseButton>
       </View>
     );
   }
@@ -296,15 +325,10 @@ let styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    // borderRadius: 8,
-    // backgroundColor: '#fff',
-    ...appConfig.styles.shadow,
   },
   image: {
     width: '100%',
     height: WIDTH_ITEM,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
   },
   imageHorizontal: {
     height: HORIZONTAL_WIDTH_ITEM,
@@ -316,7 +340,6 @@ let styles = StyleSheet.create({
   name: {
     flex: 1,
     marginBottom: 8,
-    // ...appConfig.styles.typography.text,
   },
   priceWrapper: {
     width: '100%',
@@ -327,12 +350,9 @@ let styles = StyleSheet.create({
   priceContainer: {
     flex: 1,
   },
-  commissionText: {
-    color: appConfig.colors.cherry,
-  },
+  commissionText: {},
   discount: {
     marginTop: 4,
-    // ...appConfig.styles.typography.secondary,
   },
   priceBox: {
     marginTop: 4,
@@ -344,24 +364,11 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingRight: 5,
     fontWeight: '600',
-    // ...appConfig.styles.typography.heading3,
-    // color: appConfig.colors.primary,
   },
-  loading: {
-    height: '100%',
-    backgroundColor: 'rgba(0,0,0,.12)',
-  },
-  discountBadgeContainer: {
-    top: 10,
-    left: -4,
-    position: 'absolute',
-    width: undefined,
-    ...elevationShadowStyle(1),
-  },
+
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: hexToRgba('#ffffff', 0.8),
     paddingVertical: 2,
   },
 
@@ -371,8 +378,6 @@ let styles = StyleSheet.create({
   },
   saleContentContainer: {
     paddingHorizontal: 7,
-    borderBottomRightRadius: 4,
-    borderTopRightRadius: 4,
   },
   deletedTitle: {
     textDecorationLine: 'line-through',
@@ -391,42 +396,26 @@ let styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   icon: {
     fontSize: 20,
-    // color: appConfig.colors.highlight[1],
-  },
-  iconDisabled: {
-    color: '#ddd',
   },
   iconVideo: {
-    color: appConfig.colors.white,
     fontSize: appConfig.device.isIOS ? 10 : 9,
     left: appConfig.device.isIOS ? 1.5 : 0.75,
   },
   brandTagContainer: {
-    // backgroundColor: '#fff',
     paddingVertical: 2,
     paddingHorizontal: 5,
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
     maxWidth: WIDTH_ITEM * 0.8,
-    borderWidth: appConfig.device.pixel,
     borderRightWidth: 0,
     borderBottomWidth: 1.2,
-    borderColor: '#ddd',
-    borderBottomColor: '#ddd',
     marginBottom: -5,
   },
   brandTag: {
-    // color: appConfig.colors.primary,
     fontWeight: '500',
-    // fontSize: 12,
   },
   unitName: {
-    // fontSize: 11,
-    // color: '#888',
     marginTop: appConfig.device.isIOS ? 2 : 0,
     top: appConfig.device.isAndroid ? 2 : undefined,
     lineHeight: appConfig.device.isAndroid ? 11 : undefined,

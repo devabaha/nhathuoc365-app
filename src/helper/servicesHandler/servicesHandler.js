@@ -190,7 +190,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.deepLinkOrdersTab);
+      push(appConfig.routes.deepLinkOrdersTab, {}, service.theme);
       break;
 
     /** TICKID-PHONE-CARD */
@@ -259,10 +259,14 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
-      Actions.push(appConfig.routes.notifiesVertical, {
-        title: service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.notifiesVertical,
+        {
+          title: service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** CHAT */

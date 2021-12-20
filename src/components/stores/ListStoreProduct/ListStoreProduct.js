@@ -1,12 +1,14 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import Animated from 'react-native-reanimated';
-import {Actions} from 'react-native-router-flux';
-import FlatList from 'src/components/base/FlatList';
-
+// configs
+import appConfig from 'app-config';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// custom components
+import {FlatList} from 'src/components/base';
 import Items from '../Items';
-
-// const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const styles = StyleSheet.create({
   container: {
@@ -30,14 +32,20 @@ const ListStoreProduct = ({
   listProps = {},
   onPressLoadMore = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const handlePressItem = (product) => {
     if (!!onPressItem) {
       onPressItem(product);
     } else {
-      Actions.item({
-        title: product.name,
-        item: product,
-      });
+      push(
+        appConfig.routes.item,
+        {
+          title: product.name,
+          item: product,
+        },
+        theme,
+      );
     }
   };
 
