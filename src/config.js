@@ -246,6 +246,7 @@ class Config {
 
       profileDetail: 'profile_detail',
       editProfile: 'edit_profile',
+      affiliate: 'affiliate',
 
       store: 'store',
       searchStore: 'searchStore',

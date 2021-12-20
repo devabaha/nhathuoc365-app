@@ -1,46 +1,49 @@
-/* @flow */
-
 import React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, ScrollView, Typography} from 'src/components/base';
 
-const Info = props => {
+const Info = (props) => {
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 15,
-        width: Util.size.width
-      }}
-      keyboardShouldPersistTaps="always"
-      // refreshControl={
-      //     <RefreshControl
-      //         refreshing={loadingHistory || loadingHistoryWithdraw}
-      //         onRefresh={this._getData.bind(this)}
-      //     />
-      // }
-    >
-      {!props.loading && (
-        <Text style={[styles.des]}>
-          {props.content ? props.content : props.t('info.content')}
-        </Text>
-      )}
-    </ScrollView>
+    <Container flex>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="always"
+        // refreshControl={
+        //     <RefreshControl
+        //         refreshing={loadingHistory || loadingHistoryWithdraw}
+        //         onRefresh={this._getData.bind(this)}
+        //     />
+        // }
+      >
+        {!props.loading && (
+          <View style={styles.descriptionContainer}>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+              style={styles.description}>
+              {props.content ? props.content : props.t('info.content')}
+            </Typography>
+          </View>
+        )}
+      </ScrollView>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  heading: {
-    fontSize: 24,
-    color: '#404040'
+  contentContainer: {
+    width: appConfig.device.width,
   },
-  des: {
-    fontSize: 16,
-    marginBottom: 2
+  descriptionContainer: {
+    padding: 15,
   },
-  notice: {
-    fontSize: 18,
-    color: '#404040',
-    marginBottom: 2
-  }
+  description: {
+    marginBottom: 2,
+  },
 });
 
 export default withTranslation('affiliate')(Info);

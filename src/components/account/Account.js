@@ -273,14 +273,18 @@ class Account extends Component {
         isHidden: !user_info.username,
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Actions.affiliate({
-            title: t('common:screen.affiliate.mainTitle'),
-            aff_content: store.store_data
-              ? store.store_data.aff_content
-              : t('affiliateMarketingProgram', {
-                  appName: APP_NAME_SHOW,
-                }),
-          });
+          push(
+            appConfig.routes.affiliate,
+            {
+              title: t('common:screen.affiliate.mainTitle'),
+              aff_content: store.store_data
+                ? store.store_data.aff_content
+                : t('affiliateMarketingProgram', {
+                    appName: APP_NAME_SHOW,
+                  }),
+            },
+            this.theme,
+          );
         },
         boxIconStyle: [
           styles.boxIconStyle,
