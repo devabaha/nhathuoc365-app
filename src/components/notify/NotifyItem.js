@@ -1,25 +1,12 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  FlatList,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
-import ListHeader from '../stores/ListHeader';
-import Items from '../stores/Items';
-import CartFooter from '../cart/CartFooter';
-import PopupConfirm from '../PopupConfirm';
-import store from '../../store/Store';
+import {View, StyleSheet} from 'react-native';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
-import EventTracker from '../../helper/EventTracker';
-import RightButtonNavBar from '../RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
-import Container from '../Layout/Container';
-import ActionContainer from '../Social/ActionContainer';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {
   getSocialLikeCount,
   getSocialLikeFlag,
@@ -27,26 +14,51 @@ import {
   handleSocialActionBarPress,
   calculateLikeCountFriendly,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+// routing
+import {push, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+import {MEDIA_TYPE} from 'src/constants';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+// custom components
+import ListHeader from '../stores/ListHeader';
+import CartFooter from '../cart/CartFooter';
+import PopupConfirm from '../PopupConfirm';
+
+import RightButtonNavBar from '../RightButtonNavBar';
+import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
+import ActionContainer from '../Social/ActionContainer';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import Loading from '../Loading';
 import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import MediaCarousel from '../item/MediaCarousel';
-import {MEDIA_TYPE} from 'src/constants';
+import {
+  ScreenWrapper,
+  ScrollView,
+  Container,
+  Typography,
+  Icon,
+  RefreshControl,
+} from 'src/components/base';
 
 class NotifyItem extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
+  state = {
+    loading: true,
+    item: this.props.data,
+    item_data: null,
+    refreshing: false,
+  };
+  unmounted = false;
+  eventTracker = new EventTracker();
 
-    this.state = {
-      loading: true,
-      item: props.data,
-      item_data: null,
-      refreshing: false,
-    };
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   get notify() {
@@ -56,15 +68,22 @@ class NotifyItem extends Component {
   componentDidMount() {
     this._getData();
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         right: this.renderRightButton.bind(this),
       }),
+    );
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
     );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   _onRefresh() {
@@ -118,7 +137,7 @@ class NotifyItem extends Component {
               item_data: response.data,
             },
             () =>
-              Actions.refresh({
+              refresh({
                 right: this.renderRightButton.bind(this),
               }),
           );
@@ -150,10 +169,14 @@ class NotifyItem extends Component {
 
   // tới màn hình chi tiết item
   _goItem(item) {
-    Actions.item({
-      title: item.name,
-      item,
-    });
+    push(
+      appConfig.routes.item,
+      {
+        title: item.name,
+        item,
+      },
+      this.theme,
+    );
   }
 
   _confirmRemoveCartItem(item) {
@@ -211,6 +234,26 @@ class NotifyItem extends Component {
     }
   }
 
+  renderIconMap(iconStyle) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        style={[styles.icon, iconStyle]}
+        name="map-marker"
+      />
+    );
+  }
+
+  renderIconClock(iconStyle) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        style={[styles.icon, iconStyle]}
+        name="clock-o"
+      />
+    );
+  }
+
   render() {
     var {item, item_data} = this.state;
     const {t} = this.props;
@@ -229,7 +272,7 @@ class NotifyItem extends Component {
     }
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         {this.state.loading && <Loading center />}
         <ScrollView
           refreshControl={
@@ -239,54 +282,60 @@ class NotifyItem extends Component {
             />
           }
           style={styles.notify_container}>
-          <View style={styles.notify_image_box}>
+          <Container style={styles.notify_image_box}>
             <MediaCarousel
               height="100%"
               data={media}
               showPagination={media.length > 1}
             />
+          </Container>
 
-            {/* <CachedImage
-              mutable
-              style={styles.notify_image}
-              source={{uri: this.getHeaderInfo('image_url')}}
-            /> */}
-          </View>
-
-          <View
+          <Container
             style={{
-              backgroundColor: '#ffffff',
               paddingBottom: 15,
             }}>
             <View style={styles.notify_content}>
-              <Text style={styles.notify_heading}>
+              <Typography
+                type={TypographyType.TITLE_HUGE}
+                style={styles.notify_heading}>
                 {this.getHeaderInfo('title')}
-              </Text>
+              </Typography>
 
               <View style={styles.notify_time_box}>
                 <Container row>
                   {!!shopName && (
                     <Container row style={styles.notifyBlock}>
-                      <Icon name="map-marker" style={styles.icon} />
-                      <Text style={styles.notify_time}>{shopName}</Text>
+                      {/* <Icon name="map-marker" style={styles.icon} /> */}
+                      <Typography
+                        type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                        style={styles.notify_time}
+                        renderIconBefore={this.renderIconMap}>
+                        {shopName}
+                      </Typography>
                     </Container>
                   )}
 
                   {!!created && (
                     <Container row style={styles.notifyBlock}>
-                      <Icon name="clock-o" style={styles.icon} />
-                      <Text style={styles.notify_time}>{created}</Text>
+                      <Typography
+                        type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                        style={styles.notify_time}
+                        renderIconBefore={this.renderIconClock}>
+                        {created}
+                      </Typography>
                     </Container>
                   )}
                 </Container>
               </View>
 
               {!!this.getHeaderInfo('short_content') && (
-                <View style={styles.notify_sort_content_box}>
-                  <Text style={styles.notify_sort_content}>
+                <Container style={styles.notify_sort_content_box}>
+                  <Typography
+                    type={TypographyType.LABEL_LARGE}
+                    style={styles.notify_sort_content}>
                     {this.getHeaderInfo('short_content')}
-                  </Text>
-                </View>
+                  </Typography>
+                </Container>
               )}
             </View>
 
@@ -296,7 +345,7 @@ class NotifyItem extends Component {
                 content={item_data.content}
               />
             ) : null}
-          </View>
+          </Container>
 
           {item_data != null &&
             item_data.related &&
@@ -359,28 +408,19 @@ class NotifyItem extends Component {
           }}
           yesConfirm={this._removeCartItem.bind(this)}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    marginBottom: 0,
-  },
-  notify_container: {
-    // paddingBottom: 8,
-    // marginBottom: 8
-  },
+  container: {},
+  notify_container: {},
   notify_content: {
     paddingHorizontal: 15,
   },
 
   notify_heading: {
-    fontSize: 26,
-    color: appConfig.colors.typography.text,
     fontWeight: '600',
     marginTop: 15,
   },
@@ -390,34 +430,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  notify_time: {
-    color: '#8B8B8B',
-  },
+  notify_time: {},
   notify_sort_content_box: {
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginHorizontal: -15,
     marginTop: 15,
-    backgroundColor: '#f5f5f5',
   },
   notify_sort_content: {
-    color: '#404040',
     lineHeight: 24,
-    fontSize: 16,
-    // fontWeight: '500',
-    // fontStyle: 'italic',
-  },
-  notify_full_content: {
-    color: '#404040',
-    lineHeight: 24,
-    fontSize: 16,
   },
   notify_image_box: {
     height: appConfig.device.width / 1.75,
-    backgroundColor: '#cccccc',
     justifyContent: 'center',
     overflow: 'hidden',
-    // alignItems: 'center'
   },
   notify_image: {
     flex: 1,
@@ -438,7 +464,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   actionContainer: {
-    backgroundColor: '#fff',
     paddingBottom: appConfig.device.bottomSpace,
     ...elevationShadowStyle(7),
   },
@@ -460,8 +485,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 5,
-    color: '#8B8B8B',
-    fontSize: 11,
   },
 });
 

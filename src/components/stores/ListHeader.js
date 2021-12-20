@@ -1,9 +1,9 @@
-/* @flow */
-
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-
-import appConfig from 'app-config';
+import {View, StyleSheet} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 export default class ListHeader extends Component {
   render() {
@@ -19,7 +19,11 @@ export default class ListHeader extends Component {
           containerStyle,
         ]}>
         {!!title && (
-          <Text style={[styles.store_heading_title, titleStyle]}>{title}</Text>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={[styles.store_heading_title, titleStyle]}>
+            {title}
+          </Typography>
         )}
       </View>
     );
@@ -34,10 +38,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   store_heading_title: {
-    fontSize: 14,
-    color: '#333333',
     marginVertical: 15,
     textAlign: 'center',
-    ...appConfig.styles.typography.heading3,
   },
 });

@@ -50,8 +50,11 @@ const Card = forwardRef(
     const styles = useMemo(() => {
       const baseStyles: any = createStyles(theme);
 
-      return [baseStyles.surface, baseStyles[borderRadiusSize]];
-    }, [theme]);
+      return [
+        props.noBackground ? {} : baseStyles.surface,
+        baseStyles[borderRadiusSize],
+      ];
+    }, [theme, props.noBackground]);
 
     const componentStyle = useMemo(() => {
       return mergeStyles(styles, style);

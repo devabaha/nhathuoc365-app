@@ -1,34 +1,46 @@
-/* @flow */
-
 import React, {Component} from 'react';
-import {View, StyleSheet, RefreshControl, FlatList} from 'react-native';
+import {StyleSheet} from 'react-native';
 
-// library
-import {Actions} from 'react-native-router-flux';
-import store from '../../store/Store';
+// 3-party libs
 import {reaction} from 'mobx';
-
-// components
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {FlatList, RefreshControl, ScreenWrapper} from 'src/components/base';
 import NewItemComponent from './NewItemComponent';
-import EventTracker from '../../helper/EventTracker';
+import Indicator from 'src/components/Indicator';
+import CenterText from '../CenterText';
 
 class Notify extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      data: null,
-      refreshing: false,
-      loading: true,
-      news_type: props.news_type || '',
-      navigators: this._setOptionList(),
-    };
+  state = {
+    data: null,
+    refreshing: false,
+    loading: true,
+    news_type: this.props.news_type || '',
+    navigators: this._setOptionList(),
+  };
 
-    reaction(
-      () => store.refresh_news,
-      () => this._getData(),
-    );
-    this.eventTracker = new EventTracker();
+  refreshNewsDisposer = reaction(
+    () => store.refresh_news,
+    () => this._getData(),
+  );
+  eventTracker = new EventTracker();
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   _setOptionList() {
@@ -70,7 +82,7 @@ class Notify extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         title: this.props.title || this.props.t('common:screen.news.mainTitle'),
       });
     });
@@ -78,26 +90,41 @@ class Notify extends Component {
 
     store.getNotify();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.refreshNewsDisposer();
+    this.updateNavBarDisposer();
   }
 
   async _getData(delay) {
     const {t} = this.props;
     try {
-      var response = await APIHandler.user_news_list(this.state.news_type, this.props.id);
+      var response = await APIHandler.user_news_list(
+        this.state.news_type,
+        this.props.id,
+      );
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const news = response.data.find(
             (newsItem) => newsItem.id === store.deep_link_data.id,
           );
           if (news) {
-            Actions.notify_item({
-              title: news.title,
-              data: news,
-            });
+            push(
+              appConfig.routes.notifyDetail,
+              {
+                title: news.title,
+                data: news,
+              },
+              this.theme,
+            );
           } else {
             flashShowMessage({
               type: 'danger',
@@ -120,6 +147,10 @@ class Notify extends Component {
     }
   }
 
+  renderItem = ({item, index}) => {
+    return <NewItemComponent item={item} />;
+  };
+
   _onRefresh() {
     this.setState({refreshing: true});
 
@@ -128,36 +159,27 @@ class Notify extends Component {
 
   render() {
     const {t} = this.props;
-    if (this.state.loading) {
-      return <Indicator />;
-    }
 
     return (
-      <View style={styles.container}>
-        {/* {this.props.isNotifyTime ? null :
-          (<SelectionList data={this.state.navigators} containerStyle={{ height: 125 }}/>)
-        } */}
-        {this.state.data != null ? (
-          <FlatList
-            style={{marginTop: 2}}
-            data={this.state.data}
-            onEndReached={(num) => {}}
-            onEndReachedThreshold={0}
-            renderItem={({item, index}) => {
-              return <NewItemComponent item={item} />;
-            }}
-            keyExtractor={(item) => item.id}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-          />
-        ) : (
-          <CenterText title={t('noNews')} />
-        )}
-      </View>
+      <ScreenWrapper style={styles.container}>
+        {this.state.loading && <Indicator />}
+        <FlatList
+          safeLayout
+          style={styles.flatListContainer}
+          data={this.state.data || []}
+          renderItem={this.renderItem}
+          keyExtractor={(item) => item.id}
+          ListEmptyComponent={
+            !this.state.loading && <CenterText title={t('noNews')} />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+        />
+      </ScreenWrapper>
     );
   }
 }
@@ -167,33 +189,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 0,
   },
-  separator: {
-    width: '100%',
-    height: 2,
-    backgroundColor: '#cccccc',
-  },
-  headerView: {
-    backgroundColor: 'rgb(255,255,255)',
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerContentView: {
-    width: Util.size.width - 70,
-  },
-  titleHeaderTexxt: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  descHeaderTexxt: {
-    fontSize: 15,
-  },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
     marginLeft: 6,
     borderRadius: 15,
+  },
+  flatListContainer: {
+    marginTop: 2,
   },
 });
 
