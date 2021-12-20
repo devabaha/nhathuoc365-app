@@ -1716,9 +1716,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="affiliate">
+                <Stack key={appConfig.routes.affiliate}>
                   <Scene
-                    key="affiliate_1"
+                    key={`${appConfig.routes.affiliate}_1`}
                     component={Affiliate}
                     {...navBarConfig}
                     back
