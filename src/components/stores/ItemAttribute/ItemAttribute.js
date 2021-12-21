@@ -2,29 +2,44 @@ import React, {PureComponent} from 'react';
 import {
   View,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView,
   Easing,
-  SafeAreaView,
 } from 'react-native';
+// 3-party libs
+import Modal from 'react-native-modalbox';
+import Loading from '@tickid/tickid-rn-loading';
+import {observer} from 'mobx-react';
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import Modal from 'react-native-modalbox';
-import {Actions} from 'react-native-router-flux';
-import ModernList, {LIST_TYPE} from 'app-packages/tickid-modern-list';
-import Icon from 'react-native-vector-icons/Ionicons';
+// helpers
+import EventTracker from 'src/helper/EventTracker';
+import {isConfigActive} from 'src/helper/configKeyHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {LIST_TYPE} from 'app-packages/tickid-modern-list';
+import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import {ORDER_TYPES} from 'src/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import ModernList from 'app-packages/tickid-modern-list';
 import NumberSelection from '../NumberSelection';
 import Button from 'src/components/Button';
-import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import EventTracker from 'src/helper/EventTracker';
-import DropShip from '../../item/DropShip';
-import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import {ORDER_TYPES} from 'src/constants';
+import DropShip from 'src/components/item/DropShip';
 import ProductInfo from './ProductInfo';
+import {
+  Container,
+  IconButton,
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+} from 'src/components/base';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -35,6 +50,8 @@ const DISABLE_KEY = 'disabled';
 const MIN_QUANTITY = 1;
 
 class ItemAttribute extends PureComponent {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     product: {},
   };
@@ -113,6 +130,10 @@ class ItemAttribute extends PureComponent {
   refModal = React.createRef();
   unmounted = false;
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get isDropShip() {
     return this.props.isDropShip;
@@ -200,7 +221,7 @@ class ItemAttribute extends PureComponent {
               this.setState({product: this.props.product});
             } else {
               this.props.onSubmit();
-              Actions.pop();
+              pop();
             }
           }
         }
@@ -379,7 +400,7 @@ class ItemAttribute extends PureComponent {
     if (this.refModal.current) {
       this.refModal.current.close();
     } else {
-      Actions.pop();
+      pop();
     }
   };
 
@@ -409,22 +430,47 @@ class ItemAttribute extends PureComponent {
     return this.state.viewData.map((attr, indx) => {
       return (
         <View key={indx}>
-          {indx > 0 && <View style={styles.separate} />}
+          {indx > 0 && <View style={this.separateStyle} />}
           <ModernList
             data={attr.data}
             mainKey={VALUE_KEY}
             type={LIST_TYPE.TAG}
             headerTitle={attr.label}
             onPressItem={this.handlePressProductAttr}
-            headerTitleStyle={styles.label}
-            activeStyle={{backgroundColor: DEFAULT_COLOR}}
-            activeTextStyle={{color: '#fff'}}
-            disabledStyle={styles.containerDisabled}
-            disabledTextStyle={styles.titleDisabled}
           />
         </View>
       );
     });
+  }
+
+  get optionListContainerStyle() {
+    return [
+      styles.optionListContainer,
+      {
+        borderTopLeftRadius: this.theme.layout.borderRadiusMedium,
+        borderTopRightRadius: this.theme.layout.borderRadiusMedium,
+      },
+    ];
+  }
+
+  get separateStyle() {
+    return [
+      styles.separate,
+      {
+        height: this.theme.layout.borderWidthSmall,
+        backgroundColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get quantityStyles() {
+    return [
+      styles.quantity,
+      {
+        borderTopWidth: this.theme.layout.borderWidth,
+        borderColor: this.theme.color.border,
+      },
+    ];
   }
 
   render() {
@@ -439,11 +485,11 @@ class ItemAttribute extends PureComponent {
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
-    const btnProps = disabled && {
-      btnContainerStyle: styles.containerDisabled,
-      titleStyle: styles.titleDisabled,
-      disabled,
-    };
+    // const btnProps = disabled && {
+    //   btnContainerStyle: styles.containerDisabled,
+    //   titleStyle: styles.titleDisabled,
+    //   disabled,
+    // };
 
     const infoByAttrs = this.getInfoBySelectedAttrs();
 
@@ -511,16 +557,18 @@ class ItemAttribute extends PureComponent {
         ref={this.refModal}
         isOpen
         position="top"
-        onClosed={Actions.pop}
+        onClosed={pop}
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <View style={[styles.safeView]}>
+        <ScreenWrapper style={[styles.safeView]}>
           <TouchableWithoutFeedback onPress={this.handleClose}>
             <View style={{flex: 1}} />
           </TouchableWithoutFeedback>
 
-          <View style={[styles.optionListContainer]}>
+          <Container
+            safeLayout={!store.keyboardTop}
+            style={this.optionListContainerStyle}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <ProductInfo
                 imageUri={imageUri}
@@ -536,12 +584,15 @@ class ItemAttribute extends PureComponent {
               />
             </TouchableWithoutFeedback>
 
-            <TouchableOpacity
+            <IconButton
+              neutral
+              bundle={BundleIconSetName.IONICONS}
               style={styles.close}
               onPress={this.handleClose}
-              hitSlop={HIT_SLOP}>
-              <Icon name="ios-close" style={styles.closeIcon} />
-            </TouchableOpacity>
+              hitSlop={HIT_SLOP}
+              name="ios-close"
+              iconStyle={styles.closeIcon}
+            />
 
             <ScrollView
               style={{
@@ -587,9 +638,11 @@ class ItemAttribute extends PureComponent {
             </ScrollView>
 
             {!this.isDropShip && (
-              <View style={styles.quantity}>
-                <Text style={styles.label}>{t('attr.quantity')}</Text>
-                <View style={styles.quantityWrapper}>
+              <View style={this.quantityStyles}>
+                <Typography type={TypographyType.LABEL_LARGE}>
+                  {t('attr.quantity')}
+                </Typography>
+                <Container style={styles.quantityWrapper}>
                   <NumberSelection
                     containerStyle={[styles.quantityContainer]}
                     textContainer={styles.quantityTxtContainer}
@@ -612,19 +665,20 @@ class ItemAttribute extends PureComponent {
                     }}
                     disabled={disabled}
                   />
-                </View>
+                </Container>
               </View>
             )}
 
             <Button
               title={t('addToCart')}
               onPress={this.handleSubmit}
-              {...btnProps}
+              disabled={disabled}
+              // {...btnProps}
             />
-          </View>
+          </Container>
 
           {appConfig.device.isIOS && <KeyboardSpacer topSpacing={15} />}
-        </View>
+        </ScreenWrapper>
       </Modal>
     );
   }
@@ -635,56 +689,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   safeView: {
-    flex: 1,
     backgroundColor: 'transparent',
     justifyContent: 'flex-end',
   },
   optionListContainer: {
     paddingVertical: 15,
     maxHeight: appConfig.device.height * 0.8,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
     overflow: 'hidden',
-  },
-  header: {
-    paddingTop: 30,
-    paddingBottom: 20,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    borderColor: '#eee',
-    borderBottomWidth: 1,
-  },
-  imgContainer: {
-    width: 120,
-    height: 110,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 10,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  info: {
-    justifyContent: 'space-between',
-    marginLeft: 5,
-    marginRight: 35,
-    flex: 1,
-  },
-  title: {
-    fontSize: 16,
-    marginBottom: appConfig.device.isIOS ? 3 : 0,
-    color: '#444',
-    fontWeight: '500',
-  },
-  subTitle: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '400',
   },
   close: {
     position: 'absolute',
@@ -693,31 +704,8 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     fontSize: 34,
-    color: DEFAULT_COLOR,
-  },
-  highlight: {
-    fontSize: 18,
-    color: '#404040',
-    fontWeight: 'bold',
-    marginBottom: appConfig.device.isIOS ? 2 : -2,
-  },
-  description: {
-    color: '#888',
-    fontSize: 14,
-    fontWeight: '400',
-  },
-  note: {
-    color: '#888',
-    fontSize: 14,
-  },
-  deleteText: {
-    textDecorationLine: 'line-through',
-    marginTop: 4,
-    marginBottom: appConfig.device.isIOS ? 2 : 0,
   },
   separate: {
-    height: 0.5,
-    backgroundColor: '#eee',
     marginHorizontal: 10,
   },
   quantityWrapper: {
@@ -734,16 +722,10 @@ const styles = StyleSheet.create({
   },
   quantity: {
     flexDirection: 'row',
-    borderColor: '#eee',
-    borderTopWidth: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 15,
-  },
-  label: {
-    color: '#444',
-    fontSize: 16,
   },
   containerDisabled: {
     backgroundColor: '#f1f1f1',
@@ -753,4 +735,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('product')(ItemAttribute);
+export default withTranslation('product')(observer(ItemAttribute));

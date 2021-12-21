@@ -1,32 +1,37 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput} from 'react-native';
-import NumberSelection from 'src/components/stores/NumberSelection';
-import Container from '../../Layout/Container';
+import React, {useMemo, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {TypographyType} from 'src/components/base';
+// custom components
+import NumberSelection from 'src/components/stores/NumberSelection';
+import {Container, Input, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
   row: {
-    // marginBottom: 15,
     paddingVertical: 12,
   },
   newPriceTitleContainer: {
     flex: 1,
   },
   title: {
-    // textTransform: 'uppercase',
-    color: '#666',
     letterSpacing: 0.5,
     flex: 1,
     paddingRight: 10,
   },
   note: {
-    fontSize: 11,
     fontStyle: 'italic',
-    color: '#888',
     marginTop: 2,
   },
   value: {
@@ -48,9 +53,7 @@ const styles = StyleSheet.create({
     flex: undefined,
   },
   price: {
-    color: '#444',
     fontWeight: '500',
-    fontSize: 16,
     letterSpacing: 1,
   },
   newPriceContainer: {
@@ -59,25 +62,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  newPriceTypingContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#d9d9d9',
-  },
   newPriceInput: {
     minWidth: 113,
     textAlign: 'right',
-    color: appConfig.colors.primary,
     padding: 0,
-  },
-  newPriceCurrency: {
-    color: appConfig.colors.primary,
-  },
-  btnContainer: {
-    marginHorizontal: -15,
-    paddingHorizontal: 0,
-    marginTop: 15,
-    marginBottom: -15,
-    alignSelf: 'center',
   },
 });
 
@@ -96,6 +84,10 @@ const DropShip = ({
   onPlus = () => {},
   onQuantityBlur = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('product');
+
   const priceFormatter = (price) => {
     const originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
     return numberFormat(originPrice);
@@ -137,29 +129,34 @@ const DropShip = ({
     setTotalProfit(calculateOriginGrossProfit());
   };
 
-  const totalProfitValidateStyle = {
-    color:
-      getNewPrice() < price
-        ? appConfig.colors.status.danger
-        : appConfig.colors.status.success,
-  };
-
   const renderNewPrice = () => {
     return isFixDropShipPrice() ? (
-      <Text
-        style={[styles.price, styles.newPriceInput, totalProfitValidateStyle]}>
+      <Typography style={[styles.newPriceInput, totalProfitStyle]}>
         {priceFormatter(listPrice)}
-      </Text>
+      </Typography>
     ) : (
-      <TextInput
-        style={[styles.price, styles.newPriceInput, totalProfitValidateStyle]}
+      <Input
+        style={[styles.newPriceInput, totalProfitStyle]}
         keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
         onChangeText={handleChangePrice}
         value={priceFormatter(newPriceView)}
-        editable={!disabled}
+        editable={true}
       />
     );
   };
+
+  const totalProfitStyle = useMemo(() => {
+    return mergeStyles(styles.price, {
+      color: getNewPrice() < price ? theme.color.danger : theme.color.success,
+    });
+  }, [theme]);
+
+  const newPriceTypingContainerStyle = useMemo(() => {
+    return {
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
 
   return (
     <Container
@@ -167,7 +164,11 @@ const DropShip = ({
       style={disabled && styles.disabled}
       padding={15}>
       <Container row style={[styles.row, {width: '100%'}]}>
-        <Text style={[styles.title, styles.quantityLabel]}>Số lượng</Text>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={[styles.title, styles.quantityLabel]}>
+          {t('dropShip.quantity')}
+        </Typography>
         <View style={styles.quantityWrapper}>
           <NumberSelection
             containerStyle={[styles.value, styles.quantityContainer]}
@@ -184,37 +185,54 @@ const DropShip = ({
         </View>
       </Container>
       <Container row style={styles.row}>
-        <Text style={styles.title}>Giá bán</Text>
-        <Text style={[styles.value, styles.price]}>{priceView}</Text>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={styles.title}>
+          {t('dropShip.price')}
+        </Typography>
+        <Typography
+          type={TypographyType.LABEL_LARGE}
+          style={[styles.value, styles.price]}>
+          {priceView}
+        </Typography>
       </Container>
       <Container row style={styles.row}>
         <View style={styles.newPriceTitleContainer}>
-          <Text style={styles.title}>Giá muốn bán</Text>
-          <Text style={styles.note}>* Phải cao hơn hoặc bằng giá bán</Text>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.title}>
+            {t('dropShip.wishingPrice')}
+          </Typography>
+          <Typography
+            type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+            style={styles.note}>
+            {t('dropShip.errorWishingPrice')}
+          </Typography>
         </View>
 
         <View
           style={[
             styles.value,
             styles.newPriceContainer,
-            !isFixDropShipPrice() && styles.newPriceTypingContainer,
+            !isFixDropShipPrice() && newPriceTypingContainerStyle,
           ]}>
           {renderNewPrice()}
-          <Text
-            style={[
-              styles.price,
-              styles.newPriceCurrency,
-              totalProfitValidateStyle,
-            ]}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={totalProfitStyle}>
             {currency}
-          </Text>
+          </Typography>
         </View>
       </Container>
       <Container row style={styles.row}>
-        <Text style={styles.title}>Lợi nhuận gộp</Text>
-        <Text style={[styles.value, styles.price]}>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={styles.title}>
+          {t('dropShip.grossProfit')}
+        </Typography>
+        <Typography style={[styles.value, styles.price]}>
           {calculateGrossProfit(totalProfit)}
-        </Text>
+        </Typography>
       </Container>
     </Container>
   );
