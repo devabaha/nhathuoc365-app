@@ -1796,16 +1796,16 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.listChat}>
                   <Scene
                     key={`${appConfig.routes.listChat}_1`}
-                    title="Danh sách Chat"
                     component={ListChat}
                     navBar={ListChatNavBar}
-                    // hideNavBar
                     {...navBarConfig}
                     back
                   />
+                </Stack>
+
+                <Stack key={appConfig.routes.searchChat}>
                   <Scene
-                    hideNavBar={false}
-                    key={appConfig.routes.searchChat}
+                    key={`${appConfig.routes.searchChat}_1`}
                     component={SearchChat}
                     navBar={SearchChatNavBar}
                     {...navBarConfig}

@@ -169,6 +169,9 @@
       "mainTitle": "Tạo bài viết",
       "editTitle": "Sửa bài viết"
     },
+    "listChat": {
+      "mainTitle": "Danh sách Chat"
+    },
     "listUserChat": {
       "mainTitle": "Tin nhắn"
     },
