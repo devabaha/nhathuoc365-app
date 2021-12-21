@@ -1,76 +1,80 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  // RefreshControl,
-  Alert,
-  Picker,
-  Easing,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import ImagePicker from 'react-native-image-picker';
-import Communications from 'react-native-communications';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
-import Sticker from '../Sticker';
 import {reaction} from 'mobx';
-import SelectionList from '../SelectionList';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
-import {languages} from '../../i18n/constants';
-import {setAppLanguage} from '../../i18n/i18n';
-import {APIRequest} from '../../network/Entity';
-import {
-  isActivePackageOptionConfig,
-  PACKAGE_OPTIONS_TYPE,
-} from '../../helper/packageOptionsHandler';
-import EventTracker from '../../helper/EventTracker';
-import SkeletonLoading from '../SkeletonLoading';
-import BaseAPI from '../../network/API/BaseAPI';
-import Loading from '../Loading';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// network
+import BaseAPI from 'src/network/API/BaseAPI';
+// helpers
+import {setAppLanguage} from 'src/i18n/i18n';
+import EventTracker from 'app-helper/EventTracker';
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
-import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
-import {openLink} from 'app-helper';
-import ScreenWrapper from '../base/ScreenWrapper';
-import RefreshControl from '../base/RefreshControl';
-import {push} from 'app-helper/routing';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {openLink} from 'app-helper';
+import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {languages} from 'src/i18n/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Sticker from 'src/components/Sticker';
+import SelectionList from 'src/components/SelectionList';
+import SkeletonLoading from 'src/components/SkeletonLoading';
+import CustomAutoHeightWebview from 'src/components/CustomAutoHeightWebview';
+import IconAngleRight from './IconAngleRight';
+import Loading from 'src/components/Loading';
+import Image from 'src/components/Image';
+import {
+  BaseButton,
+  Container,
+  Typography,
+  Icon,
+  ScrollView,
+  ScreenWrapper,
+  RefreshControl,
+} from 'src/components/base';
 
 const FACEBOOK_DOMAIN = 'https://facebook.com/';
 
 class Account extends Component {
   static contextType = ThemeContext;
 
-  constructor(props) {
-    super(props);
+  state = {
+    listWarehouse: [],
+    isWarehouseLoading: true,
+    refreshing: false,
+    logout_loading: false,
+    sticker_flag: false,
+    avatar_loading: false,
+  };
+  uploadFaceIDRequest = new APIRequest();
+  requests = [this.uploadFaceIDRequest];
+  userInfoDisposer = reaction(
+    () => store.user_info,
+    (userInfo) => this.initial(userInfo),
+  );
+  eventTracker = new EventTracker();
+  getWarehouseRequest = new APIRequest();
+  updateWarehouseRequest = new APIRequest();
+  requests = [this.getWarehouseRequest];
+  unmounted = false;
 
-    this.state = {
-      listWarehouse: [],
-      isWarehouseLoading: true,
-      refreshing: false,
-      logout_loading: false,
-      sticker_flag: false,
-      avatar_loading: false,
-    };
-    this.uploadFaceIDRequest = new APIRequest();
-    this.requests = [this.uploadFaceIDRequest];
-    this.userInfoDisposer = reaction(() => store.user_info, this.initial);
-    this.eventTracker = new EventTracker();
-    this.getWarehouseRequest = new APIRequest();
-    this.updateWarehouseRequest = new APIRequest();
-    this.requests = [this.getWarehouseRequest];
-    this.unmounted = false;
-
-    this.updateNavBarDisposer = () => {};
-  }
+  updateNavBarDisposer = () => {};
 
   get theme() {
     return getTheme(this);
@@ -94,8 +98,7 @@ class Account extends Component {
       premium_name,
       premium_info,
       premium_point_unit,
-      premium_color = '#80AB82',
-      // #fafafa, #95acc5, #80AB82, #d2d2e4, #f0b64a, #1eb7dc,
+      premium_color = this.theme.color.premium,
       premium_point = 10000,
       next_premium_point = 15000,
       store_id,
@@ -115,21 +118,25 @@ class Account extends Component {
         icon: 'web',
         label: 'Domain',
         desc: BaseAPI.apiDomain,
-        isHidden: !isTestDevice,
         rightIcon: <IconAngleRight />,
         onPress: () =>
-          Actions.push(appConfig.routes.domainSelector, {
+          push(appConfig.routes.domainSelector, {
             back: true,
           }),
-        boxIconStyle: [styles.boxIconStyle, styles.boxIconDomainSelector],
-        iconColor: '#ffffff',
-        iconType: 'MaterialCommunityIcons',
+        boxIconStyle: [
+          styles.boxIconStyle,
+          styles.boxIconDomainSelector,
+          {backgroundColor: this.theme.color.accountDomain},
+        ],
+        iconColor: this.iconColor,
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
+        isHidden: !isTestDevice,
       },
 
       {
         key: 'premium',
         icon: 'crown',
-        iconType: 'MaterialCommunityIcons',
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
         label: premium_name,
         labelStyle: [
           styles.premiumLabel,
@@ -139,9 +146,10 @@ class Account extends Component {
         ],
         desc:
           !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_POINT_KEY) && premium_info,
-        descStyle: {
-          color: '#ccc',
-        },
+        descStyle: [
+          this.theme.typography[TypographyType.DESCRIPTION_SMALL],
+          {color: this.theme.color.onSurface},
+        ],
         rightIcon: this.renderRightPremium(
           isShowPremiumPoint ? premium_point : null,
           premium_point_unit,
@@ -152,18 +160,13 @@ class Account extends Component {
             next_premium_point,
             premium_color,
           ),
-        onPress: () => Actions.push(appConfig.routes.premiumInfo),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#fff',
-            borderWidth: 0.5,
-            borderColor: '#ccc',
-          },
-        ],
-        iconColor: '#2fc5c5',
+        onPress: () => push(appConfig.routes.premiumInfo, {}, this.theme),
+        boxIconStyle: this.premiumBoxIconStyle,
+        iconColor: this.theme.color.accountPremium,
         iconSize: 20,
+        wrapperStyle: this.premiumContainerStyle,
         containerStyle: styles.premiumContainer,
+        separatorStyle: {marginBottom: 8},
         isHidden: !isShowPremium,
       },
 
@@ -171,16 +174,19 @@ class Account extends Component {
         key: 'default_wallet',
         icon: default_wallet.icon,
         label: (
-          <Text style={styles.profile_list_label}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={styles.profile_list_label}>
             {default_wallet.name}:{' '}
-            <Text
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
               style={[
                 styles.profile_list_label_balance,
                 {color: default_wallet.color},
               ]}>
               {default_wallet.balance_view}
-            </Text>
-          </Text>
+            </Typography>
+          </Typography>
         ),
         isHidden:
           !user_info.default_wallet ||
@@ -189,23 +195,24 @@ class Account extends Component {
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          servicesHandler({type: SERVICES_TYPE.WALLET});
+          servicesHandler({type: SERVICES_TYPE.WALLET, theme: this.theme});
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: default_wallet.color,
+            backgroundColor:
+              default_wallet.color || this.theme.color.accountDefaltWallet,
           },
         ],
-        iconColor: '#fff',
+        iconColor: this.iconColor,
         iconType: default_wallet.iconType,
-        marginTop: isShowPremium,
+        marginTop: !isShowPremium,
       },
 
       {
         key: 'revenue_commissions',
         icon: 'clipboard',
-        iconColor: '#FFFFFF',
+        iconColor: this.iconColor,
         size: 22,
         iconSize: 14,
         marginTop: 10,
@@ -219,27 +226,28 @@ class Account extends Component {
           <>
             {!!revenue_commissions?.this_month_commissions?.title &&
               `${revenue_commissions.this_month_commissions.title}: `}
-            <Text style={styles.commissionValue}>
+            <Typography type={TypographyType.LABEL_LARGE_PRIMARY}>
               {revenue_commissions?.this_month_commissions?.value}
-            </Text>
+            </Typography>
           </>
         ),
         desc: (
           <>
             {!!revenue_commissions?.last_month_commissions?.title &&
               `${revenue_commissions.last_month_commissions.title}: `}
-            <Text style={styles.commissionValue}>
+            <Typography type={TypographyType.DESCRIPTION_SMALL_PRIMARY}>
               {revenue_commissions?.last_month_commissions?.value}
-            </Text>
+            </Typography>
           </>
         ),
 
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
+        onPress: () =>
+          push(appConfig.routes.commissionIncomeStatement, {}, this.theme),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#FD6D61',
+            backgroundColor: this.theme.color.accountRevenueCommissions,
           },
         ],
         isHidden:
@@ -262,12 +270,19 @@ class Account extends Component {
         key: 'affiliate',
         icon: 'commenting-o',
         label: (
-          <Text style={styles.profile_list_label}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={styles.profile_list_label}>
             {`${t('referralCode')}: `}
-            <Text style={styles.profile_list_label_invite_id}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={[
+                styles.profile_list_label_invite_id,
+                {color: this.theme.color.accountAffiliate},
+              ]}>
               {user_info.username}
-            </Text>
-          </Text>
+            </Typography>
+          </Typography>
         ),
         desc: user_info.text_invite,
         isHidden: !user_info.username,
@@ -289,10 +304,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#51A9FF',
+            backgroundColor: this.theme.color.accountAffiliate,
           },
         ],
-        iconColor: '#fff',
+        iconColor: this.iconColor,
       },
       {
         key: 'store',
@@ -301,15 +316,17 @@ class Account extends Component {
         ),
         leftIcon: (
           <View>
-            <IconMaterialCommunity
+            <Icon
+              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
               name="store"
-              style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
+              style={{fontSize: 15, left: -3, top: 2, color: this.iconColor}}
             />
             <Icon
+              bundle={BundleIconSetName.FONT_AWESOME}
               name="map-marker"
               style={{
                 fontSize: 16,
-                color: '#fff',
+                color: this.iconColor,
                 position: 'absolute',
                 right: -3,
                 top: 0,
@@ -321,11 +338,11 @@ class Account extends Component {
         label: t('options.changeStoreLocation.label'),
         desc: store.store_data.name,
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
+        onPress: () => push(appConfig.routes.gpsStoreLocation, {}, this.theme),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#f66',
+            backgroundColor: this.theme.color.accountStore,
           },
         ],
       },
@@ -335,21 +352,23 @@ class Account extends Component {
         desc: t('options.orders.desc'),
         leftIcon: (
           <View>
-            <IconMaterialCommunity
+            <Icon
+              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
               name="cart"
-              style={{fontSize: 16, color: '#fff'}}
+              style={{fontSize: 16, color: this.iconColor}}
             />
           </View>
         ),
         rightIcon: <IconAngleRight />,
-        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+        onPress: () =>
+          servicesHandler({type: SERVICES_TYPE.ORDERS, theme: this.theme}),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: appConfig.colors.status.success,
+            backgroundColor: this.theme.color.accountOrder,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
       },
       {
         key: 'vouchers',
@@ -360,9 +379,10 @@ class Account extends Component {
         desc: t('options.myVoucher.desc'),
         leftIcon: (
           <View>
-            <IconMaterialCommunity
+            <Icon
+              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
               name="sale"
-              style={{fontSize: 16, color: '#fff'}}
+              style={{fontSize: 16, color: this.iconColor}}
             />
           </View>
         ),
@@ -379,10 +399,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#ffc3c0',
+            backgroundColor: this.theme.color.accountVoucher,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
       },
       {
         key: 'address',
@@ -401,10 +421,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fcb309',
+            backgroundColor: this.theme.color.accountAddress,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         marginTop: !!premium_name,
       },
 
@@ -412,7 +432,7 @@ class Account extends Component {
         key: 'gold_member',
         icon: 'clipboard-text-multiple',
         iconType: 'MaterialCommunityIcons',
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         size: 22,
         iconSize: 14,
         label: t('options.agencyInformationRegister.label'),
@@ -421,15 +441,15 @@ class Account extends Component {
         onPress: () =>
           servicesHandler({
             type: SERVICES_TYPE.AGENCY_INFORMATION_REGISTER,
+            theme: this.theme,
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#527c23',
+            backgroundColor: this.theme.color.accountGoldMember,
           },
         ],
         isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
-        isHidden: false,
       },
       {
         key: 'warehouse',
@@ -447,24 +467,28 @@ class Account extends Component {
           <IconAngleRight />
         ),
         onPress: () =>
-          Actions.push(appConfig.routes.modalList, {
-            heading: this.props.t('opRegister:modal.warehouse.title'),
-            data: this.state.listWarehouse,
-            selectedItem: {id: store_id},
-            onPressItem: this.onSelectWarehouse,
-            onCloseModal: Actions.pop,
-            modalStyle: {
-              height: null,
-              maxHeight: '80%',
+          push(
+            appConfig.routes.modalList,
+            {
+              heading: this.props.t('opRegister:modal.warehouse.title'),
+              data: this.state.listWarehouse,
+              selectedItem: {id: store_id},
+              onPressItem: this.onSelectWarehouse,
+              onCloseModal: pop,
+              modalStyle: {
+                height: null,
+                maxHeight: '80%',
+              },
             },
-          }),
+            this.theme,
+          ),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#3c6c7d',
+            backgroundColor: this.theme.color.accountWarehouse,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         isHidden:
           !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
@@ -472,7 +496,7 @@ class Account extends Component {
       {
         key: 'commission_income_statement',
         icon: 'clipboard',
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         size: 22,
         iconSize: 14,
         label: t('options.commissionIncomeStatement.label'),
@@ -483,7 +507,7 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fd6d61',
+            backgroundColor: this.theme.color.accountCommissionIncome,
           },
         ],
         isHidden:
@@ -494,7 +518,7 @@ class Account extends Component {
         key: 'report_npp',
         iconType: 'MaterialCommunityIcons',
         icon: 'script-text',
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         size: 22,
         iconSize: 14,
         label: t('options.salesReport.label'),
@@ -504,7 +528,7 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#72d4d3',
+            backgroundColor: this.theme.color.accountSaleReport,
           },
         ],
         isHidden:
@@ -522,15 +546,15 @@ class Account extends Component {
         desc: t('options.resetPassword.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          Actions.push(appConfig.routes.resetPassword);
+          push(appConfig.routes.resetPassword);
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#888',
+            backgroundColor: this.theme.color.accountResetPassword,
           },
         ],
-        iconColor: '#fff',
+        iconColor: this.iconColor,
         iconSize: 18,
         iconType: 'MaterialCommunityIcons',
         marginTop: true,
@@ -548,10 +572,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#4267b2',
+            backgroundColor: this.theme.color.accountFacebookFanpage,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         marginTop: !isAdmin,
         isHidden: !facebookFanpage,
       },
@@ -568,15 +592,16 @@ class Account extends Component {
               title: t('options.termsOfUse.webViewTitle'),
               id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
             },
+            theme: this.theme,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: DEFAULT_COLOR,
+            backgroundColor: this.theme.color.accountAboutUs,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         isHidden: !getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
         // marginTop: true
       },
@@ -592,14 +617,15 @@ class Account extends Component {
             type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
             title: t('options.termsOfUse.desc'),
             id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
+            theme: this.theme,
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#62459b',
+            backgroundColor: this.theme.color.accountTermOfUse,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
       },
@@ -612,7 +638,7 @@ class Account extends Component {
         marginTop: !store.user_info || !store.user_info.tel,
         rightIcon: <View></View>,
         onPress: () => {
-          Actions.push(appConfig.routes.modalPicker, {
+          push(appConfig.routes.modalPicker, {
             title: t('options.language.label'),
             cancelTitle: t('options.language.cancel'),
             selectTitle: t('options.language.select'),
@@ -625,10 +651,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189',
+            backgroundColor: this.theme.color.accountLanguage,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         marginTop: true,
       },
 
@@ -649,10 +675,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#688efb',
+            backgroundColor: this.theme.color.accountAppInfo,
           },
         ],
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
         hideAngle: true,
         marginTop: true,
       },
@@ -673,17 +699,13 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#dd4b39',
+            backgroundColor: this.theme.color.accountAppUpdate,
           },
         ],
         notify: 'updating_version',
-        iconColor: '#ffffff',
+        iconColor: this.iconColor,
       },
     ];
-  }
-
-  componentWillUnmount() {
-    cancelRequests(this.requests);
   }
 
   initial = (callback) => {
@@ -863,6 +885,7 @@ class Account extends Component {
     this.userInfoDisposer();
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
+
     this.updateNavBarDisposer();
   }
 
@@ -959,7 +982,7 @@ class Account extends Component {
   };
 
   handleLogin = () => {
-    Actions.push(appConfig.routes.phoneAuth);
+    push(appConfig.routes.phoneAuth);
   };
 
   handleConfirmChangeAppLanguage = (languageValue) => {
@@ -971,19 +994,13 @@ class Account extends Component {
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
-  renderWallets() {
+  renderWallets = () => {
     const user_info = store.user_info || {wallets: []};
     return (
-      <View
-        key="wallets"
-        style={{
-          // marginTop: 7,
-          borderTopWidth: 0,
-          borderColor: '#dddddd',
-        }}>
-        <View style={styles.add_store_actions_box}>
+      <View key="wallets">
+        <Container style={this.walletContainerStyle}>
           {user_info.wallets.map((wallet, index) => (
-            <TouchableHighlight
+            <BaseButton
               key={index}
               onPress={
                 wallet.address
@@ -992,96 +1009,114 @@ class Account extends Component {
                         type: SERVICES_TYPE.WALLET,
                         name: wallet.name,
                         zone_code: wallet.zone_code,
+                        theme: this.theme,
+                      })
+                  : () => {}
+              }
+              useTouchableHighlight
+              style={styles.add_store_action_btn}>
+              <View style={this.walletContentContainerStyle}>
+                <View style={styles.add_store_action_wallet}>
+                  <Typography
+                    type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                    style={styles.add_store_action_wallet_text}>
+                    <Icon
+                      bundle={BundleIconSetName.FONT_AWESOME}
+                      name={wallet.icon}
+                      style={{fontSize: 16, color: wallet.color}}
+                    />{' '}
+                    {wallet.name}
+                  </Typography>
+                </View>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={[
+                    styles.add_store_action_wallet_content,
+                    {color: wallet.color},
+                  ]}>
+                  {wallet.balance_view}
+                </Typography>
+              </View>
+            </BaseButton>
+          ))}
+        </Container>
+      </View>
+    );
+  };
+
+  renderExtWallets = () => {
+    const user_info = store.user_info || {ext_wallets: []};
+    return (
+      <View key="extra_wallets">
+        <Container style={this.walletContainerStyle}>
+          {user_info.ext_wallets.map((wallet, index) => (
+            <BaseButton
+              useTouchableHighlight
+              key={index}
+              onPress={
+                wallet.address
+                  ? () =>
+                      servicesHandler({
+                        type: SERVICES_TYPE.WALLET,
+                        name: wallet.name,
+                        zone_code: wallet.zone_code,
+                        theme: this.theme,
                       })
                   : () => {}
               }
               underlayColor="transparent"
               style={styles.add_store_action_btn}>
-              <View style={styles.add_store_action_btn_box}>
+              <View style={this.walletContentContainerStyle}>
                 <View style={styles.add_store_action_wallet}>
-                  <Text style={styles.add_store_action_wallet_text}>
-                    <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
+                  <Typography style={styles.add_store_action_wallet_text}>
+                    <Icon
+                      bundle={BundleIconSetName.FONT_AWESOME}
+                      name={wallet.icon}
+                      style={{fontSize: 16, color: wallet.color}}
+                    />{' '}
                     {wallet.name}
-                  </Text>
+                  </Typography>
                 </View>
-                <Text
+                <Typography
                   style={[
                     styles.add_store_action_wallet_content,
                     {color: wallet.color},
                   ]}>
                   {wallet.balance_view}
-                </Text>
+                </Typography>
               </View>
-            </TouchableHighlight>
+            </BaseButton>
           ))}
-        </View>
+        </Container>
       </View>
     );
-  }
+  };
 
-  renderExtWallets() {
-    const user_info = store.user_info || {ext_wallets: []};
-    return (
-      <View key="extra_wallets">
-        <View style={styles.add_store_actions_box}>
-          {user_info.ext_wallets.map((wallet, index) => (
-            <TouchableHighlight
-              key={index}
-              onPress={
-                wallet.address
-                  ? () =>
-                      servicesHandler({
-                        type: SERVICES_TYPE.WALLET,
-                        name: wallet.name,
-                        zone_code: wallet.zone_code,
-                      })
-                  : () => Actions.view_ndt_list()
-              }
-              underlayColor="transparent"
-              style={styles.add_store_action_btn}>
-              <View style={styles.add_store_action_btn_box}>
-                <View style={styles.add_store_action_wallet}>
-                  <Text style={styles.add_store_action_wallet_text}>
-                    <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
-                    {wallet.name}
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.add_store_action_wallet_content,
-                    {color: wallet.color},
-                  ]}>
-                  {wallet.balance_view}
-                </Text>
-              </View>
-            </TouchableHighlight>
-          ))}
-        </View>
-      </View>
-    );
-  }
-
-  renderRightPremium(point, unit) {
+  renderRightPremium = (point, unit) => {
     const isShowPoint = point !== undefined && point !== null;
 
     return (
-      <View style={styles.rightPremiumContainer}>
+      <View style={this.rightPremiumContainerStyle}>
         {isShowPoint && (
-          <Text style={styles.rightPremiumLabel}>
-            <Text style={styles.rightPremiumHighlight}>
+          <Typography
+            type={TypographyType.LABEL_TINY}
+            style={styles.rightPremiumLabel}>
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}
-            </Text>{' '}
+            </Typography>{' '}
             {unit}
-          </Text>
+          </Typography>
         )}
         <View style={styles.rightPremiumIconContainer}>
           <IconAngleRight />
         </View>
       </View>
     );
-  }
+  };
 
-  renderProgressPremium(point, nextPoint, backgroundColor) {
+  renderProgressPremium = (point, nextPoint, backgroundColor) => {
     const premiumRatio = point / nextPoint;
     const isMax = premiumRatio >= 1;
     const width = isMax ? '100%' : `${premiumRatio * 100}%`;
@@ -1093,7 +1128,7 @@ class Account extends Component {
         };
 
     return (
-      <View style={styles.premiumProgressContainer}>
+      <View style={this.premiumProgressContainerStyle}>
         <SkeletonLoading
           highlightOpacity={0.8}
           highlightMainDuration={2000}
@@ -1107,6 +1142,81 @@ class Account extends Component {
         />
       </View>
     );
+  };
+
+  get avatarContainerStyle() {
+    return [styles.profile_avatar_box, styles.profile_avatar_box_container];
+  }
+
+  get iconColor() {
+    return this.theme.color.white;
+  }
+
+  get premiumContainerStyle() {
+    return {
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    };
+  }
+
+  get premiumBoxIconStyle() {
+    return [
+      styles.boxIconStyle,
+      {
+        backgroundColor: this.theme.color.contentBackgroundWeak,
+        borderWidth: this.theme.layout.borderWidthSmall,
+        borderColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get rightPremiumContainerStyle() {
+    return [
+      styles.rightPremiumContainer,
+      {
+        backgroundColor: this.theme.color.contentBackgroundWeak,
+      },
+    ];
+  }
+
+  get premiumProgressContainerStyle() {
+    return [
+      styles.premiumProgressContainer,
+      {
+        backgroundColor: this.theme.color.grey700,
+        elevation: this.theme.layout.shadow.elevation,
+      },
+    ];
+  }
+
+  get walletContainerStyle() {
+    return [
+      styles.add_store_actions_box,
+      {
+        borderBottomWidth: this.theme.layout.borderWidthPixel,
+        borderColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get walletContentContainerStyle() {
+    return [
+      styles.add_store_action_btn_box,
+      {
+        borderRightWidth: this.theme.layout.borderWidthPixel,
+        borderColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get footerSiteContainerStyle() {
+    return [
+      styles.footerSiteContainer,
+      {
+        backgroundColor: this.theme.color.surface,
+        borderColor: this.theme.color.persistPrimary,
+      },
+    ];
   }
 
   render() {
@@ -1133,42 +1243,40 @@ class Account extends Component {
           }>
           <>
             {is_login ? (
-              <TouchableHighlight
-                onPress={this.handleShowProfileDetail}
-                style={[
-                  styles.profile_list_opt_btn,
-                  styles.profile_user_container,
-                  {flex: 1, flexDirection: 'row'},
-                ]}
-                underlayColor="rgba(255,255,255,.7)">
-                <>
-                  <TouchableHighlight
-                    disabled={!!avatar_loading}
-                    onPress={this.onTapAvatar.bind(this)}
-                    style={[
-                      styles.profile_avatar_box,
-                      styles.profile_avatar_box_container,
-                    ]}
-                    underlayColor="rgba(0,0,0,.3)">
-                    <View>
-                      <View style={styles.profile_avatar_box}>
-                        {avatar_loading ? (
-                          <View style={{width: '100%', height: '100%'}}>
-                            <Indicator size="small" />
-                          </View>
-                        ) : (
-                          <CachedImage
-                            mutable
-                            style={styles.profile_avatar}
-                            source={{
-                              uri: store.user_info ? store.user_info.img : '',
-                            }}
-                          />
-                        )}
-                      </View>
+              <Container>
+                <BaseButton
+                  useTouchableHighlight
+                  onPress={this.handleShowProfileDetail}
+                  style={[
+                    styles.profile_list_opt_btn,
+                    styles.profile_user_container,
+                  ]}>
+                  <>
+                    <BaseButton
+                      useTouchableHighlight
+                      disabled={!!avatar_loading}
+                      onPress={this.onTapAvatar.bind(this)}
+                      style={this.avatarContainerStyle}>
+                      <View>
+                        <View style={styles.profile_avatar_box}>
+                          {avatar_loading ? (
+                            <View style={styles.profile_avatar}>
+                              <Indicator size="small" />
+                            </View>
+                          ) : (
+                            <Image
+                              mutable
+                              resizeMode="cover"
+                              source={{
+                                uri: store.user_info ? store.user_info.img : '',
+                              }}
+                            />
+                          )}
+                        </View>
 
-                      {/* {!!user_info.is_verified ? (
-                        <IconMaterialCommunity
+                        {/* {!!user_info.is_verified ? (
+                        <Icon
+                          bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
                           name="check-decagram"
                           style={[
                             styles.verifiedIcon,
@@ -1188,39 +1296,30 @@ class Account extends Component {
                           ]}
                         />
                       )} */}
-                    </View>
-                  </TouchableHighlight>
+                      </View>
+                    </BaseButton>
 
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      flex: 1,
-                      alignItems: 'center',
-                      paddingRight: 25,
-                    }}>
-                    <View>
-                      <Text
-                        style={[
-                          styles.profile_list_label,
-                          {
-                            fontSize: 18,
-                          },
-                        ]}
-                        numberOfLines={1}>
-                        {user_info.name}
-                      </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        alignItems: 'center',
+                        paddingRight: 25,
+                      }}>
+                      <View>
+                        <Typography
+                          type={TypographyType.LABEL_HUGE}
+                          style={[styles.profile_list_label]}
+                          numberOfLines={1}>
+                          {user_info.name}
+                        </Typography>
 
-                      <Text
-                        style={[
-                          styles.profile_list_small_label,
-                          {
-                            fontSize: 14,
-                            marginTop: 5,
-                          },
-                        ]}>
-                        {user_info.tel}
-                      </Text>
-                      {/* {!!!user_info.is_verified && (
+                        <Typography
+                          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                          style={[styles.profile_list_small_label]}>
+                          {user_info.tel}
+                        </Typography>
+                        {/* {!!!user_info.is_verified && (
                         <Text
                           style={[
                             styles.profile_list_small_label,
@@ -1235,61 +1334,48 @@ class Account extends Component {
                           nhật ảnh đại diện để xác thực!
                         </Text>
                       )} */}
+                      </View>
+                      <View
+                        style={[
+                          styles.profile_list_icon_box,
+                          styles.profile_list_icon_box_angle,
+                          {marginRight: 0},
+                        ]}>
+                        <IconAngleRight />
+                      </View>
                     </View>
-                    <View
-                      style={[
-                        styles.profile_list_icon_box,
-                        styles.profile_list_icon_box_angle,
-                        {marginRight: 0},
-                      ]}>
-                      <IconAngleRight />
-                    </View>
-                  </View>
-                </>
-              </TouchableHighlight>
+                  </>
+                </BaseButton>
+              </Container>
             ) : (
-              <TouchableHighlight
-                style={[
-                  styles.profile_user_container,
-                  {
-                    flexDirection: 'row',
-                    backgroundColor: '#ffffff',
-                    // paddingVertical: 10,
-                    // paddingBottom: 0,
-                  },
-                ]}
-                underlayColor="rgba(255,255,255,.7)"
-                onPress={this.handleLogin}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <IconMaterialCommunity
-                    name="account-circle"
-                    size={46}
-                    color="#c7c7cd"
-                    style={{margin: -5}}
-                  />
-                  <View
-                    style={[
-                      styles.profile_button_login_box,
-                      {
-                        backgroundColor: 'transparent',
-                      },
-                    ]}>
-                    <Text style={[styles.profile_button_title]}>
-                      {t('signIn')}
-                    </Text>
-                  </View>
-                  <IconMaterialCommunity
-                    name="login-variant"
-                    size={24}
-                    color="#999999"
-                    style={{
-                      position: 'absolute',
-                      right: 15,
-                      alignSelf: 'center',
-                    }}
-                  />
-                </View>
-              </TouchableHighlight>
+              <Container>
+                <BaseButton
+                  style={styles.profile_user_container}
+                  useTouchableHighlight
+                  onPress={this.handleLogin}>
+                  <>
+                    <Icon
+                      bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+                      name="account-circle"
+                      neutral
+                      style={styles.signInLeftIcon}
+                    />
+                    <View style={styles.profile_button_login_box}>
+                      <Typography
+                        type={TypographyType.LABEL_LARGE_PRIMARY}
+                        style={[styles.profile_button_title]}>
+                        {t('signIn')}
+                      </Typography>
+                    </View>
+                    <Icon
+                      bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+                      name="login-variant"
+                      neutral
+                      style={styles.signInRightIcon}
+                    />
+                  </>
+                </BaseButton>
+              </Container>
             )}
           </>
 
@@ -1304,7 +1390,7 @@ class Account extends Component {
           {!!siteContentValue && (
             <CustomAutoHeightWebview
               content={siteContentValue}
-              containerStyle={styles.footerSiteContainer}
+              containerStyle={this.footerSiteContainerStyle}
               customStyle={`body {
                 overflow-x: hidden;
               }`}
@@ -1322,11 +1408,7 @@ class Account extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   boxIconStyle: {
-    backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
     marginLeft: 6,
     borderRadius: 15,
@@ -1337,9 +1419,9 @@ const styles = StyleSheet.create({
     height: null,
     paddingVertical: 15,
     paddingLeft: 15,
+    flexDirection: 'row',
   },
   profile_avatar_box_container: {
-    backgroundColor: '#f0f0f0',
     marginRight: 15,
   },
   profile_avatar_box: {
@@ -1353,7 +1435,6 @@ const styles = StyleSheet.create({
   profile_avatar: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   verifiedIcon: {
     fontSize: 15,
@@ -1363,17 +1444,8 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(1),
   },
 
-  point_icon: {
-    width: 30,
-    height: 30,
-  },
-  profile_button_box: {
-    bottom: 42,
-    right: 0,
-    flexDirection: 'row',
-  },
   profile_button_login_box: {
-    backgroundColor: appConfig.colors.primary,
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     // paddingVertical: 8,
@@ -1382,20 +1454,21 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   profile_button_title: {
-    fontSize: 16,
-    color: DEFAULT_COLOR,
     fontWeight: 'bold',
   },
-  profile_list_opt: {
-    borderTopWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
+  signInLeftIcon: {
+    margin: -5,
+    fontSize: 46,
+  },
+  signInRightIcon: {
+    position: 'absolute',
+    right: 15,
+    alignSelf: 'center',
+    fontSize: 24,
   },
   profile_list_opt_btn: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     height: 52,
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
   },
@@ -1408,16 +1481,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginRight: 4,
   },
-
-  profile_list_icon_box_small: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 22,
-    height: 22,
-    marginLeft: 3,
-    marginRight: 0,
-  },
   profile_list_icon_box_angle: {
     position: 'absolute',
     top: 0,
@@ -1425,110 +1488,37 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   profile_list_label: {
-    fontSize: 16,
-    color: '#000000',
     fontWeight: '400',
   },
   profile_list_label_balance: {
-    fontSize: 18,
-    color: '#922B21',
     fontWeight: '600',
     left: 20,
   },
-  profile_list_label_address: {
-    fontSize: 16,
-    color: '#0E6655',
-    fontWeight: '600',
-  },
-
-  profile_list_label_point: {
-    fontSize: 16,
-    color: '#e31b23',
-    fontWeight: '600',
-  },
 
   profile_list_label_invite_id: {
-    fontSize: 16,
-    color: '#51A9FF',
     fontWeight: '600',
   },
   profile_list_small_label: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
-  },
-  separator: {
-    width: '100%',
-    height: Util.pixel,
-    backgroundColor: '#dddddd',
-  },
-
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
-    backgroundColor: 'red',
-    top: 4,
-    left: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8,
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-
-  profile_list_balance_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 130,
-    height: 30,
-    marginLeft: 4,
-    marginRight: 4,
-  },
-  profile_list_balance_box_angle: {
-    position: 'absolute',
-    top: 0,
-    right: 20,
+    marginTop: 5,
   },
 
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
-    paddingVertical: 8,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
   },
   add_store_action_btn: {
-    paddingVertical: 4,
+    paddingVertical: 12,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 2),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ddd',
-  },
-  add_store_action_label: {
-    fontSize: 12,
-    color: '#404040',
-    marginTop: 4,
+    width: ~~(appConfig.device.width / 2),
   },
   add_store_action_wallet_text: {
-    fontSize: 14,
-    color: '#404040',
     marginLeft: 0,
     marginTop: 3,
   },
   add_store_action_wallet_content: {
-    fontSize: 16,
-    color: '#333333',
     fontWeight: '700',
   },
   add_store_action_wallet: {
@@ -1541,10 +1531,8 @@ const styles = StyleSheet.create({
   premiumContainer: {
     height: null,
     minHeight: 80,
-    backgroundColor: '#242424',
     paddingTop: 12,
     paddingBottom: 15,
-    ...elevationShadowStyle(4),
   },
   premiumLabel: {
     fontFamily: 'SairaStencilOne-Regular',
@@ -1558,7 +1546,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 15,
     paddingVertical: 3,
-    backgroundColor: '#f6f6f6',
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
     marginLeft: 10,
@@ -1567,53 +1554,28 @@ const styles = StyleSheet.create({
   rightPremiumLabel: {
     marginLeft: 10,
     marginRight: -5,
-    color: '#242424',
-    fontSize: 10,
   },
   rightPremiumHighlight: {
     fontWeight: '500',
-    fontSize: 12,
   },
   rightPremiumIconContainer: {
     marginLeft: 15,
   },
-  boxIcon_domainSelector: {
-    backgroundColor: '#333',
-  },
   premiumProgressContainer: {
     width: '100%',
-    backgroundColor: '#555',
     height: 5,
     position: 'absolute',
     bottom: 0,
-    elevation: 4,
   },
   footerSiteContainer: {
     paddingVertical: 12,
-    borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
-    backgroundColor: '#ffffff',
-    // alignItems: 'center',
-  },
-  footerSiteContent: {
-    width: appConfig.device.width - 24,
   },
   listOptionsContainer: {
     paddingVertical: 8,
-  },
-  viewRevenueCommissions: {
-    flexDirection: 'row',
-    marginBottom: appConfig.device.isIOS ? -7 : 0,
-  },
-  commissionValue: {
-    color: appConfig.colors.primary,
   },
 });
 
 export default withTranslation(['account', 'common', 'opRegister'])(
   observer(Account),
-);
-
-const IconAngleRight = () => (
-  <Icon name="angle-right" size={26} color="#999999" />
 );

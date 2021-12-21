@@ -136,6 +136,31 @@ export type Color = {
   gold: ColorValue[];
   platinum: ColorValue[];
   diamond: ColorValue[];
+
+  // ACCOUNT
+  accountDomain: ColorValue;
+  accountPremium: ColorValue;
+  accountDefaltWallet: ColorValue;
+  accountRevenueCommissions: ColorValue;
+  accountAffiliate: ColorValue;
+  accountStore: ColorValue;
+  accountOrder: ColorValue;
+  accountVoucher: ColorValue;
+  accountAddress: ColorValue;
+  accountGoldMember: ColorValue;
+  accountWarehouse: ColorValue;
+  accountCommissionIncome: ColorValue;
+  accountSaleReport: ColorValue;
+  accountResetPassword: ColorValue;
+  accountFacebookFanpage: ColorValue;
+  accountAboutUs: ColorValue;
+  accountTermOfUse: ColorValue;
+  accountLanguage: ColorValue;
+  accountAppInfo: ColorValue;
+  accountAppUpdate: ColorValue;
+  // PREMIUM
+  premium: ColorValue;
+
   accent1: ColorValue;
   accent2: ColorValue;
   sale: ColorValue;

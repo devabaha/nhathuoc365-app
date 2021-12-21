@@ -241,11 +241,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       Actions.push(appConfig.routes.newsTab);
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
-      Actions.notify_item({
-        title: service.title || service.news?.title,
-        data: service.news,
-        newsId: service.news_id,
-      });
+      push(
+        appConfig.routes.notifyDetail,
+        {
+          title: service.title || service.news?.title,
+          data: service.news,
+          newsId: service.news_id,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
       store.setSelectedNewsId(service.categoryId || '');
@@ -528,7 +532,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** PERSONAL PROFILE */
     case SERVICES_TYPE.PERSONAL_PROFILE:
-      Actions.push(appConfig.routes.personalProfile, {
+      push(appConfig.routes.personalProfile, {
         isMainUser: service.isMainUser,
         userInfo: service.userInfo,
         title: service.title || service.userInfo?.name,
@@ -542,11 +546,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** AGENCY INFORMATION REGISTER */
     case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
-      Actions.push(appConfig.routes.agencyInformationRegister, {
-        title:
-          service.title ||
-          commonT('screen.agencyInformationRegister.mainTitle'),
-      });
+      push(
+        appConfig.routes.agencyInformationRegister,
+        {
+          title:
+            service.title ||
+            commonT('screen.agencyInformationRegister.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /**  REQUEST */
@@ -594,11 +602,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           : store.user_info?.default_wallet
         : store.user_info?.default_wallet;
       console.log(wallet, service);
-      Actions.push(appConfig.routes.vndWallet, {
-        title: service.name || wallet?.name,
-        wallet,
-        tabIndex: service.tabIndex,
-      });
+      push(
+        appConfig.routes.vndWallet,
+        {
+          title: service.name || wallet?.name,
+          wallet,
+          tabIndex: service.tabIndex,
+        },
+        service.theme,
+      );
       break;
 
     default:

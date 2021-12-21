@@ -1,26 +1,65 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, StyleSheet} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Typography, Icon} from 'src/components/base';
 
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
+class Sticker extends Component {
+  static contextType = ThemeContext;
 
-export default class Sticker extends Component {
+  get theme() {
+    return getTheme(this);
+  }
+
+  renderIconBefore = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name={this.props.icon || 'check-circle'}
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  get containerStyle() {
+    return [
+      styles.container,
+      {
+        backgroundColor: this.theme.color.overlay60,
+      },
+    ];
+  }
+
+  get titleStyle() {
+    return {
+      color: this.theme.color.onOverlay,
+    };
+  }
+
   render() {
     if (this.props.active) {
       if (this.props.component) {
         return this.props.component;
       } else {
         return (
-          <View style={styles.container}>
-            <Icon
-              name={this.props.icon || 'check-circle'}
-              size={32}
-              color="#dddddd"
-            />
-            <Text style={styles.sticker_title}>{this.props.message}</Text>
+          <View style={this.containerStyle}>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM}
+              style={[styles.sticker_title, this.titleStyle]}
+              renderIconBefore={this.renderIconBefore}>
+              {this.props.message}
+            </Typography>
           </View>
         );
       }
@@ -33,7 +72,7 @@ export default class Sticker extends Component {
 Sticker.propTypes = {
   message: PropTypes.string.isRequired,
   active: PropTypes.bool.isRequired,
-  component: PropTypes.any
+  component: PropTypes.any,
 };
 
 const styles = StyleSheet.create({
@@ -41,17 +80,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '69%',
     minHeight: 100,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    left: Util.size.width / 2 - Util.size.width * 0.345,
-    top: Util.size.height / 2 - 60 - NAV_HEIGHT,
+    left: appConfig.device.width / 2 - appConfig.device.width * 0.345,
+    top: appConfig.device.height / 2 - 60 - NAV_HEIGHT,
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   sticker_title: {
-    color: '#dddddd',
     marginTop: 8,
     fontWeight: '600',
-    fontSize: 14
-  }
+  },
+  icon: {
+    fontSize: 32,
+  },
 });
+
+export default Sticker;
