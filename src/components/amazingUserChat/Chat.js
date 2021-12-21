@@ -1,13 +1,20 @@
 import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
-// librarys
-import {Actions} from 'react-native-router-flux';
-import store from '../../store/Store';
+import {View} from 'react-native';
+// configs
+import store from 'app-store/Store';
 import appConfig from 'app-config';
-import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
-import RightButtonCall from '../RightButtonCall';
-import {servicesHandler} from '../../helper/servicesHandler';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {servicesHandler} from 'app-helper/servicesHandler';
 import EventTracker from 'app-helper/EventTracker';
+// routing
+import {pop, push, refresh, replace} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import TickidChat from 'app-packages/tickid-chat/container/TickidChat';
+import RightButtonCall from '../RightButtonCall';
+import {Container} from 'src/components/base';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -15,46 +22,48 @@ const MESSAGE_TYPE_IMAGE = 'image';
 const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 class Chat extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {};
   static defaultProps = {
     phoneNumber: null,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    messages: null,
+    site: {},
+    pinNotify: 0,
+    pinListNotify: {},
+    pinList: null,
+    showImageGallery: false,
+    editable: false,
+    showImageBtn: true,
+    showSendBtn: false,
+    showBackBtn: false,
+    selectedImages: [],
+    uploadImages: [],
+    user: this.user,
+    user_id: store.user_info ? store.user_info.id : '',
+    phoneNumber: '',
+    guestName: '',
+  };
 
-    this.state = {
-      messages: null,
-      site: {},
-      pinNotify: 0,
-      pinListNotify: {},
-      pinList: null,
-      showImageGallery: false,
-      editable: false,
-      showImageBtn: true,
-      showSendBtn: false,
-      showBackBtn: false,
-      selectedImages: [],
-      uploadImages: [],
-      user: this.user,
-      user_id: store.user_info ? store.user_info.id : '',
-      phoneNumber: '',
-      guestName: '',
-    };
+  _lastID = 0;
+  limit = 20;
+  offset = 0;
+  loadMore = false;
+  unmounted = false;
+  refListMessages = null;
+  refGiftedChat = null;
+  refTickidChat = null;
+  source = null;
+  isLoadFirstTime = true;
+  giftedChatExtraProps = {};
 
-    this._lastID = 0;
-    this.limit = 20;
-    this.offset = 0;
-    this.loadMore = false;
-    this.unmounted = false;
-    this.refListMessages = null;
-    this.refGiftedChat = null;
-    this.refTickidChat = null;
-    this.source = null;
-    this.isLoadFirstTime = true;
-    this.giftedChatExtraProps = {};
+  eventTracker = new EventTracker();
 
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
   }
 
   get giftedChatProps() {
@@ -87,7 +96,7 @@ class Chat extends Component {
   i = 0;
   componentDidMount() {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         right: () => this.renderRight(this.props.phoneNumber),
         onBack: this.onBack.bind(this),
       });
@@ -117,9 +126,9 @@ class Chat extends Component {
 
   onBack() {
     if (this.props.fromSearchScene) {
-      Actions.replace(`${appConfig.routes.listUserChat}_1`);
+      replace(`${appConfig.routes.listUserChat}_1`);
     } else {
-      Actions.pop();
+      pop();
     }
   }
 
@@ -141,8 +150,6 @@ class Chat extends Component {
         }
       } catch (e) {
         console.warn(e + ' site_pin_list');
-
-        store.addApiQueue('site_pin_list', this._getPinList);
       }
     }
   };
@@ -166,7 +173,7 @@ class Chat extends Component {
           if (response && response.status == STATUS_SUCCESS && response.data) {
             if (response.data.receiver) {
               if (this.state.phoneNumber !== response.data.receiver.phone) {
-                Actions.refresh({
+                refresh({
                   right: this.renderRight(response.data.receiver.phone),
                 });
               }
@@ -310,11 +317,15 @@ class Chat extends Component {
   handlePinPress = (pin) => {
     const {t} = this.props;
     if (pin.type === 'STORE_ORDERS_TYPE') {
-      Actions.push(appConfig.routes.storeOrders, {
-        store_id: this.state.site.id,
-        title: this.state.site.name,
-        tel: this.state.site.tel,
-      });
+      push(
+        appConfig.routes.storeOrders,
+        {
+          store_id: this.state.site.id,
+          title: this.state.site.name,
+          tel: this.state.site.tel,
+        },
+        this.theme,
+      );
     } else {
       servicesHandler(pin, t);
     }
@@ -327,7 +338,7 @@ class Chat extends Component {
       <TickidChat
         // Root props
         setHeader={this.props.setHeader}
-        defaultStatusBarColor={appConfig.colors.primary}
+        defaultStatusBarColor={this.theme.color.primaryDark}
         // Refs
         ref={(inst) => (this.refTickidChat = inst)}
         refGiftedChat={(inst) => (this.refGiftedChat = inst)}
@@ -353,17 +364,11 @@ class Chat extends Component {
         pinListNotify={this.state.pinListNotify}
       />
     ) : (
-      <View style={styles.container}>
+      <Container flex>
         <Indicator size="small" />
-      </View>
+      </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default withTranslation()(observer(Chat));

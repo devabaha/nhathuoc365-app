@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
-  Image,
+  // Image,
   StyleSheet,
   RefreshControl,
   Platform,
@@ -36,12 +36,16 @@ import Posts from 'src/containers/Social/Posts';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 import {Container} from '../base';
-import {hexToRgbCode} from 'app-helper/';
-import {mergeStyles} from 'src/Themes/helper';
+import {hexToRgbCode} from 'app-helper';
 import {NavBarWrapper, ScreenWrapper} from 'src/components/base';
+import Svg, {Path} from 'react-native-svg';
+import {withSafeAreaInsets} from 'react-native-safe-area-context';
+import {HOME_HEADER_HEIGHT} from './constants';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
+
+const HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT = 40;
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
@@ -249,6 +253,7 @@ class Home extends Component {
 
   get wrapperAnimatedStyle() {
     return {
+      ...styles.headerContainer,
       opacity: interpolate(this.animatedHeaderValue, {
         inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
         outputRange: [0, 1],
@@ -323,6 +328,51 @@ class Home extends Component {
     opacity: this.animatedHeaderContainerValue,
   };
 
+  headerBackgroundStyle = [
+    styles.headerBackground,
+    this.headerBackgroundOpacity,
+  ];
+
+  get headerBackgroundDimensions() {
+    return {
+      width: appConfig.device.width,
+      height: HOME_HEADER_HEIGHT + this.props.insets.top,
+    };
+  }
+
+  renderHeaderBackground = () => {
+    return (
+      <Container
+        noBackground
+        reanimated
+        style={[
+          this.headerBackgroundStyle,
+          {
+            width: this.headerBackgroundDimensions.width,
+            height:
+              this.headerBackgroundDimensions.height +
+              HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT,
+          },
+        ]}>
+        <View style={styles.headerBackgroundContentContainer}>
+          <Svg>
+            <Path
+              fill={this.theme.color.primary}
+              d={`M 0 0 H ${this.headerBackgroundDimensions.width} V ${
+                this.headerBackgroundDimensions.height +
+                HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT / 2
+              } q -${
+                this.headerBackgroundDimensions.width / 2
+              } ${HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT} -${
+                this.headerBackgroundDimensions.width
+              } 0`}
+            />
+          </Svg>
+        </View>
+      </Container>
+    );
+  };
+
   renderHeaderComponent = () => {
     return (
       <NavBarWrapper
@@ -356,53 +406,15 @@ class Home extends Component {
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
-    const extraTop =
-      (this.state.headerHeight || 0) +
-      10 +
-      (appConfig.device.isIOS
-        ? -5 + (!!appConfig.device.bottomSpace ? -10 : 0)
-        : 0);
-
-    const headerBackgroundStyle = mergeStyles(
-      [styles.headerBackground, this.headerBackgroundOpacity],
-      {backgroundColor: this.theme.color.primary},
-    );
 
     return (
-      <ScreenWrapper
-        // safeTopLayout
-        headerComponent={this.renderHeaderComponent()}>
-        {/* <LoadingComponent loading={this.props.apiFetching} /> */}
+      <ScreenWrapper>
         {/* <StatusBar
           // barStyle={this.state.statusBarStyle}
           backgroundColor={appConfig.colors.primary}
         /> */}
-
-        <Container reanimated style={headerBackgroundStyle}>
-          {this.props.site && this.props.site.app_event_banner_image && (
-            <Image
-              style={styles.headerImage}
-              source={{uri: this.props.site.app_event_banner_image}}
-            />
-          )}
-        </Container>
-
-        {/* <Animated.View
-          style={[styles.headerContainerStyle, this.headerContainerStyle]}>
-          <Header
-            wrapperStyle={this.wrapperAnimatedStyle}
-            maskSearchWrapperStyle={this.searchWrapperStyle}
-            maskSubStyle={this.headerAnimatedStyle}
-            iconStyle={this.headerIconStyle}
-            notify={this.props.notify}
-            name={name}
-            showCart={false}
-            onPressNoti={this.props.onPressNoti}
-            goToSearch={this.props.goToSearch}
-            loading={this.props.storeFetching}
-            onContentLayout={this.handleHeaderLayout.bind(this)}
-          />
-        </Animated.View> */}
+        {this.renderHeaderBackground()}
+        {this.renderHeaderComponent()}
 
         <ScrollView
           // onScroll={this.showBgrStatusIfOffsetTop}
@@ -429,16 +441,22 @@ class Home extends Component {
               useNativeDriver: true,
             },
           )}
-          // style={{overflow: 'visible'}}
+          style={{
+            marginTop:
+              appConfig.device.statusBarHeight + HOME_HEADER_HEIGHT / 3,
+          }}
           contentContainerStyle={{
-            // paddingTop: extraTop,
+            paddingTop:
+              this.headerBackgroundDimensions.height -
+              appConfig.device.statusBarHeight -
+              HOME_HEADER_HEIGHT / 3,
             paddingBottom: 30,
           }}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
-              progressViewOffset={extraTop}
+              progressViewOffset={this.headerBackgroundDimensions.height}
               refreshing={this.props.refreshing}
               onRefresh={this.props.onPullToRefresh}
               tintColor={appConfig.colors.white}
@@ -670,27 +688,18 @@ class Home extends Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
     backgroundColor: appConfig.colors.sceneBackground,
   },
-  headerBackground: {
-    // backgroundColor: appConfig.colors.primary,
-    alignItems: 'center',
-    overflow: 'hidden',
-    width: appConfig.device.width * 3,
-    height: appConfig.device.width * 3,
-    borderRadius: appConfig.device.width * 3,
+
+  headerContainer: {
     position: 'absolute',
-    top:
-      -(appConfig.device.width * 3) +
-      120 -
-      (appConfig.device.isAndroid
-        ? appConfig.device.statusBarHeight / 2
-        : appConfig.device.bottomSpace
-        ? -appConfig.device.statusBarHeight / 2
-        : 0),
-    left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
-    transform: [{scaleX: 1.2}],
+    zIndex: 9999,
+  },
+  headerBackground: {
+    position: 'absolute',
+  },
+  headerBackgroundContentContainer: {
+    flex: 1,
   },
   headerImage: {
     height: appConfig.device.width / 3,
@@ -701,20 +710,17 @@ let styles = StyleSheet.create({
   },
   contentWrapper: {
     backgroundColor: appConfig.colors.sceneBackground,
-    // marginBottom: 32,
   },
   primaryActionsWrapper: {
     paddingBottom: 8,
   },
   headerContainerStyle: {
-    // position: 'absolute',
     top: 0,
     width: '100%',
     zIndex: 9999,
   },
 
   servicesBlock: {
-    // backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },
@@ -748,4 +754,4 @@ let styles = StyleSheet.create({
 });
 styles = Themes.mergeStyles(styles, homeStyles);
 
-export default withTranslation(['home', 'common'])(Home);
+export default withTranslation(['home', 'common'])(withSafeAreaInsets(Home));

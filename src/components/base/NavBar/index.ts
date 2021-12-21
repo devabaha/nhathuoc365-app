@@ -10,5 +10,7 @@ export interface NavBarWrapperProps extends ContainerProps {
   appNavBar?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 
+  renderBackground?: () => Children;
+
   children: Children;
 }

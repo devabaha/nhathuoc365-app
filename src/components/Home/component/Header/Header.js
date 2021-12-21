@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet, Platform} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 // 3-party libs
 import Animated from 'react-native-reanimated';
 // configs
-import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
@@ -14,6 +13,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 //constants
 import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
 import {BundleIconSetName} from 'src/components/base';
+import {HOME_HEADER_HEIGHT} from '../../constants';
 // custom components
 import RightButtonNavBar from 'src/components/RightButtonNavBar';
 import Loading from 'src/components/Loading';
@@ -82,7 +82,7 @@ class Header extends Component {
                     name="ios-search"
                   />
                   <Input
-                    style={this.searchInputStyle}
+                    style={styles.searchInput}
                     placeholder={
                       this.props.placeholder ||
                       (store.store_data ? store.store_data.name : '')
@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
   wrapper: {
     // position: 'absolute',
     // top: 0,
-    // width: '100%'
+    // width: '100%',
+    height: HOME_HEADER_HEIGHT,
   },
   container: {
     // padding: 15,

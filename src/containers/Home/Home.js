@@ -11,7 +11,6 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
-import {formatStoreSocialPosts} from 'app-helper/social';
 import {push} from 'app-helper/routing';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 

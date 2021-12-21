@@ -101,10 +101,6 @@ class List extends Component {
               this.setState({customers});
             } else {
               this.isLoadMore && (this.offset -= this.limit);
-              flashShowMessage({
-                type: 'danger',
-                message: 'Không còn bản ghi nào!',
-              });
             }
           }
         }
@@ -203,10 +199,7 @@ class List extends Component {
                       ? '9+'
                       : item.unread + ''
                   }
-                  isSeparate={
-                    this.state.customers.length < 10 ||
-                    index !== this.state.customers.length - 1
-                  }
+                  isSeparate={index !== this.state.customers.length - 1}
                   isUnread={item.unread !== '0'}
                   subTitle={item.message}
                   timeAgo={item.time_ago}
@@ -230,4 +223,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('chat')(observer(List));
+export default withTranslation('chat')(List);
