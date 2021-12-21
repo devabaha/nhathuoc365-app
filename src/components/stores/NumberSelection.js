@@ -1,11 +1,17 @@
-import React from 'react';
-import {StyleSheet, View, TextInput, TouchableHighlight} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, IconButton, Input} from 'src/components/base';
 
 const NumberSelection = (props) => {
-  const extraStyle = props.disabled ? styles.disabled : {};
+  const {theme} = useTheme();
+
   const isValueAsNumber = !isNaN(props.value);
   let disabled = props.disabled;
   let minusDisabled = disabled;
@@ -16,62 +22,102 @@ const NumberSelection = (props) => {
     if (props.value <= props.min) {
       minusDisabled = true;
     }
-    if (props.max !== null && props.max !== undefined ? props.value >= props.max : false) {
+    if (
+      props.max !== null && props.max !== undefined
+        ? props.value >= props.max
+        : false
+    ) {
       plusDisabled = true;
     }
   }
 
+  const containerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.container,
+        {
+          borderWidth: theme.layout.borderWidth,
+          borderColor: theme.color.border,
+        },
+      ],
+      props.containerStyle,
+    );
+  }, [props.containerStyle, theme]);
+
+  const textContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.textContainer,
+        {
+          borderLeftWidth: theme.layout.border,
+          borderRightWidth: theme.layout.border,
+          borderColor: theme.color.border,
+        },
+      ],
+      props.textContainer,
+    );
+  }, [props.textContainer, theme]);
+
+  const inputStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.text,
+        {
+          color: theme.color.primaryHighlight,
+        },
+      ],
+      props.disabled && styles.disabled,
+    );
+  }, [props.disabled, theme]);
+
   return (
-    <View style={[styles.container, props.containerStyle]}>
-      <TouchableHighlight
+    <Container style={containerStyle}>
+      <IconButton
+        useTouchableHighlight
+        bundle={BundleIconSetName.ANT_DESIGN}
         disabled={minusDisabled}
         hitSlop={HIT_SLOP}
-        underlayColor="rgba(0,0,0,.2)"
         onPress={props.onMinus}
-        style={[styles.btn, minusDisabled && styles.disabled]}>
-        <Icon name="minus" style={[styles.icon, extraStyle]} />
-      </TouchableHighlight>
-      <View style={[styles.textContainer, props.textContainer]}>
-        <TextInput
+        style={styles.btn}
+        name="minus"
+        iconStyle={styles.icon}
+      />
+      <View style={textContainerStyle}>
+        <Input
           editable={!props.disabled}
-          style={[styles.text, extraStyle]}
+          style={inputStyle}
           value={'  ' + props.value.toString()}
           keyboardType="number-pad"
           onChangeText={props.onChangeText}
           onBlur={props.onBlur}
         />
       </View>
-      <TouchableHighlight
+      <IconButton
+        useTouchableHighlight
+        bundle={BundleIconSetName.ANT_DESIGN}
         disabled={plusDisabled}
         hitSlop={HIT_SLOP}
-        underlayColor="rgba(0,0,0,.2)"
         onPress={props.onPlus}
-        style={[styles.btn, plusDisabled && styles.disabled]}>
-        <Icon name="plus" style={[styles.icon, extraStyle]} />
-      </TouchableHighlight>
-    </View>
+        style={styles.btn}
+        name="plus"
+        iconStyle={styles.icon}
+      />
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    borderColor: '#d9d9d9',
-    borderWidth: 1,
     flexDirection: 'row',
     width: 100,
     height: 30,
   },
   textContainer: {
-    borderColor: '#d9d9d9',
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
     paddingVertical: 0,
     marginVertical: 0,
     flex: 1,
   },
   text: {
-    color: appConfig.colors.primary,
     textAlign: 'center',
     height: '100%',
     padding: 0,
@@ -83,7 +129,6 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   icon: {
-    color: '#8c8c8c',
     fontSize: 16,
   },
   disabled: {

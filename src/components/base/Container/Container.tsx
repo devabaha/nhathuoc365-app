@@ -131,6 +131,7 @@ const Container = forwardRef(
       row,
       center,
       shadow,
+      safeLayout,
       centerHorizontal,
       centerVertical,
       noBackground,
