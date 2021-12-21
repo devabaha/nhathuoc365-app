@@ -35,6 +35,8 @@ const NavBarWrapper = ({
   containerStyle,
   appNavBar = true,
   children,
+
+  renderBackground,
   ...props
 }: NavBarWrapperProps) => {
   const edges: Array<Edge> = useMemo(() => {
