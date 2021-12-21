@@ -5,7 +5,7 @@ import {
   CartPaymentStatus,
 } from 'src/constants/cart';
 import {CORE} from '../core';
-import { SYSTEM_LIGHT } from '../system';
+import {SYSTEM_LIGHT} from '../system';
 
 export const ADDITION_LIGHT = {
   //     STATUS COLOR
@@ -68,6 +68,31 @@ export const ADDITION_LIGHT = {
   gold: ['#d99b2d', '#FFCF40'],
   platinum: ['#a1a3a6', '#d8dadb'],
   diamond: ['#723dc6', '#d1a0f6'],
+
+  // ACCOUNT
+  accountDomain: SYSTEM_LIGHT.persistPrimary,
+  accountPremium: '#2fc5c5',
+  accountDefaltWallet: SYSTEM_LIGHT.persistPrimary,
+  accountRevenueCommissions: '#FD6D61',
+  accountAffiliate: '#51A9FF',
+  accountStore: '#f66f66',
+  accountOrder: '#06d6a0',
+  accountVoucher: '#ffc3c0',
+  accountAddress: '#fcb309',
+  accountGoldMember: '#527c23',
+  accountWarehouse: '#3c6c7d',
+  accountCommissionIncome: '#fd6d61',
+  accountSaleReport: '#72d4d3',
+  accountResetPassword: '#888888',
+  accountFacebookFanpage: '#4267b2',
+  accountAboutUs: SYSTEM_LIGHT.persistPrimary,
+  accountTermOfUse: '#62459b',
+  accountLanguage: '#175189',
+  accountAppInfo: '#688efb',
+  accountAppUpdate: '#dd4b39',
+
+  // PREMIUM
+  premium: '#80AB82',
 
   // OTHERS
   accent1: CORE.green500,
