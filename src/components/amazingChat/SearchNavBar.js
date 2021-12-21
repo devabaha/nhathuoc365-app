@@ -1,26 +1,36 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Animated,
-  Easing,
-  TouchableOpacity,
-  View,
-  Platform,
-  TextInput,
-  Text,
-  SafeAreaView,
-} from 'react-native';
+import {StyleSheet, Animated, Easing, View} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import appConfig from 'app-config';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {Actions} from 'react-native-router-flux';
-import Container from '../Layout/Container';
+// helpers
+import {hexToRgba} from 'app-helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Input,
+  Icon,
+  Container,
+  TextButton,
+  BaseButton,
+  NavBar,
+} from 'src/components/base';
 
 const defaultListener = () => {};
 const DURATION_FADE = 300;
 
 class SearchNavBar extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onRight: PropTypes.func,
     onChangeSearch: PropTypes.func,
@@ -34,8 +44,6 @@ class SearchNavBar extends Component {
     onRight: defaultListener,
     onChangeSearch: defaultListener,
     onClearText: defaultListener,
-    rightTitle: 'Hủy',
-    searchPlaceholder: 'Tìm kiếm khách hàng...',
     searchValue: '',
   };
 
@@ -44,6 +52,14 @@ class SearchNavBar extends Component {
     fadeAnimation: new Animated.Value(0),
   };
   refInput = null;
+
+  rightTitleTypoProps = {
+    onPrimary: true,
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   handleFocusInput() {
     this.setState({focus: true});
@@ -81,130 +97,115 @@ class SearchNavBar extends Component {
     }
   }
 
-  handleSearch() {}
-
   handleBack() {
-    Actions.pop();
+    pop();
+  }
+
+  renderSearch = () => {
+    const placeholder =
+      this.props.searchPlaceholder || this.props.t('enterToSearch');
+
+    const searchInputBackgroundColor = [
+      hexToRgba(this.theme.color.coreOverlay, 0),
+      hexToRgba(this.theme.color.coreOverlay, 0.4),
+    ];
+
+    return (
+      <Container row noBackground style={styles.headerContainer}>
+        <View style={styles.searchInput}>
+          <Animated.View
+            style={[
+              styles.inputAnimatedWrapper,
+              this.inputAnimatedWrapperStyle,
+              {
+                backgroundColor: this.state.fadeAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: searchInputBackgroundColor,
+                }),
+              },
+            ]}>
+            <BaseButton onPress={this.toggleSearch.bind(this)}>
+              <Animated.View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flex: 1,
+                  marginRight: 8,
+                }}>
+                <Icon
+                  bundle={BundleIconSetName.IONICONS}
+                  name="ios-search"
+                  size={20}
+                  style={[styles.searchIcon, this.searchIconStyle]}
+                />
+              </Animated.View>
+            </BaseButton>
+            <Input
+              ref={(inst) => (this.refInput = inst)}
+              placeholder={placeholder}
+              onChangeText={this.props.onChangeSearch}
+              onFocus={this.handleFocusInput.bind(this)}
+              onBlur={this.handleBlurInput.bind(this)}
+              autoFocus
+              style={[styles.input, this.inputStyle]}
+            />
+          </Animated.View>
+        </View>
+        {this.renderCancelButton()}
+      </Container>
+    );
+  };
+
+  renderCancelButton = () => {
+    const rightTitle = this.props.rightTitle || this.props.t('cancel');
+
+    return (
+      <TextButton
+        typoProps={this.rightTitleTypoProps}
+        style={styles.btnCancel}
+        onPress={this.handleBack.bind(this)}>
+        {rightTitle}
+      </TextButton>
+    );
+  };
+
+  get searchIconStyle() {
+    return {
+      color: this.theme.color.placeholder,
+    };
+  }
+
+  get inputStyle() {
+    return mergeStyles(this.theme.typography[TypographyType.LABEL_LARGE], {
+      color: this.theme.color.onOverlay,
+    });
+  }
+
+  get inputAnimatedWrapperStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
   }
 
   render() {
-    const iconProps = {
-      color: 'rgba(255, 255, 255, .6)',
-      fontSize: 22,
-    };
-
     return (
-      <View
-        iosBarStyle="light-content"
-        style={[styles.container]}
-        searchBar
-        rounded>
-        <SafeAreaView style={{flex: 1}}>
-          <Container row flex paddingHorizontal={12}>
-            <View style={[styles.searchInput]}>
-              <Animated.View
-                style={[
-                  styles.inputAnimatedWrapper,
-                  {
-                    backgroundColor: this.state.fadeAnimation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,.4)'],
-                    }),
-                  },
-                ]}>
-                <TouchableOpacity onPress={this.toggleSearch.bind(this)}>
-                  <Animated.View
-                    style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flex: 1,
-                      marginRight: 8,
-                    }}>
-                    <Icon name="ios-search" size={20} style={iconProps} />
-                  </Animated.View>
-                </TouchableOpacity>
-                <TextInput
-                  ref={(inst) => (this.refInput = inst)}
-                  placeholder={this.props.searchPlaceholder}
-                  placeholderTextColor={'rgba(255, 255, 255, .6)'}
-                  onChangeText={this.props.onChangeSearch}
-                  onFocus={this.handleFocusInput.bind(this)}
-                  onBlur={this.handleBlurInput.bind(this)}
-                  autoFocus
-                  style={[
-                    styles.input,
-                    {
-                      color: 'white',
-                    },
-                  ]}
-                />
-              </Animated.View>
-            </View>
-
-            <Button
-              containerStyle={styles.btnCancel}
-              onPress={this.handleBack.bind(this)}>
-              <Text style={styles.textButton}>{this.props.rightTitle}</Text>
-            </Button>
-          </Container>
-        </SafeAreaView>
-      </View>
+      <NavBar
+        navigation={this.props.navigation}
+        renderHeader={this.renderSearch}
+        back={false}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: appConfig.colors.primary,
+  headerContainer: {
     flex: 1,
-    ...Platform.select({
-      ios: {
-        height: 64,
-      },
-      android: {
-        height: 54,
-      },
-      windows: {
-        height: 54,
-      },
-    }),
-  },
-  row: {
-    flexDirection: 'row',
-    flex: 1,
-    paddingHorizontal: 12,
+    paddingHorizontal: 5,
+    paddingVertical: appConfig.device.isAndroid ? 8 : 6,
   },
   searchInput: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
-    color: appConfig.colors.white,
-    marginVertical: 7,
-  },
-  leftWrapper: {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  textButton: {
-    color: appConfig.colors.white,
-  },
-  icon: {
-    color: appConfig.colors.white,
-  },
-  btnClearText: {
-    backgroundColor: '#999',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  closeIcon: {
-    position: 'relative',
-    top: -1,
   },
   btnCancel: {
     justifyContent: 'center',
@@ -215,7 +216,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    borderRadius: 5,
     paddingHorizontal: 8,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -227,11 +227,9 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 0,
   },
-  title: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+  searchIcon: {
+    fontSize: 22,
   },
 });
 
-export default SearchNavBar;
+export default withTranslation()(SearchNavBar);

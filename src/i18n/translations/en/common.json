@@ -169,6 +169,9 @@
       "mainTitle": "Create post",
       "editTitle": "Edit post"
     },
+    "listChat": {
+      "mainTitle": "List Chat"
+    },
     "listUserChat": {
       "mainTitle": "Messages"
     },

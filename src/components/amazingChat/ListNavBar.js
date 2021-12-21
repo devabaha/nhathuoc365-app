@@ -86,7 +86,7 @@ class ListNavBar extends Component {
       <NavBar
         navigation={this.props}
         title={this.props.title}
-        renderLeft={this.renderBack}
+        // renderLeft={this.renderBack}
         renderRight={this.renderSearch}
       />
     );

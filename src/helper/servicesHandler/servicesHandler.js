@@ -285,6 +285,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.LIST_CHAT:
       push(appConfig.routes.listChat, {
+        title: service.title || commonT('screen.listChat.mainTitle'),
         titleStyle: {width: 220},
       });
       break;
