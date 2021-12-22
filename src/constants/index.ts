@@ -103,7 +103,13 @@ export const REQUEST_TYPE = {
 };
 
 export const GPS_LIST_TYPE = {
+  /**
+   * @description list of store in a site
+   */
   GPS_LIST_SITE: 'gps_list_site',
+  /**
+   * @description list of site
+   */
   GPS_LIST_STORE: 'gps_list_store',
 };
 

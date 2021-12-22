@@ -47,7 +47,7 @@ class Account extends Component {
 
     this.state = {
       listWarehouse: [],
-      isWarehouseLoading: true,
+      isWarehouseLoading: false,
       refreshing: false,
       logout_loading: false,
       sticker_flag: false,
@@ -411,7 +411,7 @@ class Account extends Component {
         key: 'warehouse',
         icon: 'warehouse',
         iconType: 'MaterialCommunityIcons',
-        label: t('options.warehouse.label'),
+        label: t('options.salePoint.label'),
         desc: store_name,
         disabled: this.state.isWarehouseLoading,
         rightIcon: this.state.isWarehouseLoading ? (
@@ -423,17 +423,26 @@ class Account extends Component {
           <IconAngleRight />
         ),
         onPress: () =>
-          Actions.push(appConfig.routes.modalList, {
-            heading: this.props.t('opRegister:modal.store.title'),
-            data: this.state.listWarehouse,
-            selectedItem: {id: store_id},
-            onPressItem: this.onSelectWarehouse,
-            onCloseModal: Actions.pop,
-            modalStyle: {
-              height: null,
-              maxHeight: '80%',
+          servicesHandler({
+            type: SERVICES_TYPE.GPS_LIST_STORE,
+            selectedStore: {id: store_id},
+            placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+            onPress: (store) => {
+              this.onSelectWarehouse(store);
+              Actions.pop();
             },
           }),
+        // Actions.push(appConfig.routes.modalList, {
+        //   heading: this.props.t('opRegister:modal.store.title'),
+        //   data: this.state.listWarehouse,
+        //   selectedItem: {id: store_id},
+        //   onPressItem: this.onSelectWarehouse,
+        //   onCloseModal: Actions.pop,
+        //   modalStyle: {
+        //     height: null,
+        //     maxHeight: '80%',
+        //   },
+        // }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -685,7 +694,7 @@ class Account extends Component {
   onRefresh() {
     this.setState({refreshing: true}, () => {
       this.login(1000);
-      this.getListWarehouse();
+      // this.getListWarehouse();
     });
   }
 
@@ -820,7 +829,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    this.getListWarehouse();
+    // this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
@@ -910,9 +919,8 @@ class Account extends Component {
     }
   }
 
-  onSelectWarehouse = (warehouse, closeModal) => {
+  onSelectWarehouse = (warehouse) => {
     this.setState({isWarehouseLoading: true});
-    closeModal();
     this.updateWarehouse(warehouse);
   };
 
@@ -1575,7 +1583,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common', 'opRegister'])(
+export default withTranslation(['account', 'common', 'opRegister', 'gpsStore'])(
   observer(Account),
 );
 

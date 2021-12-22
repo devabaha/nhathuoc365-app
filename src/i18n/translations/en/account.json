@@ -46,6 +46,9 @@
     "warehouse": {
       "label": "Warehouse"
     },
+    "salePoint": {
+      "label": "Sale point"
+    },
     "agencyInformationRegister": {
       "label": "Distributor Information",
       "desc": "View/ Edit distributor information"

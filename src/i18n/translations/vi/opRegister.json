@@ -27,6 +27,10 @@
     "chooseStore": {
       "title": "Chọn cửa hàng",
       "placeholder": "Chạm để chọn"
+    },
+    "chooseSalePoint": {
+      "title": "Chọn điểm bán",
+      "placeholder": "Chạm để chọn"
     }
   },
   "encourageMessage": "Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {{appName}} nhé!",

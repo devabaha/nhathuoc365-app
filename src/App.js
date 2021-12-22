@@ -1134,7 +1134,6 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
                     component={GPSListStore}
-                    navBar={SearchNavBarContainer}
                     back
                   />
                 </Stack>

@@ -20,6 +20,8 @@ import {APIRequest} from '../.../../../network/Entity';
 import HorizontalInfoItem from './HorizontalInfoItem';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import Loading from '../Loading';
+import {GPS_LIST_TYPE} from 'src/constants';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 class OpRegister extends Component {
   constructor(props) {
@@ -292,22 +294,30 @@ class OpRegister extends Component {
     this.setState({birth});
   };
 
-  onSelectWarehouse = (warehouseSelected, closeModal) => {
+  onSelectWarehouse = (warehouseSelected) => {
     this.setState({warehouseSelected});
-    closeModal();
   };
 
   onPressWarehouse = () => {
     Keyboard.dismiss();
-    Actions.push(appConfig.routes.modalList, {
-      heading: this.props.t('modal.store.title'),
-      data: this.state.listWarehouse,
-      selectedItem: this.state.warehouseSelected,
-      onPressItem: this.onSelectWarehouse,
-      onCloseModal: Actions.pop,
-      modalStyle: {
-        height: null,
-        maxHeight: '80%',
+    // Actions.push(appConfig.routes.modalList, {
+    //   heading: this.props.t('modal.store.title'),
+    //   data: this.state.listWarehouse,
+    //   selectedItem: this.state.warehouseSelected,
+    //   onPressItem: this.onSelectWarehouse,
+    //   onCloseModal: Actions.pop,
+    //   modalStyle: {
+    //     height: null,
+    //     maxHeight: '80%',
+    //   },
+    // });
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_STORE,
+      selectedStore: this.state.warehouseSelected,
+      placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+      onPress: (store) => {
+        Actions.pop();
+        this.onSelectWarehouse(store);
       },
     });
   };
@@ -391,13 +401,13 @@ class OpRegister extends Component {
       const wareHouseData = {
         title: (
           <Text>
-            {this.props.t('data.chooseStore.title')}{' '}
+            {this.props.t('data.chooseSalePoint.title')}{' '}
             <Text style={styles.textRequired}>*</Text>
           </Text>
         ),
         value:
           this.state.warehouseSelected?.name ||
-          this.props.t('data.chooseStore.placeholder'),
+          this.props.t('data.chooseSalePoint.placeholder'),
         isLoading: this.state.isWarehouseLoading,
         select: true,
         disable,
@@ -806,4 +816,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['opRegister', 'common'])(observer(OpRegister));
+export default withTranslation(['opRegister', 'common', 'gpsStore'])(
+  observer(OpRegister),
+);
