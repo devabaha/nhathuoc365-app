@@ -247,7 +247,7 @@ const GPSListStore = ({
           onPressActionBtn: () => handlePressSite(store),
         };
       case GPS_LIST_TYPE.GPS_LIST_STORE:
-        if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY)) {
+        if (isConfigActive(CONFIG_KEY.OPEN_STORE_FROM_LIST_KEY) && !selectedStore) {
           return {
             ...defaultStoreData,
             disabled: false,
