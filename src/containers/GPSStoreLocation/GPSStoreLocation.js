@@ -250,7 +250,7 @@ class GPSStoreLocation extends Component {
 
   handleSaveLocation = debounce((position, loading = false) => {
     if (this.unmounted) return;
-    
+
     const {coords} = position;
     if (coords) {
       const {longitude, latitude} = coords;
