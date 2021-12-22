@@ -101,7 +101,7 @@ class NormalList extends Component {
 
   get rowBorderStyle() {
     return {
-      borderColor: this.theme.color.textPrimary,
+      borderColor: this.theme.color.border,
     };
   }
 
