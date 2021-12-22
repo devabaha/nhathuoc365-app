@@ -25,6 +25,7 @@ export enum TypographyType {
   LABEL_SMALL_TERTIARY = 'labelSmallTertiary',
   LABEL_TINY_TERTIARY = 'labelTinyTertiary',
 
+  LABEL_LARGE_SECONDARY = 'labelLargeSecondary',
   LABEL_MEDIUM_SECONDARY = 'labelMediumSecondary',
   LABEL_SMALL_SECONDARY = 'labelSmallSecondary',
 
@@ -44,6 +45,7 @@ export enum TypographyType {
   DESCRIPTION_MEDIUM_TERTIARY = 'descriptionMediumTertiary',
   DESCRIPTION_SEMI_MEDIUM_TERTIARY = 'descriptionSemiMediumTertiary',
   DESCRIPTION_SMALL_TERTIARY = 'descriptionSmallTertiary',
+  DESCRIPTION_TINY_TERTIARY = 'descriptionTinyTertiary',
 
   DESCRIPTION_MEDIUM = 'descriptionMedium',
   DESCRIPTION_SEMI_MEDIUM = 'descriptionSemiMedium',

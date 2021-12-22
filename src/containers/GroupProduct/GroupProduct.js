@@ -1,17 +1,27 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {StyleSheet, RefreshControl, FlatList} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import Items from '../../components/stores/Items';
-import APIHandler from '../../network/APIHandler';
-import {APIRequest} from '../../network/Entity';
-import store from 'app-store';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Animated, {useValue} from 'react-native-reanimated';
-import CartFooter from '../../components/cart/CartFooter';
-import ListStoreProductSkeleton from '../../components/stores/ListStoreProductSkeleton';
-import RightButtonChat from '../../components/RightButtonChat';
-
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// network
+import APIHandler from 'src/network/APIHandler';
+// routing
+import {push, refresh} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Items from 'src/components/stores/Items';
+import CartFooter from 'src/components/cart/CartFooter';
+import ListStoreProductSkeleton from 'src/components/stores/ListStoreProductSkeleton';
+import RightButtonChat from 'src/components/RightButtonChat';
 import NoResult from 'src/components/NoResult';
+import {ScreenWrapper, FlatList, RefreshControl} from 'src/components/base';
 
 const styles = StyleSheet.create({
   listContentContainer: {
@@ -27,8 +37,11 @@ const GroupProduct = ({
   siteId = store?.store_data?.id,
   title,
   groupId,
+  navigation,
   ...props
 }) => {
+  const {theme} = useTheme();
+
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
@@ -41,6 +54,14 @@ const GroupProduct = ({
   const animatedContentOffsetY = useValue(0);
 
   useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
+
+  useEffect(() => {
     handleDidMount();
     return () => {
       getProductsRequest.cancel();
@@ -49,7 +70,7 @@ const GroupProduct = ({
 
   const handleDidMount = () => {
     getProducts();
-    Actions.refresh({
+    refresh({
       title: title || props.t('screen.groupProduct.mainTitle'),
       right: renderRightNavBar,
     });
@@ -111,10 +132,14 @@ const GroupProduct = ({
   };
 
   const onPressProduct = (product) => {
-    Actions.item({
-      title: product.name,
-      item: product,
-    });
+    push(
+      appConfig.routes.item,
+      {
+        title: product.name,
+        item: product,
+      },
+      theme,
+    );
   };
 
   const renderProduct = ({item: product, index}) => {
@@ -143,7 +168,7 @@ const GroupProduct = ({
   };
 
   return (
-    <>
+    <ScreenWrapper>
       <AnimatedFlatList
         data={products}
         renderItem={renderProduct}
@@ -184,15 +209,17 @@ const GroupProduct = ({
         keyExtractor={(item) => String(item.id)}
       />
 
-      <CartFooter
-        prefix="stores"
-        // confirmRemove={this._confirmRemoveCartItem.bind(this)}
-        animatedScrollY={animatedScrollY}
-        animatedContentOffsetY={animatedContentOffsetY}
-        animating
-      />
+      {!isLoading && (
+        <CartFooter
+          prefix="stores"
+          // confirmRemove={this._confirmRemoveCartItem.bind(this)}
+          animatedScrollY={animatedScrollY}
+          animatedContentOffsetY={animatedContentOffsetY}
+          animating
+        />
+      )}
       <ListStoreProductSkeleton loading={isLoading} />
-    </>
+    </ScreenWrapper>
   );
 };
 

@@ -1,12 +1,17 @@
-import {Actions} from 'react-native-router-flux';
+// 3-party libs
+import i18n from 'src/i18n';
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
+// routing
+import {push, pop} from 'app-helper/routing';
+// constants
 import {CART_TYPES} from 'src/constants/cart';
 import {ORDER_TYPES} from 'src/constants';
 
 const ITEM_KEY = 'ItemKey';
-const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
 const CART_TYPE_REPLACE_KEYWORD = 'cart_type';
+const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
 const CART_TYPE_WARNING_MESSAGE = `\r\n• Giỏ hàng đang đặt thuộc loại ${CART_TYPE_REPLACE_KEYWORD}.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để hủy giỏ hàng đang đặt và tạo giỏ hàng mới.\r\n`;
 
 class CTAProduct {
@@ -16,10 +21,16 @@ class CTAProduct {
   actionFunctionName = '';
   t = () => {};
   context = this;
+  theme = {};
 
   constructor(t, context) {
     this.t = t;
     this.context = context;
+    this.theme = context.theme;
+  }
+
+  get customT() {
+    return i18n.getFixedT(undefined, 'product');
   }
 
   isServiceProduct(product = {}) {
@@ -27,12 +38,16 @@ class CTAProduct {
   }
 
   goToBooking = (product) => {
-    Actions.push(appConfig.routes.booking, {
-      productId: product.id,
-      siteId: product.site_id,
-      attrs: product.attrs,
-      models: product.models,
-    });
+    push(
+      appConfig.routes.booking,
+      {
+        productId: product.id,
+        siteId: product.site_id,
+        attrs: product.attrs,
+        models: product.models,
+      },
+      this.theme,
+    );
   };
 
   isActionWillAddDifferentCartType = (cartType) => {
@@ -52,14 +67,18 @@ class CTAProduct {
         //     break;
         // }
 
-        Actions.push(appConfig.routes.modalConfirm, {
-          message: modalTitle,
-          type: 'warning',
-          yesTitle: CONTINUE_ORDER_CONFIRM,
-          titleStyle: {textAlign: 'left'},
-          noConfirm: this.cancelConfirmCartType,
-          yesConfirm: this.confirmCartType,
-        });
+        push(
+          appConfig.routes.modalConfirm,
+          {
+            message: modalTitle,
+            type: 'warning',
+            yesTitle: CONTINUE_ORDER_CONFIRM,
+            titleStyle: {textAlign: 'left'},
+            noConfirm: this.cancelConfirmCartType,
+            yesConfirm: this.confirmCartType,
+          },
+          this.theme,
+        );
 
         return true;
       }
@@ -132,16 +151,20 @@ class CTAProduct {
     }
 
     if (product.has_attr || isDropShip) {
-      Actions.push(appConfig.routes.itemAttribute, {
-        isDropShip,
-        itemId: product.id,
-        product,
-        onSubmit: (...args) => {
-          // Actions.pop();
+      push(
+        appConfig.routes.itemAttribute,
+        {
+          isDropShip,
+          itemId: product.id,
+          product,
+          onSubmit: (...args) => {
+            // pop();
 
-          callBack(product, ...args);
+            callBack(product, ...args);
+          },
         },
-      });
+        this.theme,
+      );
     } else {
       // if (this.isActionWillAddDifferentCartType(cartType)) {
       //   this.saveProductTempData(product, 1, '', null);
@@ -188,11 +211,15 @@ class CTAProduct {
               //  && response.data.attrs
               response.data.has_attr
             ) {
-              Actions.push(appConfig.routes.itemAttribute, {
-                itemId: item.id,
-                onSubmit: (quantity, modal_key) =>
-                  this._addCart(item, quantity, modal_key),
-              });
+              push(
+                appConfig.routes.itemAttribute,
+                {
+                  itemId: item.id,
+                  onSubmit: (quantity, modal_key) =>
+                    this._addCart(item, quantity, modal_key),
+                },
+                this.theme,
+              );
             } else {
               flashShowMessage({
                 message: response.message,
