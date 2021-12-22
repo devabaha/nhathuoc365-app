@@ -11,8 +11,9 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import CTAProduct from 'src/components/item/CTAProduct';
 // custom components
-import CTAProduct from '../item/CTAProduct';
 import {ProductItem} from 'src/components/Home/component/ListProducts';
 import {Container, TextButton, Typography, Icon} from 'src/components/base';
 

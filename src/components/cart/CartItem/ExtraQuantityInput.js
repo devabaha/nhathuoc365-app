@@ -1,17 +1,22 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {memo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {paddingLeft: 15},
-  txt: {color: '#ccc', fontSize: 16},
 });
 
-const ExtraQuantityInput = React.memo(({message}) => {
+const ExtraQuantityInput = ({message}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.txt}>{message}</Text>
+      <Typography type={TypographyType.LABEL_LARGE_SECONDARY}>
+        {message}
+      </Typography>
     </View>
   );
-});
+};
 
-export default ExtraQuantityInput;
+export default memo(ExtraQuantityInput);

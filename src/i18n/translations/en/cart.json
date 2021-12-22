@@ -27,5 +27,6 @@
     "total": "TOTAL",
     "order": "ORDER",
     "cart": "CART"
-  }
+  },
+  "quantityInput": "Enter quantity"
 }

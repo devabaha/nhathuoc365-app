@@ -27,5 +27,6 @@
     "total": "TỔNG CỘNG",
     "order": "ĐẶT HÀNG",
     "cart": "GIỎ HÀNG"
-  }
+  },
+  "quantityInput": "Nhập số lượng"
 }

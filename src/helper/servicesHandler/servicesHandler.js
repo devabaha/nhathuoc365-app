@@ -380,11 +380,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GROUP_PRODUCT:
-      Actions.push(appConfig.routes.store, {
-        categoriesData: [{id: service.groupId, name: service.title}],
-        title: service.title,
-        type: SERVICES_TYPE.GROUP_PRODUCT,
-      });
+      push(
+        appConfig.routes.store,
+        {
+          categoriesData: [{id: service.groupId, name: service.title}],
+          title: service.title || commonT('screen.groupProduct.mainTitle'),
+          type: SERVICES_TYPE.GROUP_PRODUCT,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.PRODUCT_STAMPS:
       Actions.push(appConfig.routes.productStamps);
