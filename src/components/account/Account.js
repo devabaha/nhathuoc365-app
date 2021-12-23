@@ -546,7 +546,7 @@ class Account extends Component {
         desc: t('options.resetPassword.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          push(appConfig.routes.resetPassword);
+          push(appConfig.routes.resetPassword, {}, this.theme);
         },
         boxIconStyle: [
           styles.boxIconStyle,

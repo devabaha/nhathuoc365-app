@@ -12,5 +12,18 @@ export interface NavBarWrapperProps extends ContainerProps {
 
   renderBackground?: () => Children;
 
-  children: Children;
+  children?: Children;
+}
+
+export interface NavBarProps extends NavBarWrapperProps {
+  navigation: any;
+  noBackground?: boolean;
+  back?: boolean;
+
+  renderLeft?: () => Children;
+  renderRight?: () => Children;
+  renderTitle?: () => Children;
+
+  renderHeader?: () => Children;
+  renderBack?: () => Children;
 }

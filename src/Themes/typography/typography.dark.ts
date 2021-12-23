@@ -78,6 +78,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_DARK.textTertiary,
   },
+  [TypographyType.LABEL_SEMI_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
   [TypographyType.LABEL_SMALL_TERTIARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.textTertiary,

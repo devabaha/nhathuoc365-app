@@ -65,7 +65,6 @@ import ViewOrdersItem from './components/orders/ViewOrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/Home/SearchStore';
 import ListStore from './components/Home/ListStore';
-import ScanQRCode from './components/Home/ScanQRCode';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import ChooseLocation from './components/Home/ChooseLocation';
@@ -206,6 +205,7 @@ import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {pop, push, reset} from 'app-helper/routing';
+import {ResetPasswordNavBar} from './components/ResetPassword';
 
 /**
  * Not allow font scaling
@@ -1567,16 +1567,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.scanQrCode}>
-                  <Scene
-                    key={`${appConfig.routes.scanQrCode}_1`}
-                    title={t('screen.qrBarCode.scanTitle')}
-                    component={ScanQRCode}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key="list_store">
                   <Scene
                     key="list_store_1"
@@ -1935,6 +1925,8 @@ class RootRouter extends Component {
                     title={t('screen.resetPassword.mainTitle')}
                     component={ResetPassword}
                     hideNavBar
+                    {...whiteNavBarConfig}
+                    back
                   />
                 </Stack>
 

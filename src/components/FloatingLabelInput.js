@@ -153,6 +153,13 @@ class FloatingLabelInput extends Component {
     };
   }
 
+  get extraInputStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderBottomColor: this.theme.color.border,
+    };
+  }
+
   render() {
     const {
       label,
@@ -172,10 +179,7 @@ class FloatingLabelInput extends Component {
       opacity: this.state.animatedOpacity,
       transform: [{translateY: this.state.animatedFloating}],
     };
-    const extraInputStyle = !last && {
-      borderBottomWidth: 0.5,
-      borderBottomColor: '#ddd',
-    };
+    const extraInputStyle = !last && this.extraInputStyle;
 
     return (
       <Container style={[styles.container, containerStyle]}>
