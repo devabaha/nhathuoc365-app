@@ -55,6 +55,8 @@ const Typography = forwardRef(
 
       renderIconBefore,
       renderIconAfter,
+      renderInlineIconBefore,
+      renderInlineIconAfter,
       children,
       ...props
     }: TypographyProps,
@@ -110,7 +112,9 @@ const Typography = forwardRef(
       <>
         {renderIconBefore && renderIconBefore(styles)}
         <TextComponent {...props} ref={ref} style={styles}>
+        {renderInlineIconBefore && renderInlineIconBefore(styles)}
           {children}
+        {renderInlineIconAfter && renderInlineIconAfter(styles)}
         </TextComponent>
         {renderIconAfter && renderIconAfter(styles)}
       </>

@@ -18,14 +18,11 @@ export interface TypographyProps extends TextProps {
   onBackground?: boolean;
   onDisabled?: boolean;
 
-  renderIconBefore?: (
-    titleStyle: StyleProp<TextStyle>,
-    buttonStyle?: StyleProp<ViewStyle>,
-  ) => Children;
-  renderIconAfter?: (
-    titleStyle: StyleProp<TextStyle>,
-    buttonStyle?: StyleProp<ViewStyle>,
-  ) => Children;
+  renderIconBefore?: (titleStyle: StyleProp<TextStyle>) => Children;
+  renderIconAfter?: (titleStyle: StyleProp<TextStyle>) => Children;
+
+  renderInlineIconBefore?: (titleStyle: StyleProp<TextStyle>) => Children;
+  renderInlineIconAfter?: (titleStyle: StyleProp<TextStyle>) => Children;
 
   children?: Children;
 }
