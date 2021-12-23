@@ -4,8 +4,7 @@
   "createRequest": "Create request",
   "noResult": "Request list is empty",
   "editRequest": "Edit request",
-  "requestTypes": "Choose the type of request",
-  "uploadImage": "Upload Image",
+  "requestTypes": "Pick a request type",
 
   "formData": {
     "title": "Title *",
@@ -16,9 +15,6 @@
   },
 
   "option": {
-    "title": "Upload image request",
-    "cancel": "Cancel",
-    "takePhoto": "Take a photo",
-    "chooseLibrary": "Open the library"
+    "title": "Upload image request"
   }
 }

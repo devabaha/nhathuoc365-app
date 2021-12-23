@@ -568,7 +568,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       push(
         appConfig.routes.requests,
         {
-          title: service.title,
+          title: service.title || commonT('screen.requests.mainTitle'),
           siteId: service.site_id || store.store_id,
           roomId: service.room_id || service.channel_id || 0,
           objectType: service.object_type,
@@ -590,6 +590,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           objectId: service.object_id,
           object: service.object,
           onRefresh: service.onRefresh,
+          title: service.title || commonT('screen.requests.creationTitle'),
         },
         service.theme,
       );
@@ -602,7 +603,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           siteId: service.site_id,
           roomId: service.room_id,
           requestId: service.request_id,
-          title: service.title,
+          title: service.title || commonT('screen.requests.detailTitle'),
           callbackReload: service.callbackReload,
         },
         service.theme,

@@ -19,6 +19,7 @@ import ProgressItem from '../ProgressItem';
 import {default as CustomButton} from 'src/components/Button';
 import {Actions} from 'react-native-router-flux';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   trackingWrapper: {
@@ -59,6 +60,8 @@ const styles = StyleSheet.create({
 });
 
 const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['common', 'progressTracking']);
   const isMounted = useIsMounted();
   const [getProgressTrackingDetailRequest] = useState(new APIRequest());
@@ -171,6 +174,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       object_id: progressTrackingDetail.object_id,
       object: progressTrackingDetail,
       onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
+      theme: theme,
     });
   };
 
@@ -182,6 +186,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       object_type: progressTrackingDetail.object_type,
       object_id: progressTrackingDetail.object_id,
       object: progressTrackingDetail,
+      theme: theme,
     });
   };
 
@@ -191,6 +196,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       site_id: progressTrackingDetail.site_id,
       room_id: progressTrackingDetail.room_id,
       request_id: request.id,
+      theme: theme,
     });
   };
 

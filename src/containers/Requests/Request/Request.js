@@ -82,8 +82,8 @@ class Request extends Component {
   }
 
   render() {
-    const statusStyle = this.props.textColor && {
-      color: this.props.textColor,
+    const statusStyle = {
+      color: this.props.textColor || this.theme.color.white,
     };
     const notiMess = this.props.noti ? normalizeNotify(this.props.noti) : '';
 
@@ -107,8 +107,8 @@ class Request extends Component {
 
             <RequestTagTitle
               containerStyle={styles.tagContainer}
-              code={this.props.tagCode || 200}
-              name={this.props.tagName || 'test tag'}
+              code={this.props.tagCode}
+              name={this.props.tagName}
             />
 
             {!!this.props.tagTitle && (

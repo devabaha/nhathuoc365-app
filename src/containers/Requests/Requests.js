@@ -86,6 +86,7 @@ class Requests extends Component {
       object_id: this.props.object_id || this.props.objectId,
       object_type: this.props.object_type || this.props.objectType,
       object: this.state.object || this.props.object,
+      theme: this.theme,
       onRefresh: (request) => {
         this.getRequests();
         setTimeout(() =>
@@ -94,6 +95,7 @@ class Requests extends Component {
             site_id: this.props.siteId,
             room_id: this.props.roomId,
             request_id: request.id,
+            theme: this.theme,
           }),
         );
       },
