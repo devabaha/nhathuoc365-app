@@ -1,4 +1,24 @@
 {
-    "closeRequest": "Close request",
-    "reopenRequest": "Re-open request"
+  "closeRequest": "Close request",
+  "reopenRequest": "Re-open request",
+  "createRequest": "Create request",
+  "noResult": "Request list is empty",
+  "editRequest": "Edit request",
+  "requestTypes": "Choose the type of request",
+  "uploadImage": "Upload Image",
+
+  "formData": {
+    "title": "Title *",
+    "requestType": "Request type *",
+    "content": "Content *",
+    "image": "Image",
+    "required": "Please enter this field"
+  },
+
+  "option": {
+    "title": "Upload image request",
+    "cancel": "Cancel",
+    "takePhoto": "Take a photo",
+    "chooseLibrary": "Open the library"
+  }
 }

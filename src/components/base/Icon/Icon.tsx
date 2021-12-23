@@ -14,10 +14,16 @@ import {BundleIconSetName, BUNDLE_ICON_SETS} from './constants';
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     primary: {
-      color: theme.color.persistPrimary,
+      color: theme.color.primary,
     },
     secondary: {
-      color: theme.color.persistSecondary,
+      color: theme.color.secondary,
+    },
+    primaryHighlight: {
+      color: theme.color.primaryHighlight,
+    },
+    secondaryHighlight: {
+      color: theme.color.secondaryHighlight,
     },
     neutral: {
       color: theme.color.iconInactive,
@@ -42,7 +48,9 @@ const Icon = forwardRef(
       reanimated,
       animated,
       primary,
+      primaryHighlight,
       secondary,
+      secondaryHighlight,
       neutral,
       disabled,
       ...props
@@ -76,13 +84,24 @@ const Icon = forwardRef(
         [
           styles.icon,
           primary && styles.primary,
+          primaryHighlight && styles.primaryHighlight,
           secondary && styles.secondary,
+          secondaryHighlight && styles.secondaryHighlight,
           neutral && styles.neutral,
           disabled && styles.disabled,
         ],
         style,
       );
-    }, [styles, primary, secondary, neutral, disabled, style]);
+    }, [
+      styles,
+      primary,
+      primaryHighlight,
+      secondary,
+      secondaryHighlight,
+      neutral,
+      disabled,
+      style,
+    ]);
 
     return <IconComponent {...props} ref={ref} style={iconStyles} />;
   },
