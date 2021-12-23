@@ -1,19 +1,29 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  Easing,
-} from 'react-native';
+import {StyleSheet, View, Animated, Easing} from 'react-native';
+// 3-party libs
 import {default as NetInfo} from '@react-native-community/netinfo';
-import FeatherIcon from 'react-native-vector-icons/Feather';
+// configs
 import appConfig from 'app-config';
-import store from '../../store';
+import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {
+  BundleIconSetName,
+  ButtonRoundedType,
+  TypographyType,
+} from 'src/components/base';
 import {LIVE_API_DOMAIN} from '../../network/API/BaseAPI';
+// custom components
 import DomainWatermark from './DomainWatermark';
+import {
+  AppFilledButton,
+  Typography,
+  Icon,
+  Container,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -33,42 +43,28 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 26,
-    color: appConfig.colors.primary,
   },
   mainContent: {
     padding: 10,
     flexDirection: 'row',
-    backgroundColor: '#fafafa',
-    ...elevationShadowStyle(3),
   },
   messageContainer: {
     flex: 1,
   },
   title: {
     fontWeight: 'bold',
-    color: '#333',
   },
   description: {
-    fontSize: 12,
-    color: '#444',
     marginTop: 3,
     fontStyle: 'italic',
   },
   btnContainer: {
     marginLeft: 15,
-    borderRadius: 4,
     alignSelf: 'center',
     overflow: 'hidden',
-  },
-  btn: {
+
     padding: 7,
     paddingHorizontal: 10,
-    backgroundColor: appConfig.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnText: {
-    color: '#fff',
   },
 
   devServerWaterMarkWrapper: {
@@ -80,25 +76,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  devServerWaterMarkContainer: {
-    backgroundColor: 'rgba(0,0,0,1)',
-    borderRadius: 10,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-    opacity: 0.2,
-  },
-  devServerWaterMarkLabel: {
-    letterSpacing: 1,
-    // fontWeight: 'bold',
-    // fontFamily: 'SairaStencilOne-Regular',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 8,
-    // textTransform: 'uppercase'
-  },
 });
 
-class NetWorkInfo extends Component {
+class NetworkInfo extends Component {
+  static contextType = ThemeContext;
+
   state = {
     isConnected: true,
     visible: false,
@@ -107,6 +89,10 @@ class NetWorkInfo extends Component {
   unsubscribe = () => {};
   animatedTranslateY = new Animated.Value(-100);
   animatedMainContentTranslateY = new Animated.Value(0);
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get title() {
     const {t} = this.props;
@@ -132,17 +118,23 @@ class NetWorkInfo extends Component {
 
   get backgroundColor() {
     if (!this.state.isConnected) {
-      return '#ff4d4f';
+      return this.theme.color.danger;
     } else if (this.state.isWeakConnection) {
-      return '#e8a84a';
+      return this.theme.color.warning;
     } else {
-      return '#000';
+      return this.theme.color.black;
     }
   }
 
   get icon() {
     if (!this.state.isConnected) {
-      return <FeatherIcon name="wifi-off" style={styles.icon} />;
+      return (
+        <Icon
+          bundle={BundleIconSetName.FEATHER}
+          name="wifi-off"
+          style={[styles.icon, this.iconStyle]}
+        />
+      );
     } else if (this.state.isWeakConnection) {
       return null;
     } else {
@@ -218,6 +210,12 @@ class NetWorkInfo extends Component {
     return null;
   }
 
+  get iconStyle() {
+    return {
+      color: this.theme.color.primary,
+    };
+  }
+
   render() {
     const extraStyle = {
       transform: [{translateY: this.animatedTranslateY}],
@@ -236,20 +234,31 @@ class NetWorkInfo extends Component {
               },
             ]}
           />
-          <Animated.View style={[styles.mainContent, extraMainContentStyle]}>
+          <Container
+            shadow
+            animated
+            style={[styles.mainContent, extraMainContentStyle]}>
             <View style={styles.iconContainer}>{this.icon}</View>
             <View style={styles.messageContainer}>
-              <Text style={styles.title}>{this.title}</Text>
-              <Text style={styles.description}>{this.message}</Text>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.title}>
+                {this.title}
+              </Typography>
+              <Typography
+                type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+                style={styles.description}>
+                {this.message}
+              </Typography>
             </View>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={this.onOk.bind(this)}>
-                <Text style={styles.btnText}>OK</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
+
+            <AppFilledButton
+              rounded={ButtonRoundedType.EXTRA_SMALL}
+              style={styles.btnContainer}
+              onPress={this.onOk.bind(this)}>
+              {this.props.t('ok')}
+            </AppFilledButton>
+          </Container>
         </Animated.View>
         {this.renderDevServerModeWaterMark()}
       </>
@@ -257,4 +266,4 @@ class NetWorkInfo extends Component {
   }
 }
 
-export default withTranslation()(observer(NetWorkInfo));
+export default withTranslation()(observer(NetworkInfo));

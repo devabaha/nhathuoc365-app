@@ -306,5 +306,6 @@
   "selectWard": "Select ward",
   "errorAndTryAgain": "Error! press to try again",
   "settings": "Settings",
-  "noNotification": "No notification yet"
+  "noNotification": "No notification yet",
+  "ok": "Ok"
 }
