@@ -1,8 +1,8 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {SafeAreaView, StyleSheet, View, Animated} from 'react-native';
-
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
+// custom components
 import DomainItem from './DomainItem';
 
 const styles = StyleSheet.create({
@@ -19,6 +19,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: appConfig.device.isIOS ? appConfig.device.statusBarHeight : 5,
     zIndex: 9999999,
+    alignSelf: 'center',
+  },
+  domainContainer: {
+    zIndex: -1,
+    position: 'absolute',
     alignSelf: 'center',
   },
 });
@@ -39,17 +44,12 @@ const DomainWatermark = ({domains = []}) => {
 
   const renderOtherDomains = () => {
     return otherDomains.map((domain, index) => {
-      const extraStyle = {
-        zIndex: -1,
-        position: 'absolute',
-        alignSelf: 'center',
-      };
       return (
         <DomainItem
           key={index}
           index={index + 1}
           totalDomains={domains.length}
-          containerStyle={extraStyle}
+          containerStyle={styles.domainContainer}
           visible={isShowAllDomains}
           title={domain}
         />
