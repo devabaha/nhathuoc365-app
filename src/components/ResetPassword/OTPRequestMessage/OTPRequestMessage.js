@@ -1,7 +1,23 @@
-import React from 'react';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {TextButton, Typography} from 'src/components/base';
 
-const OTPRequestMessage = props => {
+const OTPRequestMessage = (props) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('phoneAuth');
+
+  const disabled = props.requestNewOtpCounter > 0;
+
+  const btnTypoProps = {type: TypographyType.LABEL_MEDIUM};
+
   function convertSecondToMinute(time) {
     let minute = (time / 60) % 60;
     let second = time % 60;
@@ -10,41 +26,46 @@ const OTPRequestMessage = props => {
     } : ${parseInt(second) < 10 ? '0' + parseInt(second) : parseInt(second)}`;
   }
 
-  const { t } = useTranslation('phoneAuth');
-  const disabled = props.requestNewOtpCounter > 0;
   const requestNewOTPMess =
     props.requestNewOtpCounter > 0
       ? `${t('requestNewCodeWithTime')} ${convertSecondToMinute(
-          props.requestNewOtpCounter
+          props.requestNewOtpCounter,
         )}`
       : t('requestNewCode');
 
+  const requestNewOTPStyle = useMemo(() => {
+    return mergeStyles(styles.requestNewOTP, {color: theme.color.accent2});
+  }, [theme]);
+
   return (
     <>
-      <Text style={styles.message}>{t('phoneAuth:notReceiveCode')}</Text>
-      <TouchableOpacity
+      <Typography type={TypographyType.LABEL_MEDIUM} style={styles.message}>
+        {t('phoneAuth:notReceiveCode')}
+      </Typography>
+      <TextButton
+        style={styles.textContainer}
+        typoProps={btnTypoProps}
         onPress={props.onPressRequestNewOtp}
         disabled={disabled}
-      >
-        <Text style={styles.requestNewOTP}>{requestNewOTPMess}</Text>
-      </TouchableOpacity>
+        titleStyle={requestNewOTPStyle}>
+        {requestNewOTPMess}
+      </TextButton>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   message: {
-    fontSize: 14,
     fontWeight: '200',
-    color: 'black',
-    marginTop: 20
+    marginTop: 20,
   },
   requestNewOTP: {
-    fontSize: 14,
-    color: '#528BC5',
     fontWeight: '700',
-    marginTop: 8
-  }
+    marginTop: 8,
+  },
+  textContainer: {
+    justifyContent: 'flex-start',
+  },
 });
 
 export default OTPRequestMessage;

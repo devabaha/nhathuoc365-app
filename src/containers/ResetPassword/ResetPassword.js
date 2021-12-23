@@ -1,41 +1,60 @@
-import React, { Component } from 'react';
-import { Keyboard } from 'react-native';
-import { default as ResetPasswordComponent } from '../../components/ResetPassword';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {Keyboard, StyleSheet} from 'react-native';
+// configs
 import store from 'app-store';
-import Modal from '../../components/account/Transfer/Payment/Modal';
-
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   OTP_TIME_REQUEST,
   INPUT_TYPE,
   PASSWORD_LENGTH,
-  OTP_LENGTH
-} from '../../components/ResetPassword/constants';
-import EventTracker from '../../helper/EventTracker';
+  OTP_LENGTH,
+} from 'src/components/ResetPassword/constants';
+// custom components
+import {default as ResetPasswordComponent} from 'src/components/ResetPassword';
+import Modal from 'src/components/account/Transfer/Payment/Modal';
+
+const styles = StyleSheet.create({
+  modalContent: {
+    paddingHorizontal: 15,
+  },
+});
 
 class ResetPassword extends Component {
+  static contextType = ThemeContext;
+
   state = {
     selectedItems: [],
     requestNewOtpCounter: OTP_TIME_REQUEST,
     confirmResult: false,
     [INPUT_TYPE.PASSWORD]: {
       value: '',
-      error: ''
+      error: '',
     },
     [INPUT_TYPE.CONFIRM_PASSWORD]: {
       value: '',
-      error: ''
+      error: '',
     },
     [INPUT_TYPE.OTP]: {
       value: '',
-      error: ''
-    }
+      error: '',
+    },
   };
   timer = null;
   refScrollView = React.createRef();
   refOTP = React.createRef();
   unmounted = false;
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
@@ -48,7 +67,7 @@ class ResetPassword extends Component {
   }
 
   onBack() {
-    Actions.pop();
+    pop();
   }
 
   onRequestOTP(id = null) {
@@ -57,31 +76,31 @@ class ResetPassword extends Component {
   }
 
   smsBrandNameSendCode = async (phoneNumber, id) => {
-    const { t } = this.props;
-    const state = { ...this.state };
+    const {t} = this.props;
+    const state = {...this.state};
     state[INPUT_TYPE.OTP].error = '';
     state.loading = true;
     this.setState(state);
 
     try {
       const formData = {
-        username: phoneNumber
+        username: phoneNumber,
       };
       const response = await APIHandler.user_login_sms(formData);
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
-          this.setState(prevState => ({
+          this.setState((prevState) => ({
             confirmResult: phoneNumber,
             loading: false,
             selectedItems: id ? [id] : prevState.selectedItems,
-            requestNewOtpCounter: OTP_TIME_REQUEST
+            requestNewOtpCounter: OTP_TIME_REQUEST,
           }));
         } else {
           console.log('errr', error);
-          const state = { ...this.state };
+          const state = {...this.state};
           state[INPUT_TYPE.OTP].error = t(
-            'phoneAuth:smsBrandNameSendCodeFailMessage'
+            'phoneAuth:smsBrandNameSendCodeFailMessage',
           );
           state.loading = false;
           this.setState(state);
@@ -90,9 +109,9 @@ class ResetPassword extends Component {
     } catch (error) {
       console.log('errr', error);
       if (!this.unmounted) {
-        const state = { ...this.state };
+        const state = {...this.state};
         state[INPUT_TYPE.OTP].error = t(
-          'phoneAuth:smsBrandNameSendCodeFailMessage'
+          'phoneAuth:smsBrandNameSendCodeFailMessage',
         );
         state.loading = false;
         this.setState(state);
@@ -106,10 +125,10 @@ class ResetPassword extends Component {
     }, 600);
   }
 
-  onVerifyPress = async id => {
+  onVerifyPress = async (id) => {
     Keyboard.dismiss();
-    this.setState({ loading: true });
-    const { t } = this.props;
+    this.setState({loading: true});
+    const {t} = this.props;
 
     try {
       const codeInput = this.state[INPUT_TYPE.OTP].value;
@@ -117,20 +136,20 @@ class ResetPassword extends Component {
 
       const formData = {
         pw4n: newPass,
-        otp: codeInput
+        otp: codeInput,
       };
       const response = await APIHandler.user_reset_password(formData);
 
       if (!this.unmounted) {
-        const state = { ...this.state };
+        const state = {...this.state};
         state.loading = false;
         if (response && response.status === STATUS_SUCCESS) {
-          this.setState({ loading: false });
+          this.setState({loading: false});
           flashShowMessage({
             type: 'success',
-            message: response.message
+            message: response.message,
           });
-          Actions.pop();
+          pop();
         } else {
           state[INPUT_TYPE.OTP].error = response.message;
         }
@@ -139,7 +158,7 @@ class ResetPassword extends Component {
     } catch (err) {
       console.log('error', error);
       if (!this.unmounted) {
-        const { state } = { ...this.state };
+        const {state} = {...this.state};
         state[INPUT_TYPE.OTP].error = t('smsBrandNameVerifyFailMessage');
         state.loading = false;
         this.setState(state);
@@ -162,7 +181,7 @@ class ResetPassword extends Component {
 
   handleInput(value, type) {
     if (value.match(/^\d+$/) || !value) {
-      const state = { ...this.state };
+      const state = {...this.state};
       state[type].value = value;
       state[type].error = '';
       this.setState(state, () => type !== INPUT_TYPE.OTP && this.validate());
@@ -174,8 +193,8 @@ class ResetPassword extends Component {
   }
 
   validate() {
-    const state = { ...this.state };
-    const { t } = this.props;
+    const state = {...this.state};
+    const {t} = this.props;
 
     if (state[INPUT_TYPE.PASSWORD].value.length !== PASSWORD_LENGTH) {
       state[INPUT_TYPE.PASSWORD].error = t('form.newPass.error.length');
@@ -188,7 +207,7 @@ class ResetPassword extends Component {
         state[INPUT_TYPE.PASSWORD].value
     ) {
       state[INPUT_TYPE.CONFIRM_PASSWORD].error = t(
-        'form.confirmPass.error.notMatch'
+        'form.confirmPass.error.notMatch',
       );
     } else {
       state[INPUT_TYPE.CONFIRM_PASSWORD].error = '';
@@ -198,16 +217,16 @@ class ResetPassword extends Component {
   }
 
   _onPressRequestNewOtp() {
-    this.setState({ requestNewOtpCounter: OTP_TIME_REQUEST });
+    this.setState({requestNewOtpCounter: OTP_TIME_REQUEST});
     this.startCountDown();
     this.onRequestOTP();
   }
 
   startCountDown() {
     this.timer = setInterval(() => {
-      const { requestNewOtpCounter } = this.state;
+      const {requestNewOtpCounter} = this.state;
       if (requestNewOtpCounter > 0) {
-        this.setState({ requestNewOtpCounter: requestNewOtpCounter - 1 });
+        this.setState({requestNewOtpCounter: requestNewOtpCounter - 1});
       } else {
         clearInterval(this.timer);
       }
@@ -223,13 +242,19 @@ class ResetPassword extends Component {
   }
 
   onCloseModal = () => {
-    const state = { ...this.state };
+    const state = {...this.state};
     state[INPUT_TYPE.OTP].error = '';
     this.setState(state);
   };
 
+  get modalTitleStyle() {
+    return {
+      color: this.theme.color.danger,
+    };
+  }
+
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     const sendOTPDisabled =
       this.state.loading ||
       !this.state[INPUT_TYPE.PASSWORD].value ||
@@ -248,14 +273,15 @@ class ResetPassword extends Component {
         <Modal
           visible={!!this.state[INPUT_TYPE.OTP].error}
           title={t('modal.title')}
-          titleStyle={{ color: '#d20f0f', paddingHorizontal: 15 }}
+          titleStyle={[styles.modalContent, this.modalTitleStyle]}
           content={this.state[INPUT_TYPE.OTP].error}
-          contentStyle={{ marginTop: 5, paddingHorizontal: 15 }}
+          contentStyle={styles.modalContent}
           okText={t('modal.accept')}
           onRequestClose={this.onCloseModal}
           onOk={this.onCloseModal}
         />
         <ResetPasswordComponent
+          navigation={this.props.navigation}
           refOTP={this.refOTP}
           refScrollView={this.refScrollView}
           loading={this.state.loading}

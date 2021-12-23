@@ -22,6 +22,7 @@ export enum TypographyType {
 
   LABEL_LARGE_TERTIARY = 'labelLargeTertiary',
   LABEL_MEDIUM_TERTIARY = 'labelMediumTertiary',
+  LABEL_SEMI_MEDIUM_TERTIARY = 'labelSemiMediumTertiary',
   LABEL_SMALL_TERTIARY = 'labelSmallTertiary',
   LABEL_TINY_TERTIARY = 'labelTinyTertiary',
 

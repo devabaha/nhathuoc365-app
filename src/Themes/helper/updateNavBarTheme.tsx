@@ -20,6 +20,10 @@ export const removeThemeChangingListener = (listener) => {
 
 export const checkIsNextSceneNavBarSurfaceMode = (nextSceneKey: string) => {
   const isNavBarSurfaceMode = darkStatusBarScenes.find((sceneName) => {
+    const suffix = nextSceneKey.slice(nextSceneKey.length - 2);
+    if (suffix === '_1') {
+      nextSceneKey = nextSceneKey.slice(0, nextSceneKey.length - 2);
+    }
     return sceneName === nextSceneKey;
   });
 

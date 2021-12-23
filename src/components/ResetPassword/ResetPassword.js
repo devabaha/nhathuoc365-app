@@ -1,26 +1,34 @@
-import React, { memo } from 'react';
+import React, {useMemo} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
-  TouchableOpacity,
-  TextInput,
-  View
+  View,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+// configs
 import appConfig from 'app-config';
-import { PASSWORD_LENGTH, INPUT_TYPE, OTP_LENGTH } from './constants';
-import OTPRequestMessage from './OTPRequestMessage';
-import FloatingLabelInput from '../FloatingLabelInput';
-import Button from '../Button';
-import Header from './Header';
-import ComboSlidingButton from '../ComboSlidingButton';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {
+  PASSWORD_LENGTH,
+  INPUT_TYPE,
+} from 'src/components/ResetPassword/constants';
+// custom components
+import OTPRequestMessage from 'src/components/ResetPassword/OTPRequestMessage';
+import FloatingLabelInput from 'src/components/FloatingLabelInput';
+import Button from 'src/components/Button';
+import Header from 'src/components/ResetPassword/Header';
+import ComboSlidingButton from 'src/components/ComboSlidingButton';
+import {Container, ScreenWrapper, ScrollView} from 'src/components/base';
+import OTPInput from 'src/components/ResetPassword/OTPInput';
+import NavBar from './NavBar';
 
-const ResetPassword = props => {
-  const { t } = useTranslation('resetPassword');
+const ResetPassword = (props) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('resetPassword');
+
   const comboBtnData = [
     {
       id: 0,
@@ -28,29 +36,26 @@ const ResetPassword = props => {
         <OTPInput
           refOTP={props.refOTP}
           onFocus={props.onOTPFocus}
-          onChangeText={otp => props.onInputChange(otp, INPUT_TYPE.OTP)}
+          onChangeText={(otp) => props.onInputChange(otp, INPUT_TYPE.OTP)}
           placeholder={t('btn.typeOTP.placeholder')}
           value={props.OTPValue}
           loading={props.loading}
           disabled={props.verifyOTPDisabled}
           onSendPress={() => props.onVerifyPress(0)}
         />
-      )
+      ),
     },
     {
       id: 1,
       view: (
         <Button
           containerStyle={styles.confirmOTPbtnContainer}
-          btnContainerStyle={[
-            styles.btn,
-            props.sendOTPDisabled && styles.disabledConfirmOTP
-          ]}
           disabled={props.sendOTPDisabled}
           title={t('btn.sendOTP')}
           iconRight={
             props.loading && (
               <ActivityIndicator
+                color={theme.color.onPersistPrimary}
                 animating={true}
                 style={styles.loading}
                 size="small"
@@ -59,224 +64,160 @@ const ResetPassword = props => {
           }
           onPress={() => props.onRequestOTP(1)}
         />
-      )
-    }
+      ),
+    },
   ];
 
+  const comboContainerStyle = useMemo(() => {
+    return {
+      borderRadius: theme.layout.borderRadiusMedium,
+    };
+  }, [theme]);
+
+  const inputDisabledStyle = useMemo(() => {
+    return {
+      color: theme.color.onDisabled,
+      backgroundColor: theme.color.disabled,
+    };
+  }, [theme]);
+
   return (
-    <KeyboardAvoidingView
-      behavior={appConfig.device.isIOS ? 'padding' : null}
-      style={{ flex: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <View style={[appConfig.device.isIOS ? { zIndex: 1 } : { flex: 1 }]}>
-          <View style={styles.nav}>
-            <LinearGradient
-              style={styles.mask}
-              colors={[hexToRgba('#fafafa', 0.3), hexToRgba('#fafafa', 0)]}
-              locations={[0, 1]}
-            />
+    <ScreenWrapper>
+      <KeyboardAvoidingView
+        behavior={appConfig.device.isIOS ? 'padding' : null}
+        style={{flex: 1}}>
+        <Container style={styles.container}>
+          <NavBar navigation={props.navigation} />
 
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              style={styles.backBtn}
-              onPress={props.onBack}
-            >
-              <Ionicons name="ios-arrow-back" style={styles.backIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
+          <ScrollView
+            ref={props.refScrollView}
+            style={styles.scrollView}
+            scrollEventThrottle={16}
+            keyboardShouldPersistTaps="handled">
+            <ScreenWrapper safeTopLayout noBackground>
+              <Header />
 
-        <ScrollView
-          ref={props.refScrollView}
-          style={styles.scrollView}
-          scrollEventThrottle={16}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Header />
+              <View style={styles.body}>
+                <FloatingLabelInput
+                  label={t('form.newPass.title')}
+                  keyboardType={
+                    appConfig.device.isIOS ? 'number-pad' : 'numeric'
+                  }
+                  secureTextEntry
+                  editable={!props.confirmResult}
+                  inputStyle={props.confirmResult && inputDisabledStyle}
+                  onChangeText={(password) =>
+                    props.onInputChange(password, INPUT_TYPE.PASSWORD)
+                  }
+                  maxLength={PASSWORD_LENGTH}
+                  value={props.newPassValue}
+                  error={props.newPassError}
+                  onBlur={() => props.onInputBlur(INPUT_TYPE.PASSWORD)}
+                />
+                <FloatingLabelInput
+                  label={t('form.confirmPass.title')}
+                  keyboardType={
+                    appConfig.device.isIOS ? 'number-pad' : 'numeric'
+                  }
+                  secureTextEntry
+                  editable={!props.confirmResult}
+                  inputStyle={props.confirmResult && inputDisabledStyle}
+                  onChangeText={(confirmPassword) =>
+                    props.onInputChange(
+                      confirmPassword,
+                      INPUT_TYPE.CONFIRM_PASSWORD,
+                    )
+                  }
+                  maxLength={PASSWORD_LENGTH}
+                  value={props.confirmPassValue}
+                  error={props.confirmPassError}
+                  onBlur={() => props.onInputBlur(INPUT_TYPE.CONFIRM_PASSWORD)}
+                />
+              </View>
 
-          <View style={styles.body}>
-            <FloatingLabelInput
-              label={t('form.newPass.title')}
-              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              secureTextEntry
-              editable={!props.confirmResult}
-              inputStyle={props.confirmResult && styles.inputDisabled}
-              onChangeText={password =>
-                props.onInputChange(password, INPUT_TYPE.PASSWORD)
-              }
-              maxLength={PASSWORD_LENGTH}
-              value={props.newPassValue}
-              error={props.newPassError}
-              onBlur={() => props.onInputBlur(INPUT_TYPE.PASSWORD)}
-            />
-            <FloatingLabelInput
-              label={t('form.confirmPass.title')}
-              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              secureTextEntry
-              editable={!props.confirmResult}
-              inputStyle={props.confirmResult && styles.inputDisabled}
-              onChangeText={confirmPassword =>
-                props.onInputChange(
-                  confirmPassword,
-                  INPUT_TYPE.CONFIRM_PASSWORD
-                )
-              }
-              maxLength={PASSWORD_LENGTH}
-              value={props.confirmPassValue}
-              error={props.confirmPassError}
-              onBlur={() => props.onInputBlur(INPUT_TYPE.CONFIRM_PASSWORD)}
-            />
-          </View>
-
-          <View style={styles.comboBtn}>
-            <ComboSlidingButton
-              selectedItems={props.selectedComboBtns}
-              comboContainerStyle={styles.comboContainerStyle}
-              onFinishAnimation={props.onFinishAnimation}
-              data={comboBtnData}
-            />
-            {props.confirmResult && (
-              <OTPRequestMessage
-                requestNewOtpCounter={props.requestNewOtpCounter}
-                onPressRequestNewOtp={props.onPressRequestNewOtp}
-              />
-            )}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+              <Container noBackground style={styles.comboBtn}>
+                <ComboSlidingButton
+                  selectedItems={props.selectedComboBtns}
+                  comboContainerStyle={[
+                    styles.comboContainer,
+                    comboContainerStyle,
+                  ]}
+                  onFinishAnimation={props.onFinishAnimation}
+                  data={comboBtnData}
+                />
+                {props.confirmResult && (
+                  <OTPRequestMessage
+                    requestNewOtpCounter={props.requestNewOtpCounter}
+                    onPressRequestNewOtp={props.onPressRequestNewOtp}
+                  />
+                )}
+              </Container>
+            </ScreenWrapper>
+          </ScrollView>
+        </Container>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa'
   },
   nav: {
     width: '100%',
     position: 'absolute',
     justifyContent: 'center',
-    backgroundColor: 'transparent'
   },
   mask: {
     top: 0,
     height: 50,
     width: '100%',
-    position: 'absolute'
+    position: 'absolute',
   },
   backBtn: {
     backgroundColor: 'transparent',
     zIndex: 1,
-    top: 10,
-    left: 20
+    left: 20,
+    alignItems: 'flex-start',
   },
   backIcon: {
-    fontSize: 40,
-    color: '#5f5f5f'
+    fontSize: 35,
   },
   body: {
     flex: 1,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   scrollView: {
-    zIndex: appConfig.device.isIOS ? undefined : -1
+    zIndex: appConfig.device.isIOS ? undefined : -1,
+    paddingTop: 40,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
   loading: {
-    left: 15
+    left: 15,
   },
   comboBtn: {
-    marginTop: 15,
     paddingHorizontal: 15,
-    paddingVertical: 8,
-    paddingBottom: 30
+    paddingBottom: 80,
   },
-  inputDisabled: {
-    color: '#aaa',
-    backgroundColor: '#eee'
-  },
-  comboContainerStyle: {
+  inputDisabled: {},
+  comboContainer: {
     height: 55,
-    borderRadius: 10
   },
   confirmOTPbtnContainer: {
     paddingHorizontal: 0,
     paddingVertical: 0,
-    marginVertical: 2
   },
-  disabledConfirmOTP: {
-    backgroundColor: '#aaa'
-  },
+  disabledConfirmOTP: {},
   btn: {
     height: '100%',
-    paddingVertical: 0
+    paddingVertical: 0,
   },
   confirmOTPBtn: {
     width: 60,
-    backgroundColor: '#fff'
   },
-  confirmOTPIcon: {
-    color: DEFAULT_COLOR,
-    fontSize: 30,
-    top: 2
-  },
-  OTPInputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    borderWidth: 1
-  },
-  OTPInput: {
-    flex: 1,
-    paddingHorizontal: 15,
-    paddingVertical: 0,
-    marginVertical: 10,
-    borderRightWidth: appConfig.device.isIOS ? 0.2 : 0.8,
-    fontWeight: 'bold',
-    fontSize: 20,
-    textAlign: 'center'
-  },
-  disabledVerifyOTP: {
-    color: '#aaa'
-  }
 });
 
 export default ResetPassword;
-
-const OTPInput = memo(props => {
-  return (
-    <View style={styles.OTPInputContainer}>
-      <TextInput
-        ref={props.refOTP}
-        style={styles.OTPInput}
-        onFocus={props.onFocus}
-        placeholder={props.placeholder}
-        keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-        maxLength={OTP_LENGTH}
-        onChangeText={props.onChangeText}
-        value={props.value}
-      />
-      <View>
-        <Button
-          containerStyle={styles.confirmOTPbtnContainer}
-          btnContainerStyle={[styles.btn, styles.confirmOTPBtn]}
-          disabled={props.disabled}
-          iconRight={
-            props.loading ? (
-              <ActivityIndicator animating={true} size="small" />
-            ) : (
-              <Ionicons
-                name="ios-send"
-                style={[
-                  styles.confirmOTPIcon,
-                  props.disabled && styles.disabledVerifyOTP
-                ]}
-              />
-            )
-          }
-          onPress={props.onSendPress}
-        />
-      </View>
-    </View>
-  );
-});

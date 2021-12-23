@@ -234,7 +234,6 @@ class Config {
       transferConfirm: 'transfer_confirm',
       transferResult: 'transfer_result',
 
-      scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
       qrBarCodeInputable: 'qrBarCodeInputable',
 

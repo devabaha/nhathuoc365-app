@@ -2,6 +2,7 @@ import React, {memo, useCallback, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 // types
 import {Style} from 'src/Themes/interface';
+import {NavBarProps} from '.';
 // configs
 import appConfig from 'app-config';
 // helpers
@@ -43,27 +44,32 @@ const styles = StyleSheet.create({
   backIcon: {
     fontSize: appConfig.device.isAndroid ? 24 : 32,
   },
+  noBackground: {
+    backgroundColor: 'transparent',
+  },
 });
 
 const NavBar = ({
-  renderLeft,
-  renderRight,
-  renderTitle,
   navigation,
+  noBackground = false,
   back = true,
 
-  renderHeader,
-  renderBack,
+  renderLeft = undefined,
+  renderRight = undefined,
+  renderTitle = undefined,
+
+  renderHeader = undefined,
+  renderBack = undefined,
   ...props
-}) => {
+}: NavBarProps) => {
   const {theme} = useTheme();
 
   const navBarTheme = useMemo(() => {
     return getNavBarTheme(
       theme,
-      checkIsNextSceneNavBarSurfaceMode(navigation.title),
+      checkIsNextSceneNavBarSurfaceMode(navigation?.state?.routeName),
     );
-  }, [theme, navigation.title]);
+  }, [theme, navigation?.state?.routeName]);
 
   const handleBack = useCallback(() => {
     pop();
@@ -82,10 +88,14 @@ const NavBar = ({
 
   const containerStyle: Style = useMemo(() => {
     return mergeStyles(
-      [navBarTheme.headerStyle as Style, styles.container],
+      [
+        navBarTheme.headerStyle as Style,
+        styles.container,
+        noBackground && styles.noBackground,
+      ],
       props.containerStyle,
     );
-  }, [theme, navBarTheme, props.containerStyle]);
+  }, [theme, navBarTheme, noBackground, props.containerStyle]);
 
   return (
     <NavBarWrapper {...props} containerStyle={containerStyle}>
