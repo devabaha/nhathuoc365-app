@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class NetWorkInfo extends Component {
+class NetworkInfo extends Component {
   static contextType = ThemeContext;
 
   state = {
@@ -266,4 +266,4 @@ class NetWorkInfo extends Component {
   }
 }
 
-export default withTranslation()(observer(NetWorkInfo));
+export default withTranslation()(observer(NetworkInfo));
