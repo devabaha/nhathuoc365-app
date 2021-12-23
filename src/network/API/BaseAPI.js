@@ -7,7 +7,7 @@
 import store from 'app-store';
 
 export const LIVE_API_DOMAIN = 'https://apiapp.abaha.vn/';
-export const DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
+export const DEV_API_DOMAIN = 'https://apiapp.abaha.icu/';
 export const SPRINT_DEV_API_DOMAIN = 'https://apiapp.abaha.click/';
 export const PRE_RELEASE_API_DOMAIN = 'https://apiapp.abaha.link/';
 
@@ -21,7 +21,7 @@ export const LIVE_AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
 
 class BaseAPI {
   constructor(
-    apiDomain = LIVE_API_DOMAIN,
+    apiDomain = DEV_API_DOMAIN,
     imageDomain = LIVE_IMAGE_DOMAIN,
     socialDomain = LIVE_SOCIAL_DOMAIN,
     airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,

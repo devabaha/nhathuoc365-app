@@ -1,100 +1,113 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  TouchableOpacity,
-  Keyboard,
-  Image,
-} from 'react-native';
+import {StyleSheet, View, Keyboard} from 'react-native';
+// 3-party libs
 import {compose} from 'recompose';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import {
-  handleTextInput,
-  withNextInputAutoFocusForm,
-  withNextInputAutoFocusInput,
-} from 'react-native-formik';
-import {Actions} from 'react-native-router-flux';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import appConfig from 'app-config';
+import {handleTextInput, withNextInputAutoFocusForm} from 'react-native-formik';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-
-import FloatingLabelInput from '../../../components/FloatingLabelInput';
-import Loading from '../../../components/Loading';
-import Button from '../../../components/Button';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import {reaction} from 'mobx';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+//routing
+import {pop, push, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import FloatingLabelInput from 'src/components/FloatingLabelInput';
+import Loading from 'src/components/Loading';
+import Button from 'src/components/Button';
 import Images from './Images';
 import RequestTagTitle from '../Request/RequestTagTitle';
+import {Container, ScreenWrapper, ScrollView} from 'src/components/base';
+import MyInputTouchable from './MyInputTouchable';
 
-const MyInput = compose(
-  handleTextInput,
-  // withNextInputAutoFocusInput
-)(FloatingLabelInput);
+const MyInput = compose(handleTextInput)(FloatingLabelInput);
 
 const Form = withNextInputAutoFocusForm(View);
 
-const FORM_DATA = {
-  TITLE: {
-    label: 'Tiêu đề *',
-    name: 'title',
-    type: 'name',
-    required: true,
-  },
-  REQUEST_TYPE: {
-    label: 'Loại phản ánh *',
-    name: 'code_type',
-    type: 'name',
-    required: true,
-  },
-  CONTENT: {
-    label: 'Nội dung *',
-    name: 'content',
-    type: 'name',
-    required: true,
-  },
-  IMAGES: {
-    label: 'Hình ảnh',
-    name: 'images',
-    type: 'name',
-  },
-};
-
-const REQUIRED_MESSAGE = 'Vui lòng nhập trường này';
-const validationSchema = Yup.object().shape({
-  [FORM_DATA.TITLE.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.REQUEST_TYPE.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.CONTENT.name]: Yup.string().required(REQUIRED_MESSAGE),
-});
-
 class Creation extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     request: {},
     extraSubmitData: {},
     onRefresh: () => {},
   };
 
+  formData = {
+    TITLE: {
+      label: this.props.t('request:formData.title'),
+      name: 'title',
+      type: 'name',
+      required: true,
+    },
+    REQUEST_TYPE: {
+      label: this.props.t('request:formData.requestType'),
+      name: 'code_type',
+      type: 'name',
+      required: true,
+    },
+    CONTENT: {
+      label: this.props.t('request:formData.content'),
+      name: 'content',
+      type: 'name',
+      required: true,
+    },
+    IMAGES: {
+      label: this.props.t('request:formData.image'),
+      name: 'images',
+      type: 'name',
+    },
+  };
+
+  requiredMessage = this.props.t('request:formData.required');
+  validationSchema = Yup.object().shape({
+    [this.formData.TITLE.name]: Yup.string().required(this.requiredMessage),
+    [this.formData.REQUEST_TYPE.name]: Yup.string().required(
+      this.requiredMessage,
+    ),
+    [this.formData.CONTENT.name]: Yup.string().required(this.requiredMessage),
+  });
+
   state = {
     loading: true,
     requestTypes: [],
     selectedRequestType: {
       value: this.props.request?.id
-        ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+        ? this.props.request[this.formData.REQUEST_TYPE.name] || ''
         : '',
     },
-    formData: FORM_DATA,
+    formData: this.formData,
     uploadImageLoading: false,
     images: this.initImages,
+    keyboardTop: store.keyboardTop,
   };
   unmounted = false;
   refForm = React.createRef();
-  takePicture = this.takePicture.bind(this);
+  keyboardTopDisposer = reaction(
+    () => store.keyboardTop,
+    (keyboardTop) => {
+      this.setState({keyboardTop});
+    },
+  );
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get initImages() {
     const images = this.props.request?.id
-      ? this.props.request[FORM_DATA.IMAGES.name]?.length
-        ? this.props.request[FORM_DATA.IMAGES.name].map((image) => ({
+      ? this.props.request[this.formData.IMAGES.name]?.length
+        ? this.props.request[this.formData.IMAGES.name].map((image) => ({
             ...image,
             url: image.url_image,
           }))
@@ -109,24 +122,24 @@ class Creation extends Component {
     Object.values(this.state.formData).forEach((value) => {
       let itemValue = '';
       switch (value.name) {
-        case FORM_DATA.TITLE.name:
-          itemValue = this.props.request?.[FORM_DATA.TITLE.name]
-            ? this.props.request[FORM_DATA.TITLE.name] || ''
+        case this.formData.TITLE.name:
+          itemValue = this.props.request?.[this.formData.TITLE.name]
+            ? this.props.request[this.formData.TITLE.name] || ''
             : '';
           break;
-        case FORM_DATA.REQUEST_TYPE.name:
-          itemValue = this.props.request?.[FORM_DATA.REQUEST_TYPE.name]
-            ? this.props.request[FORM_DATA.REQUEST_TYPE.name] || ''
+        case this.formData.REQUEST_TYPE.name:
+          itemValue = this.props.request?.[this.formData.REQUEST_TYPE.name]
+            ? this.props.request[this.formData.REQUEST_TYPE.name] || ''
             : '';
           break;
-        case FORM_DATA.CONTENT.name:
-          itemValue = this.props.request?.[FORM_DATA.CONTENT.name]
-            ? this.props.request[FORM_DATA.CONTENT.name] || ''
+        case this.formData.CONTENT.name:
+          itemValue = this.props.request?.[this.formData.CONTENT.name]
+            ? this.props.request[this.formData.CONTENT.name] || ''
             : '';
           break;
-        case FORM_DATA.IMAGES.name:
-          itemValue = this.props.request?.[FORM_DATA.IMAGES.name]
-            ? this.props.request[FORM_DATA.IMAGES.name].map(
+        case this.formData.IMAGES.name:
+          itemValue = this.props.request?.[this.formData.IMAGES.name]
+            ? this.props.request[this.formData.IMAGES.name].map(
                 (image) => image.name,
               ) || ''
             : '';
@@ -142,24 +155,32 @@ class Creation extends Component {
 
     if (!this.props.title) {
       setTimeout(() => {
-        Actions.refresh({
+        refresh({
           title: this.props.t('screen.requests.creationTitle'),
         });
       });
     }
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+
+    this.updateNavBarDisposer();
+    this.keyboardTopDisposer();
   }
 
   takePicture(key, values) {
     this.setState({uploadImageLoading: true});
     const options = {
-      title: 'Tải ảnh phản ánh',
-      cancelButtonTitle: 'Hủy',
-      takePhotoButtonTitle: 'Chụp ảnh',
-      chooseFromLibraryButtonTitle: 'Mở thư viện',
+      title: this.props.t('request:option.title'),
+      cancelButtonTitle: this.props.t('cancel'),
+      takePhotoButtonTitle: this.props.t('cameraLabel'),
+      chooseFromLibraryButtonTitle: this.props.t('photoLibraryLabel'),
       rotation: 360,
       storageOptions: {
         skipBackup: true,
@@ -305,7 +326,7 @@ class Creation extends Component {
       if (this.unmounted) return;
       if (response?.status === STATUS_SUCCESS) {
         this.props.onRefresh(response.data?.request);
-        Actions.pop();
+        pop();
         flashShowMessage({
           type: 'success',
           message: response.message,
@@ -334,7 +355,7 @@ class Creation extends Component {
       images.splice(imgIndex, 1);
 
       this.handleSetValueFormData(
-        FORM_DATA.IMAGES.name,
+        this.formData.IMAGES.name,
         images.map((image) => image.name),
       );
       this.setState({images});
@@ -369,7 +390,7 @@ class Creation extends Component {
     const selectedRequestType = this.state.requestTypes.find(
       (type) => type.id === type_id,
     );
-    this.handleSetValueFormData(FORM_DATA.REQUEST_TYPE.name, type_id);
+    this.handleSetValueFormData(this.formData.REQUEST_TYPE.name, type_id);
     this.setState({
       selectedRequestType,
     });
@@ -378,14 +399,14 @@ class Creation extends Component {
   goToRequestTypeSelection = () => {
     Keyboard.dismiss();
 
-    Actions.push(appConfig.routes.modalPicker, {
+    push(appConfig.routes.modalPicker, {
       data: this.state.requestTypes,
-      title: 'Chọn loại phản ánh',
+      title: this.props.t('request:requestTypes'),
       onSelect: this.onSelectRequestType,
       selectedLabel: this.state.selectedRequestType.title,
       selectedValue: this.state.selectedRequestType.id,
       defaultValue: this.state.requestTypes[0].id,
-      onClose: () => this.forceTouchFormData(FORM_DATA.REQUEST_TYPE.name),
+      onClose: () => this.forceTouchFormData(this.formData.REQUEST_TYPE.name),
     });
   };
 
@@ -397,42 +418,42 @@ class Creation extends Component {
 
   onInputFocus = (type) => {
     switch (type) {
-      case FORM_DATA.REQUEST_TYPE.name:
+      case this.formData.REQUEST_TYPE.name:
         this.goToRequestTypeSelection();
         break;
     }
   };
 
   renderFormData({values}) {
-    return Object.keys(FORM_DATA).map((key, index) => {
-      const {label, name, type} = FORM_DATA[key];
+    return Object.keys(this.formData).map((key, index) => {
+      const {label, name, type} = this.formData[key];
       let extraProps = null;
       switch (name) {
-        case FORM_DATA.REQUEST_TYPE.name:
+        case this.formData.REQUEST_TYPE.name:
           return (
             <MyInputTouchable
               key={index}
               label={label}
               name={name}
               type={type}
-              onFocus={() => this.onInputFocus(FORM_DATA.REQUEST_TYPE.name)}
+              onFocus={() => this.onInputFocus(this.formData.REQUEST_TYPE.name)}
               onPress={this.goToRequestTypeSelection}
               value={this.state.selectedRequestType.title}
             />
           );
-        case FORM_DATA.IMAGES.name:
+        case this.formData.IMAGES.name:
           return (
             <Images
               key={index}
               images={this.state.images}
               onOpenImageSelector={() =>
-                this.takePicture(FORM_DATA.IMAGES.name, values)
+                this.takePicture(this.formData.IMAGES.name, values)
               }
               onDelete={this.handleDeleteImage}
               uploadImageLoading={this.state.uploadImageLoading}
             />
           );
-        case FORM_DATA.CONTENT.name:
+        case this.formData.CONTENT.name:
           extraProps = {
             multiline: true,
             inputContainerStyle: {height: 60},
@@ -454,13 +475,13 @@ class Creation extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {this.state.loading && <Loading center />}
-        <SafeAreaView style={styles.wrapper}>
+      <ScreenWrapper>
+        <Container style={styles.container}>
+          {this.state.loading && <Loading center />}
           <Formik
             initialValues={this.initialValues}
             onSubmit={this.onSubmit}
-            validationSchema={validationSchema}
+            validationSchema={this.validationSchema}
             innerRef={this.refForm}>
             {(props) => {
               const disabled =
@@ -483,20 +504,22 @@ class Creation extends Component {
                   </ScrollView>
 
                   <Button
+                    safeLayout={!this.state.keyboardTop}
                     title={
-                      this.props.request?.id ? 'Sửa yêu cầu' : 'Tạo yêu cầu'
+                      this.props.request?.id
+                        ? this.props.t('request:editRequest')
+                        : this.props.t('request:createRequest')
                     }
                     onPress={props.handleSubmit}
                     disabled={disabled}
-                    btnContainerStyle={disabled && styles.btnDisabled}
                   />
                 </>
               );
             }}
           </Formik>
           {appConfig.device.isIOS && <KeyboardSpacer />}
-        </SafeAreaView>
-      </View>
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
@@ -504,7 +527,6 @@ class Creation extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   wrapper: {
     flex: 1,
@@ -516,81 +538,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingLeft: 15,
     paddingBottom: 10,
-    backgroundColor: '#f7f7f7',
-  },
-  title: {
-    fontSize: 20,
-    letterSpacing: 1,
-    paddingHorizontal: 15,
-    color: '#555',
-    marginBottom: 15,
-  },
-  btn: {
-    padding: 15,
-    backgroundColor: '#444',
-    marginVertical: 30,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 150,
-  },
-  btnTitle: {
-    color: '#fff',
-    fontSize: 20,
-    textTransform: 'uppercase',
-  },
-  btnDisabled: {
-    backgroundColor: '#ccc',
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#fcfcfc',
-    marginRight: 10,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  inputTouchableWrapper: {
-    flexDirection: 'row',
   },
 });
 
-export default withTranslation()(Creation);
-
-const MyInputTouchable = ({
-  onPress,
-  label,
-  name,
-  type,
-  onFocus,
-  value,
-  style,
-  uri,
-  ...props
-}) => {
-  return (
-    <TouchableOpacity onPress={() => onPress(name)}>
-      <View style={[styles.inputTouchableWrapper, style]} pointerEvents="none">
-        <MyInput
-          label={label}
-          name={name}
-          type={type}
-          onFocus={onFocus}
-          value={value}
-          containerStyle={[{flex: 1}]}
-          {...props}
-        />
-        {!!uri && (
-          <View style={styles.imageContainer}>
-            <Image source={{uri}} style={styles.image} />
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
+export default withTranslation(['common', 'request'])(Creation);

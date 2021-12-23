@@ -5,7 +5,6 @@
   "noResult": "Danh sách yêu cầu đang trống",
   "editRequest": "Sửa yêu cầu",
   "requestTypes": "Chọn loại phản ánh",
-  "uploadImage": "Thêm ảnh",
 
   "formData": {
     "title": "Tiêu đề *",
@@ -16,9 +15,6 @@
   },
 
   "option": {
-    "title": "Tải ảnh phản ánh",
-    "cancel": "Hủy",
-    "takePhoto": "Chụp ảnh",
-    "chooseLibrary": "Mở thư viện"
+    "title": "Tải ảnh phản ánh"
   }
 }

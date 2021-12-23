@@ -1,19 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-} from 'react-native';
-import Lightbox from 'react-native-lightbox';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
+import React, {useState, useEffect, useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import Header from './Header';
-import Loading from '../../../../components/Loading';
-import {Actions} from 'react-native-router-flux';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom component
+import Loading from 'src/components/Loading';
+import {Container, ImageButton, TextButton, Icon} from 'src/components/base';
 
 const PADDING = 15;
 const IMAGE_SPACE = 10;
@@ -25,16 +24,17 @@ const Images = ({
   uploadImageLoading = false,
   ...props
 }) => {
-  const {t} = useTranslation();
+  const {theme} = useTheme();
+
+  const {t} = useTranslation(['common']);
 
   const IMAGE_SIZE =
     (appConfig.device.width - PADDING * 2 - IMAGE_SPACE * (max - 1)) / max;
 
-  const [isOpenLightBox, setIsOpenLightBox] = useState(false);
   const [gallery, setGallery] = useState(images);
 
   const [moreActions] = useState([t('delete'), t('cancel')]);
-  const destructiveButtonIndex = 0; // index of delete action.
+  const destructiveButtonIndex = moreActions.length - 2; // index of delete action.
 
   useEffect(() => {
     let temp = [...images];
@@ -46,14 +46,6 @@ const Images = ({
     setGallery(temp);
   }, [images]);
 
-  function handleOpenLightBox() {
-    setIsOpenLightBox(true);
-  }
-
-  function handleCloseLightBox() {
-    setIsOpenLightBox(false);
-  }
-
   function handleDeleteImage(image) {
     onDelete(image);
   }
@@ -61,14 +53,14 @@ const Images = ({
   function handlePressAction(image, actionIndex) {
     switch (actionIndex) {
       case destructiveButtonIndex:
-        Actions.pop();
+        pop();
         handleDeleteImage(image);
         break;
     }
   }
 
   function handlePressImage(image, index) {
-    Actions.push(appConfig.routes.itemImageViewer, {
+    push(appConfig.routes.itemImageViewer, {
       images: gallery.slice(0, gallery.length - 1),
       index,
       moreActionSheetOptions: {
@@ -79,69 +71,72 @@ const Images = ({
     });
   }
 
-  function renderHeader(close, image) {
-    return (
-      <Header
-        isEdit={false}
-        onClose={close}
-        onDelete={() => handleDeleteImage(image)}
-      />
-    );
-  }
+  const imageBorderContainerStyle = useMemo(() => {
+    return mergeStyles(styles.imageContainer, {
+      borderColor: theme.color.onSurface,
+      borderWidth: theme.layout.borderWidth,
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, theme);
 
   function renderImages() {
     return gallery.map((image, index) => {
       const addImageBtnContainerStyle = [
-        styles.imageContainer,
+        imageBorderContainerStyle,
         {
           marginLeft: index !== 0 ? IMAGE_SPACE : 0,
           width: IMAGE_SIZE,
           height: IMAGE_SIZE,
         },
       ];
+
       const imageContainerStyle = [
-        styles.imageContainer,
+        imageBorderContainerStyle,
         {
           marginRight: index !== images.length - 1 ? IMAGE_SPACE : 0,
           width: IMAGE_SIZE,
           height: IMAGE_SIZE,
         },
       ];
+
       if (image.btn) {
+        const btnTypoProps = {type: TypographyType.LABEL_SMALL};
+        const renderIconLeft = (iconStyle) => {
+          return (
+            <Icon
+              bundle={BundleIconSetName.FONT_AWESOME}
+              name="photo"
+              style={[iconStyle, styles.icon]}
+            />
+          );
+        };
+
         return (
           <View key={index} style={addImageBtnContainerStyle}>
             {uploadImageLoading ? (
-              <Loading style={{height: '100%'}} />
+              <Loading style={styles.loading} />
             ) : (
-              <TouchableOpacity
+              <TextButton
                 style={styles.addImageBtnContainer}
-                onPress={onOpenImageSelector}>
-                <Icon name="photo" style={styles.icon} />
-                <Text style={styles.text}>Thêm ảnh</Text>
-              </TouchableOpacity>
+                onPress={onOpenImageSelector}
+                typoProps={btnTypoProps}
+                renderIconLeft={renderIconLeft}>
+                {t('addImages')}
+              </TextButton>
             )}
           </View>
         );
       }
+
       return (
-        <View key={index} style={imageContainerStyle}>
-          {/* <Lightbox
-            renderHeader={close => renderHeader(close, image)}
-            springConfig={{ overshootClamping: true }}
-            onOpen={handleOpenLightBox}
-            willClose={handleCloseLightBox}
-          > */}
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={() => handlePressImage(image, index)}>
-            <Image
-              resizeMode={isOpenLightBox ? 'contain' : 'cover'}
-              style={styles.image}
-              source={{uri: image.url}}
-            />
-          </TouchableHighlight>
-          {/* </Lightbox> */}
-        </View>
+        <Container key={index} style={imageContainerStyle}>
+          <ImageButton
+            useTouchableHighlight
+            onPress={() => handlePressImage(image, index)}
+            style={styles.image}
+            source={{uri: image.url}}
+          />
+        </Container>
       );
     });
   }
@@ -157,15 +152,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    backgroundColor: '#eee',
-    borderRadius: 4,
     borderStyle: 'dashed',
-    borderWidth: 1,
   },
   addImageBtnContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
   },
   icon: {
     fontSize: 20,
@@ -176,6 +169,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
+    height: '100%',
+  },
+  loading: {
     height: '100%',
   },
 });

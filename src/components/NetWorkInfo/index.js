@@ -1,1 +1,1 @@
-export { default } from './NetworkInfo';
+export {default} from './NetworkInfo';
