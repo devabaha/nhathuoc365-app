@@ -1,9 +1,8 @@
-import React, {forwardRef, Fragment, memo, useMemo} from 'react';
+import React, {forwardRef, memo, useMemo} from 'react';
 import {
   StyleSheet,
   TouchableHighlight as RNTouchableHighlight,
   TouchableOpacity as RNTouchableOpacity,
-  View,
 } from 'react-native';
 
 import {
@@ -13,7 +12,7 @@ import {
 
 import {Theme} from 'src/Themes/interface';
 import {BaseButtonProps} from '.';
-import {Container, Ref} from '..';
+import {Ref} from '..';
 
 import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';

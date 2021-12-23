@@ -140,6 +140,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.NOTE_LARGE,
     color: BASE_COLOR_DARK.textPrimary,
   },
+  [TypographyType.LABEL_EXTRA_TINY]: {
+    fontSize: TypographyFontSize.NOTE_MEDIUM,
+    color: BASE_COLOR_DARK.textPrimary,
+  },
   // DESCRIPTION
   // PRIMARY
   [TypographyType.DESCRIPTION_MEDIUM_PRIMARY]: {

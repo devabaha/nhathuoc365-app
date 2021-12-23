@@ -147,7 +147,7 @@ import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
 import CountryPicker from './components/CountryPicker';
-import NetWorkInfo from './components/NetWorkInfo';
+import NetworkInfo from './components/NetworkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
@@ -588,7 +588,7 @@ class App extends Component {
         <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
           {/* <GPSStoreLocation /> */}
           {this.state.header}
-          <NetWorkInfo />
+          <NetworkInfo />
           <RootRouter
             appLanguage={this.state.appLanguage}
             t={this.props.t}
