@@ -12,10 +12,10 @@ import {elevationShadowStyle} from 'app-helper';
 import ProfileContext from 'src/containers/Profile/ProfileContext';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {TypographyType} from 'src/components/base';
+import {NavBarWrapper, TypographyType} from 'src/components/base';
 // custom components
 import NavBarButton from './NavBarButton';
-import {Container, ScreenWrapper, Typography} from 'src/components/base';
+import {Container, Typography} from 'src/components/base';
 
 class NavBar extends Component {
   static contextType = ThemeContext;
@@ -54,65 +54,65 @@ class NavBar extends Component {
     };
 
     return (
-      <ScreenWrapper style={[styles.wrapper, this.navBarTheme?.headerStyle]}>
+      <NavBarWrapper
+        appNavBar={false}
+        style={[styles.wrapper, this.navBarTheme?.headerStyle]}>
         <Container style={styles.container}>
           <Container
             animated
             style={[styles.maskBackground, animatedBackgroundMaskStyle]}
           />
-          <ScreenWrapper noBackground style={styles.contentWrapper}>
-            <NavBarButton
-              containerStyle={styles.iconBackContainer}
-              maskStyle={navBarBtnMaskStyle}
-              iconName="arrowleft"
-              onPress={pop}
-            />
-            <Typography
-              animated
-              // navBarTheme.titleStyle will override this type
-              // this type is fallback if navBarTheme.titleStyle undefined
-              type={TypographyType.TITLE_SEMI_LARGE}
-              numberOfLines={2}
-              style={[
-                styles.title,
-                this.navBarTheme?.titleStyle,
-                animatedBackgroundMaskStyle,
-              ]}>
-              {this.props.title}
-            </Typography>
-            <View style={styles.right}>
-              <ProfileContext.Consumer>
-                {({isMainUser}) =>
-                  isMainUser ? (
-                    <>
-                      <NavBarButton
-                        maskStyle={navBarBtnMaskStyle}
-                        iconName="edit"
-                        onPress={this.props.onEdit}
-                        iconStyle={this.iconStyle}
-                      />
-
-                      <NavBarButton
-                        maskStyle={navBarBtnMaskStyle}
-                        iconName="logout"
-                        onPress={this.props.onLogout}
-                        iconStyle={this.iconStyle}
-                      />
-                    </>
-                  ) : (
+          <NavBarButton
+            containerStyle={styles.iconBackContainer}
+            maskStyle={navBarBtnMaskStyle}
+            iconName="arrowleft"
+            onPress={pop}
+          />
+          <Typography
+            animated
+            // navBarTheme.titleStyle will override this type
+            // this type is fallback if navBarTheme.titleStyle undefined
+            type={TypographyType.TITLE_SEMI_LARGE}
+            numberOfLines={2}
+            style={[
+              styles.title,
+              this.navBarTheme?.titleStyle,
+              animatedBackgroundMaskStyle,
+            ]}>
+            {this.props.title}
+          </Typography>
+          <View style={styles.right}>
+            <ProfileContext.Consumer>
+              {({isMainUser}) =>
+                isMainUser ? (
+                  <>
                     <NavBarButton
                       maskStyle={navBarBtnMaskStyle}
-                      iconName="message1"
-                      onPress={this.props.onChat}
+                      iconName="edit"
+                      onPress={this.props.onEdit}
                       iconStyle={this.iconStyle}
                     />
-                  )
-                }
-              </ProfileContext.Consumer>
-            </View>
-          </ScreenWrapper>
+
+                    <NavBarButton
+                      maskStyle={navBarBtnMaskStyle}
+                      iconName="logout"
+                      onPress={this.props.onLogout}
+                      iconStyle={this.iconStyle}
+                    />
+                  </>
+                ) : (
+                  <NavBarButton
+                    maskStyle={navBarBtnMaskStyle}
+                    iconName="message1"
+                    onPress={this.props.onChat}
+                    iconStyle={this.iconStyle}
+                  />
+                )
+              }
+            </ProfileContext.Consumer>
+          </View>
         </Container>
-      </ScreenWrapper>
+      </NavBarWrapper>
     );
   }
 }
@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
     width: '100%',
     ...elevationShadowStyle(3, 0, 5, 0.1),
   },

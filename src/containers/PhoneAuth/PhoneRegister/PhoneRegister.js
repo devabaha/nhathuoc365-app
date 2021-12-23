@@ -132,62 +132,60 @@ class PhoneRegister extends Component {
     } = this.props;
 
     return (
-      <ScreenWrapper>
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          bounces={false}
-          style={styles.container}
-          contentContainerStyle={styles.content}>
-          <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        style={styles.container}
+        contentContainerStyle={styles.content}>
+        <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
+        <Typography
+          type={TypographyType.LABEL_DISPLAY_SMALL}
+          style={styles.welcomeText}>
+          {t('phoneWelcomeMessage')}
+        </Typography>
+        <Typography type={TypographyType.TITLE_MEDIUM} style={styles.desText}>
+          {t('phoneDescription')}
+        </Typography>
+        <View style={styles.phoneContainer}>
+          <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
+            <Container style={this.countryContainerStyle}>
+              <Typography
+                type={TypographyType.LABEL_DISPLAY_SMALL}
+                style={styles.countryCode}>
+                {country ? country.flag : ''}
+              </Typography>
+              <Typography type={TypographyType.TITLE_MEDIUM}>
+                {country
+                  ? (country.idd.root ? country.idd.root : '') +
+                    (country.idd.suffixes[0] ? country.idd.suffixes[0] : '')
+                  : ''}
+              </Typography>
+            </Container>
+          </TouchableWithoutFeedback>
+          <Input
+            style={this.phoneTextInputStyle}
+            value={phoneNumber}
+            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
+            placeholder={t('phonePlaceholder')}
+            onChangeText={this.handleChangePhoneNumber.bind(this)}
+            onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
+          />
+        </View>
+        <TextButton
+          onPress={onSignIn}
+          disabled={registerDisabled}
+          typoProps={this.continueBtnTypoProps}
+          style={styles.continueText}>
+          {t('phoneConfirmMessage')}
+        </TextButton>
+        {!!message && (
           <Typography
-            type={TypographyType.LABEL_DISPLAY_SMALL}
-            style={styles.welcomeText}>
-            {t('phoneWelcomeMessage')}
+            type={TypographyType.LABEL_MEDIUM}
+            style={this.txtNoteStyle}>
+            {message}
           </Typography>
-          <Typography type={TypographyType.TITLE_MEDIUM} style={styles.desText}>
-            {t('phoneDescription')}
-          </Typography>
-          <View style={styles.phoneContainer}>
-            <TouchableWithoutFeedback onPress={this.props.onPressCountry}>
-              <Container style={this.countryContainerStyle}>
-                <Typography
-                  type={TypographyType.LABEL_DISPLAY_SMALL}
-                  style={styles.countryCode}>
-                  {country ? country.flag : ''}
-                </Typography>
-                <Typography type={TypographyType.TITLE_MEDIUM}>
-                  {country
-                    ? (country.idd.root ? country.idd.root : '') +
-                      (country.idd.suffixes[0] ? country.idd.suffixes[0] : '')
-                    : ''}
-                </Typography>
-              </Container>
-            </TouchableWithoutFeedback>
-            <Input
-              style={this.phoneTextInputStyle}
-              value={phoneNumber}
-              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              placeholder={t('phonePlaceholder')}
-              onChangeText={this.handleChangePhoneNumber.bind(this)}
-              onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
-            />
-          </View>
-          <TextButton
-            onPress={onSignIn}
-            disabled={registerDisabled}
-            typoProps={this.continueBtnTypoProps}
-            style={styles.continueText}>
-            {t('phoneConfirmMessage')}
-          </TextButton>
-          {!!message && (
-            <Typography
-              type={TypographyType.LABEL_MEDIUM}
-              style={this.txtNoteStyle}>
-              {message}
-            </Typography>
-          )}
-        </ScrollView>
-      </ScreenWrapper>
+        )}
+      </ScrollView>
     );
   }
 }

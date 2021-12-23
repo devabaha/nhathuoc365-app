@@ -175,80 +175,78 @@ class AuthConfirm extends Component {
     } = this.props;
 
     return (
-      <ScreenWrapper safeLayout>
-        <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
-          <View style={styles.header}>
-            <IconButton
-              style={styles.buttonStyle}
-              onPress={this.onBack.bind(this)}
-              bundle={BundleIconSetName.MATERIAL_ICONS}
-              name="chevron-left"
-              iconStyle={styles.backIcon}
-            />
-          </View>
-          <View style={styles.contentContainer}>
+      <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
+        <View style={styles.header}>
+          <IconButton
+            style={styles.buttonStyle}
+            onPress={this.onBack.bind(this)}
+            bundle={BundleIconSetName.MATERIAL_ICONS}
+            name="chevron-left"
+            iconStyle={styles.backIcon}
+          />
+        </View>
+        <View style={styles.contentContainer}>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={[styles.desText, styles.codeInput]}>
+            {t('verifyCodeInputTitle')}
+          </Typography>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={[styles.desText, styles.phoneNumber]}>
+            {phoneNumber}
+          </Typography>
+          <Input
+            autoFocus
+            onChangeText={onChangeCode}
+            placeholder={t('verifyCodeInputPlaceholder')}
+            value={codeInput}
+            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
+            style={styles.txtCode}
+            maxLength={6}
+            onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
+          />
+          <TextButton
+            onPress={onConfirmCode}
+            disabled={confirmDisabled}
+            title={t('verifyCodeInputConfirmMessage')}
+            style={this.styleContinueText}
+            typoProps={this.continueBtnTypoProps}
+          />
+          {!!message && (
             <Typography
-              type={TypographyType.TITLE_MEDIUM}
-              style={[styles.desText, styles.codeInput]}>
-              {t('verifyCodeInputTitle')}
+              type={TypographyType.LABEL_MEDIUM}
+              style={this.txtNoteStyle}>
+              {message}
             </Typography>
-            <Typography
-              type={TypographyType.TITLE_MEDIUM}
-              style={[styles.desText, styles.phoneNumber]}>
-              {phoneNumber}
-            </Typography>
-            <Input
-              autoFocus
-              onChangeText={onChangeCode}
-              placeholder={t('verifyCodeInputPlaceholder')}
-              value={codeInput}
-              keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              style={styles.txtCode}
-              maxLength={6}
-              onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
-            />
-            <TextButton
-              onPress={onConfirmCode}
-              disabled={confirmDisabled}
-              title={t('verifyCodeInputConfirmMessage')}
-              style={this.styleContinueText}
-              typoProps={this.continueBtnTypoProps}
-            />
-            {!!message && (
-              <Typography
-                type={TypographyType.LABEL_MEDIUM}
-                style={this.txtNoteStyle}>
-                {message}
-              </Typography>
-            )}
-            <Typography
-              type={TypographyType.TITLE_MEDIUM}
-              style={styles.txtDesCode}>
-              {t('notReceiveCode')}
-            </Typography>
+          )}
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={styles.txtDesCode}>
+            {t('notReceiveCode')}
+          </Typography>
 
-            <TextButton
-              style={styles.buttonStyle}
-              titleStyle={this.resSendOTPStyle}
-              onPress={this.reStartCountDown.bind(this)}
-              disabled={!this.isReSendable}
-              typoProps={this.resentOTPTypoProps}>
-              {!this.isReSendable
-                ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
-                    requestNewOtpCounter,
-                  )}`
-                : t('requestNewCode')}
-            </TextButton>
-            {this.state.showDescription && (
-              <Typography
-                type={TypographyType.TITLE_MEDIUM}
-                style={styles.txtDescription}>
-                {t('description')}
-              </Typography>
-            )}
-          </View>
-        </ScrollView>
-      </ScreenWrapper>
+          <TextButton
+            style={styles.buttonStyle}
+            titleStyle={this.resSendOTPStyle}
+            onPress={this.reStartCountDown.bind(this)}
+            disabled={!this.isReSendable}
+            typoProps={this.resentOTPTypoProps}>
+            {!this.isReSendable
+              ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
+                  requestNewOtpCounter,
+                )}`
+              : t('requestNewCode')}
+          </TextButton>
+          {this.state.showDescription && (
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={styles.txtDescription}>
+              {t('description')}
+            </Typography>
+          )}
+        </View>
+      </ScrollView>
     );
   }
 }
