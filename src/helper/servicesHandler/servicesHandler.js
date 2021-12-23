@@ -565,36 +565,48 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /**  REQUEST */
     /** List */
     case SERVICES_TYPE.REQUESTS:
-      Actions.push(appConfig.routes.requests, {
-        title: service.title,
-        siteId: service.site_id || store.store_id,
-        roomId: service.room_id || service.channel_id || 0,
-        objectType: service.object_type,
-        objectId: service.object_id,
-        object: service.object,
-      });
+      push(
+        appConfig.routes.requests,
+        {
+          title: service.title,
+          siteId: service.site_id || store.store_id,
+          roomId: service.room_id || service.channel_id || 0,
+          objectType: service.object_type,
+          objectId: service.object_id,
+          object: service.object,
+        },
+        service.theme,
+      );
       break;
     /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
-      Actions.push(appConfig.routes.requestCreation, {
-        siteId: service.site_id || store.store_id,
-        roomId: service.room_id || service.channel_id || 0,
-        request: service.request,
-        objectType: service.object_type,
-        objectId: service.object_id,
-        object: service.object,
-        onRefresh: service.onRefresh,
-      });
+      push(
+        appConfig.routes.requestCreation,
+        {
+          siteId: service.site_id || store.store_id,
+          roomId: service.room_id || service.channel_id || 0,
+          request: service.request,
+          objectType: service.object_type,
+          objectId: service.object_id,
+          object: service.object,
+          onRefresh: service.onRefresh,
+        },
+        service.theme,
+      );
       break;
     /** Detail */
     case SERVICES_TYPE.REQUEST_DETAIL:
-      Actions.push(appConfig.routes.requestDetail, {
-        siteId: service.site_id,
-        roomId: service.room_id,
-        requestId: service.request_id,
-        title: service.title,
-        callbackReload: service.callbackReload,
-      });
+      push(
+        appConfig.routes.requestDetail,
+        {
+          siteId: service.site_id,
+          roomId: service.room_id,
+          requestId: service.request_id,
+          title: service.title,
+          callbackReload: service.callbackReload,
+        },
+        service.theme,
+      );
       break;
 
     /** WALLET */

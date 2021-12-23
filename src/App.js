@@ -43,7 +43,6 @@ import Notify from './components/notify/Notify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
-import Register from './components/account/Register';
 // import PhoneAuth from './components/account/PhoneAuth';
 import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
@@ -1358,16 +1357,6 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.createAddress}_1`}
                     // title="Thêm địa chỉ"
                     component={CreateAddress}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="register">
-                  <Scene
-                    key="register_1"
-                    title={t('screen.register.mainTitle')}
-                    component={Register}
                     {...navBarConfig}
                     back
                   />
