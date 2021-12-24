@@ -459,19 +459,28 @@ class Item extends Component {
   };
 
   handlePressWarehouse = () => {
-    Actions.push(appConfig.routes.modalList, {
-      heading: this.props.t('opRegister:modal.store.title'),
-      data: this.state.listWarehouse,
-      selectedItem: {id: store?.user_info?.store_id},
-      onPressItem: this.onSelectWarehouse,
-      onCloseModal: Actions.pop,
-      modalStyle: {
-        height: null,
-        maxHeight: '80%',
+    // Actions.push(appConfig.routes.modalList, {
+    //   heading: this.props.t('opRegister:modal.store.title'),
+    //   data: this.state.listWarehouse,
+    //   selectedItem: {id: store?.user_info?.store_id},
+    //   onPressItem: this.onSelectWarehouse,
+    //   onCloseModal: Actions.pop,
+    //   modalStyle: {
+    //     height: null,
+    //     maxHeight: '80%',
+    //   },
+    //   ListEmptyComponent: (
+    //     <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
+    //   ),
+    // });
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_STORE,
+      selectedStore: {id: store?.user_info?.store_id},
+      placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+      onPress: (store) => {
+        this.onSelectWarehouse(store);
+        Actions.pop();
       },
-      ListEmptyComponent: (
-        <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
-      ),
     });
   };
 
@@ -529,9 +538,8 @@ class Item extends Component {
     this.setState({preparePostForSaleDataLoading: false});
   };
 
-  onSelectWarehouse = (warehouse, closeModal) => {
+  onSelectWarehouse = (warehouse) => {
     this.setState({loading: true});
-    closeModal();
     this.updateWarehouse(warehouse);
   };
 
@@ -1801,6 +1809,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['product', 'cart', 'common', 'opRegister'])(
-  observer(Item),
-);
+export default withTranslation([
+  'product',
+  'cart',
+  'common',
+  'opRegister',
+  'gpsStore',
+])(observer(Item));

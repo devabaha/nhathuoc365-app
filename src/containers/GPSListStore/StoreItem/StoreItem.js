@@ -118,6 +118,8 @@ const StoreItem = ({
   actionBtnIconName,
   onPressActionBtn,
   pressable,
+
+  rightIcon,
 }) => {
   const {t} = useTranslation();
 
@@ -147,12 +149,14 @@ const StoreItem = ({
             <Text style={styles.description}>{address}</Text>
           </View>
 
-          {!pressable && (
+          {!!pressable && (
             <View style={styles.rightIconContainer}>
-              <Ionicons
-                style={styles.rightIcon}
-                name="ios-chevron-forward-sharp"
-              />
+              {rightIcon || (
+                <Ionicons
+                  style={styles.rightIcon}
+                  name="ios-chevron-forward-sharp"
+                />
+              )}
             </View>
           )}
         </Container>

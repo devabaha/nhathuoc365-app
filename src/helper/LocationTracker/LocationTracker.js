@@ -49,16 +49,33 @@ class LocationTracker {
     }
 
     Geolocation.clearWatch(this.geolocationWatchId);
-    this.geolocationWatchId = Geolocation.watchPosition(
-      (position) => this.updateLocation(position),
-      (err) => {
-        console.log('location_watch_location', this.geolocationWatchId, err);
+    Geolocation.getCurrentPosition(
+      (currentPosition) => {
+        this.updateLocation(currentPosition);
+
+        this.geolocationWatchId = Geolocation.watchPosition(
+          (position) => this.updateLocation(position),
+          (error) => {
+            console.log(
+              'location_watch_location',
+              this.geolocationWatchId,
+              error,
+            );
+            gpsTrackingListener.emit(GPS_TRACKING_EVENT_NAME, {
+              error: true,
+              ...(error || {}),
+            });
+          },
+          this.gpsConfig,
+        );
+      },
+      (error) => {
+        console.log('location_get_current_location', error);
         gpsTrackingListener.emit(GPS_TRACKING_EVENT_NAME, {
           error: true,
-          ...(err || {}),
+          ...(error || {}),
         });
       },
-      this.gpsConfig,
     );
   };
 

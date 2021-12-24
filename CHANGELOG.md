@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.8] - 2021-12-24
+### Changed
+- [CU-1zb19ye] use GPSListStore to choose warehouse (sale point) by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1yzrma0] UI screen Transaction by [thanhyagami@gmail.com].
+
 ## [r12.2.7] - 2021-12-07
 ### Fixed
 - [CU-1wfhh1w] Re-getting transactionData when user press back from SDK in Transaction by [minhnguyenit14@gmail.com].

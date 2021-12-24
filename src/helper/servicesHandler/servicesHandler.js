@@ -287,6 +287,9 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         type: service.type,
         placeholder: service.placeholder || commonT('home:searchingStore'),
         autoFocus: service.autoFocus,
+        navBar: service.navBar || SearchNavBar,
+        onPress: service.onPress,
+        selectedStore: service.selectedStore,
       });
       break;
 

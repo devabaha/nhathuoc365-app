@@ -114,6 +114,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingVertical: 3,
     paddingHorizontal: 7,
+    // marginLeft: 100,
+    // borderLeftWidth: 100,
+    // paddingLeft: 30,
   },
   infoTitle: {
     padding: 10,
@@ -124,9 +127,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
+  copyInfoContainer: {
+    maxWidth: '60%',
+  },
   copyIcon: {
     color: appConfig.colors.primary,
     marginRight: 5,
+  },
+  copyInfoValue: {
+    height: undefined,
   },
   title: {},
   value: {},
@@ -524,15 +533,20 @@ const Transaction = ({
       if (info.copy) {
         info.renderRight = (titleStyle) => {
           return (
-            <TouchableOpacity onPress={() => copyAccountNumber(info.value)}>
-              <Container row style={styles.infoButtonContainer}>
-                <Ionicons name="ios-copy" style={styles.copyIcon} />
-                <Text style={titleStyle}>{info.value}</Text>
+            <TouchableOpacity
+              style={styles.copyInfoContainer}
+              onPress={() => copyAccountNumber(info.value)}>
+              <Container style={styles.infoButtonContainer}>
+                <Text style={[titleStyle, styles.copyInfoValue]}>
+                  <Ionicons name="ios-copy" style={styles.copyIcon} />{' '}
+                  {info.value}
+                </Text>
               </Container>
             </TouchableOpacity>
           );
         };
       }
+
       return (
         <HorizontalInfoItem
           key={index}

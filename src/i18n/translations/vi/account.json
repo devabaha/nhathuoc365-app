@@ -46,6 +46,9 @@
     "warehouse": {
       "label": "Kho hàng"
     },
+    "salePoint": {
+      "label": "Điểm bán"
+    },
     "agencyInformationRegister": {
       "label": "Thông tin NPP",
       "desc": "Xem/ Nhập thông tin NPP"
