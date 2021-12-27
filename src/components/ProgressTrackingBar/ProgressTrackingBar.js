@@ -1,18 +1,16 @@
-import React from 'react';
-import {
-  SectionList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
-
-import appConfig from 'app-config';
-
-import Container from '../Layout/Container';
+import React, {useMemo} from 'react';
+import {SectionList, StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Card, Container, Typography, Icon} from 'src/components/base';
 import CustomPad from 'src/containers/ProgressTracking/ProgressTrackingDetail/CustomPad';
 import NoResult from 'src/components/NoResult';
+// skeleton
 import ProgressTrackingBarSkeleton from './ProgressTrackingBarSkeleton';
 
 const TRACK_CONTENT_WIDTH = 1;
@@ -30,14 +28,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: '100%',
     alignItems: 'center',
-    backgroundColor: '#fff',
     paddingHorizontal: TRACK_PADDING,
     paddingVertical: TRACK_WIDTH,
     left: -TRACK_WIDTH,
-    ...elevationShadowStyle(3),
   },
   track: {
-    backgroundColor: hexToRgba(appConfig.colors.primary, 1),
     width: TRACK_CONTENT_WIDTH,
     height: '100%',
   },
@@ -51,37 +46,19 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: TRACK_WIDTH,
     paddingBottom: TRACK_WIDTH * 2,
   },
-  pad: {
-    width: PAD_DIMENSIONS,
-    height: PAD_DIMENSIONS,
-    borderRadius: PAD_DIMENSIONS / 2,
-    backgroundColor: appConfig.colors.primary,
-    position: 'absolute',
-    top: 10,
-    borderWidth: PAD_BORDER_WIDTH,
-    borderColor: '#fff',
-  },
 
   itemContainer: {
     marginTop: 5,
     marginLeft: 15,
     padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 8,
     marginBottom: 10,
-    ...elevationShadowStyle(3),
   },
-  title: {
-    color: '#333',
-  },
+  title: {},
   description: {
-    color: '#666',
     marginTop: 5,
-    fontSize: 13,
   },
 
   sectionHeader: {
-    backgroundColor: appConfig.colors.sceneBackground,
     paddingVertical: 10,
     marginBottom: 5,
   },
@@ -93,9 +70,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   headerTitle: {
-    fontSize: 15,
     fontWeight: 'bold',
-    color: '#666',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -128,19 +103,29 @@ const ProgressTrackingBar = ({
   loading,
   renderSectionFooter: renderSectionFooterProp = () => null,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['common']);
+
+  const renderIconSectionHeader = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ENTYPO}
+        name="dot-single"
+        style={[titleStyle, styles.headerIcon]}
+      />
+    );
+  };
 
   const renderSectionHeader = ({section}) => {
     return (
-      <Container row style={styles.sectionHeader}>
-        <EntypoIcon
-          name="dot-single"
-          style={[styles.headerTitle, styles.headerIcon]}
-        />
-
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>{section.title}</Text>
-        </View>
+      <Container row style={[styles.headerTitleContainer, sectionHeaderStyle]}>
+        <Typography
+          style={styles.headerTitle}
+          type={TypographyType.LABEL_SEMI_LARGE_TERTIARY}
+          renderIconBefore={renderIconSectionHeader}>
+          {section.title}
+        </Typography>
       </Container>
     );
   };
@@ -164,12 +149,11 @@ const ProgressTrackingBar = ({
         ? styles.firstTrack
         : index === section.data.length - 1 && styles.lastTrack;
     return (
-      <Container
-        centerVertical={false}
-        style={[styles.itemWrapper, trackWrapperStyle]}>
+      <Container noBackground style={[styles.itemWrapper, trackWrapperStyle]}>
         <Container
+          shadow
           style={[styles.trackContainer, extraStyle, trackContainerStyle]}>
-          <Container style={[styles.track, extraStyle, trackStyle]} />
+          <Container style={[trackContentStyle, extraStyle, trackStyle]} />
           {renderPad ? (
             renderPad(PAD_DIMENSIONS)
           ) : (
@@ -177,13 +161,31 @@ const ProgressTrackingBar = ({
           )}
         </Container>
 
-        <Container centerVertical={false} style={styles.itemContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
-        </Container>
+        <Card shadow style={styles.itemContainer}>
+          <Typography type={TypographyType.LABEL_MEDIUM} style={styles.title}>
+            {item.title}
+          </Typography>
+          <Typography
+            type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
+            style={styles.description}>
+            {item.description}
+          </Typography>
+        </Card>
       </Container>
     );
   };
+
+  const sectionHeaderStyle = useMemo(() => {
+    return mergeStyles(styles.sectionHeader, {
+      backgroundColor: theme.color.background,
+    });
+  }, [theme]);
+
+  const trackContentStyle = useMemo(() => {
+    return mergeStyles(styles.track, {
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
 
   return loading ? (
     <ProgressTrackingBarSkeleton />

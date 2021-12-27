@@ -1,93 +1,60 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, Icon} from 'src/components/base';
+import {mergeStyles} from 'src/Themes/helper';
 
-import appConfig from 'app-config';
-
-import Container from 'src/components/Layout/Container';
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  wrapper: {
+    position: 'absolute',
+  },
+  iconDirection: {
+    fontSize: 16,
+  },
+});
 
 const CustomPad = ({dimensions: padDimensions, isReverse}) => {
+  const {theme} = useTheme();
+
   const contentDimensions = padDimensions / 6;
   const borderWidth = 1;
   const contentDimensionsOutline = contentDimensions + borderWidth;
   const contentTop = contentDimensionsOutline / 4;
 
+  const iconDirectionStyle = useMemo(() => {
+    return {
+      color: theme.color.primaryHighlight,
+    };
+  }, [theme]);
+
+  const wrapperStyle = useMemo(() => {
+    return mergeStyles(styles.wrapper, {
+      top: 20 + contentTop,
+    });
+  }, [contentTop]);
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.wrapper, {
+      top: contentTop,
+      transform: [
+        {
+          rotate: isReverse ? '180deg' : '0deg',
+        },
+      ],
+    });
+  }, [contentTop, isReverse]);
+
   return (
-    <Container
-      center
-      style={{
-        top: 20,
-        position: 'absolute',
-        transform: [
-          {
-            rotate: isReverse ? '180deg' : '0deg',
-          },
-        ],
-        ...elevationShadowStyle(3),
-      }}>
-      <Container row style={{position: 'absolute'}}>
-        <Container
-          style={{
-            width: 0,
-            height: 0,
-            borderRightWidth: contentDimensionsOutline,
-            borderBottomWidth: contentDimensionsOutline * 2,
-            borderRightColor: isReverse ? '#fff' : appConfig.colors.primary,
-            borderBottomColor: isReverse ? '#fff' : appConfig.colors.primary,
-
-            borderLeftWidth: contentDimensionsOutline,
-            borderTopWidth: contentDimensionsOutline * 2,
-            borderLeftColor: 'transparent',
-            borderTopColor: 'transparent',
-          }}
-        />
-        <Container
-          style={{
-            width: 0,
-            height: 0,
-            borderLeftWidth: contentDimensionsOutline,
-            borderBottomWidth: contentDimensionsOutline * 2,
-            borderLeftColor: isReverse ? '#fff' : appConfig.colors.primary,
-            borderBottomColor: isReverse ? '#fff' : appConfig.colors.primary,
-
-            borderRightWidth: contentDimensionsOutline,
-            borderTopWidth: contentDimensionsOutline * 2,
-            borderRightColor: 'transparent',
-            borderTopColor: 'transparent',
-          }}
-        />
-      </Container>
-      <Container row style={{top: contentTop}}>
-        <Container
-          style={{
-            width: 0,
-            height: 0,
-            borderRightWidth: contentDimensions,
-            borderBottomWidth: contentDimensions * 2,
-            borderRightColor: isReverse ? appConfig.colors.primary : '#fff',
-            borderBottomColor: isReverse ? appConfig.colors.primary : '#fff',
-
-            borderLeftWidth: contentDimensions,
-            borderTopWidth: contentDimensions * 2,
-            borderLeftColor: 'transparent',
-            borderTopColor: 'transparent',
-          }}
-        />
-        <Container
-          style={{
-            width: 0,
-            height: 0,
-            borderLeftWidth: contentDimensions,
-            borderBottomWidth: contentDimensions * 2,
-            borderLeftColor: isReverse ? appConfig.colors.primary : '#fff',
-            borderBottomColor: isReverse ? appConfig.colors.primary : '#fff',
-
-            borderRightWidth: contentDimensions,
-            borderTopWidth: contentDimensions * 2,
-            borderRightColor: 'transparent',
-            borderTopColor: 'transparent',
-          }}
+    <Container noBackground shadow center style={wrapperStyle}>
+      <Container noBackground row style={containerStyle}>
+        <Icon
+          bundle={BundleIconSetName.IONICONS}
+          name="caret-up"
+          style={[styles.iconDirection, iconDirectionStyle]}
         />
       </Container>
     </Container>
