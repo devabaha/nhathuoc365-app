@@ -19,6 +19,15 @@
     "title": "Thanh toán",
     "vnpayTitle": "Thanh toán VNPAY",
     "noPaymentInformation": "Chưa có thông tin thanh toán",
-    "cancelPaymentFlowConfirmMessage": "Bạn sẽ phải thực hiện thanh toán lại từ đầu nếu thoát. Bạn chắc chắn muốn thoát chứ?"
+    "cancelPaymentFlowConfirmMessage": "Bạn sẽ phải thực hiện thanh toán lại từ đầu nếu thoát. Bạn chắc chắn muốn thoát chứ?",
+    "paymentInformationTitle": "Thông tin thanh toán",
+    "transactionInformationTitle": "Thông tin giao dịch",
+    "saveQRCodeTitle": "Lưu ảnh mã QR",
+    "statusSuccessTitle": "Thanh toán thành công",
+    "statusInProgressTitle": "Đang chờ thanh toán...",
+    "statusErrorTitle": "Lỗi kiểm tra giao dịch",
+    "openWebviewTitle": "Mở thanh toán",
+    "backHomeTitle": "Về trang chủ",
+    "cancelTransactionWarningTitle": "Bạn có chắc chắn muốn thanh toán giao dịch này vào lúc khác?"
   }
 }

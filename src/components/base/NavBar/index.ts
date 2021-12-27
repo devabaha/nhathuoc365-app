@@ -1,4 +1,5 @@
 import {StyleProp, ViewStyle} from 'react-native';
+import {Style} from 'src/Themes/interface';
 import {Children} from '..';
 import {ContainerProps} from '../Container';
 import NavBarWrapper from './NavBarWrapper';
@@ -25,5 +26,5 @@ export interface NavBarProps extends NavBarWrapperProps {
   renderTitle?: () => Children;
 
   renderHeader?: () => Children;
-  renderBack?: () => Children;
+  renderBack?: (iconStyle: Style) => Children;
 }

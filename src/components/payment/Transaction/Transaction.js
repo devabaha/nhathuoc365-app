@@ -1,45 +1,52 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
+import {Alert, StyleSheet, View} from 'react-native';
+// 3-party libs
 import {Actions} from 'react-native-router-flux';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
-
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
+// helpers
 import {copyToClipboard} from 'app-helper';
 import {saveImage} from 'app-helper/image';
 import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
-
-import {PhotoLibraryPermission} from '../../../helper/permissionHelper';
-import {CART_PAYMENT_STATUS} from '../../../constants/cart/types';
+import {PhotoLibraryPermission} from 'app-helper/permissionHelper';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop, push, replace} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {CART_PAYMENT_STATUS} from 'src/constants/cart/types';
 import {PAYMENT_METHOD_GATEWAY} from 'src/constants/payment/types';
-
-import {APIRequest} from '../../../network/Entity';
-
-import HorizontalInfoItem from '../../../components/account/HorizontalInfoItem';
-import ScreenWrapper from '../../../components/ScreenWrapper';
-import Button from '../../../components/Button';
-import Loading from '../../../components/Loading';
-import Container from '../../../components/Layout/Container';
-import PopupConfirm from '../../../components/PopupConfirm';
+import {
+  BundleIconSetName,
+  TypographyType,
+  ButtonRoundedType,
+} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
+import Button from 'src/components/Button';
+import Loading from 'src/components/Loading';
+import PopupConfirm from 'src/components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
+import {
+  RefreshControl,
+  ScrollView,
+  Typography,
+  Icon,
+  ScreenWrapper,
+  Container,
+  AppFilledButton,
+  AppFilledTonalButton,
+  ActivityIndicator,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-  },
   statusContainer: {
     width: appConfig.device.width,
     flexDirection: 'row',
@@ -48,84 +55,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusIcon: {
-    color: '#fff',
     fontSize: 22,
   },
   statusTitle: {
-    color: '#fff',
-    fontSize: 18,
     fontWeight: '500',
     marginLeft: 15,
-  },
-  scrollContentContainer: {
-    flexGrow: 1,
-    paddingBottom: 50,
   },
   qrImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  qrImage: {
-    width: appConfig.device.width * 0.4,
-    height: appConfig.device.width * 0.4,
-    margin: 20,
-    maxWidth: 200,
-    maxHeight: 200,
-  },
   saveQRBtnContainer: {
     marginBottom: 30,
-    borderRadius: 4,
     width: undefined,
     alignSelf: 'center',
-    paddingVertical: 0,
-    paddingHorizontal: 15,
-  },
-  saveQRBtnContentContainer: {
-    backgroundColor: appConfig.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 15,
     paddingVertical: 7,
-    width: undefined,
-    borderRadius: 4,
+    paddingHorizontal: 15,
   },
-  saveQRBtnContent: {
-    paddingVertical: 0,
-    textAlign: 'center',
-  },
+
   saveQRCodeIcon: {
-    color: '#fff',
     fontSize: 14,
     marginRight: 7,
   },
-  saveQRBtnTitle: {
-    color: '#fff',
-    fontSize: 12,
-  },
-
-  infoContainer: {
-    borderBottomWidth: Util.pixel,
-    borderColor: '#ccc',
-    // backgroundColor: '#fafafa',
-  },
   infoButtonContainer: {
-    backgroundColor: hexToRgba(appConfig.colors.primary, 0.1),
-    borderRadius: 4,
     overflow: 'hidden',
     paddingVertical: 3,
     paddingHorizontal: 7,
   },
   infoTitle: {
     padding: 10,
-    backgroundColor: '#f5f5f5',
     marginBottom: 3,
-    color: '#333',
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   copyIcon: {
-    color: appConfig.colors.primary,
     marginRight: 5,
   },
   title: {},
@@ -138,43 +102,18 @@ const styles = StyleSheet.create({
   },
   note: {
     marginTop: 15,
-    color: '#242424',
     padding: 15,
     fontStyle: 'italic',
-    fontSize: 13,
   },
 
   btnContainer: {
-    backgroundColor: '#fff',
-    backgroundColor: '#fff',
-    ...(appConfig.device.isIOS && elevationShadowStyle(7)),
     paddingVertical: 10,
-    borderTopWidth: appConfig.device.isAndroid ? appConfig.device.pixel : 0,
-    borderColor: appConfig.colors.border,
   },
   confirmBtn: {
     flex: 1,
     width: undefined,
   },
-  backHomeContainer: {
-    backgroundColor: '#e5e5e5',
-  },
-  backHomeTitle: {
-    color: '#333',
-  },
 });
-
-const SAVE_QR_CODE_TITLE = 'Lưu ảnh mã QR';
-
-const STATUS_SUCCESS_TITLE = 'Thanh toán thành công';
-const STATUS_INPROGRESS_TITLE = 'Đang chờ thanh toán...';
-const STATUS_ERROR_TITLE = 'Lỗi kiểm tra giao dịch';
-
-const OPEN_WEBVIEW_TITLE = 'Mở thanh toán';
-const BACK_HOME_TITLE = 'Về trang chủ';
-
-const CANCEL_TRANSACTION_WARNING_TITLE =
-  'Bạn có chắc chắn muốn thanh toán giao dịch này vào lúc khác?';
 
 const BACK_TYPE = {
   POP: 0,
@@ -185,7 +124,10 @@ const Transaction = ({
   siteId = store?.store_data?.id,
   cartId = store?.cart_data?.id,
   onPop = () => {},
+  ...props
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['common', 'payment']);
 
   const [isLoading, setLoading] = useState(true);
@@ -213,6 +155,36 @@ const Transaction = ({
     !transaction?.data_qrcode &&
     !isPaid &&
     !transaction?.data_va?.length;
+
+  const saveQRBtnTypoProps = useMemo(() => {
+    return {
+      type: TypographyType.LABEL_SMALL,
+      renderIconBefore: (titleStyle) => {
+        return (
+          <Icon
+            bundle={BundleIconSetName.ANT_DESIGN}
+            name="download"
+            style={[titleStyle, styles.saveQRCodeIcon]}
+          />
+        );
+      },
+    };
+  }, []);
+
+  const copyInfoBtnTypoProps = useMemo(() => {
+    return {
+      type: TypographyType.LABEL_SMALL,
+      renderIconBefore: (titleStyle) => {
+        return (
+          <Icon
+            bundle={BundleIconSetName.IONICONS}
+            name="ios-copy"
+            style={[titleStyle, styles.copyIcon]}
+          />
+        );
+      },
+    };
+  }, []);
 
   useEffect(() => {
     getTransactionData(true);
@@ -252,7 +224,7 @@ const Transaction = ({
                 !!response.data?.close_payment &&
                 Actions.currentScene === `${appConfig.routes.modalWebview}_1`
               ) {
-                Actions.pop();
+                pop();
               }
             }
             setError(false);
@@ -390,11 +362,11 @@ const Transaction = ({
     switch (type) {
       case BACK_TYPE.POP:
         onPop();
-        Actions.pop();
+        pop();
         break;
       case BACK_TYPE.BACK_HOME:
         store.resetCartData();
-        Actions.replace(appConfig.routes.homeTab);
+        replace(appConfig.routes.homeTab);
         break;
     }
   };
@@ -414,10 +386,14 @@ const Transaction = ({
             });
             break;
           default:
-            Actions.push(appConfig.routes.modalWebview, {
-              title: t('screen.transaction.mainTitle'),
-              url: transData.url,
-            });
+            push(
+              appConfig.routes.modalWebview,
+              {
+                title: t('screen.transaction.mainTitle'),
+                url: transData.url,
+              },
+              theme,
+            );
             break;
         }
       } else {
@@ -446,22 +422,18 @@ const Transaction = ({
               size={appConfig.device.width * 0.5}
               getRef={refQRCode}
               quietZone={20}
+              backgroundColor={theme.color.surface}
+              color={theme.color.onSurface}
             />
           </QRPayFrame>
-          <Button
+          <AppFilledButton
+            typoProps={saveQRBtnTypoProps}
             hitSlop={HIT_SLOP}
-            containerStyle={styles.saveQRBtnContainer}
-            btnContainerStyle={styles.saveQRBtnContentContainer}
-            onPress={onSaveQRCode}
-            iconLeft={
-              <AntDesignIcon name="download" style={styles.saveQRCodeIcon} />
-            }
-            renderTitleComponent={() => (
-              <Text style={[styles.saveQRBtnTitle, styles.saveQRBtnContent]}>
-                {SAVE_QR_CODE_TITLE}
-              </Text>
-            )}
-          />
+            rounded={ButtonRoundedType.EXTRA_SMALL}
+            style={styles.saveQRBtnContainer}
+            onPress={onSaveQRCode}>
+            {t('payment:transaction.saveQRCodeTitle')}
+          </AppFilledButton>
         </View>
       )
     );
@@ -471,6 +443,7 @@ const Transaction = ({
     return transactionData.details.map((info, index) => {
       const tempInfo = {...info};
       tempInfo.rightTextStyle = styles.value;
+
       if (tempInfo.title_highlight) {
         tempInfo.titleStyle = {...tempInfo.titleStyle, ...styles.highlight};
       }
@@ -493,7 +466,7 @@ const Transaction = ({
       return (
         <HorizontalInfoItem
           key={index}
-          containerStyle={styles.infoContainer}
+          containerStyle={infoContainerStyle}
           data={tempInfo}
         />
       );
@@ -505,19 +478,21 @@ const Transaction = ({
       if (info.copy) {
         info.renderRight = (titleStyle) => {
           return (
-            <TouchableOpacity onPress={() => copyAccountNumber(info.value)}>
-              <Container row style={styles.infoButtonContainer}>
-                <Ionicons name="ios-copy" style={styles.copyIcon} />
-                <Text style={titleStyle}>{info.value}</Text>
-              </Container>
-            </TouchableOpacity>
+            <AppFilledTonalButton
+              rounded={ButtonRoundedType.SMALL}
+              typoProps={copyInfoBtnTypoProps}
+              style={styles.infoButtonContainer}
+              onPress={() => copyAccountNumber(info.value)}>
+              {info.value}
+            </AppFilledTonalButton>
           );
         };
       }
+
       return (
         <HorizontalInfoItem
           key={index}
-          containerStyle={styles.infoContainer}
+          containerStyle={infoContainerStyle}
           data={info}
         />
       );
@@ -527,7 +502,9 @@ const Transaction = ({
   const renderBlockInfo = (title, renderChild = () => {}) => {
     return (
       <>
-        <Text style={styles.infoTitle}>{title}</Text>
+        <Typography type={TypographyType.LABEL_MEDIUM} style={infoTitleStyle}>
+          {title}
+        </Typography>
         {renderChild()}
       </>
     );
@@ -536,111 +513,145 @@ const Transaction = ({
   const renderNote = () => {
     return (
       !!transactionData?.note && (
-        <Text style={styles.note}>{transactionData.note}</Text>
+        <Typography
+          type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+          style={styles.note}>
+          {transactionData.note}
+        </Typography>
       )
+    );
+  };
+
+  const renderStatusIcon = (titleStyle) => {
+    return isError || isPaid ? (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name={isError ? 'exclamationcircle' : 'checkcircle'}
+        style={[titleStyle, styles.statusIcon]}
+      />
+    ) : (
+      <ActivityIndicator size="small" color={theme.color.white} />
     );
   };
 
   const renderPaidStatus = () => {
     return (
-      <Shimmer
-        pauseDuration={3000}
-        opacity={1}
-        animationOpacity={0.6}
-        highlightLength={0.5}
-        animating>
-        <Text>
-          <View
-            style={[
-              styles.statusContainer,
-              {
-                backgroundColor: isError
-                  ? appConfig.colors.status.danger
+      <View style={{backgroundColor: theme.color.white}}>
+        <Shimmer
+          pauseDuration={3000}
+          opacity={1}
+          animationOpacity={0.6}
+          highlightLength={0.5}
+          animating
+          style={{marginBottom: appConfig.device.isIOS ? -3 : 0}}>
+          <Typography>
+            <View
+              style={[
+                styles.statusContainer,
+                {
+                  backgroundColor: isError
+                    ? theme.color.danger
+                    : isPaid
+                    ? theme.color.success
+                    : theme.color.warning,
+                },
+              ]}>
+              <Typography
+                onPrimary
+                type={TypographyType.LABEL_SEMI_HUGE}
+                style={styles.statusTitle}
+                renderIconBefore={renderStatusIcon}>
+                {isError
+                  ? t('payment:transaction.statusErrorTitlet')
                   : isPaid
-                  ? appConfig.colors.status.success
-                  : appConfig.colors.status.warning,
-              },
-            ]}>
-            {isError || isPaid ? (
-              <AntDesignIcon
-                name={isError ? 'exclamationcircle' : 'checkcircle'}
-                style={styles.statusIcon}
-              />
-            ) : (
-              <ActivityIndicator size="small" color="#fff" />
-            )}
-            <Text style={styles.statusTitle}>
-              {isError
-                ? STATUS_ERROR_TITLE
-                : isPaid
-                ? STATUS_SUCCESS_TITLE
-                : STATUS_INPROGRESS_TITLE}
-            </Text>
-          </View>
-        </Text>
-      </Shimmer>
+                  ? t('payment:transaction.statusSuccessTitle')
+                  : t('payment:transaction.statusInProgressTitle')}
+              </Typography>
+            </View>
+          </Typography>
+        </Shimmer>
+      </View>
     );
   };
 
-  return (
-    <>
-      <NavBar
-        title={t('screen.transaction.paymentTitle')}
-        onClose={handleBack}
-      />
+  const backHomeBtnContainerStyle = useMemo(() => {
+    return mergeStyles(styles.btnContainer, {
+      ...(appConfig.device.isIOS && theme.layout.shadow),
+      shadowColor: theme.color.shadow,
+      borderTopWidth: appConfig.device.isAndroid
+        ? theme.layout.borderWidthPixel
+        : 0,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
 
-      <ScreenWrapper containerStyle={styles.container}>
-        {/* <BlurFilter visible={isLoading} /> */}
-        {isLoading ||
-          (isImageSavingLoading && (
-            <Loading
-              center
-              // highlight={isLoading}
-              // message={isLoading && SAVE_IMAGE_MESSAGE}
-            />
-          ))}
+  const infoContainerStyle = useMemo(() => {
+    return {
+      borderBottomWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
+
+  const infoTitleStyle = useMemo(() => {
+    return mergeStyles(styles.infoTitle, {
+      backgroundColor: theme.color.contentBackgroundWeak,
+    });
+  }, [theme]);
+
+  return (
+    <ScreenWrapper>
+      <NavBar onClose={handleBack} navigation={props} />
+
+      {isLoading || (isImageSavingLoading && <Loading center />)}
+      <Container flex noBackground>
         {renderPaidStatus()}
 
         <ScrollView
-          contentContainerStyle={styles.scrollContentContainer}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           {renderQRCode()}
 
           {!!transactionData?.data_va?.length &&
-            renderBlockInfo('Thông tin thanh toán', renderPaymentInfo)}
+            renderBlockInfo(
+              t('payment:transaction.paymentInformationTitle'),
+              renderPaymentInfo,
+            )}
           {!!transactionData?.details?.length &&
-            renderBlockInfo('Thông tin giao dịch', renderTransactionInfo)}
+            renderBlockInfo(
+              t('payment:transaction.transactionInformationTitle'),
+              renderTransactionInfo,
+            )}
           {renderNote()}
         </ScrollView>
 
-        <Container row style={styles.btnContainer}>
+        <Container
+          safeLayout
+          noBackground
+          row
+          style={backHomeBtnContainerStyle}>
           <Button
             containerStyle={styles.confirmBtn}
-            btnContainerStyle={styles.backHomeContainer}
-            titleStyle={styles.backHomeTitle}
             onPress={handleBackHome}
-            title={BACK_HOME_TITLE}
+            title={t('payment:transaction.backHomeTitle')}
           />
           {!!isActiveWebview() && (
             <Button
               containerStyle={styles.confirmBtn}
               onPress={() => handleOpenTransaction()}
-              title={OPEN_WEBVIEW_TITLE}
+              title={t('payment:transaction.openWebviewTitle')}
             />
           )}
         </Container>
-
-        <PopupConfirm
-          ref_popup={(ref) => (refPopup.current = ref)}
-          title={CANCEL_TRANSACTION_WARNING_TITLE}
-          type="warning"
-          noConfirm={closePopUp}
-          yesConfirm={() => confirmPopUp()}
-        />
-      </ScreenWrapper>
-    </>
+      </Container>
+      <PopupConfirm
+        ref_popup={(ref) => (refPopup.current = ref)}
+        title={t('payment:transaction.cancelTransactionWarningTitle')}
+        type="warning"
+        noConfirm={closePopUp}
+        yesConfirm={() => confirmPopUp()}
+      />
+    </ScreenWrapper>
   );
 };
 

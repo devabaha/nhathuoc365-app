@@ -307,5 +307,6 @@
   "errorAndTryAgain": "Lỗi! chạm để thử lại",
   "settings": "Cài đặt",
   "noNotification": "Chưa có thông báo",
-  "ok": "Ok"
+  "ok": "Ok",
+  "QRPayLabel": "QR Pay"
 }

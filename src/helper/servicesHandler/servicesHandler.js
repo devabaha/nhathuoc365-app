@@ -436,6 +436,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       );
       break;
 
+    case SERVICES_TYPE.PAYMENT_TRANSACTION:
+      push(appConfig.routes.transaction, {
+        siteId: service.siteId,
+        cartId: service.cartId,
+        onPop: service.onPop,
+        title: service.title || commonT('screen.transaction.paymentTitle'),
+      });
+      break;
+
     /** POPUP */
     case SERVICES_TYPE.POP_UP:
       setTimeout(

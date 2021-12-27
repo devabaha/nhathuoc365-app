@@ -13,7 +13,7 @@ function CloseButton(props) {
       <Icon
         bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
         name="close"
-        style={[iconStyles, iconStyle]}
+        style={[iconStyles, iconStyle, props.iconStyle]}
       />
     );
   };
