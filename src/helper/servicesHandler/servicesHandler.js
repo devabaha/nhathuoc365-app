@@ -418,18 +418,22 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
               type: service.default_payment_method_type,
             }
           : null;
-      Actions.push(appConfig.routes.paymentMethod, {
-        selectedMethod: selectedMethod,
-        price: service.total_before_view,
-        totalPrice: service.total_selected,
-        extraFee: service.item_fee,
-        showPrice: service.showPrice,
-        showSubmit: service.showSubmit,
-        onUpdatePaymentMethod: (data) => callBack(false, data),
-        store_id: service.storeId,
-        cart_id: service.cartId,
-        title: service.title,
-      });
+      push(
+        appConfig.routes.paymentMethod,
+        {
+          selectedMethod: selectedMethod,
+          price: service.total_before_view,
+          totalPrice: service.total_selected,
+          extraFee: service.item_fee,
+          showPrice: service.showPrice,
+          showSubmit: service.showSubmit,
+          onUpdatePaymentMethod: (data) => callBack(false, data),
+          store_id: service.storeId,
+          cart_id: service.cartId,
+          title: service.title,
+        },
+        service.theme,
+      );
       break;
 
     /** POPUP */

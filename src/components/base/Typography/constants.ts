@@ -40,7 +40,7 @@ export enum TypographyType {
   LABEL_EXTRA_SMALL = 'labelExtraSmall',
   LABEL_TINY = 'labelTiny',
   LABEL_EXTRA_TINY = 'labelExtraTiny',
-  
+
   DESCRIPTION_MEDIUM_PRIMARY = 'descriptionMediumPrimary',
   DESCRIPTION_SMALL_PRIMARY = 'descriptionSmallPrimary',
 
@@ -52,6 +52,7 @@ export enum TypographyType {
   DESCRIPTION_MEDIUM = 'descriptionMedium',
   DESCRIPTION_SEMI_MEDIUM = 'descriptionSemiMedium',
   DESCRIPTION_SMALL = 'descriptionSmall',
+  DESCRIPTION_TINY = 'descriptionTiny',
 
   CAPTION = 'caption',
   BUTTON_TEXT = 'buttonText',
