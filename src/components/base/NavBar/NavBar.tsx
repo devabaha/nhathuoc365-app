@@ -67,9 +67,16 @@ const NavBar = ({
   const navBarTheme = useMemo(() => {
     return getNavBarTheme(
       theme,
-      checkIsNextSceneNavBarSurfaceMode(navigation?.state?.routeName),
+      checkIsNextSceneNavBarSurfaceMode(
+        navigation?.state?.routeName ||
+          navigation?.navigation?.state?.routeName,
+      ),
     );
-  }, [theme, navigation?.state?.routeName]);
+  }, [
+    theme,
+    navigation?.state?.routeName,
+    navigation?.navigation?.state?.routeName,
+  ]);
 
   const handleBack = useCallback(() => {
     pop();
@@ -104,7 +111,7 @@ const NavBar = ({
       ) : (
         <Container noBackground flex row>
           <Container noBackground row style={styles.leftContainer}>
-            {back && (renderBack ? renderBack() : renderBaseBack())}
+            {back && (renderBack ? renderBack(navBarTheme.iconStyle) : renderBaseBack())}
             {renderLeft && renderLeft()}
           </Container>
 

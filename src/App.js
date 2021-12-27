@@ -202,7 +202,6 @@ import {ThemeProvider} from './Themes/Theme.context';
 import {BASE_LIGHT_THEME} from './Themes';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {pop, push, reset} from 'app-helper/routing';
-import {ResetPasswordNavBar} from './components/ResetPassword';
 
 /**
  * Not allow font scaling
@@ -2114,6 +2113,7 @@ class RootRouter extends Component {
               <Scene
                 key={`${appConfig.routes.transaction}_1`}
                 component={Transaction}
+                {...whiteNavBarConfig}
                 hideNavBar
                 back
               />

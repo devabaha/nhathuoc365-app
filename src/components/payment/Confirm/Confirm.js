@@ -51,6 +51,7 @@ import {debounce} from 'lodash';
 import POSSection from './components/POSSection';
 import {push} from 'app-helper/routing';
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 class Confirm extends Component {
   static contextType = ThemeContext;
@@ -479,7 +480,8 @@ class Confirm extends Component {
   }
 
   goToTransaction = (siteId, cartId) => {
-    Actions.push(appConfig.routes.transaction, {
+    servicesHandler({
+      type: SERVICES_TYPE.PAYMENT_TRANSACTION,
       siteId,
       cartId,
       onPop: () => {

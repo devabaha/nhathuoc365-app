@@ -8,6 +8,10 @@ import {Typography} from '../interface';
 export const TYPOGRAPHY_DARK: Typography = {
   // TITLE
   // PRIMARY
+  [TypographyType.TITLE_LARGE_PRIMARY]: {
+    fontSize: TypographyFontSize.HEADLINE_MEDIUM,
+    color: BASE_COLOR_DARK.primaryHighlight,
+  },
   [TypographyType.TITLE_MEDIUM_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.primaryHighlight,
