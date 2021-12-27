@@ -46,9 +46,6 @@ import Account from './components/account/Account';
 // import PhoneAuth from './components/account/PhoneAuth';
 import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
-import ForgetVerify from './components/account/ForgetVerify';
-import ForgetActive from './components/account/ForgetActive';
-import NewPass from './components/account/NewPass';
 import StoreContainer from './components/stores/Stores';
 import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
@@ -1377,36 +1374,6 @@ class RootRouter extends Component {
                     title={t('screen.opRegister.mainTitle')}
                     component={OpRegister}
                     {...navBarConfig}
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.forgetVerify}>
-                  <Scene
-                    key={`${appConfig.routes.forgetVerify}_1`}
-                    title="Lấy lại mật khẩu"
-                    component={ForgetVerify}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.forgetActive}>
-                  <Scene
-                    key={`${appConfig.routes.forgetActive}_1`}
-                    title="Kích hoạt tài khoản"
-                    component={ForgetActive}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.newPass}>
-                  <Scene
-                    key={`${appConfig.routes.newPass}_1`}
-                    title="Tạo mật khẩu mới"
-                    component={NewPass}
-                    {...navBarConfig}
-                    back
                   />
                 </Stack>
 

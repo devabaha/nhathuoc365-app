@@ -523,16 +523,24 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /** PROGRESS TRACKING */
     /** LIST */
     case SERVICES_TYPE.LIST_PROGRESS_TRACKING:
-      Actions.push(appConfig.routes.listProgressTracking, {
-        title: service.title,
-      });
+      push(
+        appConfig.routes.listProgressTracking,
+        {
+          title: service.title,
+        },
+        service.theme,
+      );
       break;
     /** DETAIL */
     case SERVICES_TYPE.PROGRESS_TRACKING_DETAIL:
-      Actions.push(appConfig.routes.progressTrackingDetail, {
-        title: service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.progressTrackingDetail,
+        {
+          title: service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** PERSONAL PROFILE */

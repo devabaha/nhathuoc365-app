@@ -201,12 +201,6 @@ class Config {
 
   get routes() {
     return {
-      // ?deprecated
-      forgetActive: 'forget_active',
-      forgetVerify: 'forget_verify',
-      newPass: 'new_pass',
-      // ----
-
       sceneWrapper: 'sceneWrapper',
       launch: 'launch',
 

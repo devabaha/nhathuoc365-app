@@ -1,25 +1,26 @@
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import Button from 'react-native-button';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import moment from 'moment';
-
-import appConfig from 'app-config';
-
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Typography, Icon} from 'src/components/base';
 import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
     marginBottom: 5,
-    backgroundColor: '#fff',
   },
   imageContainer: {
     width: 65,
     height: 65,
     marginRight: 15,
-    borderRadius: 8,
     overflow: 'hidden',
     alignSelf: 'center',
   },
@@ -31,54 +32,35 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    color: '#242424',
     fontWeight: '500',
     flex: 1,
   },
   subTitleContainer: {
-    borderRadius: 4,
     alignSelf: 'flex-start',
     marginTop: 3,
     paddingHorizontal: 5,
     paddingVertical: 2,
-    borderWidth: Util.pixel,
-    borderColor: appConfig.colors.primary,
   },
-  subTitle: {
-    color: appConfig.colors.primary,
-    fontSize: 12,
-  },
+  subTitle: {},
   statusContainer: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    backgroundColor: hexToRgba(appConfig.colors.status.success, 0.1),
-    borderRadius: 4,
   },
-  status: {
-    color: appConfig.colors.status.success,
-    fontSize: 12,
-  },
+  status: {},
 
   footerContainer: {
     marginTop: 10,
   },
   description: {
-    color: '#666',
-    fontSize: 12,
     flex: 1,
   },
   icon: {
     paddingHorizontal: 5,
-    color: '#666',
     marginLeft: 15,
   },
 
-  expiredContainer: {
-    backgroundColor: hexToRgba(appConfig.colors.status.danger, 0.1),
-  },
-  expired: {
-    color: appConfig.colors.status.danger,
-  },
+  expiredContainer: {},
+  expired: {},
 });
 
 const STATUS_TYPE = {
@@ -94,6 +76,8 @@ const ProgressItem = ({
   image = '',
   onPress,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('progressTracking');
   const getStatus = () => {
     let status = t('available');
@@ -113,53 +97,121 @@ const ProgressItem = ({
   const {status, type: statusType} = getStatus();
   const isExpired = statusType === STATUS_TYPE.EXPIRED;
 
+  const imageContainerStyle = useMemo(() => {
+    return mergeStyles(styles.imageContainer, {
+      borderRadius: theme.layout.borderRadiusMedium,
+    });
+  }, [theme]);
+
+  const subTitleColor = useMemo(() => {
+    return theme.color.primaryHighlight;
+  }, [theme]);
+
+  const subTitleStyle = useMemo(() => {
+    return mergeStyles(styles.subTitle, {color: subTitleColor});
+  }, [theme, subTitleColor]);
+
+  const subTitleContainerStyle = useMemo(() => {
+    return mergeStyles(styles.subTitleContainer, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+      borderWidth: theme.layout.borderWidthPixel,
+      borderColor: subTitleColor,
+    });
+  }, [theme, subTitleColor]);
+
+  const statusContainerStyle = useMemo(() => {
+    return mergeStyles(styles.statusContainer, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+      backgroundColor: hexToRgba(theme.color.success, 0.1),
+    });
+  }, [theme]);
+
+  const statusStyle = useMemo(() => {
+    return mergeStyles(styles.status, {
+      color: theme.color.success,
+    });
+  }, [theme]);
+
+  const expiredContainerStyle = useMemo(() => {
+    return mergeStyles(styles.expiredContainer, {
+      backgroundColor: hexToRgba(theme.color.danger, 0.1),
+    });
+  }, [theme]);
+
+  const expiredStyle = useMemo(() => {
+    return mergeStyles(styles.expired, {
+      color: theme.color.danger,
+    });
+  }, [theme]);
+
   return (
-    <Button disabled={!onPress} activeOpacity={0.8} onPress={onPress} containerStyle={styles.container}>
-      <Container row>
-        <Container style={styles.imageContainer}>
-          <Image source={{uri: image}} style={styles.image} />
-        </Container>
+    <BaseButton disabled={!onPress} activeOpacity={0.8} onPress={onPress}>
+      <Container style={styles.container}>
+        <Container noBackground row>
+          <Container noBackground style={imageContainerStyle}>
+            <Image source={{uri: image}} style={styles.image} />
+          </Container>
 
-        <Container flex centerVertical={false}>
-          <Container centerVertical={false}>
-            <Container row style={styles.headerContainer}>
-              <Text numberOfLines={2} style={styles.title}>
-                {title}
-              </Text>
+          <Container noBackground flex centerVertical={false}>
+            <Container noBackground centerVertical={false}>
+              <Container noBackground row style={styles.headerContainer}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  numberOfLines={2}
+                  style={styles.title}>
+                  {title}
+                </Typography>
 
-              {!!endDate && (
+                {!!endDate && (
+                  <Container
+                    style={[
+                      statusContainerStyle,
+                      isExpired && expiredContainerStyle,
+                    ]}>
+                    <Typography
+                      type={TypographyType.LABEL_TINY}
+                      style={[statusStyle, isExpired && expiredStyle]}>
+                      {status}
+                    </Typography>
+                  </Container>
+                )}
+              </Container>
+
+              {!!code && (
                 <Container
-                  style={[
-                    styles.statusContainer,
-                    isExpired && styles.expiredContainer,
-                  ]}>
-                  <Text style={[styles.status, isExpired && styles.expired]}>
-                    {status}
-                  </Text>
+                  noBackground
+                  centerVertical={false}
+                  style={subTitleContainerStyle}>
+                  <Typography
+                    type={TypographyType.LABEL_TINY}
+                    style={subTitleStyle}>
+                    {code}
+                  </Typography>
                 </Container>
               )}
             </Container>
 
-            {!!code && (
-              <Container
-                centerVertical={false}
-                style={styles.subTitleContainer}>
-                <Text style={styles.subTitle}>{code}</Text>
-              </Container>
-            )}
-          </Container>
+            <Container noBackground row style={styles.footerContainer}>
+              <Typography
+                type={TypographyType.LABEL_TINY_TERTIARY}
+                style={styles.description}>
+                {startDate}
+                {!!endDate && ` ~ ${endDate}`}
+              </Typography>
 
-          <Container row style={styles.footerContainer}>
-            <Text style={styles.description}>
-              {startDate}
-              {!!endDate && ` ~ ${endDate}`}
-            </Text>
-
-            {!!onPress && <AntDesignIcon name="right" style={styles.icon} />}
+              {!!onPress && (
+                <Icon
+                  neutral
+                  bundle={BundleIconSetName.ANT_DESIGN}
+                  name="right"
+                  style={styles.icon}
+                />
+              )}
+            </Container>
           </Container>
         </Container>
       </Container>
-    </Button>
+    </BaseButton>
   );
 };
 
