@@ -77,7 +77,7 @@ const Images = ({
       borderWidth: theme.layout.borderWidth,
       borderRadius: theme.layout.borderRadiusExtraSmall,
     });
-  }, theme);
+  }, [theme]);
 
   function renderImages() {
     return gallery.map((image, index) => {

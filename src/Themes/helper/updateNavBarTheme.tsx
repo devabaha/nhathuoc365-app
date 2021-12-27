@@ -1,5 +1,5 @@
 import React from 'react';
-import {Typography, TypographyType} from 'src/components/base';
+import Typography, {TypographyType} from 'src/components/base/Typography';
 
 import {Style, Theme} from '../interface';
 
