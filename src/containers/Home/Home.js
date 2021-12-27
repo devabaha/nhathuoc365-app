@@ -188,7 +188,7 @@ class Home extends Component {
   };
 
   handlePressedSurplusNext = () => {
-    servicesHandler({type: SERVICES_TYPE.WALLET});
+    servicesHandler({type: SERVICES_TYPE.WALLET, theme: this.theme});
   };
 
   handlePressCommission = () => {

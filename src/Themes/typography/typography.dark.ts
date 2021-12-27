@@ -188,6 +188,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_DARK.textSecondary,
   },
+  [TypographyType.DESCRIPTION_TINY]: {
+    fontSize: TypographyFontSize.NOTE_LARGE,
+    color: BASE_COLOR_DARK.textSecondary,
+  },
   // OTHERS
   [TypographyType.BUTTON_TEXT]: {
     fontSize: 16,

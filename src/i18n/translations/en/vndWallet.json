@@ -1,6 +1,7 @@
 {
   "header": {
-    "balance": "Balance"
+    "balance": "Balance",
+    "topUp": "Top-up"
   },
   "tabs": {
     "history": {
@@ -11,5 +12,7 @@
       "title": "Information",
       "message": "Information about the account"
     }
-  }
+  },
+  "balanceBefore": "Before: ",
+  "rechargeInstructions": "Recharge instructions"
 }
