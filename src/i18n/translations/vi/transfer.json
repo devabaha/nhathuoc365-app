@@ -1,7 +1,8 @@
 {
   "contactInput": {
     "title": "Nạp đến",
-    "placeholder": "Nhập tên hoặc SĐT người nhận"
+    "placeholder": "Nhập tên hoặc SĐT người nhận",
+    "historyTitle": "Xem lịch sử"
   },
   "contact": {
     "requestContactsPermissionTitle": "Danh bạ",
