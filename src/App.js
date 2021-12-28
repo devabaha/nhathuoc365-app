@@ -751,7 +751,7 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 2 ************************
                    */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
@@ -762,6 +762,26 @@ class RootRouter extends Component {
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
+                    />
+                  </Stack> */}
+                  <Stack
+                    key={appConfig.routes.ordersTab}
+                    icon={TabIcon}
+                    iconLabel={t('appTab.tab4.title')}
+                    iconName="cart"
+                    iconSize={24}
+                    notifyKey="notify_cart"
+                    iconSVG={SVGOrders}>
+                    <Scene
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title={t('screen.orders.mainTitle')}
+                      component={Orders}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
                     />
                   </Stack>
 
