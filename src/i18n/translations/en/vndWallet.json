@@ -14,5 +14,12 @@
     }
   },
   "balanceBefore": "Before: ",
-  "rechargeInstructions": "Recharge instructions"
+  "rechargeInstructions": "Recharge instructions",
+
+  "detailHistory": {
+    "transactionCode": "Transaction code",
+    "time": "Time",
+    "content": "Content",
+    "change": "Change"
+  }
 }
