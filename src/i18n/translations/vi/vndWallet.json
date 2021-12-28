@@ -14,5 +14,12 @@
     }
   },
   "balanceBefore": "Trước đó: ",
-  "rechargeInstructions": "Hướng dẫn nạp"
+  "rechargeInstructions": "Hướng dẫn nạp",
+
+  "detailHistory": {
+    "transactionCode": "Mã giao dịch",
+    "time": "Thời gian",
+    "content": "Nội dung",
+    "change": "Thay đổi"
+  }
 }
