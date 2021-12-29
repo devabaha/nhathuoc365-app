@@ -1191,7 +1191,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.newsTab}>
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
-                    {...navBarConfig}
                     component={SocialNews}
                     {...navBarConfig}
                     back
@@ -1244,16 +1243,6 @@ class RootRouter extends Component {
                     title={t('screen.voucher.mainTitle')}
                     component={VoucherContainer}
                     {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ VOUCHER DETAIL ================ */}
-                <Stack key={appConfig.routes.voucherDetail}>
-                  <Scene
-                    key={`${appConfig.routes.voucherDetail}_1`}
-                    component={VoucherDetailContainer}
-                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
@@ -1417,7 +1406,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.searchStore}>
                   <Scene
                     key={`${appConfig.routes.searchStore}_1`}
-                    title="Tìm kiếm"
                     component={SearchStoreContainer}
                     navBar={SearchNavBarContainer}
                     {...navBarConfig}
@@ -1445,9 +1433,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="rating">
+                <Stack key={appConfig.routes.rating}>
                   <Scene
-                    key="rating_1"
+                    key={`${appConfig.routes.rating}_1`}
                     title={t('screen.feedback.mainTitle')}
                     component={Rating}
                     {...navBarConfig}

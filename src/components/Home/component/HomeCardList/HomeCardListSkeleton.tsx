@@ -1,28 +1,15 @@
-import * as React from 'react';
-import {PureComponent} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  ViewStyle,
-  StyleProp,
-} from 'react-native';
-import {Container} from 'src/components/base';
-//@ts-ignore
-import SkeletonLoading from '../../../SkeletonLoading';
-import {SKELETON_COLOR} from '../../../SkeletonLoading/constants';
-
-export interface HomeCardListSkeletonProps {
-  itemContainerStyle?: StyleProp<ViewStyle>;
-  mainStyle?: StyleProp<ViewStyle>;
-}
+import React, {PureComponent} from 'react';
+import {View, StyleSheet} from 'react-native';
+// types
+import {HomeCardListSkeletonProps} from '.';
+// custom components
+import {Container, FlatList, Skeleton} from 'src/components/base';
+import SkeletonLoading from 'src/components/SkeletonLoading';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: '#fff',
     marginTop: 10,
-    // paddingBottom: 15
   },
   contentContainer: {
     paddingBottom: 15,
@@ -32,7 +19,6 @@ const styles = StyleSheet.create({
   },
   title: {
     width: '23%',
-    backgroundColor: SKELETON_COLOR,
     height: 12,
     marginVertical: 15,
     borderRadius: 8,
@@ -43,7 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   itemMain: {
-    backgroundColor: SKELETON_COLOR,
     borderRadius: 8,
     width: '100%',
     height: 120,
@@ -53,10 +38,9 @@ const styles = StyleSheet.create({
     width: '50%',
     height: 10,
     borderRadius: 8,
-    backgroundColor: SKELETON_COLOR,
   },
   skeletonContainer: {
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: 'transparent',
     position: 'absolute',
   },
 });
@@ -64,13 +48,24 @@ const styles = StyleSheet.create({
 const SKELETON_LENGTH = 5;
 
 class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
+  static contextType = ThemeContext;
+
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get highlightColor() {
+    return this.theme.color.background as string;
+  }
+
   render() {
     return (
-      <Container style={styles.container}>
+      <Container noBackground style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.content}>
-            <View style={styles.title} />
+            <Skeleton container style={styles.title} />
           </View>
 
           <FlatList
@@ -82,8 +77,11 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
               return (
                 <View
                   style={[styles.itemContainer, this.props.itemContainerStyle]}>
-                  <View style={[styles.itemMain, this.props.mainStyle]} />
-                  <View style={styles.itemSub} />
+                  <Skeleton
+                    container
+                    style={[styles.itemMain, this.props.mainStyle]}
+                  />
+                  <Skeleton container style={styles.itemSub} />
                 </View>
               );
             }}
@@ -92,6 +90,7 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
         </View>
         <SkeletonLoading
           style={styles.skeletonContainer}
+          highlightColor={this.highlightColor}
           width="100%"
           height="100%"
         />

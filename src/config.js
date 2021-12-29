@@ -387,6 +387,9 @@ class Config {
       requests: 'requests',
       requestDetail: 'requestDetail',
       requestCreation: 'requestCreation',
+
+      // Rating
+      rating: 'rating'
     };
   }
 }

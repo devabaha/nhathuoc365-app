@@ -1,46 +1,50 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  // Image,
-  StyleSheet,
-  RefreshControl,
-  Platform,
-  StatusBar,
-  SafeAreaView,
-  // ScrollView,
-  SectionList,
-  Text,
-} from 'react-native';
+// 3-party libs
 import Animated, {Easing} from 'react-native-reanimated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Svg, {Path} from 'react-native-svg';
+import {withSafeAreaInsets} from 'react-native-safe-area-context';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getPackageOptionValue} from 'app-helper/packageOptionsHandler';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgbCode} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
+import {HOME_HEADER_HEIGHT} from './constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, {HomeCardItem} from './component/HomeCardList';
 import ListServices from './component/ListServices';
-import ListProducts, {ProductItem} from './component/ListProducts';
-import appConfig from 'app-config';
+import ListProducts from './component/ListProducts';
+import Posts from 'src/containers/Social/Posts';
+import {
+  NavBarWrapper,
+  ScreenWrapper,
+  RefreshControl,
+  Icon,
+  Container,
+  Typography,
+} from 'src/components/base';
+// skeleton
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+// themes
 import Themes from 'src/Themes';
-import {
-  getPackageOptionValue,
-  PACKAGE_OPTIONS_TYPE,
-} from '../../helper/packageOptionsHandler';
-import Posts from 'src/containers/Social/Posts';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+
 import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
-import {Container} from '../base';
-import {hexToRgbCode} from 'app-helper';
-import {NavBarWrapper, ScreenWrapper} from 'src/components/base';
-import Svg, {Path} from 'react-native-svg';
-import {withSafeAreaInsets} from 'react-native-safe-area-context';
-import {HOME_HEADER_HEIGHT} from './constants';
+import {LIST_SERVICE_TYPE} from '.';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
@@ -96,7 +100,6 @@ class Home extends Component {
     onShowAllNews: PropTypes.func,
     onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
-    onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
@@ -133,7 +136,6 @@ class Home extends Component {
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
     onPressProduct: defaultListener,
-    onPressSiteItem: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
@@ -357,7 +359,7 @@ class Home extends Component {
         <View style={styles.headerBackgroundContentContainer}>
           <Svg>
             <Path
-              fill={this.theme.color.primary}
+              fill={this.theme.color.navBarBackground}
               d={`M 0 0 H ${this.headerBackgroundDimensions.width} V ${
                 this.headerBackgroundDimensions.height +
                 HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT / 2
@@ -399,6 +401,12 @@ class Home extends Component {
     );
   };
 
+  get siteIconStyle() {
+    return {
+      color: this.theme.color.onSurface,
+    };
+  }
+
   render() {
     const {t} = this.props;
     const name = this.props.userInfo
@@ -417,7 +425,6 @@ class Home extends Component {
         {this.renderHeaderComponent()}
 
         <ScrollView
-          // onScroll={this.showBgrStatusIfOffsetTop}
           onScroll={event(
             [
               {
@@ -459,7 +466,7 @@ class Home extends Component {
               progressViewOffset={this.headerBackgroundDimensions.height}
               refreshing={this.props.refreshing}
               onRefresh={this.props.onPullToRefresh}
-              tintColor={appConfig.colors.white}
+              tintColor={this.theme.color.onNavBarBackground}
             />
           }>
           {/* <Header
@@ -564,15 +571,23 @@ class Home extends Component {
                     imageUrl={item.image_url}
                     onPress={() => this.props.onPressSiteItem(item)}
                     last={this.props.sites.length - 1 === index}
-                    subTitle={item.address}
-                    titleStyle={styles.siteTitleContent}
-                    subTitleStyle={styles.siteSubtitleContent}
-                    iconSubTitle={
-                      <Ionicons
-                        name="ios-location-sharp"
-                        style={styles.siteIcon}
-                      />
+                    subTitle={
+                      !!item.address && (
+                        <Typography
+                          type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                          renderIconBefore={(titleStyle) => (
+                            <Icon
+                              bundle={BundleIconSetName.IONICONS}
+                              name="ios-location-sharp"
+                              style={[titleStyle, styles.siteIcon]}
+                            />
+                          )}>
+                          {' '}
+                          {item.address}
+                        </Typography>
+                      )
                     }
+                    titleStyle={styles.siteTitleContent}
                   />
                 )}
               </HomeCardList>
@@ -598,6 +613,7 @@ class Home extends Component {
                 }}
               </HomeCardList>
             )}
+
             {this.hasProduct_categories ? (
               this.props.product_categories.map((productCategory, index) => {
                 let {id, products, title, display_type} = productCategory;
@@ -679,7 +695,7 @@ class Home extends Component {
           </View>
         </ScrollView>
 
-        <StatusBarBackground />
+        {/* <StatusBarBackground /> */}
       </ScreenWrapper>
     );
   }
@@ -688,7 +704,6 @@ class Home extends Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appConfig.colors.sceneBackground,
   },
 
   headerContainer: {
@@ -708,9 +723,7 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  contentWrapper: {
-    backgroundColor: appConfig.colors.sceneBackground,
-  },
+  contentWrapper: {},
   primaryActionsWrapper: {
     paddingBottom: 8,
   },
@@ -744,12 +757,9 @@ let styles = StyleSheet.create({
   siteTitleContent: {
     fontWeight: '500',
   },
-  siteSubtitleContent: {
-    color: '#666',
-  },
+  siteSubtitleContent: {},
   siteIcon: {
     fontSize: 15,
-    color: '#000',
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);

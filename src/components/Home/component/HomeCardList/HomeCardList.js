@@ -1,16 +1,27 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography, FlatList, TextButton} from 'src/components/base';
 
-import appConfig from 'app-config';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {Typography} from 'src/components/base';
-import {TypographyType} from 'src/components/base/Typography/constants';
 class HomeCardList extends Component {
   static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get showAllTitleStyle() {
+    return {color: this.theme.color.accent2};
+  }
+
   render() {
-    const theme = getTheme(this);
     const props = this.props;
     const {t} = props;
 
@@ -27,14 +38,14 @@ class HomeCardList extends Component {
           </Typography>
 
           {props.onShowAll ? (
-            <Button
-              containerStyle={styles.showAllBtn}
-              underlayColor="transparent"
+            <TextButton
+              style={styles.showAllBtn}
+              titleStyle={this.showAllTitleStyle}
               onPress={props.onShowAll}>
-              <Text style={styles.viewAll}>{t('viewAll')}</Text>
-            </Button>
+              {t('viewAll')}
+            </TextButton>
           ) : (
-            <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
+            <View style={styles.showAllBtn} />
           )}
         </View>
 
@@ -73,14 +84,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    // ...appConfig.styles.typography.heading1,
     flex: 1,
     marginRight: 20,
   },
-  viewAll: {
-    ...appConfig.styles.typography.text,
-    color: '#0084ff',
-  },
+  viewAll: {},
   listContainer: {
     overflow: 'visible',
   },

@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
-
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import {Actions} from 'react-native-router-flux';
-import HomeComponent from '../../components/Home';
+// helpers
 import {executeJobs} from '../../helper/jobsOnReset';
-import {servicesHandler, SERVICES_TYPE} from '../../helper/servicesHandler';
+import {servicesHandler} from '../../helper/servicesHandler';
+import EventTracker from '../../helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
-import EventTracker from '../../helper/EventTracker';
-import {push} from 'app-helper/routing';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+import {SERVICES_TYPE} from '../../helper/servicesHandler';
+// custom components
+import HomeComponent from '../../components/Home';
 
 class Home extends Component {
   static contextType = ThemeContext;
@@ -80,7 +84,9 @@ class Home extends Component {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
-          Actions.rating({
+          servicesHandler({
+            type: SERVICES_TYPE.RATING,
+            theme: this.theme,
             cart_data: response.data.vote_cart,
           });
         }
@@ -192,17 +198,26 @@ class Home extends Component {
   };
 
   handlePressCommission = () => {
-    Actions.push(appConfig.routes.commissionIncomeStatement);
+    servicesHandler({
+      type: SERVICES_TYPE.COMMISSION_INCOME_STATEMENT,
+      theme: this.theme,
+    });
   };
 
   handlePromotionPressed = (item) => {
     servicesHandler(item, this.props.t);
   };
 
+  /**
+   *
+   * @deprecated
+   */
   handleVoucherPressed = (item) => {
-    Actions.notify_item({
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      theme: this.theme,
       title: item.title,
-      data: item,
+      news: item,
     });
   };
 
@@ -236,55 +251,64 @@ class Home extends Component {
   };
 
   handleShowAllCampaigns = () => {
-    Actions.push(appConfig.routes.mainVoucher, {
+    servicesHandler({
+      type: SERVICES_TYPE.LIST_VOUCHER,
+      theme: this.theme,
       from: 'home',
     });
   };
 
   handleShowAllNews = (title, categoryId) => {
-    servicesHandler({type: SERVICES_TYPE.NEWS_CATEGORY, title, categoryId});
-    // Actions.push(appConfig.routes.newsTab, {
-    //   title,
-    //   id,
-    // });
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_CATEGORY,
+      theme: this.theme,
+      title,
+      categoryId,
+    });
   };
 
   handlePressSiteItem = (store, callBack) => {
     servicesHandler(
-      {type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id},
+      {
+        type: SERVICES_TYPE.OPEN_SHOP,
+        theme: this.theme,
+        siteId: store.id,
+      },
       this.props.t,
       callBack,
     );
   };
 
   handlePressCampaignItem = (campaign) => {
-    Actions.push(appConfig.routes.voucherDetail, {
+    servicesHandler({
+      type: SERVICES_TYPE.VOUCHER_CAMPAIGN_DETAIL,
+      theme: this.theme,
       title: campaign.title,
       campaignId: campaign.id,
       from: 'home',
     });
   };
 
-  handlePressNewItem = (item) => {
-    Actions.notify_item({
+  handlePressNewsItem = (item) => {
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      theme: this.theme,
       title: item.title,
-      data: item,
+      news: item,
     });
   };
 
   handlePressButtonChat = () => {
     if (store.user_info && this.state.site) {
-      push(
-        appConfig.routes.amazingChat,
-        {
-          titleStyle: {width: 220},
-          phoneNumber: this.state.site.tel,
-          title: this.state.site.name,
-          site_id: this.state.site.id,
-          user_id: store.user_info.id,
-        },
-        this.theme,
-      );
+      servicesHandler({
+        type: SERVICES_TYPE.CHAT,
+        titleStyle: {width: 220},
+        phoneNumber: this.state.site.tel,
+        title: this.state.site.name,
+        site_id: this.state.site.id,
+        user_id: store.user_info.id,
+        theme: this.theme,
+      });
     }
   };
 
@@ -292,6 +316,7 @@ class Home extends Component {
     servicesHandler({
       type: SERVICES_TYPE.SOCIAL,
       siteId: store?.store_data?.id,
+      theme: this.theme,
     });
   };
 
@@ -321,9 +346,11 @@ class Home extends Component {
     //   productId: product.id,
     // };
     // servicesHandler(service, this.props.t, callBack);
-    Actions.push(appConfig.routes.item, {
+    servicesHandler({
+      type: SERVICES_TYPE.PRODUCT_DETAIL,
+      theme: this.theme,
       title: product.name,
-      item: product,
+      product,
     });
   };
 
@@ -336,7 +363,8 @@ class Home extends Component {
       (response) => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);
-          Actions.push(appConfig.routes.searchStore, {
+          servicesHandler({
+            type: SERVICES_TYPE.SEARCH_STORE,
             categories: null,
             category_id: 0,
             category_name: '',
@@ -393,7 +421,7 @@ class Home extends Component {
         onShowAllNews={(title, id) => this.handleShowAllNews(title, id)}
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
-        onPressNewItem={this.handlePressNewItem}
+        onPressNewItem={this.handlePressNewsItem}
         onPressNoti={this.handlePressButtonChat}
         onPressCommission={this.handlePressCommission}
         goToSocial={this.goToSocial}

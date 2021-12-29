@@ -1,9 +1,12 @@
 import React from 'react';
-import {Actions} from 'react-native-router-flux';
-import SubActionButton from '../SubActionButton';
-import appConfig from 'app-config';
-import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
+// helpers
+import {servicesHandler} from 'src/helper/servicesHandler';
+// context
 import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'src/helper/servicesHandler';
+// custom components
+import SubActionButton from '../SubActionButton';
 
 const QRScanButton = ({label, iconStyle, wrapperStyle, containerStyle}) => {
   const {theme} = useTheme();

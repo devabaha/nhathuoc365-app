@@ -1,16 +1,21 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {View, Text, FlatList, StyleSheet} from 'react-native';
-import ListProductSkeleton from './ListProductSkeleton';
+// configs
 import store from 'app-store';
-import {HOME_CARD_TYPE} from '../../constants';
 import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+import {HOME_CARD_TYPE} from '../../constants';
+// custom components
 import ProductItem from './ProductItem';
-import Button from 'react-native-button';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {Typography} from 'src/components/base';
-import {TypographyType} from 'src/components/base/Typography/constants';
-import {TextButton} from 'src/components/base/Button';
+import {Typography, TextButton, FlatList} from 'src/components/base';
+// skeleton
+import ListProductSkeleton from './ListProductSkeleton';
 
 class ListProducts extends Component {
   static contextType = ThemeContext;
@@ -119,6 +124,10 @@ class ListProducts extends Component {
     }
   }
 
+  get showAllTitleStyle() {
+    return {color: this.theme.color.accent2};
+  }
+
   render() {
     return this.hasProducts ? (
       <View style={[styles.container, this.props.containerStyle]}>
@@ -131,13 +140,10 @@ class ListProducts extends Component {
           </Typography>
           {!!this.props.onShowAll && (
             <TextButton
-              titleStyle={{color: this.theme.color.accent2}}
+              titleStyle={this.showAllTitleStyle}
               onPress={this.props.onShowAll}>
               {this.props.t('viewAll')}
             </TextButton>
-            // <Button underlayColor="transparent" onPress={this.props.onShowAll}>
-            //   <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
-            // </Button>
           )}
         </View>
         {this.renderFlatList()}
@@ -161,7 +167,6 @@ const styles = StyleSheet.create({
   heading: {
     flex: 1,
     marginRight: 20,
-    // ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
     paddingHorizontal: 7.5,
@@ -187,10 +192,7 @@ const styles = StyleSheet.create({
   itemVerticalImage: {
     height: (appConfig.device.width / 2) * 0.75,
   },
-  viewAll: {
-    ...appConfig.styles.typography.title,
-    color: '#0084ff',
-  },
+  viewAll: {},
 });
 
 export default withTranslation('home')(observer(ListProducts));

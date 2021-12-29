@@ -34,7 +34,7 @@ function StatusBarBackground(props) {
 
   if (Platform.OS !== 'ios') return null;
 
-  return <Animated.View style={[styles.statusBar, { opacity }]} />;
+  return <Animated.View style={[styles.statusBar, { opacity: 1 }]} />;
 }
 
 const styles = StyleSheet.create({

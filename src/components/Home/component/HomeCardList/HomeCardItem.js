@@ -1,21 +1,20 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-} from 'react-native';
-import Loading from '../../../Loading';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
+// configs
 import appConfig from 'app-config';
+// helpers
 import {hasVideo} from 'app-helper/product/product';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {TypographyType} from 'src/components/base/Typography/constants';
-import {Card, Typography} from 'src/components/base';
-import { mergeStyles } from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Card, Typography, Icon, BaseButton} from 'src/components/base';
+import ImageBg from 'src/components/ImageBg';
+import Loading from '../../../Loading';
 
 class HomeCardItem extends Component {
   static contextType = ThemeContext;
@@ -46,55 +45,96 @@ class HomeCardItem extends Component {
     });
   };
 
+  get imageStyle() {
+    return {
+      borderTopLeftRadius: this.theme.layout.borderRadiusMedium,
+      borderTopRightRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
+  get videoContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay30,
+    };
+  }
+
+  get iconVideoStyle() {
+    return {color: this.theme.color.onOverlay};
+  }
+
+  get loadingContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay60,
+    };
+  }
+
+  get loadingColor() {
+    return this.theme.color.onOverlay;
+  }
+
+  get titleStyle() {
+    return mergeStyles(styles.title, this.props.titleStyle);
+  }
+
+  get specialSubTitleStyle() {
+    return {
+      color: this.theme.color.accent1,
+    };
+  }
+
   render() {
     const props = this.props;
 
-    const titleStyle = mergeStyles(styles.title, props.titleStyle);
-
-    const imageBackgroundStyle = mergeStyles([styles.image, {
-      backgroundColor: this.theme.color.contentBackground
-    }], props.imageStyle);
-
     return (
       <View style={[styles.container, this.props.containerStyle]}>
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <BaseButton
           disabled={this.state.loading}
           onPress={this.handlePress}
-          style={[styles.wrapperBtn]}>
-          <Card style={styles.containerBtn}>
-            <ImageBackground
-              style={imageBackgroundStyle}
+          style={styles.wrapperBtn}>
+          <Card shadow style={styles.containerBtn}>
+            <ImageBg
+              style={[styles.image, this.imageStyle, props.imageStyle]}
               source={{uri: props.imageUrl}}>
               {hasVideo(props) && (
-                <View style={styles.videoContainer}>
-                  <Icon name="play" style={styles.iconVideo} />
+                <View style={[styles.videoContainer, this.videoContainerStyle]}>
+                  <Icon
+                    bundle={BundleIconSetName.FONT_AWESOME}
+                    name="play"
+                    style={[styles.iconVideo, this.iconVideoStyle]}
+                  />
                 </View>
               )}
               {this.state.loading && (
-                <Loading color="#fff" containerStyle={styles.loading} />
+                <Loading
+                  color={this.loadingColor}
+                  containerStyle={[styles.loading, this.loadingContainerStyle]}
+                />
               )}
-            </ImageBackground>
+            </ImageBg>
             <View style={[styles.titleWrapper, props.textWrapperStyle]}>
               <Typography
                 type={TypographyType.TITLE_MEDIUM}
                 numberOfLines={2}
-                style={titleStyle}>
+                style={this.titleStyle}>
                 {props.title}
               </Typography>
               {!!props.subTitle && (
-                <Text style={[styles.subTitle, props.subTitleStyle]}>
+                <Typography
+                  type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                  style={[styles.subTitle, props.subTitleStyle]}>
                   {this.props.iconSubTitle}
                   {!!this.props.iconSubTitle && ` `}
-                  <Text style={styles.specialSubTitle}>
+                  <Typography
+                    type={TypographyType.LABEL_HUGE}
+                    style={this.specialSubTitleStyle}>
                     {props.specialSubTitle}
-                  </Text>
+                  </Typography>
                   {props.subTitle}
-                </Text>
+                </Typography>
               )}
             </View>
           </Card>
-        </TouchableOpacity>
+        </BaseButton>
       </View>
     );
   }
@@ -106,43 +146,29 @@ const styles = StyleSheet.create({
   },
   containerBtn: {
     width: 280,
-    // backgroundColor: '#fff',
-    // borderRadius: 8,
     flexDirection: 'column',
     flex: 1,
-    ...appConfig.styles.shadow,
   },
   container: {
     marginHorizontal: 7.5,
   },
   image: {
-    backgroundColor: '#ebebeb',
     width: '100%',
     height: 280 / 1.91,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
   titleWrapper: {
     padding: 15,
-    // paddingVertical: 15,
   },
-  title: {
-    // ...appConfig.styles.typography.heading3,
-  },
-  specialSubTitle: {
-    ...appConfig.styles.typography.heading1,
-    color: appConfig.colors.highlight[1],
-  },
+  title: {},
+  specialSubTitle: {},
   subTitle: {
     marginTop: 5,
-    ...appConfig.styles.typography.text,
   },
   loading: {
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.5)',
   },
   videoContainer: {
     marginLeft: 'auto',
@@ -153,13 +179,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     position: 'absolute',
     bottom: 0,
     right: 0,
   },
   iconVideo: {
-    color: appConfig.colors.white,
     fontSize: appConfig.device.isIOS ? 10 : 9,
     left: appConfig.device.isIOS ? 1.5 : 0.75,
   },

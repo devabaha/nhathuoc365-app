@@ -16,7 +16,7 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
-import {push} from 'app-helper/routing';
+import {jump, push} from 'app-helper/routing';
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -113,7 +113,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       push(
         appConfig.routes.mainVoucher,
         {
-          from: 'home',
+          from: service.from,
         },
         service.theme,
       );
@@ -124,7 +124,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         appConfig.routes.myVoucher,
         {
           title: t('common:screen.myVoucher.mainTitle'),
-          from: 'home',
+          from: service.from,
         },
         service.theme,
       );
@@ -135,9 +135,11 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         appConfig.routes.myVoucher,
         {
           title: t('common:screen.myVoucher.mainTitle'),
-          from: 'home',
-          onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
-          onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure,
+          from: service.from,
+          onUseVoucherOnlineSuccess:
+            service.onUseVoucherOnlineSuccess || handleUseVoucherOnlineSuccess,
+          onUseVoucherOnlineFailure:
+            service.onUseVoucherOnlineFailure || handleUseVoucherOnlineFailure,
         },
         service.theme,
       );
@@ -147,7 +149,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       push(
         appConfig.routes.mainVoucher,
         {
-          from: 'deeplink',
+          from: service.from,
         },
         service.theme,
       );
@@ -158,7 +160,9 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         {
           voucherId: service.voucherId,
           campaignId: service.campaignId,
-          title: service.name,
+          title: service.title,
+          from: service.from,
+          mode: service.mode,
         },
         service.theme,
       );
@@ -253,11 +257,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
       store.setSelectedNewsId(service.categoryId || '');
-      // Actions.push(appConfig.routes.notifies, {
-      //   title: service.title,
-      //   id: service.categoryId,
-      // });
-      Actions.jump(appConfig.routes.newsTab, {
+      // push(
+      //   appConfig.routes.newsTab,
+      //   {
+      //     title: commonT('screen.news.mainTitle'),
+      //     id: service.categoryId,
+      //   },
+      //   service.theme,
+      // );
+      jump(appConfig.routes.newsTab, {
         title: service.title,
         id: service.categoryId,
       });
@@ -274,15 +282,6 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
 
     /** CHAT */
-    case SERVICES_TYPE.CHAT_NOTI:
-      Actions.amazing_chat({
-        titleStyle: {width: 220},
-        phoneNumber: service.tel,
-        title: service.site_name,
-        site_id: service.site_id,
-        user_id: service.user_id,
-      });
-      break;
     case SERVICES_TYPE.LIST_CHAT:
       push(appConfig.routes.listChat, {
         title: service.title || commonT('screen.listChat.mainTitle'),
@@ -293,6 +292,20 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       Actions.push(appConfig.routes.listUserChat, {
         titleStyle: {width: 220},
       });
+      break;
+    case SERVICES_TYPE.CHAT_NOTI:
+    case SERVICES_TYPE.CHAT:
+      push(
+        appConfig.routes.amazingChat,
+        {
+          titleStyle: {width: 220},
+          phoneNumber: service.tel,
+          title: service.site_name || service.title,
+          site_id: service.site_id,
+          user_id: service.user_id,
+        },
+        service.theme,
+      );
       break;
 
     /** STORE */
@@ -309,16 +322,24 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
               response.data.config_menu_categories &&
               service.categoryId === undefined
             ) {
-              Actions.push(appConfig.routes.multiLevelCategory, {
-                title: response.data.name,
-                siteId: service.siteId,
-                categoryId: service.categoryId || 0,
-              });
+              push(
+                appConfig.routes.multiLevelCategory,
+                {
+                  title: response.data.name,
+                  siteId: service.siteId,
+                  categoryId: service.categoryId || 0,
+                },
+                service.theme,
+              );
             } else {
-              Actions.push(appConfig.routes.store, {
-                title: service.name || response.data.name,
-                categoryId: service.categoryId || 0,
-              });
+              push(
+                appConfig.routes.store,
+                {
+                  title: service.name || response.data.name,
+                  categoryId: service.categoryId || 0,
+                },
+                service.theme,
+              );
             }
           } else {
             throw Error(
@@ -337,10 +358,26 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
     case SERVICES_TYPE.GPS_LIST_SITE:
-      Actions.push(appConfig.routes.gpsListStore, {
-        type: service.type,
-        placeholder: service.placeholder || commonT('home:searchingStore'),
+      push(
+        appConfig.routes.gpsListStore,
+        {
+          type: service.type,
+          placeholder: service.placeholder || commonT('home:searchingStore'),
+          autoFocus: service.autoFocus,
+        },
+        service.theme,
+      );
+      break;
+    case SERVICES_TYPE.SEARCH_STORE:
+      push(appConfig.routes.searchStore, {
+        categories: service.categories,
+        category_id: service.category_id,
+        category_name: service.category_name,
         autoFocus: service.autoFocus,
+        categoriesCollapsed: service.categoriesCollapsed,
+        qr_code: service.qr_code,
+        from_item: service.from_item,
+        itemRefresh: service.itemRefresh,
       });
       break;
 
@@ -351,6 +388,17 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
+      if (service.product) {
+        push(
+          appConfig.routes.item,
+          {
+            title: service.title,
+            item: service.product,
+          },
+          service.theme,
+        );
+        return;
+      }
       if (service.callback) {
         service.callback();
       }
@@ -478,7 +526,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** COMMISSION */
     case SERVICES_TYPE.COMMISSION_INCOME_STATEMENT:
-      Actions.push(appConfig.routes.commissionIncomeStatement);
+      push(appConfig.routes.commissionIncomeStatement, {}, service.theme);
       break;
 
     /** GAMIFICATION */
@@ -497,10 +545,14 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /** SOCIAL */
     /** Social */
     case SERVICES_TYPE.SOCIAL:
-      Actions.push(appConfig.routes.social, {
-        title: service.title,
-        siteId: service.id,
-      });
+      push(
+        appConfig.routes.social,
+        {
+          title: service.title || commonT('screen.social.mainTitle'),
+          siteId: service.id,
+        },
+        service.theme,
+      );
       break;
     /** Social Group */
     case SERVICES_TYPE.SOCIAL_GROUP:
@@ -647,6 +699,17 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           title: service.name || wallet?.name,
           wallet,
           tabIndex: service.tabIndex,
+        },
+        service.theme,
+      );
+      break;
+
+    /** RATING */
+    case SERVICES_TYPE.RATING:
+      push(
+        appConfig.routes.rating,
+        {
+          cart_data: service.cart_data,
         },
         service.theme,
       );
