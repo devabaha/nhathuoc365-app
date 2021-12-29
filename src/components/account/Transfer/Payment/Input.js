@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import {View, Animated, ViewPropTypes, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-// configs
-import appConfig from 'app-config';
 // helpers
 import {formatMoney} from './helper';
-import {getTheme, ThemeContet} from 'src/Themes/Theme.context';
+import {getTheme} from 'src/Themes/Theme.context';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -179,7 +177,7 @@ class Input extends Component {
         ? this.theme.color.danger
         : this.state.focus
         ? this.theme.color.primaryHighlight
-        : this.theme.color.neutral,
+        : this.theme.color.border,
     };
   }
 
@@ -189,10 +187,17 @@ class Input extends Component {
     };
   }
 
+  get titleStyle() {
+    return (
+      this.state.focus && {
+        color: this.theme.color.primaryHighlight,
+      }
+    );
+  }
+
   render() {
     const titleStyle = {
       opacity: this.state.animatedOpacity,
-      color: this.state.focus ? appConfig.colors.primary : '#404040',
     };
 
     const errorStyle = {
@@ -201,7 +206,12 @@ class Input extends Component {
 
     return (
       <View style={[styles.paymentInput, this.props.containerStyle]}>
-        <Animated.Text style={titleStyle}>{this.props.title}</Animated.Text>
+        <Typography
+          animated
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={[titleStyle, this.titleStyle]}>
+          {this.props.title}
+        </Typography>
 
         <View style={{flex: 1, justifyContent: 'center'}}>
           <BaseInput

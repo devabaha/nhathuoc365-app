@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, KeyboardAvoidingView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 // configs
 import appConfig from 'app-config';
+import store from 'app-store';
 // helpers
 import {formatMoney} from './helper';
 import EventTracker from 'app-helper/EventTracker';
@@ -19,12 +22,7 @@ import Input from './Input';
 import Button from 'src/components/Button';
 import PaymentWallet from './PaymentWallet';
 import Image from 'src/components/Image';
-import {
-  Container,
-  ScreenWrapper,
-  ScrollView,
-  Typography,
-} from 'src/components/base';
+import {Container, ScreenWrapper, Typography} from 'src/components/base';
 
 const MAX_NOTE_LENGTH = 160;
 
@@ -88,14 +86,18 @@ class Payment extends Component {
           ' ' +
           this.props.wallet.symbol;
 
-        push(appConfig.routes.transferConfirm, {
-          receiver: this.props.receiver,
-          wallet: this.props.wallet,
-          originPrice: this.moneyInput.current.inputText,
-          price,
-          originTotalPrice: this.moneyInput.current.formattedText,
-          totalPrice: price,
-        });
+        push(
+          appConfig.routes.transferConfirm,
+          {
+            receiver: this.props.receiver,
+            wallet: this.props.wallet,
+            originPrice: this.moneyInput.current.inputText,
+            price,
+            originTotalPrice: this.moneyInput.current.formattedText,
+            totalPrice: price,
+          },
+          this.theme,
+        );
       }
     }
   };
@@ -154,7 +156,7 @@ class Payment extends Component {
 
     return (
       <>
-        {!!this.props.receiver.avatar ? (
+        {!this.props.receiver.avatar ? (
           <Image
             style={styles.avatar}
             source={{uri: this.props.receiver.avatar}}
@@ -162,7 +164,8 @@ class Payment extends Component {
           />
         ) : (
           <Typography
-            type={TypographyType.LABEL_DISPLAY_SMALL}
+            onContentBackground
+            type={TypographyType.LABEL_HUGE}
             style={styles.shortContactName}>
             {shortTitle}
           </Typography>
@@ -183,83 +186,87 @@ class Payment extends Component {
     return {
       borderWidth: this.theme.layout.borderWidth,
       borderColor: this.theme.color.primaryHighlight,
-      backgroundColor: this.theme.color.contentBackgroundStrong,
+      backgroundColor: this.theme.color.contentBackground,
     };
   }
 
   render() {
     const {t} = this.props;
     const extraStyle = this.props.showWallet && {top: -60};
+    const btnContainerStyle = {bottom: store.keyboardTop};
+
     return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={appConfig.device.isIOS ? 'padding' : null}>
-        <ScreenWrapper safeLayout>
-          <ScrollView keyboardShouldPersistTaps="handled">
-            {!!this.props.showWallet && (
-              <PaymentWallet
-                sourceTitle="Nguồn tiền"
-                sourceValue={this.props.wallet.name}
-                balanceTitle="Số dư"
-                balanceValue={this.props.wallet.balance_view}
-              />
-            )}
+      <ScreenWrapper>
+        <KeyboardAwareScrollView
+          extraHeight={300}
+          keyboardShouldPersistTaps="handled">
+          {!!this.props.showWallet && (
+            <PaymentWallet
+              sourceTitle={t('paymentWallet.source')}
+              sourceValue={this.props.wallet.name}
+              balanceTitle={t('paymentWallet.balance')}
+              balanceValue={this.props.wallet.balance_view}
+            />
+          )}
 
-            <Container style={[styles.box, this.activeBoxStyle, extraStyle]}>
-              <View style={styles.user}>
-                <View
-                  style={[this.avatarContainerStyle, styles.avatarContainer]}>
-                  {this.renderAvatar()}
-                </View>
-
-                <View style={styles.informationContainer}>
-                  <Typography
-                    type={TypographyType.LABEL_HUGE}
-                    style={styles.title}>
-                    {this.props.receiver.name}
-                  </Typography>
-                  <Typography
-                    type={TypographyType.LABEL_LARGE}
-                    style={styles.subTitle}>
-                    {this.props.receiver.tel}
-                  </Typography>
-                  {!!this.props.receiver.address && (
-                    <Typography
-                      type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
-                      style={styles.subTitle}>
-                      {this.props.receiver.address}
-                    </Typography>
-                  )}
-                </View>
+          <Container style={[styles.box, this.activeBoxStyle, extraStyle]}>
+            <View style={styles.user}>
+              <View style={[this.avatarContainerStyle, styles.avatarContainer]}>
+                {this.renderAvatar()}
               </View>
 
-              <Input
-                ref={this.moneyInput}
-                placeholder={t('input.money.placeholder')}
-                keyboardType="number-pad"
-                title={t('input.money.title')}
-                errorMess={this.state.moneyError}
-                onChange={this.clearMoneyError}
-                onClear={this.clearMoneyError}
-                onBlur={this.handleOnBlurMoney}
-              />
+              <View style={styles.informationContainer}>
+                <Typography
+                  type={TypographyType.LABEL_HUGE}
+                  style={styles.title}>
+                  {this.props.receiver.name}
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_LARGE_TERTIARY}
+                  style={styles.subTitle}>
+                  {this.props.receiver.tel}
+                </Typography>
+                {!!this.props.receiver.address && (
+                  <Typography
+                    type={TypographyType.DESCRIPTION_MEDIUM}
+                    style={styles.subTitle}>
+                    {this.props.receiver.address}
+                  </Typography>
+                )}
+              </View>
+            </View>
 
-              <Input
-                ref={this.noteInput}
-                onChange={this.onNoteChange}
-                placeholder={t('input.note.placeholder')}
-                title={t('input.note.title', {
-                  counter: `${this.state.note.length}/${MAX_NOTE_LENGTH}`,
-                })}
-                multiline
-                maxLength={MAX_NOTE_LENGTH}
-                containerStyle={{marginBottom: 0}}
-              />
-            </Container>
-          </ScrollView>
-          <Button title={t('transferBtnTitle')} onPress={this.goToConfirm} />
-        </ScreenWrapper>
-      </KeyboardAvoidingView>
+            <Input
+              ref={this.moneyInput}
+              placeholder={t('input.money.placeholder')}
+              keyboardType="number-pad"
+              title={t('input.money.title')}
+              errorMess={this.state.moneyError}
+              onChange={this.clearMoneyError}
+              onClear={this.clearMoneyError}
+              onBlur={this.handleOnBlurMoney}
+            />
+
+            <Input
+              ref={this.noteInput}
+              onChange={this.onNoteChange}
+              placeholder={t('input.note.placeholder')}
+              title={t('input.note.title', {
+                counter: `${this.state.note.length}/${MAX_NOTE_LENGTH}`,
+              })}
+              multiline
+              maxLength={MAX_NOTE_LENGTH}
+              containerStyle={{marginBottom: 0}}
+            />
+          </Container>
+        </KeyboardAwareScrollView>
+        <Button
+          safeLayout={!store.keyboardTop}
+          containerStyle={btnContainerStyle}
+          title={t('transferBtnTitle')}
+          onPress={this.goToConfirm}
+        />
+      </ScreenWrapper>
     );
   }
 }

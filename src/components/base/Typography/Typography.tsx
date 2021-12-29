@@ -32,6 +32,9 @@ const createStyles = (theme: Theme) => {
     onBackground: {
       color: theme.color.onBackground,
     },
+    onContentBackground: {
+      color: theme.color.onContentBackground,
+    },
     onDisabled: {
       color: theme.color.onDisabled,
     },
@@ -49,6 +52,7 @@ const Typography = forwardRef(
       onSecondary,
       onSurface,
       onBackground,
+      onContentBackground,
       onDisabled,
       type = TypographyType.LABEL_MEDIUM,
       style,
@@ -78,6 +82,8 @@ const Typography = forwardRef(
           ? baseStyles.onSurface
           : onBackground
           ? baseStyles.onBackground
+          : onContentBackground
+          ? baseStyles.onContentBackground
           : {},
       );
 
@@ -90,6 +96,7 @@ const Typography = forwardRef(
       onSecondary,
       onSurface,
       onBackground,
+      onContentBackground,
       onDisabled,
     ]);
 
@@ -112,9 +119,9 @@ const Typography = forwardRef(
       <>
         {renderIconBefore && renderIconBefore(styles)}
         <TextComponent {...props} ref={ref} style={styles}>
-        {renderInlineIconBefore && renderInlineIconBefore(styles)}
+          {renderInlineIconBefore && renderInlineIconBefore(styles)}
           {children}
-        {renderInlineIconAfter && renderInlineIconAfter(styles)}
+          {renderInlineIconAfter && renderInlineIconAfter(styles)}
         </TextComponent>
         {renderIconAfter && renderIconAfter(styles)}
       </>
