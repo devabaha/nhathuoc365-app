@@ -58,11 +58,13 @@ export const SERVICES_TYPE = {
   CHAT_NOTI: 'chat_noti',
   LIST_CHAT: 'list_chat',
   LIST_USER_CHAT: 'list_user_chat',
+  CHAT: 'chat',
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
   GPS_LIST_STORE: 'gps_list_store',
   GPS_LIST_SITE: 'gps_list_site',
+  SEARCH_STORE: 'search_store',
 
   /** COMMUNICATION */
   CALL: 'call',
@@ -123,6 +125,9 @@ export const SERVICES_TYPE = {
   CREATE_REQUEST: 'create_request',
   REQUEST_DETAIL: 'request_detail',
 
-  /** Wallet */
+  /** WALLET */
   WALLET: 'wallet',
+
+  /** RATING */
+  RATING: 'rating'
 };

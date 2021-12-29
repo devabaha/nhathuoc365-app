@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
 import {Typography, Icon, BaseButton} from 'src/components/base';
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   add_store_action_btn: {
@@ -33,19 +34,25 @@ const SubActionButton = ({
   iconStyle = {},
   labelStyle = {},
 
+  useTouchableHighlight = true,
   onPress = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const iconBaseStyle = useMemo(() => {
+    return {color: theme.color.persistPrimary};
+  }, [theme]);
+
   return (
     <BaseButton
-      useTouchableHighlight
+      useTouchableHighlight={useTouchableHighlight}
       onPress={onPress}
       style={[styles.add_store_action_btn, wrapperStyle]}>
       <View style={[styles.add_store_action_btn_box, containerStyle]}>
         <Icon
-          primaryHighlight
           bundle={BundleIconSetName.IONICONS}
           name={iconName}
-          style={[styles.icon, iconStyle]}
+          style={[styles.icon, iconBaseStyle, iconStyle]}
         />
         {!!label && (
           <Typography

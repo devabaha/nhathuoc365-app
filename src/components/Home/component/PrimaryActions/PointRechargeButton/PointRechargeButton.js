@@ -18,6 +18,8 @@ const PointRechargeButton = ({
   containerStyle,
   iconName = 'ios-add-circle',
   iconStyle,
+
+  useTouchableHighlight = true,
   onPress = () => {},
 }) => {
   const {theme} = useTheme();
@@ -44,6 +46,7 @@ const PointRechargeButton = ({
       wrapperStyle={wrapperStyle}
       containerStyle={containerStyle}
       iconStyle={iconStyle}
+      useTouchableHighlight={useTouchableHighlight}
       onPress={goPaymentMethod}
     />
   );

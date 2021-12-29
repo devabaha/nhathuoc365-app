@@ -111,7 +111,7 @@ const Button = forwardRef(
     return (
       <Wrapper
         underlayColor={theme.color.underlay}
-        activeOpacity={0.8}
+        activeOpacity={0.6}
         {...props}
         ref={ref}>
         {renderContentContainerComponent

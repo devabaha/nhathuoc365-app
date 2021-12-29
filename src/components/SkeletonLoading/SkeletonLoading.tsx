@@ -8,7 +8,6 @@ import Highlight from './Highlight';
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: SKELETON_COLOR,
     overflow: 'hidden',
   },
 });

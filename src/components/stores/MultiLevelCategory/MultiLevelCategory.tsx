@@ -13,6 +13,7 @@ import * as React from 'react';
 import {View, StyleSheet} from 'react-native';
 // types
 import {MultiLevelCategoryProps} from '.';
+import {Style} from 'src/Themes/interface';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -30,7 +31,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 //constants
 import {RightButtonNavbarType} from 'src/components/RightButtonNavBar/constants';
 import {CATEGORY_TYPE, TEMP_CATEGORIES} from './constants';
-import {BundleIconSetName} from 'src/components/base';
+import {BundleIconSetName, NavBarWrapper} from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
 // images
@@ -424,13 +425,13 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     });
   }
 
-  get navBarStyle() {
+  get navBarStyle(): Style {
     return {
       backgroundColor: this.theme.color.navBarBackground,
     };
   }
 
-  get mainCategoriesStyle() {
+  get mainCategoriesStyle(): Style {
     return {
       borderRightColor: this.theme.color.border,
       borderRightWidth: this.theme.layout.borderWidthSmall,
@@ -444,14 +445,16 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
   render() {
     return (
       <>
-        <Header
-          wrapperStyle={this.navBarStyle}
-          contentContainer={styles.headerContentContainer}
-          placeholder={this.props.title}
-          renderLeft={this.renderBack}
-          goToSearch={this.handleSearch}
-        />
-        <ScreenWrapper style={styles.container}>
+        <NavBarWrapper appNavBar={false} containerStyle={this.navBarStyle}>
+          <Header
+            wrapperStyle={this.navBarStyle}
+            contentContainer={styles.headerContentContainer}
+            placeholder={this.props.title}
+            renderLeft={this.renderBack}
+            goToSearch={this.handleSearch}
+          />
+        </NavBarWrapper>
+        <ScreenWrapper>
           {this.state.loading && <Loading center />}
           <View style={styles.mainContainer}>
             <Container style={this.mainCategoriesStyle}>
