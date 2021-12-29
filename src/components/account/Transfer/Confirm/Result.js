@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, TouchableOpacity, StyleSheet, BackHandler} from 'react-native';
+import {View, StyleSheet, BackHandler} from 'react-native';
 // configs
 import appConfig from 'app-config';
 // helpers
@@ -12,7 +12,6 @@ import {pop} from 'app-helper/routing';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
-// entities
 // custom components
 import Button from 'src/components/Button';
 import {ScreenWrapper, Typography, Icon, Container} from 'src/components/base';
@@ -76,6 +75,18 @@ class Result extends Component {
     this.props.onClose();
   };
 
+  get headerStyle() {
+    return {
+      backgroundColor: this.theme.color.navBarBackground,
+    };
+  }
+  get mainIconStyle() {
+    return {
+      fontSize: 80,
+      color: this.theme.color.onNavBarBackground,
+    };
+  }
+
   get iconBtnStyle() {
     return {color: this.theme.color.onPrimary};
   }
@@ -93,22 +104,13 @@ class Result extends Component {
 
   render() {
     return (
-      <ScreenWrapper safeLayout>
-        <View
-          style={[
-            styles.header,
-            {
-              backgroundColor: this.theme.color.navBarBackground,
-            },
-          ]}>
-          {/* <TouchableOpacity style={styles.close} onPress={this.onClose}>
-              <Icon name="close" size={24} color="#ffffff" />
-            </TouchableOpacity> */}
+      <ScreenWrapper>
+        <View style={[this.headerStyle, styles.header]}>
           <View style={[styles.header_content, styles.center]}>
             <Icon
               bundle={BundleIconSetName.ANT_DESIGN}
               name={this.props.mainIconName}
-              style={{fontSize: 80, color: this.theme.color.onNavBarBackground}}
+              style={this.mainIconStyle}
             />
             <Typography
               type={TypographyType.TITLE_LARGE}
@@ -125,13 +127,13 @@ class Result extends Component {
               this.notificationStyle,
             ]}>
             <Typography
-              type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+              type={TypographyType.LABEL_LARGE}
               style={styles.noti_mess_title}>
               {this.props.title}
             </Typography>
             {!!this.props.subTitle && (
               <Typography
-                type={TypographyType.DESCRIPTION_SMALL}
+                type={TypographyType.DESCRIPTION_MEDIUM}
                 style={styles.noti_mess_sub_title}>
                 {this.props.subTitle}
               </Typography>
@@ -139,6 +141,7 @@ class Result extends Component {
           </Container>
         </View>
         <Button
+          safeLayout
           title={this.props.btnTitle}
           onPress={this.props.onConfirm}
           renderIconLeft={(titleStyle) => {
@@ -206,34 +209,3 @@ const styles = StyleSheet.create({
 });
 
 export default Result;
-
-const RowInfo = (props) => {
-  const borderStyle = props.first
-    ? {
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-      }
-    : props.last
-    ? {
-        borderBottomWidth: 1,
-      }
-    : {
-        borderBottomWidth: 1,
-      };
-
-  const extraProps = !props.onPress && {
-    activeOpacity: 1,
-  };
-
-  return (
-    <TouchableOpacity
-      style={[styles.rowInfo, borderStyle]}
-      onPress={props.onPress}
-      {...extraProps}>
-      <View style={[styles.content, borderStyle]}>
-        <Typography style={styles.row_label}>{props.label}</Typography>
-        <Typography style={styles.row_value}>{props.value}</Typography>
-      </View>
-    </TouchableOpacity>
-  );
-};

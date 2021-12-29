@@ -59,9 +59,6 @@ const Button = ({
         renderTitleComponent={renderTitleComponent}
         onPress={onPress}
         secondary
-        typoProps={{
-          type: TypographyType.LABEL_SMALL,
-        }}
         {...props}>
         {children || title}
       </AppPrimaryButton>
@@ -84,21 +81,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
   text: {
     textTransform: 'uppercase',
     fontWeight: '600',
-    fontSize: 16,
   },
   hideBackground: {
     backgroundColor: 'transparent',
