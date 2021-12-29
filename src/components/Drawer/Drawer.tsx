@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+// 3-party libs
 import Animated, {
   interpolate,
   block,
@@ -25,17 +26,16 @@ import Animated, {
   greaterOrEq,
   or,
   and,
-  not,
-  abs,
 } from 'react-native-reanimated';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import DrawerManager from './DrawerManager';
-
-import appConfig from 'app-config';
-import ScreenWrapper from '../ScreenWrapper';
+import {State} from 'react-native-gesture-handler';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {DRAWER_WIDTH} from 'src/constants';
+import DrawerManager from './DrawerManager';
 import {DrawerProps} from '.';
 
 export const showDrawer = (props) => {
@@ -87,31 +87,24 @@ function runSpring(state, clock, value, velocity, dest, callback = []) {
 const VELOCITY_THRESHOLD = 100;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   container: {
     position: 'absolute',
     width: '100%',
     height: '100%',
   },
-  contentContainer: {
-    backgroundColor: '#fff',
-  },
   mask: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.6)',
-  },
-  icon: {
-    fontSize: 28,
-    color: '#fff',
-  },
-  closeIconContainer: {
-    position: 'absolute',
-    left: 20,
-    top: 30,
+    // backgroundColor: 'rgba(0,0,0,.6)',
   },
 });
 
 export class Drawer extends Component<DrawerProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     width: DRAWER_WIDTH,
     position: 'right',
@@ -121,6 +114,10 @@ export class Drawer extends Component<DrawerProps> {
     visible: false,
     content: null,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   refScrollView = React.createRef<any>();
 
@@ -273,6 +270,12 @@ export class Drawer extends Component<DrawerProps> {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  get maskStyle() {
+    return mergeStyles(styles.mask, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
   render() {
     return (
       <View
@@ -310,16 +313,13 @@ export class Drawer extends Component<DrawerProps> {
             ]);
           }}
         </Animated.Code>
-        {/* <PanGestureHandler
-          maxPointers={1}
-          onHandlerStateChange={this.handlePanEvent}
-          onGestureEvent={this.handlePanEvent}> */}
-        <Animated.View style={{flex: 1}}>
+
+        <Animated.View style={styles.wrapper}>
           <View style={styles.container}>
             <TouchableWithoutFeedback onPress={this.hideDrawer}>
               <Animated.View
                 style={[
-                  styles.mask,
+                  this.maskStyle,
                   {
                     opacity: this.opacityStyle,
                   },
@@ -346,24 +346,6 @@ export class Drawer extends Component<DrawerProps> {
             {this.state.content}
           </Animated.View>
         </Animated.View>
-        {/* </PanGestureHandler> */}
-
-        {/* <SafeAreaView style={{flex: 1, position: 'absolute'}}>
-          <Animated.View
-            style={[
-              styles.closeIconContainer,
-              {
-                opacity: this.opacityStyle
-              },
-            ]}>
-            <TouchableOpacity
-              onPress={this.hideDrawer}
-              //@ts-ignore
-              hitSlop={HIT_SLOP}>
-              <AntDesignIcon name="close" style={styles.icon} />
-            </TouchableOpacity>
-          </Animated.View>
-        </SafeAreaView> */}
       </View>
     );
   }

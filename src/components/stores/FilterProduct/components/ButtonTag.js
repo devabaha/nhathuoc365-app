@@ -1,38 +1,58 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {ButtonRoundedType, TypographyType} from 'src/components/base';
+// custom components
+import {AppFilledButton} from 'src/components/base';
 
 function ButtonTag({text, onPress, checked}) {
+  const {theme} = useTheme();
+
+  const tagTypoProps = {
+    type: TypographyType.LABEL_SEMI_MEDIUM,
+  };
+
+  const containerStyle = useMemo(() => {
+    return {
+      backgroundColor: checked
+        ? theme.color.persistPrimary
+        : theme.color.surface,
+    };
+  }, [theme, checked]);
+
+  const checkedTitleStyle = useMemo(() => {
+    return {
+      color: checked ? theme.color.onPersistPrimary : theme.color.onSurface,
+    };
+  }, [theme, checked]);
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      style={[
-        styles.containerStyleTag,
-        {
-          backgroundColor: checked ? appConfig.colors.primary : appConfig.colors.sceneBackground,
-        },
+    <AppFilledButton
+      typoProps={tagTypoProps}
+      rounded={ButtonRoundedType.EXTRA_SMALL}
+      style={[styles.containerTag, containerStyle]}
+      titleStyle={[
+        styles.title,
+        theme.typography[TypographyType.LABEL_SEMI_MEDIUM],
+        checkedTitleStyle,
       ]}
+      numberOfLines={3}
       onPress={onPress}>
-      <Text
-        style={[styles.title, {color: checked ? '#fff' : '#333'}]}
-        numberOfLines={3}>
-        {text}
-      </Text>
-    </TouchableOpacity>
+      {text}
+    </AppFilledButton>
   );
 }
 
 const styles = StyleSheet.create({
-  containerStyleTag: {
+  containerTag: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    borderRadius: 4,
   },
   title: {
     textAlign: 'center',
-    fontSize: 13
   },
 });
 
