@@ -1,16 +1,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Animated,
-  Easing,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import {StyleSheet, View, Animated, Easing} from 'react-native';
+// 3-party libs
 import {isEmpty} from 'lodash';
-
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
 import ButtonTag from '../ButtonTag';
+import {TextButton, Typography, Icon} from 'src/components/base';
 
 const styles = StyleSheet.create({
   title: {
@@ -18,7 +14,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
-    color: '#666',
   },
 
   block: {
@@ -38,13 +33,10 @@ const styles = StyleSheet.create({
   showMoreContainer: {
     alignSelf: 'flex-end',
   },
-  showMoreTitle: {
-    fontSize: 13,
-    color: '#888',
-  },
+  showMoreTitle: {},
   showMoreIcon: {
-    color: '#888',
     fontSize: 11,
+    marginLeft: 5,
   },
 });
 
@@ -57,6 +49,8 @@ const BlockFilterOption = ({
   onPressTag = () => {},
   renderExtraFooter = () => null,
 }) => {
+  const {t} = useTranslation();
+
   const isShowFooter = useCallback(() => {
     return tagsProp.length > 4;
   }, [tagsProp.length]);
@@ -129,22 +123,29 @@ const BlockFilterOption = ({
     });
   };
 
+  const renderIconShowMore = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        style={[titleStyle, styles.showMoreIcon]}
+        name={canShowMore() ? 'down' : 'up'}
+      />
+    );
+  };
+
   const renderFooter = () => {
     return (
-      <TouchableOpacity
+      <TextButton
         style={styles.showMoreContainer}
+        typoProps={{type: TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}}
+        titleStyle={styles.showMoreTitle}
+        renderIconRight={renderIconShowMore}
         hitSlop={HIT_SLOP}
         onPress={handlePressShowMore}>
-        <Text style={styles.showMoreTitle}>
-          {canShowMore()
-            ? `Xem thêm (${tagsProp.length - tags.length})`
-            : 'Thu gọn'}{' '}
-          <AntDesignIcon
-            style={styles.showMoreIcon}
-            name={canShowMore() ? 'down' : 'up'}
-          />
-        </Text>
-      </TouchableOpacity>
+        {canShowMore()
+          ? `${t('showMore')} (${tagsProp.length - tags.length})`
+          : t('showLess')}
+      </TextButton>
     );
   };
 
@@ -156,7 +157,11 @@ const BlockFilterOption = ({
     <Animated.View
       onLayout={handleContainerLayout}
       style={[styles.block, animatedVisibleStyle.current]}>
-      <Text style={styles.title}>{title}</Text>
+      <Typography
+        type={TypographyType.LABEL_MEDIUM_TERTIARY}
+        style={styles.title}>
+        {title}
+      </Typography>
       <View style={styles.tagsContainer}>{renderTags()}</View>
       {isShowFooter() && renderFooter()}
       {renderExtraFooter()}

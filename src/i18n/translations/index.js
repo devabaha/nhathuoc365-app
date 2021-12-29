@@ -72,6 +72,8 @@ import vi_lotteryGame from './vi/lotteryGame.json';
 import en_lotteryGame from './en/lotteryGame.json';
 import vi_productStamp from './vi/productStamp.json';
 import en_productStamp from './en/productStamp.json';
+import vi_filterProduct from './vi/filterProduct.json';
+import en_filterProduct from './en/filterProduct.json';
 
 export default {
   [languages.vi.value]: {
@@ -111,6 +113,7 @@ export default {
     agencyInformationRegister: vi_agencyInformationRegister,
     lotteryGame: vi_lotteryGame,
     productStamp: vi_productStamp,
+    filterProduct: vi_filterProduct,
   },
   [languages.en.value]: {
     common: en_common,
@@ -149,5 +152,6 @@ export default {
     agencyInformationRegister: en_agencyInformationRegister,
     lotteryGame: en_lotteryGame,
     productStamp: en_productStamp,
+    filterProduct: en_filterProduct,
   },
 };

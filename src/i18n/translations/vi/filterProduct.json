@@ -1,0 +1,23 @@
+{
+  "popular": "Phổ biến",
+  "selling": "Bán chạy",
+  "new": "Mới nhất",
+  "priceLowToHigh": "Giá từ thấp đến cao",
+  "priceHighToLow": "Giá từ cao đến thấp",
+  "titleLeft": "Sắp xếp",
+  "titleRight": "Lọc",
+
+  "title": "Lọc sản phẩm",
+  "priceRange": "Giá thấp nhất phải nhỏ hơn giá cao nhất",
+  "price": "Giá tiền",
+  "noResult": "Chưa có bộ lọc",
+  "apply": "Áp dụng",
+
+  "toPrice": "Từ",
+  "minimum": "Tối thiểu",
+  "fromPrice": "Đến",
+  "maximum": "Tối đa",
+  "titleInput": "Nhập khoảng giá khác",
+  "minPrice": "Giá thấp nhất...",
+  "maxPrice": "Giá cao nhất..."
+}

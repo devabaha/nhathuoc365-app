@@ -1,6 +1,8 @@
 import React, {memo, useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
+// 3-party libs
 import {omit} from 'lodash';
+// custom components
 import BlockFilterOption from './BlockFilterOption';
 
 function ListTag({
@@ -50,27 +52,7 @@ function ListTag({
     });
   };
 
-  return <View style={styles.container}>{renderTags()}</View>;
+  return <View>{renderTags()}</View>;
 }
-
-const styles = StyleSheet.create({
-  tag: {
-    fontSize: 16,
-  },
-  divider: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#e5e5e5',
-  },
-
-  block: {
-    marginBottom: 15,
-  },
-
-  btnTagContainer: {
-    flex: 0.5,
-    marginBottom: 5,
-  },
-});
 
 export default memo(ListTag);

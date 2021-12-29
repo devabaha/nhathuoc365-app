@@ -1,0 +1,23 @@
+{
+  "popular": "Popular",
+  "selling": "Best selling",
+  "new": "New products",
+  "priceLowToHigh": "Price from low to high",
+  "priceHighToLow": "Price from high to low",
+  "titleLeft": "Arrange",
+  "titleRight": "Filter",
+
+  "title": "Filter products",
+  "priceRange": "The lowest price must be less than the highest price",
+  "price": "Price",
+  "noResult": "No filter yet",
+  "apply": "Apply",
+
+  "toPrice": "To",
+  "minimum": "Minimum",
+  "fromPrice": "from",
+  "maximum": "Maximum",
+  "titleInput": "Enter another price range",
+  "minPrice": "Lowest price...",
+  "maxPrice": "Highest price..."
+}
