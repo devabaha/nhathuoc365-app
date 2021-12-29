@@ -15,6 +15,10 @@
     }
   },
   "transferBtnTitle": "Transfer",
+  "paymentWallet": {
+    "cashSource": "Source",
+    "balance": "Balance"
+  },
   "transaction": {
     "title": "Payment",
     "vnpayTitle": "VNPAY Payment",

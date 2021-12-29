@@ -16,6 +16,7 @@ export interface TypographyProps extends TextProps {
   onSecondary?: boolean;
   onSurface?: boolean;
   onBackground?: boolean;
+  onContentBackground?: boolean;
   onDisabled?: boolean;
 
   renderIconBefore?: (titleStyle: StyleProp<TextStyle>) => Children;
