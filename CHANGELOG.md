@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
 
 ## [r12.2.8] - 2021-12-24
 ### Changed
