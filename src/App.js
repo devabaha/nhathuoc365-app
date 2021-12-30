@@ -980,14 +980,17 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.listUserChat}>
                   <Scene
                     key={`${appConfig.routes.listUserChat}_1`}
-                    title={t('screen.listUserChat.mainTitle')}
                     component={ListUserChat}
                     navBar={ListUserChatNavBar}
                     {...navBarConfig}
                     back
                   />
-                  <Scene
-                    key={appConfig.routes.searchUserChat}
+                  
+                </Stack>
+
+                <Stack key={appConfig.routes.searchUserChat}>
+                <Scene
+                    key={`${appConfig.routes.searchUserChat}_1`}
                     component={SearchUserChat}
                     navBar={SearchUserChatNavBar}
                     {...navBarConfig}

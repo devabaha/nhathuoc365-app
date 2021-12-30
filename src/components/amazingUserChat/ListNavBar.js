@@ -43,7 +43,7 @@ class ListNavBar extends Component {
   }
 
   handleSearch() {
-    push(appConfig.routes.searchChat, {}, this.theme);
+    push(appConfig.routes.searchUserChat, {}, this.theme);
   }
 
   handleBack() {
@@ -85,8 +85,8 @@ class ListNavBar extends Component {
       <NavBar
         navigation={this.props}
         title={this.props.title}
-        renderLeft={this.renderBack}
-        // renderRight={this.renderSearch}
+        // renderLeft={this.renderBack}
+        renderRight={this.renderSearch}
       />
     );
   }
