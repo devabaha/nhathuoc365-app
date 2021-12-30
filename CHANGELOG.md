@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1yzkbud] SocialNews tab to Orders tab also remove Orders option in Account by [minhnguyenit14@gmail.com].
 
 ## [r12.2.8] - 2021-12-24
 ### Changed

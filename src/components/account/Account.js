@@ -314,28 +314,28 @@ class Account extends Component {
           },
         ],
       },
-      {
-        key: 'orders',
-        label: t('options.orders.label'),
-        desc: t('options.orders.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="cart"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: appConfig.colors.status.success,
-          },
-        ],
-        iconColor: '#ffffff',
-      },
+      // {
+      //   key: 'orders',
+      //   label: t('options.orders.label'),
+      //   desc: t('options.orders.desc'),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="cart"
+      //         style={{fontSize: 16, color: '#fff'}}
+      //       />
+      //     </View>
+      //   ),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: appConfig.colors.status.success,
+      //     },
+      //   ],
+      //   iconColor: '#ffffff',
+      // },
       {
         key: 'vouchers',
         isHidden:
