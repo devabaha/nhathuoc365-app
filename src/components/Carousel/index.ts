@@ -5,6 +5,7 @@ import {CarouselProps as RNCarouselProps} from 'react-native-snap-carousel';
 export {default} from './Carousel';
 
 export interface CarouselProps extends RNCarouselProps<any> {
+  refCarousel?: (ref: any) => void;
   wrapperStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
   contentContainerStyle?: StyleProp<ViewProps>;

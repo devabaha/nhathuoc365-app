@@ -60,6 +60,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ModalWholesale from './ModalWholesale';
 import Video from '../Video';
 import MediaCarousel from './MediaCarousel';
+import {reaction} from 'mobx';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -92,6 +93,8 @@ class Item extends Component {
       webviewContentHeight: undefined,
       isWebviewContentCollapsed: undefined,
       selectedIndex: 0,
+
+      canPlayVideo: false,
     };
 
     this.refPlayer = React.createRef();
@@ -103,6 +106,7 @@ class Item extends Component {
     this.refWebview = React.createRef();
     this.refModalWholesale = React.createRef();
     this.productTempData = [];
+    this.disposerIsEnterItem = () => {};
 
     this.CTAProduct = new CTAProduct(props.t, this);
     this.getWarehouseRequest = new APIRequest();
@@ -146,6 +150,10 @@ class Item extends Component {
   }
 
   componentDidMount() {
+    this.disposerIsEnterItem = reaction(
+      () => store.isEnterItem,
+      this.checkEnterItemListener,
+    );
     !this.props.preventUpdate && this._initial(this.props);
     this.getListWarehouse();
   }
@@ -173,8 +181,13 @@ class Item extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.disposerIsEnterItem();
     cancelRequests(this.requests);
   }
+
+  checkEnterItemListener = (isEnterItem) => {
+    this.setState({canPlayVideo: isEnterItem});
+  };
 
   logEventTracking(rootData) {
     if (rootData && !this.state.item_data) {
@@ -835,7 +848,7 @@ class Item extends Component {
     const isShowButtons = hasImages && images.length > 1;
 
     return (
-      <View>
+      <View style={{zIndex: 999}}>
         <SkeletonLoading
           style={styles.noImageContainer}
           loading={this.state.loading}
@@ -850,8 +863,9 @@ class Item extends Component {
             </View>
           ) : (
             <MediaCarousel
-              height={appConfig.device.height / 2}
+              height={appConfig.device.width}
               data={this.state.images}
+              canPlayVideo={this.state.canPlayVideo}
             />
             // <Swiper
             //   loop={false}
@@ -1146,8 +1160,6 @@ class Item extends Component {
                 )}
                 {isInventoryVisible && (
                   <View style={styles.productsLeftContainer}>
-                    {/* <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} /> */}
                     <Text style={styles.productsLeftText}>
                       {t('productsLeft', {quantity: item.inventory})}
                     </Text>

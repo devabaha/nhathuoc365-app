@@ -317,6 +317,7 @@ class App extends Component {
 
     this.state = {
       header: null,
+      overlayComponent: null,
       restartAllowed: true,
       progress: null,
       appLanguage: props.i18n.language,
@@ -550,6 +551,10 @@ class App extends Component {
     this.setState({header});
   };
 
+  setOverlayComponent = (overlayComponent) => {
+    this.setState({overlayComponent});
+  };
+
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
@@ -586,7 +591,13 @@ class App extends Component {
           appLanguage={this.state.appLanguage}
           t={this.props.t}
           setHeader={this.setHeader}
+          setOverlayComponent={this.setOverlayComponent}
         />
+        {this.state.overlayComponent && (
+          <View style={{...StyleSheet.absoluteFillObject}}>
+            {this.state.overlayComponent}
+          </View>
+        )}
         <Drawer />
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
@@ -1457,9 +1468,16 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.item}_1`}
                     component={Item}
+                    setOverlayComponent={this.props.setOverlayComponent}
                     {...navBarConfig}
                     hideNavBar
                     back
+                    onEnter={() => {
+                      store.setEnterItem(true);
+                    }}
+                    onExit={() => {
+                      store.setEnterItem(false);
+                    }}
                   />
                 </Stack>
 
