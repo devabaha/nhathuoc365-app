@@ -16,7 +16,6 @@ import {
 // library
 import store from '../../store/Store';
 import Items from '../stores/Items';
-import ItemList from './ItemList';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import EventTracker from '../../helper/EventTracker';
