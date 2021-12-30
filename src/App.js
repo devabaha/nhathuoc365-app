@@ -37,7 +37,6 @@ import HomeContainer from './containers/Home';
 import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
-import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
 import Orders from './components/orders/Orders';
@@ -48,7 +47,6 @@ import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
 import StoreContainer from './components/stores/Stores';
 import SearchNavBarContainer from './components/stores/SearchNavBar';
-import StoresList from './components/stores/StoresList';
 import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
@@ -1396,16 +1394,6 @@ class RootRouter extends Component {
                   {/* </RNRFDrawer> */}
                 </Stack>
 
-                <Stack key="stores_list">
-                  <Scene
-                    key="stores_list_1"
-                    title="Cửa hàng"
-                    component={StoresList}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.searchStore}>
                   <Scene
                     key={`${appConfig.routes.searchStore}_1`}
@@ -1529,16 +1517,6 @@ class RootRouter extends Component {
                     key="list_store_1"
                     title="Cửa hàng"
                     component={ListStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="add_store">
-                  <Scene
-                    key="add_store_1"
-                    title="Thêm cửa hàng"
-                    component={AddStore}
                     {...navBarConfig}
                     back
                   />
