@@ -59,6 +59,7 @@ export const SERVICES_TYPE = {
   LIST_CHAT: 'list_chat',
   LIST_USER_CHAT: 'list_user_chat',
   CHAT: 'chat',
+  USER_CHAT: 'user_chat',
 
   /** STORE */
   OPEN_SHOP: 'open_shop',

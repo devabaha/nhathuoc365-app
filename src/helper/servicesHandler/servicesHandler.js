@@ -285,12 +285,13 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     case SERVICES_TYPE.LIST_CHAT:
       push(appConfig.routes.listChat, {
         title: service.title || commonT('screen.listChat.mainTitle'),
-        titleStyle: {width: 220},
+        titleStyle: service.titleStyle || {width: 220},
       });
       break;
     case SERVICES_TYPE.LIST_USER_CHAT:
       Actions.push(appConfig.routes.listUserChat, {
-        titleStyle: {width: 220},
+        titleStyle: service.titleStyle || {width: 220},
+        title: service.title || commonT('screen.listUserChat.mainTitle'),
       });
       break;
     case SERVICES_TYPE.CHAT_NOTI:
@@ -298,11 +299,29 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       push(
         appConfig.routes.amazingChat,
         {
-          titleStyle: {width: 220},
+          titleStyle: service.titleStyle || {width: 220},
           phoneNumber: service.tel,
           title: service.site_name || service.title,
           site_id: service.site_id,
           user_id: service.user_id,
+          fromSearchScene: service.fromSearchScene,
+          setHeader: service.setHeader,
+        },
+        service.theme,
+      );
+      break;
+    case SERVICES_TYPE.USER_CHAT:
+      push(
+        appConfig.routes.amazingUserChat,
+        {
+          titleStyle: service.titleStyle || {width: 220},
+          phoneNumber: service.tel,
+          title: service.site_name || service.title,
+          site_id: service.site_id,
+          user_id: service.user_id,
+          fromSearchScene: service.fromSearchScene,
+          conversation_id: service.conversation_id,
+          setHeader: service.setHeader,
         },
         service.theme,
       );

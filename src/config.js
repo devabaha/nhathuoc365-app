@@ -369,7 +369,8 @@ class Config {
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
       amazingChat: 'amazing_chat',
-      searchChat: 'search_chat',
+      searchChat: 'searchChat',
+      searchUserChat: 'searchUserChat',
 
       listAddressStore: 'listAddressStore',
 
