@@ -1,28 +1,31 @@
 import React, {Component} from 'react';
-import {
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Actions} from 'react-native-router-flux';
 import {debounce} from 'lodash';
-
+// configs
 import appConfig from 'app-config';
-
 import store from 'app-store';
+// helpers
 import EventTracker from 'app-helper/EventTracker';
+import {isUnpaid, canTransaction} from 'app-helper/product';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {refresh, pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ButtonRoundedType, TypographyType} from 'src/components/base';
+// entities
 import {APIRequest} from 'src/network/Entity';
-
+// custom components
 import ScheduleSection from './ScheduleSection';
 import BookingProductInfo from './BookingProductInfo';
 import Button from 'src/components/Button';
 import Loading from 'src/components/Loading';
 import PopupConfirm from 'src/components/PopupConfirm';
-import BookingSkeleton from './BookingSkeleton';
-import {Container} from 'src/components/Layout';
+import RightButtonChat from 'src/components/RightButtonChat';
 import {
   PricingAndPromotionSection,
   StoreInfoSection,
@@ -32,8 +35,13 @@ import {
   PaymentMethodSection,
   OrderInfoSection,
 } from 'src/components/payment/Confirm/components';
-import {isUnpaid, canTransaction} from 'app-helper/product';
-import RightButtonChat from 'src/components/RightButtonChat';
+import {
+  ScreenWrapper,
+  RefreshControl,
+  AppOutlinedButton,
+} from 'src/components/base';
+// skeleton
+import BookingSkeleton from './BookingSkeleton';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -42,33 +50,6 @@ const styles = StyleSheet.create({
   listContentContainer: {
     paddingBottom: 10,
   },
-  quantityWrapper: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  quantityContainer: {
-    width: null,
-    maxWidth: undefined,
-  },
-  quantityTxtContainer: {
-    minWidth: 70,
-    flex: undefined,
-  },
-  quantity: {
-    flexDirection: 'row',
-    borderColor: '#eee',
-    borderTopWidth: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    backgroundColor: appConfig.colors.white,
-  },
-  label: {
-    color: '#444',
-    fontSize: 16,
-  },
-
   btnContainer: {
     paddingVertical: 0,
     paddingHorizontal: 0,
@@ -79,15 +60,11 @@ const styles = StyleSheet.create({
   },
 
   unselectedContainer: {
-    borderColor: appConfig.colors.primary,
-    borderWidth: 1,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 4,
   },
   unselected: {
     fontStyle: 'italic',
-    color: appConfig.colors.text,
   },
 
   updateLoadingWrapper: {
@@ -96,27 +73,11 @@ const styles = StyleSheet.create({
     left: undefined,
     bottom: undefined,
   },
-
-  boxButtonActions: {
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingBottom: 9,
-    paddingHorizontal: 30,
-  },
-  buttonActionWrapper: {
-    flex: 1,
-    marginHorizontal: 10,
-    justifyContent: 'flex-start',
-  },
-  btnActionTitle: {
-    fontWeight: '500',
-  },
 });
 
 export class Booking extends Component {
+  static contextType = ThemeContext;
+
   state = {
     booking: {},
     bookingTimes: [],
@@ -162,6 +123,12 @@ export class Booking extends Component {
   unmounted = false;
   isInitData = false;
   isInitModel = false;
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get editable() {
     return this.state.booking?.status == CART_STATUS_ORDERING;
@@ -229,12 +196,18 @@ export class Booking extends Component {
 
   componentDidMount() {
     this.getBooking();
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     cancelRequests(this.requests);
+    this.updateNavBarDisposer();
     this.eventTracker.clearTracking();
   }
 
@@ -254,7 +227,7 @@ export class Booking extends Component {
       navbarConfig.title = '#' + booking.cart_code;
     }
 
-    Actions.refresh(navbarConfig);
+    refresh(navbarConfig);
   };
 
   getBooking = async (bookingId = this.props.bookingId) => {
@@ -441,7 +414,7 @@ export class Booking extends Component {
           if (canTransaction(response.data)) {
             this.goToTransaction(response.data.site_id, response.data.id);
           } else {
-            Actions.pop();
+            pop();
           }
         } else {
           flashShowMessage({
@@ -489,7 +462,7 @@ export class Booking extends Component {
             type: 'success',
             message: response.message,
           });
-          Actions.pop();
+          pop();
         } else {
           flashShowMessage({
             type: 'danger',
@@ -577,7 +550,7 @@ export class Booking extends Component {
     siteId = this.state.booking?.site_id,
     cartId = this.state.booking?.id,
   ) => {
-    Actions.push(appConfig.routes.transaction, {
+    push(appConfig.routes.transaction, {
       siteId,
       cartId,
       onPop: () => {
@@ -600,7 +573,7 @@ export class Booking extends Component {
   };
 
   handleChangeStore = () => {
-    Actions.push(appConfig.routes.myAddress, {
+    push(appConfig.routes.myAddress, {
       goBack: true,
       isVisibleStoreAddress: true,
       isVisibleUserAddress: false,
@@ -625,7 +598,7 @@ export class Booking extends Component {
   };
 
   handleChangePaymentMethod = () => {
-    Actions.push(appConfig.routes.paymentMethod, {
+    push(appConfig.routes.paymentMethod, {
       selectedMethod: this.state.booking.payment_method,
       selectedPaymentMethodDetail: this.state.booking.payment_method_detail,
       price: this.state.booking.total_before_view,
@@ -634,7 +607,7 @@ export class Booking extends Component {
       store_id: this.state.booking.site_id,
       cart_id: this.state.booking.id,
       onConfirm: ({paymentType, paymentMethodId}) => {
-        Actions.pop();
+        pop();
         if (
           paymentType !== this.state.paymentType ||
           paymentMethodId !== this.state.paymentMethodId
@@ -713,17 +686,32 @@ export class Booking extends Component {
     this.scrollContentSizeY = e.nativeEvent.layout.height;
   };
 
+  get unselectedContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+      borderColor: this.theme.color.primaryHighlight,
+      borderWidth: this.theme.layout.borderWidth,
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
   render() {
     const itemFee = this.state.booking?.item_fee || {};
     const cashbackView = this.state.booking?.cashback_view || {};
     const isInitLoading = !this.state.booking?.id && this.state.loading;
+    const isShowConfirmButton =
+      this.state.booking?.id &&
+      (this.editable || canTransaction(this.state.booking));
 
     if (isInitLoading) {
-      return <BookingSkeleton />;
+      return (
+        <ScreenWrapper>
+          <BookingSkeleton />
+        </ScreenWrapper>
+      );
     }
 
     return (
-      <Container flex centerVertical={false}>
+      <ScreenWrapper>
         {this.state.updateLoading && (
           <Loading
             pointerEvents="none"
@@ -737,7 +725,7 @@ export class Booking extends Component {
           scrollIndicatorInsets={{right: 0.01}}
           contentContainerStyle={[
             styles.listContentContainer,
-            !this.editable && {
+            !isShowConfirmButton && {
               paddingBottom: appConfig.device.bottomSpace,
             },
           ]}
@@ -788,14 +776,18 @@ export class Booking extends Component {
             }
             customContent={
               !this.storeInfo?.id && (
-                <TouchableOpacity
+                <AppOutlinedButton
+                  primaryHighlight
                   disabled={!this.editable}
+                  rounded={ButtonRoundedType.EXTRA_SMALL}
                   onPress={this.handleChangeStore}
-                  style={styles.unselectedContainer}>
-                  <Text style={styles.unselected}>
-                    {this.props.t('orders:confirm.store.unselected')}
-                  </Text>
-                </TouchableOpacity>
+                  style={styles.unselectedContainer}
+                  titleStyle={[
+                    styles.unselected,
+                    this.theme.typography[TypographyType.LABEL_MEDIUM],
+                  ]}>
+                  {this.props.t('orders:confirm.store.unselected')}
+                </AppOutlinedButton>
               )
             }
           />
@@ -818,7 +810,9 @@ export class Booking extends Component {
               value={this.state.tempNote}
               onChangeText={this.handleChangeNote}
               onBlur={this.handleUpdateNote}
-              isShowActionTitle={this.state.booking.status != CART_STATUS_ORDERING}
+              isShowActionTitle={
+                this.state.booking.status != CART_STATUS_ORDERING
+              }
               onNoteUpdated={this.handleChangeNote}
             />
           </View>
@@ -854,26 +848,27 @@ export class Booking extends Component {
           />
         </KeyboardAwareScrollView>
 
-        {this.state.booking?.id &&
-          (this.editable ? (
-            <Button
-              disabled={this.isDisabled}
-              title={this.props.t('orders:confirm.confirmTitle')}
-              containerStyle={styles.btnContainer}
-              btnContainerStyle={[styles.btnContentContainer]}
-              onPress={this.orderBooking}
-            />
-          ) : (
-            canTransaction(this.state.booking) && (
-              <Button
-                disabled={this.isDisabled}
-                title={this.props.t('orders:confirm.order.payTitle')}
-                containerStyle={styles.btnContainer}
-                btnContainerStyle={[styles.btnContentContainer]}
-                onPress={() => this.goToTransaction()}
-              />
-            )
-          ))}
+        {isShowConfirmButton && (
+          <Button
+            showBackground
+            safeLayout
+            disabled={this.isDisabled}
+            title={
+              this.editable
+                ? this.props.t('orders:confirm.confirmTitle')
+                : canTransaction(this.state.booking)
+                ? this.props.t('orders:confirm.order.payTitle')
+                : ''
+            }
+            onPress={
+              this.editable
+                ? this.orderBooking
+                : canTransaction(this.state.booking)
+                ? () => this.goToTransaction()
+                : undefined
+            }
+          />
+        )}
 
         <PopupConfirm
           ref_popup={this.refPopupCancelBooking}
@@ -883,7 +878,7 @@ export class Booking extends Component {
           yesConfirm={this.cancelBooking}
           otherClose={false}
         />
-      </Container>
+      </ScreenWrapper>
     );
   }
 }

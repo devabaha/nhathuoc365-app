@@ -1,51 +1,36 @@
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-} from 'react-native';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-
-import {Container} from 'src/components/Layout';
-
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon, TextButton} from 'src/components/base';
+// skeleton
 import SectionContainerSkeleton from './SectionContainerSkeleton';
 
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
     paddingHorizontal: 15,
-    backgroundColor: '#ffffff',
-    borderTopWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
   },
   topSpacing: {
     marginTop: 8,
   },
-
   titleWrapper: {
     justifyContent: 'space-between',
   },
   titleContainer: {},
   icon: {
     width: 15,
-    color: '#999',
     fontSize: 15,
   },
   title: {
-    fontSize: 16,
-    color: '#000000',
     marginLeft: 8,
   },
-  actionTitle: {},
   btnAction: {},
-  changeTitle: {
-    color: appConfig.colors.primary,
-    fontSize: 12,
-  },
 });
 
 const SectionContainer = ({
@@ -53,50 +38,94 @@ const SectionContainer = ({
   marginTop,
   title,
   customIcon,
-  iconStyle,
+  iconStyle: iconStyleProps,
   iconName,
   children,
   loading,
   actionBtnTitle,
-  actionBtnStyle,
-  actionBtnTitleStyle,
+  actionBtnStyle: actionBtnStyleProps,
+  actionBtnTitleStyle: actionBtnTitleStyleProps,
 
   onPressActionBtn,
 }) => {
+  const {theme} = useTheme();
+
   const hasHeading = !!title || !!actionBtnTitle;
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.container,
+        {
+          borderTopWidth: theme.layout.borderWidthPixel,
+          borderBottomWidth: theme.layout.borderWidthPixel,
+          borderColor: theme.color.border,
+        },
+        marginTop && styles.topSpacing,
+      ],
+      style,
+    );
+  }, [theme, marginTop, style]);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.icon,
+        {
+          color: theme.color.iconInactive,
+        },
+      ],
+      iconStyleProps,
+    );
+  }, [theme, iconStyleProps]);
+
+  const actionBtnStyle = useMemo(() => {
+    return mergeStyles(styles.btnAction, actionBtnStyleProps);
+  }, [theme, actionBtnStyleProps]);
+
+  const changeTitleStyle = useMemo(() => {
+    return mergeStyles(
+      theme.typography[TypographyType.LABEL_SMALL_PRIMARY],
+      actionBtnTitleStyleProps,
+    );
+  }, [theme, actionBtnTitleStyleProps]);
 
   return loading ? (
     <SectionContainerSkeleton />
   ) : (
-    <View style={[styles.container, style, marginTop && styles.topSpacing]}>
+    <Container style={containerStyle}>
       {!!hasHeading && (
-        <Container row style={styles.titleWrapper}>
+        <Container row noBackground style={styles.titleWrapper}>
           {!!title && (
-            <Container row>
+            <Container noBackground row>
               {customIcon || (
-                <FontAwesome5Icon
-                  style={[styles.icon, iconStyle]}
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME_5}
+                  style={iconStyle}
                   name={iconName}
                 />
               )}
-              <Text style={styles.title}>{title}</Text>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.title}>
+                {title}
+              </Typography>
             </Container>
           )}
           {!!actionBtnTitle && (
-            <TouchableOpacity
+            <TextButton
               disabled={!onPressActionBtn}
               hitSlop={HIT_SLOP}
-              style={[styles.btnAction, actionBtnStyle]}
+              style={actionBtnStyle}
+              titleStyle={changeTitleStyle}
               onPress={onPressActionBtn}>
-              <Text style={[styles.changeTitle, actionBtnTitleStyle]}>
-                {actionBtnTitle}
-              </Text>
-            </TouchableOpacity>
+              {actionBtnTitle}
+            </TextButton>
           )}
         </Container>
       )}
       {children}
-    </View>
+    </Container>
   );
 };
 

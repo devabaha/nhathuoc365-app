@@ -46,7 +46,7 @@ class RightButtonChat extends Component {
 
   get iconChatStyle() {
     return mergeStyles(styles.iconChat, {
-      color: this.theme.color.onPrimary,
+      color: this.theme.color.onNavBarBackground,
     });
   }
 

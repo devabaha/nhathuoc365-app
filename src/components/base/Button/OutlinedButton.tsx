@@ -27,6 +27,15 @@ const createStyles = (theme: Theme) => {
     secondary: {
       borderColor: theme.color.persistSecondary,
     },
+    primaryHighlight: {
+      borderColor: theme.color.primaryHighlight,
+    },
+    secondaryHighlight: {
+      borderColor: theme.color.secondaryHighlight,
+    },
+    neutral: {
+      backgroundColor: theme.color.contentBackgroundStrong,
+    },
     disabled: {
       borderColor: theme.color.disabled,
     },
@@ -50,9 +59,15 @@ const createStyles = (theme: Theme) => {
       color: theme.color.persistTextPrimary,
     },
     textPrimary: {
-      color: theme.color.persistPrimary,
+      color: theme.color.primaryHighlight,
     },
     textSecondary: {
+      color: theme.color.persistSecondary,
+    },
+    textPrimaryHighlight: {
+      color: theme.color.primaryHighlight,
+    },
+    textSecondaryHighlight: {
       color: theme.color.persistSecondary,
     },
     textDisabled: {
@@ -87,8 +102,17 @@ const OutlinedButton = forwardRef(
           styles.container,
           props.shadow && styles.shadow,
           props.rounded && styles[props.rounded],
-          props.primary && styles.primary,
-          props.secondary && styles.secondary,
+          props.primary
+            ? styles.primary
+            : props.primaryHighlight
+            ? styles.primaryHighlight
+            : props.secondary
+            ? styles.secondary
+            : props.secondaryHighlight
+            ? styles.secondaryHighlight
+            : props.neutral
+            ? styles.neutral
+            : {},
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
@@ -101,6 +125,9 @@ const OutlinedButton = forwardRef(
       props.rounded,
       props.primary,
       props.secondary,
+      props.primaryHighlight,
+      props.secondaryHighlight,
+      props.neutral,
       props.disabled,
     ]);
 
@@ -108,14 +135,32 @@ const OutlinedButton = forwardRef(
       return mergeStyles(
         [
           styles.text,
-          props.primary && styles.textPrimary,
-          props.secondary && styles.textSecondary,
+          props.primary
+            ? styles.textPrimary
+            : props.primaryHighlight
+            ? styles.textPrimaryHighlight
+            : props.secondary
+            ? styles.textSecondary
+            : props.secondaryHighlight
+            ? styles.textSecondaryHighlight
+            : props.neutral
+            ? styles.neutral
+            : {},
           // disabled should be the last overridden style
           props.disabled && styles.textDisabled,
         ],
         titleStyle,
       );
-    }, [styles, titleStyle, props.primary, props.secondary, props.disabled]);
+    }, [
+      styles,
+      titleStyle,
+      props.primary,
+      props.secondary,
+      props.primaryHighlight,
+      props.secondaryHighlight,
+      props.neutral,
+      props.disabled,
+    ]);
 
     const renderTitleComponent = useCallback(() => {
       return props.renderTitleComponent(titleStyles, buttonStyles);

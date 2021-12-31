@@ -74,7 +74,9 @@ export interface BaseButtonProps
 
 export interface CommonButtonProps extends BaseButtonProps {
   primary?: boolean;
+  primaryHighlight?: boolean;
   secondary?: boolean;
+  secondaryHighlight?: boolean;
   neutral?: boolean;
   disabled?: boolean;
   shadow?: boolean;

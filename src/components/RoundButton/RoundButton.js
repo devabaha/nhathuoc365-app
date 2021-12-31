@@ -1,6 +1,9 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Container from '../Layout/Container';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Typography, Container} from 'src/components/base';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -13,7 +16,6 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    color: '#333',
     textAlign: 'center',
   },
   titleHorizontal: {
@@ -44,19 +46,20 @@ function RoundButton({
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.wrapper, wrapperStyle]}>
-      <Container row={row} style={contentContainerStyle}>
+    <BaseButton onPress={onPress} style={[styles.wrapper, wrapperStyle]}>
+      <Container centerHorizontal row={row} style={contentContainerStyle}>
         <View style={[styles.container, containerStyle, style]}>
           {children}
         </View>
         {!!title && (
-          <Text
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
             style={[styles.title, row && styles.titleHorizontal, titleStyle]}>
             {title}
-          </Text>
+          </Typography>
         )}
       </Container>
-    </TouchableOpacity>
+    </BaseButton>
   );
 }
 

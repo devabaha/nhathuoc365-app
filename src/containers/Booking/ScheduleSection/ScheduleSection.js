@@ -1,12 +1,19 @@
-import React from 'react';
-import {TouchableOpacity} from 'react-native';
-import {StyleSheet, Text, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {ButtonRoundedType, TypographyType} from 'src/components/base';
+// custom components
 import SectionContainer from 'src/components/payment/Confirm/components/SectionContainer';
 import {SlotGridView} from 'src/components/Schedule/SlotPicker/GridView';
+import {AppOutlinedButton} from 'src/components/base';
 
 const SLOTS = [
   '1:00',
@@ -32,33 +39,16 @@ const SLOTS = [
 ];
 
 const styles = StyleSheet.create({
-  icon: {
-    fontSize: 14,
-    color: '#333',
-  },
-
   dateContainer: {
-    borderRadius: 4,
-    backgroundColor: appConfig.colors.primary,
     alignSelf: 'flex-start',
     justifyContent: 'center',
     alignItems: 'center',
-
     marginTop: 12,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  date: {
-    color: appConfig.colors.white,
-  },
-  unselectedDateContainer: {
-    borderWidth: 1,
-    borderColor: appConfig.colors.primary,
-    backgroundColor: undefined,
-  },
   unselectedDate: {
     fontStyle: 'italic',
-    color: appConfig.colors.text,
   },
 
   slotGridViewContainer: {
@@ -80,6 +70,8 @@ const ScheduleSection = ({
   onChangeDate = () => {},
   onChangeTime = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('orders');
 
   const hasDate = !!date;
@@ -88,8 +80,8 @@ const ScheduleSection = ({
     selectedTimeSlot?.value || t('confirm.date.unselected');
 
   const handlePressDatePicker = () => {
-    Actions.push(appConfig.routes.modalCalendar, {
-      title: 'Chọn ngày',
+    push(appConfig.routes.modalCalendar, {
+      title: t('common:pickDate'),
       current: date,
       onPressDate: (date, closeCallback) => {
         onChangeDate(date);
@@ -98,19 +90,38 @@ const ScheduleSection = ({
     });
   };
 
+  const dateStyle = useMemo(() => {
+    return mergeStyles(
+      theme.typography[TypographyType.LABEL_MEDIUM],
+      hasDate
+        ? {
+            color: theme.color.onPersistPrimary,
+          }
+        : styles.unselectedDate,
+    );
+  }, [theme, hasDate]);
+
+  const dateBtnContanerStyle = useMemo(() => {
+    return mergeStyles(
+      styles.dateContainer,
+      hasDate && {
+        backgroundColor: theme.color.persistPrimary,
+        borderColor: theme.color.persistPrimary,
+      },
+    );
+  }, [theme, hasDate]);
+
   const renderButtonSelection = (value, onPress = () => {}) => {
     return (
-      <TouchableOpacity
+      <AppOutlinedButton
+        rounded={ButtonRoundedType.EXTRA_SMALL}
+        primaryHighlight
         disabled={!editable}
         onPress={onPress}
-        style={[
-          styles.dateContainer,
-          !hasDate && styles.unselectedDateContainer,
-        ]}>
-        <Text style={[styles.date, !hasDate && styles.unselectedDate]}>
-          {value}
-        </Text>
-      </TouchableOpacity>
+        titleStyle={dateStyle}
+        style={dateBtnContanerStyle}>
+        {value}
+      </AppOutlinedButton>
     );
   };
 

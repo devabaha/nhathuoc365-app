@@ -126,7 +126,7 @@ const ProductInfo = ({
               <Typography
                 type={TypographyType.DESCRIPTION_MEDIUM}
                 style={styles.deleteText}>
-                {discountPrice} discount
+                {discountPrice}
               </Typography>
             )}
             {!!price && (
@@ -145,10 +145,7 @@ const ProductInfo = ({
             )}
             {!!inventory && (
               <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
-                {`${t('attr.stock')}:`}{' '}
-                <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
-                  {inventory}
-                </Typography>
+                {`${t('attr.stock')}:`} {inventory}
               </Typography>
             )}
             {extraInfoComponent}
