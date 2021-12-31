@@ -19,11 +19,23 @@ export interface TypographyProps extends TextProps {
   onContentBackground?: boolean;
   onDisabled?: boolean;
 
-  renderIconBefore?: (titleStyle: StyleProp<TextStyle>) => Children;
-  renderIconAfter?: (titleStyle: StyleProp<TextStyle>) => Children;
+  renderIconBefore?: (
+    titleStyle: StyleProp<TextStyle>,
+    fontStyle: StyleProp<TextStyle>,
+  ) => Children;
+  renderIconAfter?: (
+    titleStyle: StyleProp<TextStyle>,
+    fontStyle: StyleProp<TextStyle>,
+  ) => Children;
 
-  renderInlineIconBefore?: (titleStyle: StyleProp<TextStyle>) => Children;
-  renderInlineIconAfter?: (titleStyle: StyleProp<TextStyle>) => Children;
+  renderInlineIconBefore?: (
+    titleStyle: StyleProp<TextStyle>,
+    fontStyle: StyleProp<TextStyle>,
+  ) => Children;
+  renderInlineIconAfter?: (
+    titleStyle: StyleProp<TextStyle>,
+    fontStyle: StyleProp<TextStyle>,
+  ) => Children;
 
   children?: Children;
 }

@@ -1,52 +1,17 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  Animated,
-  // RefreshControl,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
+// 3-party libs
 import Clipboard from '@react-native-community/clipboard';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Actions} from 'react-native-router-flux';
-import Swiper from 'react-native-swiper';
-import store from '../../store/Store';
-import CartFooter from '../cart/CartFooter';
-import PopupConfirm from '../PopupConfirm';
-import RightButtonChat from '../RightButtonChat';
-import appConfig from 'app-config';
-import EventTracker from '../../helper/EventTracker';
-import Header from './Header';
-import {DiscountBadge} from '../Badges';
-import Button from '../../components/Button';
-import FastImage from 'react-native-fast-image';
-import {MEDIA_TYPE, ORDER_TYPES} from '../../constants';
-import SkeletonLoading from '../SkeletonLoading';
-import SVGPhotoBroken from '../../images/photo_broken.svg';
-import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import {CART_TYPES} from 'src/constants/cart';
-import Loading from '../Loading';
-import CTAProduct from './CTAProduct';
-import {APIRequest} from 'src/network/Entity';
-import NoResult from '../NoResult';
+import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
-import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
 import {isEmpty} from 'lodash';
-import ListStoreProduct from '../stores/ListStoreProduct';
-import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
-import {shareImages} from '../../helper/share';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {shareImages} from 'app-helper/share';
 import {isOutOfStock} from 'app-helper/product';
-import {Container} from '../Layout';
-import ActionContainer from '../Social/ActionContainer';
-import {
-  ACCESSORY_TYPE,
-  SOCIAL_BUTTON_TYPES,
-  SOCIAL_DATA_TYPES,
-} from 'src/constants/social';
 import {
   calculateLikeCountFriendly,
   getSocialCommentsCount,
@@ -54,27 +19,62 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
-import ListProducts from '../Home/component/ListProducts';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
-import LinearGradient from 'react-native-linear-gradient';
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {hexToRgba} from 'app-helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {isConfigActive} from 'src/helper/configKeyHandler';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// routing
+import {pop, push} from 'app-helper/routing';
+// constants
+import {
+  ButtonRoundedType,
+  TypographyType,
+  BundleIconSetName,
+} from 'src/components/base';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {
+  ACCESSORY_TYPE,
+  SOCIAL_BUTTON_TYPES,
+  SOCIAL_DATA_TYPES,
+} from 'src/constants/social';
+import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import {CART_TYPES} from 'src/constants/cart';
+import {MEDIA_TYPE, ORDER_TYPES} from '../../constants';
+// entities
+import {APIRequest} from 'src/network/Entity';
+import CTAProduct from './CTAProduct';
+// images
+import SVGPhotoBroken from '../../images/photo_broken.svg';
+// custom components
 import ModalWholesale from './ModalWholesale';
-import Video from '../Video';
 import MediaCarousel from './MediaCarousel';
-import {ButtonRoundedType, Typography, TypographyType} from '../base';
+import ListProducts from '../Home/component/ListProducts';
+import CartFooter from '../cart/CartFooter';
+import PopupConfirm from '../PopupConfirm';
 import {
   AppFilledButton,
-  AppFilledTonalButton,
   AppOutlinedButton,
-  AppPrimaryButton,
-  FilledButton,
-  FilledTonalButton,
-  OutlinedButton,
-} from '../base/Button';
-import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
-import {hexToRgba} from 'app-helper/';
-import ScrollView from '../base/ScrollView';
-import ScreenWrapper from '../base/ScreenWrapper';
-import RefreshControl from '../base/RefreshControl';
+  Typography,
+  Icon,
+  ScrollView,
+  ScreenWrapper,
+  RefreshControl,
+  Container,
+  BaseButton,
+  TextButton,
+} from 'src/components/base';
+import ActionContainer from '../Social/ActionContainer';
+import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
+import HomeCardList, {HomeCardItem} from '../Home/component/HomeCardList';
+import NoResult from '../NoResult';
+import Header from './Header';
+import {DiscountBadge} from '../Badges';
+import Button from 'src/components/Button';
+import Loading from '../Loading';
+// skeleton
+import SkeletonLoading from '../SkeletonLoading';
 
 const ITEM_KEY = 'ItemKey';
 const WEBVIEW_HEIGHT_COLLAPSED = 300;
@@ -125,6 +125,10 @@ class Item extends Component {
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
     this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
+
+    this.webviewContentShowMoreTitleTypoProps = {
+      type: TypographyType.LABEL_MEDIUM_PRIMARY,
+    };
   }
 
   get theme() {
@@ -141,13 +145,13 @@ class Item extends Component {
 
   get subActionColor() {
     return this.isDisabledSubBtnAction
-      ? '#ccc'
+      ? this.subActionDisabledColor
       : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
         !this.isServiceProduct(this.product)
-      ? appConfig.colors.primary
+      ? this.subActionActiveColor
       : this.isLiked
-      ? appConfig.colors.primary
-      : appConfig.colors.primary;
+      ? this.subActionActiveColor
+      : this.subActionActiveColor;
   }
 
   get isDisabledSubBtnAction() {
@@ -213,28 +217,6 @@ class Item extends Component {
   }
 
   _initial(props) {
-    setTimeout(() =>
-      Actions.refresh({
-        title: props.title || props.t('common:screen.productDetail.mainTitle'),
-        showSearchBar: true,
-        smallSearch: true,
-        placeholder: store.store_data.name,
-        searchOnpress: () => {
-          return Actions.push(appConfig.routes.searchStore, {
-            title: `Tìm kiếm tại ${store.store_data.name}`,
-            from_item: true,
-            itemRefresh: this._itemRefresh.bind(this),
-          });
-        },
-        right: this._renderRightButton,
-        onBack: () => {
-          this._unMount();
-
-          Actions.pop();
-        },
-      }),
-    );
-
     this.start_time = time();
 
     this._getData();
@@ -254,11 +236,15 @@ class Item extends Component {
   _goStores(item) {
     if (store.no_refresh_home_change) {
       // Trong cua hang lien ket
-      Actions.pop();
+      pop();
     } else {
-      Actions.push(appConfig.routes.store, {
-        title: store.store_data.name,
-      });
+      push(
+        appConfig.routes.store,
+        {
+          title: store.store_data.name,
+        },
+        this.theme,
+      );
     }
   }
 
@@ -310,57 +296,13 @@ class Item extends Component {
 
   // Lấy chi tiết sản phẩm
   _getData(delay) {
-    // var {item} = this.state;
-    // var item_key = ITEM_KEY + item.id + store.user_info.id;
-
-    // // load
-    // storage
-    //   .load({
-    //     key: item_key,
-    //     autoSync: true,
-    //     syncInBackground: true,
-    //     syncParams: {
-    //       extraFetchOptions: {},
-    //       someFlag: true,
-    //     },
-    //   })
-    //   .then((data) => {
-    //     setTimeout(() => {
-    //       if (isIOS) {
-    //         layoutAnimation();
-    //       }
-
-    //       var images = [];
-
-    //       if (data && data.img) {
-    //         data.img.map((item) => {
-    //           images.push({
-    //             url: item.image,
-    //           });
-    //         });
-    //       }
-
-    //       this.logEventTracking(data);
-
-    //       this.setState({
-    //         item_data: data,
-    //         images: images,
-    //         like_flag: data.like_flag,
-    //         loading: false,
-    //         refreshing: false,
-    //         like_loading: false,
-    //       });
-    //     }, delay || this._delay());
-    //   })
-    //   .catch((err) => {
     this._getDataFromServer(delay);
-    // });
   }
 
   async _getDataFromServer(delay) {
     var {item} = this.state;
     var item_key = ITEM_KEY + item.id + store.user_info.id;
-    // alert(store.store_id +' - '+ item.id);
+
     const {t} = this.props;
     try {
       const response = await APIHandler.site_product(store.store_id, item.id);
@@ -378,8 +320,7 @@ class Item extends Component {
           like_count_friendly:
             calculateLikeCountFriendly(productSocialFormat) || 0,
         });
-        // delay append data
-        // setTimeout(() => {
+
         if (isIOS) {
           layoutAnimation();
         }
@@ -418,7 +359,6 @@ class Item extends Component {
             });
           },
         );
-        // }, delay || this._delay());
       } else {
         flashShowMessage({
           type: 'danger',
@@ -450,15 +390,6 @@ class Item extends Component {
     };
   }
 
-  _renderRightButton() {
-    return (
-      <View style={styles.right_btn_box}>
-        {/* <RightButtonOrders /> */}
-        <RightButtonChat tel={store.store_data.tel} />
-      </View>
-    );
-  }
-
   _onRefresh() {
     if (this.props.preventUpdate) {
       return null;
@@ -467,12 +398,6 @@ class Item extends Component {
 
     this._getDataFromServer(1000);
   }
-
-  goToSchedule = (product) => {
-    Actions.push(appConfig.routes.productSchedule, {
-      productId: product.id,
-    });
-  };
 
   handlePressMainActionBtnProduct = (product, cartType) => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
@@ -483,18 +408,18 @@ class Item extends Component {
   };
 
   handlePressWarehouse = () => {
-    Actions.push(appConfig.routes.modalList, {
+    push(appConfig.routes.modalList, {
       heading: this.props.t('opRegister:modal.warehouse.title'),
       data: this.state.listWarehouse,
       selectedItem: {id: store?.user_info?.store_id},
       onPressItem: this.onSelectWarehouse,
-      onCloseModal: Actions.pop,
+      onCloseModal: pop,
       modalStyle: {
         height: null,
         maxHeight: '80%',
       },
       ListEmptyComponent: (
-        <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
+        <NoResult iconName="warehouse" message={this.props.t('noStoreFound')} />
       ),
     });
   };
@@ -605,13 +530,6 @@ class Item extends Component {
     );
   }
 
-  _itemRefresh(item) {
-    Actions.item({
-      title: item.name,
-      item,
-    });
-  }
-
   _confirmRemoveCartItem(item) {
     this.cartItemConfirmRemove = item;
 
@@ -710,9 +628,19 @@ class Item extends Component {
   }
 
   handlePressProduct = (product) => {
-    Actions.push(appConfig.routes.item, {
+    servicesHandler({
+      type: SERVICES_TYPE.PRODUCT_DETAIL,
       title: product.name,
-      item: product,
+      product,
+    });
+  };
+
+  handleItemNews = (item) => () => {
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      theme: this.theme,
+      title: item.title,
+      data: item,
     });
   };
 
@@ -751,116 +679,20 @@ class Item extends Component {
     this.setState({selectedIndex: index});
   };
 
-  renderPagination = (index, total, hasImages) => {
-    const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
-    return (
-      <View pointerEvents="none" style={styles.paginationContainer}>
-        <Text style={styles.paginationText}>{pagingMess}</Text>
-      </View>
-    );
-  };
-
-  renderNextButton() {
-    return (
-      <View style={[styles.swipeControlBtn, styles.swipeRightControlBtn]}>
-        <Icon
-          name="angle-right"
-          style={[styles.iconSwipeControl, styles.iconSwipeControlRight]}
-        />
-      </View>
-    );
-  }
-
-  renderPrevButton() {
-    return (
-      <View style={[styles.swipeControlBtn, styles.swipeLeftControlBtn]}>
-        <Icon
-          name="angle-left"
-          style={[styles.iconSwipeControl, styles.iconSwipeControlLeft]}
-        />
-      </View>
-    );
-  }
-
-  renderProductImages(images) {
-    return images.map((image, index) => {
-      return (
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.item_image_viewer({
-              images: this.state.images,
-              index,
-            });
-          }}
-          key={index}>
-          <View style={{height: '100%'}}>
-            <FastImage
-              style={styles.swiper_image}
-              source={{uri: image.image}}
-              resizeMode="contain"
-            />
-          </View>
-        </TouchableHighlight>
-      );
-    });
-  }
-
-  renderItem = ({item: image, index}) => {
-    return (
-      <View style={{width: appConfig.device.width}}>
-        {image?.image ? (
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={() => {
-              console.log(this.state.images);
-              Actions.item_image_viewer({
-                images: this.state.images,
-                index: index - 1,
-              });
-            }}>
-            <View style={{height: '100%'}}>
-              <FastImage
-                style={styles.swiper_image}
-                source={{uri: image.image}}
-                resizeMode="contain"
-              />
-            </View>
-          </TouchableHighlight>
-        ) : (
-          <Video
-            refPlayer={this.refPlayer}
-            type="youtube"
-            videoId={image}
-            containerStyle={{
-              justifyContent: 'center',
-              height: appConfig.device.height / 2,
-            }}
-            height={appConfig.device.height / 2}
-            autoAdjustLayout
-            youtubeIframeProps={{play: this.state.selectedIndex === index}}
-          />
-        )}
-      </View>
-    );
+  handlePressScannedProduct = () => {
+    push(appConfig.routes.productStamps, {}, this.theme);
   };
 
   renderProductSwiper(product) {
     const images = product?.img || [];
-    const hasImages = !!images.length;
-    const isShowButtons = hasImages && images.length > 1;
-
-    const backgroundStyle = {
-      backgroundColor: hexToRgba(
-        LightenColor(this.theme.color.primary, 20),
-        0.5,
-      ),
-    };
 
     return (
-      <View>
+      <Container>
         <SkeletonLoading
-          style={[styles.noImageContainer, backgroundStyle]}
+          style={[
+            styles.noImageContainer,
+            this.skeletonLoadingProductSwiperContainerStyle,
+          ]}
           loading={this.state.loading}
           height={appConfig.device.width}>
           {!images.length ? (
@@ -868,7 +700,7 @@ class Item extends Component {
               style={[
                 styles.noImageContainer,
                 styles.swiper_no_image,
-                backgroundStyle,
+                this.skeletonLoadingProductSwiperContainerStyle,
               ]}>
               <SVGPhotoBroken
                 width="80"
@@ -881,25 +713,9 @@ class Item extends Component {
               height={appConfig.device.height / 2}
               data={this.state.images}
             />
-            // <Swiper
-            //   loop={false}
-            //   showsButtons={isShowButtons}
-            //   renderPagination={(index, total, context) =>
-            //     this.renderPagination(index, total, context, hasImages)
-            //   }
-            //   buttonWrapperStyle={{
-            //     alignItems: 'flex-end',
-            //   }}
-            //   nextButton={this.renderNextButton()}
-            //   prevButton={this.renderPrevButton()}
-            //   width={appConfig.device.width}
-            //   height={appConfig.device.height / 2}
-            //   containerStyle={styles.content_swiper}>
-            //   {this.renderProductImages(images)}
-            // </Swiper>
           )}
         </SkeletonLoading>
-      </View>
+      </Container>
     );
   }
 
@@ -920,11 +736,13 @@ class Item extends Component {
       <Indicator size="small" color="#ffffff" />
     ) : this.isServiceProduct(product) ? (
       <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
         name="calendar-plus-o"
         style={[styles.item_actions_btn_icon, titleStyle]}
       />
     ) : (
       <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
         name="cart-plus"
         style={[styles.item_actions_btn_icon, titleStyle]}
       />
@@ -936,17 +754,17 @@ class Item extends Component {
       <Indicator size="small" />
     ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
       !this.isServiceProduct(product) ? (
-      <MaterialCommunityIcons
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
         name="truck-fast"
         size={24}
-        // color={this.subActionColor}
         style={titleStyle}
       />
     ) : (
       <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
         name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
         size={20}
-        // color={this.subActionColor}
         style={titleStyle}
       />
     );
@@ -955,21 +773,14 @@ class Item extends Component {
   renderPostForSaleBtnContent = (titleStyle, buttonStyle) => {
     return (
       <>
-        <View
-          style={
-            [
-              // styles.postForSaleContainer,
-              // this.state.preparePostForSaleDataLoading &&
-              //   styles.postForSaleContainerLoading,
-            ]
-          }>
+        <View>
           <Typography
             type={TypographyType.LABEL_SMALL}
             style={[styles.postForSaleTitle, titleStyle]}>
             {this.props.t('shopTitle.postForSale')}
           </Typography>
         </View>
-        <View
+        <Container
           style={[
             styles.postForSaleIconContainer,
             this.state.preparePostForSaleDataLoading &&
@@ -978,12 +789,13 @@ class Item extends Component {
           {this.state.preparePostForSaleDataLoading ? (
             <Loading size="small" />
           ) : (
-            <MaterialCommunityIcons
+            <Icon
+              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
               name="share"
               style={[styles.postForSaleIcon, titleStyle]}
             />
           )}
-        </View>
+        </Container>
       </>
     );
   };
@@ -1020,19 +832,28 @@ class Item extends Component {
     });
 
     return (
-      <View style={styles.wholesaleContainer}>
+      <View style={[styles.wholesaleContainer, this.borderStyle]}>
         <View style={[styles.item_content_item, styles.item_content_item_left]}>
-          <Text style={styles.item_content_item_title}>
+          <Typography type={TypographyType.LABEL_MEDIUM_SECONDARY}>
             {t('wholesale.title')}
-          </Text>
+          </Typography>
         </View>
 
-        <TouchableOpacity
+        <BaseButton
           onPress={this.handleWholesalePress}
           style={[styles.item_content_item, styles.item_content_item_right]}>
-          <Text style={styles.item_content_item_value}>{wholesaleValue}</Text>
-          <Icon name="angle-right" style={styles.wholesaleRightIcon} />
-        </TouchableOpacity>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={styles.item_content_item_value}>
+            {wholesaleValue}
+          </Typography>
+          <Icon
+            bundle={BundleIconSetName.FONT_AWESOME}
+            name="angle-right"
+            neutral
+            style={styles.wholesaleRightIcon}
+          />
+        </BaseButton>
       </View>
     );
   };
@@ -1041,16 +862,20 @@ class Item extends Component {
     return (
       !!this.props.showBtnProductStamps && (
         <Button
-          containerStyle={styles.btnProductStampsContainer}
+          containerStyle={[
+            styles.btnProductStampsContainer,
+            this.btnProductStampsContainerStyle,
+          ]}
           btnContainerStyle={styles.btnProductStampsContentContainer}
-          titleStyle={styles.btnProductStampsTitle}
-          renderTitleComponent={(style) => (
-            <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
-              <Text style={style}>Xem sản phẩm đã quét</Text>
-            </Shimmer>
-          )}
-          onPress={() => Actions.push(appConfig.routes.productStamps)}
-        />
+          onPress={this.handlePressScannedProduct}>
+          <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
+            <Typography
+              type={TypographyType.LABEL_LARGE_PRIMARY}
+              style={styles.btnProductStampsTitle}>
+              {this.props.t('productStamp:viewScannedProduct')}
+            </Typography>
+          </Shimmer>
+        </Button>
       )
     );
   };
@@ -1061,10 +886,15 @@ class Item extends Component {
         style={[
           styles.noticeContainer,
           {
-            backgroundColor: product.notice.bgColor || appConfig.colors.primary,
+            backgroundColor:
+              product?.notice?.bgColor || this.theme.color.persistPrimary,
           },
         ]}>
-        <Text style={styles.noticeMessage}>{product.notice.message}</Text>
+        <Typography
+          type={TypographyType.LABEL_SEMI_LARGE}
+          style={[styles.noticeMessage, this.noticeMessageStyle]}>
+          {product.notice.message}
+        </Typography>
       </View>
     ) : null;
   }
@@ -1076,24 +906,25 @@ class Item extends Component {
         <View key={index} style={styles.item_content_item_container}>
           <View
             style={[styles.item_content_item, styles.item_content_item_left]}>
-            <Text style={styles.item_content_item_title}>{info.name}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_SECONDARY}
+              style={styles.item_content_item_title}>
+              {info.name}
+            </Typography>
           </View>
 
           <View
             style={[styles.item_content_item, styles.item_content_item_right]}>
-            <Text style={styles.item_content_item_value}>{info.info}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.item_content_item_value}>
+              {info.info}
+            </Typography>
           </View>
         </View>
       );
     });
   }
-
-  handleItemNews = (item) => () => {
-    Actions.notify_item({
-      title: item.title,
-      data: item,
-    });
-  };
 
   renderListNews = ({item, index}) => {
     return (
@@ -1110,45 +941,46 @@ class Item extends Component {
   renderWebviewContentCollapseBtn = () => {
     return (
       this.state.isWebviewContentCollapsed !== undefined && (
-        <TouchableOpacity onPress={this.toggleCollapseWebviewContent}>
-          <Container row center padding={15}>
-            <Text style={styles.webviewContentShowMoreTitle}>
-              {this.state.isWebviewContentCollapsed
-                ? this.props.t('common:showMore')
-                : this.props.t('common:showLess')}
-            </Text>
-            <Icon
-              name={
-                this.state.isWebviewContentCollapsed ? 'angle-down' : 'angle-up'
-              }
-              style={styles.webviewContentShowMoreIcon}
-            />
-          </Container>
-        </TouchableOpacity>
+        <TextButton
+          typoProps={this.webviewContentShowMoreTitleTypoProps}
+          style={styles.webviewContentShowMoreContainer}
+          onPress={this.toggleCollapseWebviewContent}
+          renderIconRight={(titleStyle) => {
+            return (
+              <Icon
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name={
+                  this.state.isWebviewContentCollapsed
+                    ? 'angle-down'
+                    : 'angle-up'
+                }
+                style={[titleStyle, styles.webviewContentShowMoreIcon]}
+              />
+            );
+          }}>
+          {this.state.isWebviewContentCollapsed
+            ? this.props.t('common:showMore')
+            : this.props.t('common:showLess')}
+        </TextButton>
       )
     );
   };
 
-  renderMainActionBtn = (item, titleStyle, buttonStyle) => {
+  renderMainActionBtn = (item, titleStyle, buttonStyle, fontStyle) => {
     const {t} = this.props;
 
     return (
-      <Container
-        row
-        center
-        style={[
-          styles.item_actions_btn,
-          // styles.item_actions_btn_add_cart,
-          // this.isDisabledBuyingProduct &&
-          //   styles.item_actions_btn_add_cart_disabled,
-        ]}>
-        <View style={styles.item_actions_btn_icon_container}>
-          {this.renderMainActionBtnIcon(item, titleStyle)}
-        </View>
+      <Container noBackground row style={styles.item_actions_btn}>
+        <Container
+          noBackground
+          center
+          style={styles.item_actions_btn_icon_container}>
+          {this.renderMainActionBtnIcon(item, fontStyle)}
+        </Container>
         <Typography
           type={TypographyType.LABEL_MEDIUM}
           numberOfLines={1}
-          style={[styles.item_actions_title, titleStyle]}>
+          style={[styles.item_actions_title, fontStyle]}>
           {this.isServiceProduct(item)
             ? t('shopTitle.book')
             : this.isDisabledBuyingProduct
@@ -1159,34 +991,18 @@ class Item extends Component {
     );
   };
 
-  renderSubActionBtn = (item, titleStyle, buttonStyle) => {
+  renderSubActionBtn = (item, titleStyle, buttonStyle, fontStyle) => {
     const {t} = this.props;
 
     return (
-      <Container
-        row
-        center
-        style={
-          [
-            // {
-            //   borderColor: this.subActionColor,
-            // },
-          ]
-        }>
+      <Container row centerVertical>
         <View style={styles.item_actions_btn_icon_container}>
-          {this.renderSubActionBtnIcon(item, titleStyle)}
+          {this.renderSubActionBtnIcon(item, fontStyle)}
         </View>
         <Typography
           type={TypographyType.LABEL_MEDIUM}
           numberOfLines={1}
-          style={[
-            styles.item_actions_title,
-            // styles.item_actions_title_chat,
-            // {
-            //   color: this.subActionColor,
-            // },
-            titleStyle,
-          ]}>
+          style={[styles.item_actions_title, fontStyle]}>
           {!this.isServiceProduct(item) &&
           isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
             ? t('shopTitle.dropShip')
@@ -1198,16 +1014,69 @@ class Item extends Component {
     );
   };
 
+  get subActionActiveColor() {
+    return this.theme.color.primaryHighlight;
+  }
+
+  get subActionDisabledColor() {
+    return this.theme.color.disabled;
+  }
+
+  get skeletonLoadingProductSwiperContainerStyle() {
+    return {
+      backgroundColor: hexToRgba(
+        LightenColor(this.theme.color.primary, 20),
+        0.5,
+      ),
+    };
+  }
+
+  get commissionTextStyle() {
+    return {
+      color: this.theme.color.cherry,
+    };
+  }
+
+  get borderStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidth,
+    };
+  }
+
+  get blockStyle() {
+    return [styles.block, this.borderStyle];
+  }
+
+  get btnProductStampsContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    };
+  }
+
+  get noticeMessageStyle() {
+    return {
+      color: this.theme.color.onPersistPrimary,
+    };
+  }
+
+  get shortContentBoxStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    };
+  }
+
+  get webviewCollapseColor() {
+    return [hexToRgba(this.theme.color.surface, 0.3), this.theme.color.surface];
+  }
+
   render() {
-    // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
     const productWithSocialDataFormat = item?.object
       ? this.getProductWithSocialFormat(item)
       : {};
-    const is_like = this.state.like_flag == 1;
     const {t} = this.props;
     const unitName = item.unit_name && item.unit_name_view;
-    const storeName = store?.user_info?.store_name;
     const isInventoryVisible =
       !!item.inventory &&
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
@@ -1220,43 +1089,44 @@ class Item extends Component {
     };
 
     return (
-      <ScreenWrapper style={styles.container}>
-        {(this.state.loading || this.state.actionLoading) && <Loading center />}
+      <ScreenWrapper>
         <Header
           title={this.props.title}
           animatedValue={this.animatedScrollY}
           item={item}
           onPressWarehouse={this.handlePressWarehouse}
         />
+        
+        {(this.state.loading || this.state.actionLoading) && <Loading center />}
 
-        <View style={styles.container}>
-          <ScrollView
-            animated
-            safeLayout={!store.cart_data}
-            ref={(ref) => (this.refs_body_item = ref)}
-            onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: this.animatedScrollY,
-                    },
+        <ScrollView
+          animated
+          safeLayout={!store.cart_data}
+          ref={(ref) => (this.refs_body_item = ref)}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.animatedScrollY,
                   },
                 },
-              ],
-              {
-                useNativeDriver: true,
               },
-            )}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }>
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }>
+          <Container>
             {this.renderProductSwiper(item)}
 
-            <View style={[styles.block, styles.item_heading_box]}>
+            <View style={[this.blockStyle, styles.item_heading_box]}>
               <View style={styles.boxDiscount}>
                 {item.discount_percent > 0 ? (
                   <View>
@@ -1271,39 +1141,52 @@ class Item extends Component {
                 )}
                 {isInventoryVisible && (
                   <View style={styles.productsLeftContainer}>
-                    {/* <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} /> */}
-                    <Text style={styles.productsLeftText}>
+                    <Typography
+                      type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
+                      style={styles.productsLeftText}>
                       {t('productsLeft', {quantity: item.inventory})}
-                    </Text>
+                    </Typography>
                   </View>
                 )}
               </View>
-              <Text style={styles.item_heading_title}>{item.name}</Text>
+              <Typography
+                type={TypographyType.LABEL_HUGE}
+                style={styles.item_heading_title}>
+                {item.name}
+              </Typography>
 
               {!!item.commission_value && (
-                <Text style={styles.commissionText}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={[styles.commissionText, this.commissionTextStyle]}>
                   {item.commission_value_view}
-                </Text>
+                </Typography>
               )}
 
               <View style={styles.item_heading_price_box}>
-                <Container centerVertical={false} flex>
+                <Container flex>
                   {item.discount_percent > 0 && (
-                    <Text style={styles.item_heading_safe_off_value}>
-                      <Text style={{textDecorationLine: 'line-through'}}>
-                        {item.discount_view}
-                      </Text>
-                    </Text>
+                    <Typography
+                      type={TypographyType.LABEL_LARGE_SECONDARY}
+                      style={[
+                        styles.item_heading_safe_off_value,
+                        styles.slashText,
+                      ]}>
+                      {item.discount_view}
+                    </Typography>
                   )}
-                  <Text style={styles.item_heading_price}>
+                  <Typography
+                    type={TypographyType.LABEL_HUGE_PRIMARY}
+                    style={styles.item_heading_price}>
                     {item.price_view}
                     {!!unitName && (
-                      <Text style={styles.item_heading_safe_off_value}>
+                      <Typography
+                        type={TypographyType.DESCRIPTION_MEDIUM}
+                        style={styles.item_heading_safe_off_value}>
                         / {unitName}
-                      </Text>
+                      </Typography>
                     )}
-                  </Text>
+                  </Typography>
                 </Container>
 
                 {isConfigActive(CONFIG_KEY.ENABLE_POST_FOR_SALE_KEY) &&
@@ -1311,47 +1194,6 @@ class Item extends Component {
               </View>
 
               <View style={styles.item_actions_box}>
-                {/* <TouchableHighlight
-                  disabled={this.isDisabledSubBtnAction}
-                  onPress={() =>
-                    this.handlePressSubAction(
-                      item,
-                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? CART_TYPES.DROP_SHIP
-                        : '',
-                    )
-                  }
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_chat,
-                      {
-                        borderColor: this.subActionColor,
-                      },
-                    ]}>
-                    <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderSubActionBtnIcon(item)}
-                    </View>
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        styles.item_actions_title,
-                        styles.item_actions_title_chat,
-                        {
-                          color: this.subActionColor,
-                        },
-                      ]}>
-                      {!this.isServiceProduct(item) &&
-                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? t('shopTitle.dropShip')
-                        : is_like
-                        ? t('liked')
-                        : t('like')}
-                    </Text>
-                  </View>
-                </TouchableHighlight> */}
-
                 <AppOutlinedButton
                   disabled={this.isDisabledSubBtnAction}
                   onPress={() =>
@@ -1366,8 +1208,13 @@ class Item extends Component {
                     styles.item_actions_btn,
                     styles.item_actions_btn_chat,
                   ]}
-                  renderTitleComponent={(titleStyle, buttonStyle) =>
-                    this.renderSubActionBtn(item, titleStyle, buttonStyle)
+                  renderTitleComponent={(titleStyle, buttonStyle, fontStyle) =>
+                    this.renderSubActionBtn(
+                      item,
+                      titleStyle,
+                      buttonStyle,
+                      fontStyle,
+                    )
                   }
                 />
 
@@ -1379,38 +1226,15 @@ class Item extends Component {
                       CART_TYPES.NORMAL,
                     )
                   }
-                  renderTitleComponent={(titleStyle, buttonStyle) =>
-                    this.renderMainActionBtn(item, titleStyle, buttonStyle)
-                  }
-                />
-                {/* <TouchableHighlight
-                  disabled={this.isDisabledBuyingProduct}
-                  onPress={() =>
-                    this.handlePressMainActionBtnProduct(
+                  renderTitleComponent={(titleStyle, buttonStyle, fontStyle) =>
+                    this.renderMainActionBtn(
                       item,
-                      CART_TYPES.NORMAL,
+                      titleStyle,
+                      buttonStyle,
+                      fontStyle,
                     )
                   }
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_add_cart,
-                      this.isDisabledBuyingProduct &&
-                        styles.item_actions_btn_add_cart_disabled,
-                    ]}>
-                    <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderMainActionBtnIcon(item)}
-                    </View>
-                    <Text numberOfLines={1} style={styles.item_actions_title}>
-                      {this.isServiceProduct(item)
-                        ? t('shopTitle.book')
-                        : this.isDisabledBuyingProduct
-                        ? t('shopTitle.outOfStock')
-                        : t('shopTitle.buy')}
-                    </Text>
-                  </View>
-                </TouchableHighlight> */}
+                />
               </View>
             </View>
 
@@ -1418,17 +1242,19 @@ class Item extends Component {
               <>
                 {this.renderWholesaleInfo(item)}
 
-                <View style={[styles.block, styles.item_content_box]}>
+                <View style={this.blockStyle}>
                   {this.renderBtnProductStamps()}
                   {this.renderNoticeMessage(item)}
-                  {this.renderDetailInfo(item)}
+                  <View style={styles.item_content_box}>
+                    {this.renderDetailInfo(item)}
+                  </View>
                 </View>
               </>
             )}
 
             {!!item.object && (
               <ActionContainer
-                style={styles.actionContainer}
+                style={this.borderStyle}
                 isLiked={getSocialLikeFlag(
                   SOCIAL_DATA_TYPES.PRODUCT,
                   productWithSocialDataFormat,
@@ -1472,19 +1298,22 @@ class Item extends Component {
             {!!item?.short_content && (
               <View
                 style={[
-                  styles.block,
+                  this.blockStyle,
                   styles.item_content_text,
                   styles.shortContentBox,
+                  this.shortContentBoxStyle,
                 ]}>
-                <Text style={styles.shortContentItem}>
+                <Typography
+                  yype={TypographyType.LABEL_MEDIUM}
+                  style={styles.shortContentItem}>
                   {item.short_content}
-                </Text>
+                </Typography>
               </View>
             )}
 
             {!!item?.content && (
               <>
-                <View style={[styles.block, styles.item_content_text]}>
+                <View style={[this.blockStyle, styles.item_content_text]}>
                   <CustomAutoHeightWebview
                     ref={(inst) => (this.refWebview.current = inst)}
                     onSizeUpdated={this.handleWebviewContentLayout}
@@ -1504,7 +1333,7 @@ class Item extends Component {
                   {!!this.state.isWebviewContentCollapsed && (
                     <LinearGradient
                       style={styles.webviewCollapsedMask}
-                      colors={['rgba(255,255,255,.3)', 'rgba(255,255,255,1)']}
+                      colors={this.webviewCollapseColor}
                       locations={[0.2, 0.8]}
                     />
                   )}
@@ -1512,68 +1341,64 @@ class Item extends Component {
                 {this.renderWebviewContentCollapseBtn()}
               </>
             )}
+          </Container>
 
-            <View style={styles.extraInfo}>
-              {this.hasProductGroups ? (
-                this.product.product_groups.map((productGroup, index) => {
-                  let {id, products, title, display_type} = productGroup;
-                  return (
-                    <ListProducts
-                      containerStyle={{
-                        marginHorizontal: -15,
-                      }}
-                      key={id}
-                      type={display_type}
-                      data={products}
-                      title={title}
-                      onPressProduct={this.handlePressProduct}
-                      onShowAll={() =>
-                        this.handleShowAllGroupProduct(productGroup)
-                      }
-                    />
-                  );
-                })
-              ) : this.props.apiFetching ? (
-                <ListProductSkeleton />
-              ) : null}
-              {item.news_linking !== null &&
-                !isEmpty(item.news_linking) &&
-                typeof item.news_linking === 'object' && (
-                  <View style={[styles.newsWrapper, styles.newsWrapperExtra]}>
-                    <HomeCardList
-                      onShowAll={null}
-                      data={item.news_linking}
-                      title={
-                        <Text style={styles.titleRelated}>
-                          {t('TIN TỨC LIÊN QUAN')}
-                        </Text>
-                      }>
-                      {({item: news, index}) => {
-                        return (
-                          <HomeCardItem
-                            title={news.title}
-                            imageUrl={news.image_url}
-                            onPress={this.handleItemNews(news)}
-                            last={item.news_linking.length - 1 === index}
-                          />
-                        );
-                      }}
-                    </HomeCardList>
-                  </View>
-                )}
-            </View>
+          <View style={styles.extraInfo}>
+            {this.hasProductGroups ? (
+              this.product.product_groups.map((productGroup, index) => {
+                let {id, products, title, display_type} = productGroup;
+                return (
+                  <ListProducts
+                    containerStyle={{
+                      marginHorizontal: -15,
+                    }}
+                    key={id}
+                    type={display_type}
+                    data={products}
+                    title={title}
+                    onPressProduct={this.handlePressProduct}
+                    onShowAll={() =>
+                      this.handleShowAllGroupProduct(productGroup)
+                    }
+                  />
+                );
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
 
-            <View style={styles.boxButtonActions}>
-              <Button
-                onPress={this._goStores.bind(this, this.state.store_data)}
-                btnContainerStyle={styles.goToStoreBtn}
-                titleStyle={styles.goToStoreTxt}
-                title={t('goToStore')}
-                rounded={ButtonRoundedType.SMALL}
-              />
-            </View>
-          </ScrollView>
-        </View>
+            {item.news_linking !== null &&
+              !isEmpty(item.news_linking) &&
+              typeof item.news_linking === 'object' && (
+                <View style={[styles.newsWrapper, styles.newsWrapperExtra]}>
+                  <HomeCardList
+                    onShowAll={null}
+                    data={item.news_linking}
+                    title={t('relatedNews')}>
+                    {({item: news, index}) => {
+                      return (
+                        <HomeCardItem
+                          title={news.title}
+                          imageUrl={news.image_url}
+                          onPress={this.handleItemNews(news)}
+                          last={item.news_linking.length - 1 === index}
+                        />
+                      );
+                    }}
+                  </HomeCardList>
+                </View>
+              )}
+          </View>
+
+          <View style={styles.boxButtonActions}>
+            <Button
+              onPress={this._goStores.bind(this, this.state.store_data)}
+              btnContainerStyle={styles.goToStoreBtn}
+              titleStyle={styles.goToStoreTxt}
+              title={t('goToStore')}
+            />
+          </View>
+        </ScrollView>
 
         {this.renderCartFooter(item)}
 
@@ -1602,33 +1427,12 @@ class Item extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#ffffff',
   },
   block: {
     paddingHorizontal: 15,
-    borderColor: appConfig.colors.border,
-    borderBottomWidth: 1,
     paddingBottom: 20,
   },
 
-  titleRelated: {
-    paddingHorizontal: 10,
-    paddingTop: 5,
-    textAlign: 'center',
-    ...appConfig.styles.typography.heading3,
-  },
-
-  right_btn_box: {
-    flexDirection: 'row',
-  },
-  content_swiper: {
-    flex: 0,
-  },
-  swiper_image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
   swiper_no_image: {
     height: appConfig.device.height / 2 - 70,
     resizeMode: 'contain',
@@ -1637,7 +1441,6 @@ const styles = StyleSheet.create({
   item_heading_box: {
     width: '100%',
     marginTop: 10,
-    backgroundColor: '#fff',
   },
   boxDiscount: {
     flexDirection: 'row',
@@ -1647,54 +1450,31 @@ const styles = StyleSheet.create({
   item_heading_title: {
     marginTop: 10,
     marginBottom: 15,
-    ...appConfig.styles.typography.heading1,
   },
   commissionText: {
-    fontSize: 16,
     marginBottom: 10,
-    color: appConfig.colors.cherry,
   },
   item_heading_price_box: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   item_heading_safe_off_value: {
-    ...appConfig.styles.typography.secondary,
-    fontSize: 16,
     marginBottom: 10,
   },
-  item_heading_price: {
-    ...appConfig.styles.typography.heading1,
-    color: appConfig.colors.primary,
-  },
+  item_heading_price: {},
   item_actions_box: {
     flexDirection: 'row',
     marginTop: 15,
     overflow: 'hidden',
-    // justifyContent: 'center',
   },
   item_actions_btn: {
-    // borderWidth: 0.5,
-    // borderColor: appConfig.colors.primary,
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
     height: 40,
     width: (appConfig.device.width - 45) / 2,
-    // borderRadius: 5,
     paddingHorizontal: 20,
+    justifyContent: 'center',
   },
 
-  postForSaleWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   postForSaleContainer: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // borderColor: appConfig.colors.primary,
-    // borderWidth: 0.5,
-    // borderRadius: 5,
     padding: 5,
     paddingHorizontal: 10,
     marginTop: 10,
@@ -1705,7 +1485,6 @@ const styles = StyleSheet.create({
   },
   postForSaleIconContainer: {
     position: 'absolute',
-    backgroundColor: '#fff',
     minWidth: 30,
     minHeight: 20,
     padding: 2,
@@ -1717,38 +1496,24 @@ const styles = StyleSheet.create({
     transform: [{rotate: '0deg'}],
   },
   postForSaleIcon: {
-    // color: appConfig.colors.primary,
     fontSize: 20,
   },
   postForSaleTitle: {
-    // color: appConfig.colors.primary,
-    // fontSize: 12,
     fontWeight: '400',
   },
 
   item_actions_btn_icon_container: {
     height: '100%',
     minWidth: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   item_actions_btn_icon: {
     fontSize: 20,
-    // color: '#fff',
   },
   item_actions_btn_chat: {
     marginRight: 15,
   },
-  item_actions_btn_add_cart: {
-    backgroundColor: appConfig.colors.primary,
-  },
-  item_actions_btn_add_cart_disabled: {
-    backgroundColor: '#ccc',
-    borderColor: '#ccc',
-  },
   item_actions_title: {
     marginLeft: 8,
-    // color: '#fff',
   },
 
   item_content_box: {},
@@ -1766,12 +1531,8 @@ const styles = StyleSheet.create({
   item_content_item_right: {
     flex: 1,
   },
-  item_content_item_title: {
-    ...appConfig.styles.typography.secondary,
-    color: '#8b8b8b',
-  },
+  item_content_item_title: {},
   item_content_item_value: {
-    ...appConfig.styles.typography.text,
     marginLeft: 15,
     flex: 1,
   },
@@ -1790,7 +1551,6 @@ const styles = StyleSheet.create({
   },
   goToStoreBtn: {
     paddingVertical: 10,
-    // borderRadius: 6,
   },
   goToStoreTxt: {
     fontSize: 14,
@@ -1801,7 +1561,6 @@ const styles = StyleSheet.create({
   },
 
   discountBadgeContent: {
-    backgroundColor: appConfig.colors.sale,
     borderRadius: 15,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -1810,46 +1569,6 @@ const styles = StyleSheet.create({
     height: undefined,
   },
 
-  paginationContainer: {
-    borderRadius: 20,
-    position: 'absolute',
-    bottom: 15,
-    right: 15,
-    backgroundColor: 'rgba(255,255,255,.6)',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  paginationText: {
-    fontSize: 12,
-    color: '#444',
-  },
-
-  swipeControlBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  swipeRightControlBtn: {
-    right: 7,
-  },
-  swipeLeftControlBtn: {
-    left: 7,
-  },
-  iconSwipeControl: {
-    fontSize: 30,
-    color: '#444',
-    bottom: 1,
-  },
-  iconSwipeControlLeft: {
-    left: -2,
-  },
-  iconSwipeControlRight: {
-    left: 2,
-  },
   noImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -1858,51 +1577,28 @@ const styles = StyleSheet.create({
   },
 
   productsLeftContainer: {},
-  productsLeftBackground: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  productsLeftBackgroundTagTail: {
-    position: 'absolute',
-    right: '100%',
-    width: 0,
-    height: 0,
-    borderTopWidth: 11,
-    borderLeftWidth: 11,
-    borderBottomWidth: 11,
-    borderRightWidth: 11,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderRightColor: '#5f7d95',
-    borderLeftColor: 'transparent',
-  },
   productsLeftText: {
-    color: '#9F9F9F',
-    fontSize: 13,
     marginLeft: 8,
-    elevation: 3,
   },
   noticeContainer: {
     padding: 15,
+    marginHorizontal: -15,
   },
   noticeMessage: {
-    color: '#fff',
     textAlign: 'center',
-    fontSize: 15,
     fontWeight: '500',
   },
 
   btnProductStampsContainer: {
-    backgroundColor: '#fafafa',
+    marginHorizontal: -15,
+    width: appConfig.device.width,
   },
   btnProductStampsContentContainer: {
     paddingVertical: 5,
     backgroundColor: 'transparent',
   },
   btnProductStampsTitle: {
-    color: appConfig.colors.primary,
-    ...(appConfig.device.isAndroid && {fontWeight: '700'}),
+    fontWeight: 'bold',
   },
   newsWrapper: {
     paddingTop: 15,
@@ -1913,17 +1609,10 @@ const styles = StyleSheet.create({
   },
   extraInfo: {
     paddingBottom: 15,
-    backgroundColor: '#f5f7f8',
     paddingHorizontal: 15,
   },
 
-  actionContainer: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-    paddingBottom: appConfig.device.bottomSpace,
-    // ...elevationShadowStyle(7),
-  },
+  actionContainer: {},
 
   webviewCollapsedContainer: {
     height: WEBVIEW_HEIGHT_COLLAPSED,
@@ -1935,40 +1624,40 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  webviewContentShowMoreTitle: {
-    color: appConfig.colors.primary,
-    textAlign: 'center',
+  webviewContentShowMoreContainer: {
+    padding: 15,
   },
   webviewContentShowMoreIcon: {
     marginLeft: 5,
     fontSize: 18,
-    color: appConfig.colors.primary,
   },
 
   wholesaleContainer: {
     flexDirection: 'row',
     padding: 15,
-    borderColor: '#eee',
-    borderBottomWidth: 1,
     width: appConfig.device.width,
     alignItems: 'center',
   },
   wholesaleRightIcon: {
-    color: '#ccc',
     fontSize: 26,
     paddingLeft: 10,
   },
   shortContentBox: {
-    backgroundColor: '#f5f5f5',
     paddingHorizontal: 15,
   },
   shortContentItem: {
-    ...appConfig.styles.typography.text,
     lineHeight: 24,
     fontSize: 14,
   },
+  slashText: {
+    textDecorationLine: 'line-through',
+  },
 });
 
-export default withTranslation(['product', 'cart', 'common', 'opRegister'])(
-  observer(Item),
-);
+export default withTranslation([
+  'product',
+  'productStamp',
+  'cart',
+  'common',
+  'opRegister',
+])(observer(Item));

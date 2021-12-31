@@ -20,7 +20,7 @@ import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {openLink} from 'app-helper';
 import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
 // routing
-import {push} from 'app-helper/routing';
+import {pop, push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants

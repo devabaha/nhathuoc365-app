@@ -30,7 +30,13 @@ class Notification extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.animating();
+    if (
+      this.props.animation !== prevProps.animation ||
+      this.props.show !== prevProps.show ||
+      this.props.label !== prevProps.label
+    ) {
+      this.animating();
+    }
   }
 
   animating() {

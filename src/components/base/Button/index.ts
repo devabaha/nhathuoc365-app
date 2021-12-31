@@ -45,6 +45,13 @@ export interface BaseButtonProps
     TouchableHighlightProps {
   useGestureHandler?: boolean;
   useTouchableHighlight?: boolean;
+  /**
+   * this is props to add View instead of Fragment quickly as a container for children
+   * mostly use for TouchableHighlight with Image as children
+   * because TouchableHighlight won't underlay if the Image is inside a Fragment.
+   * If you need pass more style to this container, use renderContentContainerComponent instead.
+   */
+  useContentContainer?: boolean;
 
   typoProps?: TypographyProps;
 
@@ -55,16 +62,21 @@ export interface BaseButtonProps
   renderIconLeft?: (
     titleStyle: StyleProp<TextStyle>,
     buttonStyle?: StyleProp<ViewStyle>,
+    fontStyle?: StyleProp<TextStyle>,
   ) => Children;
   renderTitleComponent?: (
     titleStyle: StyleProp<TextStyle>,
     buttonStyle?: StyleProp<ViewStyle>,
+    fontStyle?: StyleProp<TextStyle>,
   ) => Children;
   renderIconRight?: (
     titleStyle: StyleProp<TextStyle>,
     buttonStyle?: StyleProp<ViewStyle>,
+    fontStyle?: StyleProp<TextStyle>,
   ) => Children;
-
+  /**
+   * return children for contentContainer customization  as you want.
+   */
   renderContentContainerComponent?: (children: any) => ReactElement;
 
   iconLeft?: Children;

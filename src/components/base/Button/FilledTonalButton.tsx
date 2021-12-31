@@ -12,6 +12,7 @@ import {hexToRgba, rgbaToRgb} from 'app-helper';
 import {ButtonRoundedType} from './constants';
 
 import Button from './Button';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -30,7 +31,9 @@ const createStyles = (theme: Theme) => {
       backgroundColor: rgbaToRgb(hexToRgba(theme.color.persistSecondary, 0.2)),
     },
     neutral: {
-      backgroundColor: rgbaToRgb(hexToRgba(theme.color.contentBackgroundStrong, 0.2)),
+      backgroundColor: rgbaToRgb(
+        hexToRgba(theme.color.contentBackgroundStrong, 0.2),
+      ),
     },
     disabled: {
       backgroundColor: theme.color.disabled,
@@ -125,7 +128,9 @@ const FilledTonalButton = forwardRef(
     }, [styles, titleStyle, props.primary, props.secondary, props.disabled]);
 
     const renderTitleComponent = useCallback(() => {
-      return props.renderTitleComponent(titleStyles, buttonStyles);
+      const fontStyle = getFontStyle(titleStyles);
+
+      return props.renderTitleComponent(titleStyles, buttonStyles, fontStyle);
     }, [titleStyles, buttonStyles]);
 
     return (

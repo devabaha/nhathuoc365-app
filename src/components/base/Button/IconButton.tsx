@@ -10,6 +10,7 @@ import {mergeStyles} from 'src/Themes/helper';
 
 import Icon from '../Icon';
 import Button from './Button';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -107,7 +108,9 @@ const IconButton = forwardRef(
     ]);
 
     const renderTitleComponent = useCallback(() => {
-      return props.renderTitleComponent(iconStyles, buttonStyles);
+      const fontStyle = getFontStyle(titleStyles);
+
+      return props.renderTitleComponent(iconStyles, buttonStyles, fontStyle);
     }, [titleStyles, buttonStyles]);
 
     const renderIconComponent = () => {

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
+// types
 import {VideoProps} from '.';
+// custom components
 import YoutubeVideoIframe from './YoutubeVideoIframe';
 
 export class Video extends Component<VideoProps> {

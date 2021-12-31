@@ -9,6 +9,7 @@ import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
 
 import Button from './Button';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -89,7 +90,9 @@ const TextButton = forwardRef(
     ]);
 
     const renderTitleComponent = useCallback(() => {
-      return props.renderTitleComponent(titleStyles, buttonStyles);
+      const fontStyle = getFontStyle(titleStyles);
+
+      return props.renderTitleComponent(titleStyles, buttonStyles, fontStyle);
     }, [titleStyles, buttonStyles]);
 
     return (

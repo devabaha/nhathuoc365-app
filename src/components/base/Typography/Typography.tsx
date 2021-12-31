@@ -11,6 +11,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 
 import {TypographyType} from './constants';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -100,10 +101,6 @@ const Typography = forwardRef(
       onDisabled,
     ]);
 
-    const componentStyle = useMemo(() => {
-      return mergeStyles(styles, style);
-    }, [styles, style]);
-
     const TextComponent: any = useMemo(() => {
       if (animated) {
         return Animated.Text;
@@ -115,15 +112,19 @@ const Typography = forwardRef(
       return Text;
     }, [animated, reanimated]);
 
+    const fontStyle = useMemo(() => {
+      return getFontStyle(styles);
+    }, [styles]);
+
     return (
       <>
-        {renderIconBefore && renderIconBefore(styles)}
+        {renderIconBefore && renderIconBefore(styles, fontStyle)}
         <TextComponent {...props} ref={ref} style={styles}>
-          {renderInlineIconBefore && renderInlineIconBefore(styles)}
+          {renderInlineIconBefore && renderInlineIconBefore(styles, fontStyle)}
           {children}
-          {renderInlineIconAfter && renderInlineIconAfter(styles)}
+          {renderInlineIconAfter && renderInlineIconAfter(styles, fontStyle)}
         </TextComponent>
-        {renderIconAfter && renderIconAfter(styles)}
+        {renderIconAfter && renderIconAfter(styles, fontStyle)}
       </>
     );
   },

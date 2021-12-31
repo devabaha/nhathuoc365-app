@@ -79,30 +79,37 @@ class CustomAutoHeightWebview extends Component {
 
   refWebview = React.createRef();
 
-  customStyle = `
-  body {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-  * {
-    font-family: 'arial';
-  }
-  a {
-    // pointer-events:none;
-    // text-decoration: none !important;
-    // color: ${appConfig.colors.primary} !important;
-  }
-  p {
-    font-size: ${this.theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
-    line-height: 24px;
-    color: ${this.theme.typography[TypographyType.LABEL_LARGE].color}
-
-  }
-  img {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-`;
+  customStyle = () => {
+    const style =
+      `
+        body {
+          padding-left: 15px;
+          padding-right: 15px;
+          color: ${this.theme.typography[TypographyType.LABEL_LARGE].color}
+        }
+        * {
+          font-family: 'arial';
+        }
+        a {
+          // pointer-events:none;
+          // text-decoration: none !important;
+          color: ${this.theme.color.primaryHighlight}!important
+        }
+        p, span {
+          font-size: ${
+            this.theme.typography[TypographyType.LABEL_LARGE].fontSize
+          }px;
+          line-height: 24px;
+          color: ${this.theme.typography[TypographyType.LABEL_LARGE].color}
+        }
+        img {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+` + this.props.customStyle || '';
+    console.log(style, this.props.content);
+    return style;
+  };
 
   get theme() {
     return getTheme(this);
@@ -175,7 +182,7 @@ class CustomAutoHeightWebview extends Component {
           javaScriptEnabled
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
-          customStyle={this.customStyle + this.props.customStyle}
+          customStyle={this.customStyle()}
           allowsFullscreenVideo={true}
         />
       </Container>

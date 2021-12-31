@@ -25,12 +25,12 @@ import {jump, push} from 'app-helper/routing';
  *
  * @typedef {Object} Service - an abstract for all kind of services.
  * @property {string} type - type of a service.
- * @property {*} others - any other param(s) for specific case.
+ * @property {any} theme - type of a service.
  */
 
 /**
  *
- * @param {Service} service
+ * @param {..Service} service
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */

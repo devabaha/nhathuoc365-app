@@ -1,15 +1,20 @@
-import React, {ClassAttributes, Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import YoutubeIframe, {getYoutubeMeta} from 'react-native-youtube-iframe';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import equal from 'deep-equal';
 import {withTranslation} from 'react-i18next';
-
+// types
 import {YoutubeVideoIframeProps} from '.';
-
-import appConfig from 'app-config';
+import {Style} from 'src/Themes/interface';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon} from 'src/components/base';
 import Loading from 'src/components/Loading';
-import {Container} from 'src/components/Layout';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,22 +22,20 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorIcon: {
     fontSize: 36,
-    color: appConfig.colors.disabled,
   },
   errorMessage: {
-    fontSize: 16,
-    color: appConfig.colors.disabled,
     marginTop: 15,
   },
 });
 
 class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     autoAdjustLayout: false,
   };
@@ -48,6 +51,10 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     containerWidth: undefined,
     containerHeight: undefined,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps: YoutubeVideoIframeProps, nextState) {
     if (nextState !== this.state) {
@@ -150,6 +157,22 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
     return true;
   };
 
+  renderErrorIcon = (titleStyle, fontStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="exclamationcircle"
+        style={[fontStyle, styles.errorIcon]}
+      />
+    );
+  };
+
+  get maskStyle(): Style {
+    return {
+      backgroundColor: this.theme.color.coreOverlay,
+    };
+  }
+
   render() {
     return (
       <View
@@ -170,16 +193,15 @@ class YoutubeVideoIframe extends Component<YoutubeVideoIframeProps> {
           />
         </View>
         {(this.state.isError || this.state.loading) && (
-          <View style={styles.mask}>
+          <View style={[styles.mask, this.maskStyle]}>
             {this.state.isError ? (
-              <Container center>
-                <AntDesignIcon
-                  name="exclamationcircle"
-                  style={styles.errorIcon}
-                />
-                <Text style={styles.errorMessage}>
-                  {this.props.t('api.error.message')}
-                </Text>
+              <Container noBackground center>
+                <Typography
+                  type={TypographyType.LABEL_LARGE_TERTIARY}
+                  style={styles.errorMessage}
+                  renderIconBefore={this.renderErrorIcon}>
+                  {this.props.t('api.error.message') as string}
+                </Typography>
               </Container>
             ) : (
               this.state.loading && <Loading center />

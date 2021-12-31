@@ -34,8 +34,10 @@
     "errorWishingPrice": "*Must be higher than origin price",
     "grossProfit": "Gross profit"
   },
-  "relatedItems": "PRODUCTS OF THE SAME TYPE",
+  "relatedItems": "Related products",
+  "relatedNews": "Related news",
   "goToStore": "Go to store",
   "copyContent": "Copied product article content",
-  "placeholderRating": "Enter your rating..."
+  "placeholderRating": "Enter your rating...",
+  "noStoreFound": "No store found"
 }
