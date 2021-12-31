@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableHighlight, View} from 'react-native';
 // configs
 import appConfig from 'app-config';
 // helpers
@@ -82,7 +82,7 @@ const MediaCarousel = ({
 
   const paginationContainerStyle = useMemo(() => {
     return mergeStyles(styles.paginationContainer, {
-      backgroundColor: hexToRgba(theme.color.white, 0.6),
+      backgroundColor: theme.color.overlay30,
       borderRadius: theme.layout.borderRadiusGigantic,
     });
   }, [theme]);
@@ -98,7 +98,7 @@ const MediaCarousel = ({
       <View pointerEvents="none" style={paginationContainerStyle}>
         <Typography
           type={TypographyType.LABEL_SEMI_MEDIUM}
-          style={styles.paginationText}>
+          style={[styles.paginationText, {color: theme.color.onOverlay}]}>
           {pagingMess}
         </Typography>
       </View>
@@ -125,6 +125,7 @@ const MediaCarousel = ({
       return (
         <BaseButton
           useTouchableHighlight
+          useContentContainer
           onPress={() => {
             push(appConfig.routes.itemImageViewer, {
               images: data,

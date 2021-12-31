@@ -20,6 +20,7 @@ import store from 'app-store';
 import {isConfigActive} from 'app-helper/configKeyHandler';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper';
 // routing
 import {push} from 'app-helper/routing';
 // context
@@ -41,7 +42,6 @@ import {NotiBadge} from 'src/components/Badges';
 import PopupConfirm from 'src/components/PopupConfirm';
 import CartItem from './CartItem';
 import {BaseButton, Icon, Typography, FlatList} from 'src/components/base';
-import {hexToRgba} from 'app-helper/';
 
 class CartFooter extends Component {
   static contextType = ThemeContext;

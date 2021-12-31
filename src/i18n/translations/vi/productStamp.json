@@ -1,5 +1,6 @@
 {
   "receivedDate": "Ngày nhận",
   "qrCode": "Mã QR",
-  "noResult": "Bạn chưa nhận sản phẩm nào"
+  "noResult": "Bạn chưa nhận sản phẩm nào",
+  "viewScannedProduct": "Xem sản phẩm đã quét"
 }

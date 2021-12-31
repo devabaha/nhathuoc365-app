@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {AppPrimaryButton} from './base/Button';
-import {Children, Container, TypographyType} from './base';
+// types
 import {FilledButtonProps} from 'src/components/base/Button';
-import {useTheme} from 'src/Themes/Theme.context';
 import {Style} from 'src/Themes/interface';
+// custom components
+import {Children, Container, AppPrimaryButton} from 'src/components/base';
 
 interface ButtonProps extends FilledButtonProps {
   showBackground?: boolean;
@@ -37,14 +37,12 @@ const Button = ({
   children = null,
   ...props
 }: ButtonProps) => {
-  const {theme} = useTheme();
   const defaultTitleStyle = [styles.text, titleStyle];
   return (
     <Container
       safeLayout={safeLayout}
       style={[
         styles.container,
-        {backgroundColor: theme.color.surface},
         !showBackground && styles.hideBackground,
         containerStyle,
       ]}>

@@ -63,6 +63,7 @@ class Modal extends PureComponent {
         styles.itemContainer,
         {
           borderBottomColor: this.theme.color.border,
+          borderBottomWidth: this.theme.layout.borderWidthSmall,
         },
       ],
       extraStyle,
@@ -87,13 +88,16 @@ class Modal extends PureComponent {
           <View style={contentContainerStyle}>
             {!!item.image && (
               <View style={styles.itemImageContainer}>
-                <Image style={styles.itemImage} source={{uri: item.image}} />
+                <Image
+                  style={[styles.itemImage, this.imageStyle]}
+                  source={{uri: item.image}}
+                />
               </View>
             )}
             <View style={styles.itemInfoContainer}>
               <Typography
                 type={TypographyType.TITLE_MEDIUM}
-                style={[styles.title, this.props.titleStyle]}>
+                style={[styles.title, this.props.labelStyle]}>
                 {item.title}
               </Typography>
               {!!item.renderDescription
@@ -120,12 +124,26 @@ class Modal extends PureComponent {
     );
   }
 
+  get modalStyle() {
+    return {
+      borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+      borderTopRightRadius: this.theme.layout.borderRadiusHuge,
+    };
+  }
+
+  get imageStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
   render() {
     const headingStyle = mergeStyles(
       [
         styles.headingContainer,
         {
           borderBottomColor: this.theme.color.border,
+          borderBottomWidth: this.theme.layout.borderWidth,
         },
       ],
       this.props.headingContainerStyle,
@@ -139,7 +157,7 @@ class Modal extends PureComponent {
       <ModalBox
         entry={this.props.entry}
         position={this.props.position}
-        style={[styles.modal, this.props.modalStyle]}
+        style={[styles.modal, this.modalStyle, this.props.modalStyle]}
         backButtonClose
         ref={(inst) => {
           this.props.ref_modal(inst);
@@ -184,8 +202,6 @@ const styles = StyleSheet.create({
   },
   modal: {
     height: '80%',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     overflow: 'hidden',
   },
   iconContainer: {
@@ -198,18 +214,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 22,
-    // color: '#666',
   },
   headingContainer: {
     padding: 30,
-    borderBottomWidth: 1,
     borderStyle: 'solid',
-    // borderBottomColor: '#ccc',
   },
   heading: {
-    // fontSize: 30,
     fontWeight: 'bold',
-    // color: '#555',
     letterSpacing: 1.6,
     textAlign: 'right',
   },
@@ -218,16 +229,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     padding: 15,
-    borderBottomWidth: 0.5,
-    // borderBottomColor: '#eee',
   },
-  selectedItemContainer: {
-    // backgroundColor: '#f5f5f5',
-  },
+  selectedItemContainer: {},
   itemImageContainer: {
     width: 55,
     height: 55,
-    borderRadius: 8,
     overflow: 'hidden',
     marginRight: 15,
   },

@@ -11,6 +11,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {ButtonRoundedType} from './constants';
 
 import Button from './Button';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -163,7 +164,8 @@ const OutlinedButton = forwardRef(
     ]);
 
     const renderTitleComponent = useCallback(() => {
-      return props.renderTitleComponent(titleStyles, buttonStyles);
+      const fontStyle = getFontStyle(titleStyles);
+      return props.renderTitleComponent(titleStyles, buttonStyles, fontStyle);
     }, [titleStyles, buttonStyles]);
 
     return (

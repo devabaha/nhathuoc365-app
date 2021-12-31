@@ -416,7 +416,7 @@ class PremiumInfo extends Component {
 
   render() {
     return (
-      <PremiumInfoSkeleton loading={this.state.loading}>
+      <PremiumInfoSkeleton loading={this.state.loading} loading>
         <View style={styles.container}>
           <SafeAreaView style={styles.container}>
             {this.state.loading && <Loading center />}

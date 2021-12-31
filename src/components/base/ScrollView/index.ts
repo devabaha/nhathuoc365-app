@@ -5,6 +5,7 @@ export {default} from './ScrollView';
 
 export interface ScrollViewProps extends RNScrollViewProps {
   safeLayout?: boolean;
+  safeTopLayout?: boolean;
   reanimated?: boolean;
   animated?: boolean;
 

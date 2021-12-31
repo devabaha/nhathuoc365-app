@@ -1,8 +1,9 @@
-import React, {forwardRef, memo, useMemo} from 'react';
+import React, {forwardRef, Fragment, memo, useMemo} from 'react';
 import {
   StyleSheet,
   TouchableHighlight as RNTouchableHighlight,
   TouchableOpacity as RNTouchableOpacity,
+  View,
 } from 'react-native';
 
 import {
@@ -20,6 +21,7 @@ import {useTheme} from 'src/Themes/Theme.context';
 import {TypographyType} from '../Typography/constants';
 
 import Typography from '../Typography';
+import {getFontStyle} from '../helpers';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -38,6 +40,7 @@ const Button = forwardRef(
     {
       useGestureHandler,
       useTouchableHighlight,
+      useContentContainer,
 
       typoProps,
 
@@ -74,6 +77,10 @@ const Button = forwardRef(
       );
     }, [styles, titleStyle, typoProps?.type, typoProps?.style]);
 
+    const fontStyle = useMemo(() => {
+      return getFontStyle(titleStyles);
+    }, [titleStyles]);
+
     const Wrapper = useMemo(() => {
       return useTouchableHighlight
         ? useGestureHandler
@@ -85,13 +92,14 @@ const Button = forwardRef(
     }, [useTouchableHighlight, useGestureHandler]);
 
     const renderContent = () => {
+      const ContentContainer = useContentContainer ? View : Fragment;
       return (
-        <>
+        <ContentContainer>
           {iconLeft}
-          {!!renderIconLeft && renderIconLeft(titleStyles, {})}
+          {!!renderIconLeft && renderIconLeft(titleStyles, {}, fontStyle)}
 
           {renderTitleComponent ? (
-            renderTitleComponent(titleStyles)
+            renderTitleComponent(titleStyles, {}, fontStyle)
           ) : typeof children === 'string' || !!title ? (
             <Typography
               type={TypographyType.LABEL_MEDIUM}
@@ -102,9 +110,9 @@ const Button = forwardRef(
           ) : (
             children
           )}
-          {!!renderIconRight && renderIconRight(titleStyles)}
+          {!!renderIconRight && renderIconRight(titleStyles, {}, fontStyle)}
           {iconRight}
-        </>
+        </ContentContainer>
       );
     };
 

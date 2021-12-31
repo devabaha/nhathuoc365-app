@@ -7,6 +7,7 @@ export {default} from './Container';
 
 export interface ContainerProps extends ViewProps {
   safeLayout?: boolean,
+  safeTopLayout?: boolean,
   
   reanimated?: boolean;
   animated?: boolean;

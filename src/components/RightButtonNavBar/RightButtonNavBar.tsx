@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, TouchableHighlight, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 // 3-party libs
-import {autorun} from 'mobx';
-import {Actions} from 'react-native-router-flux';
-import {IWrappedComponent} from 'mobx-react';
+import {withTranslation} from 'react-i18next';
+import {reaction} from 'mobx';
+import {IWrappedComponent, observer} from 'mobx-react';
 // types
 import {RightButtonNavBarProps} from '.';
 // configs
@@ -14,6 +14,7 @@ import {share} from 'app-helper/share';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {saveImage} from 'app-helper/image';
+import {servicesHandler} from 'app-helper/servicesHandler';
 // routing
 import {push} from 'app-helper/routing';
 // context
@@ -22,10 +23,10 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {RIGHT_BUTTON_TYPE} from './constants';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {BundleIconSetName} from 'src/components/base';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 // custom components
 import {NotiBadge} from '../Badges';
 import {BaseButton, Icon} from 'src/components/base';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -180,7 +181,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   async handlePressShare() {
     const message = this.props.shareTitle;
     const url = this.props.shareURL;
-    share(undefined, `Xem ${message} tại ${url}`);
+    share(undefined, this.props.t('shareMessage', {message, url}));
   }
 
   handlePressDownloadImage() {
@@ -188,7 +189,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   handlePressMore = () => {
-    Actions.push(appConfig.routes.modalActionSheet, {
+    push(appConfig.routes.modalActionSheet, {
       options: this.props.moreOptions,
       onPress: this.props.onPressMoreAction,
       ...this.props.moreActionsProps,
@@ -196,26 +197,31 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   };
 
   updateNoti() {
-    this.autoUpdateDisposer = autorun(() => {
-      switch (this.props.type) {
-        case RIGHT_BUTTON_TYPE.SHOPPING_CART:
-          if (
-            (store.cart_data && store.cart_data.count !== this.state.noti) ||
-            (!store.cart_data && this.state.noti)
-          ) {
-            this.setState({noti: store.cart_data ? store.cart_data.count : 0});
-          }
-          break;
-        case RIGHT_BUTTON_TYPE.CHAT:
-          if (
-            (store.notify && store.notify.notify_chat !== this.state.noti) ||
-            (!store.notify && this.state.noti)
-          ) {
-            this.setState({noti: store.notify ? store.notify.notify_chat : 0});
-          }
-          break;
-      }
-    });
+    this.autoUpdateDisposer = reaction(
+      () => [store.cart_data, store.notify],
+      ([cart_data, notify]) => {
+        switch (this.props.type) {
+          case RIGHT_BUTTON_TYPE.SHOPPING_CART:
+            if (
+              (cart_data && cart_data.count !== this.state.noti) ||
+              (!cart_data && this.state.noti)
+            ) {
+              this.setState({noti: cart_data ? cart_data.count : 0});
+            }
+            break;
+          case RIGHT_BUTTON_TYPE.CHAT:
+            if (
+              (notify && notify.notify_chat !== this.state.noti) ||
+              (!notify && this.state.noti)
+            ) {
+              this.setState({
+                noti: notify ? notify.notify_chat : 0,
+              });
+            }
+            break;
+        }
+      },
+    );
   }
 
   get notiContainerStyle() {
@@ -238,6 +244,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
     return (
       <BaseButton
+        disabled={this.props.disabled}
         useTouchableHighlight={this.props.touchableHighlight}
         onPress={this.handlePressIcon.bind(this)}>
         <View style={[styles.right_btn_add_store, this.props.containerStyle]}>
@@ -254,6 +261,6 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 }
 
-//@ts-ignore
-export default observer(RightButtonNavBar) as typeof RightButtonNavBar &
-  IWrappedComponent<RightButtonNavBarProps>;
+export default withTranslation()(
+  observer(RightButtonNavBar),
+) as typeof RightButtonNavBar & IWrappedComponent<RightButtonNavBarProps>;

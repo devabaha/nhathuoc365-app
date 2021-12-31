@@ -11,6 +11,7 @@ import appConfig from 'app-config';
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
 import {Theme} from 'src/Themes/interface';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
@@ -63,6 +64,7 @@ const Container = forwardRef(
     {
       children,
       safeLayout,
+      safeTopLayout,
       reanimated,
       animated,
       style,
@@ -79,6 +81,8 @@ const Container = forwardRef(
     ref: Ref,
   ) => {
     const {theme} = useTheme();
+
+    const {top} = useSafeAreaInsets();
 
     const styles = useMemo(() => {
       const baseStyles: any = createStyles(theme);
@@ -122,6 +126,7 @@ const Container = forwardRef(
           : baseStyles.surface,
         [
           safeLayout && baseStyles.safeLayout,
+          safeTopLayout && {paddingTop: top},
           shadow && baseStyles.shadow,
           additionalStyle,
         ],
@@ -132,6 +137,7 @@ const Container = forwardRef(
       center,
       shadow,
       safeLayout,
+      safeTopLayout,
       centerHorizontal,
       centerVertical,
       noBackground,

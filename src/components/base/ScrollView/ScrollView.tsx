@@ -10,6 +10,7 @@ import {ScrollViewProps} from '.';
 import appConfig from 'app-config';
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
@@ -24,6 +25,7 @@ const ScrollView = forwardRef(
   (
     {
       safeLayout,
+      safeTopLayout,
       reanimated,
       animated,
       contentContainerStyle,
@@ -33,15 +35,20 @@ const ScrollView = forwardRef(
     ref: Ref,
   ) => {
     const {theme} = useTheme();
+    const {top} = useSafeAreaInsets();
 
     const contentContainerStyles = useMemo(() => {
       const baseStyles = createStyles(theme);
 
       return mergeStyles(
-        [baseStyles.contentContainer, safeLayout && baseStyles.safeLayout],
+        [
+          baseStyles.contentContainer,
+          safeLayout && baseStyles.safeLayout,
+          safeTopLayout && {paddingTop: top},
+        ],
         contentContainerStyle,
       );
-    }, [theme, safeLayout, contentContainerStyle]);
+    }, [theme, safeLayout, safeTopLayout, contentContainerStyle]);
 
     const Wrapper: any = useMemo(
       () =>

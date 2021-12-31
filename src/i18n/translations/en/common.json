@@ -308,6 +308,7 @@
   "settings": "Settings",
   "noNotification": "No notification yet",
   "ok": "Ok",
+  "shareMessage": "View {{name}} at {{url}}",
   "qrPayLabel": "QR Pay",
   "selectDate": "Pick date"
 }

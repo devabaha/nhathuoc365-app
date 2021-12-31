@@ -308,6 +308,7 @@
   "settings": "Cài đặt",
   "noNotification": "Chưa có thông báo",
   "ok": "Ok",
+  "shareMessage": "Xem {{message}} tại {{url}}",
   "qrPayLabel": "QR Pay",
   "selectDate": "Chọn ngày"
 }
