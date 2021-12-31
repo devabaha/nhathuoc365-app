@@ -81,7 +81,7 @@ const ScheduleSection = ({
 
   const handlePressDatePicker = () => {
     push(appConfig.routes.modalCalendar, {
-      title: t('common:pickDate'),
+      title: t('common:selectDate'),
       current: date,
       onPressDate: (date, closeCallback) => {
         onChangeDate(date);

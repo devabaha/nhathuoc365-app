@@ -308,6 +308,6 @@
   "settings": "Cài đặt",
   "noNotification": "Chưa có thông báo",
   "ok": "Ok",
-  "QRPayLabel": "QR Pay",
-  "pickDate": "Chọn ngày"
+  "qrPayLabel": "QR Pay",
+  "selectDate": "Chọn ngày"
 }

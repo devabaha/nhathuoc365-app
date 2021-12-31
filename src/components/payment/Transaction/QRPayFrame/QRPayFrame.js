@@ -103,7 +103,7 @@ const QRPayFrame = ({children, style}) => {
       <Typography
         type={TypographyType.TITLE_LARGE_PRIMARY}
         style={styles.title}>
-        {t('QRPayLabel')}
+        {t('qrPayLabel')}
       </Typography>
       <View style={styles.frameContainer}>
         <View style={[frameStyle, styles.frameTopLeftHorizontal]} />
