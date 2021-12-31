@@ -100,15 +100,11 @@ const QRPayFrame = ({children, style}) => {
   return (
     <View style={[styles.container, style]}>
       {children}
-<<<<<<< HEAD
-      <Typography style={styles.title}>QR Pay</Typography>
-=======
       <Typography
         type={TypographyType.TITLE_LARGE_PRIMARY}
         style={styles.title}>
         {t('QRPayLabel')}
       </Typography>
->>>>>>> CU-1rqjmf4_He-thong-mau-trong-App_Minh-Nguyen
       <View style={styles.frameContainer}>
         <View style={[frameStyle, styles.frameTopLeftHorizontal]} />
         <View style={[frameStyle, styles.frameTopLeftVertical]} />

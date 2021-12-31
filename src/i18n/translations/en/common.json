@@ -308,5 +308,6 @@
   "settings": "Settings",
   "noNotification": "No notification yet",
   "ok": "Ok",
-  "QRPayLabel": "QR Pay"
+  "QRPayLabel": "QR Pay",
+  "pickDate": "Pick date"
 }

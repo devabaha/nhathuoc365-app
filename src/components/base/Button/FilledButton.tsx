@@ -26,6 +26,12 @@ const createStyles = (theme: Theme) => {
     secondary: {
       backgroundColor: theme.color.persistSecondary,
     },
+    primaryHighlight: {
+      borderColor: theme.color.primaryHighlight,
+    },
+    secondaryHighlight: {
+      borderColor: theme.color.secondaryHighlight,
+    },
     neutral: {
       backgroundColor: theme.color.contentBackgroundStrong,
     },
@@ -83,9 +89,17 @@ const FilledButton = forwardRef(
           styles.container,
           props.shadow && styles.shadow,
           props.rounded && styles[props.rounded],
-          props.primary && styles.primary,
-          props.secondary && styles.secondary,
-          props.neutral && styles.neutral,
+          props.primary
+            ? styles.primary
+            : props.primaryHighlight
+            ? styles.primaryHighlight
+            : props.secondary
+            ? styles.secondary
+            : props.secondaryHighlight
+            ? styles.secondaryHighlight
+            : props.neutral
+            ? styles.neutral
+            : {},
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
@@ -98,6 +112,8 @@ const FilledButton = forwardRef(
       props.rounded,
       props.primary,
       props.secondary,
+      props.primaryHighlight,
+      props.secondaryHighlight,
       props.neutral,
       props.disabled,
     ]);

@@ -62,6 +62,6 @@ export {
   NavBarWrapper,
 };
 
-export type SingleChildren = ReactChild | ReactChildren;
+export type SingleChildren = ReactChild | ReactChildren | JSX.Element;
 export type Children = SingleChildren | SingleChildren[];
 export type Ref = RNRef<any>;

@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableHighlight,
-  FlatList,
-} from 'react-native';
-
-import appConfig from 'app-config';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {AppOutlinedButton, TypographyType} from 'src/components/base';
+// custom components
+import {FlatList, TextButton} from 'src/components/base';
 
 const MIN_ITEMS_PER_ROW = 5;
 const MIN_WIDTH_HORIZONTAL_SLOT = 100;
 
 class GridView extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {};
 
   static defaultProps = {
@@ -30,6 +32,10 @@ class GridView extends Component {
   listHorizontal = React.createRef();
 
   isInitScroll = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   getSlotValue(slot) {
     return slot?.value || slot;
@@ -181,26 +187,19 @@ class GridView extends Component {
       this.getSlotValue(slot) === this.getSlotValue(this.props.selectedSlot);
 
     return (
-      <TouchableHighlight
+      <AppOutlinedButton
         key={index}
+        primaryHighlight
         disabled={isDisabled}
         onPress={() => this.props.onPress(slot)}
-        underlayColor="rgba(0,0,0,.1)"
         style={[
           styles.itemContainer,
           style,
-          isSelected && styles.slotSelectedContainer,
-          isDisabled && styles.slotDisabledContainer,
-        ]}>
-        <Text
-          style={[
-            styles.slot,
-            isSelected && styles.slotSelected,
-            isDisabled && styles.slotDisabled,
-          ]}>
-          {this.getSlotValue(slot)}
-        </Text>
-      </TouchableHighlight>
+          isSelected && this.slotSelectedContainerStyle,
+        ]}
+        titleStyle={[this.slotStyle, isSelected && this.slotSelectedStyle]}>
+        {this.getSlotValue(slot)}
+      </AppOutlinedButton>
     );
   };
 
@@ -221,6 +220,21 @@ class GridView extends Component {
       />
     );
   };
+
+  get slotSelectedContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.persistPrimary,
+      borderColor: this.theme.color.persistPrimary,
+    };
+  }
+
+  get slotStyle() {
+    return {color: this.theme.color.textPrimary};
+  }
+
+  get slotSelectedStyle() {
+    return {color: this.theme.color.onPersistPrimary};
+  }
 
   render() {
     return (
@@ -245,10 +259,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderColor: appConfig.colors.primary,
-    borderWidth: 1,
-    borderRadius: 8,
   },
   row: {
     flexDirection: 'row',
@@ -260,22 +270,6 @@ const styles = StyleSheet.create({
   },
   blockSlot: {
     marginBottom: 10,
-  },
-  slotSelectedContainer: {
-    backgroundColor: appConfig.colors.primary,
-  },
-  slotDisabledContainer: {
-    backgroundColor: appConfig.colors.border,
-    borderColor: appConfig.colors.border,
-  },
-  slot: {
-    color: appConfig.colors.text,
-  },
-  slotSelected: {
-    color: appConfig.colors.white,
-  },
-  slotDisabled: {
-    color: '#ccc',
   },
 });
 

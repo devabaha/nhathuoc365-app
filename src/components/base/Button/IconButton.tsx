@@ -90,6 +90,7 @@ const IconButton = forwardRef(
         titleStyle,
       );
     }, [
+      styles,
       props.shadow,
       props.primary,
       props.secondary,
