@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.2.9]
 ### Added
 - [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
+- [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-1yzkbud] SocialNews tab to Orders tab also remove Orders option in Account by [minhnguyenit14@gmail.com].
 
