@@ -52,6 +52,7 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
       <>
         {loading ? (
           <Skeleton
+            container
             pointerEvents="none"
             onLayout={this.handleContainerLayout}
             style={[styles.container, style]}

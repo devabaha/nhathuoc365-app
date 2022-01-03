@@ -1,28 +1,31 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import {TabView, TabBar} from 'react-native-tab-view';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
-import {APIRequest} from '../../network/Entity';
-import BenefitRow from './BenefitRow';
-import Container from '../../components/Layout/Container';
-import {Actions} from 'react-native-router-flux';
-import Loading from '../../components/Loading';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import Scene from './Scene';
+import {
+  ScreenWrapper,
+  Container,
+  Typography,
+  BaseButton,
+} from 'src/components/base';
+// skeleton
 import PremiumInfoSkeleton from './PremiumInfoSkeleton';
-import Button from 'react-native-button';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import {push} from 'app-helper/routing';
-import {useTheme} from 'src/Themes/Theme.context';
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 
 const premiums = [
   {
@@ -179,17 +182,12 @@ const premiums = [
 const MAX_TAB_ITEMS_PER_ROW = 4;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   tabBarStyle: {
     paddingHorizontal: 0,
-    ...elevationShadowStyle(5),
   },
   tabBarLabel: {
     minWidth: '100%',
     flex: appConfig.device.isIOS ? undefined : 1,
-    color: '#333',
     textAlignVertical: 'center',
     textAlign: 'center',
     paddingHorizontal: 5,
@@ -197,39 +195,20 @@ const styles = StyleSheet.create({
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
-    color: appConfig.colors.primary,
   },
   indicatorStyle: {
-    backgroundColor: appConfig.colors.primary,
     height: 2,
   },
-  sceneContainer: {
-    backgroundColor: '#fff',
-  },
-  separator: {
-    height: 2,
-    backgroundColor: '#eee',
-    ...elevationShadowStyle(7),
-  },
-  premiumBenefitHeading: {
-    color: '#aaa',
-    paddingTop: 15,
-    textAlign: 'right',
-    paddingHorizontal: 15,
-  },
-  loyaltyContainer: {
-    marginTop: 7,
-    backgroundColor: '#fff',
-  },
-  loyaltyTitle: {
-    color: '#333',
-  },
-  loyaltyIconRight: {
-    color: '#666',
+  tabBarItemContainerStyle: {
+    minHeight: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
 class PremiumInfo extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     indexTab: 0,
     siteId: '',
@@ -246,16 +225,29 @@ class PremiumInfo extends Component {
   getPremiumsRequest = new APIRequest();
   requests = [];
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   get currentPremiumId() {
     return this.props.currentPremiumId || store.user_info?.premium || 0;
   }
 
   componentDidMount() {
     this.getPremiums();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
+
+    this.updateNavBarDisposer();
   }
 
   async getPremiums() {
@@ -340,16 +332,6 @@ class PremiumInfo extends Component {
     this.setState({index});
   };
 
-  renderPremiumBenefit({item: benefit}) {
-    return (
-      <BenefitRow
-        active={benefit.unlock}
-        title={benefit.name}
-        description={benefit.describe}
-      />
-    );
-  }
-
   renderTabBarLabel(props) {
     const {
       route: {title, key},
@@ -357,11 +339,15 @@ class PremiumInfo extends Component {
     const focused = key === this.state.index;
 
     return (
-      <Text
+      <Typography
+        type={TypographyType.LABEL_MEDIUM}
         numberOfLines={2}
-        style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}>
+        style={[
+          styles.tabBarLabel,
+          focused && [this.tabBarLabelActiveStyle, styles.tabBarLabelActive],
+        ]}>
         {title}
-      </Text>
+      </Typography>
     );
   }
 
@@ -376,25 +362,20 @@ class PremiumInfo extends Component {
         {...props}
         renderTabBarItem={(props) => {
           return (
-            <Button
+            <BaseButton
+              style={[{width: tabWidth}, styles.tabBarItemContainerStyle]}
               key={props.route.key}
-              onPress={() => this.setState({index: props.route.key})}
-              containerStyle={{
-                minHeight: 48,
-                width: tabWidth,
-                justifyContent: 'center',
-                alignItems: 'center',
+              onPress={() => {
+                this.context.toggleTheme(BASE_DARK_THEME_ID);
+                this.setState({index: props.route.key});
               }}>
               {this.renderTabBarLabel(props)}
-            </Button>
+            </BaseButton>
           );
         }}
-        indicatorStyle={styles.indicatorStyle}
-        style={styles.tabBarStyle}
+        indicatorStyle={[this.indicatorStyle, styles.indicatorStyle]}
+        style={[this.tabBarStyle, styles.tabBarStyle]}
         tabStyle={{width: tabWidth}}
-        style={{
-          backgroundColor: '#fff',
-        }}
         scrollEnabled
       />
     );
@@ -414,11 +395,31 @@ class PremiumInfo extends Component {
     );
   }
 
+  get tabBarLabelActiveStyle() {
+    return {
+      color: this.theme.color.persistPrimary,
+    };
+  }
+
+  get indicatorStyle() {
+    return {
+      backgroundColor: this.theme.color.persistPrimary,
+    };
+  }
+
+  get tabBarStyle() {
+    return {
+      backgroundColor: this.theme.color.surface,
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    };
+  }
+
   render() {
     return (
-      <PremiumInfoSkeleton loading={this.state.loading} loading>
-        <View style={styles.container}>
-          <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
+        <PremiumInfoSkeleton loading={this.state.loading}>
+          <Container noBackground flex>
             {this.state.loading && <Loading center />}
             {!!this.state.routes && (
               <TabView
@@ -427,97 +428,13 @@ class PremiumInfo extends Component {
                 renderScene={this.renderScene.bind(this)}
                 onIndexChange={this.handleIndexChange}
                 initialLayout={{width: appConfig.device.width}}
-                style={styles.tabBarContainer}
               />
             )}
-          </SafeAreaView>
-        </View>
-      </PremiumInfoSkeleton>
+          </Container>
+        </PremiumInfoSkeleton>
+      </ScreenWrapper>
     );
   }
 }
 
 export default withTranslation()(PremiumInfo);
-
-const areEquals = (prevProps, nextProps) => {
-  return (
-    nextProps.benefits === prevProps.benefits &&
-    nextProps.currentPremium === prevProps.currentPremium &&
-    nextProps.premium === prevProps.premium &&
-    nextProps.refreshing === prevProps.refreshing
-  );
-};
-const Scene = React.memo(
-  ({benefits, currentPremium, premium, handleRefresh, refreshing}) => {
-    const userInfo = store.user_info || {};
-    const isShowPremiumPoint = !isConfigActive(
-      CONFIG_KEY.HIDE_PREMIUM_POINT_KEY,
-    );
-
-    const {theme} = useTheme();
-
-    const goToNews = () => {
-      push(
-        appConfig.routes.notifyDetail,
-        {
-          data: {
-            id: userInfo.premium_post_id,
-          },
-        },
-        theme,
-      );
-    };
-
-    const renderPremiumBenefitsHeader = (premium) => {
-      const message =
-        premium.point && premium.point > (userInfo.premium_point || 0)
-          ? `Mở khóa hạng khi đạt đủ ${premium.point_view}`
-          : currentPremium.id === premium.id
-          ? 'Hạng hiện tại của bạn'
-          : 'Đã mở khóa hạng';
-      return <Text style={styles.premiumBenefitHeading}>{message}</Text>;
-    };
-
-    const renderPremiumBenefit = ({item: benefit}) => {
-      return (
-        <BenefitRow
-          active={benefit.unlock}
-          title={benefit.name}
-          description={benefit.describe}
-        />
-      );
-    };
-
-    return (
-      <FlatList
-        extraData={benefits}
-        contentContainerStyle={styles.sceneContainer}
-        data={benefits}
-        renderItem={renderPremiumBenefit}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        ListHeaderComponent={
-          isShowPremiumPoint && renderPremiumBenefitsHeader(premium)
-        }
-        ListFooterComponent={
-          <TouchableOpacity onPress={goToNews}>
-            <Container row padding={15} style={styles.loyaltyContainer}>
-              <Container.Item flex>
-                <Text style={styles.loyaltyTitle}>
-                  Chương trình khách hàng thân thiết
-                </Text>
-              </Container.Item>
-              <FontAwesomeIcon
-                name="chevron-right"
-                style={styles.loyaltyIconRight}
-              />
-            </Container>
-          </TouchableOpacity>
-        }
-        keyExtractor={(item, index) => index.toString()}
-      />
-    );
-  },
-  areEquals,
-);
