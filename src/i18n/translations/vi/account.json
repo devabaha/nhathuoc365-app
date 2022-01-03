@@ -60,6 +60,10 @@
     "salesReport": {
       "label": "Báo cáo giới thiệu",
       "desc": "Doanh số của những người được giới thiệu"
+    },
+    "partnerRegistration": {
+      "label": "Đăng ký đối tác",
+      "desc": ""
     }
   },
   "avatarPicker": {

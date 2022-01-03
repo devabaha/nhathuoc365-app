@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 
 import appConfig from 'app-config';
@@ -8,6 +8,7 @@ import Video from 'src/components/Video';
 import Image from 'src/components/Image';
 import {Actions} from 'react-native-router-flux';
 import {MEDIA_TYPE} from 'src/constants';
+import {THUMB_SIZE} from 'src/components/Video/Controls/constants';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     borderRadius: 20,
     position: 'absolute',
-    bottom: 15,
+    bottom: 22,
     right: 15,
     backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
@@ -45,40 +46,65 @@ const styles = StyleSheet.create({
   },
 });
 
-const MediaCarousel = ({
-  wrapperStyle,
-  height,
-  data,
-  showPagination = true,
-  initIndex = 0,
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(initIndex);
+class MediaCarousel extends Component {
+  static defaultProps = {
+    initIndex: 0,
+    showPagination: true,
+    canPlayVideo: false,
+  };
+  state = {
+    currentIndex: this.props.initIndex,
+    stopVideo: false,
+  };
 
-  const videoContainerStyle = useMemo(() => {
+  videosInfo = [];
+
+  get videoContainerStyle() {
     return [
       styles.videoContainer,
       {
-        height,
+        height: this.props.height,
       },
     ];
-  }, [height]);
+  }
 
-  const wrapperMixStyle = useMemo(() => {
+  get wrapperMixStyle() {
     return [
       styles.wrapper,
-      wrapperStyle,
+      this.props.wrapperStyle,
       {
-        height,
+        height: this.props.height + THUMB_SIZE,
       },
     ];
-  }, [height, wrapperStyle]);
+  }
 
-  const handleChangeImageIndex = useCallback((index, media) => {
-    setCurrentIndex(index);
-  }, []);
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.canPlayVideo !== this.props.canPlayVideo) {
+      this.setState({stopVideo: !nextProps.canPlayVideo});
+    }
+    return true;
+  }
 
-  const renderPagination = (index, total) => {
-    if (!showPagination) return null;
+  handleChangeImageIndex = (index, media) => {
+    this.setState({currentIndex: index});
+  };
+
+  updateVideoCurrentTime = (index, currentTime) => {
+    this.videosInfo[index] = {currentTime};
+  };
+
+  goToGallery = (index) => {
+    this.setState({stopVideo: true});
+    Actions.item_image_viewer({
+      images: this.props.data,
+      index: index,
+      onBack: () => this.setState({stopVideo: false}),
+      videosInfo: this.videosInfo,
+    });
+  };
+
+  renderPagination = (index, total) => {
+    if (!this.props.showPagination) return null;
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
       <View pointerEvents="none" style={styles.paginationContainer}>
@@ -87,62 +113,59 @@ const MediaCarousel = ({
     );
   };
 
-  const renderVideo = (media, index) => {
+  renderVideo = (media, index) => {
     return (
       <Video
         type="youtube"
         videoId={media.url}
-        containerStyle={videoContainerStyle}
-        height={appConfig.device.height / 2}
+        containerStyle={this.videoContainerStyle}
+        height={this.props.height}
         autoAdjustLayout
-        youtubeIframeProps={{
-          play: currentIndex === index,
-        }}
+        isPlay={!this.state.stopVideo && this.state.currentIndex === index}
+        onPressFullscreen={() => this.goToGallery(index)}
+        onChangeCurrentTime={(currentTime) =>
+          this.updateVideoCurrentTime(index, currentTime)
+        }
       />
     );
   };
 
-  const renderItem = useCallback(
-    ({item: media, index}) => {
-      return (
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.item_image_viewer({
-              images: data,
-              index: index,
-            });
-          }}>
-          <View style={styles.mediaContainer}>
-            {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
-              <View style={styles.imageContainer}>
-                <Image
-                  style={styles.image}
-                  source={{uri: media.url}}
-                  resizeMode="contain"
-                  {...media.mediaProps}
-                />
-              </View>
-            ) : (
-              renderVideo(media, index)
-            )}
-          </View>
-        </TouchableHighlight>
-      );
-    },
-    [currentIndex],
-  );
+  renderItem = ({item: media, index}) => {
+    return (
+      <TouchableHighlight
+        disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
+        underlayColor="transparent"
+        onPress={() => this.goToGallery(index)}>
+        <View style={styles.mediaContainer}>
+          {media?.type !== MEDIA_TYPE.YOUTUBE_VIDEO ? (
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                source={{uri: media.url}}
+                resizeMode="contain"
+                {...media.mediaProps}
+              />
+            </View>
+          ) : (
+            this.renderVideo(media, index)
+          )}
+        </View>
+      </TouchableHighlight>
+    );
+  };
 
-  return (
-    <Carousel
-      scrollEnabled={data?.length > 1}
-      wrapperStyle={wrapperMixStyle}
-      data={data}
-      renderItem={renderItem}
-      onChangeIndex={handleChangeImageIndex}
-      renderPagination={(index, total) => renderPagination(index, total)}
-    />
-  );
-};
+  render() {
+    return (
+      <Carousel
+        scrollEnabled={this.props.data?.length > 1}
+        wrapperStyle={this.wrapperMixStyle}
+        data={this.props.data}
+        renderItem={this.renderItem}
+        onChangeIndex={this.handleChangeImageIndex}
+        renderPagination={(index, total) => this.renderPagination(index, total)}
+      />
+    );
+  }
+}
 
-export default React.memo(MediaCarousel);
+export default MediaCarousel;

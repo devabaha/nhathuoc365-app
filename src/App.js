@@ -317,6 +317,7 @@ class App extends Component {
 
     this.state = {
       header: null,
+      overlayComponent: null,
       restartAllowed: true,
       progress: null,
       appLanguage: props.i18n.language,
@@ -550,6 +551,10 @@ class App extends Component {
     this.setState({header});
   };
 
+  setOverlayComponent = (overlayComponent) => {
+    this.setState({overlayComponent});
+  };
+
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
@@ -586,7 +591,13 @@ class App extends Component {
           appLanguage={this.state.appLanguage}
           t={this.props.t}
           setHeader={this.setHeader}
+          setOverlayComponent={this.setOverlayComponent}
         />
+        {this.state.overlayComponent && (
+          <View style={{...StyleSheet.absoluteFillObject}}>
+            {this.state.overlayComponent}
+          </View>
+        )}
         <Drawer />
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
@@ -751,7 +762,7 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 2 ************************
                    */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
@@ -762,6 +773,26 @@ class RootRouter extends Component {
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
+                    />
+                  </Stack> */}
+                  <Stack
+                    key={appConfig.routes.ordersTab}
+                    icon={TabIcon}
+                    iconLabel={t('appTab.tab4.title')}
+                    iconName="cart"
+                    iconSize={24}
+                    notifyKey="notify_cart"
+                    iconSVG={SVGOrders}>
+                    <Scene
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title={t('screen.orders.mainTitle')}
+                      component={Orders}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
                     />
                   </Stack>
 
@@ -1457,9 +1488,16 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.item}_1`}
                     component={Item}
+                    setOverlayComponent={this.props.setOverlayComponent}
                     {...navBarConfig}
                     hideNavBar
                     back
+                    onEnter={() => {
+                      store.setEnterItem(true);
+                    }}
+                    onExit={() => {
+                      store.setEnterItem(false);
+                    }}
                   />
                 </Stack>
 

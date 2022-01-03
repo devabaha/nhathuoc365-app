@@ -40,6 +40,7 @@ class ItemImageViewer extends Component {
     index: 0,
     moreActionSheetOptions: null,
     scrollEnabled: true,
+    onBack: () => {},
   };
 
   constructor(props) {
@@ -50,11 +51,12 @@ class ItemImageViewer extends Component {
       scrollEnabled: true,
     };
 
-    this.isHeaderVisible = true;
-    this.opacity = new Animated.Value(1);
-
     this.refActionSheet = React.createRef();
     this.refButtonDownloadImage = React.createRef();
+    this.refCarousel = React.createRef();
+
+    this.isHeaderVisible = true;
+    this.opacity = new Animated.Value(1);
   }
 
   eventTracker = new EventTracker();
@@ -69,8 +71,12 @@ class ItemImageViewer extends Component {
     StatusBar.setHidden(false);
   }
 
-  toggleHeaderVisibility = () => {
-    this.isHeaderVisible = !this.isHeaderVisible;
+  handleChangeVideoControlsVisible = (isVisible) => {
+    this.toggleHeaderVisibility(isVisible);
+  };
+
+  toggleHeaderVisibility = (isVisible = !this.isHeaderVisible) => {
+    this.isHeaderVisible = isVisible;
     Animated.timing(this.opacity, {
       toValue: this.isHeaderVisible ? 1 : 0,
       duration: 400,
@@ -109,6 +115,7 @@ class ItemImageViewer extends Component {
 
   handleBack = () => {
     StatusBar.setHidden(false);
+    this.props.onBack();
     Actions.pop();
   };
 
@@ -116,7 +123,7 @@ class ItemImageViewer extends Component {
     this.setState({currentIndex: index});
   };
 
-  handleSwipeDownImage = () => Actions.pop();
+  handleSwipeDownImage = () => this.handleBack();
 
   handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
@@ -126,7 +133,7 @@ class ItemImageViewer extends Component {
 
   renderHeader = (currentIndex = this.state.currentIndex) => {
     return (
-      <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
+      <TouchableWithoutFeedback onPress={() => this.toggleHeaderVisibility()}>
         <Animated.View
           style={[styles.headerContainer, {opacity: this.opacity}]}>
           <SafeAreaView style={styles.headerContentContainer}>
@@ -204,6 +211,8 @@ class ItemImageViewer extends Component {
     this.scaleValue = scale;
   };
 
+  updateContent = () => {};
+
   renderImage = ({item: image, index}) => {
     return (
       <View
@@ -216,6 +225,9 @@ class ItemImageViewer extends Component {
           selectedIndex={this.state.currentIndex}
           onPress={this.toggleHeaderVisibility}
           onMove={this.handleMove}
+          onRotateFullscreen={this.updateContent}
+          onChangeVideoControlsVisible={this.handleChangeVideoControlsVisible}
+          currentTime={(this.props.videosInfo || [])[index]?.currentTime}
         />
         {/* <ImageZoom
           ref={(inst) => (this.refImage = inst)}
@@ -280,8 +292,8 @@ class ItemImageViewer extends Component {
           }}
         /> */}
         {this.renderHeader()}
-
         <Carousel
+          refCarousel={(inst) => (this.refCarousel.current = inst)}
           firstItem={this.props.index}
           wrapperStyle={{backgroundColor: '#000'}}
           data={images}

@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {StyleSheet, Animated, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import ImageZoom from 'react-native-image-pan-zoom';
@@ -8,6 +8,7 @@ import {MEDIA_TYPE} from 'src/constants';
 
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
+import {Actions} from 'react-native-router-flux';
 
 const DOUBLE_PRESS_INTERVAL = 300;
 const PRESS_DELTA = 50;
@@ -25,6 +26,9 @@ const ItemImage = ({
   index,
   selectedIndex,
   type,
+  currentTime,
+  onRotateFullscreen,
+  onChangeVideoControlsVisible,
   onMove = () => {},
   onPress = () => {},
 }) => {
@@ -37,6 +41,7 @@ const ItemImage = ({
   const isPress = useRef(true);
   const lastEvent = useRef(null);
   const scaleValue = useRef(1);
+  const [isFullscreenLandscape, setFullscreenLandscape] = useState(false);
 
   const handleStartShouldSetPanResponder = useCallback((e) => {
     let refImg = refImage.current;
@@ -145,35 +150,53 @@ const ItemImage = ({
     isPress.current = true;
   }, []);
 
+  const handleRotateFullscreen = useCallback((isFullscreenLandscape) => {
+    onRotateFullscreen(isFullscreenLandscape);
+    setFullscreenLandscape(isFullscreenLandscape);
+  }, []);
+
+  const trackerContainerStyle = useMemo(() => {
+    return (
+      isFullscreenLandscape && {
+        // avoid header
+        paddingLeft: 80,
+      }
+    );
+  }, [isFullscreenLandscape]);
+
   return (
     <View
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}>
-      <ImageZoom
-        ref={(inst) => (refImage.current = inst)}
-        onStartShouldSetPanResponder={handleStartShouldSetPanResponder}
-        onMove={handleMove}
-        onClick={onPress}
-        cropHeight={appConfig.device.height}
-        cropWidth={appConfig.device.width}
-        imageHeight={appConfig.device.height}
-        imageWidth={appConfig.device.width}>
-        {type === MEDIA_TYPE.YOUTUBE_VIDEO ? (
-          <Video
-            type="youtube"
-            videoId={url}
-            containerStyle={styles.videoContainer}
-            autoAdjustLayout
-            height={appConfig.device.height}
-            youtubeIframeProps={{
-              play: index === selectedIndex,
-            }}
-          />
-        ) : (
+      {type === MEDIA_TYPE.YOUTUBE_VIDEO ? (
+        <Video
+          type="youtube"
+          videoId={url}
+          containerStyle={styles.videoContainer}
+          trackerContainerStyle={trackerContainerStyle}
+          autoAdjustLayout
+          isFullscreenWithoutModal
+          height={appConfig.device.height}
+          isPlay={index === selectedIndex}
+          onPressFullscreen={Actions.pop}
+          onRotateFullscreen={handleRotateFullscreen}
+          onChangeControlsVisible={onChangeVideoControlsVisible}
+          currentTime={currentTime}
+        />
+      ) : (
+        <ImageZoom
+          ref={(inst) => (refImage.current = inst)}
+          onStartShouldSetPanResponder={handleStartShouldSetPanResponder}
+          onMove={handleMove}
+          onClick={onPress}
+          cropHeight={appConfig.device.height}
+          cropWidth={appConfig.device.width}
+          imageHeight={appConfig.device.height}
+          imageWidth={appConfig.device.width}>
           <Image source={{uri: url}} resizeMode="contain" />
-        )}
-      </ImageZoom>
+        </ImageZoom>
+      )}
     </View>
   );
 };

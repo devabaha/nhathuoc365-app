@@ -155,6 +155,34 @@ class Account extends Component {
       },
 
       {
+        key: 'partnerRegistration',
+        icon: 'handshake-o',
+        iconType: 'FontAwesome',
+        label: t('options.partnerRegistration.label'),
+        isHidden: !getValueFromConfigKey(
+          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+        ),
+
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          Actions.push(appConfig.routes.webview, {
+            title: t('options.partnerRegistration.label'),
+            url: getValueFromConfigKey(
+              CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+            ),
+          });
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#5b88d9',
+          },
+        ],
+        iconColor: '#fff',
+        marginTop: isShowPremium,
+      },
+
+      {
         key: 'default_wallet',
         icon: default_wallet.icon,
         label: (
@@ -314,28 +342,28 @@ class Account extends Component {
           },
         ],
       },
-      {
-        key: 'orders',
-        label: t('options.orders.label'),
-        desc: t('options.orders.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="cart"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: appConfig.colors.status.success,
-          },
-        ],
-        iconColor: '#ffffff',
-      },
+      // {
+      //   key: 'orders',
+      //   label: t('options.orders.label'),
+      //   desc: t('options.orders.desc'),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="cart"
+      //         style={{fontSize: 16, color: '#fff'}}
+      //       />
+      //     </View>
+      //   ),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: appConfig.colors.status.success,
+      //     },
+      //   ],
+      //   iconColor: '#ffffff',
+      // },
       {
         key: 'vouchers',
         isHidden:
@@ -542,7 +570,7 @@ class Account extends Component {
 
       {
         key: '3',
-        icon: 'handshake-o',
+        icon: 'info',
         label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -618,7 +646,7 @@ class Account extends Component {
 
       {
         key: 'app_info',
-        icon: 'question-circle',
+        icon: 'question',
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,

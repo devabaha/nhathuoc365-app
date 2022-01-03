@@ -35,6 +35,8 @@ import CustomAutoHeightWebview from '../CustomAutoHeightWebview';
 import MediaCarousel from '../item/MediaCarousel';
 import {MEDIA_TYPE} from 'src/constants';
 
+const MEDIA_HEIGHT = appConfig.device.width / 1.75;
+
 class NotifyItem extends Component {
   constructor(props) {
     super(props);
@@ -241,7 +243,7 @@ class NotifyItem extends Component {
           style={styles.notify_container}>
           <View style={styles.notify_image_box}>
             <MediaCarousel
-              height="100%"
+              height={MEDIA_HEIGHT}
               data={media}
               showPagination={media.length > 1}
             />
@@ -413,8 +415,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   notify_image_box: {
-    height: appConfig.device.width / 1.75,
-    backgroundColor: '#cccccc',
+    height: MEDIA_HEIGHT,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     overflow: 'hidden',
     // alignItems: 'center'
