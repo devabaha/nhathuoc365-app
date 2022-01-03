@@ -1,0 +1,8 @@
+{
+  "title": "Chương trình khách hàng thân thiết",
+  "tierTitle": {
+    "reach": "Mở khóa hạng khi đạt đủ {{premiumPoint}}",
+    "currentTier": "Hạng hiện tại",
+    "unlockedTier": "Đã mở khóa hạng"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Customer loyalty program",
+  "tierTitle": {
+    "reach": "Unlock this tier when reach {{premiumPoint}}",
+    "currentTier": "Your current tier",
+    "unlockedTier": "Tier unlocked"
+  }
+}

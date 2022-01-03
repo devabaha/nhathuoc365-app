@@ -74,6 +74,8 @@ import vi_productStamp from './vi/productStamp.json';
 import en_productStamp from './en/productStamp.json';
 import vi_filterProduct from './vi/filterProduct.json';
 import en_filterProduct from './en/filterProduct.json';
+import vi_premium from './vi/premium.json';
+import en_premium from './en/premium.json';
 
 export default {
   [languages.vi.value]: {
@@ -114,6 +116,7 @@ export default {
     lotteryGame: vi_lotteryGame,
     productStamp: vi_productStamp,
     filterProduct: vi_filterProduct,
+    premium: vi_premium,
   },
   [languages.en.value]: {
     common: en_common,
@@ -153,5 +156,6 @@ export default {
     lotteryGame: en_lotteryGame,
     productStamp: en_productStamp,
     filterProduct: en_filterProduct,
+    premium: en_premium,
   },
 };
