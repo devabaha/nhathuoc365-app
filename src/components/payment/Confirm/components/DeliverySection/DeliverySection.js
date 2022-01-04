@@ -1,6 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
+import {StyleSheet} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 import SectionContainer from '../SectionContainer';
 
 const styles = StyleSheet.create({
@@ -8,13 +11,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   desc_content: {
-    fontSize: 12,
-    color: '#666666',
     marginTop: 4,
     marginLeft: 22,
   },
   orders_status: {
-    fontSize: 12,
     fontWeight: '600',
     marginTop: 15,
   },
@@ -29,8 +29,13 @@ const DeliverySection = ({code, statusColor, statusName}) => {
       iconName="shipping-fast"
       iconStyle={styles.icon}
       marginTop>
-      <Text style={styles.desc_content}>{code}</Text>
-      <Text
+      <Typography
+        type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+        style={styles.desc_content}>
+        {code}
+      </Typography>
+      <Typography
+        type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
         style={[
           styles.desc_content,
           styles.orders_status,
@@ -39,7 +44,7 @@ const DeliverySection = ({code, statusColor, statusName}) => {
           },
         ]}>
         {statusName}
-      </Text>
+      </Typography>
     </SectionContainer>
   );
 };

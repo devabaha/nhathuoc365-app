@@ -107,7 +107,7 @@ class CustomAutoHeightWebview extends Component {
           height: auto !important;
         }
 ` + this.props.customStyle || '';
-    console.log(style, this.props.content);
+
     return style;
   };
 

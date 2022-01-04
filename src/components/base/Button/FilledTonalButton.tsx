@@ -55,7 +55,7 @@ const createStyles = (theme: Theme) => {
       borderRadius: theme.layout.borderRadiusLarge,
     },
     text: {
-      color: theme.color.persistTextPrimary,
+      color: theme.color.textPrimary,
     },
     textPrimary: {
       color: theme.color.persistPrimary,
@@ -95,8 +95,11 @@ const FilledTonalButton = forwardRef(
           styles.container,
           props.shadow && styles.shadow,
           props.rounded && styles[props.rounded],
-          props.primary && styles.primary,
-          props.secondary && styles.secondary,
+          props.primary
+            ? styles.primary
+            : props.secondary
+            ? styles.secondary
+            : {},
           props.neutral && styles.neutral,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
@@ -118,14 +121,25 @@ const FilledTonalButton = forwardRef(
       return mergeStyles(
         [
           styles.text,
-          props.primary && styles.textPrimary,
-          props.secondary && styles.textSecondary,
+          props.primary
+            ? styles.textPrimary
+            : props.secondary
+            ? styles.textSecondary
+            : {},
+          props.neutral && styles.text,
           // disabled should be the last overridden style
           props.disabled && styles.textDisabled,
         ],
         titleStyle,
       );
-    }, [styles, titleStyle, props.primary, props.secondary, props.disabled]);
+    }, [
+      styles,
+      titleStyle,
+      props.primary,
+      props.secondary,
+      props.neutral,
+      props.disabled,
+    ]);
 
     const renderTitleComponent = useCallback(() => {
       const fontStyle = getFontStyle(titleStyles);

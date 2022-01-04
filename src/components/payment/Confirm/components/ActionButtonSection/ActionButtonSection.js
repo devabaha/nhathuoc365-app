@@ -56,6 +56,8 @@ const styles = StyleSheet.create({
 });
 
 const ActionButtonSection = ({
+  safeLayout = false,
+
   editable,
   onEdit = () => {},
 
@@ -104,7 +106,7 @@ const ActionButtonSection = ({
 
   return (
     <SectionContainer marginTop style={styles.container}>
-      <Container centerVertical={false} style={styles.boxButtonActions}>
+      <Container safeLayout={safeLayout} centerVertical={false} style={styles.boxButtonActions}>
         {!!hasMainBlockData && (
           <Container row style={styles.block}>
             {!!editable && (

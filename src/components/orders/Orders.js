@@ -399,7 +399,11 @@ class Orders extends Component {
   render() {
     const {loading, data} = this.state;
     if (loading) {
-      return <Indicator />;
+      return (
+        <ScreenWrapper>
+          <Indicator />
+        </ScreenWrapper>
+      );
     }
 
     return (

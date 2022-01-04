@@ -24,8 +24,14 @@ const createStyles = (theme: Theme) => {
     primary: {
       color: theme.color.primary,
     },
+    primaryHighlight: {
+      color: theme.color.primaryHighlight,
+    },
     secondary: {
       color: theme.color.secondary,
+    },
+    secondaryHighlight: {
+      color: theme.color.secondaryHighlight,
     },
     neutral: {
       color: theme.color.textInactive,
@@ -73,7 +79,9 @@ const TextButton = forwardRef(
         [
           props.shadow && styles.shadow,
           props.primary && styles.primary,
+          props.primaryHighlight && styles.primaryHighlight,
           props.secondary && styles.secondary,
+          props.secondaryHighlight && styles.secondaryHighlight,
           props.neutral && styles.neutral,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
@@ -83,7 +91,9 @@ const TextButton = forwardRef(
     }, [
       props.shadow,
       props.primary,
+      props.primaryHighlight,
       props.secondary,
+      props.secondaryHighlight,
       props.neutral,
       props.disabled,
       titleStyle,

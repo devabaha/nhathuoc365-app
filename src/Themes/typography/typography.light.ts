@@ -69,6 +69,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.BODY_MEDIUM,
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
+  [TypographyType.LABEL_SEMI_MEDIUM_PRIMARY]: {
+    fontSize: TypographyFontSize.BODY_SEMI_MEDIUM,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
   [TypographyType.LABEL_SMALL_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_SMALL,
     color: BASE_COLOR_LIGHT.primaryHighlight,

@@ -6,6 +6,9 @@ import PricingAndPromotionSection from './PricingAndPromotionSection';
 import CommissionsSection from './CommissionsSection';
 import ActionButtonSection from './ActionButtonSection';
 import OrderInfoSection from './OrderInfoSection';
+import AddressSection from './AddressSection';
+import POSSection from './POSSection';
+import ProductSection from './ProductSection';
 import SectionContainer from './SectionContainer';
 
 export {
@@ -17,5 +20,8 @@ export {
   CommissionsSection,
   ActionButtonSection,
   OrderInfoSection,
+  AddressSection,
+  POSSection,
+  ProductSection,
   SectionContainer,
 };

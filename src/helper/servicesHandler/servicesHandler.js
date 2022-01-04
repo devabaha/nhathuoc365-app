@@ -478,26 +478,21 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** PAYMENT */
     case SERVICES_TYPE.PAYMENT_METHOD:
-      const selectedMethod =
-        service.default_payment_method_id !== undefined
-          ? {
-              id: service.default_payment_method_id,
-              type: service.default_payment_method_type,
-            }
-          : null;
       push(
         appConfig.routes.paymentMethod,
         {
-          selectedMethod: selectedMethod,
-          price: service.total_before_view,
-          totalPrice: service.total_selected,
-          extraFee: service.item_fee,
+          selectedMethod: service.selectedMethod,
+          selectedPaymentMethodDetail: service.selectedPaymentMethodDetail,
+          price: service.price,
+          totalPrice: service.totalPrice,
+          extraFee: service.extraFee,
           showPrice: service.showPrice,
           showSubmit: service.showSubmit,
-          onUpdatePaymentMethod: (data) => callBack(false, data),
           store_id: service.storeId,
           cart_id: service.cartId,
-          title: service.title,
+          title: service.title || commonT('screen.paymentMethod.mainTitle'),
+          onUpdatePaymentMethod: service.onUpdatePaymentMethod,
+          onConfirm: service.onConfirm,
         },
         service.theme,
       );
