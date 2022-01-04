@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [CU-20dhzmw] Execute BranchIO, OneSignal even after CodePush finished by [minhnguyenit14@gmail.com].
 
 ## [r12.2.9]
 ### Added

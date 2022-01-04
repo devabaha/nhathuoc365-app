@@ -539,7 +539,7 @@ setJSExceptionHandler((error, isFatal) => {
 }, false);
 
 setNativeExceptionHandler((exceptionString) => {
-  console.log('native_exception', error);
+  console.log('native_exception', exceptionString);
 });
 
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
