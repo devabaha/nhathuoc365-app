@@ -155,34 +155,6 @@ class Account extends Component {
       },
 
       {
-        key: 'partnerRegistration',
-        icon: 'handshake-o',
-        iconType: 'FontAwesome',
-        label: t('options.partnerRegistration.label'),
-        isHidden: !getValueFromConfigKey(
-          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
-        ),
-
-        rightIcon: <IconAngleRight />,
-        onPress: () => {
-          Actions.push(appConfig.routes.webview, {
-            title: t('options.partnerRegistration.label'),
-            url: getValueFromConfigKey(
-              CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
-            ),
-          });
-        },
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#5b88d9',
-          },
-        ],
-        iconColor: '#fff',
-        marginTop: isShowPremium,
-      },
-
-      {
         key: 'default_wallet',
         icon: default_wallet.icon,
         label: (
@@ -614,6 +586,29 @@ class Account extends Component {
         iconColor: '#ffffff',
         isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
+      },
+      {
+        key: 'partnerRegistration',
+        icon: 'handshake-o',
+        iconType: 'FontAwesome',
+        label: t('options.partnerRegistration.label'),
+        isHidden: !getValueFromConfigKey(
+          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+        ),
+
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          openLink(
+            getValueFromConfigKey(CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY),
+          );
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#5b88d9',
+          },
+        ],
+        iconColor: '#fff',
       },
 
       {
