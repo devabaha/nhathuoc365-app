@@ -1,19 +1,17 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
-import Fontisto from 'react-native-vector-icons/Fontisto';
-
+import {StyleSheet} from 'react-native';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Icon, Typography} from 'src/components/base';
 import SectionContainer from '../SectionContainer';
 
 const styles = StyleSheet.create({
   icon: {
     width: 15,
-    color: '#999',
     fontSize: 19,
   },
   desc_content: {
-    fontSize: 12,
-    color: '#666666',
     marginTop: 4,
     marginLeft: 22,
     textTransform: 'uppercase',
@@ -31,9 +29,20 @@ const POSSection = ({code}) => {
   return (
     <SectionContainer
       title={t('confirm.information.POSTitle')}
-      customIcon={<Fontisto style={styles.icon} name="shopping-pos-machine" />}
+      customIcon={
+        <Icon
+          neutral
+          bundle={BundleIconSetName.FONTISO}
+          style={styles.icon}
+          name="shopping-pos-machine"
+        />
+      }
       marginTop>
-      <Text style={styles.desc_content}>{code}</Text>
+      <Typography
+        type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+        style={styles.desc_content}>
+        {code}
+      </Typography>
     </SectionContainer>
   );
 };

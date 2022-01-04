@@ -237,7 +237,7 @@ const PricingAndPromotionSection = ({
         </View>
       </SectionContainer>
 
-      {!isPromotionSelectable && (
+      {isPromotionSelectable && (
         <SectionContainer marginTop>
           <View style={styles.address_name_box}>
             <View style={useVoucherLabelWrapperStyle}>

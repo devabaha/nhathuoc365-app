@@ -4,8 +4,6 @@ import {StyleSheet, View} from 'react-native';
 import Communications from 'react-native-communications';
 // helpers
 import {openMap} from 'app-helper/map';
-// context
-import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {
   TypographyType,
@@ -85,8 +83,6 @@ const StoreInfoSection = ({
   onPressActionBtn,
   customContent,
 }) => {
-  const {theme} = useTheme();
-
   const {t} = useTranslation('orders');
 
   const handleCall = useCallback(() => {

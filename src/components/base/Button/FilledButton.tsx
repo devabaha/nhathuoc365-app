@@ -98,9 +98,8 @@ const FilledButton = forwardRef(
             ? styles.secondary
             : props.secondaryHighlight
             ? styles.secondaryHighlight
-            : props.neutral
-            ? styles.neutral
             : {},
+          props.neutral && styles.neutral,
           // disabled should be the last overridden style
           props.disabled && styles.disabled,
         ],
