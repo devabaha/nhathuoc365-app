@@ -1,28 +1,21 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Animated, StyleSheet} from 'react-native';
-import PropTypes from 'prop-types';
-// 3-party libs
-import moment from 'moment';
-// helpers
-import {getTheme} from 'src/Themes/Theme.context';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
-// constants
-import {DAY_NAME_IN_WEEK, DATE_FORMAT} from '../constants';
-import {BundleIconSetName, TypographyType} from 'src/components/base';
-// custom components
-import Day from './Day';
 import {
-  BaseButton,
+  View,
   FlatList,
-  Typography,
-  Icon,
-  Container,
-} from 'src/components/base';
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  Text,
+} from 'react-native';
+import PropTypes from 'prop-types';
+
+import moment from 'moment';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import appConfig from 'app-config';
+import {DAY_NAME_IN_WEEK, DATE_FORMAT} from '../constants';
+import Day from './Day';
 
 class DateTimePicker extends Component {
-  static contextType = ThemeContext;
-
   static propTypes = {
     containerStyle: PropTypes.object,
     componentPaddingHorizontal: PropTypes.number,
@@ -62,10 +55,6 @@ class DateTimePicker extends Component {
     animatedNext: new Animated.Value(0),
   };
   refDayFlatList = React.createRef();
-
-  get theme() {
-    return getTheme(this);
-  }
 
   getDefaultDates(selectedDate, startDate, endDate, disabledDates) {
     let dates = [],
@@ -525,55 +514,35 @@ class DateTimePicker extends Component {
 
     return (
       <View style={[styles.headerContainer, extraContainerStyle]}>
-        <BaseButton
+        <TouchableOpacity
           disabled={disabledPrevious}
           hitSlop={HIT_SLOP}
           onPress={() => this.changeDayFlatListIndex(-1)}>
           <View style={styles.btnContainer}>
-            <Container
-              animated
-              style={[
-                this.headerBtnBackgroundStyle,
-                styles.bgBtn,
-                extraPrevStyle,
-              ]}
-            />
+            <Animated.View style={[styles.bgBtn, extraPrevStyle]} />
             <Icon
-              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
-              neutral
               name="pan-left"
-              disabled={disabledPrevious}
-              style={styles.icon}
+              style={[styles.icon, disabledPrevious && styles.iconDisabled]}
             />
           </View>
-        </BaseButton>
+        </TouchableOpacity>
 
-        <Typography type={TypographyType.LABEL_SEMI_HUGE} style={styles.title}>
+        <Text style={styles.title}>
           {this.selectedMonth} {this.selectedYear}
-        </Typography>
+        </Text>
 
-        <BaseButton
+        <TouchableOpacity
           disabled={disabledNext}
           hitSlop={HIT_SLOP}
           onPress={() => this.changeDayFlatListIndex(1)}>
           <View style={styles.btnContainer}>
-            <Container
-              animated
-              style={[
-                this.headerBtnBackgroundStyle,
-                styles.bgBtn,
-                extraNextStyle,
-              ]}
-            />
+            <Animated.View style={[styles.bgBtn, extraNextStyle]} />
             <Icon
-              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
-              neutral
               name="pan-right"
-              disabled={disabledNext}
-              style={styles.icon}
+              style={[styles.icon, disabledNext && styles.iconDisabled]}
             />
           </View>
-        </BaseButton>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -581,12 +550,9 @@ class DateTimePicker extends Component {
   renderDayInWeek() {
     return DAY_NAME_IN_WEEK.map((dayName, index) => {
       return (
-        <Typography
-          type={TypographyType.LABEL_LARGE_TERTIARY}
-          key={index}
-          style={styles.subTitle}>
+        <Text key={index} style={styles.subTitle}>
           {dayName}
-        </Typography>
+        </Text>
       );
     });
   }
@@ -618,28 +584,26 @@ class DateTimePicker extends Component {
 
   renderDate() {
     return (
-      !!this.state.componentWidth && (
-        <FlatList
-          ref={this.refDayFlatList}
-          contentContainerStyle={styles.dateContentContainer}
-          onScrollEndDrag={this.onDayScrollEnd.bind(this)}
-          onScrollToIndexFailed={(e) => console.log(e)}
-          initialNumToRender={5}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          horizontal
-          data={this.state.dates}
-          renderItem={this.renderDay.bind(this)}
-          keyExtractor={(item, index) => index.toString()}
-          onEndReached={this.loadMoreDate.bind(this)}
-          onEndReachedThreshold={0.1}
-          getItemLayout={(data, index) => ({
-            length: this.state.componentWidth,
-            offset: this.state.componentWidth * index,
-            index,
-          })}
-        />
-      )
+      !!this.state.componentWidth && <FlatList
+        ref={this.refDayFlatList}
+        contentContainerStyle={styles.dateContentContainer}
+        onScrollEndDrag={this.onDayScrollEnd.bind(this)}
+        onScrollToIndexFailed={(e) => console.log(e)}
+        initialNumToRender={5}
+        showsHorizontalScrollIndicator={false}
+        pagingEnabled
+        horizontal
+        data={this.state.dates}
+        renderItem={this.renderDay.bind(this)}
+        keyExtractor={(item, index) => index.toString()}
+        onEndReached={this.loadMoreDate.bind(this)}
+        onEndReachedThreshold={0.1}
+        getItemLayout={(data, index) => ({
+          length: this.state.componentWidth,
+          offset: this.state.componentWidth * index,
+          index,
+        })}
+      />
     );
   }
 
@@ -656,12 +620,6 @@ class DateTimePicker extends Component {
         <View style={styles.dateContainer}>{this.renderDate()}</View>
       </View>
     );
-  }
-
-  get headerBtnBackgroundStyle() {
-    return {
-      backgroundColor: this.theme.color.contentBackground,
-    };
   }
 
   render() {
@@ -686,10 +644,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 30,
+    color: '#555',
   },
   bodyContainer: {},
   title: {
     textTransform: 'uppercase',
+    fontSize: 18,
+    color: appConfig.colors.text,
   },
   dayNameContainer: {
     flexDirection: 'row',
@@ -698,6 +659,8 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     textTransform: 'uppercase',
+    fontSize: 16,
+    color: '#555',
   },
   dayInWeekContainer: {
     flex: 1,
@@ -710,6 +673,9 @@ const styles = StyleSheet.create({
   dateContentContainer: {
     justifyContent: 'center',
   },
+  iconDisabled: {
+    color: '#aaa',
+  },
   btnContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -719,6 +685,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
+    backgroundColor: '#aaa',
   },
 });
 

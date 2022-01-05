@@ -1,36 +1,24 @@
 import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
-// 3-party libs
-import moment from 'moment';
-// configs
-import store from 'app-store';
-import appConfig from 'app-config';
-// helpers
-import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
-import {getTheme} from 'src/Themes/Theme.context';
-import EventTracker from 'app-helper/EventTracker';
-// routing
-import {push} from 'app-helper/routing';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
-// constants
-import {ORDER_TYPES} from 'src/constants';
-import {DATE_FORMAT} from 'src/components/Schedule/constants';
-import {TypographyType} from 'src/components/base';
-// entities
-import {APIRequest} from 'src/network/Entity';
-// custom components
-import {ScheduleDateTimePicker} from 'src/components/Schedule';
-import SlotPicker from 'src/components/Schedule/SlotPicker/SlotPicker';
-import Loading from 'src/components/Loading';
-import NoResult from 'src/components/NoResult';
 import {
-  Typography,
+  SafeAreaView,
+  StyleSheet,
+  View,
   ScrollView,
+  Text,
   RefreshControl,
-  ScreenWrapper,
-  Container,
-} from 'src/components/base';
+} from 'react-native';
+import {ScheduleDateTimePicker} from '../../components/Schedule';
+import SlotPicker from '../../components/Schedule/SlotPicker/SlotPicker';
+import moment from 'moment';
+import {DATE_FORMAT} from '../../components/Schedule/constants';
+import {Actions} from 'react-native-router-flux';
+import {APIRequest} from '../../network/Entity';
+import appConfig from 'app-config';
+import Loading from '../../components/Loading';
+import NoResult from '../../components/NoResult';
+import EventTracker from '../../helper/EventTracker';
+import store from 'app-store';
+import { ORDER_TYPES } from '../../constants';
 
 const SLOTS = [
   '9:00',
@@ -55,13 +43,10 @@ const SLOTS = [
   '9:00',
 ];
 class ProductSchedule extends Component {
-  static contextType = ThemeContext;
-
   state = {
     serviceTitle: '',
     productId: this.props.productId,
     selectedDate: moment().format(DATE_FORMAT),
-    selectedDate: '',
     titleSlotPicker: this.getTitleSlotPicker(moment().format(DATE_FORMAT)),
     disabledDates: [],
     // [
@@ -77,16 +62,11 @@ class ProductSchedule extends Component {
     user: {},
     loading: true,
     refreshing: false,
-    site: store.store_data || {},
+    site: store.store_data || {}
   };
   getProductConfigRequest = new APIRequest();
   requests = [this.getProductConfigRequest];
   eventTracker = new EventTracker();
-  updateNavBarDisposer = () => {};
-
-  get theme() {
-    return getTheme(this);
-  }
 
   get hasDateData() {
     return !!this.state.startDate;
@@ -99,18 +79,11 @@ class ProductSchedule extends Component {
   componentDidMount() {
     this.getProductConfig();
     this.eventTracker.logCurrentView();
-
-    this.updateNavBarDisposer = updateNavbarTheme(
-      this.props.navigation,
-      this.theme,
-    );
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.eventTracker.clearTracking();
-
-    this.updateNavBarDisposer();
   }
 
   async getProductConfig() {
@@ -119,10 +92,7 @@ class ProductSchedule extends Component {
     try {
       const productId = this.state.productId;
       const siteId = store.store_data?.id;
-      this.getProductConfigRequest.data = APIHandler.site_product_config(
-        siteId,
-        productId,
-      );
+      this.getProductConfigRequest.data = APIHandler.site_product_config(siteId, productId);
       const response = await this.getProductConfigRequest.promise();
       console.log(response);
 
@@ -244,27 +214,23 @@ class ProductSchedule extends Component {
   };
 
   handlePressSlot(slot) {
-    push(
-      appConfig.routes.scheduleConfirm,
-      {
-        title: this.state.serviceTitle,
-        siteId: this.state.site.id,
-        serviceId: this.state.productId,
+    Actions.push(appConfig.routes.scheduleConfirm, {
+      title: this.state.serviceTitle,
+      siteId: this.state.site.id,
+      serviceId: this.state.productId,
 
-        dateView: this.state.titleSlotPicker,
-        date: this.state.selectedDate,
-        dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
-        timeRange: slot,
-        // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
-        appointmentName: this.state.site.name,
-        appointmentDescription: this.state.site.address,
-        image: this.state.site.logo_url,
-        cover: this.state.site.banner_url,
-        description: this.state.confirmNote,
-        type: ORDER_TYPES.BOOKING,
-      },
-      this.theme,
-    );
+      dateView: this.state.titleSlotPicker,
+      date: this.state.selectedDate,
+      dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
+      timeRange: slot,
+      // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
+      appointmentName: this.state.site.name,
+      appointmentDescription: this.state.site.address,
+      image: this.state.site.logo_url,
+      cover: this.state.site.banner_url,
+      description: this.state.confirmNote,
+      type: ORDER_TYPES.BOOKING
+    });
   }
 
   onRefresh() {
@@ -275,14 +241,14 @@ class ProductSchedule extends Component {
   renderExtraMessage() {
     return (
       this.props.extraMessage && (
-        <Container noBackground flex>
-          <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
+        <View style={styles.container}>
+          <Text style={styles.extraMessageTitle}>
             {this.props.extraMessage.title}
-          </Typography>
-          <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
+          </Text>
+          <Text style={styles.extraMessageContent}>
             {this.props.extraMessage.content}
-          </Typography>
-        </Container>
+          </Text>
+        </View>
       )
     );
   }
@@ -302,23 +268,13 @@ class ProductSchedule extends Component {
     );
   }
 
-  get dateTimePickerContainerStyle() {
-    return {
-      borderBottomWidth: this.theme.layout.borderWidthSmall,
-      borderBottomColor: this.theme.color.border,
-    };
-  }
-
   render() {
     return (
-      <ScreenWrapper>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && <Loading center />}
         {this.hasDateData && (
           <ScheduleDateTimePicker
-            containerStyle={[
-              this.dateTimePickerContainerStyle,
-              styles.dateTimePicker,
-            ]}
+            containerStyle={styles.dateTimePicker}
             onPress={this.handlePressDate}
             // date-format: YYYY-MM-DD
             selectedDate={this.state.selectedDate}
@@ -332,8 +288,8 @@ class ProductSchedule extends Component {
         )}
 
         <ScrollView
-          safeLayout
           style={styles.slotPicker}
+          contentContainerStyle={{flexGrow: 1}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -351,18 +307,32 @@ class ProductSchedule extends Component {
                 />
               )}
         </ScrollView>
-      </ScreenWrapper>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   dateTimePicker: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#bababa',
     paddingBottom: 10,
     paddingHorizontal: 10,
   },
   slotPicker: {
     paddingHorizontal: 15,
+    backgroundColor: '#f8f8f8',
+  },
+  extraMessageTitle: {
+    color: '#555',
+  },
+  extraMessageContent: {
+    color: '#555',
+    fontSize: 14,
   },
 });
 
