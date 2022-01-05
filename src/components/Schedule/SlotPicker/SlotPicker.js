@@ -1,7 +1,10 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { SlotGridView } from './GridView';
-import PropTypes from 'prop-types';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
+import {SlotGridView} from './GridView';
 
 class SlotPicker extends Component {
   static propTypes = {};
@@ -14,7 +17,9 @@ class SlotPicker extends Component {
     return (
       <View style={styles.container}>
         {!!this.props.title && (
-          <Text style={[styles.box, styles.title]}>{this.props.title}</Text>
+          <Typography type={TypographyType.LABEL_SEMI_LARGE} style={styles.box}>
+            {this.props.title}
+          </Typography>
         )}
         <SlotGridView
           slots={this.props.slots}
@@ -22,7 +27,11 @@ class SlotPicker extends Component {
           onPress={this.props.onPress}
         />
         {!!this.props.message && (
-          <Text style={[styles.box, styles.message]}>{this.props.message}</Text>
+          <Typography
+            type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+            style={styles.box}>
+            {this.props.message}
+          </Typography>
         )}
       </View>
     );
@@ -31,18 +40,11 @@ class SlotPicker extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   box: {
-    marginTop: 15
+    marginTop: 15,
   },
-  title: {
-    fontSize: 15
-  },
-  message: {
-    fontSize: 13,
-    color: '#6b6b6b'
-  }
 });
 
 export default SlotPicker;
