@@ -1,49 +1,99 @@
-import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import config from '../../config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  Typography,
+  BaseButton,
+  Container,
+  Icon,
+  Card,
+} from 'src/components/base';
+import Image from 'src/components/Image';
 import ModalOverlay from '../ModalOverlay';
-import checkImage from '../../assets/images/check.png';
 
 class ChangeNetwork extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     visible: PropTypes.bool,
     onNetworkChange: PropTypes.func,
-    networkType: PropTypes.string
+    networkType: PropTypes.string,
   };
 
   static defaultProps = {
     data: [],
     visible: false,
     onNetworkChange: () => {},
-    networkType: ''
+    networkType: '',
   };
 
+  get theme() {
+    return getTheme(this);
+  }
+
   renderNetworks() {
-    return this.props.data.map(network => {
+    return this.props.data.map((network) => {
       const isActive = this.props.networkType === network.type;
       return (
-        <Button
-          key={network.type}
-          onPress={() => this.props.onNetworkChange(network)}
-          containerStyle={[
-            styles.networkBtn,
-            isActive && styles.networkBtnActive
-          ]}
-        >
-          <Image style={styles.networkImage} source={network.localImage} />
-          <View style={styles.networkInfoWrapper}>
-            <Text style={styles.networkName}>{network.name}</Text>
-            <Text style={styles.networkDescription}>
-              {network.discount_label}
-            </Text>
-          </View>
-          {isActive && <Image style={styles.checkImage} source={checkImage} />}
-        </Button>
+        <Card key={network.type} style={isActive && this.networkBtnActiveStyle}>
+          <BaseButton
+            onPress={() => this.props.onNetworkChange(network)}
+            style={styles.networkBtn}>
+            <Container noBackground row>
+              <Image
+                style={[styles.networkImage, this.networkImageStyle]}
+                source={network.localImage}
+              />
+              <View style={styles.networkInfoWrapper}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={styles.networkName}>
+                  {network.name}
+                </Typography>
+                <Typography
+                  type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+                  style={styles.networkDescription}>
+                  {network.discount_label}
+                </Typography>
+              </View>
+              {isActive && (
+                <Icon
+                  bundle={BundleIconSetName.ANT_DESIGN}
+                  name="check"
+                  style={[styles.checkIcon, this.checkIconStyle]}
+                />
+              )}
+            </Container>
+          </BaseButton>
+        </Card>
       );
     });
+  }
+
+  get networkImageStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
+  get checkIconStyle() {
+    return {
+      color: this.theme.color.accent1,
+    };
+  }
+
+  get networkBtnActiveStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    };
   }
 
   render() {
@@ -51,14 +101,14 @@ class ChangeNetwork extends Component {
       <ModalOverlay
         transparent
         visible={this.props.visible}
-        heading="Thay đổi nhà mạng"
-        onClose={this.props.onClose}
-      >
+        heading={this.props.t('changeNetwork')}
+        onClose={this.props.onClose}>
         <View style={styles.body}>
-          <Text style={styles.message}>
-            Lưu ý chỉ thay đổi nhà mạng khi bạn đã đăng ký chuyển mạng giữ số
-            điện thoại
-          </Text>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.message}>
+            {this.props.t('changeNetworkNote')}
+          </Typography>
 
           {this.renderNetworks()}
         </View>
@@ -68,72 +118,40 @@ class ChangeNetwork extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
-  },
   overlayBtn: {
-    flex: 1
-  },
-  content: {
-    backgroundColor: config.colors.white,
-    minHeight: 40,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    marginBottom: config.device.bottomSpace
+    flex: 1,
   },
   body: {
-    padding: 16
+    padding: 15,
   },
   message: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#666',
-    marginBottom: 20
-  },
-  submitButton: {
-    backgroundColor: config.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14
-  },
-  submitButtonTitle: {
-    color: config.colors.white,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16
+    marginBottom: 20,
   },
   networkBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8
   },
-  networkBtnActive: {
-    backgroundColor: '#f1f6f9'
-  },
+  networkBtnActive: {},
   networkImage: {
     width: 48,
     height: 48,
-    borderRadius: 8
+    borderRadius: 8,
   },
   networkInfoWrapper: {
     flex: 1,
-    marginLeft: 12
+    marginLeft: 12,
   },
-  networkName: {
-    fontSize: 16,
-    color: config.colors.black,
-    fontWeight: '400'
-  },
+  networkName: {},
   networkDescription: {
-    fontSize: 12,
-    color: '#888',
-    fontWeight: '400',
-    marginTop: 2
+    marginTop: 2,
   },
   checkImage: {
     width: 20,
-    height: 20
-  }
+    height: 20,
+  },
+  checkIcon: {
+    fontSize: 20,
+  },
 });
 
-export default ChangeNetwork;
+export default withTranslation('phoneCard')(ChangeNetwork);

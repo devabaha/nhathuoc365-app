@@ -76,6 +76,8 @@ import vi_filterProduct from './vi/filterProduct.json';
 import en_filterProduct from './en/filterProduct.json';
 import vi_premium from './vi/premium.json';
 import en_premium from './en/premium.json';
+import vi_phoneCard from './vi/phoneCard.json';
+import en_phoneCard from './en/phoneCard.json';
 
 export default {
   [languages.vi.value]: {
@@ -117,6 +119,7 @@ export default {
     productStamp: vi_productStamp,
     filterProduct: vi_filterProduct,
     premium: vi_premium,
+    phoneCard: vi_phoneCard,
   },
   [languages.en.value]: {
     common: en_common,
@@ -157,5 +160,6 @@ export default {
     productStamp: en_productStamp,
     filterProduct: en_filterProduct,
     premium: en_premium,
+    phoneCard: en_phoneCard,
   },
 };

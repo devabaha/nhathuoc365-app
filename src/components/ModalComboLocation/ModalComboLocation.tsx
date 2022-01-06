@@ -18,9 +18,9 @@ import {mergeStyles} from 'src/Themes/helper';
 import {pop} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
-//constants
+// constants
 import {COMBO_LOCATION_TYPE, LOCATION_HEIGHT} from './constants';
-// emtities
+// entities
 import {APIRequest} from '../../network/Entity';
 // custom components
 import NavBar from './NavBar';
@@ -29,7 +29,7 @@ import Loading from '../Loading';
 import Search from './Search';
 import {FlatList} from 'src/components/base';
 
-const PROVINCE_TYPE_QUERRY_PARAM = 'province';
+const PROVINCE_TYPE_QUERY_PARAM = 'province';
 
 const styles = StyleSheet.create({
   container: {
@@ -176,7 +176,7 @@ const ModalComboLocation = ({
     }
 
     if (type === COMBO_LOCATION_TYPE.PROVINCE) {
-      data.type = PROVINCE_TYPE_QUERRY_PARAM;
+      data.type = PROVINCE_TYPE_QUERY_PARAM;
     }
 
     getLocationRequest.data = APIHandler.user_location(data);

@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@alessiocancian/react-native-actionsheet@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@alessiocancian/react-native-actionsheet/-/react-native-actionsheet-3.0.3.tgz#b62aaed398c8539122193f920ff7d2af2319797e"
-  integrity sha512-B0akWApU7UPvng8v5e35+lyMBNxSORulyVjwc/ZP16bYJmxSMZTc9moIETuz7wv1tf93KyLhg1giXP3PlZRimA==
+"@alessiocancian/react-native-actionsheet@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@alessiocancian/react-native-actionsheet/-/react-native-actionsheet-3.1.1.tgz#8d98e26ef94f548e091f832c92a8cb493417a8b4"
+  integrity sha512-pkpztxtdJdJv39Yl3BwiPF3IXTbHte9DB3SwpE5p/PWyJ7bArcVWz1JQVGh65nbgOQm+TIeGSyYfQniNda4H6g==
   dependencies:
     "@react-native-community/blur" "^3.6.0"
 

@@ -310,5 +310,8 @@
   "ok": "Ok",
   "shareMessage": "Xem {{message}} tại {{url}}",
   "qrPayLabel": "QR Pay",
-  "selectDate": "Chọn ngày"
+  "selectDate": "Chọn ngày",
+  "close": "Đóng",
+  "continue": "Tiếp tục",
+  "otherOptions": "Tuỳ chọn khác"
 }

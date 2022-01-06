@@ -1,36 +1,42 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import config from '../../config';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import addEnableImage from '../../assets/images/add-enable.png';
-import addDisabledImage from '../../assets/images/add-disabled.png';
-import removeEnableImage from '../../assets/images/remove-enable.png';
-import removeDisabledImage from '../../assets/images/remove-disabled.png';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+//helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Typography, IconButton} from 'src/components/base';
 
 const MAX_CARD_BUY_AT_ONCE = 5;
 
 class ChooseQuantity extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     initQuantity: PropTypes.number,
     minValue: PropTypes.number,
     maxValue: PropTypes.number,
-    onChangeQuantity: PropTypes.func
+    onChangeQuantity: PropTypes.func,
   };
 
   static defaultProps = {
     initQuantity: 1,
     minValue: 1,
     maxValue: MAX_CARD_BUY_AT_ONCE,
-    onChangeQuantity: () => {}
+    onChangeQuantity: () => {},
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    quantity: this.props.initQuantity,
+  };
 
-    this.state = {
-      quantity: props.initQuantity
-    };
+  get theme() {
+    return getTheme(this);
   }
 
   get canIncrease() {
@@ -44,12 +50,12 @@ class ChooseQuantity extends Component {
   decrease = () => {
     if (this.canDecrease) {
       this.setState(
-        prevState => ({
-          quantity: prevState.quantity - 1
+        (prevState) => ({
+          quantity: prevState.quantity - 1,
         }),
         () => {
           this.props.onChangeQuantity(this.state.quantity);
-        }
+        },
       );
     }
   };
@@ -57,39 +63,53 @@ class ChooseQuantity extends Component {
   increase = () => {
     if (this.canIncrease) {
       this.setState(
-        prevState => ({
-          quantity: prevState.quantity + 1
+        (prevState) => ({
+          quantity: prevState.quantity + 1,
         }),
         () => {
           this.props.onChangeQuantity(this.state.quantity);
-        }
+        },
       );
     }
   };
 
+  get valueWrapperStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusSmall,
+      borderColor: this.theme.color.border,
+      borderWidth: this.theme.layout.borderWidth,
+    };
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Số lượng</Text>
+        <Typography type={TypographyType.TITLE_SEMI_LARGE} style={styles.label}>
+          {this.props.t('quantity')}
+        </Typography>
 
         <View style={styles.controlBtnWrapper}>
-          <Button onPress={this.decrease}>
-            <Image
-              style={styles.controlBtn}
-              source={
-                this.canDecrease ? removeEnableImage : removeDisabledImage
-              }
-            />
-          </Button>
-          <View style={styles.valueWrapper}>
-            <Text style={styles.value}>{this.state.quantity}</Text>
+          <IconButton
+            primaryHighlight
+            disabled={!this.canDecrease}
+            bundle={BundleIconSetName.ANT_DESIGN}
+            name="minuscircle"
+            iconStyle={styles.icon}
+            onPress={this.decrease}
+          />
+          <View style={[styles.valueWrapper, this.valueWrapperStyle]}>
+            <Typography type={TypographyType.LABEL_LARGE} style={styles.value}>
+              {this.state.quantity}
+            </Typography>
           </View>
-          <Button onPress={this.increase}>
-            <Image
-              style={styles.controlBtn}
-              source={this.canIncrease ? addEnableImage : addDisabledImage}
-            />
-          </Button>
+          <IconButton
+            primaryHighlight
+            disabled={!this.canIncrease}
+            bundle={BundleIconSetName.ANT_DESIGN}
+            name="pluscircle"
+            iconStyle={styles.icon}
+            onPress={this.increase}
+          />
         </View>
       </View>
     );
@@ -102,35 +122,32 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 16,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18
   },
   controlBtnWrapper: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   controlBtn: {
     width: 26,
-    height: 26
+    height: 26,
   },
   valueWrapper: {
     width: 42,
     paddingVertical: 6,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginHorizontal: 12
+    marginHorizontal: 12,
   },
   value: {
     fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
+  icon: {
+    fontSize: 26,
+  },
 });
 
-export default ChooseQuantity;
+export default withTranslation('phoneCard')(ChooseQuantity);

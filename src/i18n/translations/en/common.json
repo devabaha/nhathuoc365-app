@@ -310,5 +310,8 @@
   "ok": "Ok",
   "shareMessage": "View {{name}} at {{url}}",
   "qrPayLabel": "QR Pay",
-  "selectDate": "Pick date"
+  "selectDate": "Pick date",
+  "close": "Close",
+  "continue": "Continue",
+  "otherOptions": "Other options"
 }

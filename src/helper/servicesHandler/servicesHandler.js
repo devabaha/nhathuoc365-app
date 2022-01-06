@@ -199,13 +199,17 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** TICKID-PHONE-CARD */
     case SERVICES_TYPE.UP_TO_PHONE:
-      Actions.push(appConfig.routes.upToPhone, {
-        service_type: service.type,
-        service_id: service.id,
-        indexTab: service.tab,
-        title: service.name,
-        serviceId: service.serviceId ? service.serviceId : 100,
-      });
+      push(
+        appConfig.routes.upToPhone,
+        {
+          service_type: service.type,
+          service_id: service.id,
+          indexTab: service.tab,
+          title: service.name,
+          serviceId: service.serviceId ? service.serviceId : 100,
+        },
+        service.theme,
+      );
       break;
 
     /** 30DAY */

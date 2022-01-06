@@ -8,6 +8,7 @@ export enum TypographyType {
 
   TITLE_LARGE_TERTIARY = 'titleLargeTertiary',
   TITLE_SEMI_LARGE_TERTIARY = 'titleSemiLargeTertiary',
+  TITLE_MEDIUM_TERTIARY = 'titleMediumTertiary',
 
   TITLE_HUGE = 'titleHuge',
   TITLE_LARGE = 'titleLarge',
