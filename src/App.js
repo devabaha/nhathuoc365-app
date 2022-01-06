@@ -231,10 +231,10 @@ initializePhoneCardModule({
     endpoint: () => BaseAPI.apiDomain,
   },
   route: {
-    push: Actions.push,
-    pop: Actions.pop,
+    push: push,
+    pop: pop,
     pushToMain: () => {
-      Actions.reset(appConfig.routes.primaryTabbar);
+      reset(appConfig.routes.primaryTabbar);
     },
   },
 });
@@ -983,11 +983,10 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     back
                   />
-                  
                 </Stack>
 
                 <Stack key={appConfig.routes.searchUserChat}>
-                <Scene
+                  <Scene
                     key={`${appConfig.routes.searchUserChat}_1`}
                     component={SearchUserChat}
                     navBar={SearchUserChatNavBar}

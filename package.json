@@ -11,7 +11,7 @@
     "postinstall": "bash setup"
   },
   "dependencies": {
-    "@alessiocancian/react-native-actionsheet": "^3.0.3",
+    "@alessiocancian/react-native-actionsheet": "^3.1.1",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/blur": "^3.6.0",

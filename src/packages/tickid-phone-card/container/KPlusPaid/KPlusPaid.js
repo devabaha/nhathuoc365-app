@@ -1,22 +1,34 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import config from '../../config';
+// helpers
+import replaceAll from '../../helper/replaceAll';
+import {getTheme} from 'src/Themes/Theme.context';
+//context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
+import EventTracker from '../../../../helper/EventTracker';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import {
-  Text,
-  View,
+  Container,
   ScrollView,
-  StyleSheet,
-  Platform,
-  RefreshControl
-} from 'react-native';
+  RefreshControl,
+  Typography,
+} from 'src/components/base';
 import EnterPhoneComponent from '../../component/EnterPhone';
 import ChangeNetworkModal from '../../component/ChangeNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SubmitButton from '../../component/SubmitButton';
-import replaceAll from '../../helper/replaceAll';
-import EventTracker from '../../../../helper/EventTracker';
 
 class KPlusPaid extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     refreshing: PropTypes.bool,
     routeKey: PropTypes.string.isRequired,
@@ -24,14 +36,13 @@ class KPlusPaid extends Component {
     listServices: PropTypes.array,
     networksOfService: PropTypes.object,
     cardsOfNetwork: PropTypes.object,
-    prefix: PropTypes.oneOf(['trước', 'sau']),
     onRefresh: PropTypes.func,
     hideContact: PropTypes.bool,
     placeholder: PropTypes.string,
     errorEmptyMessage: PropTypes.string,
     errorLengthMessage: PropTypes.string,
     validLength: PropTypes.number,
-    keyboardType: PropTypes.string
+    keyboardType: PropTypes.string,
   };
 
   static defaultProps = {
@@ -40,36 +51,35 @@ class KPlusPaid extends Component {
     listServices: [],
     networksOfService: {},
     cardsOfNetwork: {},
-    prefix: 'trước',
     onRefresh: () => {},
     placeholder: '',
     hideContact: false,
     validLength: 0,
     errorLengthMessage: '',
     errorEmptyMessage: '',
-    keyboardType: undefined
+    keyboardType: undefined,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    errorMessage: '',
+    cardValueType: '',
+    contactName: config.defaultContactName,
+    cardNumber: config.defaultcardNumber,
+    networkType: this.currentNetworks[0].type,
+    options: [],
+    subCardValue: '',
+    currentCards: [],
+    kPlusData: [],
+    totalPrice: '',
+  };
+  eventTracker = new EventTracker();
 
-    this.state = {
-      errorMessage: '',
-      cardValueType: '',
-      contactName: config.defaultContactName,
-      cardNumber: config.defaultcardNumber,
-      networkType: this.currentNetworks[0].type,
-      options: [],
-      subCardValue: '',
-      currentCards: [],
-      kPlusData: [],
-      totalPrice: ''
-    };
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
   }
 
   get currentService() {
-    const { services, routeKey } = this.props;
+    const {services, routeKey} = this.props;
     return services[routeKey];
   }
 
@@ -79,14 +89,14 @@ class KPlusPaid extends Component {
 
   get selectedNetwork() {
     return this.currentNetworks.find(
-      network => network.type === this.state.networkType
+      (network) => network.type === this.state.networkType,
     );
   }
 
   get selectedCard() {
     if (!this.state.cardValueType) return {};
     return this.state.currentCards.find(
-      card => card.type === this.state.cardValueType
+      (card) => card.type === this.state.cardValueType,
     );
   }
 
@@ -97,8 +107,8 @@ class KPlusPaid extends Component {
 
   get networksOfService() {
     let networksOfService = [];
-    Object.keys(this.props.networksOfService).forEach(serviceKey => {
-      this.props.networksOfService[serviceKey].forEach(s => {
+    Object.keys(this.props.networksOfService).forEach((serviceKey) => {
+      this.props.networksOfService[serviceKey].forEach((s) => {
         if (s.type_view === 'kplus_paid') {
           networksOfService = this.props.networksOfService[serviceKey];
         }
@@ -137,7 +147,7 @@ class KPlusPaid extends Component {
       kPlusData,
       options,
       subCardValue: options[0].type,
-      totalPrice: currentCards[0].total_price
+      totalPrice: currentCards[0].total_price,
     });
     this.eventTracker.logCurrentView();
   }
@@ -146,54 +156,48 @@ class KPlusPaid extends Component {
     this.eventTracker.clearTracking();
   }
 
-  handleOpenContact = () => {
-    config.route.push(config.routes.contact, {
-      onPressContact: this.handlePressContact
-    });
-  };
-
-  handlePressContact = contact => {
+  handlePressContact = (contact) => {
     config.route.pop();
     this.setState({
       contactName: contact.name,
-      cardNumber: contact.displayPhone
+      cardNumber: contact.displayPhone,
     });
   };
 
   handlePressSelectNetwork = () => {
     this.setState({
-      visibleNetwork: true
+      visibleNetwork: true,
     });
   };
 
-  handleNetworkChange = network => {
+  handleNetworkChange = (network) => {
     this.setState(
       {
         networkType: network.type,
-        visibleNetwork: false
+        visibleNetwork: false,
       },
       () => {
         const alsoHasType = this.state.currentCards.some(
-          card => card.type === this.state.cardValueType
+          (card) => card.type === this.state.cardValueType,
         );
         // if not exist card type, reset default card type to first
         if (!alsoHasType) {
           this.setState({
-            cardValueType: this.state.currentCards[0].type
+            cardValueType: this.state.currentCards[0].type,
           });
         }
-      }
+      },
     );
   };
 
-  handleSelectCardValue = cardValue => {
+  handleSelectCardValue = (cardValue) => {
     this.setState({
       cardValueType: cardValue.type,
-      totalPrice: cardValue.total_price
+      totalPrice: cardValue.total_price,
     });
   };
 
-  handleSelectSubCardValue = subCardValue => {
+  handleSelectSubCardValue = (subCardValue) => {
     if (subCardValue.type !== this.state.subCardValue) {
       const currentCards = this.state.kPlusData[subCardValue.label].data
         .discounts;
@@ -201,13 +205,13 @@ class KPlusPaid extends Component {
       this.setState(
         {
           subCardValue: subCardValue.type,
-          currentCards
+          currentCards,
         },
         () => {
           this.setState({
-            totalPrice: this.selectedCard.total_price
+            totalPrice: this.selectedCard.total_price,
           });
-        }
+        },
       );
     }
   };
@@ -215,17 +219,17 @@ class KPlusPaid extends Component {
   handleValidate = () => {
     if (!this.state.cardNumber) {
       this.setState({
-        errorMessage: this.props.errorEmptyMessage
+        errorMessage: this.props.errorEmptyMessage,
       });
       return false;
     } else if (this.state.cardNumber.length < this.props.validLength) {
       this.setState({
-        errorMessage: this.props.errorLengthMessage
+        errorMessage: this.props.errorLengthMessage,
       });
       return false;
     } else {
       this.setState({
-        errorMessage: ''
+        errorMessage: '',
       });
       return true;
     }
@@ -237,38 +241,46 @@ class KPlusPaid extends Component {
       const selectedCard = this.selectedCard;
       const option = Object.keys(
         this.state.options.find(
-          option => option.type === this.state.subCardValue
-        )
+          (option) => option.type === this.state.subCardValue,
+        ),
       )[0];
 
-      config.route.push(config.routes.buyCardConfirm, {
-        type: this.currentService.name,
-        card: selectedCard,
-        wallet: this.props.wallet,
-        hasPass: this.props.hasPass,
-        network: this.selectedNetwork,
-        serviceId: this.currentService.id,
-        historyTitle: this.currentService.history_title,
-        subCard: this.state.subCardValue,
-        cardNumber: this.cardNumber,
-        times: selectedCard.times,
-        option
-      });
+      config.route.push(
+        config.routes.buyCardConfirm,
+        {
+          type: this.currentService.name,
+          card: selectedCard,
+          wallet: this.props.wallet,
+          hasPass: this.props.hasPass,
+          network: this.selectedNetwork,
+          serviceId: this.currentService.id,
+          historyTitle: this.currentService.history_title,
+          subCard: this.state.subCardValue,
+          cardNumber: this.cardNumber,
+          times: selectedCard.times,
+          option,
+        },
+        this.theme,
+      );
     }
   };
 
   handleShowHistory = () => {
-    config.route.push(config.routes.cardHistory, {
-      title: this.currentService.history_title,
-      serviceId: this.currentService.id
-    });
+    config.route.push(
+      config.routes.cardHistory,
+      {
+        title: this.currentService.history_title,
+        serviceId: this.currentService.id,
+      },
+      this.theme,
+    );
   };
 
-  handleChangePhoneNumber = text => {
+  handleChangePhoneNumber = (text) => {
     this.setState({
       cardNumber: text,
       contactName: '',
-      errorMessage: ''
+      errorMessage: '',
     });
   };
 
@@ -278,7 +290,7 @@ class KPlusPaid extends Component {
 
   render() {
     return (
-      <View style={styles.sceneContainer}>
+      <Container style={styles.sceneContainer}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -288,8 +300,7 @@ class KPlusPaid extends Component {
           }
           keyboardDismissMode={
             Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-          }
-        >
+          }>
           <EnterPhoneComponent
             editable
             hideContact={this.props.hideContact}
@@ -307,25 +318,26 @@ class KPlusPaid extends Component {
           />
 
           <SelectCardValueComponent
-            title="Số tháng"
+            title={this.props.t('selectPackage')}
             data={this.state.currentCards}
             cardValueType={this.state.cardValueType}
             onSelectCardValue={this.handleSelectCardValue}
           />
 
           <SelectCardValueComponent
-            title="Số thẻ phụ"
+            title={this.props.t('totalSubCard')}
             data={this.state.options}
-            cardValueBtnStyle={{ height: 40 }}
             cardValueType={this.state.subCardValue}
             onSelectCardValue={this.handleSelectSubCardValue}
           />
 
           <View
-            style={[styles.container, { flexDirection: 'row', marginTop: 10 }]}
-          >
-            <Text style={[styles.label, { marginRight: 15 }]}>Tổng:</Text>
-            <Text style={styles.label}>{this.state.totalPrice}</Text>
+            style={[styles.container, {flexDirection: 'row', marginTop: 10}]}>
+            <Typography
+              type={TypographyType.TITLE_SEMI_LARGE}
+              style={styles.label}>
+              {this.props.t('total')}: {this.state.totalPrice}
+            </Typography>
           </View>
 
           <ChangeNetworkModal
@@ -333,18 +345,26 @@ class KPlusPaid extends Component {
             networkType={this.state.networkType}
             visible={this.state.visibleNetwork}
             onNetworkChange={this.handleNetworkChange}
-            onClose={() => this.setState({ visibleNetwork: false })}
+            onClose={() => this.setState({visibleNetwork: false})}
           />
 
           {!!this.currentService.content && (
-            <Text style={styles.content}>{this.currentService.content}</Text>
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={styles.content}>
+              {this.currentService.content}
+            </Typography>
           )}
 
           <View style={styles.bottomSpace} />
         </ScrollView>
 
-        <SubmitButton onPress={this.handleContinue} title="Nạp ngay" />
-      </View>
+        <SubmitButton
+          safeLayout
+          onPress={this.handleContinue}
+          title={this.props.t('rechargeNow')}
+        />
+      </Container>
     );
   }
 }
@@ -353,26 +373,21 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 10,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18
   },
   sceneContainer: {
-    flex: 1
+    flex: 1,
   },
   bottomSpace: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   content: {
-    fontSize: 12,
-    color: '#333',
-    fontWeight: '400',
     marginLeft: 16,
-    marginTop: 24
-  }
+    marginTop: 24,
+  },
 });
 
-export default KPlusPaid;
+export default withTranslation('phoneCard')(KPlusPaid);

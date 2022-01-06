@@ -1,18 +1,35 @@
-import React, { Component } from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import config from '../../config';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
 import numberFormat from '../../helper/numberFormat';
 import getNetworkImage from '../../helper/getNetworkImage';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {
+  Card,
+  FlatList,
+  Typography,
+  TextButton,
+  BaseButton,
+} from 'src/components/base';
+import Image from 'src/components/Image';
 
 class SelectCardHistory extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     onSelectCardHistory: PropTypes.func,
     onShowHistory: PropTypes.func,
     showHistory: PropTypes.bool,
-    heading: PropTypes.string
+    heading: PropTypes.string,
   };
 
   static defaultProps = {
@@ -20,7 +37,17 @@ class SelectCardHistory extends Component {
     onSelectCardHistory: () => {},
     onShowHistory: () => {},
     showHistory: true,
-    heading: ''
+    heading: '',
+  };
+
+  viewHistoryTitleTypoProps = {type: TypographyType.LABEL_SEMI_LARGE_PRIMARY};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  getPrice = (cashback) => {
+    return numberFormat(cashback) + 'đ';
   };
 
   renderCardValues() {
@@ -35,53 +62,86 @@ class SelectCardHistory extends Component {
     );
   }
 
-  getPrice = cashback => {
-    return numberFormat(cashback) + 'đ';
-  };
-
-  renderCardValueItem = ({ item: card, index }) => {
+  renderCardValueItem = ({item: card, index}) => {
     const last = index === this.props.data.length - 1;
     return (
-      <Button
+      <BaseButton
         onPress={() => this.props.onSelectCardHistory(card)}
-        containerStyle={[
+        style={[
           styles.cardBtn,
           {
-            marginRight: last ? 0 : 10
-          }
-        ]}
-      >
-        <View style={styles.btnContent}>
+            marginRight: last ? 0 : 10,
+          },
+        ]}>
+        <Card style={[styles.btnContent, this.btnContentStyle]}>
           <View style={styles.cardInfoWrapper}>
             <Image
               style={styles.networkImage}
               source={getNetworkImage(card.type)}
             />
             <View>
-              <Text style={styles.cardName}>{card.name}</Text>
-              <Text style={styles.cardBuyTime}>{card.created}</Text>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.cardName}>
+                {card.name}
+              </Typography>
+              <Typography
+                type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                style={styles.cardBuyTime}>
+                {card.created}
+              </Typography>
             </View>
           </View>
-          <View style={styles.descriptionWrapper}>
-            <Text style={styles.description}>
-              Giá: <Text style={styles.cashback}>{card.price_label}</Text>
-            </Text>
+          <View
+            style={[styles.descriptionWrapper, this.descriptionWrapperStyle]}>
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={styles.description}>
+              {this.props.t('pricePrefix')}
+              {': '}
+              <Typography
+                type={TypographyType.LABEL_SMALL}
+                style={styles.cashback}>
+                {card.price_label}
+              </Typography>
+            </Typography>
           </View>
-        </View>
-      </Button>
+        </Card>
+      </BaseButton>
     );
   };
+
+  get btnContentStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get descriptionWrapperStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.label}>{this.props.heading}</Text>
+          <Typography
+            type={TypographyType.TITLE_SEMI_LARGE}
+            style={styles.label}>
+            {this.props.heading}
+          </Typography>
 
           {this.props.showHistory && (
-            <Button onPress={this.props.onShowHistory}>
-              <Text style={styles.viewHistoryText}>Xem lịch sử</Text>
-            </Button>
+            <TextButton
+              typoProps={this.viewHistoryTitleTypoProps}
+              titleStyle={styles.viewHistoryText}
+              onPress={this.props.onShowHistory}>
+              {this.props.t('transfer:contactInput.historyTitle')}
+            </TextButton>
           )}
         </View>
 
@@ -95,82 +155,52 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 10,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   headingWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  viewHistoryText: {
-    fontSize: 15,
-    fontWeight: '400',
-    color: '#0084ff'
-  },
+  viewHistoryText: {},
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18
   },
   cardBtn: {
     width: 200,
     flexDirection: 'column',
     height: 86,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
     overflow: 'hidden',
-    marginTop: 16
+    marginTop: 16,
   },
   btnContent: {
-    flex: 1
+    flex: 1,
   },
   cardInfoWrapper: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   networkImage: {
     width: 56,
     height: 56,
-    marginLeft: 10
+    marginLeft: 10,
   },
   cardName: {
-    fontSize: 14,
     fontWeight: '600',
-    color: config.colors.black,
-    marginLeft: 8
+    marginLeft: 8,
   },
   cardBuyTime: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#666',
-    marginLeft: 8
-  },
-  value: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 16
-  },
-  valueActive: {
-    color: config.colors.primary
+    marginLeft: 8,
   },
   descriptionWrapper: {
-    borderRadius: 1,
-    borderTopWidth: 1,
-    borderTopColor: '#e6e6e6',
     marginHorizontal: 8,
-    paddingVertical: 3
+    paddingVertical: 3,
   },
-  description: {
-    fontSize: 11,
-    fontWeight: '400',
-    color: '#333'
-  },
+  description: {},
   cashback: {
     fontWeight: '600',
-    color: '#333'
-  }
+  },
 });
 
-export default SelectCardHistory;
+export default withTranslation(['phoneCard', 'transfer'])(SelectCardHistory);

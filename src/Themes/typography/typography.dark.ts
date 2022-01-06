@@ -25,6 +25,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.HEADLINE_SMALL,
     color: BASE_COLOR_DARK.textTertiary,
   },
+  [TypographyType.TITLE_MEDIUM_TERTIARY]: {
+    fontSize: TypographyFontSize.BODY_LARGE,
+    color: BASE_COLOR_DARK.textTertiary,
+  },
   // SECONDARY
   [TypographyType.TITLE_LARGE_SECONDARY]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,

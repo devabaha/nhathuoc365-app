@@ -1,78 +1,147 @@
-import React, { Component } from 'react';
-import { View, Text, ViewPropTypes, FlatList, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, ViewPropTypes, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import config from '../../config';
-import numberFormat from '../../helper/numberFormat';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {Card, TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Typography} from 'src/components/base';
 
 class SelectCardValue extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     onSelectCardValue: PropTypes.func,
     cardValueType: PropTypes.string,
     title: PropTypes.string,
-    cardValueBtnStyle: ViewPropTypes.style
+    cardValueBtnStyle: ViewPropTypes.style,
   };
 
   static defaultProps = {
     data: [],
     onSelectCardValue: () => {},
     cardValueType: '',
-    title: 'Mệnh giá nạp',
-    cardValueBtnStyle: {}
+    cardValueBtnStyle: {},
   };
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get title() {
+    return this.props.title || this.props.t('cardPrice');
+  }
 
   renderCardValues() {
     return (
-      <FlatList
-        numColumns={3}
-        data={this.props.data}
-        extraData={this.props.cardValueType}
-        renderItem={this.renderCardValueItem}
-        keyExtractor={item => item.type}
-      />
+      <View style={styles.cardValueContainer}>
+        {this.props.data.map((item, index) => {
+          return this.renderCardValueItem({item, index});
+        })}
+      </View>
     );
   }
 
-  renderCardValueItem = ({ item: cardValue }) => {
+  renderCardValueItem = ({item: cardValue, index}) => {
     const isActive = this.props.cardValueType === cardValue.type;
+    const isLastInRow = (index + 1) % 3 === 0;
     return (
-      <Button
+      <BaseButton
+        key={index}
         onPress={() => this.props.onSelectCardValue(cardValue)}
-        containerStyle={[
+        style={[
           styles.cardValueBtn,
+          !isLastInRow && styles.cardValueBtnSpacing,
           this.props.cardValueBtnStyle,
-          isActive && styles.cardValueBtnActive
-        ]}
-      >
-        <View style={styles.btnContent}>
+        ]}>
+        <Card
+          style={[
+            styles.btnContent,
+            this.btnContentStyle,
+            isActive && this.cardValueBtnActiveStyle,
+          ]}>
           <View style={styles.valueWrapper}>
-            <Text style={[styles.value, isActive && styles.valueActive]}>
+            <Typography
+              type={TypographyType.LABEL_LARGE_TERTIARY}
+              style={[styles.value, isActive && this.valueActiveStyle]}>
               {cardValue.label}
-            </Text>
+            </Typography>
             {!!cardValue.subLabel && (
-              <Text style={[styles.subValue]}>{cardValue.subLabel}</Text>
+              <Typography
+                type={TypographyType.LABEL_SMALL}
+                style={styles.subValue}>
+                {cardValue.subLabel}
+              </Typography>
             )}
           </View>
           {cardValue.cashbackValue && (
-            <View style={styles.descriptionWrapper}>
-              <Text style={styles.description}>
+            <View
+              style={[styles.descriptionWrapper, this.descriptionWrapperStyle]}>
+              <Typography
+                type={TypographyType.DESCRIPTION_TINY_TERTIARY}
+                style={styles.description}>
                 {cardValue.cashbackLabel}
                 {cardValue.cashbackValue && (
-                  <Text style={styles.cashback}>{cardValue.cashbackValue}</Text>
+                  <Typography
+                    type={TypographyType.DESCRIPTION_TINY_TERTIARY}
+                    style={[styles.cashback, this.cashbackStyle]}>
+                    {cardValue.cashbackValue}
+                  </Typography>
                 )}
-              </Text>
+              </Typography>
             </View>
           )}
-        </View>
-      </Button>
+        </Card>
+      </BaseButton>
     );
   };
+
+  get btnContentStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidthLarge,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get cardValueBtnActiveStyle() {
+    return {
+      borderColor: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get valueActiveStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get descriptionWrapperStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get cashbackStyle() {
+    return {
+      color: this.theme.color.accent2,
+    };
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>{this.props.title}</Text>
+        <Typography type={TypographyType.TITLE_SEMI_LARGE} style={styles.label}>
+          {this.title}
+        </Typography>
 
         {this.renderCardValues()}
       </View>
@@ -84,31 +153,28 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 10,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18
+  },
+  cardValueContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   cardValueBtn: {
     width: config.device.width / 3 - 16,
     flexDirection: 'column',
     height: 71,
-    borderWidth: 2,
-    borderColor: '#e6e6e6',
-    borderRadius: 8,
-    marginRight: 8,
     marginTop: 16,
-    justifyContent:'center'
+    justifyContent: 'center',
   },
-  cardValueBtnActive: {
-    borderColor: config.colors.primary
+  cardValueBtnSpacing: {
+    marginRight: 8,
   },
   btnContent: {
     width: config.device.width / 3 - 16,
     height: 73,
-
   },
   valueWrapper: {
     flex: 1,
@@ -117,33 +183,22 @@ const styles = StyleSheet.create({
   value: {
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16,
-    color:'#666',
-    
   },
   subValue: {
     textAlign: 'center',
-    fontSize: 12,
-    marginTop: 5
+    marginTop: 5,
   },
-  valueActive: {
-    color: config.colors.primary
-  },
+  valueActive: {},
   descriptionWrapper: {
-    borderTopWidth: 1,
-    borderTopColor: '#e6e6e6',
     marginHorizontal: 6,
-    paddingVertical: 3
+    paddingVertical: 3,
   },
   description: {
-    fontSize: 10,
-    fontWeight: '400',
-    color: '#333'
+    // textAlign: 'center',
   },
   cashback: {
     fontWeight: '600',
-    color: '#188aeb'
-  }
+  },
 });
 
-export default SelectCardValue;
+export default withTranslation('phoneCard')(SelectCardValue);
