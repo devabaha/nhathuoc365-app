@@ -231,10 +231,10 @@ class BuyCard extends Component {
             onSelectCardValue={this.handleSelectCardValue}
           />
 
-          <ChooseQuantityComponent
+          {/* <ChooseQuantityComponent
             initQuantity={this.state.cardQuantity}
             onChangeQuantity={this.handleChangeQuantity}
-          />
+          /> */}
 
           {!!this.currentService.content && (
             <Typography

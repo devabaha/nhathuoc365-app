@@ -117,32 +117,23 @@ class PhoneCard extends BaseContainer {
             {...extraProps}
           />
         );
-      // case 'internet_paid':
-      //   extraProps.placeholder = this.props.t('enterAccountCode');
-      //   extraProps.validLength = 9;
-      //   extraProps.errorLengthMessage = this.props.t(
-      //     'error.accountCodeMinLength',
-      //     {minLength: extraProps.validLength},
-      //   );
-      //   extraProps.keyboardType = 'default';
-
-      //   return (
-      //     <PrepayContainer
-      //       prefix={this.props.t('prepayPrefix')}
-      //       routeKey={route.key}
-      //       refreshing={this.state.refreshing}
-      //       onRefresh={this.handleRefresh}
-      //       {...this.state.cardServiceData}
-      //       {...extraProps}
-      //     />
-      //   );
       case 'internet_paid':
+        extraProps.placeholder = this.props.t('enterAccountCode');
+        extraProps.validLength = 9;
+        extraProps.errorLengthMessage = this.props.t(
+          'error.accountCodeMinLength',
+          {minLength: extraProps.validLength},
+        );
+        extraProps.keyboardType = 'default';
+
         return (
-          <BuyCardContainer
+          <PrepayContainer
+            prefix={this.props.t('prepayPrefix')}
             routeKey={route.key}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
             {...this.state.cardServiceData}
+            {...extraProps}
           />
         );
       case 'kplus_paid':
