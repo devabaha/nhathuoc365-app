@@ -1096,7 +1096,7 @@ class Item extends Component {
           item={item}
           onPressWarehouse={this.handlePressWarehouse}
         />
-        
+
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
 
         <ScrollView

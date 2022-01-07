@@ -1,3 +1,4 @@
+import { TFunction } from "i18next";
 import { RNCameraProps } from "react-native-camera/types";
 
 export { default } from "./CameraView";
@@ -13,7 +14,7 @@ type OrientationNumber = 1 | 2 | 3 | 4;
 
 export interface TakePictureOptions {
   quality?: number;
-  orientation?: keyof Orientation | OrientationNumber;
+  orientation?: string;
   base64?: boolean;
   exif?: boolean;
   width?: number;
@@ -31,6 +32,8 @@ export interface TakePictureOptions {
 }
 
 export interface CameraViewProps extends RNCameraProps {
+  t?: TFunction;
+
   options?: TakePictureOptions;
   prefixImageCapture?: string;
   onCaptured?: Function;

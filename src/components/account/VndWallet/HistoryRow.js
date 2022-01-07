@@ -86,42 +86,42 @@ const HistoryRow = (props) => {
 
   return (
     <Container>
-    <BaseButton
-      useTouchableHighlight
-      style={containerStyle}
-      onPress={_onShowHistoryDetail}>
-      <View style={styles.contentContainer}>
-        <View style={[styles.historyDetailContainer]}>
-          <Typography style={styles.title} type={TypographyType.LABEL_LARGE}>
-            {props.title}
-          </Typography>
-          <Typography
-            type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
-            style={styles.des}>
-            {props.date}
-          </Typography>
-          <Typography
-            numberOfLines={1}
-            type={TypographyType.DESCRIPTION_TINY}
-            style={styles.des}>
-            {props.id}
-          </Typography>
-        </View>
+      <BaseButton
+        useTouchableHighlight
+        style={containerStyle}
+        onPress={_onShowHistoryDetail}>
+        <View style={styles.contentContainer}>
+          <View style={[styles.historyDetailContainer]}>
+            <Typography style={styles.title} type={TypographyType.LABEL_LARGE}>
+              {props.title}
+            </Typography>
+            <Typography
+              type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+              style={styles.des}>
+              {props.date}
+            </Typography>
+            <Typography
+              numberOfLines={1}
+              type={TypographyType.DESCRIPTION_TINY}
+              style={styles.des}>
+              {props.id}
+            </Typography>
+          </View>
 
-        <View style={[styles.historyAmountContainer]}>
-          <Typography
-            type={TypographyType.LABEL_LARGE}
-            style={historyAmountStyle}>
-            {props.money}
-          </Typography>
-          <Typography
-            type={TypographyType.DESCRIPTION_SMALL}
-            style={[styles.des, styles.beforeBalance]}>
-            {t('vndWallet:balanceBefore')} {props.balance_view}
-          </Typography>
+          <View style={[styles.historyAmountContainer]}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={historyAmountStyle}>
+              {props.money}
+            </Typography>
+            <Typography
+              type={TypographyType.DESCRIPTION_SMALL}
+              style={[styles.des, styles.beforeBalance]}>
+              {t('vndWallet:balanceBefore')} {props.balance_view}
+            </Typography>
+          </View>
         </View>
-      </View>
-    </BaseButton>
+      </BaseButton>
     </Container>
   );
 };
