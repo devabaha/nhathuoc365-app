@@ -2,16 +2,18 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Keyboard, Alert} from 'react-native';
 // 3-party libs
 import {reaction} from 'mobx';
-import {Actions} from 'react-native-router-flux';
+import {withTranslation} from 'react-i18next';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
-// helper
+// helpers
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
-import {getTheme} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop, push, refresh, reset} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -89,11 +91,11 @@ class OpRegister extends Component {
   componentDidMount() {
     isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
     isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && this.getListWarehouse();
-    Actions.refresh({
+    refresh({
       onBack: () => {
         this._unMount();
 
-        Actions.pop();
+        pop();
       },
     });
 
@@ -167,7 +169,7 @@ class OpRegister extends Component {
           const response = await APIHandler.user_op_register(data);
           if (response?.status === STATUS_SUCCESS) {
             store.setUserInfo(response.data);
-            Actions.reset(appConfig.routes.sceneWrapper);
+            reset(appConfig.routes.sceneWrapper);
           }
 
           flashShowMessage({
@@ -293,16 +295,20 @@ class OpRegister extends Component {
 
   onPressSelectProvince = async () => {
     Keyboard.dismiss();
-    Actions.push(appConfig.routes.voucherSelectProvince, {
-      provinceSelected: this.state.provinceSelected.name,
-      onSelectProvince: (provinceSelected) => {
-        this.setState({provinceSelected});
+    push(
+      appConfig.routes.voucherSelectProvince,
+      {
+        provinceSelected: this.state.provinceSelected.name,
+        onSelectProvince: (provinceSelected) => {
+          this.setState({provinceSelected});
+        },
+        onClose: pop,
+        listCities: this.state.cities,
+        dataKey: 'name',
+        allOption: false,
       },
-      onClose: Actions.pop,
-      listCities: this.state.cities,
-      dataKey: 'name',
-      allOption: false,
-    });
+      this.theme,
+    );
   };
 
   onCheckBox = () => {
@@ -320,12 +326,12 @@ class OpRegister extends Component {
 
   onPressWarehouse = () => {
     Keyboard.dismiss();
-    Actions.push(appConfig.routes.modalList, {
+    push(appConfig.routes.modalList, {
       heading: this.props.t('modal.warehouse.title'),
       data: this.state.listWarehouse,
       selectedItem: this.state.warehouseSelected,
       onPressItem: this.onSelectWarehouse,
-      onCloseModal: Actions.pop,
+      onCloseModal: pop,
       modalStyle: {
         height: null,
         maxHeight: '80%',
@@ -334,16 +340,20 @@ class OpRegister extends Component {
   };
 
   onPressScanInvitationCode = () => {
-    Actions.push(appConfig.routes.qrBarCode, {
-      title: this.props.t('common:screen.qrBarCode.scanTitle'),
-      index: 1,
-      isVisibleTabBar: false,
-      getQRCode: (result) => {
-        this.setState({
-          refer: result,
-        });
+    push(
+      appConfig.routes.qrBarCode,
+      {
+        title: this.props.t('common:screen.qrBarCode.scanTitle'),
+        index: 1,
+        isVisibleTabBar: false,
+        getQRCode: (result) => {
+          this.setState({
+            refer: result,
+          });
+        },
       },
-    });
+      this.theme,
+    );
   };
 
   renderDOB() {
