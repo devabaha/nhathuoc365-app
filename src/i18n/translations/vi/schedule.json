@@ -10,5 +10,16 @@
       "placeholder": "Chạm để nhập ghi chú..."
     },
     "requestAppointment": "Yêu cầu cuộc hẹn"
-  }
+  },
+  "diffTime": {
+    "yearFrom": "năm từ",
+    "monthFrom": "tháng từ",
+    "weekFrom": "tuần từ",
+    "dayFrom": "ngày từ",
+    "hourFrom": "giờ từ",
+    "minuteFrom": "phút từ"
+  },
+  "delayed": "Đã trễ ",
+  "now": "bây giờ",
+  "noSlot": "Chưa có khung giờ cho ngày này."
 }

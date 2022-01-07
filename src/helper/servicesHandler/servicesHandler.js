@@ -529,9 +529,13 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** SCHEDULE BOOKING */
     case SERVICES_TYPE.SCHEDULE_BOOKING:
-      Actions.push(appConfig.routes.schedule, {
-        serviceId: service.service_id,
-      });
+      push(
+        appConfig.routes.schedule,
+        {
+          serviceId: service.service_id,
+        },
+        service.theme,
+      );
       break;
 
     /** PREMIUMS */
