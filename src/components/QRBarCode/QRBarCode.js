@@ -483,7 +483,7 @@ class QRBarCode extends Component {
                     ) {
                       pop();
                       setTimeout(() => {
-                        push(appConfig.routes.viewOrdersItem, {
+                        push(appConfig.routes.ordersDetail, {
                           data: response.data.item,
                           title: '#' + response.data.item.cart_code,
                         });
@@ -542,11 +542,10 @@ class QRBarCode extends Component {
                   loading: false,
                 },
                 () => {
-                  replace(appConfig.routes.viewOrdersItem, {
+                  replace(appConfig.routes.ordersDetail, {
                     data: response.data,
                     title: '#' + barcode,
                     tel: response.data.tel,
-                    // type: ActionConst.REPLACE,
                   });
                   // Toast.show(response.message, Toast.SHORT);
                 },
