@@ -1,33 +1,36 @@
-/* @flow */
-
 import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   StatusBar,
   Animated,
-  Text,
-  SafeAreaView,
   TouchableWithoutFeedback,
 } from 'react-native';
-
-//library
-import ImageZoom from 'react-native-image-pan-zoom';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Actions} from 'react-native-router-flux';
-import ImageViewer from 'react-native-image-zoom-viewer';
-import EventTracker from 'src/helper/EventTracker';
-// import ActionSheet from 'react-native-actionsheet';
+// configs
 import appConfig from 'app-config';
-import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
-import RightButtonNavBar from 'src/components/RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
-import Image from 'src/components/Image';
-import Video from 'src/components/Video';
-import Carousel from 'src/components/Carousel';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'src/helper/EventTracker';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {MEDIA_TYPE} from 'src/constants';
+import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
+import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import RightButtonNavBar from 'src/components/RightButtonNavBar';
+import Carousel from 'src/components/Carousel';
 import ItemImage from './ItemImage';
+import {
+  BaseButton,
+  Container,
+  IconButton,
+  ScreenWrapper,
+  Typography,
+} from 'src/components/base';
 
 const HEADER_BUTTON_TYPE = {
   BACK: 0,
@@ -36,28 +39,30 @@ const HEADER_BUTTON_TYPE = {
 };
 
 class ItemImageViewer extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     index: 0,
     moreActionSheetOptions: null,
     scrollEnabled: true,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    currentIndex: this.props.index,
+    scrollEnabled: true,
+  };
 
-    this.state = {
-      currentIndex: this.props.index,
-      scrollEnabled: true,
-    };
+  isHeaderVisible = true;
+  opacity = new Animated.Value(1);
 
-    this.isHeaderVisible = true;
-    this.opacity = new Animated.Value(1);
-
-    this.refActionSheet = React.createRef();
-    this.refButtonDownloadImage = React.createRef();
-  }
+  refActionSheet = React.createRef();
+  refButtonDownloadImage = React.createRef();
 
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
@@ -91,7 +96,7 @@ class ItemImageViewer extends Component {
         this.handleDownloadImage();
         break;
       case HEADER_BUTTON_TYPE.MORE:
-        Actions.push(
+        push(
           appConfig.routes.modalActionSheet,
           this.props.moreActionSheetOptions,
         );
@@ -109,14 +114,14 @@ class ItemImageViewer extends Component {
 
   handleBack = () => {
     StatusBar.setHidden(false);
-    Actions.pop();
+    pop();
   };
 
   handleChange = (index) => {
     this.setState({currentIndex: index});
   };
 
-  handleSwipeDownImage = () => Actions.pop();
+  handleSwipeDownImage = () => pop();
 
   handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
@@ -127,28 +132,39 @@ class ItemImageViewer extends Component {
   renderHeader = (currentIndex = this.state.currentIndex) => {
     return (
       <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
-        <Animated.View
-          style={[styles.headerContainer, {opacity: this.opacity}]}>
-          <SafeAreaView style={styles.headerContentContainer}>
+        <ScreenWrapper
+          safeTopLayout
+          animated
+          noBackground
+          style={[
+            styles.headerContainer,
+            this.headerContainerStyle,
+            {opacity: this.opacity},
+          ]}>
+          <Container noBackground style={styles.headerContentContainer}>
             <View style={styles.headerContent}>
-              <TouchableOpacity
+              <IconButton
+                bundle={BundleIconSetName.IONICONS}
+                name="ios-chevron-back"
                 hitSlop={HIT_SLOP}
+                iconStyle={[this.headerMainStyle, styles.icon]}
                 style={styles.headerLeftButton}
                 onPress={() =>
                   this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.BACK)
-                }>
-                <Ionicons size={26} name="ios-chevron-back" color="#fff" />
-              </TouchableOpacity>
+                }
+              />
               <View style={styles.headerMiddleContainer}>
-                <Text style={styles.headerMiddleTitle}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={this.headerMainStyle}>
                   {currentIndex + 1}/{this.props.images.length}
-                </Text>
+                </Typography>
               </View>
 
               <View style={[styles.headerContent, styles.headerLeftButton]}>
                 {this.props.images[currentIndex]?.type ===
                 MEDIA_TYPE.YOUTUBE_VIDEO ? null : (
-                  <TouchableOpacity
+                  <BaseButton
                     onPress={() =>
                       this.handlePressHeaderBtn(
                         HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE,
@@ -162,33 +178,27 @@ class ItemImageViewer extends Component {
                         imageUrl={this.props.images[currentIndex].url}
                       />
                     </View>
-                  </TouchableOpacity>
+                  </BaseButton>
                 )}
                 {!!this.props.moreActionSheetOptions && (
-                  <TouchableOpacity
+                  <IconButton
+                    bundle={BundleIconSetName.IONICONS}
+                    name="ios-ellipsis-vertical"
                     hitSlop={HIT_SLOP}
+                    iconStyle={[this.headerMainStyle, styles.icon]}
                     style={styles.headerRightBtnContainer}
                     onPress={() =>
                       this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.MORE)
-                    }>
-                    <Ionicons
-                      size={26}
-                      name="ios-ellipsis-vertical"
-                      color="#fff"
-                    />
-                  </TouchableOpacity>
+                    }
+                  />
                 )}
               </View>
             </View>
-          </SafeAreaView>
-        </Animated.View>
+          </Container>
+        </ScreenWrapper>
       </TouchableWithoutFeedback>
     );
   };
-
-  // renderImage = (imageProps) => {
-  //     <Image source={imageProps.source} />
-  // };
 
   scaleValue = 1;
   allowListScroll = (e) => {
@@ -255,34 +265,30 @@ class ItemImageViewer extends Component {
     return null;
   };
 
+  get carouselWrapperStyle() {
+    return {backgroundColor: this.theme.color.black};
+  }
+
+  get headerMainStyle() {
+    return {
+      color: this.theme.color.white,
+    };
+  }
+
+  get headerContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay60,
+    };
+  }
+
   render() {
     var {images} = this.props;
     return (
       <View style={styles.container}>
-        {/* <ImageViewer
-          style={styles.imageViewerContainer}
-          index={this.props.index}
-          imageUrls={images}
-          saveToLocalByLongPress={false}
-          renderHeader={this.renderHeader}
-          renderIndicator={this.renderIndicator}
-          enableSwipeDown={true}
-          swipeDownThreshold={100}
-          onSwipeDown={this.handleSwipeDownImage}
-          onClick={this.toggleHeaderVisibility}
-          onLongPress={this.handleLongPressImage}
-          renderImage={this.renderImage}
-          onChange={this.handleChange}
-          failImageSource={{
-            width: appConfig.device.width,
-            height: appConfig.device.height,
-          }}
-        /> */}
         {this.renderHeader()}
-
         <Carousel
           firstItem={this.props.index}
-          wrapperStyle={{backgroundColor: '#000'}}
+          wrapperStyle={this.carouselWrapperStyle}
           data={images}
           renderItem={this.renderImage}
           onChangeIndex={this.handleChange}
@@ -316,7 +322,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     zIndex: 999,
-    backgroundColor: 'rgba(0,0,0,0.65)',
     alignItems: 'center',
   },
   headerContentContainer: {
@@ -338,12 +343,13 @@ const styles = StyleSheet.create({
     width: '100%',
     zIndex: -1,
   },
-  headerMiddleTitle: {
-    color: '#fff',
-    fontSize: 16,
-  },
+  headerMiddleTitle: {},
   headerRightBtnContainer: {
     paddingLeft: 15,
+  },
+
+  icon: {
+    fontSize: 26,
   },
 });
 

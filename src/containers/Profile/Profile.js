@@ -345,10 +345,11 @@ class Profile extends Component {
     }
   }
 
-  uploadTempImage = (response, type, resolve, reject) => {
+  uploadTempImage = (response, type, resolve, reject, isCoverLoading) => {
+    const loadingParam = isCoverLoading ? 'coverLoading' : 'loading';
     this.setState(
       {
-        coverLoading: true,
+        [loadingParam]: true,
       },
       () => {
         const {t} = this.props;
@@ -386,7 +387,7 @@ class Profile extends Component {
                   type: 'danger',
                   message: response.message || t('common:api.error.message'),
                 });
-                !this.unmounted && this.setState({coverLoading: false});
+                !this.unmounted && this.setState({[loadingParam]: false});
               }
             }
           })
@@ -398,7 +399,7 @@ class Profile extends Component {
               type: 'danger',
               message: t('common:api.error.message'),
             });
-            !this.unmounted && this.setState({coverLoading: false});
+            !this.unmounted && this.setState({loading: false});
           });
       },
     );
@@ -452,7 +453,9 @@ class Profile extends Component {
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
-          this.setState({gallery: response.data.images || []});
+          this.setState({
+            gallery: this.formatGallery(response.data.images || []),
+          });
           flashShowMessage({
             type: 'success',
             message: response.message,
@@ -632,7 +635,13 @@ class Profile extends Component {
             premium={this.state.userInfo.premium}
             loading={this.state.loading}
             uploadTempCover={(data) =>
-              this.uploadTempImage(data, IMAGE_TYPE.COVER)
+              this.uploadTempImage(
+                data,
+                IMAGE_TYPE.COVER,
+                undefined,
+                undefined,
+                true,
+              )
             }
             onPressAvatar={this.onTapAvatar}
           />

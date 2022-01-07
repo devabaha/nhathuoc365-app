@@ -1,11 +1,13 @@
 import React, {useCallback, useRef} from 'react';
 import {StyleSheet, Animated, View} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
 import ImageZoom from 'react-native-image-pan-zoom';
-
+// configs
 import appConfig from 'app-config';
+// constants
 import {MEDIA_TYPE} from 'src/constants';
-
+// custom components
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
 
