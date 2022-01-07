@@ -1049,9 +1049,7 @@ class Confirm extends Component {
             paymentStatusView={cart_data.payment_status_name}
           />
 
-          {!!cart_data?.pos_details && (
-            <POSSection code={posCode} />
-          )}
+          {!!cart_data?.pos_details && <POSSection code={posCode} />}
 
           {!!cart_data?.delivery_details && (
             <DeliverySection

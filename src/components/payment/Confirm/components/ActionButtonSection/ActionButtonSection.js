@@ -106,7 +106,10 @@ const ActionButtonSection = ({
 
   return (
     <SectionContainer marginTop style={styles.container}>
-      <Container safeLayout={safeLayout} centerVertical={false} style={styles.boxButtonActions}>
+      <Container
+        safeLayout={safeLayout}
+        centerVertical={false}
+        style={styles.boxButtonActions}>
         {!!hasMainBlockData && (
           <Container row style={styles.block}>
             {!!editable && (

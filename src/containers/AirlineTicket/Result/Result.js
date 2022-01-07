@@ -1,43 +1,61 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import Proptypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
 
-import Loading from '../../../components/Loading';
-import WebView from 'react-native-webview'
+// 3-party libs
+import WebView from 'react-native-webview';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {ScreenWrapper} from 'src/components/base';
 
 export default class Result extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
-      url: Proptypes.string.isRequired,
-      jsCode: Proptypes.string
-  }
+    url: Proptypes.string.isRequired,
+    jsCode: Proptypes.string,
+  };
 
   static defaultProps = {
-    jsCode: ''
+    jsCode: '',
+  };
+
+  state = {
+    showLoading: false,
+    url: this.props.url,
+    jsCode: this.props.jsCode,
+  };
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
-  constructor(props) {
-    super(props);
+  componentDidMount() {
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+  }
 
-    this.state = {
-      showLoading: false,
-      url: props.url,
-      jsCode: props.jsCode
-    }
+  componentWillUnmount() {
+    this.updateNavBarDisposer();
   }
 
   onLoadStart() {
     this.setState({
-      showLoading: true
+      showLoading: true,
     });
   }
 
   onLoadEnd() {
     this.setState({
-      showLoading: false
+      showLoading: false,
     });
   }
 
@@ -48,27 +66,32 @@ export default class Result extends Component {
 
     if (!existViewApp) {
       this.setState({
-        url: url + (existGet ? '&' : '?') + 'view=app'
+        url: url + (existGet ? '&' : '?') + 'view=app',
       });
     }
+  }
+
+  get webViewStyle() {
+    return mergeStyles(styles.webView, {
+      backgroundColor: this.theme.color.background,
+    });
   }
 
   render() {
     var {url, jsCode} = this.state;
 
     return (
-      
-      <View style={[styles.container, this.props.style]}>
+      <ScreenWrapper style={[styles.container, this.props.style]}>
         <WebView
           injectedJavaScript={jsCode}
           onNavigationStateChange={this._onNavigationStateChange.bind(this)}
           onLoadStart={this.onLoadStart.bind(this)}
           onLoadEnd={this.onLoadEnd.bind(this)}
-					onLoad={this.onLoadEnd.bind(this)}
+          onLoad={this.onLoadEnd.bind(this)}
           source={{uri: url}}
-          style={styles.webView}
+          style={this.webViewStyle}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -76,24 +99,8 @@ export default class Result extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
   webView: {
-    flex: 1
-  },
-  loadingBox: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: "#ebebeb",
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  loadingTitle: {
-    fontSize: 14,
-    marginTop: 4,
-    color: "#404040"
+    flex: 1,
   },
 });

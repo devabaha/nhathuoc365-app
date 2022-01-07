@@ -74,6 +74,8 @@ import vi_productStamp from './vi/productStamp.json';
 import en_productStamp from './en/productStamp.json';
 import vi_filterProduct from './vi/filterProduct.json';
 import en_filterProduct from './en/filterProduct.json';
+import vi_airlineTicket from './vi/airlineTicket.json';
+import en_airlineTicket from './en/airlineTicket.json';
 import vi_premium from './vi/premium.json';
 import en_premium from './en/premium.json';
 import vi_phoneCard from './vi/phoneCard.json';
@@ -118,6 +120,7 @@ export default {
     lotteryGame: vi_lotteryGame,
     productStamp: vi_productStamp,
     filterProduct: vi_filterProduct,
+    airlineTicket: vi_airlineTicket,
     premium: vi_premium,
     phoneCard: vi_phoneCard,
   },
@@ -159,6 +162,7 @@ export default {
     lotteryGame: en_lotteryGame,
     productStamp: en_productStamp,
     filterProduct: en_filterProduct,
+    airlineTicket: en_airlineTicket,
     premium: en_premium,
     phoneCard: en_phoneCard,
   },

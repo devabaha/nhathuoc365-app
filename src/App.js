@@ -909,9 +909,9 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ AIRLINE TICKET RESULT ================ */}
-                <Stack key={appConfig.routes.result}>
+                <Stack key={appConfig.routes.airlineTicketResult}>
                   <Scene
-                    key={`${appConfig.routes.result}_1`}
+                    key={`${appConfig.routes.airlineTicketResult}_1`}
                     component={Result}
                     {...navBarConfig}
                     back
@@ -919,24 +919,23 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ AIRLINE TICKET PLACE ================ */}
-                <Stack key={appConfig.routes.place}>
+                <Stack key={appConfig.routes.airlineTicketPlace}>
                   <Scene
-                    key={`${appConfig.routes.place}_1`}
+                    key={`${appConfig.routes.airlineTicketPlace}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => (
-                      <PlaceNavBar {...{onChangeText}} />
-                    )}
+                    {...navBarConfig}
+                    navBar={PlaceNavBar}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}>
+                <Stack key={appConfig.routes.airlineTicketDatePicker}>
                   <Scene
                     modal={true}
                     panHandlers={null}
-                    title="Chọn ngày"
+                    title={t('screen.chooseDate.mainTitle')}
                     {...navBarConfig}
-                    key={`${appConfig.routes.datePicker}_1`}
+                    key={`${appConfig.routes.airlineTicketDatePicker}_1`}
                     component={DatePicker}
                     back
                   />
@@ -945,7 +944,6 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -2008,7 +2006,7 @@ class RootRouter extends Component {
               />
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
               <Stack
-                key={appConfig.routes.customer}
+                key={appConfig.routes.airlineTicketCustomer}
                 component={Customer}
                 hideNavBar
               />

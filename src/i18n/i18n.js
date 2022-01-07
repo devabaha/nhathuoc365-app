@@ -5,10 +5,61 @@ import {asyncStorageLanguageKey, arrayLanguages, languages} from './constants';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNLocalize from 'react-native-localize';
+import {LocaleConfig} from 'react-native-calendars';
 import 'moment/locale/vi';
 import moment from 'moment';
 
 const updateMoment = (t, language) => {
+  LocaleConfig.locales[language] = {
+    monthNames: [
+      t('month.january'),
+      t('month.february'),
+      t('month.march'),
+      t('month.april'),
+      t('month.may'),
+      t('month.june'),
+      t('month.july'),
+      t('month.august'),
+      t('month.september'),
+      t('month.october'),
+      t('month.november'),
+      t('month.december'),
+    ],
+    monthNamesShort: [
+      t('month.januaryInShort'),
+      t('month.februaryInShort'),
+      t('month.marchInShort'),
+      t('month.aprilInShort'),
+      t('month.mayInShort'),
+      t('month.juneInShort'),
+      t('month.julyInShort'),
+      t('month.augustInShort'),
+      t('month.septemberInShort'),
+      t('month.octoberInShort'),
+      t('month.novemberInShort'),
+      t('month.decemberInShort'),
+    ],
+    dayNames: [
+      t('day.sunday'),
+      t('day.monday'),
+      t('day.tuesday'),
+      t('day.wednesday'),
+      t('day.thursday'),
+      t('day.friday'),
+      t('day.saturday'),
+    ],
+    dayNamesShort: [
+      t('day.sundayInShort'),
+      t('day.mondayInShort'),
+      t('day.tuesdayInShort'),
+      t('day.wednesdayInShort'),
+      t('day.thursdayInShort'),
+      t('day.fridayInShort'),
+      t('day.saturdayInShort'),
+    ],
+  };
+  LocaleConfig.defaultLocale = language;
+
   moment.locale(language);
   moment.updateLocale(language, {
     relativeTime: {
