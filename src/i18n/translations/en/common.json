@@ -92,9 +92,6 @@
       "mainTitle": "Orders detail",
       "confirmTitle": "Confirmation"
     },
-    "viewOrdersItem": {
-      "mainTitle": "Information order"
-    },
     "feedback": {
       "mainTitle": "Thank you!"
     },

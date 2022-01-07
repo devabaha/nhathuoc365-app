@@ -277,7 +277,6 @@ class Config {
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',
       transaction: 'transaction',
-      viewOrdersItem: 'viewOrdersItem',
       //
       upToPhone: 'upToPhone',
 

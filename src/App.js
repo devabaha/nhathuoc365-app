@@ -56,7 +56,6 @@ import Confirm from './components/payment/Confirm';
 import PaymentMethod from './components/payment/PaymentMethod';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
-import ViewOrdersItem from './components/orders/ViewOrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/Home/SearchStore';
 import ListStore from './components/Home/ListStore';
@@ -1436,16 +1435,6 @@ class RootRouter extends Component {
                     key="orders_item_1"
                     title={t('screen.ordersDetail.mainTitle')}
                     component={OrdersItem}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.viewOrdersItem}>
-                  <Scene
-                    key={`${appConfig.routes.viewOrdersItem}_1`}
-                    title={t('screen.viewOrdersItem.mainTitle')}
-                    component={ViewOrdersItem}
                     {...navBarConfig}
                     back
                   />
