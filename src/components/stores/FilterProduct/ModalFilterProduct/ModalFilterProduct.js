@@ -1,34 +1,38 @@
-import React, {memo, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import React, {memo, useRef, useState, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Modal from 'react-native-modalbox';
-import Icon from 'react-native-vector-icons/Feather';
-import {Actions} from 'react-native-router-flux';
-import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  Container,
+  FlatList,
+  TextButton,
+  Typography,
+  Icon,
+} from 'src/components/base';
 
 function ModalFilterProduct({
-  onSelectValue = () => {},
   data = [],
   defaultSelected = {},
   title = 'Default',
   onSelectValueSort = () => {},
 }) {
-  const [selected, setSelected] = useState(defaultSelected);
-  const [selectedPrice, setSelectedPrice] = useState({});
-  const [selectedTag, setSelectedTag] = useState({});
+  const {theme} = useTheme();
+
   const refModal = useRef(null);
 
-  const handleSelected = (val) => {
-    setSelectedTag(val);
-  };
+  const [selected, setSelected] = useState(defaultSelected);
 
-  const handleSelectedPrice = (value) => {
-    setSelectedPrice(value);
+  const itemTypoProps = {
+    type: TypographyType.LABEL_SEMI_LARGE,
   };
 
   const handleItem = (item) => () => {
@@ -39,42 +43,71 @@ function ModalFilterProduct({
     }
   };
 
+  const renderIcon = ({titleStyle}) => {
+    return (
+      <Icon
+        primaryHighlight
+        bundle={BundleIconSetName.FEATHER}
+        name="check"
+        style={styles.icon}
+      />
+    );
+  };
+
   const renderItem = ({item, index}) => {
     return (
-      <TouchableOpacity style={styles.itemContainer} onPress={handleItem(item)}>
-        <Text style={styles.text}>{item.name}</Text>
-        {item.id === selected.id && (
-          <Icon name="check" color={appConfig.colors.primary} size={20} />
-        )}
-      </TouchableOpacity>
+      <TextButton
+        style={styles.itemContainer}
+        titleStyle={styles.text}
+        typoProps={itemTypoProps}
+        renderIconRight={item.id === selected.id && renderIcon}
+        onPress={handleItem(item)}>
+        {item.name}
+      </TextButton>
     );
   };
 
   const renderList = () => {
     return (
-      <FlatList
-        contentContainerStyle={styles.contentContainer}
-        data={data}
-        extraData={selected}
-        keyExtractor={(i, index) => `${index}__${i.id}`}
-        renderItem={renderItem}
-      />
+      <Container>
+        <FlatList
+          safeLayout
+          contentContainerStyle={styles.contentContainer}
+          data={data}
+          extraData={selected}
+          keyExtractor={(i, index) => `${index}__${i.id}`}
+          renderItem={renderItem}
+        />
+      </Container>
     );
   };
+
+  const titleContainerStyle = useMemo(() => {
+    return mergeStyles(styles.titleContainer, {
+      backgroundColor: theme.color.primary,
+      borderColor: theme.color.border,
+      borderBottomWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
 
   return (
     <Modal
       entry="bottom"
       position="bottom"
-      style={[styles.modal]}
+      style={styles.modal}
       backButtonClose
       ref={refModal}
       isOpen
-      onClosed={() => Actions.pop()}
+      onClosed={pop}
       useNativeDriver>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
-      </View>
+      <Container style={titleContainerStyle}>
+        <Typography
+          onPrimary
+          type={TypographyType.TITLE_SEMI_LARGE}
+          style={styles.title}>
+          {title}
+        </Typography>
+      </Container>
       {renderList()}
     </Modal>
   );
@@ -82,10 +115,6 @@ function ModalFilterProduct({
 const styles = StyleSheet.create({
   modal: {
     height: 'auto',
-    backgroundColor: '#fff',
-    paddingBottom: appConfig.device.bottomSpace
-      ? appConfig.device.bottomSpace
-      : 0,
   },
   contentContainer: {
     paddingVertical: 5,
@@ -97,24 +126,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
-  text: {
-    fontSize: 15,
-    color: '#333',
-  },
+  text: {},
   titleContainer: {
     paddingTop: 15,
     paddingBottom: 10,
     paddingHorizontal: 10,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
-    backgroundColor: appConfig.colors.primary
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
     letterSpacing: 1,
     textTransform: 'uppercase',
+  },
+  icon: {
+    fontSize: 20,
   },
 });
 
