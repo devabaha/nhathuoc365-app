@@ -130,5 +130,5 @@ export const SERVICES_TYPE = {
   WALLET: 'wallet',
 
   /** RATING */
-  RATING: 'rating'
+  RATING: 'rating',
 };
