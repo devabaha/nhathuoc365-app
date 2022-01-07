@@ -5,9 +5,9 @@ import {getTheme} from 'src/Themes/Theme.context';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {AppOutlinedButton, TypographyType} from 'src/components/base';
+import {AppOutlinedButton} from 'src/components/base';
 // custom components
-import {FlatList, TextButton} from 'src/components/base';
+import {FlatList} from 'src/components/base';
 
 const MIN_ITEMS_PER_ROW = 5;
 const MIN_WIDTH_HORIZONTAL_SLOT = 100;
