@@ -185,6 +185,12 @@
     },
     "listSite": {
       "mainTitle": "List of store"
+    },
+    "airlineTicket": {
+      "mainTitle": "Find flight"
+    },
+    "chooseDate": {
+      "mainTitle": "Choose a date"
     }
   },
 
@@ -247,6 +253,50 @@
       "y": "1 year",
       "yy": "%d years"
     }
+  },
+
+  "month": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    "januaryInShort": "Jan",
+    "februaryInShort": "Feb",
+    "marchInShort": "Mar",
+    "aprilInShort": "Apr",
+    "mayInShort": "May",
+    "juneInShort": "Jun",
+    "julyInShort": "Jul",
+    "augustInShort": "Aug",
+    "septemberInShort": "Sep",
+    "octoberInShort": "Oct",
+    "novemberInShort": "Nov",
+    "decemberInShort": "Dec"
+  },
+
+  "day": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "mondayInShort": "Mon",
+    "tuesdayInShort": "Tue",
+    "wednesdayInShort": "Wed",
+    "thursdayInShort": "Thu",
+    "fridayInShort": "Fri",
+    "saturdayInShort": "Sat",
+    "sundayInShort": "Sun"
   },
 
   "edit": "Edit",

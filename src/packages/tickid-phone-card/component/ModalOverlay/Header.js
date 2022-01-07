@@ -35,9 +35,7 @@ function Header(props) {
         titleStyle={styles.closeTitle}>
         {closeTitle}
       </TextButton>
-      <Typography
-        type={TypographyType.TITLE_MEDIUM}
-        style={styles.headerTitle}>
+      <Typography type={TypographyType.TITLE_MEDIUM} style={styles.headerTitle}>
         {props.title}
       </Typography>
     </View>

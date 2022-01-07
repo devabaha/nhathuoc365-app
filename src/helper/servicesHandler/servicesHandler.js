@@ -637,7 +637,13 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** AIRLINE TICKET */
     case SERVICES_TYPE.AIRLINE_TICKET:
-      Actions.push(appConfig.routes.airlineTicket);
+      push(
+        appConfig.routes.airlineTicket,
+        {
+          title: service.title || commonT('screen.airlineTicket.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /** AGENCY INFORMATION REGISTER */

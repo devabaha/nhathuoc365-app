@@ -376,11 +376,12 @@ class Config {
 
       itemImageViewer: 'item_image_viewer',
 
+      // Airline ticket
       airlineTicket: 'airlineTicket',
-      datePicker: 'datePicker',
-      place: 'place',
-      customer: 'customer',
-      result: 'result',
+      airlineTicketDatePicker: 'airlineTicketDatePicker',
+      airlineTicketPlace: 'airlineTicketPlace',
+      airlineTicketCustomer: 'airlineTicketCustomer',
+      airlineTicketResult: 'airlineTicketResult',
 
       booking: 'booking',
 
@@ -390,7 +391,7 @@ class Config {
       requestCreation: 'requestCreation',
 
       // Rating
-      rating: 'rating'
+      rating: 'rating',
     };
   }
 }
