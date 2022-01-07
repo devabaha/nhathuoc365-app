@@ -1,27 +1,49 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React, {Component} from 'react';
+import {View} from 'react-native';
+// 3-party libs
 import ImagePicker from 'react-native-image-picker';
-import { Actions } from 'react-native-router-flux';
+// configs
 import store from 'app-store';
-import { APIRequest } from '../../../network/Entity';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// routing
+import {pop} from 'app-helper/routing';
+// entities
+import {APIRequest} from 'src/network/Entity';
 
 class CaptureFaceID extends Component {
+  static contextType = ThemeContext;
+
   state = {
-    loading: false
+    loading: false,
   };
   uploadFaceIDRequest = new APIRequest();
   requests = [this.uploadFaceIDRequest];
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.openCamera();
-  }
 
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+  }
   componentWillUnmount() {
     cancelRequests(this.requests);
+
+    this.updateNavBarDisposer();
   }
 
   async uploadFaceID(image) {
-    this.setState({ loading: true });
+    this.setState({loading: true});
     const siteId = this.props.siteId || store.store_id;
     const uploadImageBase64 = 'data:' + image.type + ';base64,' + image.data;
     console.log(uploadImageBase64);
@@ -49,16 +71,16 @@ class CaptureFaceID extends Component {
       rotation: 360,
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
     };
 
-    ImagePicker.launchCamera(options, response => {
+    ImagePicker.launchCamera(options, (response) => {
       if (response.error) {
         console.log(response.error);
       } else if (response.didCancel) {
         console.log(response);
-        Actions.pop();
+        pop();
       } else {
         // console.log(response);
         this.uploadFaceID(response);
