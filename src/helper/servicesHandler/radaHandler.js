@@ -1,6 +1,7 @@
-import { Alert } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Alert} from 'react-native';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
+import {push} from 'app-helper/routing';
 
 /**
  * A group of functions to handler rada's jobs.
@@ -24,12 +25,12 @@ export function handleCategoryPress(item, t) {
   Actions.push(appConfig.routes.tickidRadaListService, {
     category: item,
     title: item.name,
-    onPressItem: item => {
+    onPressItem: (item) => {
       handleServicePress(item, t);
     },
-    onPressCartImage: item => {
+    onPressCartImage: (item) => {
       handleCartImagePress(item, t);
-    }
+    },
   });
 }
 
@@ -41,10 +42,10 @@ export function handleCategoryPress(item, t) {
  * @param {I18n} t
  */
 export function handleOrderHistoryPress(item, t) {
-  Actions.push('tickidRadaOrderHistory', {
+  push('tickidRadaOrderHistory', {
     category: item,
     title: t('common:screen.radaOrderHistory.mainTitle'),
-    onPressItem: serviceOrder => {
+    onPressItem: (serviceOrder) => {
       const cart_data = {
         cart_code: serviceOrder.id,
         shop_logo_url: serviceOrder.image,
@@ -52,11 +53,11 @@ export function handleOrderHistoryPress(item, t) {
         status: serviceOrder.status,
         status_view: serviceOrder.status_view,
         orders_time: serviceOrder.created,
-        total_selected: serviceOrder.price_label
+        total_selected: serviceOrder.price_label,
       };
 
-      Actions.push(appConfig.routes.serviceFeedback, { cart_data });
-    }
+      push(appConfig.routes.rating, {cart_data});
+    },
   });
 }
 
@@ -71,9 +72,9 @@ export function handleServicePress(item, t) {
   Actions.push(appConfig.routes.tickidRadaServiceDetail, {
     service: item,
     title: item.name,
-    onPressOrder: item => {
+    onPressOrder: (item) => {
       handleOrderButtonPress(item, t);
-    }
+    },
   });
 }
 
@@ -88,18 +89,18 @@ export function handleOrderButtonPress(service, t) {
     customerName: '',
     phone: '',
     address: '',
-    onBookingSuccess: response => {
+    onBookingSuccess: (response) => {
       handleBookingSuccess(response, t);
     },
-    onBookingFail: err => {
+    onBookingFail: (err) => {
       handleBookingFail(err, t);
     },
-    onCallWebHookSuccess: response => {
+    onCallWebHookSuccess: (response) => {
       handleCallWebHookSuccess(response, t);
     },
-    onCallWebHookFail: err => {
+    onCallWebHookFail: (err) => {
       handleCallWebHookFail(err, t);
-    }
+    },
   });
 }
 
@@ -107,8 +108,8 @@ export function handleBookingSuccess(response, t) {
   return Alert.alert(
     t('booking.success.title'),
     t('booking.success.message'),
-    [{ text: t('booking.success.accept'), onPress: () => Actions.homeTab() }],
-    { cancelable: false }
+    [{text: t('booking.success.accept'), onPress: () => Actions.homeTab()}],
+    {cancelable: false},
   );
 }
 
@@ -118,32 +119,32 @@ function handleBookingFail(err, t) {
       return Alert.alert(
         t('booking.fail.title'),
         err.data.customer[0],
-        [{ text: t('booking.fail.accept') }],
-        { cancelable: false }
+        [{text: t('booking.fail.accept')}],
+        {cancelable: false},
       );
     } else {
       return Alert.alert(
         t('booking.fail.title'),
         err.message || '',
-        [{ text: t('booking.fail.accept') }],
-        { cancelable: false }
+        [{text: t('booking.fail.accept')}],
+        {cancelable: false},
       );
     }
   } else if (err.message) {
     return Alert.alert(
       t('booking.fail.title'),
       err.message,
-      [{ text: t('booking.fail.accept') }],
+      [{text: t('booking.fail.accept')}],
       {
-        cancelable: false
-      }
+        cancelable: false,
+      },
     );
   } else {
     return Alert.alert(
       t('booking.fail.title'),
       t('booking.fail.message'),
-      [{ text: t('booking.fail.accept') }],
-      { cancelable: false }
+      [{text: t('booking.fail.accept')}],
+      {cancelable: false},
     );
   }
 }
@@ -152,8 +153,8 @@ function handleCallWebHookSuccess(response, t) {
   return Alert.alert(
     t('web.success.title'),
     t('web.success.message'),
-    [{ text: t('web.success.accept'), onPress: () => Actions.homeTab() }],
-    { cancelable: false }
+    [{text: t('web.success.accept'), onPress: () => Actions.homeTab()}],
+    {cancelable: false},
   );
 }
 
@@ -163,32 +164,32 @@ function handleCallWebHookFail(err, t) {
       return Alert.alert(
         t('web.fail.title'),
         err.data.customer[0],
-        [{ text: t('web.fail.accept') }],
-        { cancelable: false }
+        [{text: t('web.fail.accept')}],
+        {cancelable: false},
       );
     } else {
       return Alert.alert(
         t('web.fail.title'),
         err.message || '',
-        [{ text: t('web.fail.accept') }],
-        { cancelable: false }
+        [{text: t('web.fail.accept')}],
+        {cancelable: false},
       );
     }
   } else if (err.message) {
     return Alert.alert(
       t('web.fail.title'),
       err.message,
-      [{ text: t('web.fail.accept') }],
+      [{text: t('web.fail.accept')}],
       {
-        cancelable: false
-      }
+        cancelable: false,
+      },
     );
   } else {
     return Alert.alert(
       t('web.fail.title'),
       t('web.fail.message'),
-      [{ text: t('web.fail.accept') }],
-      { cancelable: false }
+      [{text: t('web.fail.accept')}],
+      {cancelable: false},
     );
   }
 }

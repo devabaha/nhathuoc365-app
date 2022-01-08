@@ -106,5 +106,6 @@
     "cantCall": "Unable to contact",
     "notRegisterPhoneYet": "User{{username}} not registered phone number",
     "confirm": "OK"
-  }
+  },
+  "noServiceOrder": "You do not have service order"
 }

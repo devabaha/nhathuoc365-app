@@ -91,7 +91,7 @@ import {
   SearchChatNavBar,
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
-import {ServiceOrders, ServiceFeedback} from './components/services';
+import {ServiceOrders} from './components/services';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -1825,16 +1825,6 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.gpsStoreLocation}_1`}
                     title={t('screen.gpsStoreLocation.mainTitle')}
                     component={GPSStoreLocation}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.serviceFeedback}>
-                  <Scene
-                    key={`${appConfig.routes.serviceFeedback}_1`}
-                    title={t('screen.feedback.mainTitle')}
-                    component={ServiceFeedback}
                     {...navBarConfig}
                     back
                   />
