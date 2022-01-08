@@ -78,6 +78,8 @@ import vi_airlineTicket from './vi/airlineTicket.json';
 import en_airlineTicket from './en/airlineTicket.json';
 import vi_premium from './vi/premium.json';
 import en_premium from './en/premium.json';
+import vi_payWallet from './vi/payWallet.json';
+import en_payWallet from './en/payWallet.json';
 import vi_phoneCard from './vi/phoneCard.json';
 import en_phoneCard from './en/phoneCard.json';
 import vi_domainSelector from './vi/domainSelector.json';
@@ -124,6 +126,7 @@ export default {
     filterProduct: vi_filterProduct,
     airlineTicket: vi_airlineTicket,
     premium: vi_premium,
+    payWallet: vi_payWallet,
     phoneCard: vi_phoneCard,
     domainSelector: vi_domainSelector,
   },
@@ -167,6 +170,7 @@ export default {
     filterProduct: en_filterProduct,
     airlineTicket: en_airlineTicket,
     premium: en_premium,
+    payWallet: en_payWallet,
     phoneCard: en_phoneCard,
     domainSelector: en_domainSelector,
   },

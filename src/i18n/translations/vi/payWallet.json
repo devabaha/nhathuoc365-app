@@ -1,0 +1,10 @@
+{
+  "notification": "Thông báo",
+  "inactiveAddress": "Địa chỉ không chính xác",
+  "inactiveQuantity": "Số lượng nhập không đúng",
+  "transfer": "Chuyển khoản",
+  "transferTitle": "Chuyển khoản {{walletName}} tới địa chỉ",
+  "transferMessage": "Hãy xác nhận đúng địa chỉ Ví, không thể lấy lại nếu đã chuyển đi.",
+  "transferPlaceholder": "Nhập số lượng {{currency}} trong {{walletName}} cần chuyển",
+  "balance": "Số dư"
+}
