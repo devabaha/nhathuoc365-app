@@ -80,6 +80,8 @@ import vi_premium from './vi/premium.json';
 import en_premium from './en/premium.json';
 import vi_phoneCard from './vi/phoneCard.json';
 import en_phoneCard from './en/phoneCard.json';
+import vi_domainSelector from './vi/domainSelector.json';
+import en_domainSelector from './en/domainSelector.json';
 
 export default {
   [languages.vi.value]: {
@@ -123,6 +125,7 @@ export default {
     airlineTicket: vi_airlineTicket,
     premium: vi_premium,
     phoneCard: vi_phoneCard,
+    domainSelector: vi_domainSelector,
   },
   [languages.en.value]: {
     common: en_common,
@@ -165,5 +168,6 @@ export default {
     airlineTicket: en_airlineTicket,
     premium: en_premium,
     phoneCard: en_phoneCard,
+    domainSelector: en_domainSelector,
   },
 };

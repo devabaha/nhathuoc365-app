@@ -1,10 +1,10 @@
 import {ColorValue, StyleProp, TextStyle, ViewStyle} from 'react-native';
-
+import Animated from 'react-native-reanimated';
 import {TypographyType} from 'src/components/base';
 import {CartPaymentStatus, CartStatus} from 'src/constants/cart';
 import {CartType, DeliveryStatusCode} from 'src/constants/cart';
 
-export type ItemStyle = ViewStyle | TextStyle;
+export type ItemStyle = ViewStyle | TextStyle | Animated.AnimateStyle<any>;
 
 export type Style = StyleProp<ItemStyle> | StyleProp<ItemStyle>[];
 

@@ -6,6 +6,8 @@ import {Children} from '..';
 export {default} from './Container';
 
 export interface ContainerProps extends ViewProps {
+  style?: Style,
+
   safeLayout?: boolean,
   safeTopLayout?: boolean,
   

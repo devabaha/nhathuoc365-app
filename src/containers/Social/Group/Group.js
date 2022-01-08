@@ -220,7 +220,7 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
             />
             <View style={styles.groupInfoContainer}>
               <Typography
-                type={TypographyType.LABEL_DISPLAY_SMALL}
+                type={TypographyType.DISPLAY_SMALL}
                 style={styles.groupName}>
                 {groupInfo.name}
               </Typography>

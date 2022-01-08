@@ -24,7 +24,7 @@ const Input = forwardRef(({style, type, ...props}: InputProps, ref: Ref) => {
     const baseStyles: any = createStyles(theme);
 
     return mergeStyles(baseStyles.primary, theme.typography[type]);
-  }, [theme]);
+  }, [theme, type]);
 
   const componentStyle = useMemo(() => {
     return mergeStyles(styles, style);

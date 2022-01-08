@@ -1,25 +1,21 @@
-import React, {useCallback} from 'react';
-import {
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Text,
-} from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import React, {useCallback, useMemo} from 'react';
+import {Keyboard, StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Container, Icon, Input, IconButton} from 'src/components/base';
 import DomainTag from '../DomainTag';
 
 const styles = StyleSheet.create({
   inputContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: appConfig.colors.primary,
-    backgroundColor: '#fafafa',
   },
   leftIcon: {
     marginLeft: 10,
@@ -29,13 +25,10 @@ const styles = StyleSheet.create({
     paddingVertical: appConfig.device.isIOS ? 15 : 7,
     paddingHorizontal: 10,
     flex: 1,
-    fontSize: 13,
   },
   closeIconContainer: {
     marginRight: 10,
     padding: 5,
-    borderRadius: 15,
-    backgroundColor: '#ededed',
   },
   tag: {
     marginRight: 10,
@@ -55,21 +48,39 @@ const DomainInput = ({
   onChangeText = () => {},
   onSubmitEditing = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const handlePressShowMore = useCallback(() => {
     Keyboard.dismiss();
     onPressShowMore();
   }, []);
 
+  const inputContainerStyle = useMemo(() => {
+    return mergeStyles(styles.inputContainer, {
+      borderColor: theme.color.primaryHighlight,
+      borderWidth: theme.layout.borderWidth,
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, [theme]);
+
+  const closeIconContainerStyle = useMemo(() => {
+    return mergeStyles(styles.closeIconContainer, {
+      borderRadius: theme.layout.borderRadiusHuge,
+      backgroundColor: theme.color.background,
+    });
+  }, [theme]);
+
   return (
-    <View ref={innerRef} style={[styles.inputContainer, containerStyle]}>
+    <Container ref={innerRef} style={[inputContainerStyle, containerStyle]}>
       {!!iconName && (
-        <MaterialIcons
+        <Icon
+          bundle={BundleIconSetName.MATERIAL_ICONS}
           name={iconName}
-          style={styles.leftIcon}
-          color={iconColor}
+          style={[styles.leftIcon, {color: iconColor}]}
         />
       )}
-      <TextInput
+      <Input
+        type={TypographyType.LABEL_SEMI_MEDIUM}
         style={styles.textInput}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmitEditing}
@@ -88,22 +99,24 @@ const DomainInput = ({
       )}
 
       {!!value && (
-        <TouchableOpacity
+        <IconButton
+          bundle={BundleIconSetName.MATERIAL_ICONS}
+          name="close"
           onPress={onClearText}
-          style={styles.closeIconContainer}>
-          <MaterialIcons name="close" />
-        </TouchableOpacity>
+          style={closeIconContainerStyle}
+        />
       )}
 
       {!!onPressShowMore && (
-        <TouchableOpacity
+        <IconButton
+          bundle={BundleIconSetName.MATERIAL_ICONS}
+          name="keyboard-arrow-down"
           hitSlop={HIT_SLOP}
           onPress={handlePressShowMore}
-          style={styles.closeIconContainer}>
-          <MaterialIcons name="keyboard-arrow-down" />
-        </TouchableOpacity>
+          style={closeIconContainerStyle}
+        />
       )}
-    </View>
+    </Container>
   );
 };
 

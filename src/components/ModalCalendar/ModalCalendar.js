@@ -165,7 +165,7 @@ const ModalCalendar = ({
               style={styles.iconContainer}
             />
             <Typography
-              type={TypographyType.LABEL_DISPLAY_SMALL}
+              type={TypographyType.DISPLAY_SMALL}
               style={styles.heading}>
               {title}
             </Typography>
