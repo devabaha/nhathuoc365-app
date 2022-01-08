@@ -2,34 +2,58 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableHighlight,
-  FlatList,
+  findNodeHandle,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
+// 3-party libs
 import Animated from 'react-native-reanimated';
-import store from '../../store/Store';
-import CartFooter from '../cart/CartFooter';
-import PopupConfirm from '../PopupConfirm';
-import RightButtonChat from '../RightButtonChat';
-import Button from 'react-native-button';
-import appConfig from '../../config';
-import IconFeather from 'react-native-vector-icons/Feather';
-import {willUpdateState} from '../../packages/tickid-chat/helper';
-import CategoryScreen from './CategoryScreen';
-import EventTracker from '../../helper/EventTracker';
-import CategoriesSkeleton from './CategoriesSkeleton';
-import {findNodeHandle} from 'react-native';
-import APIHandler from 'src/network/APIHandler';
 import {reaction} from 'mobx';
-import {FilterProduct} from './FilterProduct';
 import {isEmpty} from 'lodash';
-import {clearDrawerContent} from '../Drawer';
+// types
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {willUpdateState} from 'src/packages/tickid-chat/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {clearDrawerContent} from 'src/components/Drawer';
+// routing
+import {refresh, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {
+  BaseButton,
+  BundleIconSetName,
+  TypographyType,
+} from 'src/components/base';
+// entities
+import EventTracker from 'app-helper/EventTracker';
+// custom components
+import CartFooter from 'src/components/cart/CartFooter';
+import PopupConfirm from 'src/components/PopupConfirm';
+import RightButtonChat from 'src/components/RightButtonChat';
+import CategoryScreen from './CategoryScreen';
+import {FilterProduct} from './FilterProduct';
+import {
+  FlatList,
+  Typography,
+  ScreenWrapper,
+  Container,
+  IconButton,
+} from 'src/components/base';
+// skeleton
+import CategoriesSkeleton from './CategoriesSkeleton';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
 class Stores extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
@@ -38,32 +62,33 @@ class Stores extends Component {
     categoryId: 0,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    loading: true,
+    category_nav_index: 0,
+    categories_data: this.props.categoriesData || null,
+    selected_category: this.props.categoriesData?.length
+      ? this.props.categoriesData[0]
+      : {id: 0, name: ''},
+    categoriesPosition: [],
+    filterParams: {},
+    valueSort: {},
+  };
+  unmounted = false;
+  refCates = [];
 
-    this.state = {
-      loading: true,
-      category_nav_index: 0,
-      categories_data: props.categoriesData || null,
-      selected_category: props.categoriesData?.length
-        ? props.categoriesData[0]
-        : {id: 0, name: ''},
-      categoriesPosition: [],
-      filterParams: {},
-      valueSort: {},
-    };
-    this.unmounted = false;
-    this.refCates = [];
+  // action(() => {
+  //   store.setStoresFinish(false);
+  // })();
 
-    action(() => {
-      store.setStoresFinish(false);
-    })();
+  eventTracker = new EventTracker();
+  animatedScrollY = new Animated.Value(0);
+  animatedContentOffsetY = new Animated.Value(0);
 
-    this.eventTracker = new EventTracker();
-    this.animatedScrollY = new Animated.Value(0);
-    this.animatedContentOffsetY = new Animated.Value(0);
+  disposer = () => {};
+  updateNavBarDisposer = () => {};
 
-    this.disposer = () => {};
+  get theme() {
+    return getTheme(this);
   }
 
   get isGetFullStore() {
@@ -111,7 +136,7 @@ class Stores extends Component {
     });
 
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         right: this._renderRightButton(),
       });
     });
@@ -119,6 +144,11 @@ class Stores extends Component {
     this.disposer = reaction(
       () => store.selectedFilter,
       (data) => this.handleEffect(data),
+    );
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
     );
   }
 
@@ -128,6 +158,8 @@ class Stores extends Component {
     this.disposer();
     store.setSelectedFilter({});
     clearDrawerContent();
+
+    this.updateNavBarDisposer();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -239,23 +271,27 @@ class Stores extends Component {
     }
   };
 
+  handleRightBtnNav = () => {
+    push(appConfig.routes.searchStore, {
+      type: this.props.type,
+      categories: this.state.categories_data,
+      category_id: this.state.selected_category.id,
+      category_name:
+        this.state.selected_category.id !== 0
+          ? this.state.selected_category.name
+          : '',
+    });
+  };
+
   _renderRightButton() {
     return (
       <View style={[styles.right_btn_box]}>
-        <Button
-          onPress={() => {
-            Actions.push(appConfig.routes.searchStore, {
-              type: this.props.type,
-              categories: this.state.categories_data,
-              category_id: this.state.selected_category.id,
-              category_name:
-                this.state.selected_category.id !== 0
-                  ? this.state.selected_category.name
-                  : '',
-            });
-          }}>
-          <IconFeather size={26} color={appConfig.colors.white} name="search" />
-        </Button>
+        <IconButton
+          bundle={BundleIconSetName.FEATHER}
+          iconStyle={[this.rightBtnNavStyle, styles.rightBtnNavIcon]}
+          name="search"
+          onPress={this.handleRightBtnNav}
+        />
         <RightButtonChat tel={store.store_data.tel} />
       </View>
     );
@@ -414,13 +450,81 @@ class Stores extends Component {
     });
   };
 
+  renderCategoryItem = ({item, index}) => {
+    let active = this.state.category_nav_index == index;
+    return (
+      <BaseButton
+        onPress={() => this._changeCategory(item, index)}
+        underlayColor="transparent">
+        <View
+          ref={(inst) => this.measureCategoriesLayout(inst, item, index)}
+          style={styles.categories_nav_items}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            numberOfLines={2}
+            style={[
+              styles.categories_nav_items_title,
+              active && this.categoryItemActiveTitleStyle,
+            ]}>
+            {item.name}
+          </Typography>
+
+          {active && (
+            <View
+              style={[
+                this.categoryItemActiveStyle,
+                styles.categories_nav_items_active,
+              ]}
+            />
+          )}
+        </View>
+      </BaseButton>
+    );
+  };
+
+  get categoriesContainerStyle() {
+    return {
+      ...this.theme.layout.shadow,
+      shadowColor: this.theme.color.shadow,
+    };
+  }
+
+  get categoriesStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get categoryItemActiveTitleStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get categoryItemActiveStyle() {
+    return {
+      backgroundColor: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get rightBtnNavStyle() {
+    return {
+      color: this.theme.color.onNavBarBackground,
+    };
+  }
+
   render() {
     const {t} = this.props;
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         {this.state.categories_data != null
           ? this.state.categories_data.length > 1 && (
-              <View style={styles.categories_nav_container}>
+              <Container
+                style={[
+                  this.categoriesContainerStyle,
+                  styles.categories_nav_container,
+                ]}>
                 <FlatList
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
@@ -430,38 +534,10 @@ class Stores extends Component {
                   extraData={this.state.category_nav_index}
                   keyExtractor={(item) => `${item.id}`}
                   horizontal={true}
-                  style={styles.categories_nav}
-                  renderItem={({item, index}) => {
-                    let active = this.state.category_nav_index == index;
-                    return (
-                      <TouchableHighlight
-                        onPress={() => this._changeCategory(item, index)}
-                        underlayColor="transparent">
-                        <View
-                          ref={(inst) =>
-                            this.measureCategoriesLayout(inst, item, index)
-                          }
-                          style={styles.categories_nav_items}>
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.categories_nav_items_title,
-                              active
-                                ? styles.categories_nav_items_title_active
-                                : null,
-                            ]}>
-                            {item.name}
-                          </Text>
-
-                          {active && (
-                            <View style={styles.categories_nav_items_active} />
-                          )}
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  }}
+                  style={[this.categoriesStyle, styles.categories_nav]}
+                  renderItem={this.renderCategoryItem}
                 />
-              </View>
+              </Container>
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
@@ -487,13 +563,11 @@ class Stores extends Component {
             horizontal
             pagingEnabled
             onMomentumScrollEnd={this._onScrollEnd.bind(this)}
-            style={{
-              width: Util.size.width,
-            }}
+            style={styles.listCategories}
             getItemLayout={(data, index) => {
               return {
-                length: Util.size.width,
-                offset: Util.size.width * index,
+                length: appConfig.device.width,
+                offset: appConfig.device.width * index,
                 index,
               };
             }}
@@ -522,7 +596,7 @@ class Stores extends Component {
           />
         )}
 
-        {store.stores_finish == true && (
+        {this.state.categories_data != null && store.stores_finish == true && (
           <CartFooter
             prefix="stores"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
@@ -540,7 +614,7 @@ class Stores extends Component {
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -552,20 +626,21 @@ const styles = StyleSheet.create({
   right_btn_box: {
     flexDirection: 'row',
   },
-
+  rightBtnNavIcon: {
+    fontSize: 26,
+  },
   items_box: {
-    width: Util.size.width,
+    width: appConfig.device.width,
   },
 
   categories_nav_container: {
     zIndex: 1,
-    backgroundColor: '#ffffff',
-    ...appConfig.styles.shadow,
+  },
+  listCategories: {
+    width: appConfig.device.width,
   },
   categories_nav: {
     height: 40,
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
   },
   categories_nav_items: {
     justifyContent: 'center',
@@ -573,12 +648,7 @@ const styles = StyleSheet.create({
   },
   categories_nav_items_title: {
     paddingHorizontal: 10,
-    fontSize: 14,
     fontWeight: '500',
-    color: '#666666',
-  },
-  categories_nav_items_title_active: {
-    color: DEFAULT_COLOR,
   },
   categories_nav_items_active: {
     position: 'absolute',
@@ -586,7 +656,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 3,
-    backgroundColor: DEFAULT_COLOR,
   },
 });
 

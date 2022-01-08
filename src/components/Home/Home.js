@@ -44,7 +44,6 @@ import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 import Themes from 'src/Themes';
 
 import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
-import {LIST_SERVICE_TYPE} from '.';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
