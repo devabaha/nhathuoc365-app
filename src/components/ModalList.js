@@ -176,7 +176,7 @@ class Modal extends PureComponent {
               />
             </BaseButton>
             <Typography
-              type={TypographyType.LABEL_DISPLAY_SMALL}
+              type={TypographyType.DISPLAY_SMALL}
               style={styles.heading}>
               {this.props.heading}
             </Typography>

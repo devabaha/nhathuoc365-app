@@ -88,7 +88,7 @@ class CountryPicker extends Component {
         <View style={styles.itemContainer}>
           {!!item.flag && (
             <Typography
-              type={TypographyType.LABEL_DISPLAY_SMALL}
+              type={TypographyType.DISPLAY_SMALL}
               style={styles.itemFlag}>
               {item.flag}
             </Typography>

@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useState, useEffect} from 'react';
+import React, {MutableRefObject, useState, useEffect, useMemo} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -6,6 +6,8 @@ import {
   View,
   TouchableWithoutFeedback,
 } from 'react-native';
+// 3-party libs
+import useIsMounted from 'react-is-mounted-hook';
 import {useValues, useClocks} from 'react-native-redash';
 import Animated, {
   Easing,
@@ -20,11 +22,14 @@ import Animated, {
   eq,
   concat,
   clockRunning,
-  neq,
 } from 'react-native-reanimated';
-import AwesomeComboItem from './AwesomeComboItem';
+// configs
 import appConfig from 'app-config';
-import useIsMounted from 'react-is-mounted-hook';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {Container} from 'src/components/base';
+import AwesomeComboItem from './AwesomeComboItem';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -32,14 +37,8 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     maxWidth: appConfig.device.width * 0.6,
   },
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    // @ts-ignore
-    ...elevationShadowStyle(10),
-  },
+  container: {},
   mainContent: {
-    borderRadius: 8,
     padding: 7,
     overflow: 'hidden',
   },
@@ -118,7 +117,7 @@ function runTiming(
   ]);
 }
 
-function AwesomeCombo({
+const AwesomeCombo = ({
   data,
   show = false,
   parentRef,
@@ -127,7 +126,9 @@ function AwesomeCombo({
   renderCustomItem,
   onSelect,
   onClose = () => {},
-}: AwesomeComboProps) {
+}: AwesomeComboProps) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const [containerPosition, setContainerPosition] = useState(position);
   const [visible, setVisible] = useState(show);
@@ -167,19 +168,6 @@ function AwesomeCombo({
       setVisible(false);
     }
   };
-
-  function renderItem(item: AwesomeComboItem, index: number) {
-    return renderCustomItem ? (
-      renderCustomItem(item, () => onSelect(item), index, data)
-    ) : (
-      <AwesomeComboItem
-        key={index}
-        title={item.title}
-        last={index === data.length - 1}
-        onPress={() => onSelect(item)}
-      />
-    );
-  }
 
   function onContainerLayout(e: LayoutChangeEvent) {
     const {
@@ -221,6 +209,23 @@ function AwesomeCombo({
     }
   }
 
+  function renderItem(item: AwesomeComboItem, index: number) {
+    return renderCustomItem ? (
+      renderCustomItem(item, () => onSelect(item), index, data)
+    ) : (
+      <AwesomeComboItem
+        key={index}
+        title={item.title}
+        last={index === data.length - 1}
+        onPress={() => onSelect(item)}
+      />
+    );
+  }
+
+  const containerStyle = useMemo(() => {
+    return {borderRadius: theme.layout.borderRadiusMedium};
+  }, [theme]);
+
   return (
     visible && (
       <>
@@ -237,7 +242,9 @@ function AwesomeCombo({
               top: containerPosition.y,
             },
           ]}>
-          <Animated.View
+          <Container
+            reanimated
+            shadow
             pointerEvents="box-none"
             style={[
               styles.container,
@@ -247,6 +254,7 @@ function AwesomeCombo({
                   containerPosition.width !== undefined ? animatedOpacity : 0,
                 transform: [{translateX: animatedTranslateX}],
               },
+              containerStyle,
             ]}>
             <Animated.View
               style={[
@@ -260,17 +268,18 @@ function AwesomeCombo({
                     '%',
                   ),
                 },
+                containerStyle,
               ]}>
               {data.map((item: AwesomeComboItem, index: number) =>
                 renderItem(item, index),
               )}
             </Animated.View>
-          </Animated.View>
+          </Container>
         </View>
       </>
     )
   );
-}
+};
 
 const areEquals = (prevProps, nextProps) => {
   return (
