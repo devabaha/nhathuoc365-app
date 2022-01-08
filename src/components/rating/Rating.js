@@ -169,14 +169,19 @@ class Rating extends Component {
 
     try {
       const {current, comment, rating_selection} = this.state;
-      const {site_id, id} = this.state.cart_data;
-
-      const response = await APIHandler.site_cart_rating(site_id, id, {
+      const {site_id, id, cart_code} = this.state.cart_data;
+      const params = {
         star: current,
         comment,
         rating_data: rating_selection.join(', '),
-      });
+      };
 
+      const apiHandler = this.props.isServiceFeedback
+        ? APIHandler.service_rating(cart_code, params)
+        : APIHandler.site_cart_rating(site_id, id, params);
+
+      const response = await apiHandler;
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         pop();
 
@@ -192,6 +197,11 @@ class Rating extends Component {
             type: 'success',
           });
         }
+      } else {
+        flashShowMessage({
+          message: response.message || this.props.t('common:api.error.message'),
+          type: 'danger',
+        });
       }
     } catch (error) {
       console.log(error);
@@ -289,7 +299,11 @@ class Rating extends Component {
             paddingBottom: store.keyboardTop,
           }}>
           <View style={styles.cartView}>
-            <OrdersItemComponent disableGoDetail={true} item={cart_data} />
+            <OrdersItemComponent
+              disableGoStore={this.props.disableGoStore}
+              disableGoDetail={true}
+              item={cart_data}
+            />
           </View>
 
           <Container style={[styles.feedbackWrapper]}>
@@ -450,4 +464,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation('rating')(observer(Rating));
+export default withTranslation(['rating', 'common'])(observer(Rating));

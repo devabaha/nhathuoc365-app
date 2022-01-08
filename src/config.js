@@ -282,7 +282,6 @@ class Config {
 
       itemAttribute: 'itemAttribute',
       serviceOrders: 'serviceOrders',
-      serviceFeedback: 'serviceFeedback',
 
       // Schedule
       schedule: 'schedule',
