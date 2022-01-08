@@ -1,14 +1,29 @@
-import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
+import React, {PureComponent} from 'react';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 class Location extends PureComponent {
+  static contextType = ThemeContext;
+
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get shortName() {
     return !!this.props.name
       ? this.props.name
           .split(' ')
-          .map(word => word.charAt(0).toUpperCase())
+          .map((word) => word.charAt(0).toUpperCase())
           .join('')
       : '';
   }
@@ -16,73 +31,71 @@ class Location extends PureComponent {
   renderAvatar() {
     if (this.props.image) {
       return (
-        <CachedImage source={{ uri: this.props.image }} style={styles.image} />
+        <Image
+          resizeMode="cover"
+          source={{uri: this.props.image}}
+          style={styles.image}
+        />
       );
     } else {
       const shortName = this.shortName;
-      return <Text style={styles.shortName}>{shortName}</Text>;
+      return (
+        <Typography type={TypographyType.DISPLAY_LARGE} style={styles.shortName}>
+          {shortName}
+        </Typography>
+      );
     }
   }
-
+  get containerStyle() {
+    return {
+      ...this.theme.layout.shadow,
+      shadowColor: this.theme.color.shadow,
+    };
+  }
   render() {
     return (
-      <View style={styles.container}>
+      <Container flex style={[this.containerStyle, styles.container]}>
         <View style={styles.wrapper}>
-          <TouchableHighlight
+          <BaseButton
+            useTouchableHighlight
             style={styles.fullCenter}
-            underlayColor="rgba(0,0,0,.15)"
-            onPress={this.props.onPress}
-          >
+            onPress={this.props.onPress}>
             {this.renderAvatar()}
-          </TouchableHighlight>
+          </BaseButton>
         </View>
-      </View>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
-    backgroundColor: '#fcfcfc',
-    shadowOffset: {
-      width: 0,
-      height: 3
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7
   },
   wrapper: {
     borderRadius: 15,
     overflow: 'hidden',
-    backgroundColor: '#fcfcfc',
     width: '100%',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   fullCenter: {
     flex: 1,
     width: '100%',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
   },
   shortName: {
-    fontSize: 38,
     fontWeight: 'bold',
-    color: '#242424'
-  }
+  },
 });
 
 export default Location;
