@@ -8,6 +8,10 @@ import {Typography} from '../interface';
 export const TYPOGRAPHY_LIGHT: Typography = {
   // DISPLAY
   // NORMAL
+  [TypographyType.DISPLAY_LARGE]: {
+    fontSize: TypographyFontSize.DISPLAY_LARGE,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
   [TypographyType.DISPLAY_SMALL]: {
     fontSize: TypographyFontSize.DISPLAY_SMALL,
     color: BASE_COLOR_LIGHT.textPrimary,
