@@ -53,7 +53,7 @@ const HistoryRow = (props) => {
 
   const {t} = useTranslation();
 
-  _onShowHistoryDetail = () => {
+  const _onShowHistoryDetail = () => {
     push(
       appConfig.routes.detailHistoryPayment,
       {

@@ -419,8 +419,7 @@ class QRBarCode extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.user_check_address(barcode);
-
+          const response = await APIHandler.user_check_address(barcode);
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               action(() => {
@@ -430,14 +429,18 @@ class QRBarCode extends Component {
                   },
                   () => {
                     if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
-                      pop();
+                      // pop();
                       // setTimeout(() => {
-                      //   push(appConfig.routes.payWallet, {
-                      //     title: 'Chuyển khoản',
-                      //     wallet: this.state.wallet,
-                      //     address: barcode
-                      //   });
-                      // }, this.theme);
+                      //   push(
+                      //     appConfig.routes.payWallet,
+                      //     {
+                      //       title: 'Chuyển khoản',
+                      //       wallet: this.state.wallet,
+                      //       address: barcode,
+                      //     },
+                      //     this.theme,
+                      //   );
+                      // }, 400);
                       this.goToPayment(barcode);
                     } else if (
                       response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
