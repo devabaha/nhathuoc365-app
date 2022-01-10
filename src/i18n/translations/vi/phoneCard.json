@@ -96,5 +96,15 @@
     }
   },
   "enterPassword": "Nhập mật khẩu",
-  "forgetPassword": "Quên mật khẩu"
+  "forgetPassword": "Quên mật khẩu",
+  "rechargeHistory": "Lịch sử nạp",
+  "success": {
+    "title": "Giao dịch thành công",
+    "boughtCard": "Thẻ đã mua",
+    "rechargeInformation": "Thông tin nạp",
+    "transactionStatus": "Trạng thái giao dịch",
+    "backToHome": "Về trang chủ"
+  },
+  "transactionCode": "Mã giao dịch",
+  "viewHistory": "Xem lịch sử"
 }

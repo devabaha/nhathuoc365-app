@@ -1,6 +1,8 @@
 import React, {useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 
@@ -18,10 +20,10 @@ function FieldItemWrapper(props) {
   const {theme} = useTheme();
 
   const separateStyle = useMemo(() => {
-    return {
+    return mergeStyles(styles.separate, {
       borderBottomWidth: theme.layout.borderWidth,
       borderColor: theme.color.border,
-    };
+    });
   }, [theme]);
 
   return (
