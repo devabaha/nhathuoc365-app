@@ -10,7 +10,6 @@ import {
 import Animated from 'react-native-reanimated';
 import {reaction} from 'mobx';
 import {isEmpty} from 'lodash';
-// types
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';

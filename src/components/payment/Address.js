@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Alert} from 'react-native';
-// 3-party libs
-import {Actions} from 'react-native-router-flux';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
 // helpers
-import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {isConfigActive} from 'app-helper/configKeyHandler';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {pop, push, refresh} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -23,6 +22,7 @@ import {
 } from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
+import EventTracker from 'app-helper/EventTracker';
 // custom components
 import AddressContainer from 'src/components/payment/AddressContainer';
 import ListAddressStore from 'src/containers/ListAddressStore';
@@ -106,7 +106,7 @@ class Address extends Component {
   componentDidMount() {
     if (this.props.isVisibleUserAddress) {
       setTimeout(() =>
-        Actions.refresh({
+        refresh({
           right: this._renderRightButton.bind(this),
         }),
       );
@@ -163,7 +163,7 @@ class Address extends Component {
   _goConfirmPage() {
     if (this.props.onSelectAddress) {
       this.props.onSelectAddress(this.state.item_selected);
-      Actions.pop();
+      pop();
       return;
     }
 
@@ -232,9 +232,9 @@ class Address extends Component {
   }
 
   _goConfirm() {
-    Actions.pop();
+    pop();
     if (this.props.redirect == 'confirm') {
-      Actions.push(appConfig.routes.paymentConfirm);
+      push(appConfig.routes.paymentConfirm, {}, this.theme);
     } else {
     }
   }
@@ -253,23 +253,31 @@ class Address extends Component {
 
   handleEditAddress = (address) => {
     const {t} = this.props;
-    Actions.create_address({
-      edit_data: address,
-      title: t('common:screen.address.editTitle'),
-      addressReload: this.reloadAddress,
-      from_page: this.props.from_page,
-    });
+    push(
+      appConfig.routes.createAddress,
+      {
+        edit_data: address,
+        title: t('common:screen.address.editTitle'),
+        addressReload: this.reloadAddress,
+        from_page: this.props.from_page,
+      },
+      this.theme,
+    );
   };
 
   checkAddressSelected = (address) => {};
 
   _createNew() {
-    Actions.create_address({
-      redirect: this.props.redirect,
-      goBack: this.props.goBack,
-      addressReload: this.reloadAddress,
-      from_page: this.props.from_page,
-    });
+    push(
+      appConfig.routes.createAddress,
+      {
+        redirect: this.props.redirect,
+        goBack: this.props.goBack,
+        addressReload: this.reloadAddress,
+        from_page: this.props.from_page,
+      },
+      this.theme,
+    );
   }
 
   onRefresh = () => {

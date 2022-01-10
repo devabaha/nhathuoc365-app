@@ -2,10 +2,10 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 // configs
 import appConfig from 'app-config';
-// context
-import {useTheme} from 'src/Themes/Theme.context';
 // routing
 import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 // custom components
 import {FlatList} from 'src/components/base';
 import Items from '../Items';

@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 // types
+import {Style} from 'src/Themes/interface';
 import {NavBarProps} from './index';
 // 3-party libs
 import Animated, {Easing, useValue, interpolate} from 'react-native-reanimated';
@@ -79,6 +80,40 @@ const NavBar = ({title, description, type, onPressBack}: NavBarProps) => {
     });
   }, [theme]);
 
+  const iconBackAnimatedStyle: Style = useMemo(() => {
+    return {
+      opacity: animatedOpacity.interpolate({
+        inputRange: [0, 0.4, 1],
+        outputRange: [0, 1, 1],
+      }),
+      transform: [
+        {
+          translateX: interpolate(animatedOpacity, {
+            inputRange: [0, 1],
+            outputRange: [-10, 0],
+          }),
+        },
+      ],
+    };
+  }, []);
+
+  const iconCloseAnimatedStyle: Style = useMemo(() => {
+    return {
+      opacity: animatedOpacity.interpolate({
+        inputRange: [0, 0.4, 1],
+        outputRange: [1, 0, 0],
+      }),
+      transform: [
+        {
+          translateX: interpolate(animatedOpacity, {
+            inputRange: [0, 1],
+            outputRange: [0, -10],
+          }),
+        },
+      ],
+    };
+  }, []);
+
   return (
     <>
       <Container row style={containerStyle}>
@@ -87,46 +122,13 @@ const NavBar = ({title, description, type, onPressBack}: NavBarProps) => {
             bundle={BundleIconSetName.IONICONS}
             reanimated
             name={BACK_NAV_ICON_NAME}
-            style={[
-              styles.icon,
-              {
-                opacity: animatedOpacity.interpolate({
-                  inputRange: [0, 0.4, 1],
-                  outputRange: [0, 1, 1],
-                }),
-                transform: [
-                  {
-                    translateX: interpolate(animatedOpacity, {
-                      inputRange: [0, 1],
-                      outputRange: [-10, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
+            style={[styles.icon, iconBackAnimatedStyle]}
           />
           <Icon
             bundle={BundleIconSetName.IONICONS}
             reanimated
             name="close"
-            style={[
-              styles.icon,
-              styles.iconClose,
-              {
-                opacity: interpolate(animatedOpacity, {
-                  inputRange: [0, 0.4, 1],
-                  outputRange: [1, 0, 0],
-                }),
-                transform: [
-                  {
-                    translateX: interpolate(animatedOpacity, {
-                      inputRange: [0, 1],
-                      outputRange: [0, -10],
-                    }),
-                  },
-                ],
-              },
-            ]}
+            style={[styles.icon, styles.iconClose, iconCloseAnimatedStyle]}
           />
         </BaseButton>
 

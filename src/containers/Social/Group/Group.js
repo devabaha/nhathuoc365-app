@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Animated, Easing, StyleSheet, Text, View} from 'react-native';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
-import {Actions} from 'react-native-router-flux';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
+// network
+import {refresh} from 'app-helper/routing';
 // helpers
 import {getNewsFeedSize} from 'app-helper/image';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
@@ -100,7 +101,7 @@ const Group = ({id, groupName, siteId = store.store_data?.id}) => {
   }, []);
 
   useEffect(() => {
-    Actions.refresh({
+    refresh({
       renderTitle: renderTitle(),
     });
   }, [groupInfo?.banner, groupName, groupInfo?.name]);

@@ -12,10 +12,10 @@ import {withTranslation} from 'react-i18next';
 import EventTracker from 'app-helper/EventTracker';
 import {getTheme} from 'src/Themes/Theme.context';
 import {servicesHandler} from 'app-helper/servicesHandler';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 // custom components

@@ -1,7 +1,6 @@
 import React, {useCallback, useRef, useState, useEffect, useMemo} from 'react';
 import {Alert, BackHandler, Keyboard, StyleSheet, View} from 'react-native';
 import {reaction} from 'mobx';
-import {Actions} from 'react-native-router-flux';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -12,7 +11,7 @@ import {formatPostStoreData} from 'app-helper/social';
 import {renderGridImages} from 'app-helper/social';
 import {mergeStyles} from 'src/Themes/helper';
 // routing
-import {push} from 'app-helper/routing';
+import {pop, push, refresh} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -114,7 +113,7 @@ const CreatePost = ({
 
   useEffect(() => {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         right: () => renderPostBtn(),
       });
     });
@@ -130,7 +129,7 @@ const CreatePost = ({
 
   useEffect(() => {
     if (!title) {
-      Actions.refresh({
+      refresh({
         title: t('screen.createPost.mainTitle'),
       });
     }
@@ -153,7 +152,7 @@ const CreatePost = ({
     const handlePop = () => {
       if (canBack.current || (!contentText && !images?.length)) {
         clearRequests();
-        Actions.pop();
+        pop();
       } else {
         Alert.alert(
           t('social:discardPost'),
@@ -164,7 +163,7 @@ const CreatePost = ({
               style: 'destructive',
               onPress: () => {
                 clearRequests();
-                Actions.pop();
+                pop();
               },
             },
             {
@@ -185,7 +184,7 @@ const CreatePost = ({
 
     BackHandler.addEventListener('hardwareBackPress', backHandlerListener);
 
-    Actions.refresh({
+    refresh({
       onBack: handlePop,
     });
 
@@ -220,7 +219,7 @@ const CreatePost = ({
       postData.images = images;
     }
     canBack.current = true;
-    Actions.pop();
+    pop();
     if (editMode) {
       store.socialCreatePost(postData, t, undefined, true);
     } else {

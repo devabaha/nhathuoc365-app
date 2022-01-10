@@ -7,10 +7,10 @@ import store from 'app-store';
 // helpers
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // entities
 import {APIRequest} from 'src/network/Entity';
 

@@ -2,6 +2,7 @@ import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 // types
 import {LocationProps} from '.';
+import {Style} from 'src/Themes/interface';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 // context
@@ -45,7 +46,7 @@ const Location = ({
     );
   }, [theme, selected]);
 
-  const iconStyle = useMemo(() => {
+  const iconStyle: Style = useMemo(() => {
     return {color: theme.color.primaryHighlight, fontSize: 20};
   }, [theme]);
 

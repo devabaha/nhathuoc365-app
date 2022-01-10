@@ -5,10 +5,10 @@ import appConfig from 'app-config';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 import {BaseButton, Container, Typography, Icon} from 'src/components/base';

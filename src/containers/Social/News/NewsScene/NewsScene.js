@@ -30,10 +30,11 @@ import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 // entities
 import {APIRequest} from 'src/network/Entity';
 // custom components
-import NewsSceneSkeleton from './NewsSceneSkeleton';
 import NoResult from 'src/components/NoResult';
 import {ListFeeds} from 'src/components/Social';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
+// skeleton
+import NewsSceneSkeleton from './NewsSceneSkeleton';
 
 const styles = StyleSheet.create({
   feedsContainer: {

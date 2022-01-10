@@ -7,10 +7,10 @@ import appConfig from 'app-config';
 // helpers
 import EventTracker from 'app-helper/EventTracker';
 import {getTheme} from 'src/Themes/Theme.context';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // custom components
 import NoResult from '../NoResult';
 import ChatRow from './ChatRow';

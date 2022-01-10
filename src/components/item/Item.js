@@ -23,10 +23,10 @@ import {servicesHandler} from 'app-helper/servicesHandler';
 import {hexToRgba} from 'app-helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {isConfigActive} from 'src/helper/configKeyHandler';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {
   ButtonRoundedType,

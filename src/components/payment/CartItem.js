@@ -7,10 +7,10 @@ import store from 'app-store';
 import appConfig from 'app-config';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
-// context
-import {ThemeContext} from 'src/Themes/Theme.context';
 // routing
 import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 // images

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Switch, Keyboard} from 'react-native';
 // 3-party libs
-import {Actions, ActionConst} from 'react-native-router-flux';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 // configs
 import store from 'app-store';
@@ -12,7 +11,7 @@ import EventTracker from 'app-helper/EventTracker';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
 // routing
-import {push} from 'app-helper/routing';
+import {pop, push, refresh, replace} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -265,10 +264,10 @@ class CreateAddress extends Component {
     actions.onBack = () => {
       this._unMount();
 
-      Actions.pop();
+      pop();
     };
 
-    setTimeout(() => Actions.refresh(actions));
+    setTimeout(() => refresh(actions));
 
     if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
@@ -402,8 +401,8 @@ class CreateAddress extends Component {
     //       {
     //         text: t('confirmNotification.accept'),
     //         onPress: () => {
-    //           Actions.push(appConfig.routes.modalSearchPlaces, {
-    //             onCloseModal: Actions.pop,
+    //           push(appConfig.routes.modalSearchPlaces, {
+    //             onCloseModal: pop,
     //             onPressItem: this.handlePressAddress.bind(this),
     //           });
     //         },
@@ -486,14 +485,12 @@ class CreateAddress extends Component {
             this._reloadParent();
 
             if (this.props.goBack) {
-              Actions.pop();
+              pop();
             }
             if (this.props.redirect == 'confirm') {
-              Actions.replace(appConfig.routes.paymentConfirm, {
-                type: ActionConst.REPLACE,
-              });
+              replace(appConfig.routes.paymentConfirm, {}, this.theme);
             } else {
-              Actions.pop();
+              pop();
             }
 
             flashShowMessage({
@@ -564,7 +561,7 @@ class CreateAddress extends Component {
         // auto reload address list
         this._reloadParent();
 
-        Actions.pop();
+        pop();
       } else {
         flashShowMessage({
           type: 'danger',

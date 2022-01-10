@@ -22,9 +22,10 @@ import {TypographyType} from 'src/components/base';
 import {APIRequest} from 'src/network/Entity';
 // custom components
 import NewsScene from './NewsScene';
-import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
 import NoResult from 'src/components/NoResult';
 import {BaseButton, Typography, ScreenWrapper} from 'src/components/base';
+// skeleton
+import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
 
 const MAX_TAB_ITEMS_PER_ROW = 3.5;
 
@@ -195,16 +196,17 @@ class News extends Component {
   getLabelStyle = (focused) => {
     return [
       styles.tabBarLabel,
-      focused
-        ? [styles.tabBarLabelActive, {color: this.theme.color.primary}]
-        : {color: this.theme.color.onSurface},
+      focused && [
+        styles.tabBarLabelActive,
+        {color: this.theme.color.primaryHighlight},
+      ],
     ];
   };
 
   renderTabBarLabel(title, focused) {
     return (
       <Typography
-        type={TypographyType.LABEL_MEDIUM}
+        type={TypographyType.LABEL_MEDIUM_TERTIARY}
         numberOfLines={2}
         style={this.getLabelStyle(focused)}>
         {title}
@@ -250,24 +252,12 @@ class News extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 },
-                focused && {
-                  backgroundColor:
-                    this.theme.id === BASE_DARK_THEME_ID
-                      ? this.theme.color.surfaceHighlight
-                      : this.theme.color.surface,
-                },
               ]}>
               {this.renderTabBarLabel(title, focused)}
             </BaseButton>
           );
         }}
-        indicatorContainerStyle={{zIndex: 1}}
-        indicatorStyle={[
-          {
-            backgroundColor: this.theme.color.primary,
-            height: this.theme.id === BASE_DARK_THEME_ID ? 0 : 2,
-          },
-        ]}
+        indicatorStyle={this.indicatorStyle}
         tabStyle={{width: tabWidth}}
         style={tabBarContainerStyle}
         scrollEnabled
@@ -281,6 +271,12 @@ class News extends Component {
       route.key >= this.state.index - 1 && route.key <= this.state.index + 1;
 
     return <NewsScene id={route.id} isFetching={isFetching} />;
+  }
+
+  get indicatorStyle() {
+    return {
+      backgroundColor: this.theme.color.primaryHighlight,
+    };
   }
 
   render() {

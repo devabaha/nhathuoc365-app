@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 // configs
 import appConfig from 'app-config';
-// routing
-import {pop} from 'app-helper/routing';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
 import {getNavBarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {elevationShadowStyle} from 'app-helper';
+// routing
+import {pop} from 'app-helper/routing';
 // context
 import ProfileContext from 'src/containers/Profile/ProfileContext';
 import {ThemeContext} from 'src/Themes/Theme.context';

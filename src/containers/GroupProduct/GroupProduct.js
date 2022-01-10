@@ -5,10 +5,10 @@ import Animated, {useValue} from 'react-native-reanimated';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
-// helpers
-import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // network
 import APIHandler from 'src/network/APIHandler';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // routing
 import {push, refresh} from 'app-helper/routing';
 // context
@@ -18,10 +18,11 @@ import {APIRequest} from 'src/network/Entity';
 // custom components
 import Items from 'src/components/stores/Items';
 import CartFooter from 'src/components/cart/CartFooter';
-import ListStoreProductSkeleton from 'src/components/stores/ListStoreProductSkeleton';
 import RightButtonChat from 'src/components/RightButtonChat';
 import NoResult from 'src/components/NoResult';
 import {ScreenWrapper, FlatList, RefreshControl} from 'src/components/base';
+// skeleton
+import ListStoreProductSkeleton from 'src/components/stores/ListStoreProductSkeleton';
 
 const styles = StyleSheet.create({
   listContentContainer: {

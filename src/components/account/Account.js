@@ -11,7 +11,6 @@ import appConfig from 'app-config';
 import BaseAPI from 'src/network/API/BaseAPI';
 // helpers
 import {setAppLanguage} from 'src/i18n/i18n';
-import EventTracker from 'app-helper/EventTracker';
 import {servicesHandler} from 'app-helper/servicesHandler';
 import {isConfigActive} from 'app-helper/configKeyHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
@@ -31,6 +30,7 @@ import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
 // entities
 import {APIRequest} from 'src/network/Entity';
+import EventTracker from 'app-helper/EventTracker';
 // custom components
 import Sticker from 'src/components/Sticker';
 import SelectionList from 'src/components/SelectionList';
@@ -971,9 +971,6 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    // Actions.push(appConfig.routes.profileDetail, {
-    //   userInfo: store.user_info,
-    // });
     servicesHandler({
       type: SERVICES_TYPE.PERSONAL_PROFILE,
       isMainUser: true,
@@ -1064,7 +1061,6 @@ class Account extends Component {
                       })
                   : () => {}
               }
-              underlayColor="transparent"
               style={styles.add_store_action_btn}>
               <View style={this.walletContentContainerStyle}>
                 <View style={styles.add_store_action_wallet}>
@@ -1183,8 +1179,7 @@ class Account extends Component {
     return [
       styles.premiumProgressContainer,
       {
-        backgroundColor: this.theme.color.grey700,
-        elevation: this.theme.layout.shadow.elevation,
+        backgroundColor: this.theme.color.grey600,
       },
     ];
   }
@@ -1563,7 +1558,7 @@ const styles = StyleSheet.create({
   },
   premiumProgressContainer: {
     width: '100%',
-    height: 5,
+    height: 3,
     position: 'absolute',
     bottom: 0,
   },

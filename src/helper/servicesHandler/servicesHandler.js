@@ -472,7 +472,13 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** SERVICE ORDERS */
     case SERVICES_TYPE.SERVICE_ORDERS:
-      push(appConfig.routes.serviceOrders, {}, service.theme);
+      push(
+        appConfig.routes.serviceOrders,
+        {
+          title: service.title || commonT('screen.serviceOrder.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /** ALL SERVICES */

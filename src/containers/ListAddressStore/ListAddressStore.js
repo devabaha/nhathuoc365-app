@@ -9,7 +9,6 @@ import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
 import {
-  LocationPermission,
   LOCATION_PERMISSION_TYPE,
   REQUEST_RESULT_TYPE,
 } from 'app-helper/permissionHelper';
@@ -20,6 +19,7 @@ import {useTheme} from 'src/Themes/Theme.context';
 import {TypographyType} from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
+import {LocationPermission} from 'app-helper/permissionHelper';
 // custom components
 import AddressItem from 'src/components/payment/AddressItem';
 import NoResult from './NoResult';

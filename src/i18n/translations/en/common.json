@@ -188,6 +188,9 @@
     },
     "chooseDate": {
       "mainTitle": "Choose a date"
+    },
+    "serviceOrder": {
+      "mainTitle": "Service order"
     }
   },
 

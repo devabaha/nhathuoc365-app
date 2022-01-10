@@ -37,12 +37,10 @@ import HomeContainer from './containers/Home';
 import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
-import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
-// import PhoneAuth from './components/account/PhoneAuth';
 import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
 import StoreContainer from './components/stores/Stores';
@@ -50,15 +48,12 @@ import SearchNavBarContainer from './components/stores/SearchNavBar';
 import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
-import Cart from './components/cart/Cart';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
 import PaymentMethod from './components/payment/PaymentMethod';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
-import SearchStore from './components/Home/SearchStore';
-import ListStore from './components/Home/ListStore';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import ChooseLocation from './components/Home/ChooseLocation';
@@ -90,9 +85,8 @@ import {
   SearchChat,
   SearchChatNavBar,
 } from './components/amazingChat';
-import MdCardConfirm from './components/services/MdCardConfirm';
 import {ServiceOrders} from './components/services';
-import TabIcon from './components/TabIcon';
+import TabBar, {TabIcon} from './components/TabBar';
 import {
   initialize as initializeRadaModule,
   Category,
@@ -620,39 +614,20 @@ class App extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
   tabBarStyle: {
     borderTopWidth: 0,
-    borderColor: '#cccccc',
-    opacity: 1,
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 10,
-    shadowOpacity: 0.3,
-    elevation: 2,
+    // borderColor: '#cccccc',
+    // shadowColor: 'black',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowRadius: 10,
+    // shadowOpacity: 0.3,
+    // elevation: 2,
+    backgroundColor: 'transparent',
+    overflow: 'visible',
     height: 44 + appConfig.device.bottomSpace,
-  },
-  content: {
-    width: Util.size.width,
-    height: 28,
-    backgroundColor: '#FFD2D2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: isIOS ? 20 : 0,
-  },
-  message: {
-    color: '#D8000C',
-    fontSize: 14,
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: appConfig.colors.primary,
   },
   awesomeAlertContainer: {
     backgroundColor: 'transparent',
@@ -733,6 +708,7 @@ class RootRouter extends Component {
                   showLabel={false}
                   key={appConfig.routes.primaryTabbar}
                   tabBarStyle={styles.tabBarStyle}
+                  tabBarComponent={TabBar}
                   // activeBackgroundColor={this.theme.color.surface}
                   // inactiveBackgroundColor={this.theme.color.surface}
                   tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
@@ -1362,16 +1338,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="cart">
-                  <Scene
-                    key="cart_1"
-                    title={t('screen.cart.mainTitle')}
-                    component={Cart}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.store}>
                   {/* <RNRFDrawer
                   key={appConfig.routes.store}
@@ -1430,9 +1396,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="orders_item">
+                <Stack key={appConfig.routes.ordersDetail}>
                   <Scene
-                    key="orders_item_1"
+                    key={`${appConfig.routes.ordersDetail}_1`}
                     title={t('screen.ordersDetail.mainTitle')}
                     component={OrdersItem}
                     {...navBarConfig}
@@ -1488,26 +1454,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="search_store">
-                  <Scene
-                    key="search_store_1"
-                    title="Tìm cửa hàng"
-                    component={SearchStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="list_store">
-                  <Scene
-                    key="list_store_1"
-                    title="Cửa hàng"
-                    component={ListStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={`${appConfig.routes.storeOrders}`}>
                   <Scene
                     key={`${appConfig.routes.storeOrders}_1`}
@@ -1527,15 +1473,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.webview}_1`}
                     component={WebView}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="_add_ref">
-                  <Scene
-                    key="_add_ref_1"
-                    component={AddRef}
                     {...navBarConfig}
                     back
                   />
@@ -1779,20 +1716,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="md_card_confirm">
-                  <Scene
-                    key="md_card_confirm_1"
-                    title={t('screen.ordersDetail.confirmTitle')}
-                    component={MdCardConfirm}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.serviceOrders}>
                   <Scene
                     key={`${appConfig.routes.serviceOrders}_1`}
-                    title="Đơn dịch vụ"
                     component={ServiceOrders}
                     {...navBarConfig}
                     back
