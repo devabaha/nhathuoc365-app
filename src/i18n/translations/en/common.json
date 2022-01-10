@@ -360,5 +360,6 @@
   "selectDate": "Pick date",
   "close": "Close",
   "continue": "Continue",
-  "otherOptions": "Other options"
+  "otherOptions": "Other options",
+  "verifyFingerprint": "Verify fingerprint"
 }

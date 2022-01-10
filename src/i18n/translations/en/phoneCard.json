@@ -48,5 +48,53 @@
   "markAsUnpaid": "Mark as unpaid",
   "markAsPaid": "Mark as paid",
   "paidCard": "Paid",
-  "usedCard": "Used"
+  "usedCard": "Used",
+  "confirm": {
+    "moneySource": "Money source",
+    "transaction": {
+      "detail": "Transaction detail",
+      "type": "Transaction type",
+      "form": {
+        "sendTo": "Recharge to",
+        "tel": "Phone number",
+        "network": "Network",
+        "cardNumber": "Card number",
+        "subCardNumber": "Sub number",
+        "month": "Month",
+        "value": "Value",
+        "quantity": "Quantity",
+        "discount": "Discount",
+        "fee": {
+          "title": "Transaction fee",
+          "value": "Free"
+        },
+        "price": "Total price"
+      }
+    },
+    "error": {
+      "passwordNotMatch": {
+        "title": "Password not match",
+        "message": "Please try again!",
+        "accept": "Try again"
+      },
+      "network": "The connection may have trouble, please try again!"
+    },
+    "fingerprintScanner": {
+      "authenMessage": "Use Touch ID to unlock and confirm"
+    },
+    "secure": "Secure SSL/TLS, every transaction information is encrypted safely",
+    "confirm": "Confirm",
+    "modal": {
+      "newPass": {
+        "title": "Create new password",
+        "message": "For safety, please create a transaction password"
+      },
+      "renEnterPass": {
+        "title": "Re-enter password",
+        "message": "Re-enter password to confirm"
+      }
+    }
+  },
+  "enterPassword": "Enter password",
+  "forgetPassword": "Forget password"
 }

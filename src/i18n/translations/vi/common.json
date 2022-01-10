@@ -360,5 +360,6 @@
   "selectDate": "Chọn ngày",
   "close": "Đóng",
   "continue": "Tiếp tục",
-  "otherOptions": "Tuỳ chọn khác"
+  "otherOptions": "Tuỳ chọn khác",
+  "verifyFingerprint": "Xác thực vân tay"
 }

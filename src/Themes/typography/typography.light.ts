@@ -134,6 +134,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     color: BASE_COLOR_LIGHT.textSecondary,
   },
   // NORMAL
+  [TypographyType.LABEL_GIGANTIC]: {
+    fontSize: TypographyFontSize.HEADLINE_LARGE,
+    color: BASE_COLOR_LIGHT.textPrimary,
+  },
   [TypographyType.LABEL_HUGE]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_LIGHT.textPrimary,
