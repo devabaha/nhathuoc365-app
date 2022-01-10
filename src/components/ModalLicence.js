@@ -11,6 +11,7 @@ import Modal from 'react-native-modalbox';
 import {CheckBox} from 'react-native-elements';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import appConfig from 'app-config';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   modalLicense: {
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
 class LicenseModal extends Component {
   static defaultProps = {
     html: false,
+    onDisagree: Actions.pop,
   };
 
   state = {
@@ -118,13 +120,13 @@ class LicenseModal extends Component {
   toggleCheckbox = (index) => {
     this.setState(
       (prevState) => {
-        let toggleConfirmed = !prevState.checkboxes[index].confirmed;
+        let toggleConfirmed = !prevState.checkboxes[index]?.confirmed;
         let currentCheckbox = {
           ...this.state.checkboxes[index],
           confirmed: toggleConfirmed,
         };
         //replace to the old one
-        prevState.checkboxes.splice(index, 1, currentCheckbox);
+        prevState.checkboxes?.splice(index, 1, currentCheckbox);
 
         return {checkboxes: prevState.checkboxes};
       },
@@ -133,14 +135,16 @@ class LicenseModal extends Component {
   };
 
   handlePressAgree = () => {
-    const listCheckboxesConfirmed = this.state.checkboxes.filter((checkbox) => {
-      return checkbox.confirmed;
-    });
+    const listCheckboxesConfirmed = this.state.checkboxes?.filter(
+      (checkbox) => {
+        return checkbox.confirmed;
+      },
+    );
     this.props.onAgree(this.state.checkboxes, listCheckboxesConfirmed);
   };
 
   handleBtnAgreeDisabled = () => {
-    let passed = this.state.checkboxes.some((checkbox) => {
+    let passed = this.state.checkboxes?.some((checkbox) => {
       if (checkbox.required) {
         return !checkbox.confirmed;
       }
