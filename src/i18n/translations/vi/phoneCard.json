@@ -48,5 +48,53 @@
   "markAsUnpaid": "Đánh dấu là chưa thanh toán",
   "markAsPaid": "Đánh dấu là đã thanh toán",
   "paidCard": "Đã thanh toán",
-  "usedCard": "Đã sử dụng"
+  "usedCard": "Đã sử dụng",
+  "confirm": {
+    "moneySource": "Nguồn tiền",
+    "transaction": {
+      "detail": "Chi tiết giao dịch",
+      "type": "Loại giao dịch",
+      "form": {
+        "sendTo": "Nạp cho",
+        "tel": "Số điện thoại",
+        "network": "Nhà mạng",
+        "cardNumber": "Số thẻ",
+        "subCardNumber": "Số phụ",
+        "month": "Số tháng",
+        "value": "Mệnh giá",
+        "quantity": "Số lượng",
+        "discount": "Giảm",
+        "fee": {
+          "title": "Phí giao dịch",
+          "value": "Miễn phí"
+        },
+        "price": "Tổng tiền"
+      }
+    },
+    "error": {
+      "passwordNotMatch": {
+        "title": "Mật khẩu không khớp",
+        "message": "Vui lòng thử lại",
+        "accept": "Thử lại"
+      },
+      "network": "Kết nối mạng có lỗi, vui lòng thử lại"
+    },
+    "fingerprintScanner": {
+      "authenMessage": "Sử dụng Touch ID để mở khóa và xác nhận"
+    },
+    "secure": "Bảo mật SSL/TLS, mọi thông tin giao dịch đều được mã hóa an toàn.",
+    "confirm": "Xác nhận",
+    "modal": {
+      "newPass": {
+        "title": "Tạo mật khẩu mới",
+        "message": "Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
+      },
+      "renEnterPass": {
+        "title": "Nhập lại mật khẩu",
+        "message": "Nhập lại mật khẩu để xác nhận"
+      }
+    }
+  },
+  "enterPassword": "Nhập mật khẩu",
+  "forgetPassword": "Quên mật khẩu"
 }

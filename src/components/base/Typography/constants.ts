@@ -36,6 +36,7 @@ export enum TypographyType {
   LABEL_MEDIUM_SECONDARY = 'labelMediumSecondary',
   LABEL_SMALL_SECONDARY = 'labelSmallSecondary',
 
+  LABEL_GIGANTIC = 'labelGigantic',
   LABEL_HUGE = 'labelHuge',
   LABEL_SEMI_HUGE = 'labelSemiHuge',
   LABEL_LARGE = 'labelLarge',
