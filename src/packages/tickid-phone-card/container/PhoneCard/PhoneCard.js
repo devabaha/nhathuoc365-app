@@ -18,10 +18,13 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import EventTracker from '../../../../helper/EventTracker';
 // custom components
 import PrepayContainer from '../Prepay';
-import BuyCardContainer from '../BuyCard';
 import KPlusPaidContainer from '../KPlusPaid';
 import BaseContainer from '../BaseContainer';
-import {ScreenWrapper, Typography, TypographyType} from 'src/components/base';
+import {
+  ScreenWrapper,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
 
 class PhoneCard extends BaseContainer {
   static contextType = ThemeContext;
@@ -195,6 +198,7 @@ class PhoneCard extends BaseContainer {
                   renderLabel={this.renderTabBarLabel}
                   indicatorStyle={[styles.indicatorStyle, this.indicatorStyle]}
                   style={this.tabBarStyle}
+                  tabStyle={styles.tabStyle}
                 />
               );
             }}
@@ -220,6 +224,9 @@ const styles = StyleSheet.create({
   },
   indicatorStyle: {
     height: 3,
+  },
+  tabStyle: {
+    alignItems: undefined,
   },
 });
 

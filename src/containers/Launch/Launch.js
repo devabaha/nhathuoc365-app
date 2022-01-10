@@ -17,7 +17,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
 import {languages} from 'src/i18n/constants';
 // custom components
-import {ScreenWrapper} from 'src/components/base';
+import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
 
 class Launch extends Component {
@@ -222,126 +222,128 @@ class Launch extends Component {
   render() {
     return (
       <ScreenWrapper style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../images/btn-cart.png')}
-            style={styles.logo}
-            resizeMode="contain"
-            loadingColor="transparent"
-          />
-          <View style={styles.animateLoading}>
-            <Animated.View
-              style={[
-                styles.dot,
-                this.dotStyle,
-                {
-                  opacity: this.state.animatedBouncing.interpolate({
-                    inputRange: [0, 30, 60],
-                    outputRange: [0.6, 1, 0.6],
-                  }),
-                  transform: [
-                    {
-                      translateY: this.state.animatedBouncing.interpolate({
-                        inputRange: [0, 30, 60],
-                        outputRange: [0, 30, 0],
-                      }),
-                    },
-                    {
-                      scale: this.state.animatedBouncing.interpolate({
-                        inputRange: [0, 30, 60],
-                        outputRange: [0.6, 1, 0.6],
-                      }),
-                    },
-                    {
-                      scaleX: this.state.animatedPressing.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.3],
-                      }),
-                    },
-                    {
-                      scaleY: this.state.animatedPressing.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 0.7],
-                      }),
-                    },
-                  ],
-                },
-              ]}>
+        <Container flex>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../images/btn-cart.png')}
+              style={styles.logo}
+              resizeMode="contain"
+              loadingColor="transparent"
+            />
+            <View style={styles.animateLoading}>
               <Animated.View
                 style={[
-                  this.leftHalfStyle,
+                  styles.dot,
+                  this.dotStyle,
                   {
                     opacity: this.state.animatedBouncing.interpolate({
-                      inputRange: [0, 15, 30, 45, 60],
-                      outputRange: [0, 1, 1, 1, 0],
+                      inputRange: [0, 30, 60],
+                      outputRange: [0.6, 1, 0.6],
                     }),
                     transform: [
                       {
-                        rotate: this.state.animatedBouncing.interpolate({
-                          inputRange: [0, 15, 30, 45, 60],
-                          outputRange: [
-                            '-360deg',
-                            '-180deg',
-                            '0deg',
-                            '180deg',
-                            '360deg',
-                          ],
+                        translateY: this.state.animatedBouncing.interpolate({
+                          inputRange: [0, 30, 60],
+                          outputRange: [0, 30, 0],
+                        }),
+                      },
+                      {
+                        scale: this.state.animatedBouncing.interpolate({
+                          inputRange: [0, 30, 60],
+                          outputRange: [0.6, 1, 0.6],
+                        }),
+                      },
+                      {
+                        scaleX: this.state.animatedPressing.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.3],
+                        }),
+                      },
+                      {
+                        scaleY: this.state.animatedPressing.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 0.7],
+                        }),
+                      },
+                    ],
+                  },
+                ]}>
+                <Animated.View
+                  style={[
+                    this.leftHalfStyle,
+                    {
+                      opacity: this.state.animatedBouncing.interpolate({
+                        inputRange: [0, 15, 30, 45, 60],
+                        outputRange: [0, 1, 1, 1, 0],
+                      }),
+                      transform: [
+                        {
+                          rotate: this.state.animatedBouncing.interpolate({
+                            inputRange: [0, 15, 30, 45, 60],
+                            outputRange: [
+                              '-360deg',
+                              '-180deg',
+                              '0deg',
+                              '180deg',
+                              '360deg',
+                            ],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                />
+              </Animated.View>
+
+              <Animated.View
+                style={[
+                  this.spreadingShadowStyle,
+                  {
+                    opacity: this.state.animatedSpreadingShadow.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [0, 1, 0],
+                    }),
+                  },
+                  {
+                    transform: [
+                      {
+                        scaleX: this.state.animatedSpreadingShadow.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 8],
+                        }),
+                      },
+                      {
+                        scaleY: this.state.animatedSpreadingShadow.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.6, 1.5],
                         }),
                       },
                     ],
                   },
                 ]}
               />
-            </Animated.View>
-
-            <Animated.View
-              style={[
-                this.spreadingShadowStyle,
-                {
-                  opacity: this.state.animatedSpreadingShadow.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0],
-                  }),
-                },
-                {
-                  transform: [
-                    {
-                      scaleX: this.state.animatedSpreadingShadow.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 8],
-                      }),
-                    },
-                    {
-                      scaleY: this.state.animatedSpreadingShadow.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.6, 1.5],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-            <Animated.View
-              style={[
-                this.spreadingStyle,
-                {
-                  opacity: this.state.animatedSpreading.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0],
-                  }),
-                  transform: [
-                    {
-                      scaleX: this.state.animatedSpreading.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 5],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
+              <Animated.View
+                style={[
+                  this.spreadingStyle,
+                  {
+                    opacity: this.state.animatedSpreading.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [0, 1, 0],
+                    }),
+                    transform: [
+                      {
+                        scaleX: this.state.animatedSpreading.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 5],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </View>
           </View>
-        </View>
+        </Container>
       </ScreenWrapper>
     );
   }

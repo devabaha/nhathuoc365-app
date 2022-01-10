@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Animated, Platform} from 'react-native';
+// configs
 import config from './config';
+// custom components
+import {Container} from 'src/components/base';
 
 const SHOW_FLAG = 1;
 const HIDE_FLAG = 0;
@@ -34,7 +37,7 @@ function StatusBarBackground(props) {
 
   if (Platform.OS !== 'ios') return null;
 
-  return <Animated.View style={[styles.statusBar, {opacity: 1}]} />;
+  return <Container animated style={[styles.statusBar, {opacity}]} />;
 }
 
 const styles = StyleSheet.create({
@@ -43,7 +46,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     position: 'absolute',
-    backgroundColor: '#fff',
     height: config.device.statusBarHeight,
   },
 });
