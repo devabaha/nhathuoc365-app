@@ -26,6 +26,10 @@ export const TYPOGRAPHY_DARK: Typography = {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_DARK.primaryHighlight,
   },
+  [TypographyType.TITLE_SEMI_LARGE_PRIMARY]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
+    color: BASE_COLOR_DARK.primaryHighlight,
+  },
   // TERTIARY
   [TypographyType.TITLE_LARGE_TERTIARY]: {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,

@@ -22,6 +22,10 @@ export const TYPOGRAPHY_LIGHT: Typography = {
     fontSize: TypographyFontSize.HEADLINE_MEDIUM,
     color: BASE_COLOR_LIGHT.primaryHighlight,
   },
+  [TypographyType.TITLE_SEMI_LARGE_PRIMARY]: {
+    fontSize: TypographyFontSize.HEADLINE_SMALL,
+    color: BASE_COLOR_LIGHT.primaryHighlight,
+  },
   [TypographyType.TITLE_MEDIUM_PRIMARY]: {
     fontSize: TypographyFontSize.BODY_LARGE,
     color: BASE_COLOR_LIGHT.primaryHighlight,

@@ -16,5 +16,15 @@
 
   "option": {
     "title": "Upload image request"
+  },
+
+  "noRequestInformation": "No request information",
+  "enterMessage": "Enter your message...",
+
+  "detail": {
+    "status": "Status",
+    "staffInCharge": "Staff in charge",
+    "createdTime": "Creation time",
+    "content": "Content"
   }
 }
