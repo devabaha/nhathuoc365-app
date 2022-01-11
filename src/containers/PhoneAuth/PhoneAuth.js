@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, Keyboard} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import countries from 'world-countries';
 import appConfig from 'app-config';
@@ -16,11 +22,25 @@ import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import firebaseAuth from '@react-native-firebase/auth';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
+  },
+  eulaTextContainer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop:
+      appConfig.device.height -
+      30 -
+      (appConfig.device.isAndroid
+        ? appConfig.device.statusBarHeight
+        : appConfig.device.bottomSpace),
+  },
+  eulaText: {
+    color: appConfig.colors.text,
   },
 });
 
@@ -295,6 +315,14 @@ class PhoneAuth extends Component {
     });
   }
 
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({
+      type: SERVICES_TYPE.EULA_AGREEMENT,
+    });
+  };
+
   render() {
     const {
       confirmResult,
@@ -334,6 +362,14 @@ class PhoneAuth extends Component {
             />
           )}
           {appConfig.device.isIOS && <KeyboardSpacer />}
+
+          <TouchableOpacity
+            style={styles.eulaTextContainer}
+            onPress={this.openEULAAgreement}>
+            <Text style={styles.eulaText}>
+              {this.props.t('common:eulaAgreement')}
+            </Text>
+          </TouchableOpacity>
         </SafeAreaView>
       </KeyboardAwareScrollView>
     );
