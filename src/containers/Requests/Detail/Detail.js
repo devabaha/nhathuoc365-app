@@ -1,22 +1,35 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, RefreshControl} from 'react-native';
-import appConfig from 'app-config';
-
-import Loading from '../../../components/Loading';
+// 3-party libs
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import Comments from './Comments';
 import equal from 'deep-equal';
-import {Actions} from 'react-native-router-flux';
-import RightButtonNavBar from 'src/components/RightButtonNavBar';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {pop, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
+// entities
 import {APIRequest} from 'src/network/Entity';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// custom components
+import Comments from './Comments';
+import Loading from 'src/components/Loading';
+import RightButtonNavBar from 'src/components/RightButtonNavBar';
+import {ScreenWrapper, RefreshControl} from 'src/components/base';
 
 const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 
 class Detail extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     callbackReload: () => {},
   };
@@ -39,15 +52,26 @@ class Detail extends Component {
   updateStatusRequest = new APIRequest();
   requests = [this.updateStatusRequest];
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.getRequest(this.updateRightNavBar);
 
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         title: this.props.title || this.props.t('screen.requests.detailTitle'),
         onBack: () => {
           this.props.callbackReload();
-          Actions.pop();
+          pop();
         },
       }),
     );
@@ -56,6 +80,7 @@ class Detail extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     cancelRequests(this.requests);
+    this.updateNavBarDisposer();
     clearTimeout(this.timerGetChat);
   }
 
@@ -294,7 +319,8 @@ class Detail extends Component {
     setTimeout(() =>
       servicesHandler({
         type: SERVICES_TYPE.CREATE_REQUEST,
-        title: 'Sửa yêu cầu',
+        theme: this.theme,
+        title: this.props.t('request:editRequest'),
         site_id: this.props.siteId,
         request: this.state.request,
         object_id: this.state.request?.object_id,
@@ -329,7 +355,7 @@ class Detail extends Component {
     }
     moreOptions.push(this.props.t('cancel'));
 
-    Actions.refresh({
+    refresh({
       right: this.renderRightNavBar(moreOptions, destructiveMoreOptionsIndex),
     });
   };
@@ -360,7 +386,7 @@ class Detail extends Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
         <Comments
           loading={this.state.loading}
@@ -381,19 +407,9 @@ class Detail extends Component {
           forceUpdate={this.state.forceUpdate}
         />
         {appConfig.device.isIOS && <KeyboardSpacer />}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  emptyText: {
-    color: '#666',
-    textAlign: 'center',
-  },
-});
 
 export default withTranslation(['common', 'request'])(Detail);

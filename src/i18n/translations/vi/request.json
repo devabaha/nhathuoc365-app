@@ -16,5 +16,15 @@
 
   "option": {
     "title": "Tải ảnh phản ánh"
+  },
+
+  "noRequestInformation": "Không có thông tin phản ánh",
+  "enterMessage": "Nhập nội dung",
+
+  "detail": {
+    "status": "Trạng thái",
+    "staffInCharge": "Nhân viên tiếp nhận",
+    "createdTime": "Thời gian tạo",
+    "content": "Nội dung"
   }
 }

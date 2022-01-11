@@ -3,13 +3,14 @@ export enum TypographyType {
   DISPLAY_SMALL = 'displaySmall',
 
   TITLE_LARGE_PRIMARY = 'titleLargePrimary',
+  TITLE_SEMI_LARGE_PRIMARY = 'titleSemiLargePrimary',
   TITLE_MEDIUM_PRIMARY = 'titleMediumPrimary',
-
-  TITLE_LARGE_SECONDARY = 'titleLargeSecondary',
 
   TITLE_LARGE_TERTIARY = 'titleLargeTertiary',
   TITLE_SEMI_LARGE_TERTIARY = 'titleSemiLargeTertiary',
   TITLE_MEDIUM_TERTIARY = 'titleMediumTertiary',
+  
+  TITLE_LARGE_SECONDARY = 'titleLargeSecondary',
 
   TITLE_HUGE = 'titleHuge',
   TITLE_LARGE = 'titleLarge',

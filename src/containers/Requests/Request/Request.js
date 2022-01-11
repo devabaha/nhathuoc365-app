@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
-// configs
-import appConfig from 'app-config';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
@@ -15,7 +13,6 @@ import RequestTagTitle from './RequestTagTitle';
 import {
   BaseButton,
   Container,
-  Card,
   Typography,
   Icon,
 } from 'src/components/base';
@@ -81,6 +78,15 @@ class Request extends Component {
     };
   }
 
+  get containerBtnStyle() {
+    return {
+      backgroundColor: this.theme.color.surface,
+      borderRadius: this.theme.layout.borderRadiusMedium,
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    };
+  }
+
   render() {
     const statusStyle = {
       color: this.props.textColor || this.theme.color.white,
@@ -90,11 +96,12 @@ class Request extends Component {
     return (
       <BaseButton
         onPress={this.props.onPress}
-        activeOpacity={0.8}
-        style={[styles.containerBtn, this.props.wrapperStyle]}>
-        <Card
-          shadow
-          style={[styles.contentContainer, this.props.containerStyle]}>
+        style={[
+          styles.containerBtn,
+          this.containerBtnStyle,
+          this.props.wrapperStyle,
+        ]}>
+        <View style={[styles.contentContainer, this.props.containerStyle]}>
           <View style={styles.block}>
             <View style={this.typeContainerStyle}>
               <Typography
@@ -148,7 +155,10 @@ class Request extends Component {
             />
           </View>
 
-          <Container row style={[styles.block, styles.statusWrapper]}>
+          <Container
+            noBackground
+            row
+            style={[styles.block, styles.statusWrapper]}>
             {!!this.props.adminName && (
               <View
                 style={[this.statusContainerStyle, this.adminContainerStyle]}>
@@ -186,7 +196,7 @@ class Request extends Component {
               </Typography>
             </View>
           )}
-        </Card>
+        </View>
       </BaseButton>
     );
   }
@@ -197,6 +207,8 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginVertical: 5,
     width: 280,
+    backgroundColor: '#fff',
+    elevation: 5,
   },
   tagContainer: {
     marginBottom: 10,
