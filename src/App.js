@@ -34,7 +34,6 @@ import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
-import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
 import Notify from './components/notify/Notify';
@@ -831,16 +830,6 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
-
-                {/* ================ CUSTOMER CARD WALLET ================ */}
-                <Stack key={appConfig.routes.customerCardWallet}>
-                  <Scene
-                    key={`${appConfig.routes.customerCardWallet}_1`}
-                    component={CustomerCardWallet}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
 
                 {/* ================ REQUESTS ================ */}
                 <Stack key={appConfig.routes.requests}>
