@@ -130,14 +130,7 @@ class Item extends Component {
 
   get subActionColor() {
     const is_like = this.state.like_flag == 1;
-    return this.isDisabledSubBtnAction
-      ? '#ccc'
-      : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-        !this.isServiceProduct(this.product)
-      ? appConfig.colors.primary
-      : is_like
-      ? appConfig.colors.primary
-      : appConfig.colors.primary;
+    return appConfig.colors.primary;
   }
 
   get isDisabledSubBtnAction() {
@@ -809,21 +802,22 @@ class Item extends Component {
       this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP] ||
       this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART];
 
-    const addToCartButtonData = {
-      type: PRODUCT_BUTTON_ACTION_TYPE.ADD_TO_CART,
-      // title: 'Thêm vào\n giỏ hàng',
+    // const addToCartButtonData = {
+    //   type: PRODUCT_BUTTON_ACTION_TYPE.ADD_TO_CART,
+    //   title: isProductOutOfStock
+    //     ? t('shopTitle.outOfStock')
+    //     : t('shopTitle.buy'),
+    //   loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART],
+    //   disabled: isDisabledActionBtn,
+    //   iconName: 'cart-plus',
+    //   iconBundle: FontAwesome5Icon,
+    //   iconStyle: [iconStyle, {fontSize: 17}],
+    //   isHidden: isProductOutOfStock,
+    //   contentContainerStyle,
 
-      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART],
-      disabled: isDisabledActionBtn,
-      iconName: 'cart-plus',
-      iconBundle: FontAwesome5Icon,
-      iconStyle: [iconStyle, {fontSize: 17}],
-      isHidden: isProductOutOfStock,
-      contentContainerStyle,
-
-      onPress: () =>
-        this.handlePressMainActionBtnProduct(this.product, CART_TYPES.NORMAL),
-    };
+    //   onPress: () =>
+    //     this.handlePressMainActionBtnProduct(this.product, CART_TYPES.NORMAL),
+    // };
 
     const dropShipButtonData = {
       type: PRODUCT_BUTTON_ACTION_TYPE.DROP_SHIP,
@@ -847,14 +841,14 @@ class Item extends Component {
     };
 
     const buyNowButtonData = {
-      type: PRODUCT_BUTTON_ACTION_TYPE.BUY_NOW,
+      type: PRODUCT_BUTTON_ACTION_TYPE.ADD_TO_CART,
       iconName: 'cart',
       iconBundle: Ionicons,
       iconStyle: mainActionIconStyle,
       title: isProductOutOfStock
         ? t('shopTitle.outOfStock')
         : t('shopTitle.buy'),
-      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW],
+      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART],
       disabled: isDisabledActionBtn || isProductOutOfStock,
       contentContainerStyle,
       containerStyle: [
@@ -870,7 +864,7 @@ class Item extends Component {
         this.handlePressMainActionBtnProduct(
           this.product,
           CART_TYPES.NORMAL,
-          true,
+          // true,
         ),
     };
 
@@ -892,11 +886,11 @@ class Item extends Component {
       buttonsData.push(bookingButtonData);
     } else if (isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)) {
       // Drop ship
-      buttonsData.push(addToCartButtonData, buyNowButtonData);
-      buttonsData.push([dropShipButtonData]);
+      buttonsData.push(dropShipButtonData, buyNowButtonData);
+      // buttonsData.push([dropShipButtonData]);
     } else {
       // Buy now
-      buttonsData.push(addToCartButtonData, buyNowButtonData);
+      buttonsData.push(buyNowButtonData);
     }
     return buttonsData;
   }
@@ -1050,39 +1044,6 @@ class Item extends Component {
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
         />
       )
-    );
-  }
-
-  renderMainActionBtnIcon(product) {
-    return this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW] ? (
-      <Indicator size="small" color="#ffffff" />
-    ) : this.isServiceProduct(product) ? (
-      <FontAwesomeIcon
-        name="calendar-plus-o"
-        style={styles.item_actions_btn_icon}
-      />
-    ) : (
-      <FontAwesomeIcon name="cart-plus" style={styles.item_actions_btn_icon} />
-    );
-  }
-
-  renderSubActionBtnIcon(product) {
-    return this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE] ||
-      this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP] ? (
-      <Indicator size="small" />
-    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-      !this.isServiceProduct(product) ? (
-      <MaterialCommunityIcons
-        name="truck-fast"
-        size={24}
-        color={this.subActionColor}
-      />
-    ) : (
-      <FontAwesomeIcon
-        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
-        size={20}
-        color={this.subActionColor}
-      />
     );
   }
 
@@ -1257,7 +1218,7 @@ class Item extends Component {
           styles.item_actions_btn,
           {
             borderColor: this.subActionColor,
-            marginLeft: index ? 15 : 0,
+            marginLeft: index ? 10 : 0,
             minWidth: 42,
           },
           button.containerStyle,
@@ -1468,78 +1429,7 @@ class Item extends Component {
                   this.renderPostForSaleBtn(item)}
               </View>
 
-              {/* <View style={styles.item_actions_box}> */}
               {this.renderActionButtons()}
-              {/* <TouchableHighlight
-                  disabled={this.isDisabledSubBtnAction}
-                  onPress={() =>
-                    this.handlePressSubAction(
-                     item,
-                    isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? CART_TYPES.DROP_SHIP
-                        : '',
-                    )
-                  }
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_chat,
-                      {
-                        borderColor: this.subActionColor,
-                      },
-                    ]}>
-                    <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderSubActionBtnIcon(item)}
-                    </View>
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        styles.item_actions_title,
-                        styles.item_actions_title_chat,
-                        {
-                          color: this.subActionColor,
-                        },
-                      ]}>
-                      {!this.isServiceProduct(item) &&
-                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? t('shopTitle.dropShip')
-                        : is_like
-                        ? t('liked')
-                        : t('like')}
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  disabled={this.isDisabledBuyingProduct}
-                  onPress={() =>
-                    this.handlePressMainActionBtnProduct(
-                      item,
-                      CART_TYPES.NORMAL,
-                    )
-                  }
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_add_cart,
-                      this.isDisabledBuyingProduct &&
-                        styles.item_actions_btn_add_cart_disabled,
-                    ]}>
-                    <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderMainActionBtnIcon(item)}
-                    </View>
-                    <Text numberOfLines={1} style={styles.item_actions_title}>
-                      {this.isServiceProduct(item)
-                        ? t('shopTitle.book')
-                        : this.isDisabledBuyingProduct
-                        ? t('shopTitle.outOfStock')
-                        : t('shopTitle.buy')}
-                    </Text>
-                  </View>
-                </TouchableHighlight> */}
-              {/* </View> */}
             </View>
 
             {item != null && !this.state.loading && (
