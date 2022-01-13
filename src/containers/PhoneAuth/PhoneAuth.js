@@ -261,7 +261,6 @@ class PhoneAuth extends Component {
   }
 
   verifyResponse = (response) => {
-    const {t} = this.props;
     const user = response.data;
     store.setUserInfo(user);
     store.setAnalyticsUser(user);
@@ -269,17 +268,18 @@ class PhoneAuth extends Component {
 
     switch (response.status) {
       case STATUS_FILL_INFO_USER:
-        Actions.replace('op_register', {
-          title: t('common:screen.register.mainTitle'),
-          name_props: response.data.name,
-          hideBackImage: true,
-        });
+        this.goToRegister(response.data.name);
+
         break;
       case STATUS_SYNC_FLAG:
         Actions.replace(appConfig.routes.rootGpsStoreLocation);
         break;
       case STATUS_SUCCESS:
-        Actions.replace(appConfig.routes.primaryTabbar);
+        if (response.data?.fill_info_user) {
+          this.goToRegister(response.data.name);
+        } else {
+          Actions.replace(appConfig.routes.primaryTabbar);
+        }
         break;
       default:
         this.setState({
@@ -287,6 +287,15 @@ class PhoneAuth extends Component {
         });
         break;
     }
+  };
+
+  goToRegister = (nameProps) => {
+    const {t} = this.props;
+
+    Actions.replace('op_register', {
+      title: t('common:screen.register.mainTitle'),
+      name_props: nameProps,
+    });
   };
 
   handleChangeCodeInput(codeInput) {

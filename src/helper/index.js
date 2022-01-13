@@ -100,7 +100,7 @@ export const lightenColor = (color, percent) => {
 };
 
 export const checkIfEULAAgreed = async () => {
-  // AsyncStorage.removeItem(IS_EULA_AGREED_KEY);
+  // AsyncStorage.removeItem(EULA_AGREEMENT_USER_DECISION_DATA_KEY);
   const isEULAAgreed = await AsyncStorage.getItem(
     EULA_AGREEMENT_USER_DECISION_DATA_KEY,
   );
