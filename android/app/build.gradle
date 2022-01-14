@@ -141,11 +141,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "vn.abahaglobal"
+        applicationId "vn.cnv.cnvloyalty.nhathuoc365"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.1.7"
 
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line

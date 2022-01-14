@@ -95,13 +95,13 @@ declare logo_addition_color="addition: '$logo_addition_color_code'"
 declare android_colors_primary="<item name=\"primary\" type=\"color\">#$primary_color_value</item>"
 declare vnpay_merchant_scheme="scheme: '$bundle_id'"
 
-declare oneSignal_key="1bc53b69-00ec-469c-ba7e-2d1f94dcbb8c"
+declare oneSignal_key="a1852c98-bfcd-4046-aed0-e03fd8cf9860"
 
-declare branchIO_key="key_live_kd7jIYLYYZZrHyCsV4t2lomkrze8CimW"
+declare branchIO_key="key_live_ab4QimdnwHRZmphZ24z7xgdbDtjECjfU"
 
-declare firebase_reversed_client_id="com.googleusercontent.apps.915697121102-128d52vluc32rg3sb2pp0ujqu8289vl8"
+declare firebase_reversed_client_id="com.googleusercontent.apps.708677936625-b4rho30k8usdu67b6s70u3k1llkkp7pc"
 
-declare code_push_ios_key="Ex6xx5ueZXuu-rTk5VMcRFq0aA9x8iUi0Ukxn"
+declare code_push_ios_key="dq825PqnCsKHfU-fNG1-kctcgVf_5qMrsdKJ5"
 declare code_push_android_key="HT3lBgnIZImC38A-dTnPs2WObgeFbb6YaqoMc"
 
 # current

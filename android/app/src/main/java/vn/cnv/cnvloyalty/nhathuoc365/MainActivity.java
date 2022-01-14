@@ -1,4 +1,4 @@
-package vn.abahaglobal;
+package vn.cnv.cnvloyalty.nhathuoc365;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

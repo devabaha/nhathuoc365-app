@@ -194,7 +194,7 @@ class VndWallet extends Component {
                     paddingHorizontal: 15,
                   },
                 ]}>
-                <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
+                <Icon name={wallet?.icon} size={16} color={wallet?.color} />{' '}
                 {'  '}
                 {t('header.balance')}
               </Text>
@@ -205,10 +205,10 @@ class VndWallet extends Component {
                     textAlign: 'right',
                     width: '100%',
                     paddingHorizontal: 15,
-                    color: wallet.color,
+                    color: wallet?.color,
                   },
                 ]}>
-                {wallet.balance_view}
+                {wallet?.balance_view}
               </Text>
             </View>
           </TouchableHighlight>
@@ -242,7 +242,7 @@ class VndWallet extends Component {
         key: 1,
         title: t('tabs.information.title'),
         component: (
-          <Info loading={this.state.loading} content={wallet.content} />
+          <Info loading={this.state.loading} content={wallet?.content} />
         ),
       },
     ];

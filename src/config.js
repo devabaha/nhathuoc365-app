@@ -12,7 +12,7 @@ import {
 
 class Config {
   constructor() {
-    this._primaryColor = '#f41820';
+    this._primaryColor = '#f37020';
   }
 
   get tagVersion() {
@@ -20,7 +20,7 @@ class Config {
   }
 
   get appName() {
-    return 'HuongCang';
+    return 'NhaThuoc365';
   }
 
   get namespace() {
@@ -28,7 +28,7 @@ class Config {
   }
 
   get defaultSiteId() {
-    return 1803;
+    return 2637;
   }
 
   get reduxLoggerEnable() {
@@ -37,8 +37,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'nhathuoc365key3Fkyl',
+      secretKey: 'r44Fnhathuoc365key3FkylRf3Ika',
     };
   }
 
@@ -50,7 +50,7 @@ class Config {
 
   get oneSignal() {
     return {
-      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1',
+      appKey: 'a1852c98-bfcd-4046-aed0-e03fd8cf9860',
     };
   }
 

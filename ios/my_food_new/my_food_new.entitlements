@@ -6,12 +6,10 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:huongcang.app.link</string>
-		<string>applinks:huongcang-alternate.app.link</string>
+		<string>applinks:nhathuoc365.app.link</string>
+		<string>applinks:nhathuoc365-alternate.app.link</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.vn.abahaglobal.onesignal</string>
-	</array>
+	<array/>
 </dict>
 </plist>

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="vn.abahaglobal">
+  package="vn.cnv.cnvloyalty.nhathuoc365">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -51,7 +51,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" android:host="abahavn.app.link" />
+            <data android:scheme="https" android:host="nhathuoc365.app.link" />
         </intent-filter>
 
         <!-- VNPay Scheme -->
@@ -59,13 +59,13 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="vn.abahaglobal" />
+            <data android:scheme="vn.cnv.cnvloyalty.nhathuoc365" />
         </intent-filter>
       </activity>
 
-      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FFf41820" />
+      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FFf37020" />
       <!-- Branch init -->
-      <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9" />
+      <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_ab4QimdnwHRZmphZ24z7xgdbDtjECjfU" />
       <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
       <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
  

@@ -1,57 +1,110 @@
 {
   "project_info": {
-    "project_number": "728365043840",
-    "project_id": "abaha-global",
-    "storage_bucket": "abaha-global.appspot.com"
+    "project_number": "708677936625",
+    "project_id": "nha-thuoc-365",
+    "storage_bucket": "nha-thuoc-365.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:728365043840:android:5a57fabaf9f4b33bc61665",
+        "mobilesdk_app_id": "1:708677936625:android:5b2ec9e92d59739d689050",
         "android_client_info": {
-          "package_name": "vn.abahaglobal"
+          "package_name": "vn.cnv.cnvloyalty.nhathuoc365"
         }
       },
       "oauth_client": [
         {
-          "client_id": "728365043840-80abphq5lr9jf7ajnj0emsppbb9ikjtr.apps.googleusercontent.com",
+          "client_id": "708677936625-3s37eg31n92siktgq4l2gjjong09s8ju.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "vn.abahaglobal",
+            "package_name": "vn.cnv.cnvloyalty.nhathuoc365",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
-          "client_id": "728365043840-cup4iuhii5irbajjtr5hfour73064ved.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.abahaglobal",
-            "certificate_hash": "e238bb7fa6d0205f819d32e9e7e5117c9adf992e"
-          }
-        },
-        {
-          "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
+          "client_id": "708677936625-bqimnr22gc3gq62eqthit1gfgg6gdf9v.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAUqOXHxWEs1wDsDmKORL0-xhx_cSJmuoo"
+          "current_key": "AIzaSyBSy9S7H43kU6cp0XKY944yUkX_12CfzqU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
+              "client_id": "708677936625-bqimnr22gc3gq62eqthit1gfgg6gdf9v.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com",
+              "client_id": "708677936625-b4rho30k8usdu67b6s70u3k1llkkp7pc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.abaha",
-                "app_store_id": "1545103650"
+                "bundle_id": "vn.cnv.loyalty.nhathuoc365",
+                "app_store_id": "1549518894"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708677936625:android:f52829efdb0780c0689050",
+        "android_client_info": {
+          "package_name": "vn.nhathuoc365"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708677936625-ca3qop5cgcdadvpusm6df61okosd9h0v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.nhathuoc365",
+            "certificate_hash": "6739a1e4484100380c41a2b0c6e63be9e01f0408"
+          }
+        },
+        {
+          "client_id": "708677936625-jf6n73ctfreudv56j0g0cfdvdc0fl715.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.nhathuoc365",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "708677936625-l923k17av0v58rsnohnog2nj0i3pggsm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.nhathuoc365",
+            "certificate_hash": "0eea20456781bbc67fee63c512b39cd438a5dcb0"
+          }
+        },
+        {
+          "client_id": "708677936625-bqimnr22gc3gq62eqthit1gfgg6gdf9v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSy9S7H43kU6cp0XKY944yUkX_12CfzqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708677936625-bqimnr22gc3gq62eqthit1gfgg6gdf9v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "708677936625-b4rho30k8usdu67b6s70u3k1llkkp7pc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.cnv.loyalty.nhathuoc365",
+                "app_store_id": "1549518894"
               }
             }
           ]

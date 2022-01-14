@@ -27,7 +27,7 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Produ
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │ │U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY
+│ Production │ │dq825PqnCsKHfU-fNG1-kctcgVf_5qMrsdKJ5
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Staging │ │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
 └────────────┴──────────────────────────────────────────────────────────────────┘
@@ -39,18 +39,18 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android P
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │ │5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr
+│ Production │ │lvcmrPZq9JC1CYOD3J-CLuAk1kSkdXP-byppm
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Staging │ │Ekl91GWSUVXNB4brJzJxUNWNy7ZBnTrFIsQCn
 └────────────┴──────────────────────────────────────────────────────────────────┘
-code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
-code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
+code-push release-react tick-nhathuoc365-ios ios -d "Production" -m --description "new app"
+code-push release-react tick-nhathuoc365-android android -d "Production" -m --description "new app"
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
-code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
+code-push release-react tick-nhathuoc365-ios ios -d "Production" -m --description "test codepush"
+code-push release-react tick-nhathuoc365-android android -d "Production" -m --description "test codepush"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 

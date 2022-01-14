@@ -8,12 +8,12 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 global.MY_FOOD_API = 'https://apiapp.abaha.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
-global.HOTLINE = '+84983962301';
+global.HOTLINE = '+8418006284';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY',
-  android: '5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr'
+  ios: 'dq825PqnCsKHfU-fNG1-kctcgVf_5qMrsdKJ5',
+  android: 'lvcmrPZq9JC1CYOD3J-CLuAk1kSkdXP-byppm'
 };
 
 // width, height of screen
@@ -44,8 +44,8 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'HuongCang'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'Hương Cảng';
+global.APP_NAME = 'NhaThuoc365'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'Nhà Thuốc 365';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
@@ -53,7 +53,7 @@ global.DELAY_UPDATE_NOTICE = 3000;
 global.GA_ID = 'UA-106153171-1';
 
 // color
-global.DEFAULT_COLOR = '#f41820';
+global.DEFAULT_COLOR = '#f37020';
 global.DEFAULT_COLOR_RED = '#ff9100';
 global.DEFAULT_ADMIN_COLOR = '#3c8dbc';
 global.HEADER_BGR = DEFAULT_COLOR;
@@ -141,9 +141,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'thuc.lehuy@gmail.com';
-global.APP_FANPAGE = '';
-global.APP_INFO = 'https://huongcang.vn';
+global.EMAIL_SUPPORT = 'nhathuoc365@gmail.com';
+global.APP_FANPAGE = 'https://www.facebook.com/NhaThuoc365VietNam';
+global.APP_INFO = 'https://nhathuoc365.vn/';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
