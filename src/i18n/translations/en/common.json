@@ -357,6 +357,8 @@
   "errorAndTryAgain": "Error! press to try again",
   "settings": "Settings",
   "noNotification": "No notification yet",
+  "tryAgain": "Try again",
+  "skip": "Skip",
   "ok": "Ok",
   "shareMessage": "View {{name}} at {{url}}",
   "qrPayLabel": "QR Pay",

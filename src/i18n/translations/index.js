@@ -72,6 +72,8 @@ import vi_lotteryGame from './vi/lotteryGame.json';
 import en_lotteryGame from './en/lotteryGame.json';
 import vi_productStamp from './vi/productStamp.json';
 import en_productStamp from './en/productStamp.json';
+import vi_gpsStore from './vi/gpsStore.json';
+import en_gpsStore from './en/gpsStore.json';
 import vi_filterProduct from './vi/filterProduct.json';
 import en_filterProduct from './en/filterProduct.json';
 import vi_airlineTicket from './vi/airlineTicket.json';
@@ -123,6 +125,7 @@ export default {
     agencyInformationRegister: vi_agencyInformationRegister,
     lotteryGame: vi_lotteryGame,
     productStamp: vi_productStamp,
+    gpsStore: vi_gpsStore,
     filterProduct: vi_filterProduct,
     airlineTicket: vi_airlineTicket,
     premium: vi_premium,
@@ -167,6 +170,7 @@ export default {
     agencyInformationRegister: en_agencyInformationRegister,
     lotteryGame: en_lotteryGame,
     productStamp: en_productStamp,
+    gpsStore: en_gpsStore,
     filterProduct: en_filterProduct,
     airlineTicket: en_airlineTicket,
     premium: en_premium,

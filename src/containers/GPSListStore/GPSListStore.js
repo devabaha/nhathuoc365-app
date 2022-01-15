@@ -1,36 +1,45 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  Keyboard,
-  AppState,
-  Text,
-  FlatList,
-  StyleSheet,
-  RefreshControl,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Keyboard, AppState, StyleSheet} from 'react-native';
+// 3-party libs
 import Geolocation from '@react-native-community/geolocation';
-import {Actions} from 'react-native-router-flux';
 import {getPreciseDistance} from 'geolib';
 import useIsMounted from 'react-is-mounted-hook';
 import {debounce} from 'lodash';
-
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
-import {APIRequest} from '../../network/Entity';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {LocationPermission} from 'app-helper/permissionHelper';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {GPS_LIST_TYPE} from 'src/constants';
-
-import ScreenWrapper from '../../components/ScreenWrapper';
-import Modal from '../../components/account/Transfer/Payment/Modal';
 import {
-  LocationPermission,
   LOCATION_PERMISSION_TYPE,
   REQUEST_RESULT_TYPE,
-} from '../../helper/permissionHelper';
-import Loading from '../../components/Loading';
+} from 'app-helper/permissionHelper';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Modal from 'src/components/account/Transfer/Payment/Modal';
+import Loading from 'src/components/Loading';
 import StoreItem from './StoreItem';
 import NoResult from 'src/components/NoResult';
+import {
+  BaseButton,
+  Container,
+  FlatList,
+  RefreshControl,
+  ScreenWrapper,
+  Typography,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   image: {
@@ -38,86 +47,18 @@ const styles = StyleSheet.create({
     height: 75,
     borderRadius: 8,
   },
-  storeContainer: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
-  },
   infoContainer: {
     paddingLeft: 15,
     justifyContent: 'space-between',
   },
-  title: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
-  },
-  description: {
-    color: '#666',
-    marginTop: 3,
-  },
-  mapInfoContainer: {
-    justifyContent: 'space-between',
-    marginTop: 15,
-  },
-  distanceContainer: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 15,
-    borderColor: '#ccc',
-    backgroundColor: hexToRgba(appConfig.colors.primary, 0.05),
-  },
-  disabledDistance: {
-    backgroundColor: '#f5f5f5',
-    color: '#aaa',
-  },
-  distanceLoadingContainer: {
-    position: 'relative',
-    top: undefined,
-    left: undefined,
-  },
-  distanceLoading: {
-    padding: 0,
-    width: 11,
-    height: 11,
-  },
-  distanceIcon: {
-    fontSize: 11,
-    color: appConfig.colors.primary,
-  },
-  distanceTxt: {
-    marginLeft: 7,
-    fontSize: 11,
-    color: appConfig.colors.primary,
-  },
   distanceUnitTxt: {
-    fontSize: 9,
-  },
-  btnWrapper: {
-    overflow: 'hidden',
-    borderRadius: 15,
-    marginLeft: 10,
-  },
-  openMapContainer: {
-    backgroundColor: appConfig.colors.primary,
-  },
-  openMapBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  mapIcon: {
     fontSize: 11,
-    marginRight: 7,
-    color: '#fff',
-  },
-  openMapTxt: {
-    fontSize: 11,
-    color: '#fff',
   },
 });
 
 const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation();
 
   const appState = useRef('active');
@@ -144,16 +85,16 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const [searchValue, setSearchValue] = useState('');
   const [noResult, setNoResult] = useState(false);
 
-  const title = 'Không truy cập được Vị trí';
+  const title = t('gpsStore:locationPermissionNotGranted');
   const content =
     requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
-      ? 'Hết thời gian yêu cầu.'
-      : 'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
+      ? t('gpsStore:requestTimeoutMessage')
+      : t('gpsStore:requiredPermissionMessage');
   const okText =
     requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
-      ? 'Thử lại'
-      : 'Cài đặt';
-  const cancelText = 'Bỏ qua';
+      ? t('common:tryAgain')
+      : t('common:settings');
+  const cancelText = t('common:skip');
 
   useEffect(() => {
     didMount();
@@ -167,10 +108,10 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     requestLocationPermission();
 
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         searchValue: '',
         onSearch: (text) => {
-          Actions.refresh({
+          refresh({
             searchValue: text,
           });
 
@@ -181,7 +122,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           Keyboard.dismiss();
         },
         onClearText: () => {
-          Actions.refresh({
+          refresh({
             searchValue: '',
           });
 
@@ -397,14 +338,14 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   const calculateDiffDistance = (lng, lat) => {
     if (latitude && longitude) {
       return (
-        <Text>
+        <Typography style={distanceTextStyle}>
           {getPreciseDistance(
             {latitude, longitude},
             {latitude: Number(lat), longitude: Number(lng)},
             100,
           ) / 1000}{' '}
-          <Text style={styles.distanceUnitTxt}>km</Text>
-        </Text>
+          <Typography style={distanceTextStyle}>km</Typography>
+        </Typography>
       );
     }
     return '-';
@@ -416,10 +357,10 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
   };
 
   const renderStore = ({item: store}) => {
-    const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
+    const disabledDistanceStyle = !isConnectGPS && disabledDistanceStyle;
 
     return (
-      <TouchableOpacity
+      <BaseButton
         activeOpacity={0.5}
         disabled={
           type === GPS_LIST_TYPE.GPS_LIST_STORE
@@ -447,9 +388,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
           distance={calculateDiffDistance(store.lng, store.lat)}
           disabledDistanceStyle={disabledDistanceStyle}
           actionBtnTitle={
-            type === GPS_LIST_TYPE.GPS_LIST_STORE
-              ? t('map')
-              : t('goShopping')
+            type === GPS_LIST_TYPE.GPS_LIST_STORE ? t('map') : t('goShopping')
           }
           actionBtnIconName={
             type === GPS_LIST_TYPE.GPS_LIST_SITE && 'ios-cart-sharp'
@@ -460,7 +399,7 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
               : null
           }
         />
-      </TouchableOpacity>
+      </BaseButton>
     );
   };
 
@@ -478,6 +417,18 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
     );
   };
 
+  const distanceTextStyle = useMemo(() => {
+    return mergeStyles(styles.distanceUnitTxt, {
+      color: theme.color.primary,
+    });
+  }, [theme]);
+
+  const disabledDistanceStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.contentBackground,
+      color: theme.color.iconInactive,
+    };
+  }, [theme]);
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
@@ -493,17 +444,19 @@ const GPSListStore = ({type = GPS_LIST_TYPE.GPS_LIST_STORE}) => {
         onCancel={cancelModal}
         onOk={handleLocationError}
       />
-      <FlatList
-        data={listStore}
-        contentContainerStyle={{flexGrow: 1}}
-        renderItem={renderStore}
-        keyExtractor={(item, index) => index.toString()}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
-        ListEmptyComponent={renderNoResult}
-        onScroll={Keyboard.dismiss}
-      />
+      <Container flex>
+        <FlatList
+          safeLayout
+          data={listStore}
+          renderItem={renderStore}
+          keyExtractor={(item, index) => index.toString()}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={renderNoResult}
+          onScroll={Keyboard.dismiss}
+        />
+      </Container>
     </ScreenWrapper>
   );
 };

@@ -1,0 +1,15 @@
+{
+  "createApp": "Tạo app",
+  "searchStorePlaceholder": "Tìm kiếm cửa hàng...",
+  "welcomeMessage": "Xin chào",
+  "appCreatingMessage": "Bạn hãy tạo App mới hoặc chọn App của bạn trong danh sách để trải nghiệm ngay nhé.",
+  "accessDenyMessage": "Không thể truy cập",
+  "cantOpenLinkMessage": "Đường dẫn này không thể mở được.",
+  "locationPermissionNotGranted": "Không truy cập được Vị trí",
+  "requestTimeoutMessage": "Hết thời gian yêu cầu.",
+  "requiredPermissionMessage": "Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.",
+  "storeItem": {
+    "call": "Gọi",
+    "cannotConnect": "Không thể liên lạc"
+  }
+}

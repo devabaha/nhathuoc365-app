@@ -357,6 +357,8 @@
   "errorAndTryAgain": "Lỗi! chạm để thử lại",
   "settings": "Cài đặt",
   "noNotification": "Chưa có thông báo",
+  "tryAgain": "Thử lại",
+  "skip": "Bỏ qua",
   "ok": "Ok",
   "shareMessage": "Xem {{message}} tại {{url}}",
   "qrPayLabel": "QR Pay",
