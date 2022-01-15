@@ -1,28 +1,27 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  Platform,
-  PlatformColor,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Platform, PlatformColor, StyleSheet} from 'react-native';
+// 3-party libs
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Modal from 'react-native-modalbox';
-import {Actions} from 'react-native-router-flux';
-
+// configs
 import appConfig from 'app-config';
+// helpers
 import {isValidDate} from 'app-helper';
-
-import {Container} from '../Layout';
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, TextButton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   modal: {
     maxHeight: '80%',
     height: undefined,
-    paddingBottom: appConfig.device.bottomSpace,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     overflow: 'hidden',
@@ -35,21 +34,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   btnTitle: {
-    ...appConfig.styles.typography.heading3,
     fontWeight: 'bold',
-    fontSize: 18,
-  },
-  btnCancel: {
-    color: Platform.select({
-      ios: PlatformColor('systemGray'),
-      default: '#888',
-    }),
-  },
-  btnSelect: {
-    color: Platform.select({
-      ios: PlatformColor('systemBlue'),
-      default: appConfig.colors.primary,
-    }),
   },
   dateTimeContainer: {
     paddingHorizontal: 7,
@@ -66,6 +51,8 @@ const ModalDateTimePicker = ({
   onSelect = () => {},
   ...props
 }) => {
+  const {theme} = useTheme();
+
   const {t, i18n} = useTranslation();
   const refModal = useRef();
 
@@ -108,13 +95,31 @@ const ModalDateTimePicker = ({
   }, []);
 
   const handleClosedModal = useCallback(() => {
-    Actions.pop();
+    pop();
   }, []);
 
   const handleRef = useCallback((inst) => {
     innerRef(inst);
     refModal.current = inst;
   }, []);
+
+  const btnCancelStyle = useMemo(() => {
+    return mergeStyles(styles.btnTitle, {
+      color: Platform.select({
+        ios: PlatformColor('systemGray'),
+        default: theme.color.textSecondary,
+      }),
+    });
+  }, [theme]);
+
+  const btnSelectStyle = useMemo(() => {
+    return mergeStyles(styles.btnTitle, {
+      color: Platform.select({
+        ios: PlatformColor('systemBlue'),
+        default: theme.color.primaryHighlight,
+      }),
+    });
+  }, [theme]);
 
   return (
     <Modal
@@ -129,25 +134,30 @@ const ModalDateTimePicker = ({
       useNativeDriver>
       {appConfig.device.isIOS && (
         <Container row style={styles.headerContainer}>
-          <TouchableOpacity
-            hitSlop={HIT_SLOP}
-            style={[styles.btnContainer, styles.btnCancelContainer]}
-            onPress={handleClosingModal}>
-            <Text style={[styles.btnTitle, styles.btnCancel]}>
-              {t('cancel')}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
+          <TextButton
+            typoProps={{type: TypographyType.LABEL_SEMI_HUGE}}
             hitSlop={HIT_SLOP}
             style={styles.btnContainer}
+            titleStyle={btnCancelStyle}
+            onPress={handleClosingModal}>
+            {t('cancel')}
+          </TextButton>
+
+          <TextButton
+            typoProps={{type: TypographyType.LABEL_SEMI_HUGE}}
+            hitSlop={HIT_SLOP}
+            style={styles.btnContainer}
+            titleStyle={btnSelectStyle}
             onPress={handleSelect}>
-            <Text style={[styles.btnTitle, styles.btnSelect]}>{t('done')}</Text>
-          </TouchableOpacity>
+            {t('done')}
+          </TextButton>
         </Container>
       )}
-      <View style={mergeStyles(styles.dateTimeContainer, containerStyle)}>
+      <Container
+        safeLayout
+        style={mergeStyles(styles.dateTimeContainer, containerStyle)}>
         <DateTimePicker
+          textColor={theme.color.textPrimary}
           value={value}
           onChange={handleDateChange}
           mode="date"
@@ -155,7 +165,7 @@ const ModalDateTimePicker = ({
           locale={i18n.language}
           {...props}
         />
-      </View>
+      </Container>
     </Modal>
   );
 };
