@@ -1,0 +1,19 @@
+{
+  "title": "Danh bạ",
+  "searchContactsPlaceholder": "Tìm theo tên hoặc số điện thoại",
+  "notInContactsFamilyName": "Chưa có trong danh bạ",
+  "requestContactsPermission": {
+    "message": "Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin",
+    "allowAccessContacts": "Cho phép truy cập"
+  },
+  "modalAllowPermission": {
+    "title": "Cho phép truy cập Danh bạ",
+    "descriptionPromo": "Vui lòng cho phép {{appName}} truy cập Danh bạ để chọn số điện thoại nhanh hơn",
+    "descriptionAllowing": " Nhấn 'Cho phép truy cập' và Đồng ý / OK",
+    "or": "Hoặc:",
+    "descriptionStep1": "1. Vào mục Cài đặt",
+    "descriptionStep2": "2. Tìm chọn icon {{appName}}",
+    "descriptionStep3": "3. Bật quyền truy cập Danh bạ",
+    "allowAccessContacts": "Cho phép truy cập"
+  }
+}

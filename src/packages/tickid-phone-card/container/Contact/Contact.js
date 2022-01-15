@@ -1,73 +1,115 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {
-  FlatList,
   StyleSheet,
   Platform,
-  SafeAreaView,
-  RefreshControl,
   Linking,
   View,
-  Text,
-  PermissionsAndroid
+  PermissionsAndroid,
 } from 'react-native';
-import config from '../../config';
-import update from 'immutability-helper';
-import Button from 'react-native-button';
+// 3-party libs
 import Contacts from 'react-native-contacts';
-import debounce from '../../helper/debounce';
-import ContactEntity from '../../entity/Contact';
-import SearchComponent from '../../component/Search';
-import LoadingComponent from '@tickid/tickid-rn-loading';
-import ContactItemComponent from '../../component/ContactItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ModalAllowPermisson from '../../component/ModalAllowPermisson';
 import AndroidOpenSettings from 'react-native-android-open-settings';
-import EventTracker from '../../../../helper/EventTracker';
+// helpers
+import update from 'immutability-helper';
+import debounce from 'src/packages/tickid-phone-card/helper/debounce';
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import ContactEntity from 'src/packages/tickid-phone-card/entity/Contact';
+// custom components
+import Button from 'src/components/Button';
+import SearchComponent from 'src/packages/tickid-phone-card/component/Search';
+import LoadingComponent from '@tickid/tickid-rn-loading';
+import ContactItemComponent from 'src/packages/tickid-phone-card/component/ContactItem';
+import ModalAllowPermisson from 'src/packages/tickid-phone-card/component/ModalAllowPermisson';
+import {
+  FlatList,
+  RefreshControl,
+  ScreenWrapper,
+  Typography,
+} from 'src/components/base';
 
 const INIT_PAGE = 1;
 const CONTACTS_PER_PAGE = 20;
 const CONTACTS_STORAGE_KEY = 'CONTACTS_STORAGE_KEY';
 
 class Contact extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onPressContact: PropTypes.func,
     requestContactsPermissionTitle: PropTypes.string,
     requestContactsPermissionMessage: PropTypes.string,
     notInContactsFamilyName: PropTypes.string,
     allowAccessContactsMessage: PropTypes.string,
-    searchContactsPlaceholder: PropTypes.string
+    searchContactsPlaceholder: PropTypes.string,
   };
 
   static defaultProps = {
     onPressContact: () => {},
-    requestContactsPermissionTitle: 'Danh bạ',
-    requestContactsPermissionMessage:
-      'Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin',
-    notInContactsFamilyName: 'Chưa có trong danh bạ',
-    allowAccessContactsMessage: 'Cho phép truy cập',
-    searchContactsPlaceholder: 'Tìm theo tên hoặc số điện thoại'
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    contacts: [],
+    contactsToRender: [],
+    searchResult: [],
+    refreshing: false,
+    showLoading: false,
+    isNotAccessToContact: false,
+    showAllowContactPermission: false,
+    currentPage: INIT_PAGE,
+    searchText: '',
+  };
+  eventTracker = new EventTracker();
 
-    this.state = {
-      contacts: [],
-      contactsToRender: [],
-      searchResult: [],
-      refreshing: false,
-      showLoading: false,
-      isNotAccessToContact: false,
-      showAllowContactPermission: false,
-      currentPage: INIT_PAGE,
-      searchText: ''
-    };
-    this.eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   get hasSearchResult() {
     return this.state.searchResult.length > 0;
+  }
+
+  get requestContactsPermissionTitle() {
+    return this.props.requestContactsPermissionTitle || this.props.t('title');
+  }
+
+  get requestContactsPermissionMessage() {
+    return (
+      this.props.requestContactsPermissionMessage ||
+      this.props.t('requestContactsPermission.message')
+    );
+  }
+
+  get notInContactsFamilyName() {
+    return (
+      this.props.notInContactsFamilyName ||
+      this.props.t('notInContactsFamilyName')
+    );
+  }
+
+  get allowAccessContactsMessage() {
+    return (
+      this.props.allowAccessContactsMessage ||
+      this.props.t('requestContactsPermission.allowAccessContacts')
+    );
+  }
+
+  get searchContactsPlaceholder() {
+    console.log(this.props);
+    return (
+      this.props.searchContactsPlaceholder ||
+      this.props.t('searchContactsPlaceholder')
+    );
   }
 
   componentDidMount() {
@@ -82,42 +124,49 @@ class Contact extends Component {
     }
 
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   handleCheckPermissonAndroid = () => {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-      title: this.props.requestContactsPermissionTitle,
-      message: this.props.requestContactsPermissionMessage
-    }).then(async error => {
+      title: this.requestContactsPermissionTitle,
+      message: this.requestContactsPermissionMessage,
+    }).then(async (error) => {
       switch (error) {
         case 'never_ask_again':
           this.setState({
             showAllowContactPermission: true,
             isNotAccessToContact: true,
-            nerverAskAgain: true
+            nerverAskAgain: true,
           });
           break;
         case 'denied':
           this.setState({
             showAllowContactPermission: true,
-            isNotAccessToContact: true
+            isNotAccessToContact: true,
           });
           break;
         default:
           this.getListContacts();
           this.setState({
             showAllowContactPermission: false,
-            isNotAccessToContact: false
+            isNotAccessToContact: false,
           });
       }
     });
   };
 
-  handleCheckPermissonIOS = async permission => {
+  handleCheckPermissonIOS = async (permission) => {
     switch (permission) {
       case 'authorized':
         await this.loadStoredContacts();
@@ -125,13 +174,13 @@ class Contact extends Component {
         break;
       case 'undefined':
         Contacts.requestPermission((err, permission) =>
-          this.handleCheckPermissonIOS(permission)
+          this.handleCheckPermissonIOS(permission),
         );
         break;
       case 'denied':
         this.setState({
           showAllowContactPermission: true,
-          isNotAccessToContact: true
+          isNotAccessToContact: true,
         });
         break;
     }
@@ -142,20 +191,20 @@ class Contact extends Component {
       AndroidOpenSettings.appDetailsSettings();
     } else {
       Linking.canOpenURL('app-settings:')
-        .then(supported => {
+        .then((supported) => {
           if (!supported) {
             console.log("Can't handle settings url");
           } else {
             return Linking.openURL('app-settings:');
           }
         })
-        .catch(err => console.error('An error occurred', err));
+        .catch((err) => console.error('An error occurred', err));
     }
   };
 
   loadStoredContacts = async () => {
     await this.setState({
-      showLoading: true
+      showLoading: true,
     });
 
     try {
@@ -174,7 +223,7 @@ class Contact extends Component {
   getListContacts = (showLoading = true) => {
     if (showLoading) {
       this.setState({
-        showLoading: true
+        showLoading: true,
       });
     }
 
@@ -187,27 +236,27 @@ class Contact extends Component {
     } catch (error) {
       this.setState({
         refreshing: false,
-        showLoading: false
+        showLoading: false,
       });
     }
   };
 
-  mapContactsToState = contacts => {
+  mapContactsToState = (contacts) => {
     this.setState({
       refreshing: false,
       showLoading: false,
-      contacts: contacts.map(contact => new ContactEntity(contact)),
+      contacts: contacts.map((contact) => new ContactEntity(contact)),
       contactsToRender: contacts
         .slice(0, CONTACTS_PER_PAGE)
-        .map(contact => new ContactEntity(contact))
+        .map((contact) => new ContactEntity(contact)),
     });
   };
 
-  saveContactsToStorage = async contacts => {
+  saveContactsToStorage = async (contacts) => {
     try {
       await AsyncStorage.setItem(
         CONTACTS_STORAGE_KEY,
-        JSON.stringify(contacts)
+        JSON.stringify(contacts),
       );
     } catch (error) {
       console.log(error);
@@ -217,7 +266,7 @@ class Contact extends Component {
   onRefresh = () => {
     this.setState({
       refreshing: true,
-      currentPage: INIT_PAGE
+      currentPage: INIT_PAGE,
     });
 
     setTimeout(() => {
@@ -233,7 +282,7 @@ class Contact extends Component {
       <FlatList
         keyboardDismissMode={Platform.OS === 'ios' ? 'on-drag' : 'interactive'}
         data={dataToRender}
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={(item) => `${item.id}`}
         renderItem={this.renderContact}
         removeClippedSubviews={true}
         keyboardShouldPersistTaps="handled"
@@ -251,27 +300,27 @@ class Contact extends Component {
 
   onLoadMoreContacts = () => {
     this.setState(
-      prevState => ({
-        currentPage: prevState.currentPage + 1
+      (prevState) => ({
+        currentPage: prevState.currentPage + 1,
       }),
       () => {
         const startIndex = CONTACTS_PER_PAGE * (this.state.currentPage - 1);
         const newContacts = this.state.contacts.slice(
           startIndex,
-          startIndex + CONTACTS_PER_PAGE
+          startIndex + CONTACTS_PER_PAGE,
         );
         if (newContacts.length > 0) {
           this.setState({
             contactsToRender: update(this.state.contactsToRender, {
-              $push: newContacts
-            })
+              $push: newContacts,
+            }),
           });
         }
-      }
+      },
     );
   };
 
-  renderContact = ({ item: contact }) => {
+  renderContact = ({item: contact}) => {
     return (
       <ContactItemComponent
         hasThumbnail={contact.data.hasThumbnail}
@@ -285,10 +334,10 @@ class Contact extends Component {
     );
   };
 
-  handleChangeText = searchText => {
+  handleChangeText = (searchText) => {
     if (searchText) {
       this.setState({
-        searchText
+        searchText,
       });
       this.search(searchText);
     } else {
@@ -296,58 +345,58 @@ class Contact extends Component {
     }
   };
 
-  search = debounce(searchText => {
-    let searchResult = this.state.contacts.filter(({ isMatch }) =>
-      isMatch(searchText)
+  search = debounce((searchText) => {
+    let searchResult = this.state.contacts.filter(({isMatch}) =>
+      isMatch(searchText),
     );
 
     if (searchResult.length === 0) {
       searchResult = [
         {
           data: {
-            familyName: this.props.notInContactsFamilyName
+            familyName: this.notInContactsFamilyName,
           },
           displayPhone: searchText,
-          name: this.props.notInContactsFamilyName,
-          notInContact: true
-        }
+          name: this.notInContactsFamilyName,
+          notInContact: true,
+        },
       ];
     }
 
     this.setState({
-      searchResult
+      searchResult,
     });
   }, 250);
 
   handleClearText = () => {
     this.setState({
       searchText: '',
-      searchResult: []
+      searchResult: [],
     });
   };
 
   handleCloseContactPermission = () => {
     this.setState({
-      showAllowContactPermission: false
+      showAllowContactPermission: false,
     });
   };
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.showLoading && <LoadingComponent loading />}
 
         {this.state.isNotAccessToContact ? (
           <View style={styles.allowBox}>
-            <Text style={styles.allowMessage}>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+              style={styles.allowMessage}>
               {this.props.requestContactsPermissionMessage}
-            </Text>
+            </Typography>
             <Button
               containerStyle={styles.allowBtn}
-              style={styles.allowText}
-              onPress={this.handleOpenAllowContactPermission}
-            >
-              {this.props.allowAccessContactsMessage}
+              onPress={this.handleOpenAllowContactPermission}>
+              {this.allowAccessContactsMessage}
             </Button>
           </View>
         ) : (
@@ -356,7 +405,7 @@ class Contact extends Component {
               value={this.state.searchText}
               onChangeText={this.handleChangeText}
               onClearText={this.handleClearText}
-              placeholder={this.props.searchContactsPlaceholder}
+              placeholder={this.searchContactsPlaceholder}
             />
 
             {this.renderContacts()}
@@ -368,40 +417,32 @@ class Contact extends Component {
           onClose={this.handleCloseContactPermission}
           onAllowAccessContacts={this.handleOpenAllowContactPermission}
         />
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   allowBox: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
   allowMessage: {
-    fontSize: 15,
-    color: '#666',
     fontWeight: '400',
     textAlign: 'center',
-    lineHeight: 24
+    lineHeight: 24,
   },
   allowBtn: {
     marginTop: 24,
     borderRadius: 6,
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: config.colors.primary
   },
-  allowText: {
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: '500'
-  }
 });
 
-export default Contact;
+export default withTranslation('phoneCardContact')(Contact);

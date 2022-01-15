@@ -1,124 +1,163 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, Modal, StyleSheet } from 'react-native';
-import closeImage from '../../assets/images/close_lint.png';
-import Button from 'react-native-button';
-import config from '../../config';
+import {Modal, StyleSheet} from 'react-native';
+// configs
+import config from 'src/packages/tickid-phone-card/config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, CardBorderRadiusType} from 'src/components/base';
+// images
+import closeImage from 'src/assets/images/close_lint.png';
+// custom components
+import {
+  AppFilledButton,
+  Card,
+  Container,
+  ImageButton,
+  Typography,
+} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class ModalAllowPermisson extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     visible: PropTypes.bool,
     transparent: PropTypes.bool,
     onClose: PropTypes.func,
-    onAllowAccessContacts: PropTypes.func
+    onAllowAccessContacts: PropTypes.func,
   };
 
   static defaultProps = {
     visible: false,
     transparent: true,
     onClose: defaultListener,
-    onAllowAccessContacts: defaultListener
+    onAllowAccessContacts: defaultListener,
   };
 
+  get theme() {
+    return getTheme(this);
+  }
+
+  get containerStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay30,
+    };
+  }
+
   render() {
+    const {t} = this.props;
+
     return (
       <Modal
         animationType="fade"
         visible={this.props.visible}
         transparent={this.props.transparent}
-        onRequestClose={this.props.onClose}
-      >
-        <View style={styles.container}>
-          <View style={styles.content}>
-            <Text style={styles.heading}>Cho phép truy cập Danh bạ</Text>
-            <Text style={styles.text}>
-              {`Vui lòng cho phép ${config.appName} truy cập Danh bạ để chọn số điện thoại nhanh hơn.`}
-            </Text>
-            <Text style={styles.text}>
-              Nhấn "Cho phép truy cập" và Đồng ý / OK
-            </Text>
-            <Text style={[styles.text, styles.or]}>Hoặc:</Text>
-            <Text style={styles.text}>1. Vào mục Cài đặt / Settings</Text>
-            <Text
-              style={styles.text}
-            >{`2. Tìm chọn icon ${config.appName}`}</Text>
-            <Text style={styles.text}>
-              3. Bật quyền truy cập Danh bạ / Contacts
-            </Text>
-            <Button
-              style={styles.allowBtnText}
-              containerStyle={styles.allowBtn}
-              onPress={this.props.onAllowAccessContacts}
-            >
-              Cho phép truy cập
-            </Button>
+        onRequestClose={this.props.onClose}>
+        <Container flex center style={this.containerStyle}>
+          <Card
+            borderRadiusSize={CardBorderRadiusType.MEDIUM}
+            style={styles.content}>
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={styles.heading}>
+              {t('modalAllowPermission.title')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={styles.text}>
+              {t('modalAllowPermission.descriptionPromo', {
+                appName: config.appName,
+              })}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={styles.text}>
+              {t('modalAllowPermission.descriptionAllowing')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={[styles.text, styles.or]}>
+              {t('modalAllowPermission.or')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={styles.text}>
+              {t('modalAllowPermission.descriptionStep1')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={styles.text}>
+              {t('modalAllowPermission.descriptionStep2', {
+                appName: config.appName,
+              })}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_LARGE}
+              style={styles.text}>
+              {t('modalAllowPermission.descriptionStep3')}
+            </Typography>
+            <AppFilledButton
+              titleStyle={[
+                this.theme.typography[TypographyType.LABEL_SEMI_LARGE],
+                {color: this.theme.color.onPrimary},
+              ]}
+              primary
+              secondary={false}
+              style={styles.allowBtn}
+              onPress={this.props.onAllowAccessContacts}>
+              {t('modalAllowPermission.allowAccessContacts')}
+            </AppFilledButton>
 
-            <Button
-              containerStyle={styles.closeBtn}
+            <ImageButton
               onPress={this.props.onClose}
-            >
-              <Image source={closeImage} style={styles.closeImg} />
-            </Button>
-          </View>
-        </View>
+              style={styles.closeBtn}
+              source={closeImage}
+              imageStyle={styles.closeImg}
+            />
+          </Card>
+        </Container>
       </Modal>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
-  },
   content: {
     padding: 16,
-    borderRadius: 8,
     marginHorizontal: 16,
-    backgroundColor: '#fff',
-    position: 'relative'
+    position: 'relative',
   },
   heading: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   text: {
-    fontSize: 15,
-    color: '#333',
     fontWeight: '400',
-    marginTop: 6
+    marginTop: 6,
   },
   or: {
     fontWeight: 'bold',
-    marginTop: 16
-  },
-  allowBtnText: {
-    color: config.colors.white,
-    fontSize: 15,
-    fontWeight: 'bold'
+    marginTop: 16,
   },
   allowBtn: {
-    backgroundColor: config.colors.primary,
-    borderRadius: 8,
     paddingVertical: 14,
-    marginTop: 24
+    marginTop: 24,
   },
   closeBtn: {
     position: 'absolute',
     top: 0,
     right: 0,
-    padding: 10
+    padding: 10,
   },
   closeImg: {
     width: 14,
-    height: 14
-  }
+    height: 14,
+  },
 });
 
-export default ModalAllowPermisson;
+export default withTranslation('phoneCardContact')(ModalAllowPermisson);
