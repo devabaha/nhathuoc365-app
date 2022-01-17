@@ -1,0 +1,19 @@
+{
+  "eula": {
+    "lastUpdated": "<p><i>Last updated: {{lastUpdated}}</i></p>",
+    "content": [
+      "<p>Để sử dụng ứng dụng của chúng tôi, bạn cần đồng ý với bản Thoả thuận người dùng (EULA) này.</p>",
+
+      "<h4>1. Nội dung do người dùng tự tạo (UGC)</h4>",
+      "<p>- Bạn không được đăng tải, trao đổi, chia sẻ:</p>",
+      "<ul>",
+      "<li>Nội dung bị cấm theo quy định của nước sở tại.</li>",
+      "<li>Nội dung tình dục nhạy cảm, khiêu dâm, tục tĩu.</li>",
+      "<li>Nôi dung kích động bạo lực, xúi giục sự thù ghét, gây phân biệt, chia rẽ, kỳ thị hướng tới bất kỳ cá nhân hay tổ chức nào.</li>",
+      "<li>Nội dung mô tả, xúi giục các hoạt động nguy hiểm, khủng bố.</li>",
+      "<li>Nội dung mua bán vũ khí, các chất, sản phẩm bị cấm.</li>",
+      "</ul>",
+      "<p>- Đảm bảo bạn có toàn quyền về nội dung của mình, không vi phạm bản quyền, thương hiệu, quyền riêng tư, quyền công khai, các quyền sở hữu trí tuệ khác của bất kỳ cá nhân hay tổ chức nào.</p>"
+    ]
+  }
+}

@@ -314,6 +314,7 @@ class Config {
       modalCalendar: 'modalCalendar',
       modalActionSheet: 'modalActionSheet',
       modalDateTimePicker: 'modalDateTimePicker',
+      modalLicense: 'modalLicense',
 
       //  Reset password
       resetPassword: 'resetPassword',

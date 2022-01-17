@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, Keyboard} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import countries from 'world-countries';
 import appConfig from 'app-config';
@@ -16,11 +22,25 @@ import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import firebaseAuth from '@react-native-firebase/auth';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
+  },
+  eulaTextContainer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop:
+      appConfig.device.height -
+      30 -
+      (appConfig.device.isAndroid
+        ? appConfig.device.statusBarHeight
+        : appConfig.device.bottomSpace),
+  },
+  eulaText: {
+    color: appConfig.colors.text,
   },
 });
 
@@ -241,7 +261,6 @@ class PhoneAuth extends Component {
   }
 
   verifyResponse = (response) => {
-    const {t} = this.props;
     const user = response.data;
     store.setUserInfo(user);
     store.setAnalyticsUser(user);
@@ -249,17 +268,18 @@ class PhoneAuth extends Component {
 
     switch (response.status) {
       case STATUS_FILL_INFO_USER:
-        Actions.replace('op_register', {
-          title: t('common:screen.register.mainTitle'),
-          name_props: response.data.name,
-          hideBackImage: true,
-        });
+        this.goToRegister(response.data.name);
+
         break;
       case STATUS_SYNC_FLAG:
         Actions.replace(appConfig.routes.rootGpsStoreLocation);
         break;
       case STATUS_SUCCESS:
-        Actions.replace(appConfig.routes.primaryTabbar);
+        if (response.data?.fill_info_user) {
+          this.goToRegister(response.data.name);
+        } else {
+          Actions.replace(appConfig.routes.primaryTabbar);
+        }
         break;
       default:
         this.setState({
@@ -267,6 +287,15 @@ class PhoneAuth extends Component {
         });
         break;
     }
+  };
+
+  goToRegister = (nameProps) => {
+    const {t} = this.props;
+
+    Actions.replace('op_register', {
+      title: t('common:screen.register.mainTitle'),
+      name_props: nameProps,
+    });
   };
 
   handleChangeCodeInput(codeInput) {
@@ -294,6 +323,14 @@ class PhoneAuth extends Component {
       message: '',
     });
   }
+
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({
+      type: SERVICES_TYPE.EULA_AGREEMENT,
+    });
+  };
 
   render() {
     const {
@@ -334,6 +371,14 @@ class PhoneAuth extends Component {
             />
           )}
           {appConfig.device.isIOS && <KeyboardSpacer />}
+
+          <TouchableOpacity
+            style={styles.eulaTextContainer}
+            onPress={this.openEULAAgreement}>
+            <Text style={styles.eulaText}>
+              {this.props.t('common:eulaAgreement')}
+            </Text>
+          </TouchableOpacity>
         </SafeAreaView>
       </KeyboardAwareScrollView>
     );

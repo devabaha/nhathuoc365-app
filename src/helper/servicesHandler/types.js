@@ -127,5 +127,8 @@ export const SERVICES_TYPE = {
   WALLET: 'wallet',
 
   /** REPORT */
-  SALES_REPORT: 'sales_report'
+  SALES_REPORT: 'sales_report',
+  
+  /** LICENSE/ AGREEMENT */
+  EULA_AGREEMENT: 'eula_agreement',
 };

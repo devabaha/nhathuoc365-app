@@ -27,7 +27,7 @@ const CUSTOM_STYLE = `
     // text-decoration: none !important;
     // color: ${appConfig.colors.primary} !important;
   }
-  p {
+  p, li, span {
     font-size: 14px;
     line-height: 24px
   }
