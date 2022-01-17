@@ -14,6 +14,7 @@ import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
 import {isOutOfStock} from 'app-helper/product';
 import {hasVideo} from 'app-helper/product/product';
+import { PRODUCT_BUTTON_ACTION_LOADING_PARAM } from 'src/constants/product';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -21,7 +22,7 @@ const productItemStyle = homeThemes('styles.home.listProduct');
 class ProductItem extends PureComponent {
   constructor(props) {
     super(props);
-    this.CTAProduct = new CTAProduct(props.t, this);
+    this.CTAProduct = new CTAProduct(this);
   }
   static propTypes = {
     name: PropTypes.string,
@@ -43,7 +44,7 @@ class ProductItem extends PureComponent {
     price_view: '',
     onPress: () => {},
     last: false,
-    buying: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART]: false,
   };
 
   state = {
@@ -75,7 +76,10 @@ class ProductItem extends PureComponent {
     if (!!item.has_attr) {
       Keyboard.dismiss();
     }
-    this.CTAProduct.handlePressMainActionBtnProduct(item, CART_TYPES.NORMAL);
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product: item,
+      cartType: CART_TYPES.NORMAL,
+    });
   };
 
   handleSelfRequest = () => {
@@ -173,7 +177,7 @@ class ProductItem extends PureComponent {
                       </Text>
 
                       <TouchableOpacity
-                        disabled={isOutOfStock(item)}
+                        disabled={this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART] || isOutOfStock(item)}
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}
                         hitSlop={HIT_SLOP}>
@@ -184,7 +188,7 @@ class ProductItem extends PureComponent {
                             justifyContent: 'center',
                             alignItems: 'center',
                           }}>
-                          {this.state.buying ? (
+                          {this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART] ? (
                             <Indicator size="small" />
                           ) : this.isServiceProduct(item) ? (
                             <Icon name="calendar-plus-o" style={styles.icon} />
@@ -290,7 +294,8 @@ let styles = StyleSheet.create({
   },
   item_add_cart_box: {
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignSelf: 'flex-end',
     backgroundColor: hexToRgbA('#ffffff', 0.8),
     paddingVertical: 2,
   },

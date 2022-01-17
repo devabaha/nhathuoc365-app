@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CU-1wfhh1w] Re-getting transactionData when user press back from SDK in Transaction by [minhnguyenit14@gmail.com].
 
+### Changed
+- [CU-1vrne37] Adjust UI, UX, logic CTAProduct, action buttons in Item [minhnguyenit14@gmail.com].
+
 ## [r12.2.6] - 2021-11-29
 ### Changed
 - [CU-1vrvxqq] condition to show discount_view in CartItem by [minhnguyenit14@gmail.com].
