@@ -16,7 +16,7 @@ import {isConfigActive} from 'app-helper/configKeyHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
-import {openLink} from 'app-helper';
+import {openLink, saveTheme} from 'app-helper';
 import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
 // routing
 import {pop, push} from 'app-helper/routing';
@@ -28,6 +28,8 @@ import {languages} from 'src/i18n/constants';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
+import {BASE_LIGHT_THEME} from 'src/Themes/Theme.light';
+import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 // entities
 import {APIRequest} from 'src/network/Entity';
 import EventTracker from 'app-helper/EventTracker';
@@ -56,7 +58,7 @@ class Account extends Component {
 
   state = {
     listWarehouse: [],
-    isWarehouseLoading: true,
+    isWarehouseLoading: false,
     refreshing: false,
     logout_loading: false,
     sticker_flag: false,
@@ -285,7 +287,9 @@ class Account extends Component {
           </Typography>
         ),
         desc: user_info.text_invite,
-        isHidden: !user_info.username,
+        isHidden:
+          !user_info.username ||
+          isConfigActive(CONFIG_KEY.HIDE_AFFILIATE_ACCOUNT_KEY),
         rightIcon: <IconAngleRight />,
         onPress: () => {
           push(
@@ -346,30 +350,28 @@ class Account extends Component {
           },
         ],
       },
-      {
-        key: 'orders',
-        label: t('options.orders.label'),
-        desc: t('options.orders.desc'),
-        leftIcon: (
-          <View>
-            <Icon
-              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
-              name="cart"
-              style={{fontSize: 16, color: this.iconColor}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () =>
-          servicesHandler({type: SERVICES_TYPE.ORDERS, theme: this.theme}),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: this.theme.color.accountOrder,
-          },
-        ],
-        iconColor: this.iconColor,
-      },
+      // {
+      //   key: 'orders',
+      //   label: t('options.orders.label'),
+      //   desc: t('options.orders.desc'),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="cart"
+      //         style={{fontSize: 16, color: '#fff'}}
+      //       />
+      //     </View>
+      //   ),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: appConfig.colors.status.success,
+      //     },
+      //   ],
+      //   iconColor: '#ffffff',
+      // },
       {
         key: 'vouchers',
         isHidden:
@@ -431,7 +433,7 @@ class Account extends Component {
       {
         key: 'gold_member',
         icon: 'clipboard-text-multiple',
-        iconType: 'MaterialCommunityIcons',
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
         iconColor: this.iconColor,
         size: 22,
         iconSize: 14,
@@ -454,8 +456,8 @@ class Account extends Component {
       {
         key: 'warehouse',
         icon: 'warehouse',
-        iconType: 'MaterialCommunityIcons',
-        label: t('options.warehouse.label'),
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
+        label: t('options.salePoint.label'),
         desc: store_name,
         disabled: this.state.isWarehouseLoading,
         rightIcon: this.state.isWarehouseLoading ? (
@@ -467,21 +469,27 @@ class Account extends Component {
           <IconAngleRight />
         ),
         onPress: () =>
-          push(
-            appConfig.routes.modalList,
-            {
-              heading: this.props.t('opRegister:modal.warehouse.title'),
-              data: this.state.listWarehouse,
-              selectedItem: {id: store_id},
-              onPressItem: this.onSelectWarehouse,
-              onCloseModal: pop,
-              modalStyle: {
-                height: null,
-                maxHeight: '80%',
-              },
+          servicesHandler({
+            type: SERVICES_TYPE.GPS_LIST_STORE,
+            theme: this.theme,
+            selectedStore: {id: store_id},
+            placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+            onPress: (store) => {
+              this.onSelectWarehouse(store);
+              pop();
             },
-            this.theme,
-          ),
+          }),
+        // Actions.push(appConfig.routes.modalList, {
+        //   heading: this.props.t('opRegister:modal.store.title'),
+        //   data: this.state.listWarehouse,
+        //   selectedItem: {id: store_id},
+        //   onPressItem: this.onSelectWarehouse,
+        //   onCloseModal: Actions.pop,
+        //   modalStyle: {
+        //     height: null,
+        //     maxHeight: '80%',
+        //   },
+        // }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -516,7 +524,7 @@ class Account extends Component {
 
       {
         key: 'report_npp',
-        iconType: 'MaterialCommunityIcons',
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
         icon: 'script-text',
         iconColor: this.iconColor,
         size: 22,
@@ -556,7 +564,7 @@ class Account extends Component {
         ],
         iconColor: this.iconColor,
         iconSize: 18,
-        iconType: 'MaterialCommunityIcons',
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
         marginTop: true,
       },
 
@@ -582,7 +590,7 @@ class Account extends Component {
 
       {
         key: '3',
-        icon: 'handshake-o',
+        icon: 'info',
         label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -609,7 +617,7 @@ class Account extends Component {
       {
         key: '4',
         icon: 'text-box-check-outline',
-        iconType: 'MaterialCommunityIcons',
+        iconType: BundleIconSetName.MATERIAL_COMMUNITY_ICONS,
         label: t('options.termsOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
@@ -628,6 +636,28 @@ class Account extends Component {
         iconColor: this.iconColor,
         isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
+      },
+      {
+        key: 'partnerRegistration',
+        icon: 'handshake-o',
+        label: t('options.partnerRegistration.label'),
+        isHidden: !getValueFromConfigKey(
+          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+        ),
+
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          openLink(
+            getValueFromConfigKey(CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY),
+          );
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#5b88d9',
+          },
+        ],
+        iconColor: '#fff',
       },
 
       {
@@ -657,10 +687,32 @@ class Account extends Component {
         iconColor: this.iconColor,
         marginTop: true,
       },
+      {
+        key: 'theme',
+        icon: 'color-palette',
+        iconType: BundleIconSetName.IONICONS,
+        label: 'Theme',
+        rightIcon: <View></View>,
+        onPress: () => {
+          this.context.toggleTheme(BASE_DARK_THEME_ID);
+          saveTheme(
+            this.theme.id === BASE_DARK_THEME_ID
+              ? BASE_LIGHT_THEME
+              : BASE_DARK_THEME,
+          );
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: this.theme.color.onContentBackground,
+          },
+        ],
+        iconColor: this.theme.color.contentBackgroundWeak,
+      },
 
       {
         key: 'app_info',
-        icon: 'question-circle',
+        icon: 'question',
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
@@ -681,6 +733,7 @@ class Account extends Component {
         iconColor: this.iconColor,
         hideAngle: true,
         marginTop: true,
+        disabled: true,
       },
       {
         key: 'app_update',
@@ -732,7 +785,7 @@ class Account extends Component {
   onRefresh() {
     this.setState({refreshing: true}, () => {
       this.login(1000);
-      this.getListWarehouse();
+      // this.getListWarehouse();
     });
   }
 
@@ -867,7 +920,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    this.getListWarehouse();
+    // this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
@@ -964,9 +1017,8 @@ class Account extends Component {
     }
   }
 
-  onSelectWarehouse = (warehouse, closeModal) => {
+  onSelectWarehouse = (warehouse) => {
     this.setState({isWarehouseLoading: true});
-    closeModal();
     this.updateWarehouse(warehouse);
   };
 
@@ -1571,6 +1623,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common', 'opRegister'])(
+export default withTranslation(['account', 'common', 'opRegister', 'gpsStore'])(
   observer(Account),
 );

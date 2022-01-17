@@ -12,7 +12,6 @@ import {
   Text,
   TextInput,
   LogBox,
-  StatusBar,
 } from 'react-native';
 import {
   Scene,
@@ -29,7 +28,7 @@ import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
 import FoodHubCartButton from './components/FoodHubCartButton';
 import {CloseButton} from 'app-packages/tickid-navbar';
-import handleStatusBarStyle from './helper/handleStatusBarStyle';
+import handleStatusBarStyle from './helper/statusBar';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
@@ -189,9 +188,10 @@ import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
 import {ThemeProvider} from './Themes/Theme.context';
-import {BASE_LIGHT_THEME} from './Themes';
+import {BASE_LIGHT_THEME} from './Themes/Theme.light';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {pop, push, reset} from 'app-helper/routing';
+import {StatusBar} from './components/base';
 
 /**
  * Not allow font scaling
@@ -309,6 +309,7 @@ class App extends Component {
 
     this.state = {
       header: null,
+      overlayComponent: null,
       restartAllowed: true,
       progress: null,
       appLanguage: props.i18n.language,
@@ -542,6 +543,10 @@ class App extends Component {
     this.setState({header});
   };
 
+  setOverlayComponent = (overlayComponent) => {
+    this.setState({overlayComponent});
+  };
+
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
@@ -572,7 +577,7 @@ class App extends Component {
     return (
       <ThemeProvider initial={BASE_LIGHT_THEME}>
         <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
-          {/* <GPSStoreLocation /> */}
+          <StatusBar />
           {this.state.header}
           <NetworkInfo />
           <RootRouter
@@ -631,6 +636,11 @@ const styles = StyleSheet.create({
   awesomeAlertContainer: {
     backgroundColor: 'transparent',
   },
+  accountSceneNavBar: {
+    ...whiteNavBarConfig.navigationBarStyle,
+    height: 70,
+    borderBottomWidth: 0.5,
+  },
 });
 
 // wrap App with codepush HOC
@@ -679,15 +689,17 @@ class RootRouter extends Component {
     this.props.setHeader(header);
   }
 
+  handleStateChange = (prevState, newState, action) => {
+    handleStatusBarStyle(prevState, newState, action);
+  };
+
   render() {
     const {t} = this.props;
     return (
       <Router
         store={store}
         backAndroidHandler={handleBackAndroid}
-        onStateChange={(prevState, newState, action) => {
-          handleStatusBarStyle(prevState, newState, action);
-        }}
+        onStateChange={this.handleStateChange}
         {...routerConfig}>
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
@@ -732,7 +744,7 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 2 ************************
                    */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
@@ -743,6 +755,26 @@ class RootRouter extends Component {
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       component={SocialNews}
+                    />
+                  </Stack> */}
+                  <Stack
+                    key={appConfig.routes.ordersTab}
+                    icon={TabIcon}
+                    iconLabel={t('appTab.tab4.title')}
+                    iconName="cart"
+                    iconSize={24}
+                    notifyKey="notify_cart"
+                    iconSVG={SVGOrders}>
+                    <Scene
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title={t('screen.orders.mainTitle')}
+                      component={Orders}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
                     />
                   </Stack>
 
@@ -810,23 +842,20 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
-                    navigationBarStyle={{
-                      backgroundColor: '#fff',
-                      height: 70,
-                    }}
                     headerLayoutPreset="left"
                     iconSize={24}
                     iconSVG={SVGAccount}>
                     <Scene
-                      titleStyle={{
-                        color: '#333',
-                        fontSize: 25,
-                        fontWeight: 'bold',
-                        paddingTop: 20,
-                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
+                      {...whiteNavBarConfig}
+                      navigationBarStyle={styles.accountSceneNavBar}
+                      titleStyle={{
+                        fontSize: 25,
+                        paddingTop: 20,
+                        paddingLeft: 15,
+                      }}
                     />
                   </Stack>
                 </Tabs>
@@ -1106,7 +1135,6 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
                     component={GPSListStore}
-                    navBar={SearchNavBarContainer}
                     back
                   />
                 </Stack>
@@ -1358,9 +1386,16 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.item}_1`}
                     component={Item}
+                    setOverlayComponent={this.props.setOverlayComponent}
                     {...navBarConfig}
                     hideNavBar
                     back
+                    onEnter={() => {
+                      store.setEnterItem(true);
+                    }}
+                    onExit={() => {
+                      store.setEnterItem(false);
+                    }}
                   />
                 </Stack>
 

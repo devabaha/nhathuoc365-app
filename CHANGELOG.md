@@ -6,8 +6,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.2.9]
+### Added
+- [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
+- [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1yzkbud] SocialNews tab to Orders tab also remove Orders option in Account by [minhnguyenit14@gmail.com].
+
+## [r12.2.8] - 2021-12-24
+### Changed
+- [CU-1zb19ye] use GPSListStore to choose warehouse (sale point) by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1yzrma0] UI screen Transaction by [thanhyagami@gmail.com].
+
+## [r12.2.7] - 2021-12-07
+### Fixed
+- [CU-1wfhh1w] Re-getting transactionData when user press back from SDK in Transaction by [minhnguyenit14@gmail.com].
+
+## [r12.2.6] - 2021-11-29
+### Changed
+- [CU-1vrvxqq] condition to show discount_view in CartItem by [minhnguyenit14@gmail.com].
+- Show required sign for input labels in OpRegister by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [minhnguyenit14@gmail.com].
+
+## [r12.2.5] - 2021-11-27
+### Added
+- [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [lamah.dev@gmail.com].
+### Changed
+- [CU-1vk24rt] Title Choose store instead Warehouse in OpRegister by [thanhyagami@gmail.com].
+- [CU-1vrqar8] Logic of choose_store_site_key in GPS List Store by [kienluu612@gmail.com].
+
+## [r12.2.4] - 2021-11-24
+### Added
+- [CU-1vdc9bt] [iOS] Language support on the App Store by [lamah.dev@gmail.com].
+
+## [r12.2.3] - 2021-11-22
+### Fixed
+- [CU-1tm27u3] [Android] Can not open link in Chat by [lamah.dev@gmail.com].
+
+## [r12.2.2] - 2021-11-20
+### Added
+- [CU-1tef5vn] hide_affiliate_account_key in Account by [lamah.dev@gmaill.com].
 ### Changed
 - Titles of Pricing and Promotion Section in Confirm by [kienluu612@gmail.com]
+- [CU-1t2wc22] UI in GPSListStore by [kienluu612@gmail.com]
+- [CU-1rx6vh1] History content when searching products by [kienluu612@gmail.com].
+### Fixed
+- [Android] can not share url in Notify by [lamah.dev@gmail.com].
 
 ## [r12.2.1] - 2021-11-03
 ### Added

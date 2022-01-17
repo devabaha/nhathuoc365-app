@@ -50,3 +50,7 @@ export const jump: RoutingCommonFunction = (sceneKey, props, theme) => {
 export const pop: RoutingPopFunction = (params) => {
   Actions.pop(params);
 };
+
+export const getCurrentScene: any = () => {
+  return Actions.currentScene;
+};

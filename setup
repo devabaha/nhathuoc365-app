@@ -2,11 +2,44 @@
 #title           :setup
 #description     :This script will do things to clean, setup for source code.
 #author          :minhnguyenit14@gmail.com
-#date            :20210813
-#version         :1.0
+#date            :20211030
+#version         :1.1
 #===============================================================================
 
 
+# Add logic to get refWebview, function to get buffering time of video.
+# => Add code and build package.
+declare rn_youtube_iframe="node_modules/react-native-youtube-iframe";
+declare src_youtube_iframe="${rn_youtube_iframe}/src";
+declare dist_youtube_iframe="${rn_youtube_iframe}/dist";
+declare js_youtube_iframe="${rn_youtube_iframe}/src/YoutubeIframe.js";
+declare refSign=".*\(() => ({\).*";
+declare getVideoLoadedFractionInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoLoadedFraction', data: player.getVideoLoadedFraction()}));true;\`";
+declare getVideoCurrentTimeInjectedJs="\`window.ReactNativeWebView.postMessage(JSON.stringify({eventType: 'getVideoCurrentTime', data: player.getCurrentTime()}));true;\`";
+declare replaceCode="    () => ({playVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.playVideo),
+        pauseVideo: () => webViewRef.current.injectJavaScript(PLAYER_FUNCTIONS.pauseVideo),
+        getWebViewRef: () => {
+            return webViewRef.current;
+        },
+        getVideoCurrentTime: () => {
+            eventEmitter.current.removeAllListeners('getVideoCurrentTime');
+            webViewRef.current.injectJavaScript($getVideoCurrentTimeInjectedJs);
+            return new Promise(resolve => {
+                eventEmitter.current.once('getVideoCurrentTime', resolve);
+            });
+        },
+        getVideoLoadedFraction: () => {
+            eventEmitter.current.removeAllListeners('getVideoLoadedFraction');
+            webViewRef.current.injectJavaScript($getVideoLoadedFractionInjectedJs);
+            return new Promise(resolve => {
+                eventEmitter.current.once('getVideoLoadedFraction', resolve);});
+        },";
+sed -i '' "/${refSign}/ s//${replaceCode//$'\n'/}/" $js_youtube_iframe
+cd $rn_youtube_iframe && npm run build && cd -
+
+#date            :20210813
+#version         :1.0
+#===============================================================================
 
 # Remove redandunt child dependencies from some package.
 # => Force using installed dependencies of source instead of package.

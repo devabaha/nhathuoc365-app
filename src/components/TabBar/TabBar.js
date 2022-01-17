@@ -34,16 +34,16 @@ class TabBar extends Component {
     return (
       <Container shadow row style={[styles.container, this.containerStyle]}>
         {state.routes.map((element, index) => {
-          console.log(element);
           return (
             <BaseButton
               key={element.key}
-              onPress={() => jump(element.key)}
               onPress={() =>
                 handleTabBarOnPress({
                   ...element,
                   theme: this.theme,
-                  defaultHandler: () => jump(element.key),
+                  defaultHandler: () => {
+                    jump(element.key, element.routes[0].params, this.theme);
+                  },
                 })
               }>
               <TabIcon

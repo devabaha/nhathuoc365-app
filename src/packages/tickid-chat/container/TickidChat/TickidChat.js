@@ -426,7 +426,7 @@ class TickidChat extends Component {
 
   handleFocus = (selectedType = COMPONENT_TYPE._NONE) => {
     if (this.refInput.current) {
-      this.refInput.current.focus();
+      this.refInput.current && this.refInput.current.focus();
     }
 
     setTimeout(() =>
@@ -830,17 +830,17 @@ class TickidChat extends Component {
     if (PATTERNS.WWW_URL.test(url)) {
       this.handlePressURL(`http://${url}`);
     } else {
-      Linking.canOpenURL(url).then((supported) => {
-        if (!supported) {
-          console.error('No handler for URL:', url);
-        } else {
-          // Linking.openURL(url);
-          push(appConfig.routes.modalWebview, {
-            url: url,
-            title: url,
-          });
-        }
+      // Linking.canOpenURL(url).then((supported) => {
+      //   if (!supported) {
+      //     console.error('No handler for URL:', url);
+      //   } else {
+      // Linking.openURL(url);
+      push(appConfig.routes.modalWebview, {
+        url: url,
+        title: url,
       });
+      // }
+      // });
     }
   };
 

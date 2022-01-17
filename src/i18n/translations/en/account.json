@@ -46,6 +46,9 @@
     "warehouse": {
       "label": "Warehouse"
     },
+    "salePoint": {
+      "label": "Sale point"
+    },
     "agencyInformationRegister": {
       "label": "Distributor Information",
       "desc": "View/ Edit distributor information"
@@ -57,6 +60,10 @@
     "salesReport": {
       "label": "Invited Sales Report",
       "desc": "Sales of invented"
+    },
+    "partnerRegistration": {
+      "label": "Partner registration",
+      "desc": ""
     }
   },
   "avatarPicker": {

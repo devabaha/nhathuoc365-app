@@ -7,19 +7,22 @@ import {withTranslation} from 'react-i18next';
 import store from 'app-store';
 import appConfig from 'app-config';
 // helpers
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
-import EventTracker from 'app-helper/EventTracker';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 import {mergeStyles} from 'src/Themes/helper';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
+import {servicesHandler} from 'app-helper/servicesHandler';
 // routing
 import {pop, push, refresh, reset} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType, BundleIconSetName} from 'src/components/base';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // entities
 import {APIRequest} from 'src/network/Entity';
+import EventTracker from 'app-helper/EventTracker';
 // custom components
 import HorizontalInfoItem from './HorizontalInfoItem';
 import Loading from '../Loading';
@@ -33,6 +36,7 @@ import {
   IconButton,
 } from 'src/components/base';
 import Button from 'src/components/Button';
+
 class OpRegister extends Component {
   static contextType = ThemeContext;
 
@@ -52,7 +56,10 @@ class OpRegister extends Component {
       name: store.user_info ? store.user_info.city : '',
       id: store.user_info ? store.user_info.city_id : '',
     },
-    warehouseSelected: {id: store?.user_info?.store_id},
+    warehouseSelected: {
+      id: store?.user_info?.store_id,
+      name: store?.user_info?.store_name,
+    },
     licenseChecked: false,
     birth: store.user_info ? store.user_info.birth : '',
     cities: [],
@@ -90,7 +97,7 @@ class OpRegister extends Component {
 
   componentDidMount() {
     isConfigActive(CONFIG_KEY.CHOOSE_CITY_SITE_KEY) && this.getCities();
-    isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && this.getListWarehouse();
+    // isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY) && this.getListWarehouse();
     refresh({
       onBack: () => {
         this._unMount();
@@ -319,22 +326,31 @@ class OpRegister extends Component {
     this.setState({birth});
   };
 
-  onSelectWarehouse = (warehouseSelected, closeModal) => {
+  onSelectWarehouse = (warehouseSelected) => {
     this.setState({warehouseSelected});
-    closeModal();
   };
 
   onPressWarehouse = () => {
     Keyboard.dismiss();
-    push(appConfig.routes.modalList, {
-      heading: this.props.t('modal.warehouse.title'),
-      data: this.state.listWarehouse,
-      selectedItem: this.state.warehouseSelected,
-      onPressItem: this.onSelectWarehouse,
-      onCloseModal: pop,
-      modalStyle: {
-        height: null,
-        maxHeight: '80%',
+    // push(appConfig.routes.modalList, {
+    //   heading: this.props.t('modal.warehouse.title'),
+    //   data: this.state.listWarehouse,
+    //   selectedItem: this.state.warehouseSelected,
+    //   onPressItem: this.onSelectWarehouse,
+    //   onCloseModal: pop,
+    //   modalStyle: {
+    //     height: null,
+    //     maxHeight: '80%',
+    //   },
+    // });
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_STORE,
+      theme: this.theme,
+      selectedStore: this.state.warehouseSelected,
+      placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+      onPress: (store) => {
+        pop();
+        this.onSelectWarehouse(store);
       },
     });
   };
@@ -360,7 +376,12 @@ class OpRegister extends Component {
     if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
         id: 'ngay_sinh',
-        title: this.props.t('data.birthdate.title'),
+        title: (
+          <Text>
+            {this.props.t('data.birthdate.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value: this.state.birth,
         defaultValue: this.props.t('data.birthdate.defaultValue'),
         select: true,
@@ -383,7 +404,12 @@ class OpRegister extends Component {
     if (this.isActiveCity) {
       const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
-        title: this.props.t('data.province.title'),
+        title: (
+          <Text>
+            {this.props.t('data.province.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value:
           this.state.provinceSelected?.name ||
           this.props.t('data.province.placeholder'),
@@ -407,13 +433,18 @@ class OpRegister extends Component {
 
   renderWarehouse() {
     if (isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
-      const disable =
-        !this.state.listWarehouse || this.state.listWarehouse.length === 0;
+      const disable = false;
+      // !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
-        title: this.props.t('data.warehouse.title'),
+        title: (
+          <Text>
+            {this.props.t('data.chooseSalePoint.title')}{' '}
+            <Text style={styles.textRequired}>*</Text>
+          </Text>
+        ),
         value:
           this.state.warehouseSelected?.name ||
-          this.props.t('data.warehouse.placeholder'),
+          this.props.t('data.chooseSalePoint.placeholder'),
         isLoading: this.state.isWarehouseLoading,
         select: true,
         disable,
@@ -761,4 +792,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['opRegister', 'common'])(observer(OpRegister));
+export default withTranslation(['opRegister', 'common', 'gpsStore'])(
+  observer(OpRegister),
+);

@@ -1,11 +1,10 @@
 // Theme.context.tsx
 import React, {useEffect} from 'react';
-// import {DARK_THEME, DARK_THEME_ID} from './Theme.dark';
 import {BASE_LIGHT_THEME, BASE_LIGHT_THEME_ID} from './Theme.light';
 import {Theme} from './interface';
 import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from './Theme.dark';
 import EventEmitter from 'eventemitter3';
-import {darkStatusBarScenes} from 'app-helper/handleStatusBarStyle';
+import store from 'app-store';
 
 export const themeChangingListener = new EventEmitter();
 
@@ -15,6 +14,7 @@ export const THEME_CHANGING_EVENT_NAME = 'theme_changing';
 export interface ThemeProvidedValue {
   theme: Theme;
   toggleTheme: () => void;
+  updateTheme: (updatedTheme: Theme) => void;
 }
 // Creating our context
 // Important: the defined object here is only received by the
@@ -25,6 +25,9 @@ export const ThemeContext = React.createContext<ThemeProvidedValue>({
   theme: BASE_LIGHT_THEME,
   toggleTheme: () => {
     console.log('ThemeProvider is not rendered!');
+  },
+  updateTheme: (updatedTheme) => {
+    console.log(updatedTheme);
   },
 });
 // Because our stateful context provider will be a React component
@@ -40,7 +43,7 @@ export const ThemeProvider = React.memo<Props>((props) => {
   const [theme, setTheme] = React.useState<Theme>(props.initial);
   // Implement a method for toggling the Theme
   // We're using the React.useCallback hook for optimization
-  const ToggleThemeCallback = React.useCallback(() => {
+  const toggleTheme = React.useCallback(() => {
     setTheme((currentTheme) => {
       if (currentTheme.id === BASE_LIGHT_THEME_ID) {
         return BASE_DARK_THEME;
@@ -51,17 +54,25 @@ export const ThemeProvider = React.memo<Props>((props) => {
       return currentTheme;
     });
   }, []);
+  // update theme
+  const updateTheme = React.useCallback((updatedTheme) => {
+    setTheme(updatedTheme);
+  }, []);
   // Building up the provided object
   // We're using the React.useMemo hook for optimization
   const MemoizedValue = React.useMemo(() => {
     const value: ThemeProvidedValue = {
       theme,
-      toggleTheme: ToggleThemeCallback,
+      toggleTheme,
+      updateTheme,
     };
+
     return value;
-  }, [theme, ToggleThemeCallback]);
+  }, [theme, toggleTheme, updateTheme]);
   // emit an event whenever the theme is changed.
   useEffect(() => {
+    store.setTheme(theme);
+
     themeChangingListener.emit(THEME_CHANGING_EVENT_NAME, theme);
   }, [theme]);
   // Render our context provider by passing it the value to provide

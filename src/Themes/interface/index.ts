@@ -1,4 +1,10 @@
-import {ColorValue, StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {
+  ColorValue,
+  StatusBarStyle,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {TypographyType} from 'src/components/base';
 import {CartPaymentStatus, CartStatus} from 'src/constants/cart';
@@ -79,6 +85,8 @@ export type Color = {
   onOverlay: ColorValue;
   underlay: ColorValue;
   shadow: ColorValue;
+  statusBarBackground: ColorValue;
+  statusBarBackgroundSurfaceMode: ColorValue;
   navBarBackground: ColorValue;
   onNavBarBackground: ColorValue;
   contentBackgroundPrimary: ColorValue;
@@ -195,6 +203,9 @@ export type Layout = {
 
     elevation: number;
   };
+
+  statusBarStyle: StatusBarStyle;
+  statusBarSurfaceModeStyle: StatusBarStyle;
 };
 
 export interface Theme {

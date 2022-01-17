@@ -5,7 +5,6 @@ import appConfig from 'app-config';
 // helpers
 import {executeJobs} from '../../helper/jobsOnReset';
 import {servicesHandler} from '../../helper/servicesHandler';
-import EventTracker from '../../helper/EventTracker';
 import {getTheme} from 'src/Themes/Theme.context';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
@@ -15,6 +14,8 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import {SERVICES_TYPE} from '../../helper/servicesHandler';
+// entities
+import EventTracker from '../../helper/EventTracker';
 // custom components
 import HomeComponent from '../../components/Home';
 

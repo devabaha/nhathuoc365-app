@@ -6,6 +6,7 @@ import AutoHeightWebView from 'react-native-autoheight-webview';
 import appConfig from 'app-config';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
+import {openLink} from 'app-helper';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -16,6 +17,33 @@ import {Container} from 'src/components/base';
 const ACTION_TYPE = {
   GET_INNER_TEXT: 'webview_get_inner_text',
   CLICK_LINK: 'native_click_link',
+};
+
+const getCustomStyle = (theme) => {
+  return `
+  body {
+    padding-left: 15px;
+    padding-right: 15px;
+    color: ${theme.typography[TypographyType.LABEL_LARGE].color}
+  }
+  * {
+    font-family: 'arial';
+  }
+  a {
+    // pointer-events:none;
+    // text-decoration: none !important;
+    color: ${theme.color.primaryHighlight}!important
+  }
+  p, span {
+    font-size: ${theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
+    line-height: 24px;
+    color: ${theme.typography[TypographyType.LABEL_LARGE].color}
+  }
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+`;
 };
 
 const CUSTOM_SCRIPT = `
@@ -59,6 +87,31 @@ const CUSTOM_SCRIPT = `
   function getTextOnly(){
     return document.body.innerText;
   }
+
+//   let preventScroll = false;
+
+// function onFullScreenChange() {
+// 	let inFullScreen = Boolean(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+// 	if(inFullScreen) {
+// 		preventScroll = true;
+// 		setTimeout(() => {
+// 			preventScroll = false;
+// 		}, 100);
+// 	}
+// }
+
+// document.addEventListener('fullscreenchange', onFullScreenChange)
+// document.addEventListener('mozfullscreenchange', onFullScreenChange)
+// document.addEventListener('msfullscreenchange', onFullScreenChange)
+// document.addEventListener('webkitfullscreenchange', onFullScreenChange)
+// let y = 0;
+// window.addEventListener("scroll", () => {
+//         if(preventScroll && window.scrollY === 0) {
+// 	        window.scrollTo(0, y);
+// 	        return;
+//         }
+//         y = window.scrollY;
+// });
 `;
 
 const styles = StyleSheet.create({
@@ -79,40 +132,14 @@ class CustomAutoHeightWebview extends Component {
 
   refWebview = React.createRef();
 
-  customStyle = () => {
-    const style =
-      `
-        body {
-          padding-left: 15px;
-          padding-right: 15px;
-          color: ${this.theme.typography[TypographyType.LABEL_LARGE].color}
-        }
-        * {
-          font-family: 'arial';
-        }
-        a {
-          // pointer-events:none;
-          // text-decoration: none !important;
-          color: ${this.theme.color.primaryHighlight}!important
-        }
-        p, span {
-          font-size: ${
-            this.theme.typography[TypographyType.LABEL_LARGE].fontSize
-          }px;
-          line-height: 24px;
-          color: ${this.theme.typography[TypographyType.LABEL_LARGE].color}
-        }
-        img {
-          max-width: 100% !important;
-          height: auto !important;
-        }
-` + this.props.customStyle || '';
-
-    return style;
-  };
-
   get theme() {
     return getTheme(this);
+  }
+
+  get customStyle() {
+    const style = getCustomStyle(this.theme) + this.props.customStyle || '';
+
+    return style;
   }
 
   getInnerText() {
@@ -129,6 +156,7 @@ class CustomAutoHeightWebview extends Component {
     let data = e?.nativeEvent?.data;
     if (data) {
       data = JSON.parse(data)?.nativeEvent?.data;
+
       if (data?.type) {
         switch (data.type) {
           case ACTION_TYPE.GET_INNER_TEXT:
@@ -140,15 +168,15 @@ class CustomAutoHeightWebview extends Component {
             break;
           case ACTION_TYPE.CLICK_LINK:
             if (data?.message) {
-              Linking.canOpenURL(data.message)
-                .then((supported) => {
-                  if (supported) {
-                    Linking.openURL(data.message);
-                  }
-                })
-                .catch((err) => {
-                  // console.log(err);
-                });
+              // Linking.canOpenURL(data.message)
+              //   .then((supported) => {
+              //     if (supported) {
+              openLink(data.message);
+              // }
+              // })
+              // .catch((err) => {
+              //   // console.log(err);
+              // });
             }
             break;
         }
@@ -182,7 +210,7 @@ class CustomAutoHeightWebview extends Component {
           javaScriptEnabled
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
-          customStyle={this.customStyle()}
+          customStyle={this.customStyle}
           allowsFullscreenVideo={true}
         />
       </Container>

@@ -8,7 +8,13 @@ import {SERVICES_TYPE} from 'src/helper/servicesHandler';
 // custom components
 import SubActionButton from '../SubActionButton';
 
-const QRScanButton = ({label, iconStyle, wrapperStyle, containerStyle}) => {
+const QRScanButton = ({
+  label,
+  iconStyle,
+  wrapperStyle,
+  containerStyle,
+  useTouchableHighlight,
+}) => {
   const {theme} = useTheme();
   const {t} = useTranslation('common');
 
@@ -18,6 +24,7 @@ const QRScanButton = ({label, iconStyle, wrapperStyle, containerStyle}) => {
 
   return (
     <SubActionButton
+      useTouchableHighlight={useTouchableHighlight}
       iconName="ios-scan"
       label={label}
       wrapperStyle={wrapperStyle}

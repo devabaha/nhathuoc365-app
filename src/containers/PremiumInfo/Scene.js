@@ -73,7 +73,7 @@ const Scene = ({
   const renderPremiumBenefitsHeader = (premium) => {
     const message =
       premium.point && premium.point > (userInfo.premium_point || 0)
-        ? t('tierTitle.reach')
+        ? t('tierTitle.reach', {premiumPoint: premium.point})
         : currentPremium.id === premium.id
         ? t('tierTitle.currentTier')
         : t('tierTitle.unlockedTier');

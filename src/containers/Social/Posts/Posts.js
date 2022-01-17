@@ -315,7 +315,14 @@ const Posts = ({
   );
 
   const handleActionBarPress = useCallback((type, feeds) => {
-    handleSocialActionBarPress(SOCIAL_DATA_TYPES.POST, type, feeds);
+    handleSocialActionBarPress(
+      SOCIAL_DATA_TYPES.POST,
+      type,
+      feeds,
+      undefined,
+      undefined,
+      theme,
+    );
   }, []);
 
   const handlePostingComplete = useCallback(() => {

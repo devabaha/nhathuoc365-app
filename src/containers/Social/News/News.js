@@ -60,36 +60,32 @@ class News extends Component {
     indexTab: 0,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    data: null,
+    refreshing: false,
+    loading: true,
+    news_type: this.props.news_type || '',
+    // news tab state
+    index: this.props.indexTab,
+    routes: [],
+  };
 
-    this.state = {
-      data: null,
-      refreshing: false,
-      loading: true,
-      news_type: props.news_type || '',
-      // news tab state
-      index: this.props.indexTab,
-      routes: [],
-    };
+  updateNewsDisposer = reaction(
+    () => store.refresh_news,
+    () => this.getListNewsCategory(),
+  );
 
-    this.updateNewsDisposer = reaction(
-      () => store.refresh_news,
-      () => this.getListNewsCategory(),
-    );
+  updateSelectedTabIndex = reaction(
+    () => store.selectedNewsId,
+    (id) => this.updateSelectedTabIndexById(id),
+  );
 
-    this.updateSelectedTabIndex = reaction(
-      () => store.selectedNewsId,
-      (id) => this.updateSelectedTabIndexById(id),
-    );
+  eventTracker = new EventTracker();
+  getListNewsCategoryRequest = new APIRequest();
+  requests = [this.getListNewsCategoryRequest];
+  jumpTo = null;
 
-    this.eventTracker = new EventTracker();
-    this.getListNewsCategoryRequest = new APIRequest();
-    this.requests = [this.getListNewsCategoryRequest];
-    this.jumpTo = null;
-
-    this.updateNavBarDisposer = () => {};
-  }
+  updateNavBarDisposer = () => {};
 
   get theme() {
     return getTheme(this);

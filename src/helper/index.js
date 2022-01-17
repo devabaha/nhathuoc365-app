@@ -2,6 +2,10 @@ import {Linking, Alert} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import i18n from 'src/i18n';
 
+import {saveTheme, isDarkMode} from './theme';
+
+export {saveTheme, isDarkMode};
+
 export const openLink = (url) => {
   const t = i18n.getFixedT(undefined, 'common');
   Linking.openURL(url).catch((error) => {
@@ -112,6 +116,16 @@ export const rgbaToRgbCode = (rgba, background = '#ffffff') => {
 
 export const rgbaToRgb = (rgba, background = '#fff') => {
   return 'rgb(' + rgbaToRgbCode(rgba, background).join(',') + ')';
+};
+
+export const cancelRequests = (requests) => {
+  if (Array.isArray(requests)) {
+    requests.forEach((request) => {
+      request.cancel();
+    });
+  } else {
+    requests.cancel();
+  }
 };
 
 export const lightenColor = (color, percent) => {

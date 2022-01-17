@@ -269,10 +269,10 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       //   },
       //   service.theme,
       // );
-      jump(appConfig.routes.newsTab, {
+      push(appConfig.routes.newsTab, {
         title: service.title,
         id: service.categoryId,
-      });
+      }, service.theme);
       break;
     case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
       push(
@@ -385,6 +385,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         appConfig.routes.gpsListStore,
         {
           type: service.type,
+          title: service.title || commonT('screen.listSite.mainTitle'),
           placeholder: service.placeholder || commonT('home:searchingStore'),
           autoFocus: service.autoFocus,
         },
@@ -401,6 +402,8 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         qr_code: service.qr_code,
         from_item: service.from_item,
         itemRefresh: service.itemRefresh,
+        onPress: service.onPress,
+        selectedStore: service.selectedStore,
       });
       break;
 

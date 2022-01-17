@@ -103,7 +103,13 @@ export const REQUEST_TYPE = {
 };
 
 export const GPS_LIST_TYPE = {
+  /**
+   * @description list of store in a site
+   */
   GPS_LIST_SITE: 'gps_list_site',
+  /**
+   * @description list of site
+   */
   GPS_LIST_STORE: 'gps_list_store',
 };
 
@@ -111,3 +117,12 @@ export const MEDIA_TYPE = {
   IMAGE: 'image',
   YOUTUBE_VIDEO: 'youtube',
 };
+
+export const HIT_SLOP = {
+  top: 15,
+  right: 15,
+  bottom: 15,
+  left: 15,
+};
+
+export const THEME_STORAGE_KEY = 'theme_storage_key';

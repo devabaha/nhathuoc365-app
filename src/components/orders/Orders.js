@@ -31,32 +31,27 @@ import Indicator from '../Indicator';
 class Orders extends Component {
   static contextType = ThemeContext;
 
-  constructor(props) {
-    super(props);
+  state = {
+    data: null,
+    refreshing: false,
+    cart_check_list: {},
+    loading: true,
+    empty: false,
+    finish: false,
+    scrollTop: 0,
+  };
 
-    this.state = {
-      data: null,
-      refreshing: false,
-      cart_check_list: {},
-      loading: true,
-      empty: false,
-      finish: false,
-      scrollTop: 0,
-    };
+  unmounted = false;
+  autoUpdateDisposer = null;
 
-    this._getData = this._getData.bind(this);
-    this.unmounted = false;
-    this.autoUpdateDisposer = null;
+  // refresh
+  updateDataDisposer = () => {};
+  eventTracker = new EventTracker();
 
-    // refresh
-    reaction(() => store.orders_key_change, this._getData);
-    this.eventTracker = new EventTracker();
-
-    this.updateNavBarDisposer = () => {};
-  }
+  updateNavBarDisposer = () => {};
 
   get theme() {
-    getTheme(this);
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -65,6 +60,11 @@ class Orders extends Component {
     store.is_stay_orders = true;
     store.parentTab = `${appConfig.routes.newsTab}_1`;
     this.eventTracker.logCurrentView();
+
+    this.updateDataDisposer = reaction(
+      () => store.orders_key_change,
+      this._getData,
+    );
 
     this.updateNavBarDisposer = updateNavbarTheme(
       this.props.navigation,
@@ -75,6 +75,7 @@ class Orders extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.updateDataDisposer();
     this.autoUpdateDisposer && this.autoUpdateDisposer();
 
     this.updateNavBarDisposer();
@@ -127,7 +128,7 @@ class Orders extends Component {
     );
   }
 
-  async _getData(delay, noScroll = false) {
+  _getData = async (delay, noScroll = false) => {
     const {t} = this.props;
 
     appConfig.device.isIOS &&
@@ -197,7 +198,7 @@ class Orders extends Component {
 
       !this.autoUpdateDisposer && this.forceUpdateOrders();
     }
-  }
+  };
 
   _closePopupConfirm() {
     if (this.refs_cancel_cart) {
@@ -335,14 +336,14 @@ class Orders extends Component {
     }
   }
 
-  _onRefresh() {
+  _onRefresh = () => {
     this.setState(
       {
         refreshing: true,
       },
-      this._getData.bind(this, 1000),
+      this._getData(1000),
     );
-  }
+  };
 
   forceUpdateOrders() {
     if (this.autoUpdateDisposer) return;
@@ -420,7 +421,7 @@ class Orders extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
+              onRefresh={this._onRefresh}
             />
           }
         />

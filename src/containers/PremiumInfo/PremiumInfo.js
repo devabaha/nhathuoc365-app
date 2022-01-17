@@ -366,7 +366,6 @@ class PremiumInfo extends Component {
               style={[{width: tabWidth}, styles.tabBarItemContainerStyle]}
               key={props.route.key}
               onPress={() => {
-                this.context.toggleTheme(BASE_DARK_THEME_ID);
                 this.setState({index: props.route.key});
               }}>
               {this.renderTabBarLabel(props)}

@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 // 3-party libs
-import {Actions} from 'react-native-router-flux';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
 // configs
@@ -10,11 +9,9 @@ import appConfig from 'app-config';
 // helpers
 import {copyToClipboard} from 'app-helper';
 import {saveImage} from 'app-helper/image';
-import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
-import {PhotoLibraryPermission} from 'app-helper/permissionHelper';
 import {mergeStyles} from 'src/Themes/helper';
 // routing
-import {pop, push, replace} from 'app-helper/routing';
+import {pop, push, replace, getCurrentScene} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -27,6 +24,8 @@ import {
 } from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
+import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
+import {PhotoLibraryPermission} from 'app-helper/permissionHelper';
 // custom components
 import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
 import Button from 'src/components/Button';
@@ -81,6 +80,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingVertical: 3,
     paddingHorizontal: 7,
+    // marginLeft: 100,
+    // borderLeftWidth: 100,
+    // paddingLeft: 30,
   },
   infoTitle: {
     padding: 10,
@@ -89,8 +91,15 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
+  copyInfoContainer: {
+    maxWidth: '60%',
+  },
   copyIcon: {
     marginRight: 5,
+  },
+  copyInfoValue: {
+    height: undefined,
+    flex: undefined,
   },
   title: {},
   value: {},
@@ -174,12 +183,12 @@ const Transaction = ({
   const copyInfoBtnTypoProps = useMemo(() => {
     return {
       type: TypographyType.LABEL_SMALL,
-      renderIconBefore: (titleStyle) => {
+      renderIconBefore: (titleStyle, fontStyle) => {
         return (
           <Icon
             bundle={BundleIconSetName.IONICONS}
             name="ios-copy"
-            style={[titleStyle, styles.copyIcon]}
+            style={[fontStyle, styles.copyIcon]}
           />
         );
       },
@@ -187,7 +196,11 @@ const Transaction = ({
   }, []);
 
   useEffect(() => {
-    getTransactionData(true);
+    getTransactionData().then((transData) => {
+      if (transData) {
+        handleOpenTransaction(transData);
+      }
+    });
 
     return () => {
       getTransactionDataRequest.cancel();
@@ -222,7 +235,7 @@ const Transaction = ({
 
               if (
                 !!response.data?.close_payment &&
-                Actions.currentScene === `${appConfig.routes.modalWebview}_1`
+                getCurrentScene() === `${appConfig.routes.modalWebview}_1`
               ) {
                 pop();
               }
@@ -261,48 +274,47 @@ const Transaction = ({
     };
   }, []);
 
-  const getTransactionData = useCallback(
-    async (isOpenTransaction = false) => {
-      getTransactionDataRequest.data = APIHandler.payment_cart_payment(
-        siteId,
-        cartId,
-      );
-      try {
-        const response = await getTransactionDataRequest.promise();
-        // console.log(response, siteId, cartId);
-        if (response) {
-          if (response.status === STATUS_SUCCESS) {
-            if (response.data) {
-              setTransactionData(response.data);
-              if (isActiveWebview(response.data) && isOpenTransaction) {
-                handleOpenTransaction(response.data);
-              }
+  const getTransactionData = useCallback(async () => {
+    getTransactionDataRequest.data = APIHandler.payment_cart_payment(
+      siteId,
+      cartId,
+    );
+    try {
+      const response = await getTransactionDataRequest.promise();
+      // console.log(response, siteId, cartId);
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            setTransactionData(response.data);
+            if (isActiveWebview(response.data)) {
+              return response.data;
             }
-          } else {
-            flashShowMessage({
-              type: 'danger',
-              message: response.message || t('api.error.message'),
-            });
           }
         } else {
           flashShowMessage({
             type: 'danger',
-            message: t('api.error.message'),
+            message: response.message || t('api.error.message'),
           });
         }
-      } catch (error) {
-        console.log('get_transaction_data', error);
+      } else {
         flashShowMessage({
           type: 'danger',
           message: t('api.error.message'),
         });
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
       }
-    },
-    [isPaid],
-  );
+      return null;
+    } catch (error) {
+      console.log('get_transaction_data', error);
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+      return null;
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [isPaid]);
 
   const handleSavePhoto = async (dataURL) => {
     await saveImage(undefined, dataURL, 'png');
@@ -371,12 +383,28 @@ const Transaction = ({
     }
   };
 
+  const vnPayMerchantListener = (e) => {
+    switch (e.resultCode) {
+      // user press back
+      case -1:
+      // transaction fail
+      case 98:
+      // user press cancel transaction
+      case 99:
+        break;
+    }
+  };
+
   const handleOpenTransaction = useCallback(
-    (transData = transactionData) => {
-      if (transData.url) {
+    async (transData) => {
+      if (!transData) {
+        setLoading(true);
+        transData = await getTransactionData();
+      }
+      if (transData?.url) {
         switch (transData?.payment_method?.gateway) {
           case PAYMENT_METHOD_GATEWAY.VNPAY:
-            const vnPayMerchant = new VNPayMerchant();
+            const vnPayMerchant = new VNPayMerchant(vnPayMerchantListener);
             vnPayMerchant.show({
               isSandbox: !!transData.isSandbox,
               paymentUrl: transData.url,
@@ -482,6 +510,7 @@ const Transaction = ({
               rounded={ButtonRoundedType.SMALL}
               typoProps={copyInfoBtnTypoProps}
               style={styles.infoButtonContainer}
+              titleStyle={[titleStyle, styles.copyInfoValue]}
               onPress={() => copyAccountNumber(info.value)}>
               {info.value}
             </AppFilledTonalButton>
@@ -602,7 +631,7 @@ const Transaction = ({
     <ScreenWrapper>
       <NavBar onClose={handleBack} navigation={props} />
 
-      {isLoading || (isImageSavingLoading && <Loading center />)}
+      {(isLoading || isImageSavingLoading) && <Loading center />}
       <Container flex noBackground>
         {renderPaidStatus()}
 

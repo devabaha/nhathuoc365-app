@@ -25,6 +25,7 @@ import {
 } from './Button';
 import Icon, {BundleIconSetName, BUNDLE_ICON_SETS} from './Icon';
 import NavBar, {NavBarWrapper} from './NavBar';
+import StatusBar from './StatusBar';
 
 import {Ref as RNRef, ReactChild, ReactChildren} from 'react';
 
@@ -60,6 +61,7 @@ export {
   CardBorderRadiusType,
   NavBar,
   NavBarWrapper,
+  StatusBar
 };
 
 export type SingleChildren = ReactChild | ReactChildren | JSX.Element;

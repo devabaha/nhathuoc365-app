@@ -23,13 +23,12 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 import {MEDIA_TYPE} from 'src/constants';
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 // custom components
 import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
-
 import RightButtonNavBar from '../RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 import ActionContainer from '../Social/ActionContainer';
 import ListStoreProduct from '../stores/ListStoreProduct';
 import Loading from '../Loading';
@@ -43,6 +42,8 @@ import {
   Icon,
   RefreshControl,
 } from 'src/components/base';
+
+const MEDIA_HEIGHT = appConfig.device.width / 1.75;
 
 class NotifyItem extends Component {
   static contextType = ThemeContext;
@@ -284,7 +285,7 @@ class NotifyItem extends Component {
           style={styles.notify_container}>
           <Container style={styles.notify_image_box}>
             <MediaCarousel
-              height="100%"
+              height={MEDIA_HEIGHT}
               data={media}
               showPagination={media.length > 1}
             />
@@ -361,32 +362,38 @@ class NotifyItem extends Component {
         </ScrollView>
 
         {!!item_data && (
-          <ActionContainer
-            style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
-            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
-            commentsCount={getSocialCommentsCount(
-              SOCIAL_DATA_TYPES.NEWS,
-              item_data,
-            )}
-            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            onActionBarPress={(type) =>
-              handleSocialActionBarPress(
+          <Container safeLayout shadow>
+            <ActionContainer
+              isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+              likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+              commentsCount={getSocialCommentsCount(
                 SOCIAL_DATA_TYPES.NEWS,
-                type,
                 item_data,
-              )
-            }
-            hasInfoExtraBottom={false}
-            onPressTotalComments={() =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.NEWS,
-                SOCIAL_BUTTON_TYPES.COMMENT,
-                item_data,
-                false,
-              )
-            }
-          />
+              )}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+              onActionBarPress={(type) =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  type,
+                  item_data,
+                  undefined,
+                  undefined,
+                  this.theme,
+                )
+              }
+              hasInfoExtraBottom={false}
+              onPressTotalComments={() =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  item_data,
+                  false,
+                  undefined,
+                  this.theme,
+                )
+              }
+            />
+          </Container>
         )}
 
         {/* {item_data != null && item_data.related && (
@@ -456,16 +463,6 @@ const styles = StyleSheet.create({
   },
   rightButtonNavBarContainer: {
     marginRight: 10,
-  },
-  product_related_text: {
-    fontSize: 20,
-    color: '#2B2B2B',
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  actionContainer: {
-    paddingBottom: appConfig.device.bottomSpace,
-    ...elevationShadowStyle(7),
   },
 
   listStoreProductContainer: {

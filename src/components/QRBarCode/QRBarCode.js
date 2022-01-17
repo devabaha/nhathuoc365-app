@@ -36,7 +36,6 @@ import {
 } from 'src/components/base';
 import Button from 'src/components/Button';
 import QRScanner from './QRScanner';
-import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -63,31 +62,32 @@ class QRBarCode extends Component {
     isVisibleTabBar: true,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      index: props.index || 0,
-      wallet: props.wallet || false,
-      loading: false,
-      from: props.from || false,
-      barcode: props.address || '000000000000',
-      title: props.title || props.t('common:screen.qrBarCode.mainTitle'),
-      content: props.content ? props.content : props.t('content.description'),
-      originLuminous: MIN_LUMINOUS,
+  state = {
+    index: this.props.index || 0,
+    wallet: this.props.wallet || false,
+    loading: false,
+    from: this.props.from || false,
+    barcode: this.props.address || '000000000000',
+    title:
+      this.props.title || this.props.t('common:screen.qrBarCode.mainTitle'),
+    content: this.props.content
+      ? this.props.content
+      : this.props.t('content.description'),
+    originLuminous: MIN_LUMINOUS,
 
-      isVisibleBtnEnterCode: false,
-      topContentText: '',
-      placeholder: '',
-      isFromProductStamps: false,
-      isEnterCode: false,
-    };
+    isVisibleBtnEnterCode: false,
+    topContentText: '',
+    placeholder: '',
+    isFromProductStamps: false,
+    isEnterCode: false,
+  };
 
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
-    this.checkProductRequest = new APIRequest();
-    this.requests = [this.checkProductRequest];
-    this.updateNavBarDisposer = () => {};
-  }
+  unmounted = false;
+  eventTracker = new EventTracker();
+  checkProductRequest = new APIRequest();
+  requests = [this.checkProductRequest];
+  updateNavBarDisposer = () => {};
+  tabTitleTypoProps = {type: TypographyType.LABEL_MEDIUM_TERTIARY};
 
   get theme() {
     return getTheme(this);
@@ -830,22 +830,22 @@ class QRBarCode extends Component {
     );
   }
 
-  renderIconQRCode = (titleStyle) => {
+  renderIconQRCode = (titleStyle, buttonStyle, fontStyle) => {
     return (
       <Icon
         bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
         name="barcode-scan"
-        style={[titleStyle, styles.iconQR]}
+        style={[fontStyle, styles.iconQR]}
       />
     );
   };
 
-  renderIconScanQRCode = (titleStyle) => {
+  renderIconScanQRCode = (titleStyle, buttonStyle, fontStyle) => {
     return (
       <Icon
         bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
         name="qrcode-scan"
-        style={[titleStyle, styles.iconQR]}
+        style={[fontStyle, styles.iconQR]}
       />
     );
   };
@@ -863,26 +863,25 @@ class QRBarCode extends Component {
   getButtonBackgroundStyle = (focused) => {
     return [
       styles.bottomButton,
-      focused &&
-        this.theme.id === BASE_DARK_THEME_ID && {
-          backgroundColor: this.theme.color.surfaceHighlight,
-        },
+      // focused &&
+      //   this.theme.id === BASE_DARK_THEME_ID && {
+      //     backgroundColor: this.theme.color.surfaceHighlight,
+      //   },
     ];
   };
 
   getButtonTitleStyle = (focused) => {
-    return (
+    return [
+      styles.bottomButtonTitle,
       focused && {
-        color:
-          this.theme.id === BASE_DARK_THEME_ID
-            ? this.theme.color.primary
-            : this.theme.color.persistPrimary,
-      }
-    );
+        ...styles.bottomButtonFocusedTitle,
+        color: this.theme.color.primaryHighlight,
+      },
+    ];
   };
 
   get titleBtnLeftStyle() {
-    return mergeStyles(styles.titleStyle, {
+    return mergeStyles(styles.title, {
       color: this.theme.color.persistPrimary,
     });
   }
@@ -918,14 +917,16 @@ class QRBarCode extends Component {
 
         {!!this.props.isVisibleBtnEnterCode ? (
           <Button
+            safeLayout
             containerStyle={styles.enterCodeBtn}
             onPress={() => this.enterCodeManual()}
             title={this.props.t('common:screen.qrBarCode.enterCode')}
           />
         ) : (
           !!this.props.isVisibleTabBar && (
-            <Container style={this.bottomViewStyle}>
+            <Container safeLayout style={this.bottomViewStyle}>
               <TextButton
+                typoProps={this.tabTitleTypoProps}
                 column
                 renderIconLeft={this.renderIconQRCode}
                 style={this.getButtonBackgroundStyle(isQRCodeFocused)}
@@ -934,6 +935,7 @@ class QRBarCode extends Component {
                 {title}
               </TextButton>
               <TextButton
+                typoProps={this.tabTitleTypoProps}
                 column
                 renderIconLeft={this.renderIconScanQRCode}
                 style={this.getButtonBackgroundStyle(isScanQRCodeFocused)}
@@ -958,7 +960,7 @@ const styles = StyleSheet.create({
 
   enterCodeBtn: {
     position: 'absolute',
-    bottom: appConfig.device.bottomSpace,
+    bottom: 0,
   },
 
   topContent: {
@@ -975,7 +977,7 @@ const styles = StyleSheet.create({
   },
   bottomView: {
     position: 'absolute',
-    height: BOTTOM_HEIGHT,
+    // height: BOTTOM_HEIGHT,
     bottom: 0,
     left: 0,
     right: 0,
@@ -1036,7 +1038,13 @@ const styles = StyleSheet.create({
   iconQR: {
     fontSize: 20,
   },
-  titleStyle: {},
+  title: {},
+  bottomButtonTitle: {
+    marginTop: 5,
+  },
+  bottomButtonFocusedTitle: {
+    fontWeight: 'bold',
+  },
 });
 
 export default withTranslation(['qrBarCode', 'transfer', 'common'])(QRBarCode);

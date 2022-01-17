@@ -450,11 +450,7 @@ class CartFooter extends Component {
         </View>
       );
     } else {
-      return (
-        <View style={styles.store_cart_container}>
-          <CenterText marginTop={-8} title={t('noFooterItems')} />
-        </View>
-      );
+      return null;
     }
   }
 

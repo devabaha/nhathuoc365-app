@@ -1,9 +1,10 @@
 import React, {PureComponent} from 'react';
-import {View, Easing, StyleSheet, Platform, Picker} from 'react-native';
+import {View, Easing, StyleSheet, Platform} from 'react-native';
 // 3-party libs
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
+import {Picker} from '@react-native-picker/picker';
 // helpers
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
@@ -111,6 +112,7 @@ class ModalPicker extends PureComponent {
 
     return (
       <TextButton
+        key={index}
         useTouchableHighlight
         onPress={() => this.onValueChange(item.value, index)}
         style={[styles.androidDataRow, isSelected && androidDataRowSelected]}
@@ -237,8 +239,6 @@ class ModalPicker extends PureComponent {
 
 const styles = StyleSheet.create({
   modal: {
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     overflow: 'hidden',
     height: undefined,
   },

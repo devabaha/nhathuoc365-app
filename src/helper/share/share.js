@@ -3,6 +3,9 @@ import appConfig from 'app-config';
 
 export const share = async (url, message = '') => {
   try {
+    message =
+      appConfig.device.isAndroid && url ? message + '\r\n' + url : message;
+
     const shareContent = url ? {url, message} : {message};
 
     const result = await Share.share(shareContent, {

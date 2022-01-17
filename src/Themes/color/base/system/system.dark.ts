@@ -26,7 +26,7 @@ const SYSTEM_COMMON = {
   persistOnSurface: CORE.onSurface,
 
   // OTHERS
-  coreOverlay: CORE.black
+  coreOverlay: CORE.black,
 };
 
 export const SYSTEM_DARK = {
@@ -45,6 +45,10 @@ export const SYSTEM_DARK = {
 
   onOverlay: CORE.white,
   // underlay: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.2),
+
+  // for Android
+  statusBarBackground: SYSTEM_COMMON.primary,
+  statusBarBackgroundSurfaceMode: SYSTEM_COMMON.surface,
 
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,

@@ -8,7 +8,8 @@ import {
   themeChangingListener,
   THEME_CHANGING_EVENT_NAME,
 } from '../Theme.context';
-import {darkStatusBarScenes} from 'app-helper/handleStatusBarStyle';
+import {DARK_STATUS_BAR_SCENES} from 'app-helper/statusBar/constants';
+import {StatusBar} from 'react-native';
 
 export const addThemeChangingListener = (listener) => {
   themeChangingListener.addListener(THEME_CHANGING_EVENT_NAME, listener);
@@ -19,7 +20,7 @@ export const removeThemeChangingListener = (listener) => {
 };
 
 export const checkIsNextSceneNavBarSurfaceMode = (nextSceneKey: string) => {
-  const isNavBarSurfaceMode = darkStatusBarScenes.find((sceneName) => {
+  const isNavBarSurfaceMode = DARK_STATUS_BAR_SCENES.find((sceneName) => {
     const suffix = nextSceneKey.slice(nextSceneKey.length - 2);
     if (suffix === '_1') {
       nextSceneKey = nextSceneKey.slice(0, nextSceneKey.length - 2);
@@ -30,7 +31,11 @@ export const checkIsNextSceneNavBarSurfaceMode = (nextSceneKey: string) => {
   return !!isNavBarSurfaceMode;
 };
 
-export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
+export const getNavBarTheme = (
+  theme?: Theme,
+  isSurfaceMode?: boolean,
+  params: any = {},
+) => {
   if (!theme) return {};
   const tintColor = isSurfaceMode
     ? theme.color.onSurface
@@ -38,6 +43,7 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
 
   const titleStyle: Style = {
     ...(theme.typography[TypographyType.TITLE_SEMI_LARGE] as {}),
+    ...params.titleStyle,
     fontWeight: appConfig.device.isIOS ? '500' : 'bold',
     color: tintColor,
   };
@@ -52,10 +58,13 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
         <Typography
           type={TypographyType.TITLE_SEMI_LARGE}
           numberOfLines={1}
-          style={{
-            color: tintColor,
-            fontWeight: appConfig.device.isIOS ? '500' : 'bold',
-          }}>
+          style={[
+            titleStyle,
+            {
+              color: tintColor,
+              fontWeight: appConfig.device.isIOS ? '500' : 'bold',
+            },
+          ]}>
           {props.title}
         </Typography>
       );
@@ -63,6 +72,9 @@ export const getNavBarTheme = (theme?: Theme, isSurfaceMode?: boolean) => {
     titleStyle,
     iconStyle,
     headerStyle: {
+      borderBottomWidth: 0,
+      borderBottomColor: theme.color.border,
+      ...params.navigationBarStyle,
       backgroundColor: isSurfaceMode
         ? theme.color.surface
         : theme.color.primary,
@@ -79,9 +91,29 @@ export const updateNavbarTheme = (navigation: any, currentTheme: Theme) => {
     const navBarTheme = getNavBarTheme(
       theme,
       !!navigation.state?.params?.surfaceMode,
+      navigation?.state?.params || {},
     );
 
     navigation.setParams(navBarTheme);
+
+    if (!!theme) {
+      StatusBar.setBarStyle(
+        !!navigation.state?.params?.surfaceMode
+          ? theme.layout.statusBarSurfaceModeStyle
+          : theme.layout.statusBarStyle,
+      );
+
+      if (
+        appConfig.device.isAndroid &&
+        navigation.state?.params?.surfaceMode !== undefined
+      ) {
+        if (!!navigation.state?.params?.surfaceMode) {
+          StatusBar.setBackgroundColor(theme.color.statusBarBackgroundSurfaceMode);
+        } else {
+          StatusBar.setBackgroundColor(theme.color.statusBarBackground);
+        }
+      }
+    }
   };
 
   listener(currentTheme);

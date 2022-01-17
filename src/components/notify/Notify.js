@@ -18,7 +18,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {FlatList, RefreshControl, ScreenWrapper} from 'src/components/base';
 import NewItemComponent from './NewItemComponent';
 import Indicator from 'src/components/Indicator';
-import CenterText from '../CenterText';
+import NoResult from '../NoResult';
 
 class Notify extends Component {
   static contextType = ThemeContext;
@@ -170,7 +170,7 @@ class Notify extends Component {
           renderItem={this.renderItem}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={
-            !this.state.loading && <CenterText title={t('noNews')} />
+            !this.state.loading && <NoResult message={t('noNews')} />
           }
           refreshControl={
             <RefreshControl

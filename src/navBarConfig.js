@@ -22,6 +22,7 @@ export const whiteNavBarConfig = {
   surfaceMode: true,
   navigationBarStyle: {
     backgroundColor: appConfig.colors.white,
+    borderBottomWidth: 0,
   },
   titleStyle: {
     color: appConfig.colors.text,

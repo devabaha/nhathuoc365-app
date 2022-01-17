@@ -5,6 +5,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Easing,
+  StatusBar,
 } from 'react-native';
 // 3-party libs
 import Modal from 'react-native-modalbox';
@@ -550,136 +551,148 @@ class ItemAttribute extends PureComponent {
     const unitName =
       this.state.product?.unit_name && this.state.product?.unit_name_view;
 
-    return this.state.loading ? (
-      <Loading loading />
-    ) : (
-      <Modal
-        ref={this.refModal}
-        isOpen
-        position="top"
-        onClosed={pop}
-        swipeToClose={false}
-        style={[styles.modal]}
-        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <ScreenWrapper style={[styles.safeView]}>
-          <TouchableWithoutFeedback onPress={this.handleClose}>
-            <View style={{flex: 1}} />
-          </TouchableWithoutFeedback>
+    return (
+      <>
+        {this.state.loading ? (
+          <Loading loading />
+        ) : (
+          <Modal
+            ref={this.refModal}
+            isOpen
+            position="top"
+            onClosed={pop}
+            swipeToClose={false}
+            style={styles.modal}
+            easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
+            <ScreenWrapper style={styles.safeView}>
+              <TouchableWithoutFeedback onPress={this.handleClose}>
+                <View style={{flex: 1}} />
+              </TouchableWithoutFeedback>
 
-          <Container
-            safeLayout={!store.keyboardTop}
-            style={this.optionListContainerStyle}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <ProductInfo
-                imageUri={imageUri}
-                title={title}
-                subTitle={subTitle}
-                discountPrice={
-                  this.isDiscount && !!discountPrice && discountPrice
-                }
-                price={price}
-                unitName={unitName}
-                inventory={isInventoryVisible && inventory}
-                headerStyle={{paddingTop: 35}}
-              />
-            </TouchableWithoutFeedback>
-
-            <IconButton
-              neutral
-              bundle={BundleIconSetName.IONICONS}
-              style={styles.close}
-              onPress={this.handleClose}
-              hitSlop={HIT_SLOP}
-              name="ios-close"
-              iconStyle={styles.closeIcon}
-            />
-
-            <ScrollView
-              style={{
-                maxHeight: appConfig.device.height * 0.5,
-              }}
-              scrollEventThrottle={16}
-              keyboardShouldPersistTaps="handled"
-              // keyboardDismissMode="on-drag"
-              onStartShouldSetResponder={() => true}>
-              {/* <View onStartShouldSetResponder={() => true}> */}
-
-              {this.renderOptions()}
-
-              {this.isDropShip && (
-                <DropShip
-                  disabled={isDropShipDisabled}
-                  price={priceDropShip}
-                  priceView={priceDropShipView}
-                  quantity={this.state.quantity}
-                  min={MIN_QUANTITY}
-                  max={maxQuantity}
-                  listPrice={this.listPrice}
-                  onChangeNewPrice={(dropShipPrice) => {
-                    this.setState({dropShipPrice});
-                  }}
-                  onChangeQuantity={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
-                  }
-                  onMinus={() => {
-                    this.setState({quantity: this.state.quantity - 1});
-                  }}
-                  onPlus={() => {
-                    this.setState({quantity: this.state.quantity + 1});
-                  }}
-                  onQuantityBlur={() => {
-                    if (!this.state.quantity) {
-                      this.setState({quantity: MIN_QUANTITY});
+              <Container
+                safeLayout={!store.keyboardTop}
+                style={this.optionListContainerStyle}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                  <ProductInfo
+                    imageUri={imageUri}
+                    title={title}
+                    subTitle={subTitle}
+                    discountPrice={
+                      this.isDiscount && !!discountPrice && discountPrice
                     }
-                  }}
-                />
-              )}
-              {/* </View> */}
-            </ScrollView>
-
-            {!this.isDropShip && (
-              <View style={this.quantityStyles}>
-                <Typography type={TypographyType.LABEL_LARGE}>
-                  {t('attr.quantity')}
-                </Typography>
-                <Container style={styles.quantityWrapper}>
-                  <NumberSelection
-                    containerStyle={[styles.quantityContainer]}
-                    textContainer={styles.quantityTxtContainer}
-                    value={this.state.quantity}
-                    min={MIN_QUANTITY}
-                    max={maxQuantity}
-                    onChangeText={(text) =>
-                      this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
-                    }
-                    onMinus={() => {
-                      this.setState({quantity: this.state.quantity - 1});
-                    }}
-                    onPlus={() => {
-                      this.setState({quantity: this.state.quantity + 1});
-                    }}
-                    onBlur={() => {
-                      if (!this.state.quantity) {
-                        this.setState({quantity: MIN_QUANTITY});
-                      }
-                    }}
-                    disabled={disabled}
+                    price={price}
+                    unitName={unitName}
+                    inventory={isInventoryVisible && inventory}
+                    headerStyle={{paddingTop: 35}}
                   />
-                </Container>
-              </View>
-            )}
+                </TouchableWithoutFeedback>
 
-            <Button
-              title={t('addToCart')}
-              onPress={this.handleSubmit}
-              disabled={disabled}
-              // {...btnProps}
-            />
-          </Container>
+                <IconButton
+                  neutral
+                  bundle={BundleIconSetName.IONICONS}
+                  style={styles.close}
+                  onPress={this.handleClose}
+                  hitSlop={HIT_SLOP}
+                  name="ios-close"
+                  iconStyle={styles.closeIcon}
+                />
 
-          {appConfig.device.isIOS && <KeyboardSpacer topSpacing={15} />}
-        </ScreenWrapper>
-      </Modal>
+                <ScrollView
+                  style={{
+                    maxHeight: appConfig.device.height * 0.5,
+                  }}
+                  scrollEventThrottle={16}
+                  keyboardShouldPersistTaps="handled"
+                  // keyboardDismissMode="on-drag"
+                  onStartShouldSetResponder={() => true}>
+                  {/* <View onStartShouldSetResponder={() => true}> */}
+
+                  {this.renderOptions()}
+
+                  {this.isDropShip && (
+                    <DropShip
+                      disabled={isDropShipDisabled}
+                      price={priceDropShip}
+                      priceView={priceDropShipView}
+                      quantity={this.state.quantity}
+                      min={MIN_QUANTITY}
+                      max={maxQuantity}
+                      listPrice={this.listPrice}
+                      onChangeNewPrice={(dropShipPrice) => {
+                        this.setState({dropShipPrice});
+                      }}
+                      onChangeQuantity={(text) =>
+                        this.handleChangeQuantity(
+                          text,
+                          MIN_QUANTITY,
+                          maxQuantity,
+                        )
+                      }
+                      onMinus={() => {
+                        this.setState({quantity: this.state.quantity - 1});
+                      }}
+                      onPlus={() => {
+                        this.setState({quantity: this.state.quantity + 1});
+                      }}
+                      onQuantityBlur={() => {
+                        if (!this.state.quantity) {
+                          this.setState({quantity: MIN_QUANTITY});
+                        }
+                      }}
+                    />
+                  )}
+                  {/* </View> */}
+                </ScrollView>
+
+                {!this.isDropShip && (
+                  <View style={this.quantityStyles}>
+                    <Typography type={TypographyType.LABEL_LARGE}>
+                      {t('attr.quantity')}
+                    </Typography>
+                    <Container style={styles.quantityWrapper}>
+                      <NumberSelection
+                        containerStyle={[styles.quantityContainer]}
+                        textContainer={styles.quantityTxtContainer}
+                        value={this.state.quantity}
+                        min={MIN_QUANTITY}
+                        max={maxQuantity}
+                        onChangeText={(text) =>
+                          this.handleChangeQuantity(
+                            text,
+                            MIN_QUANTITY,
+                            maxQuantity,
+                          )
+                        }
+                        onMinus={() => {
+                          this.setState({quantity: this.state.quantity - 1});
+                        }}
+                        onPlus={() => {
+                          this.setState({quantity: this.state.quantity + 1});
+                        }}
+                        onBlur={() => {
+                          if (!this.state.quantity) {
+                            this.setState({quantity: MIN_QUANTITY});
+                          }
+                        }}
+                        disabled={disabled}
+                      />
+                    </Container>
+                  </View>
+                )}
+
+                <Button
+                  title={t('addToCart')}
+                  onPress={this.handleSubmit}
+                  disabled={disabled}
+                  // {...btnProps}
+                />
+              </Container>
+
+              {appConfig.device.isIOS && <KeyboardSpacer topSpacing={15} />}
+            </ScreenWrapper>
+          </Modal>
+        )}
+      </>
     );
   }
 }

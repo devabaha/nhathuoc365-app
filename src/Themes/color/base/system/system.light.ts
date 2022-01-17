@@ -48,8 +48,10 @@ export const SYSTEM_LIGHT = {
   underlay: hexToRgba(SYSTEM_COMMON.coreOverlay, 0.1), // use for touchableHighlight
   shadow: CORE.black,
 
-  // statusBarBackground: android ? primaryDark : transparent,
-  // statusBarStyle: contrast with statusBarBackground,
+  // for Android
+  statusBarBackground: SYSTEM_COMMON.primary,
+  statusBarBackgroundSurfaceMode: SYSTEM_COMMON.surface,
+
   navBarBackground: SYSTEM_COMMON.primary,
   onNavBarBackground: SYSTEM_COMMON.onPrimary,
 

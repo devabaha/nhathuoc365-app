@@ -84,6 +84,8 @@ import vi_phoneCard from './vi/phoneCard.json';
 import en_phoneCard from './en/phoneCard.json';
 import vi_domainSelector from './vi/domainSelector.json';
 import en_domainSelector from './en/domainSelector.json';
+import vi_gpsStore from './vi/gpsStore.json';
+import en_gpsStore from './en/gpsStore.json';
 
 export default {
   [languages.vi.value]: {
@@ -129,6 +131,7 @@ export default {
     payWallet: vi_payWallet,
     phoneCard: vi_phoneCard,
     domainSelector: vi_domainSelector,
+    gpsStore: vi_gpsStore,
   },
   [languages.en.value]: {
     common: en_common,
@@ -173,5 +176,6 @@ export default {
     payWallet: en_payWallet,
     phoneCard: en_phoneCard,
     domainSelector: en_domainSelector,
+    gpsStore: en_gpsStore,
   },
 };

@@ -1,11 +1,13 @@
 import React, {memo, forwardRef, useMemo} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
-
+// types
 import {InputProps} from '.';
 import {Ref} from '..';
-
-import {useTheme} from 'src/Themes/Theme.context';
+// helpers
+import {isDarkMode} from 'app-helper/theme';
 import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const createStyles = (theme) => {
   const styles = StyleSheet.create({
@@ -34,6 +36,7 @@ const Input = forwardRef(({style, type, ...props}: InputProps, ref: Ref) => {
     <TextInput
       ref={ref}
       placeholderTextColor={theme.color.placeholder}
+      keyboardAppearance={isDarkMode(theme) ? 'dark' : 'light'}
       {...props}
       style={componentStyle}
     />

@@ -45,10 +45,8 @@ class SelectionList extends Component {
     }
 
     let iconBundle = BundleIconSetName.FONT_AWESOME;
-    switch (item.iconType) {
-      case 'MaterialCommunityIcons':
-        iconBundle = BundleIconSetName.MATERIAL_COMMUNITY_ICONS;
-        break;
+    if (item.iconType) {
+      iconBundle = item.iconType;
     }
 
     return (
@@ -106,7 +104,7 @@ class SelectionList extends Component {
                     ]}>
                     {item.rightIcon || (
                       <Icon
-                        bundle={iconBundle}
+                        bundle={BundleIconSetName.FONT_AWESOME}
                         name="angle-right"
                         style={styles.rightIcon}
                         neutral

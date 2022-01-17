@@ -12,10 +12,6 @@ global.CachedImageBackground = CachedImageBackground;
 
 global.AsyncStorage = AsyncStorage;
 
-// center text
-import CenterText from '../components/CenterText';
-global.CenterText = CenterText;
-
 // components
 import Indicator from '../components/Indicator';
 global.Indicator = Indicator;

@@ -19,6 +19,8 @@ import {languages} from 'src/i18n/constants';
 // custom components
 import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {THEME_STORAGE_KEY} from 'src/constants';
 
 class Launch extends Component {
   static contextType = ThemeContext;
@@ -43,9 +45,23 @@ class Launch extends Component {
   }
 
   componentDidMount() {
-    this.handleAuthorization();
+    this.loadTheme();
     this.animateLoading();
   }
+
+  loadTheme = async () => {
+    try {
+      let themeStorage = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+      if (themeStorage) {
+        themeStorage = JSON.parse(themeStorage);
+        this.context.updateTheme(themeStorage);
+      }
+    } catch (error) {
+      console.log('load_theme', error);
+    } finally {
+      this.handleAuthorization();
+    }
+  };
 
   handleAuthorization = async () => {
     try {

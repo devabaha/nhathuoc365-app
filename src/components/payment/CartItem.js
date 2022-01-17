@@ -649,7 +649,7 @@ class CartItem extends Component {
                     style={styles.cart_item_price_price}>
                     {item.price_view}
                   </Typography>
-                  {item.discount_percent > 0 && (
+                  {!!item.discount_view && (
                     <Typography
                       type={TypographyType.LABEL_SEMI_LARGE_TERTIARY}
                       style={styles.cart_item_price_price_safe_off}>

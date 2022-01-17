@@ -10,7 +10,6 @@ import {
 import appConfig from 'app-config';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
-import EventTracker from 'src/helper/EventTracker';
 // routing
 import {pop, push} from 'app-helper/routing';
 // context
@@ -20,6 +19,8 @@ import {MEDIA_TYPE} from 'src/constants';
 import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
 import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import EventTracker from 'src/helper/EventTracker';
 // custom components
 import RightButtonNavBar from 'src/components/RightButtonNavBar';
 import Carousel from 'src/components/Carousel';
@@ -45,6 +46,7 @@ class ItemImageViewer extends Component {
     index: 0,
     moreActionSheetOptions: null,
     scrollEnabled: true,
+    onBack: () => {},
   };
 
   state = {
@@ -52,11 +54,12 @@ class ItemImageViewer extends Component {
     scrollEnabled: true,
   };
 
-  isHeaderVisible = true;
-  opacity = new Animated.Value(1);
-
   refActionSheet = React.createRef();
   refButtonDownloadImage = React.createRef();
+  refCarousel = React.createRef();
+
+  isHeaderVisible = true;
+  opacity = new Animated.Value(1);
 
   eventTracker = new EventTracker();
 
@@ -74,8 +77,12 @@ class ItemImageViewer extends Component {
     StatusBar.setHidden(false);
   }
 
-  toggleHeaderVisibility = () => {
-    this.isHeaderVisible = !this.isHeaderVisible;
+  handleChangeVideoControlsVisible = (isVisible) => {
+    this.toggleHeaderVisibility(isVisible);
+  };
+
+  toggleHeaderVisibility = (isVisible = !this.isHeaderVisible) => {
+    this.isHeaderVisible = isVisible;
     Animated.timing(this.opacity, {
       toValue: this.isHeaderVisible ? 1 : 0,
       duration: 400,
@@ -114,6 +121,7 @@ class ItemImageViewer extends Component {
 
   handleBack = () => {
     StatusBar.setHidden(false);
+    this.props.onBack();
     pop();
   };
 
@@ -121,7 +129,7 @@ class ItemImageViewer extends Component {
     this.setState({currentIndex: index});
   };
 
-  handleSwipeDownImage = () => pop();
+  handleSwipeDownImage = () => this.handleBack();
 
   handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
@@ -131,7 +139,7 @@ class ItemImageViewer extends Component {
 
   renderHeader = (currentIndex = this.state.currentIndex) => {
     return (
-      <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
+      <TouchableWithoutFeedback onPress={() => this.toggleHeaderVisibility()}>
         <ScreenWrapper
           safeTopLayout
           animated
@@ -213,6 +221,8 @@ class ItemImageViewer extends Component {
     this.scaleValue = scale;
   };
 
+  updateContent = () => {};
+
   renderImage = ({item: image, index}) => {
     return (
       <View
@@ -225,6 +235,9 @@ class ItemImageViewer extends Component {
           selectedIndex={this.state.currentIndex}
           onPress={this.toggleHeaderVisibility}
           onMove={this.handleMove}
+          onRotateFullscreen={this.updateContent}
+          onChangeVideoControlsVisible={this.handleChangeVideoControlsVisible}
+          currentTime={(this.props.videosInfo || [])[index]?.currentTime}
         />
         {/* <ImageZoom
           ref={(inst) => (this.refImage = inst)}
@@ -287,6 +300,7 @@ class ItemImageViewer extends Component {
       <View style={styles.container}>
         {this.renderHeader()}
         <Carousel
+          refCarousel={(inst) => (this.refCarousel.current = inst)}
           firstItem={this.props.index}
           wrapperStyle={this.carouselWrapperStyle}
           data={images}

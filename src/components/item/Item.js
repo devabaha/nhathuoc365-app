@@ -5,11 +5,11 @@ import Clipboard from '@react-native-community/clipboard';
 import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
 import {isEmpty} from 'lodash';
+import {reaction} from 'mobx';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
-import EventTracker from 'app-helper/EventTracker';
 import {shareImages} from 'app-helper/share';
 import {isOutOfStock} from 'app-helper/product';
 import {
@@ -45,6 +45,7 @@ import {MEDIA_TYPE, ORDER_TYPES} from '../../constants';
 // entities
 import {APIRequest} from 'src/network/Entity';
 import CTAProduct from './CTAProduct';
+import EventTracker from 'app-helper/EventTracker';
 // images
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 // custom components
@@ -109,6 +110,8 @@ class Item extends Component {
       webviewContentHeight: undefined,
       isWebviewContentCollapsed: undefined,
       selectedIndex: 0,
+
+      canPlayVideo: false,
     };
 
     this.refPlayer = React.createRef();
@@ -120,6 +123,7 @@ class Item extends Component {
     this.refWebview = React.createRef();
     this.refModalWholesale = React.createRef();
     this.productTempData = [];
+    this.disposerIsEnterItem = () => {};
 
     this.CTAProduct = new CTAProduct(props.t, this);
     this.getWarehouseRequest = new APIRequest();
@@ -174,6 +178,10 @@ class Item extends Component {
   }
 
   componentDidMount() {
+    this.disposerIsEnterItem = reaction(
+      () => store.isEnterItem,
+      this.checkEnterItemListener,
+    );
     !this.props.preventUpdate && this._initial(this.props);
     this.getListWarehouse();
   }
@@ -201,8 +209,13 @@ class Item extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.disposerIsEnterItem();
     cancelRequests(this.requests);
   }
+
+  checkEnterItemListener = (isEnterItem) => {
+    this.setState({canPlayVideo: isEnterItem});
+  };
 
   logEventTracking(rootData) {
     if (rootData && !this.state.item_data) {
@@ -408,19 +421,28 @@ class Item extends Component {
   };
 
   handlePressWarehouse = () => {
-    push(appConfig.routes.modalList, {
-      heading: this.props.t('opRegister:modal.warehouse.title'),
-      data: this.state.listWarehouse,
-      selectedItem: {id: store?.user_info?.store_id},
-      onPressItem: this.onSelectWarehouse,
-      onCloseModal: pop,
-      modalStyle: {
-        height: null,
-        maxHeight: '80%',
+    // push(appConfig.routes.modalList, {
+    //   heading: this.props.t('opRegister:modal.warehouse.title'),
+    //   data: this.state.listWarehouse,
+    //   selectedItem: {id: store?.user_info?.store_id},
+    //   onPressItem: this.onSelectWarehouse,
+    //   onCloseModal: pop,
+    //   modalStyle: {
+    //     height: null,
+    //     maxHeight: '80%',
+    //   },
+    //   ListEmptyComponent: (
+    //     <NoResult iconName="warehouse" message={this.props.t('noStoreFound')} />
+    //   ),
+    // });
+    servicesHandler({
+      type: SERVICES_TYPE.GPS_LIST_STORE,
+      selectedStore: {id: store?.user_info?.store_id},
+      placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+      onPress: (store) => {
+        this.onSelectWarehouse(store);
+        pop();
       },
-      ListEmptyComponent: (
-        <NoResult iconName="warehouse" message={this.props.t('noStoreFound')} />
-      ),
     });
   };
 
@@ -478,9 +500,8 @@ class Item extends Component {
     this.setState({preparePostForSaleDataLoading: false});
   };
 
-  onSelectWarehouse = (warehouse, closeModal) => {
+  onSelectWarehouse = (warehouse) => {
     this.setState({loading: true});
-    closeModal();
     this.updateWarehouse(warehouse);
   };
 
@@ -687,7 +708,7 @@ class Item extends Component {
     const images = product?.img || [];
 
     return (
-      <Container>
+      <Container style={{zIndex: 999}}>
         <SkeletonLoading
           style={[
             styles.noImageContainer,
@@ -710,8 +731,9 @@ class Item extends Component {
             </View>
           ) : (
             <MediaCarousel
-              height={appConfig.device.height / 2}
+              height={appConfig.device.width}
               data={this.state.images}
+              canPlayVideo={this.state.canPlayVideo}
             />
           )}
         </SkeletonLoading>
@@ -1660,4 +1682,5 @@ export default withTranslation([
   'cart',
   'common',
   'opRegister',
+  'gpsStore',
 ])(observer(Item));

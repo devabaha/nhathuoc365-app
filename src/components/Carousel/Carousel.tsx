@@ -14,6 +14,9 @@ import {getTheme} from 'src/Themes/Theme.context';
 import {ThemeContext} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
+  container: {
+    overflow: 'visible',
+  },
   paginationContainer: {
     position: 'absolute',
     width: '100%',
@@ -37,6 +40,13 @@ export class Carousel extends Component<CarouselProps> {
 
   get theme() {
     return getTheme(this);
+  }
+  
+  componentDidMount() {
+    if (this.props.refCarousel) {
+      //@ts-ignore
+      this.props.refCarousel(this.refCarousel.current._carouselRef);
+    }
   }
 
   handleSnapToItem = (currentIndex) => {
@@ -64,12 +74,6 @@ export class Carousel extends Component<CarouselProps> {
           this.paginationContainerStyle,
         ]}
         dotStyle={[styles.paginationDot, this.paginationDotStyle]}
-        inactiveDotStyle={
-          {
-            // Define styles for inactive dots here
-            //   backgroundColor: 'rgba(0,0,0, 1)',
-          }
-        }
         inactiveDotOpacity={0.4}
         inactiveDotScale={0.6}
       />
@@ -87,6 +91,8 @@ export class Carousel extends Component<CarouselProps> {
       backgroundColor: hexToRgba(this.theme.color.white, 0.92),
     };
   }
+
+  containerStyle = [styles.container, this.props.containerStyle];
 
   render() {
     const {
@@ -110,7 +116,9 @@ export class Carousel extends Component<CarouselProps> {
           onSnapToItem={this.handleSnapToItem}
           onScrollToIndexFailed={this.handleScrollToIndexFailed}
           {...props}
+          containerCustomStyle={this.containerStyle}
         />
+
         {this.renderPagination()}
       </View>
     );

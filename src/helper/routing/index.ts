@@ -7,10 +7,11 @@ import {
   refresh,
   reset,
   jump,
+  getCurrentScene,
   formatSceneProps,
 } from './routing';
 
-export {push, pop, replace, refresh, reset, jump, formatSceneProps};
+export {push, pop, replace, refresh, reset, jump, getCurrentScene, formatSceneProps};
 
 export type RoutingPopFunction = (params?: {animated?: boolean}) => void;
 

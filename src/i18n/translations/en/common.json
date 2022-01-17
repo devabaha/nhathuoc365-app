@@ -345,6 +345,7 @@
   "optional": "optional",
   "cantOpenLink": "Can not open link!",
   "noStoreFound": "No stores found",
+  "noResultFound": "No results found",
   "map": "Map",
   "goShopping": "Go shopping",
   "enterToSearch": "Search...",

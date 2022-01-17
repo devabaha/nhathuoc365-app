@@ -35,6 +35,7 @@ import {
   Icon,
   Container,
   Typography,
+  ScrollView,
 } from 'src/components/base';
 // skeleton
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
@@ -58,7 +59,6 @@ const STATUS_BAR_STYLE = {
 const {
   set,
   Extrapolate,
-  ScrollView,
   color,
   interpolate,
   Value,
@@ -424,6 +424,7 @@ class Home extends Component {
         {this.renderHeaderComponent()}
 
         <ScrollView
+          reanimated
           onScroll={event(
             [
               {
@@ -492,8 +493,7 @@ class Home extends Component {
                     ? this.props.primaryActions
                     : null
                 }
-                // onPressItem={this.props.onActionPress}
-                onPressItem={() => this.context.toggleTheme(BASE_DARK_THEME_ID)}
+                onPressItem={this.props.onActionPress}
                 onSurplusNext={this.props.onSurplusNext}
                 onPressCommission={this.props.onPressCommission}
               />

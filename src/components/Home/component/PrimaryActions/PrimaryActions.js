@@ -105,6 +105,7 @@ class PrimaryActions extends Component {
               {!this.isActiveQRScan ? (
                 <View style={styles.pointRechargeBtnContainer}>
                   <QRScanButton
+                    useTouchableHighlight={false}
                     wrapperStyle={styles.pointRechargeBtn}
                     iconStyle={styles.scanIcon}
                   />
