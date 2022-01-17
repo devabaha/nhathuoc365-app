@@ -28,10 +28,10 @@ const createStyles = (theme: Theme) => {
       backgroundColor: theme.color.persistSecondary,
     },
     primaryHighlight: {
-      borderColor: theme.color.primaryHighlight,
+      backgroundColor: theme.color.primaryHighlight,
     },
     secondaryHighlight: {
-      borderColor: theme.color.secondaryHighlight,
+      backgroundColor: theme.color.secondaryHighlight,
     },
     neutral: {
       backgroundColor: theme.color.contentBackgroundStrong,
