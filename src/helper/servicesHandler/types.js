@@ -125,4 +125,7 @@ export const SERVICES_TYPE = {
 
   /** Wallet */
   WALLET: 'wallet',
+
+  /** REPORT */
+  SALES_REPORT: 'sales_report'
 };

@@ -544,6 +544,10 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       });
       break;
 
+    /** SALES REPORT */
+    case SERVICES_TYPE.SALES_REPORT:
+      Actions.push(appConfig.routes.salesReport);
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
