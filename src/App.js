@@ -367,7 +367,6 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    this.handleRemoveListenerOneSignal();
     store.branchIOUnsubscribe();
   }
 
@@ -397,17 +396,9 @@ class App extends Component {
     store.branchIOSubscribe(branchIOSubscribe);
   };
 
-  handleAddListenerOpenedOneSignal = () => {
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleRemoveListenerOpenedOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleOpenningNotification = (openResult) => {
+  handleOpenningNotification = (notification) => {
     const {t} = this.props;
-    const params = openResult.notification.payload.additionalData;
+    const params = notification.additionalData;
     console.log(params);
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
@@ -551,13 +542,36 @@ class App extends Component {
   };
 
   handleAddListenerOneSignal = () => {
-    OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('ids', this.handleAddPushToken);
-    OneSignal.inFocusDisplaying(2);
-  };
+    OneSignal.setAppId(appConfig.oneSignal.appKey);
+    //Prompt for push on iOS
+    // OneSignal.promptForPushNotificationsWithUserResponse(response => {
+    //   console.log("Prompt response:", response);
+    // });
 
-  handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('ids', this.handleAddPushToken);
+    //Method for handling notifications received while app in foreground
+    OneSignal.setNotificationWillShowInForegroundHandler(
+      (notificationReceivedEvent) => {
+        console.log(
+          'OneSignal: notification will show in foreground:',
+          notificationReceivedEvent,
+        );
+        let notification = notificationReceivedEvent.getNotification();
+        console.log('notification: ', notification);
+        const data = notification.additionalData;
+        console.log('additionalData: ', data);
+        // Complete with null means don't show a notification.
+        notificationReceivedEvent.complete(notification);
+      },
+    );
+
+    //Method for handling notifications opened
+    OneSignal.setNotificationOpenedHandler((notification) => {
+      console.log('OneSignal: notification opened:', notification);
+      this.handleOpenningNotification(notification);
+    });
+
+    OneSignal.getDeviceState().then(this.handleAddPushToken);
+    //
   };
 
   handleAddPushToken = async (device) => {
@@ -569,7 +583,6 @@ class App extends Component {
           push_token,
           player_id,
         });
-        this.handleAddListenerOpenedOneSignal();
       } catch (error) {
         console.log(error);
       }
@@ -1134,6 +1147,7 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.gpsListStore}_1`}
                     {...navBarConfig}
                     component={GPSListStore}
+                    navBar={SearchNavBarContainer}
                     back
                   />
                 </Stack>
