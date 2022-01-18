@@ -41,7 +41,7 @@
 
         <!-- Branch URI scheme -->
         <intent-filter>
-            <data android:scheme="abahavn" android:host="open" />
+            <data android:scheme="nhathuoc365" android:host="open" />
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
