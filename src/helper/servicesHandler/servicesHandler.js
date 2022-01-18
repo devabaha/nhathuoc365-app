@@ -17,6 +17,8 @@ import {
   handleOrderHistoryPress,
 } from './radaHandler';
 import {jump, push} from 'app-helper/routing';
+import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from 'app-helper';
+
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -388,6 +390,8 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           title: service.title || commonT('screen.listSite.mainTitle'),
           placeholder: service.placeholder || commonT('home:searchingStore'),
           autoFocus: service.autoFocus,
+          selectedStore: service.selectedStore,
+          onPress: service.onPress
         },
         service.theme,
       );
@@ -550,9 +554,9 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /** PREMIUMS */
     case SERVICES_TYPE.PREMIUM_INFO:
       if (Actions.currentScene === `${appConfig.routes.premiumInfo}_1`) {
-        Actions.jump(appConfig.routes.accountTab);
+        jump(appConfig.routes.accountTab);
       }
-      Actions.push(appConfig.routes.premiumInfo);
+      push(appConfig.routes.premiumInfo, {}, {theme: service.theme});
       break;
 
     /** COMMISSION */
@@ -750,6 +754,29 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         },
         service.theme,
       );
+      break;
+
+    /** SALES REPORT */
+    case SERVICES_TYPE.SALES_REPORT:
+      push(appConfig.routes.salesReport, {}, service.theme);
+      break;
+
+    /** LICENSE/ AGREEMENT */
+    case SERVICES_TYPE.EULA_AGREEMENT:
+      (async () => {
+        const isAgreed = await checkIfEULAAgreed();
+
+        Actions.push(appConfig.routes.modalLicense, {
+          backdropPressToClose: service.backdropPressToClose,
+
+          title: service.title || commonT('eulaAgreement'),
+          isHTML: service.isHTML || true,
+          content: service.content || getEULAContent(),
+          agreeTitle: isAgreed ? undefined : commonT('iAgree'),
+
+          onAgree: service.onAgree || updateEULAUserDecision,
+        });
+      })();
       break;
 
     default:

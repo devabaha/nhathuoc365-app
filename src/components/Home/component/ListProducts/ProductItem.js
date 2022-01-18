@@ -15,6 +15,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
+import {PRODUCT_BUTTON_ACTION_LOADING_PARAM} from 'src/constants/product';
 // entities
 import Themes from 'src/Themes';
 import CTAProduct from 'src/components/item/CTAProduct';
@@ -37,10 +38,6 @@ const productItemStyle = homeThemes('styles.home.listProduct');
 class ProductItem extends PureComponent {
   static contextType = ThemeContext;
 
-  constructor(props) {
-    super(props);
-    this.CTAProduct = new CTAProduct(props.t, this);
-  }
   static propTypes = {
     name: PropTypes.string,
     image: PropTypes.string,
@@ -61,13 +58,15 @@ class ProductItem extends PureComponent {
     price_view: '',
     onPress: () => {},
     last: false,
-    buying: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART]: false,
   };
 
   state = {
     loading: false,
   };
-  unmounted = false;
+  CTAProduct = new CTAProduct(this);
+
+  unmounted = false;  
 
   get theme() {
     return getTheme(this);
@@ -97,7 +96,10 @@ class ProductItem extends PureComponent {
     if (!!item.has_attr) {
       Keyboard.dismiss();
     }
-    this.CTAProduct.handlePressMainActionBtnProduct(item, CART_TYPES.NORMAL);
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product: item,
+      cartType: CART_TYPES.NORMAL,
+    });
   };
 
   handleSelfRequest = () => {
@@ -231,25 +233,6 @@ class ProductItem extends PureComponent {
                           </Typography>
                         )}
 
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                          }}>
-                          {this.props.discount_percent > 0 && (
-                            <Typography
-                              type={TypographyType.DESCRIPTION_MEDIUM}
-                              style={styles.discount}>
-                              <Typography
-                                type={TypographyType.DESCRIPTION_MEDIUM}
-                                style={styles.deletedTitle}>
-                                {this.props.discount_view}
-                              </Typography>
-                              {/* {'/ ' + this.props.unit_name} */}
-                            </Typography>
-                          )}
-                        </View>
                         <View style={styles.priceBox}>
                           <Typography
                             type={TypographyType.LABEL_LARGE_PRIMARY}
@@ -267,13 +250,17 @@ class ProductItem extends PureComponent {
                           </Typography>
 
                           <Container
+                            noBackground
                             style={{
                               minWidth: 20,
                               minHeight: 24,
                               justifyContent: 'center',
                               alignItems: 'center',
+                              alignSelf: 'flex-end',
                             }}>
-                            {this.state.buying ? (
+                            {this.state[
+                              PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART
+                            ] ? (
                               <Indicator size="small" />
                             ) : (
                               <IconButton
@@ -368,7 +355,8 @@ let styles = StyleSheet.create({
 
   item_add_cart_box: {
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignSelf: 'flex-end',
     paddingVertical: 2,
   },
 

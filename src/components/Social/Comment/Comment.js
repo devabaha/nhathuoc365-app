@@ -3,7 +3,6 @@ import {findNodeHandle, Keyboard, StyleSheet, View} from 'react-native';
 // 3-party libs
 import moment from 'moment';
 import Clipboard from '@react-native-community/clipboard';
-import {Actions} from 'react-native-router-flux';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -12,6 +11,8 @@ import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import TickidChat from 'app-packages/tickid-chat';
 import {getTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -777,7 +778,7 @@ class Comment extends Component {
     }
     this.collapseComposer();
 
-    Actions.push(appConfig.routes.modalActionSheet, {
+    push(appConfig.routes.modalActionSheet, {
       options,
       destructiveButtonIndex,
       onPress: async (buttonIndex) => {
@@ -857,7 +858,7 @@ class Comment extends Component {
   confirmDeleteMessage = async (commentId) => {
     await new Promise((resolve) => {
       setTimeout(() => {
-        Actions.push(appConfig.routes.modalConfirm, {
+        push(appConfig.routes.modalConfirm, {
           message: this.props.t('social:commentDeleteConfirmMessage'),
           yesTitle: this.props.t('delete'),
           noTitle: this.props.t('cancel'),

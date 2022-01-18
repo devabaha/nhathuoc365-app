@@ -166,6 +166,7 @@ export type Color = {
   accountLanguage: ColorValue;
   accountAppInfo: ColorValue;
   accountAppUpdate: ColorValue;
+  accountPartnerRegistration: ColorValue;
   // PREMIUM
   premium: ColorValue;
 
@@ -210,6 +211,7 @@ export type Layout = {
 
 export interface Theme {
   id: string;
+  name: string;
   color: Color;
   layout: Layout;
   typography: Typography;

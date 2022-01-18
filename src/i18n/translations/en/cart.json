@@ -14,6 +14,9 @@
     },
     "reorder": {
       "message": "The current shopping cart (if existed) will be removed! Do you still want to re-order this order?"
+    },
+    "changeCartType": {
+      "message": "\r\n• Your ordering cart type is {{cartTypeKeyword}}.\r\n\r\n• Press {{btnTitle}} to cancel current cart and create new one for this type.\r\n"
     }
   },
   "notification": {

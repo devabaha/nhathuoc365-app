@@ -20,15 +20,10 @@ import {Container, TextButton, Typography, Icon} from 'src/components/base';
 class Items extends Component {
   static contextType = ThemeContext;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      buying: false,
-      loadMore: false,
-    };
-    this.CTAProduct = new CTAProduct(props.t, this);
-  }
+  state = {
+    loadMore: false,
+  };
+  CTAProduct = new CTAProduct(this);
   unmounted = false;
 
   get theme() {
@@ -53,7 +48,10 @@ class Items extends Component {
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    this.CTAProduct.handlePressMainActionBtnProduct(product, CART_TYPES.NORMAL);
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product,
+      cartType: CART_TYPES.NORMAL,
+    });
   };
 
   getItemExtraStyle(index) {

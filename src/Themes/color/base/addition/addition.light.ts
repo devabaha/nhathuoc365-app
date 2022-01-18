@@ -90,6 +90,7 @@ export const ADDITION_LIGHT = {
   accountLanguage: '#175189',
   accountAppInfo: '#688efb',
   accountAppUpdate: '#dd4b39',
+  accountPartnerRegistration: '#5b88d9',
 
   // PREMIUM
   premium: '#80AB82',

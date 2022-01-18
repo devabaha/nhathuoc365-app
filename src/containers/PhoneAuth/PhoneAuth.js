@@ -10,16 +10,20 @@ import countries from 'world-countries';
 import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
-import EventTracker from '../../helper/EventTracker';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
+import {servicesHandler} from 'app-helper/servicesHandler';
 // context
 import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {RESEND_OTP_INTERVAL} from './constants';
 import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
+import {TextButton} from 'src/components/base';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // entities
 import {APIRequest} from '../../network/Entity';
+import EventTracker from '../../helper/EventTracker';
 // custom components
 import {ScreenWrapper, Container} from 'src/components/base';
 import Loading from '../../components/Loading';
@@ -29,6 +33,19 @@ import AuthConfirm from './AuthConfirm';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  eulaTextContainer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop:
+      appConfig.device.height -
+      30 -
+      (appConfig.device.isAndroid
+        ? appConfig.device.statusBarHeight
+        : appConfig.device.bottomSpace),
+  },
+  eulaText: {
+    color: appConfig.colors.text,
   },
 });
 
@@ -254,7 +271,6 @@ class PhoneAuth extends Component {
   }
 
   verifyResponse = (response) => {
-    const {t} = this.props;
     const user = response.data;
     store.setUserInfo(user);
     store.setAnalyticsUser(user);
@@ -262,17 +278,18 @@ class PhoneAuth extends Component {
 
     switch (response.status) {
       case STATUS_FILL_INFO_USER:
-        Actions.replace('op_register', {
-          title: t('common:screen.register.mainTitle'),
-          name_props: response.data.name,
-          hideBackImage: true,
-        });
+        this.goToRegister(response.data.name);
+
         break;
       case STATUS_SYNC_FLAG:
         Actions.replace(appConfig.routes.rootGpsStoreLocation);
         break;
       case STATUS_SUCCESS:
-        Actions.replace(appConfig.routes.primaryTabbar);
+        if (response.data?.fill_info_user) {
+          this.goToRegister(response.data.name);
+        } else {
+          Actions.replace(appConfig.routes.primaryTabbar);
+        }
         break;
       default:
         this.setState({
@@ -280,6 +297,15 @@ class PhoneAuth extends Component {
         });
         break;
     }
+  };
+
+  goToRegister = (nameProps) => {
+    const {t} = this.props;
+
+    Actions.replace('op_register', {
+      title: t('common:screen.register.mainTitle'),
+      name_props: nameProps,
+    });
   };
 
   handleChangeCodeInput(codeInput) {
@@ -308,6 +334,14 @@ class PhoneAuth extends Component {
     });
   }
 
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({
+      type: SERVICES_TYPE.EULA_AGREEMENT,
+    });
+  };
+
   render() {
     const theme = this.theme;
     const {
@@ -320,13 +354,13 @@ class PhoneAuth extends Component {
 
     return (
       <Container flex>
-        <ScreenWrapper noBackground safeTopLayout>
+        <ScreenWrapper noBackground>
           <KeyboardAwareScrollView
             keyboardShouldPersistTaps="handled"
             bounces={false}
             style={styles.container}
             contentContainerStyle={{flexGrow: 1}}>
-            <Container style={styles.container}>
+            <Container safeTopLayout style={styles.container}>
               {isShowIndicator && <Loading center />}
               {!!confirmResult ? (
                 <AuthConfirm
@@ -350,6 +384,12 @@ class PhoneAuth extends Component {
                 />
               )}
               {appConfig.device.isIOS && <KeyboardSpacer />}
+
+              <TextButton
+                style={styles.eulaTextContainer}
+                onPress={this.openEULAAgreement}>
+                {this.props.t('common:eulaAgreement')}
+              </TextButton>
             </Container>
           </KeyboardAwareScrollView>
         </ScreenWrapper>

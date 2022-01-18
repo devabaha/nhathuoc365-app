@@ -64,6 +64,10 @@
     "partnerRegistration": {
       "label": "Partner registration",
       "desc": ""
+    },
+    "appearance": {
+      "label": "Appearance",
+      "desc": ""
     }
   },
   "avatarPicker": {

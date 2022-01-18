@@ -25,7 +25,7 @@ import {
   LOCATION_PERMISSION_TYPE,
   REQUEST_RESULT_TYPE,
 } from 'app-helper/permissionHelper';
-import {TypographyType} from 'src/components/base';
+import {BundleIconSetName} from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';
 // custom components
@@ -40,6 +40,7 @@ import {
   RefreshControl,
   ScreenWrapper,
   Typography,
+  Icon,
 } from 'src/components/base';
 
 const styles = StyleSheet.create({
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
   },
   checkIcon: {
     fontSize: 16,
-    color: appConfig.colors.primary,
   },
 });
 
@@ -433,7 +433,12 @@ const GPSListStore = ({
   const renderRightIcon = (store) => {
     return selectedStore ? (
       store.id === selectedStore.id ? (
-        <FontAwesomeIcon name="check" style={styles.checkIcon} />
+        <Icon
+          secondaryHighlight
+          bundle={BundleIconSetName.FONT_AWESOME}
+          name="check"
+          style={styles.checkIcon}
+        />
       ) : (
         <View />
       )

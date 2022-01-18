@@ -323,6 +323,8 @@
   "agree": "OK",
   "select": "Select",
   "done": "Done",
+  "iAgree": "I agree",
+  "iDecline": "I decline",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
@@ -368,5 +370,10 @@
   "close": "Close",
   "continue": "Continue",
   "otherOptions": "Other options",
-  "verifyFingerprint": "Verify fingerprint"
+  "verifyFingerprint": "Verify fingerprint",
+  "eulaAgreement": "User agreement (EULA)",
+  "agreeToEulaAgreement": {
+    "prefix": "By pressing {{title}}, you agreed to our ",
+    "suffix": ""
+  }
 }

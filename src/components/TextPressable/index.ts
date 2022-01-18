@@ -1,8 +1,8 @@
-import {ColorValue, StyleProp, TextProps, TextStyle} from 'react-native';
-import {Children} from '../base';
+import {Children} from 'src/components/base';
+import {TypographyProps} from 'src/components/base/Typography';
 
 export {default} from './TextPressable';
 
-export interface TextPressableProps extends TextProps {
+export interface TextPressableProps extends TypographyProps {
   children: Children;
 }

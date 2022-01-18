@@ -64,6 +64,10 @@
     "partnerRegistration": {
       "label": "Đăng ký đối tác",
       "desc": ""
+    },
+    "appearance": {
+      "label": "Giao diện",
+      "desc": ""
     }
   },
   "avatarPicker": {

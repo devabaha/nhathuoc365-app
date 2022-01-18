@@ -8,6 +8,8 @@ import {getTheme} from 'src/Themes/Theme.context';
 import {jump} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {NAV_BAR_HEIGHT} from 'src/constants';
 // custom components
 import {Container, BaseButton} from 'src/components/base';
 import TabIcon from './TabIcon';
@@ -60,7 +62,7 @@ class TabBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: 44 + appConfig.device.bottomSpace,
+    height: NAV_BAR_HEIGHT + appConfig.device.bottomSpace,
   },
 });
 

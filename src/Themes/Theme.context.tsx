@@ -1,10 +1,16 @@
 // Theme.context.tsx
 import React, {useEffect} from 'react';
-import {BASE_LIGHT_THEME, BASE_LIGHT_THEME_ID} from './Theme.light';
+import EventEmitter from 'eventemitter3';
+import i18n from 'i18next';
+import store from 'app-store';
+import {
+  BASE_LIGHT_THEME,
+  BASE_LIGHT_THEME_ID,
+  CUSTOM_LIGHT_THEME_1,
+} from './Theme.light';
 import {Theme} from './interface';
 import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from './Theme.dark';
-import EventEmitter from 'eventemitter3';
-import store from 'app-store';
+import {CUSTOM_LIGHT_THEME_1_ID} from './constants';
 
 export const themeChangingListener = new EventEmitter();
 
@@ -13,7 +19,7 @@ export const THEME_CHANGING_EVENT_NAME = 'theme_changing';
 // Our context provider will provide this object shape
 export interface ThemeProvidedValue {
   theme: Theme;
-  toggleTheme: () => void;
+  toggleTheme: (theme: Theme) => void;
   updateTheme: (updatedTheme: Theme) => void;
 }
 // Creating our context
@@ -23,7 +29,7 @@ export interface ThemeProvidedValue {
 // a fallback object
 export const ThemeContext = React.createContext<ThemeProvidedValue>({
   theme: BASE_LIGHT_THEME,
-  toggleTheme: () => {
+  toggleTheme: (BASE_LIGHT_THEME) => {
     console.log('ThemeProvider is not rendered!');
   },
   updateTheme: (updatedTheme) => {
@@ -43,15 +49,25 @@ export const ThemeProvider = React.memo<Props>((props) => {
   const [theme, setTheme] = React.useState<Theme>(props.initial);
   // Implement a method for toggling the Theme
   // We're using the React.useCallback hook for optimization
-  const toggleTheme = React.useCallback(() => {
+  const toggleTheme = React.useCallback((callback = () => {}) => {
     setTheme((currentTheme) => {
-      if (currentTheme.id === BASE_LIGHT_THEME_ID) {
-        return BASE_DARK_THEME;
+      let nextTheme = currentTheme;
+      switch (currentTheme.id) {
+        case BASE_LIGHT_THEME_ID:
+          nextTheme = CUSTOM_LIGHT_THEME_1;
+          break;
+        case CUSTOM_LIGHT_THEME_1_ID:
+          nextTheme = BASE_DARK_THEME;
+          break;
+        case BASE_DARK_THEME_ID:
+          nextTheme = BASE_LIGHT_THEME;
+          break;
       }
-      if (currentTheme.id === BASE_DARK_THEME_ID) {
-        return BASE_LIGHT_THEME;
-      }
-      return currentTheme;
+
+      nextTheme.name = i18n.getFixedT(undefined, 'theme')(nextTheme.id);
+
+      callback(nextTheme);
+      return nextTheme;
     });
   }, []);
   // update theme

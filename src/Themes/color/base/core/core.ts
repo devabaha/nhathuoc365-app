@@ -58,10 +58,13 @@ export const CORE = {
   onPrimary: '#FFFFFF',
 
   // SECONDARY
-  secondary: '#268423',
+  secondary: '#812384',
+  // secondary: '#268423',
   // —— Secondary variants ——
-  secondaryLight: '#5cb551',
-  secondaryDark: '#005600',
+  secondaryLight: '#B354B4',
+  // secondaryLight: '#5cb551',
+  secondaryDark: '#510057',
+  // secondaryDark: '#005600',
   onSecondary: '#FFFFFF',
 
   // NEUTRAL (Nature)

@@ -134,16 +134,6 @@ const StoreItem = ({
     });
   }, [theme]);
 
-  const actionButtonStyle = useMemo(() => {
-    return mergeStyles(styles.openMapBtn);
-  }, []);
-
-  const actionLabelStyle = useMemo(() => {
-    return {
-      color: theme.color.onPrimaryHighlight,
-    };
-  }, [theme]);
-
   const storeContainerStyle = useMemo(() => {
     return mergeStyles(styles.storeContainer, {
       borderBottomWidth: theme.layout.borderWidthSmall,
@@ -163,7 +153,7 @@ const StoreItem = ({
         styles.distanceContainer,
         {
           borderColor: theme.color.border,
-          backgroundColor: theme.color.persistPrimary5,
+          backgroundColor: theme.color.primary5,
           borderRadius: theme.layout.borderRadiusHuge,
         },
       ],

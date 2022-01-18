@@ -135,12 +135,14 @@ const Container = forwardRef(
       theme,
       row,
       center,
+      flex,
       shadow,
       safeLayout,
       safeTopLayout,
       centerHorizontal,
       centerVertical,
       noBackground,
+      content,
     ]);
 
     const componentStyle = useMemo(() => {

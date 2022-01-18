@@ -323,6 +323,8 @@
   "agree": "Đồng ý",
   "select": "Chọn",
   "done": "Xong",
+  "iAgree": "Tôi đồng ý",
+  "iDecline": "Tôi từ chối",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
@@ -368,5 +370,10 @@
   "close": "Đóng",
   "continue": "Tiếp tục",
   "otherOptions": "Tuỳ chọn khác",
-  "verifyFingerprint": "Xác thực vân tay"
+  "verifyFingerprint": "Xác thực vân tay",
+  "eulaAgreement": "Thoả thuận người dùng (EULA)",
+  "agreeToEulaAgreement": {
+    "prefix": "Bằng việc nhấn {{title}}, bạn đã đồng ý với ",
+    "suffix": " của chúng tôi"
+  }
 }

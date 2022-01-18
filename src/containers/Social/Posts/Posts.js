@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 // 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
-import {Actions} from 'react-native-router-flux';
 import equal from 'deep-equal';
 import {Observer} from 'mobx-react';
 import {debounce} from 'lodash';
@@ -21,6 +20,8 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -385,7 +386,7 @@ const Posts = ({
           Toast.show(t('copied'));
           break;
         case 2:
-          Actions.push(appConfig.routes.modalConfirm, {
+          push(appConfig.routes.modalConfirm, {
             message: t('social:postDeleteConfirmMessage'),
             yesTitle: t('delete'),
             noTitle: t('cancel'),
@@ -399,7 +400,7 @@ const Posts = ({
 
   const handlePressMoreActions = useCallback(
     (feeds) => {
-      Actions.push(appConfig.routes.modalActionSheet, {
+      push(appConfig.routes.modalActionSheet, {
         options: moreActionOptions,
         destructiveButtonIndex: moreActionOptions.length - 2,
         onPress: (index) => handlePressMoreActionOption(index, feeds),

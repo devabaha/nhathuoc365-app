@@ -27,7 +27,9 @@ export interface IconProps extends RNIconProps {
   reanimated?: boolean;
   animated?: boolean;
   primary?: boolean;
+  persistPrimary?: boolean;
   secondary?: boolean;
+  persistSecondary?: boolean;
   primaryHighlight?: boolean;
   secondaryHighlight?: boolean;
   neutral?: boolean;

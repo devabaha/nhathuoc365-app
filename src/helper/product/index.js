@@ -4,4 +4,5 @@ export {
   isPaid,
   canTransaction,
   hasVideo,
+  goConfirm,
 } from './product';

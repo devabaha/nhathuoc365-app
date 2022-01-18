@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Keyboard, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  Alert,
+  TouchableWithoutFeedback,
+} from 'react-native';
 // 3-party libs
 import {reaction} from 'mobx';
 import {withTranslation} from 'react-i18next';
@@ -12,6 +18,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
 import {servicesHandler} from 'app-helper/servicesHandler';
+import {updateEULAUserDecision} from 'app-helper';
 // routing
 import {pop, push, refresh, reset} from 'app-helper/routing';
 // context
@@ -20,6 +27,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+import {NAV_BAR_HEIGHT} from 'src/constants';
 // entities
 import {APIRequest} from 'src/network/Entity';
 import EventTracker from 'app-helper/EventTracker';
@@ -36,6 +44,7 @@ import {
   IconButton,
 } from 'src/components/base';
 import Button from 'src/components/Button';
+import TextPressable from '../TextPressable';
 
 class OpRegister extends Component {
   static contextType = ThemeContext;
@@ -64,6 +73,8 @@ class OpRegister extends Component {
     birth: store.user_info ? store.user_info.birth : '',
     cities: [],
     listWarehouse: [],
+
+    eulaTextHeight: 0,
   };
 
   updateReferCodeDisposer = reaction(
@@ -176,6 +187,7 @@ class OpRegister extends Component {
           const response = await APIHandler.user_op_register(data);
           if (response?.status === STATUS_SUCCESS) {
             store.setUserInfo(response.data);
+            updateEULAUserDecision();
             reset(appConfig.routes.sceneWrapper);
           }
 
@@ -372,15 +384,31 @@ class OpRegister extends Component {
     );
   };
 
+  handleLayoutEULAText = (e) => {
+    if (e.nativeEvent.layout.height !== this.state.eulaTextHeight) {
+      this.setState({eulaTextHeight: e.nativeEvent.layout.height});
+    }
+  };
+
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({type: SERVICES_TYPE.EULA_AGREEMENT});
+  };
+
   renderDOB() {
     if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
         id: 'ngay_sinh',
         title: (
-          <Text>
+          <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
             {this.props.t('data.birthdate.title')}{' '}
-            <Text style={styles.textRequired}>*</Text>
-          </Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={this.textRequiredStyle}>
+              *
+            </Typography>
+          </Typography>
         ),
         value: this.state.birth,
         defaultValue: this.props.t('data.birthdate.defaultValue'),
@@ -405,10 +433,14 @@ class OpRegister extends Component {
       const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
         title: (
-          <Text>
+          <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
             {this.props.t('data.province.title')}{' '}
-            <Text style={styles.textRequired}>*</Text>
-          </Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={this.textRequiredStyle}>
+              *
+            </Typography>
+          </Typography>
         ),
         value:
           this.state.provinceSelected?.name ||
@@ -437,10 +469,14 @@ class OpRegister extends Component {
       // !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
         title: (
-          <Text>
+          <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
             {this.props.t('data.chooseSalePoint.title')}{' '}
-            <Text style={styles.textRequired}>*</Text>
-          </Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={this.textRequiredStyle}>
+              *
+            </Typography>
+          </Typography>
         ),
         value:
           this.state.warehouseSelected?.name ||
@@ -472,13 +508,7 @@ class OpRegister extends Component {
   renderTitleButton(titleStyle) {
     const {t} = this.props;
     return (
-      <Container
-        row
-        noBackground
-        style={[
-          styles.address_continue_content,
-          // !this.props.disabled && styles.btnDisabled,
-        ]}>
+      <Container row noBackground style={[styles.address_continue_content]}>
         <View
           style={{
             minWidth: 20,
@@ -537,6 +567,11 @@ class OpRegister extends Component {
     borderColor: this.theme.color.border,
   });
 
+  btnContainerStyle = {
+    borderTopWidth: this.theme.layout.borderWidth,
+    borderColor: this.theme.color.border,
+  };
+
   render() {
     const {
       name,
@@ -575,132 +610,177 @@ class OpRegister extends Component {
     );
 
     return (
-      <ScreenWrapper safeLayout={!store.keyboardTop}>
-        {loading && <Loading center />}
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Container style={this.inputBoxStyle}>
-            <Typography
-              type={TypographyType.LABEL_MEDIUM_TERTIARY}
-              style={styles.input_label}>
-              {t('data.name.title')}{' '}
-              <Typography
-                type={TypographyType.LABEL_MEDIUM_TERTIARY}
-                style={this.textRequiredStyle}>
-                *
-              </Typography>
-            </Typography>
-
-            <Container style={styles.input_text_box}>
-              <Input
-                ref={(ref) => (this.refs_name = ref)}
-                style={styles.input_text}
-                keyboardType="default"
-                maxLength={30}
-                placeholder={t('data.name.placeholder')}
-                underlineColorAndroid="transparent"
-                onChangeText={(value) => {
-                  this.setState({
-                    name: value,
-                  });
-                }}
-                value={this.state.name}
-                onLayout={() => {
-                  if (this.refs_name && !this.props.registerNow) {
-                    setTimeout(() => this.refs_name.focus(), 300);
-                  }
-                }}
-                onSubmitEditing={() => {
-                  if (this.refs_refer) {
-                    this.refs_refer.focus();
-                  }
-                }}
-                returnKeyType="next"
-              />
-            </Container>
-          </Container>
-
-          {this.renderDOB()}
-          {this.renderCity()}
-          {this.renderWarehouse()}
-
-          {this.isActiveReferCode && (
-            <>
-              <Container
-                style={[
-                  this.inputBoxStyle,
-                  styles.referInputWrapper,
-                  !this.state.referCodeEditable &&
-                    this.referInputWrapperDisableStyle,
-                ]}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScreenWrapper>
+          {loading && <Loading center />}
+          <View
+            style={{
+              height:
+                appConfig.device.height -
+                NAV_BAR_HEIGHT -
+                appConfig.device.statusBarHeight,
+            }}>
+            <ScrollView
+              contentContainerStyle={
+                {
+                  // paddingBottom: store.keyboardTop + 60 + this.state.eulaTextHeight,
+                }
+              }
+              keyboardShouldPersistTaps="handled">
+              <Container style={this.inputBoxStyle}>
                 <Typography
                   type={TypographyType.LABEL_MEDIUM_TERTIARY}
-                  style={[
-                    styles.input_label,
-                    styles.referInputLabel,
-                    this.extraReferCodeStyle,
-                  ]}>
-                  {referCodeTitle}
+                  style={styles.input_label}>
+                  {t('data.name.title')}{' '}
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                    style={this.textRequiredStyle}>
+                    *
+                  </Typography>
                 </Typography>
 
-                <Container
-                  noBackground
-                  style={[styles.input_text_box, styles.referInputContainer]}>
+                <Container style={styles.input_text_box}>
                   <Input
-                    editable={this.state.referCodeEditable}
-                    ref={(ref) => (this.refs_refer = ref)}
-                    style={[
-                      styles.input_text,
-                      styles.referInput,
-                      this.extraReferCodeStyle,
-                    ]}
+                    ref={(ref) => (this.refs_name = ref)}
+                    style={styles.input_text}
                     keyboardType="default"
                     maxLength={30}
-                    placeholder={t('data.referCode.placeholder')}
+                    placeholder={t('data.name.placeholder')}
                     underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
-                        refer: value,
+                        name: value,
                       });
                     }}
-                    value={this.state.refer}
-                  />
-
-                  <IconButton
-                    disabled={!this.state.referCodeEditable}
-                    hitSlop={HIT_SLOP}
-                    onPress={this.onPressScanInvitationCode}
-                    style={[
-                      this.inputIconContainerStyle,
-                      this.extraReferCodeStyle,
-                    ]}
-                    bundle={BundleIconSetName.FONT_AWESOME}
-                    name="qrcode"
-                    iconStyle={[this.inputIconStyle, this.extraReferCodeStyle]}
+                    value={this.state.name}
+                    onLayout={() => {
+                      if (this.refs_name && !this.props.registerNow) {
+                        setTimeout(() => this.refs_name.focus(), 300);
+                      }
+                    }}
+                    onSubmitEditing={() => {
+                      if (this.refs_refer) {
+                        this.refs_refer.focus();
+                      }
+                    }}
+                    returnKeyType="next"
                   />
                 </Container>
               </Container>
-              {/* <Typography
+
+              {this.renderDOB()}
+              {this.renderCity()}
+              {this.renderWarehouse()}
+
+              {this.isActiveReferCode && (
+                <>
+                  <Container
+                    style={[
+                      this.inputBoxStyle,
+                      styles.referInputWrapper,
+                      !this.state.referCodeEditable &&
+                        this.referInputWrapperDisableStyle,
+                    ]}>
+                    <Typography
+                      type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                      style={[
+                        styles.input_label,
+                        styles.referInputLabel,
+                        this.extraReferCodeStyle,
+                      ]}>
+                      {referCodeTitle}
+                    </Typography>
+
+                    <Container
+                      noBackground
+                      style={[
+                        styles.input_text_box,
+                        styles.referInputContainer,
+                      ]}>
+                      <Input
+                        editable={this.state.referCodeEditable}
+                        ref={(ref) => (this.refs_refer = ref)}
+                        style={[
+                          styles.input_text,
+                          styles.referInput,
+                          this.extraReferCodeStyle,
+                        ]}
+                        keyboardType="default"
+                        maxLength={30}
+                        placeholder={t('data.referCode.placeholder')}
+                        underlineColorAndroid="transparent"
+                        onChangeText={(value) => {
+                          this.setState({
+                            refer: value,
+                          });
+                        }}
+                        value={this.state.refer}
+                      />
+
+                      <IconButton
+                        disabled={!this.state.referCodeEditable}
+                        hitSlop={HIT_SLOP}
+                        onPress={this.onPressScanInvitationCode}
+                        style={[
+                          this.inputIconContainerStyle,
+                          this.extraReferCodeStyle,
+                        ]}
+                        bundle={BundleIconSetName.FONT_AWESOME}
+                        name="qrcode"
+                        iconStyle={[
+                          this.inputIconStyle,
+                          this.extraReferCodeStyle,
+                        ]}
+                      />
+                    </Container>
+                  </Container>
+                  {/* <Typography
                 type={TypographyType.LABEL_MEDIUM_TERTIARY}
                 style={styles.disclaimerText}>
                 {t('encourageMessage', {appName: APP_NAME_SHOW})}
               </Typography> */}
-            </>
-          )}
-        </ScrollView>
+                </>
+              )}
+            </ScrollView>
 
-        <Button
-          shadow
-          onPress={this._onSave.bind(this)}
-          disabled={disabled}
-          containerStyle={[
-            styles.address_continue,
-            {bottom: store.keyboardTop},
-          ]}
-          renderTitleComponent={(titleStyle) =>
-            this.renderTitleButton(titleStyle)
-          }
-        />
-      </ScreenWrapper>
+            <Container
+              shadow
+              safeLayout={!store.keyboardTop}
+              style={[
+                this.btnContainerStyle,
+                {
+                  // bottom: store.keyboardTop,
+                },
+              ]}>
+              <View style={styles.eulaAgreementMessage}>
+                <Typography
+                  type={TypographyType.LABEL_SMALL}
+                  onLayout={this.handleLayoutEULAText}>
+                  {t('common:agreeToEulaAgreement.prefix', {
+                    title: t('confirm.register.title'),
+                  })}
+                  <TextPressable
+                    type={TypographyType.LABEL_SEMI_MEDIUM_PRIMARY}
+                    onPress={this.openEULAAgreement}
+                    style={styles.eulaAgreementHighlightMessage}>
+                    {t('common:eulaAgreement')}
+                  </TextPressable>
+                  {t('common:agreeToEulaAgreement.suffix')}
+                </Typography>
+              </View>
+
+              <Button
+                onPress={this._onSave.bind(this)}
+                disabled={disabled}
+                containerStyle={styles.address_continue}
+                renderTitleComponent={(titleStyle) =>
+                  this.renderTitleButton(titleStyle)
+                }
+              />
+            </Container>
+          </View>
+        </ScreenWrapper>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -761,9 +841,7 @@ const styles = StyleSheet.create({
   placeDropDownIcon: {
     marginTop: 4,
   },
-  btnDisabled: {
-    backgroundColor: '#aaa',
-  },
+  btnDisabled: {},
 
   infoContainer: {
     marginRight: -5,
@@ -789,6 +867,13 @@ const styles = StyleSheet.create({
   textRequired: {},
   iconContinue: {
     fontSize: 20,
+  },
+  eulaAgreementMessage: {
+    padding: 15,
+  },
+  eulaAgreementHighlightMessage: {
+    fontWeight: '500',
+    textDecorationLine: 'underline',
   },
 });
 

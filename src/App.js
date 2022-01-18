@@ -192,6 +192,8 @@ import {BASE_LIGHT_THEME} from './Themes/Theme.light';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {pop, push, reset} from 'app-helper/routing';
 import {StatusBar} from './components/base';
+import ModalLicense from './components/ModalLicense';
+import {setAppLanguage} from './i18n/helpers';
 
 /**
  * Not allow font scaling
@@ -629,7 +631,7 @@ const styles = StyleSheet.create({
     // shadowRadius: 10,
     // shadowOpacity: 0.3,
     // elevation: 2,
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
     overflow: 'visible',
     height: 44 + appConfig.device.bottomSpace,
   },
@@ -1928,16 +1930,24 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
+
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
+
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
               <Stack
                 key={appConfig.routes.airlineTicketCustomer}
                 component={Customer}
                 hideNavBar
+              />
+
+              {/* ================ MODAL LICENSE================ */}
+              <Stack
+                key={appConfig.routes.modalLicense}
+                component={ModalLicense}
               />
             </Lightbox>
 

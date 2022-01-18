@@ -6,6 +6,7 @@ import appConfig from 'app-config';
 import {executeJobs} from '../../helper/jobsOnReset';
 import {servicesHandler} from '../../helper/servicesHandler';
 import {getTheme} from 'src/Themes/Theme.context';
+import {checkIfEULAAgreed, updateEULAUserDecision} from 'app-helper';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -22,35 +23,31 @@ import HomeComponent from '../../components/Home';
 class Home extends Component {
   static contextType = ThemeContext;
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      refreshing: false,
-      apiFetching: false,
-      storeFetching: false,
-      isDarkStatusBar: false,
-      site: null,
-      sites: null,
-      title_sites: null,
-      newses: null,
-      notices: null,
-      campaigns: null,
-      promotions: null,
-      services: [],
-      products: [],
-      listService: [],
-      listServiceConfig: {
-        type: LIST_SERVICE_TYPE.VERTICAL,
-        items_per_row: MIN_ITEMS_PER_ROW,
-      },
-      primaryActions: null,
-      product_groups: [],
-      news_categories: [],
-      product_categories: [],
-    };
-    this.eventTracker = new EventTracker();
-  }
+  state = {
+    refreshing: false,
+    apiFetching: false,
+    storeFetching: false,
+    isDarkStatusBar: false,
+    site: null,
+    sites: null,
+    title_sites: null,
+    newses: null,
+    notices: null,
+    campaigns: null,
+    promotions: null,
+    services: [],
+    products: [],
+    listService: [],
+    listServiceConfig: {
+      type: LIST_SERVICE_TYPE.VERTICAL,
+      items_per_row: MIN_ITEMS_PER_ROW,
+    },
+    primaryActions: null,
+    product_groups: [],
+    news_categories: [],
+    product_categories: [],
+  };
+  eventTracker = new EventTracker();
   homeDataLoaded = false;
 
   get theme() {
@@ -69,7 +66,10 @@ class Home extends Component {
 
   handleExecuteTempDeepLink() {
     if (store.tempDeepLinkData) {
-      servicesHandler(store.tempDeepLinkData.params, store.tempDeepLinkData.t);
+      servicesHandler(
+        {...(store.tempDeepLinkData.params || {}), theme: this.theme},
+        store.tempDeepLinkData.t,
+      );
       store.setTempDeepLinkData(null);
     }
   }
@@ -79,6 +79,20 @@ class Home extends Component {
       this.setState({
         apiFetching: true,
       });
+    }
+
+    const isEULAAgreed = await checkIfEULAAgreed();
+
+    if (!isEULAAgreed) {
+      servicesHandler({
+        type: SERVICES_TYPE.EULA_AGREEMENT,
+        backdropPressToClose: false,
+        onAgree: async () => {
+          await updateEULAUserDecision();
+          this.getHomeDataFromApi();
+        },
+      });
+      return;
     }
 
     try {
@@ -154,6 +168,7 @@ class Home extends Component {
     if (store.popupClickedID !== popup.modified) {
       const popupService = {
         type: SERVICES_TYPE.POP_UP,
+        theme: this.theme,
         image: popup.image_url,
         // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
         delay: popup.delay !== undefined ? popup.delay : 2000,
@@ -206,7 +221,7 @@ class Home extends Component {
   };
 
   handlePromotionPressed = (item) => {
-    servicesHandler(item, this.props.t);
+    servicesHandler({...item, theme: this.theme}, this.props.t);
   };
 
   /**
@@ -239,6 +254,7 @@ class Home extends Component {
     // store.setSelectedTab(appConfig.routes.customerCardWallet);
     servicesHandler({
       type: SERVICES_TYPE.GPS_LIST_SITE,
+      theme: this.theme,
     });
   };
 

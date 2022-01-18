@@ -10,7 +10,7 @@ import appConfig from 'app-config';
 // network
 import BaseAPI from 'src/network/API/BaseAPI';
 // helpers
-import {setAppLanguage} from 'src/i18n/i18n';
+import {setAppLanguage} from 'src/i18n/helpers';
 import {servicesHandler} from 'app-helper/servicesHandler';
 import {isConfigActive} from 'app-helper/configKeyHandler';
 import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
@@ -479,12 +479,12 @@ class Account extends Component {
               pop();
             },
           }),
-        // Actions.push(appConfig.routes.modalList, {
+        // push(appConfig.routes.modalList, {
         //   heading: this.props.t('opRegister:modal.store.title'),
         //   data: this.state.listWarehouse,
         //   selectedItem: {id: store_id},
         //   onPressItem: this.onSelectWarehouse,
-        //   onCloseModal: Actions.pop,
+        //   onCloseModal: pop,
         //   modalStyle: {
         //     height: null,
         //     maxHeight: '80%',
@@ -532,7 +532,11 @@ class Account extends Component {
         label: t('options.salesReport.label'),
         desc: t('options.salesReport.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => push(appConfig.routes.salesReport, {}, this.theme),
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.SALES_REPORT,
+            theme: this.theme,
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -654,10 +658,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#5b88d9',
+            backgroundColor: this.theme.color.accountPartnerRegistration,
           },
         ],
-        iconColor: '#fff',
+        iconColor: this.iconColor,
       },
 
       {
@@ -691,15 +695,12 @@ class Account extends Component {
         key: 'theme',
         icon: 'color-palette',
         iconType: BundleIconSetName.IONICONS,
-        label: 'Theme',
+        label: t('options.appearance.label'),
+        desc: this.theme.name,
+        leftIcon: this.renderThemeIcon(),
         rightIcon: <View></View>,
         onPress: () => {
-          this.context.toggleTheme(BASE_DARK_THEME_ID);
-          saveTheme(
-            this.theme.id === BASE_DARK_THEME_ID
-              ? BASE_LIGHT_THEME
-              : BASE_DARK_THEME,
-          );
+          this.context.toggleTheme((theme) => saveTheme(theme));
         },
         boxIconStyle: [
           styles.boxIconStyle,
@@ -1192,6 +1193,48 @@ class Account extends Component {
     );
   };
 
+  renderThemeIcon = () => {
+    return (
+      <View style={[styles.themeIconWrapper, this.themeIconWrapperStyle]}>
+        <View style={styles.themeIconBackgroundContainer}>
+          <Container flex style={this.themeIconPrimaryBackgroundStyle} />
+          <Container flex style={this.themeIconSecondaryBackgroundStyle} />
+        </View>
+        <View style={styles.themeIconContainer}>
+          <Icon
+            bundle={BundleIconSetName.IONICONS}
+            name="color-palette"
+            style={[styles.themeIcon, this.themeIconStyle]}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  get themeIconWrapperStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.onSurface,
+    };
+  }
+
+  get themeIconPrimaryBackgroundStyle() {
+    return {
+      backgroundColor: this.theme.color.primary,
+    };
+  }
+  get themeIconSecondaryBackgroundStyle() {
+    return {
+      backgroundColor: this.theme.color.secondary,
+    };
+  }
+
+  get themeIconStyle() {
+    return {
+      color: this.theme.color.onPrimary,
+    };
+  }
+
   get avatarContainerStyle() {
     return [styles.profile_avatar_box, styles.profile_avatar_box_container];
   }
@@ -1620,6 +1663,23 @@ const styles = StyleSheet.create({
   },
   listOptionsContainer: {
     paddingVertical: 8,
+  },
+  themeIconWrapper: {
+    flex: 1,
+    overflow: 'hidden',
+    borderRadius: 25,
+  },
+  themeIconBackgroundContainer: {
+    flex: 1,
+    transform: [{rotate: '-60deg'}],
+  },
+  themeIconContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  themeIcon: {
+    fontSize: 14,
   },
 });
 

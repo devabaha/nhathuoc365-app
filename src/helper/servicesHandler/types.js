@@ -133,4 +133,10 @@ export const SERVICES_TYPE = {
 
   /** RATING */
   RATING: 'rating',
+  
+  /** REPORT */
+  SALES_REPORT: 'sales_report',
+  
+  /** LICENSE/ AGREEMENT */
+  EULA_AGREEMENT: 'eula_agreement',
 };

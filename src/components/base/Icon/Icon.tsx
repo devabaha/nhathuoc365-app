@@ -22,8 +22,14 @@ const createStyles = (theme: Theme) => {
     primaryHighlight: {
       color: theme.color.primaryHighlight,
     },
+    persistPrimary: {
+      color: theme.color.persistPrimary,
+    },
     secondaryHighlight: {
       color: theme.color.secondaryHighlight,
+    },
+    persistSecondary: {
+      color: theme.color.persistSecondary,
     },
     neutral: {
       color: theme.color.iconInactive,
@@ -48,8 +54,10 @@ const Icon = forwardRef(
       reanimated,
       animated,
       primary,
+      persistPrimary,
       primaryHighlight,
       secondary,
+      persistSecondary,
       secondaryHighlight,
       neutral,
       disabled,
@@ -83,8 +91,10 @@ const Icon = forwardRef(
       return mergeStyles(
         [
           styles.icon,
+          persistPrimary && styles.persistPrimary,
           primary && styles.primary,
           primaryHighlight && styles.primaryHighlight,
+          persistSecondary && styles.persistSecondary,
           secondary && styles.secondary,
           secondaryHighlight && styles.secondaryHighlight,
           neutral && styles.neutral,
@@ -95,8 +105,10 @@ const Icon = forwardRef(
     }, [
       styles,
       primary,
+      persistPrimary,
       primaryHighlight,
       secondary,
+      persistSecondary,
       secondaryHighlight,
       neutral,
       disabled,

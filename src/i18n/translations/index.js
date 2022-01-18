@@ -88,6 +88,10 @@ import vi_domainSelector from './vi/domainSelector.json';
 import en_domainSelector from './en/domainSelector.json';
 import vi_gpsStore from './vi/gpsStore.json';
 import en_gpsStore from './en/gpsStore.json';
+import vi_license from './vi/license.json';
+import en_license from './en/license.json';
+import vi_theme from './vi/theme.json';
+import en_theme from './en/theme.json';
 
 export default {
   [languages.vi.value]: {
@@ -136,6 +140,8 @@ export default {
     phoneCard: vi_phoneCard,
     domainSelector: vi_domainSelector,
     gpsStore: vi_gpsStore,
+    license: vi_license,
+    theme: vi_theme,
   },
   [languages.en.value]: {
     common: en_common,
@@ -183,5 +189,7 @@ export default {
     phoneCard: en_phoneCard,
     domainSelector: en_domainSelector,
     gpsStore: en_gpsStore,
+    license: en_license,
+    theme: en_theme,
   },
 };

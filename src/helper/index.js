@@ -1,6 +1,11 @@
 import {Linking, Alert} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
-import i18n from 'src/i18n';
+import i18n from 'i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  EULA_AGREEMENT_LAST_UPDATED,
+  EULA_AGREEMENT_USER_DECISION_DATA_KEY,
+} from 'src/constants';
 
 import {saveTheme, isDarkMode} from './theme';
 
@@ -161,3 +166,32 @@ export const elevationShadowStyle = (
   shadowOpacity,
   shadowRadius: 0.8 * elevation,
 });
+
+export const checkIfEULAAgreed = async () => {
+  // AsyncStorage.removeItem(EULA_AGREEMENT_USER_DECISION_DATA_KEY);
+  const isEULAAgreed = await AsyncStorage.getItem(
+    EULA_AGREEMENT_USER_DECISION_DATA_KEY,
+  );
+
+  return !!isEULAAgreed;
+};
+
+export const updateEULAUserDecision = async (decision = true) => {
+  const information = {
+    agreeTime: new Date().toString(),
+    isAgree: !!decision,
+  };
+  await AsyncStorage.setItem(
+    EULA_AGREEMENT_USER_DECISION_DATA_KEY,
+    JSON.stringify(information),
+  );
+};
+
+export const getEULAContent = () => {
+  const t = i18n.getFixedT(undefined, 'license');
+
+  return (
+    t('eula.lastUpdated', {lastUpdated: EULA_AGREEMENT_LAST_UPDATED}) +
+    t('eula.content').reduce((prev, next) => prev + next, '')
+  );
+};

@@ -55,6 +55,7 @@ class ItemAttribute extends PureComponent {
 
   static defaultProps = {
     product: {},
+    onClosed: () => {},
   };
 
   getBaseData = (attrs = {}, models = {}) => {
@@ -170,6 +171,7 @@ class ItemAttribute extends PureComponent {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.props.onUnmounted && this.props.onUnmounted();
     this.eventTracker.clearTracking();
   }
 
@@ -181,7 +183,7 @@ class ItemAttribute extends PureComponent {
         store.store_data.id,
         this.props.itemId,
       );
-      console.log(response);
+
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           if (response.data) {
@@ -401,8 +403,13 @@ class ItemAttribute extends PureComponent {
     if (this.refModal.current) {
       this.refModal.current.close();
     } else {
-      pop();
+      this.handleClosed();
     }
+  };
+
+  handleClosed = () => {
+    this.props.onClosed();
+    pop();
   };
 
   handleChangeQuantity = (quantity, min, max) => {
@@ -480,18 +487,6 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
 
-    const disabled =
-      (this.isDropShip &&
-        this.state.selectedModel?.price_in_number > this.dropShipPrice) ||
-      (this.hasAttrs && numberSelectedAttrs === 0) ||
-      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
-
-    // const btnProps = disabled && {
-    //   btnContainerStyle: styles.containerDisabled,
-    //   titleStyle: styles.titleDisabled,
-    //   disabled,
-    // };
-
     const infoByAttrs = this.getInfoBySelectedAttrs();
 
     const imageUri = this.state.selectedModel.image
@@ -551,6 +546,17 @@ class ItemAttribute extends PureComponent {
     const unitName =
       this.state.product?.unit_name && this.state.product?.unit_name_view;
 
+    const disabled =
+      (this.isDropShip && priceDropShip > this.dropShipPrice) ||
+      (this.hasAttrs && numberSelectedAttrs === 0) ||
+      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
+
+    const btnProps = disabled && {
+      btnContainerStyle: styles.containerDisabled,
+      titleStyle: styles.titleDisabled,
+      disabled,
+    };
+
     return (
       <>
         {this.state.loading ? (
@@ -560,7 +566,7 @@ class ItemAttribute extends PureComponent {
             ref={this.refModal}
             isOpen
             position="top"
-            onClosed={pop}
+            onClosed={this.handleClosed}
             swipeToClose={false}
             style={styles.modal}
             easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Keyboard} from 'react-native';
 // 3-party libs
 import {isEmpty, isFunction} from 'lodash';
 import {Actions} from 'react-native-router-flux';
@@ -41,6 +41,7 @@ export default class HorizontalInfoItem extends Component {
   }
 
   openDateTimePicker = (dateValue) => {
+    Keyboard.dismiss();
     Actions.push(appConfig.routes.modalDateTimePicker, {
       value: new Date(dateValue),
       onSelect: (date) => {

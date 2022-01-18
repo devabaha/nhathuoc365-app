@@ -7,7 +7,7 @@ import {getTheme} from 'src/Themes/Theme.context';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // custom components
-import {ActivityIndicator} from './base';
+import {ActivityIndicator} from 'src/components/base';
 
 const FADE_SHOW_VALUE = 1;
 const FADE_HIDE_VALUE = 0;

@@ -34,7 +34,7 @@ const getCustomStyle = (theme) => {
     // text-decoration: none !important;
     color: ${theme.color.primaryHighlight}!important
   }
-  p, span {
+  p, li, span {
     font-size: ${theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
     line-height: 24px;
     color: ${theme.typography[TypographyType.LABEL_LARGE].color}

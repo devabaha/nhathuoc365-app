@@ -14,6 +14,9 @@
     },
     "reorder": {
       "message": "Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn đặt lại đơn hàng này?"
+    },
+    "changeCartType": {
+      "message": "\r\n• Giỏ hàng đang đặt thuộc loại {{cartTypeKeyword}}.\r\n\r\n• Chọn {{btnTitle}} để hủy giỏ hàng đang đặt và tạo giỏ hàng mới.\r\n"
     }
   },
   "notification": {

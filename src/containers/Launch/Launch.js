@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
+// 3-party libs
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -16,11 +18,10 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
 import {languages} from 'src/i18n/constants';
+import {THEME_STORAGE_KEY} from 'src/constants';
 // custom components
 import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {THEME_STORAGE_KEY} from 'src/constants';
 
 class Launch extends Component {
   static contextType = ThemeContext;

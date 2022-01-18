@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, StyleSheet, Animated, TouchableHighlight} from 'react-native';
 // 3-party libs
+import Swiper from 'react-native-swiper';
 import Clipboard from '@react-native-community/clipboard';
 import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
@@ -12,6 +13,7 @@ import store from 'app-store';
 // helpers
 import {shareImages} from 'app-helper/share';
 import {isOutOfStock} from 'app-helper/product';
+import {goConfirm} from 'app-helper/product';
 import {
   calculateLikeCountFriendly,
   getSocialCommentsCount,
@@ -33,6 +35,10 @@ import {
   TypographyType,
   BundleIconSetName,
 } from 'src/components/base';
+import {
+  PRODUCT_BUTTON_ACTION_LOADING_PARAM,
+  PRODUCT_BUTTON_ACTION_TYPE,
+} from 'src/constants/product';
 import {SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {
   ACCESSORY_TYPE,
@@ -56,6 +62,7 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import {
   AppFilledButton,
+  AppFilledTonalButton,
   AppOutlinedButton,
   Typography,
   Icon,
@@ -89,51 +96,48 @@ class Item extends Component {
     showBtnProductStamps: false,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    listWarehouse: [],
+    refreshing: false,
+    item: this.props.item,
+    item_data: null,
+    images: null,
+    loading: !this.props.preventUpdate,
+    actionLoading: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW]: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART]: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP]: false,
+    preparePostForSaleDataLoading: false,
+    like_flag: this.props?.item?.like_flag || 0,
+    scrollY: 0,
 
-    this.state = {
-      listWarehouse: [],
-      refreshing: false,
-      item: props.item,
-      item_data: null,
-      images: null,
-      loading: !this.props.preventUpdate,
-      actionLoading: false,
-      buying: false,
-      like_loading: !this.props.preventUpdate,
-      isSubActionLoading: false,
-      preparePostForSaleDataLoading: false,
-      like_flag: 0,
-      scrollY: 0,
+    webviewContentHeight: undefined,
+    isWebviewContentCollapsed: undefined,
+    selectedIndex: 0,
 
-      webviewContentHeight: undefined,
-      isWebviewContentCollapsed: undefined,
-      selectedIndex: 0,
+    canPlayVideo: false,
+  };
 
-      canPlayVideo: false,
-    };
+  refPlayer = React.createRef();
 
-    this.refPlayer = React.createRef();
+  animatedScrollY = new Animated.Value(0);
+  unmounted = false;
+  eventTracker = new EventTracker();
+  refPopupConfirmCartType = React.createRef();
+  refWebview = React.createRef();
+  refModalWholesale = React.createRef();
+  productTempData = [];
+  disposerIsEnterItem = () => {};
 
-    this.animatedScrollY = new Animated.Value(0);
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
-    this.refPopupConfirmCartType = React.createRef();
-    this.refWebview = React.createRef();
-    this.refModalWholesale = React.createRef();
-    this.productTempData = [];
-    this.disposerIsEnterItem = () => {};
+  CTAProduct = new CTAProduct(this);
+  getWarehouseRequest = new APIRequest();
+  updateWarehouseRequest = new APIRequest();
+  requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
 
-    this.CTAProduct = new CTAProduct(props.t, this);
-    this.getWarehouseRequest = new APIRequest();
-    this.updateWarehouseRequest = new APIRequest();
-    this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
-
-    this.webviewContentShowMoreTitleTypoProps = {
-      type: TypographyType.LABEL_MEDIUM_PRIMARY,
-    };
-  }
+  webviewContentShowMoreTitleTypoProps = {
+    type: TypographyType.LABEL_MEDIUM_PRIMARY,
+  };
 
   get theme() {
     return getTheme(this);
@@ -148,14 +152,16 @@ class Item extends Component {
   }
 
   get subActionColor() {
-    return this.isDisabledSubBtnAction
-      ? this.subActionDisabledColor
-      : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-        !this.isServiceProduct(this.product)
-      ? this.subActionActiveColor
-      : this.isLiked
-      ? this.subActionActiveColor
-      : this.subActionActiveColor;
+    // return this.isDisabledSubBtnAction
+    //   ? this.subActionDisabledColor
+    //   : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+    //     !this.isServiceProduct(this.product)
+    //   ? this.subActionActiveColor
+    //   : this.isLiked
+    //   ? this.subActionActiveColor
+    //   : this.subActionActiveColor;
+    const is_like = this.state.like_flag == 1;
+    return this.subActionActiveColor;
   }
 
   get isDisabledSubBtnAction() {
@@ -195,8 +201,8 @@ class Item extends Component {
           item_data: null,
           images: null,
           loading: true,
-          buying: false,
-          like_loading: true,
+          [PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW]: false,
+          [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: true,
           like_flag: 0,
         },
         () => {
@@ -388,7 +394,7 @@ class Item extends Component {
       !this.unmounted &&
         this.setState({
           loading: false,
-          like_loading: false,
+          [PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE]: false,
           refreshing: false,
         });
     }
@@ -412,12 +418,27 @@ class Item extends Component {
     this._getDataFromServer(1000);
   }
 
-  handlePressMainActionBtnProduct = (product, cartType) => {
-    this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
+  goToSchedule = (product) => {
+    Actions.push(appConfig.routes.productSchedule, {
+      productId: product.id,
+    });
+  };
+
+  handlePressMainActionBtnProduct = (product, cartType, isOrderNow = false) => {
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product,
+      cartType,
+      isOrderNow,
+      callbackSuccess: isOrderNow
+        ? () => {
+            goConfirm();
+          }
+        : undefined,
+    });
   };
 
   handlePressSubAction = (product, cartType) => {
-    this.CTAProduct.handlePressSubAction(product, cartType);
+    this.CTAProduct.handlePressSubAction({product, cartType});
   };
 
   handlePressWarehouse = () => {
@@ -504,52 +525,6 @@ class Item extends Component {
     this.setState({loading: true});
     this.updateWarehouse(warehouse);
   };
-
-  _likeHandler(item) {
-    this.setState(
-      {
-        like_loading: true,
-      },
-      async () => {
-        try {
-          var response = await APIHandler.site_like(
-            store.store_id,
-            item.id,
-            this.state.like_flag == 1 ? 0 : 1,
-          );
-
-          if (response && response.status == STATUS_SUCCESS) {
-            var like_flag = response.data.like_flag;
-
-            this.setState(
-              {
-                like_flag,
-                like_loading: false,
-              },
-              () => {
-                this.state.item_data.like_flag = like_flag;
-
-                // cache in five minutes
-                var {item} = this.state;
-                var item_key = ITEM_KEY + item.id + store.user_info.id;
-                storage.save({
-                  key: item_key,
-                  data: this.state.item_data,
-                  expires: ITEM_CACHE,
-                });
-              },
-            );
-          }
-        } catch (e) {
-          console.log(e + ' site_like');
-          flashShowMessage({
-            type: 'danger',
-            message: t('common:api.error.message'),
-          });
-        }
-      },
-    );
-  }
 
   _confirmRemoveCartItem(item) {
     this.cartItemConfirmRemove = item;
@@ -702,6 +677,147 @@ class Item extends Component {
 
   handlePressScannedProduct = () => {
     push(appConfig.routes.productStamps, {}, this.theme);
+  };
+
+  get actionButtonData() {
+    const {t} = this.props;
+
+    const likeButtonData = {
+      type: PRODUCT_BUTTON_ACTION_TYPE.LIKE,
+      component: AppOutlinedButton,
+      iconName: this.state.like_flag == 1 ? 'heart' : 'heart-outline',
+      containerStyle: styles.iconLikeContainer,
+      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE],
+      disabled: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.LIKE],
+
+      onPress: () => {
+        this.handlePressSubAction(this.product);
+      },
+    };
+
+    const buttonsData = [likeButtonData];
+    const isProductOutOfStock = isOutOfStock(this.product);
+    const isDisabledActionBtn =
+      this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.BUY_NOW] ||
+      this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP] ||
+      this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART];
+
+    // const addToCartButtonData = {
+    //   type: PRODUCT_BUTTON_ACTION_TYPE.ADD_TO_CART,
+    //   title: isProductOutOfStock
+    //     ? t('shopTitle.outOfStock')
+    //     : t('shopTitle.buy'),
+    //   loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART],
+    //   disabled: isDisabledActionBtn,
+    //   iconName: 'cart-plus',
+    //   iconBundle: FontAwesome5Icon,
+    //   iconStyle: {fontSize: 17},
+    //   isHidden: isProductOutOfStock,
+
+    //   onPress: () =>
+    //     this.handlePressMainActionBtnProduct(this.product, CART_TYPES.NORMAL),
+    // };
+
+    const dropShipButtonData = {
+      type: PRODUCT_BUTTON_ACTION_TYPE.DROP_SHIP,
+      component: AppFilledTonalButton,
+      iconName: 'truck-fast',
+      title: isProductOutOfStock
+        ? t('shopTitle.outOfStock')
+        : t('shopTitle.dropShip'),
+      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.DROP_SHIP],
+      disabled: isDisabledActionBtn,
+      isHidden: isProductOutOfStock,
+      containerStyle: styles.actionBtnContainer,
+
+      onPress: () =>
+        this.handlePressSubAction(this.product, CART_TYPES.DROP_SHIP),
+    };
+
+    const buyNowButtonData = {
+      type: PRODUCT_BUTTON_ACTION_TYPE.ADD_TO_CART,
+      component: AppFilledButton,
+      iconName: 'cart',
+      iconBundle: BundleIconSetName.IONICONS,
+      title: isProductOutOfStock
+        ? t('shopTitle.outOfStock')
+        : t('shopTitle.buy'),
+      loading: this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART],
+      disabled: isDisabledActionBtn || isProductOutOfStock,
+      containerStyle: styles.actionBtnContainer,
+
+      onPress: () =>
+        this.handlePressMainActionBtnProduct(
+          this.product,
+          CART_TYPES.NORMAL,
+          // true,
+        ),
+    };
+
+    const bookingButtonData = {
+      type: PRODUCT_BUTTON_ACTION_TYPE.BOOKING,
+      component: AppFilledButton,
+      iconName: 'calendar-plus-o',
+      iconBundle: BundleIconSetName.FONT_AWESOME,
+      title: t('shopTitle.book'),
+      containerStyle: styles.actionBtnContainer,
+
+      onPress: () =>
+        this.handlePressMainActionBtnProduct(this.product, CART_TYPES.NORMAL),
+    };
+
+    if (this.isServiceProduct(this.product)) {
+      // Booking
+      buttonsData.push(bookingButtonData);
+    } else if (isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)) {
+      // Drop ship
+      buttonsData.push(dropShipButtonData, buyNowButtonData);
+      // buttonsData.push([dropShipButtonData]);
+    } else {
+      // Buy now
+      buttonsData.push(buyNowButtonData);
+    }
+
+    return buttonsData;
+  }
+
+  renderItem = ({item: image, index}) => {
+    return (
+      <View style={{width: appConfig.device.width}}>
+        {image?.image ? (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => {
+              console.log(this.state.images);
+              Actions.item_image_viewer({
+                images: this.state.images,
+                index: index - 1,
+              });
+            }}>
+            <View style={{height: '100%'}}>
+              <FastImage
+                style={styles.swiper_image}
+                source={{uri: image.image}}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableHighlight>
+        ) : (
+          <Video
+            refPlayer={this.refPlayer}
+            type="youtube"
+            videoId={image}
+            containerStyle={{
+              justifyContent: 'center',
+              height: appConfig.device.height / 2,
+            }}
+            height={appConfig.device.height / 2}
+            autoAdjustLayout
+            youtubeIframeProps={{play: this.state.selectedIndex === index}}
+          />
+        )}
+      </View>
+    );
   };
 
   renderProductSwiper(product) {
@@ -988,52 +1104,90 @@ class Item extends Component {
     );
   };
 
-  renderMainActionBtn = (item, titleStyle, buttonStyle, fontStyle) => {
-    const {t} = this.props;
+  renderMainActionIconLeft = (fontStyle, button) => {
+    const iconBundle =
+      button.iconBundle || BundleIconSetName.MATERIAL_COMMUNITY_ICONS;
 
-    return (
-      <Container noBackground row style={styles.item_actions_btn}>
-        <Container
-          noBackground
-          center
-          style={styles.item_actions_btn_icon_container}>
-          {this.renderMainActionBtnIcon(item, fontStyle)}
-        </Container>
-        <Typography
-          type={TypographyType.LABEL_MEDIUM}
-          numberOfLines={1}
-          style={[styles.item_actions_title, fontStyle]}>
-          {this.isServiceProduct(item)
-            ? t('shopTitle.book')
-            : this.isDisabledBuyingProduct
-            ? t('shopTitle.outOfStock')
-            : t('shopTitle.buy')}
-        </Typography>
-      </Container>
+    return !!button.loading ? (
+      <Loading
+        size="small"
+        wrapperStyle={!!button.title && {position: undefined}}
+        style={styles.mainActionLoading}
+        color={fontStyle.color}
+      />
+    ) : (
+      !!button.iconName && (
+        <Icon
+          bundle={iconBundle}
+          name={button.iconName}
+          style={[fontStyle, styles.icon, button.iconStyle]}
+        />
+      )
     );
   };
 
-  renderSubActionBtn = (item, titleStyle, buttonStyle, fontStyle) => {
-    const {t} = this.props;
+  renderActionButton = (button, index) => {
+    const ButtonComponent = button.component;
 
     return (
-      <Container row centerVertical>
-        <View style={styles.item_actions_btn_icon_container}>
-          {this.renderSubActionBtnIcon(item, fontStyle)}
-        </View>
-        <Typography
-          type={TypographyType.LABEL_MEDIUM}
-          numberOfLines={1}
-          style={[styles.item_actions_title, fontStyle]}>
-          {!this.isServiceProduct(item) &&
-          isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-            ? t('shopTitle.dropShip')
-            : this.isLiked
-            ? t('liked')
-            : t('like')}
-        </Typography>
-      </Container>
+      <ButtonComponent
+        key={index}
+        disabled={button.disabled}
+        rounded={ButtonRoundedType.EXTRA_SMALL}
+        onPress={button.onPress}
+        style={[
+          styles.item_actions_btn,
+          {
+            marginLeft: index ? 10 : 0,
+          },
+          button.containerStyle,
+        ]}
+        titleStyle={[
+          styles.item_actions_title,
+          {
+            marginLeft: !!button.iconName ? 10 : 0,
+          },
+          button.titleStyle,
+        ]}
+        renderIconLeft={(titleStyle, buttonStyle, fontStyle) =>
+          this.renderMainActionIconLeft(fontStyle, button)
+        }>
+        {((!!button.title && !!button.iconName) ||
+          (!!button.title && !button.loading)) &&
+          button.title}
+      </ButtonComponent>
     );
+  };
+
+  renderActionButtons = () => {
+    const buttonBlocks = this.actionButtonData.filter((btn) =>
+      Array.isArray(btn),
+    );
+    const fistButtonBlock = (
+      <View key={-1} style={styles.item_actions_box}>
+        {this.actionButtonData.map((button, index) => {
+          if (Array.isArray(button) || !!button.isHidden) {
+            return null;
+          }
+
+          return this.renderActionButton(button, index);
+        })}
+      </View>
+    );
+
+    const othersButtonBlock = buttonBlocks.map((block, index) => {
+      const hasBtn = block.filter((btn) => !btn.isHidden);
+
+      return (
+        !!hasBtn?.length && (
+          <View key={index} style={styles.item_actions_box}>
+            {block.map((btn, i) => this.renderActionButton(btn, i))}
+          </View>
+        )
+      );
+    });
+
+    return [fistButtonBlock, othersButtonBlock];
   };
 
   get subActionActiveColor() {
@@ -1215,49 +1369,7 @@ class Item extends Component {
                   this.renderPostForSaleBtn(item)}
               </View>
 
-              <View style={styles.item_actions_box}>
-                <AppOutlinedButton
-                  disabled={this.isDisabledSubBtnAction}
-                  onPress={() =>
-                    this.handlePressSubAction(
-                      item,
-                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
-                        ? CART_TYPES.DROP_SHIP
-                        : '',
-                    )
-                  }
-                  style={[
-                    styles.item_actions_btn,
-                    styles.item_actions_btn_chat,
-                  ]}
-                  renderTitleComponent={(titleStyle, buttonStyle, fontStyle) =>
-                    this.renderSubActionBtn(
-                      item,
-                      titleStyle,
-                      buttonStyle,
-                      fontStyle,
-                    )
-                  }
-                />
-
-                <AppFilledButton
-                  disabled={this.isDisabledBuyingProduct}
-                  onPress={() =>
-                    this.handlePressMainActionBtnProduct(
-                      item,
-                      CART_TYPES.NORMAL,
-                    )
-                  }
-                  renderTitleComponent={(titleStyle, buttonStyle, fontStyle) =>
-                    this.renderMainActionBtn(
-                      item,
-                      titleStyle,
-                      buttonStyle,
-                      fontStyle,
-                    )
-                  }
-                />
-              </View>
+              {this.renderActionButtons()}
             </View>
 
             {item != null && !this.state.loading && (
@@ -1326,7 +1438,7 @@ class Item extends Component {
                   this.shortContentBoxStyle,
                 ]}>
                 <Typography
-                  yype={TypographyType.LABEL_MEDIUM}
+                  type={TypographyType.LABEL_MEDIUM}
                   style={styles.shortContentItem}>
                   {item.short_content}
                 </Typography>
@@ -1488,11 +1600,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 15,
     overflow: 'hidden',
+    flex: 1,
+    // justifyContent: 'center',
   },
   item_actions_btn: {
-    height: 40,
-    width: (appConfig.device.width - 45) / 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 42,
+    minWidth: 42,
     paddingHorizontal: 20,
+    overflow: 'hidden',
+  },
+
+  postForSaleWrapper: {
     justifyContent: 'center',
   },
 
@@ -1634,7 +1755,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
 
-  actionContainer: {},
+  actionBtnContainer: {
+    flex: 1,
+    marginRight: 0,
+    paddingHorizontal: 0,
+  },
 
   webviewCollapsedContainer: {
     height: WEBVIEW_HEIGHT_COLLAPSED,
@@ -1673,6 +1798,19 @@ const styles = StyleSheet.create({
   },
   slashText: {
     textDecorationLine: 'line-through',
+  },
+  mainActionLoading: {
+    padding: 0,
+    width: '100%',
+    height: '100%',
+  },
+  iconLikeContainer: {
+    width: 42,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  icon: {
+    fontSize: 20,
   },
 });
 

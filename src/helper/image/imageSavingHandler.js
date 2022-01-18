@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 import CameraRoll from '@react-native-community/cameraroll';
 import {downloadImage} from './imageDownloadingHandler';
-import {PhotoLibraryPermission} from '../permissionHelper';
+import {PhotoLibraryPermission} from '../permissionHelper/PhotoLibraryPermission';
 import showFlashNotification from '../../components/FlashNotification';
 
 const saveImage = async (url = '', dataURL = '', mimeType = '') => {

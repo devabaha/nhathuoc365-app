@@ -263,7 +263,6 @@ class Prepay extends Component {
   };
 
   render() {
-    console.log(this.currentNetworks);
     return (
       <Container style={styles.container}>
         <ScrollView
