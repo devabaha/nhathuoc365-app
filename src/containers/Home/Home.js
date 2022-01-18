@@ -12,6 +12,7 @@ import {
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
 import {formatStoreSocialPosts} from 'app-helper/social';
+import {checkIfEULAAgreed, updateEULAUserDecision} from 'app-helper';
 
 class Home extends Component {
   constructor(props) {
@@ -67,6 +68,20 @@ class Home extends Component {
       this.setState({
         apiFetching: true,
       });
+    }
+
+    const isEULAAgreed = await checkIfEULAAgreed();
+
+    if (!isEULAAgreed) {
+      servicesHandler({
+        type: SERVICES_TYPE.EULA_AGREEMENT,
+        backdropPressToClose: false,
+        onAgree: async () => {
+          await updateEULAUserDecision();
+          this.getHomeDataFromApi();
+        },
+      });
+      return;
     }
 
     try {
@@ -328,7 +343,7 @@ class Home extends Component {
             categories: null,
             category_id: 0,
             category_name: '',
-            autoFocus: true
+            autoFocus: true,
           });
         } else {
           flashShowMessage({

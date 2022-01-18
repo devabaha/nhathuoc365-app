@@ -7,7 +7,6 @@ import appConfig from 'app-config';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
-import {GPS_LIST_TYPE} from 'src/constants';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -19,6 +18,7 @@ import {
 } from './radaHandler';
 
 import SearchNavBar from '../../components/stores/SearchNavBar';
+import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from '..';
 /**
  * A powerful handler for all app's services.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -542,6 +542,29 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         wallet,
         tabIndex: service.tabIndex,
       });
+      break;
+
+    /** SALES REPORT */
+    case SERVICES_TYPE.SALES_REPORT:
+      Actions.push(appConfig.routes.salesReport);
+      break;
+
+    /** LICENSE/ AGREEMENT */
+    case SERVICES_TYPE.EULA_AGREEMENT:
+      (async () => {
+        const isAgreed = await checkIfEULAAgreed();
+
+        Actions.push(appConfig.routes.modalLicense, {
+          backdropPressToClose: service.backdropPressToClose,
+
+          title: service.title || commonT('eulaAgreement'),
+          isHTML: service.isHTML || true,
+          content: service.content || getEULAContent(),
+          agreeTitle: isAgreed ? undefined : commonT('iAgree'),
+
+          onAgree: service.onAgree || updateEULAUserDecision,
+        });
+      })();
       break;
 
     default:
