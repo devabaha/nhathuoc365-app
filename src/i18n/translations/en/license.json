@@ -1,0 +1,19 @@
+{
+  "eula": {
+    "lastUpdated": "<p><i>Last updated: {{lastUpdated}}</i></p>",
+    "content": [
+      "<p>In order to use our app, you need agree with this End User License Agreement (EULA).</p>",
+
+      "<h4>1. User Generated Content (UGC)</h4>",
+      "<p>- You are not allow to upload, chat, exchange, share:</p>",
+      "<ul>",
+      "<li>Prohibited content according to local regulations.</li>",
+      "<li>Sensitive sexual, porn, obscene content.</li>",
+      "<li>Content that incites violence, hatred, discriminates, race against any person or organization.</li>",
+      "<li>Content that describes or incites dangerous or terrorist activities.</li>",
+      "<li>Content of buying and selling weapons, prohibited substances and products.</li>",
+      "</ul>",
+      "<p>- Make sure you have full rights to your content, not infringing the copyright, trademark, rights of privacy, rights of publicity, other intellectual property rights of any person or entity.</p>"
+    ]
+  }
+}

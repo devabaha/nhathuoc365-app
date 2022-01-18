@@ -12,15 +12,30 @@ export interface YoutubeVideoIframeProps {
   t: TFunction;
 
   videoId: string;
-  height: number; // string-able
 
-  width?: number; // string-able
-  refPlayer?: React.MutableRefObject<YoutubeIframeRef>;
+  height: number;
+  width?: number;
+  currentTime?: number; // in seconds.
+
+  refPlayer?: (ref: YoutubeIframeRef) => void;
   webviewStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
+  controlsContainerStyle?: StyleProp<ViewProps>;
+  trackerContainerStyle?: StyleProp<ViewProps>;
   autoAdjustLayout?: boolean;
+  isEnd?: boolean;
+  isFullscreenWithoutModal?: boolean;
   onReady?: () => void;
   onError?: (error: string) => void;
   onChangeState?: (event: string) => void;
+  onPressPlay?: () => void;
+  onPressMute?: () => void;
+  onPressFullscreen?: () => void;
+  onRotateFullscreen?: (isFullscreenLandscape: boolean) => void;
+  onChangeControlsVisible?: (isControlsVisible: boolean) => void;
+  onChangeCurrentTime?: (currentTime: number) => void;
+  onProgress?: (progress: number) => void;
   youtubeIframeProps?: YoutubeIframeProps;
+
+  renderVideo?: (videoComponent: React.ReactNode) => React.ReactNode;
 }

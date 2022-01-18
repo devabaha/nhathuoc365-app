@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 
 import {isEmpty, isFunction} from 'lodash';
@@ -33,6 +34,7 @@ export default class HorizontalInfoItem extends Component {
   }
 
   openDateTimePicker = (dateValue) => {
+    Keyboard.dismiss();
     Actions.push(appConfig.routes.modalDateTimePicker, {
       value: new Date(dateValue),
       onSelect: (date) => {
@@ -254,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
 
   title: {
@@ -289,7 +291,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingVertical: 15,
     // marginVertical: -15,
-
   },
   columnViewContainer: {
     flexDirection: 'column',

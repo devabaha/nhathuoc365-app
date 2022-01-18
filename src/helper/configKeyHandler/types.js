@@ -52,4 +52,8 @@ export const CONFIG_KEY = {
   HIDE_VOUCHERS_ACCOUNT_KEY: 'hide_vouchers_account_key',
 
   HIDE_AFFILIATE_ACCOUNT_KEY: 'hide_affiliate_account_key',
+
+  PARTNER_REGISTRATION_LINK_KEY: 'partner_registration_link_key',
+  
+  SLA_NEWS_ID_KEY: 'sla_news_id_key',
 };

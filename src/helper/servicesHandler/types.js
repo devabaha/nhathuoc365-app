@@ -125,4 +125,10 @@ export const SERVICES_TYPE = {
 
   /** Wallet */
   WALLET: 'wallet',
+
+  /** REPORT */
+  SALES_REPORT: 'sales_report',
+  
+  /** LICENSE/ AGREEMENT */
+  EULA_AGREEMENT: 'eula_agreement',
 };

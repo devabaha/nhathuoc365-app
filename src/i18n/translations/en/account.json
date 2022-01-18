@@ -60,6 +60,10 @@
     "salesReport": {
       "label": "Invited Sales Report",
       "desc": "Sales of invented"
+    },
+    "partnerRegistration": {
+      "label": "Partner registration",
+      "desc": ""
     }
   },
   "avatarPicker": {

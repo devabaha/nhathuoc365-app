@@ -19,15 +19,15 @@ import {ORDER_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
 import {CART_TYPES} from 'src/constants/cart';
 import {ProductItem} from '../Home/component/ListProducts';
+
 class Items extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      buying: false,
       loadMore: false,
     };
-    this.CTAProduct = new CTAProduct(props.t, this);
+    this.CTAProduct = new CTAProduct(this);
   }
   unmounted = false;
 
@@ -49,7 +49,10 @@ class Items extends Component {
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    this.CTAProduct.handlePressMainActionBtnProduct(product, CART_TYPES.NORMAL);
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product,
+      cartType: CART_TYPES.NORMAL,
+    });
   };
 
   goToSchedule = (product) => {
@@ -100,11 +103,15 @@ class Items extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Icon name="th" size={24} color={appConfig.colors.typography.text} />
+                <Icon
+                  name="th"
+                  size={24}
+                  color={appConfig.colors.typography.text}
+                />
                 <Text
                   style={{
                     marginTop: 8,
-                    ...appConfig.styles.typography.text
+                    ...appConfig.styles.typography.text,
                   }}>
                   {t('item.more')}
                 </Text>

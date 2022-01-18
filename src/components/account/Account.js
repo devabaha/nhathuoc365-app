@@ -314,28 +314,28 @@ class Account extends Component {
           },
         ],
       },
-      {
-        key: 'orders',
-        label: t('options.orders.label'),
-        desc: t('options.orders.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="cart"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: appConfig.colors.status.success,
-          },
-        ],
-        iconColor: '#ffffff',
-      },
+      // {
+      //   key: 'orders',
+      //   label: t('options.orders.label'),
+      //   desc: t('options.orders.desc'),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="cart"
+      //         style={{fontSize: 16, color: '#fff'}}
+      //       />
+      //     </View>
+      //   ),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: appConfig.colors.status.success,
+      //     },
+      //   ],
+      //   iconColor: '#ffffff',
+      // },
       {
         key: 'vouchers',
         isHidden:
@@ -484,7 +484,7 @@ class Account extends Component {
         label: t('options.salesReport.label'),
         desc: t('options.salesReport.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.salesReport),
+        onPress: () => servicesHandler({type: SERVICES_TYPE.SALES_REPORT}),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -542,7 +542,7 @@ class Account extends Component {
 
       {
         key: '3',
-        icon: 'handshake-o',
+        icon: 'info',
         label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -587,6 +587,29 @@ class Account extends Component {
         isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
       },
+      {
+        key: 'partnerRegistration',
+        icon: 'handshake-o',
+        iconType: 'FontAwesome',
+        label: t('options.partnerRegistration.label'),
+        isHidden: !getValueFromConfigKey(
+          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+        ),
+
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          openLink(
+            getValueFromConfigKey(CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY),
+          );
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#5b88d9',
+          },
+        ],
+        iconColor: '#fff',
+      },
 
       {
         key: '7',
@@ -618,7 +641,7 @@ class Account extends Component {
 
       {
         key: 'app_info',
-        icon: 'question-circle',
+        icon: 'question',
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
