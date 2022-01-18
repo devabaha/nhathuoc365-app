@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
 
-
 ## [r12.2.10]
 ### Added
 - [CU-1zwaqqn] salesReport to servicesHandler by [minhnguyenit14@gmail.com].
