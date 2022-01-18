@@ -341,7 +341,7 @@ class Orders extends Component {
       {
         refreshing: true,
       },
-      this._getData(1000),
+      () => this._getData(1000),
     );
   };
 

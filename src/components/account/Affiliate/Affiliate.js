@@ -235,7 +235,10 @@ class Affiliate extends Component {
         <View style={[i !== data.length - 1 && this.tabRightSeparatorStyle]}>
           <Typography
             type={TypographyType.LABEL_MEDIUM}
-            style={styles.tabLabel}>
+            style={[
+              styles.tabLabel,
+              d.key === activeTab && {fontWeight: 'bold'},
+            ]}>
             {d.title}
           </Typography>
         </View>
@@ -311,7 +314,6 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     textAlign: 'center',
-    fontWeight: 'bold'
   },
   tabContainer: {
     flex: 1,
