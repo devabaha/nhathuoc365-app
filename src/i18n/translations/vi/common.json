@@ -267,6 +267,8 @@
   "agree": "Đồng ý",
   "select": "Chọn",
   "done": "Xong",
+  "iAgree": "Tôi đồng ý",
+  "iDecline": "Tôi từ chối",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "Đã có bản cập nhật mới!",
@@ -291,5 +293,10 @@
   "noStoreFound": "Không tìm thấy cửa hàng",
   "noResultFound": "Không tìm thấy dữ liệu",
   "map": "Bản đồ",
-  "goShopping": "Vào mua hàng"
+  "goShopping": "Vào mua hàng",
+  "eulaAgreement": "Thoả thuận người dùng (EULA)",
+  "agreeToEulaAgreement": {
+    "prefix": "Bằng việc nhấn {{title}}, bạn đã đồng ý với ",
+    "suffix": " của chúng tôi"
+  }
 }

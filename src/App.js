@@ -204,6 +204,7 @@ import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
+import ModalLicense from './components/ModalLicense';
 
 /**
  * Not allow font scaling
@@ -2112,16 +2113,24 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
+
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
                 component={ModalFilterProduct}
               />
+
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
               <Stack
                 key={appConfig.routes.customer}
                 component={Customer}
                 hideNavBar
+              />
+
+              {/* ================ MODAL LICENSE================ */}
+              <Stack
+                key={appConfig.routes.modalLicense}
+                component={ModalLicense}
               />
             </Lightbox>
 

@@ -16,7 +16,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.2.9';
+    return 'r12.2.10';
   }
 
   get appName() {
@@ -314,6 +314,7 @@ class Config {
       modalCalendar: 'modalCalendar',
       modalActionSheet: 'modalActionSheet',
       modalDateTimePicker: 'modalDateTimePicker',
+      modalLicense: 'modalLicense',
 
       //  Reset password
       resetPassword: 'resetPassword',

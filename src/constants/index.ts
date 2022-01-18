@@ -117,3 +117,8 @@ export const MEDIA_TYPE = {
   IMAGE: 'image',
   YOUTUBE_VIDEO: 'youtube',
 };
+
+export const EULA_AGREEMENT_USER_DECISION_DATA_KEY =
+  'eulaAgreementUserDecisionData';
+
+export const EULA_AGREEMENT_LAST_UPDATED = '2022-01-12';

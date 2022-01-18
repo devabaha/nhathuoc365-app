@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {reaction} from 'mobx';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -20,8 +21,9 @@ import {APIRequest} from '../.../../../network/Entity';
 import HorizontalInfoItem from './HorizontalInfoItem';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import Loading from '../Loading';
-import {GPS_LIST_TYPE} from 'src/constants';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import TextPressable from '../TextPressable';
+import {updateEULAUserDecision} from 'app-helper';
 
 class OpRegister extends Component {
   constructor(props) {
@@ -50,6 +52,8 @@ class OpRegister extends Component {
       birth: store.user_info ? store.user_info.birth : '',
       cities: [],
       listWarehouse: [],
+
+      eulaTextHeight: 0,
     };
 
     this.updateReferCodeDisposer = reaction(
@@ -151,6 +155,7 @@ class OpRegister extends Component {
           const response = await APIHandler.user_op_register(data);
           if (response?.status === STATUS_SUCCESS) {
             store.setUserInfo(response.data);
+            updateEULAUserDecision();
             Actions.reset(appConfig.routes.sceneWrapper);
           }
 
@@ -338,6 +343,18 @@ class OpRegister extends Component {
     });
   };
 
+  handleLayoutEULAText = (e) => {
+    if (e.nativeEvent.layout.height !== this.state.eulaTextHeight) {
+      this.setState({eulaTextHeight: e.nativeEvent.layout.height});
+    }
+  };
+
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({type: SERVICES_TYPE.EULA_AGREEMENT});
+  };
+
   renderDOB() {
     if (isConfigActive(CONFIG_KEY.CHOOSE_BIRTH_SITE_KEY)) {
       const dobData = {
@@ -472,148 +489,168 @@ class OpRegister extends Component {
       !this.state.referCodeEditable && styles.input_text_disabled;
 
     return (
-      <View style={styles.container}>
-        {loading && <Loading center />}
-        <ScrollView
-          style={{
-            marginBottom: store.keyboardTop + 60,
-          }}
-          keyboardShouldPersistTaps="handled">
-          <View style={styles.input_box}>
-            <Text style={styles.input_label}>
-              {t('data.name.title')} <Text style={styles.textRequired}>*</Text>
-            </Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          {loading && <Loading center />}
+          <ScrollView
+            style={{
+              marginBottom: store.keyboardTop + 60 + this.state.eulaTextHeight,
+            }}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.input_box}>
+              <Text style={styles.input_label}>
+                {t('data.name.title')}{' '}
+                <Text style={styles.textRequired}>*</Text>
+              </Text>
 
-            <View style={styles.input_text_box}>
-              <TextInput
-                ref={(ref) => (this.refs_name = ref)}
-                style={styles.input_text}
-                keyboardType="default"
-                maxLength={30}
-                placeholder={t('data.name.placeholder')}
-                underlineColorAndroid="transparent"
-                onChangeText={(value) => {
-                  this.setState({
-                    name: value,
-                  });
-                }}
-                value={this.state.name}
-                onLayout={() => {
-                  if (this.refs_name && !this.props.registerNow) {
-                    setTimeout(() => this.refs_name.focus(), 300);
-                  }
-                }}
-                onSubmitEditing={() => {
-                  if (this.refs_refer) {
-                    this.refs_refer.focus();
-                  }
-                }}
-                returnKeyType="next"
-              />
-            </View>
-          </View>
-
-          {this.renderDOB()}
-          {this.renderCity()}
-          {this.renderWarehouse()}
-
-          {this.isActiveReferCode && (
-            <>
-              <View
-                style={[
-                  styles.input_box,
-                  styles.referInputWrapper,
-                  !this.state.referCodeEditable &&
-                    styles.referInputWrapperDisable,
-                ]}>
-                <Text
-                  style={[
-                    styles.input_label,
-                    styles.referInputLabel,
-                    extraReferCodeStyle,
-                  ]}>
-                  {referCodeTitle}
-                </Text>
-
-                <View
-                  style={[styles.input_text_box, styles.referInputContainer]}>
-                  <TextInput
-                    editable={this.state.referCodeEditable}
-                    ref={(ref) => (this.refs_refer = ref)}
-                    style={[
-                      styles.input_text,
-                      styles.referInput,
-                      extraReferCodeStyle,
-                    ]}
-                    keyboardType="default"
-                    maxLength={30}
-                    placeholder={t('data.referCode.placeholder')}
-                    underlineColorAndroid="transparent"
-                    onChangeText={(value) => {
-                      this.setState({
-                        refer: value,
-                      });
-                    }}
-                    value={this.state.refer}
-                  />
-
-                  <TouchableOpacity
-                    disabled={!this.state.referCodeEditable}
-                    hitSlop={HIT_SLOP}
-                    onPress={this.onPressScanInvitationCode}
-                    style={[styles.inputIconContainer, extraReferCodeStyle]}>
-                    <Icon
-                      name="qrcode"
-                      style={[styles.inputIcon, extraReferCodeStyle]}
-                    />
-                  </TouchableOpacity>
-                </View>
+              <View style={styles.input_text_box}>
+                <TextInput
+                  ref={(ref) => (this.refs_name = ref)}
+                  style={styles.input_text}
+                  keyboardType="default"
+                  maxLength={30}
+                  placeholder={t('data.name.placeholder')}
+                  underlineColorAndroid="transparent"
+                  onChangeText={(value) => {
+                    this.setState({
+                      name: value,
+                    });
+                  }}
+                  value={this.state.name}
+                  onLayout={() => {
+                    if (this.refs_name && !this.props.registerNow) {
+                      setTimeout(() => this.refs_name.focus(), 300);
+                    }
+                  }}
+                  onSubmitEditing={() => {
+                    if (this.refs_refer) {
+                      this.refs_refer.focus();
+                    }
+                  }}
+                  returnKeyType="next"
+                />
               </View>
-              {/* <Text style={styles.disclaimerText}>
+            </View>
+
+            {this.renderDOB()}
+            {this.renderCity()}
+            {this.renderWarehouse()}
+
+            {this.isActiveReferCode && (
+              <>
+                <View
+                  style={[
+                    styles.input_box,
+                    styles.referInputWrapper,
+                    !this.state.referCodeEditable &&
+                      styles.referInputWrapperDisable,
+                  ]}>
+                  <Text
+                    style={[
+                      styles.input_label,
+                      styles.referInputLabel,
+                      extraReferCodeStyle,
+                    ]}>
+                    {referCodeTitle}
+                  </Text>
+
+                  <View
+                    style={[styles.input_text_box, styles.referInputContainer]}>
+                    <TextInput
+                      editable={this.state.referCodeEditable}
+                      ref={(ref) => (this.refs_refer = ref)}
+                      style={[
+                        styles.input_text,
+                        styles.referInput,
+                        extraReferCodeStyle,
+                      ]}
+                      keyboardType="default"
+                      maxLength={30}
+                      placeholder={t('data.referCode.placeholder')}
+                      underlineColorAndroid="transparent"
+                      onChangeText={(value) => {
+                        this.setState({
+                          refer: value,
+                        });
+                      }}
+                      value={this.state.refer}
+                    />
+
+                    <TouchableOpacity
+                      disabled={!this.state.referCodeEditable}
+                      hitSlop={HIT_SLOP}
+                      onPress={this.onPressScanInvitationCode}
+                      style={[styles.inputIconContainer, extraReferCodeStyle]}>
+                      <Icon
+                        name="qrcode"
+                        style={[styles.inputIcon, extraReferCodeStyle]}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {/* <Text style={styles.disclaimerText}>
                 {t('encourageMessage', {appName: APP_NAME_SHOW})}
               </Text> */}
-            </>
-          )}
-        </ScrollView>
+              </>
+            )}
+          </ScrollView>
 
-        <Button
-          onPress={this._onSave.bind(this)}
-          disabled={disabled}
-          containerStyle={[
-            styles.address_continue,
-            {bottom: store.keyboardTop},
-          ]}>
-          <View
+          <Text
+            onLayout={this.handleLayoutEULAText}
             style={[
-              styles.address_continue_content,
-              disabled && styles.btnDisabled,
+              styles.eulaAgreementMessage,
+              {bottom: store.keyboardTop + 75},
+            ]}>
+            {t('common:agreeToEulaAgreement.prefix', {
+              title: t('confirm.register.title'),
+            })}
+            <TextPressable
+              onPress={this.openEULAAgreement}
+              style={styles.eulaAgreementHighlightMessage}>
+              {t('common:eulaAgreement')}
+            </TextPressable>
+            {t('common:agreeToEulaAgreement.suffix')}
+          </Text>
+
+          <Button
+            onPress={this._onSave.bind(this)}
+            disabled={disabled}
+            containerStyle={[
+              styles.address_continue,
+              {bottom: store.keyboardTop},
             ]}>
             <View
-              style={{
-                minWidth: 20,
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {/* {this.state.loading ? (
+              style={[
+                styles.address_continue_content,
+                disabled && styles.btnDisabled,
+              ]}>
+              <View
+                style={{
+                  minWidth: 20,
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {/* {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : ( */}
-              <Icon
-                name={this.state.edit_mode ? 'save' : 'user-plus'}
-                size={20}
-                color="#ffffff"
-              />
-              {/* )} */}
-            </View>
+                <Icon
+                  name={this.state.edit_mode ? 'save' : 'user-plus'}
+                  size={20}
+                  color="#ffffff"
+                />
+                {/* )} */}
+              </View>
 
-            <Text style={styles.address_continue_title}>
-              {this.state.edit_mode
-                ? t('confirm.save.title')
-                : t('confirm.register.title')}
-            </Text>
-          </View>
-        </Button>
-      </View>
+              <Text style={styles.address_continue_title}>
+                {this.state.edit_mode
+                  ? t('confirm.save.title')
+                  : t('confirm.register.title')}
+              </Text>
+            </View>
+          </Button>
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -816,6 +853,17 @@ const styles = StyleSheet.create({
 
   textRequired: {
     color: appConfig.colors.status.danger,
+  },
+  eulaAgreementMessage: {
+    paddingHorizontal: 15,
+    color: appConfig.colors.text,
+    fontSize: 12,
+  },
+  eulaAgreementHighlightMessage: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: appConfig.colors.primary,
+    textDecorationLine: 'underline',
   },
 });
 
