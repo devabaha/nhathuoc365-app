@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
-- native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
 
+### Added
+- android:exported in Manifest for Android 12 target by [minhnguyen14@gmail.com].
+### Changed
+- Native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
 
 ## [r12.2.10]
 ### Added
