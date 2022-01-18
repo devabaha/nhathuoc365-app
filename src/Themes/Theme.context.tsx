@@ -51,7 +51,7 @@ export const ThemeProvider = React.memo<Props>((props) => {
   // We're using the React.useCallback hook for optimization
   const toggleTheme = React.useCallback((callback = () => {}) => {
     setTheme((currentTheme) => {
-      let nextTheme = currentTheme;
+      let nextTheme = BASE_LIGHT_THEME;
       switch (currentTheme.id) {
         case BASE_LIGHT_THEME_ID:
           nextTheme = CUSTOM_LIGHT_THEME_1;

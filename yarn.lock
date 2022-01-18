@@ -8504,10 +8504,10 @@ react-native-modalbox@^2.0.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-onesignal@^3.9.3:
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.9.3.tgz#8f8c095f8eed4ca4d934d25d7f33790569076fc9"
-  integrity sha512-ruCwKfBbofb6wDBVDLe37tIrnt3lqoIhPvejk/yIeie21yYirXt3HdytaDH47TuuXclet7HsC+2X39rLFP5JpQ==
+react-native-onesignal@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.3.3.tgz#c2249b69787065cb8d361e273d4ff4fac3bbf5ae"
+  integrity sha512-aJdgp32HsW1PEXgwMNXAaSbr037VdZmO70NPIQHWgCsIAGG4SD/MW9Kj197z1wdn/CRcfz/YNsZwhlmwUIgDMA==
   dependencies:
     invariant "^2.2.2"
 

@@ -98,7 +98,7 @@
     "react-native-localize": "^2.0.1",
     "react-native-md5": "^1.0.0",
     "react-native-modalbox": "^2.0.2",
-    "react-native-onesignal": "^3.9.3",
+    "react-native-onesignal": "^4.3.3",
     "react-native-open-maps": "^0.3.5",
     "react-native-permissions": "^3.0.0",
     "react-native-qrcode-scanner": "^1.6.0",
