@@ -547,6 +547,11 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       });
       break;
 
+    /** SALES REPORT */
+    case SERVICES_TYPE.SALES_REPORT:
+      Actions.push(appConfig.routes.salesReport);
+      break;
+
     /** LICENSE/ AGREEMENT */
     case SERVICES_TYPE.EULA_AGREEMENT:
       (async () => {

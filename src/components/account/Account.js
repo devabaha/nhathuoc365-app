@@ -484,7 +484,7 @@ class Account extends Component {
         label: t('options.salesReport.label'),
         desc: t('options.salesReport.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.salesReport),
+        onPress: () => servicesHandler({type: SERVICES_TYPE.SALES_REPORT}),
         boxIconStyle: [
           styles.boxIconStyle,
           {
