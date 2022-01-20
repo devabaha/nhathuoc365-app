@@ -9,8 +9,10 @@ export type LicenseOption = {
 };
 
 export interface ModalLicenseState {
+  content: string;
   checkboxes: Array<LicenseOption>;
   agreeBtnDisabled: boolean;
+  loading: boolean;
 }
 
 export interface ModalLicenseProps {
@@ -32,4 +34,6 @@ export interface ModalLicenseProps {
     confirmedCheckboxes: Array<LicenseOption>,
   ) => void;
   onDisagree?: () => void;
+
+  apiHandler?: () => {content: string};
 }

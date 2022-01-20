@@ -32,6 +32,7 @@ import {
   ScrollView,
   TextButton,
 } from 'src/components/base';
+import Loading from '../Loading';
 
 const styles = StyleSheet.create({
   modalLicense: {
@@ -112,8 +113,10 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
   };
 
   state = {
+    content: this.props.content,
     checkboxes: this.props.checkboxes,
     agreeBtnDisabled: true,
+    loading: false,
   };
   refModalLicense = React.createRef<any>();
 
@@ -124,7 +127,11 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
   componentDidMount() {
     Keyboard.dismiss();
 
-    if (this.state.checkboxes?.length === 0) {
+    if (this.props.apiHandler) {
+      this.getContent();
+    }
+
+    if (this.props.checkboxes?.length === 0) {
       this.setState({
         agreeBtnDisabled: false,
       });
@@ -132,6 +139,13 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
       this.handleBtnAgreeDisabled();
     }
   }
+
+  getContent = async () => {
+    this.setState({loading: true});
+
+    const {content} = await this.props.apiHandler();
+    setTimeout(() => this.setState({content, loading: false}), 3000);
+  };
 
   toggleCheckbox = (index) => {
     this.setState(
@@ -231,6 +245,8 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
         animationDuration={250}
         onClosed={pop}>
         <Container safeLayout style={[styles.container, this.containerStyle]}>
+          {this.state.loading && <Loading center />}
+
           {!!this.props.title ? (
             <View style={[styles.titleContainer, this.titleContainerStyle]}>
               <Typography
@@ -248,7 +264,7 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
               style={styles.contentHtmlContainer}
               contentContainerStyle={styles.contentTextContainer}>
               {!!this.props.isHTML ? (
-                <CustomAutoHeightWebView content={this.props.content} />
+                <CustomAutoHeightWebView content={this.state.content} />
               ) : (
                 <Typography type={TypographyType.LABEL_MEDIUM}>
                   {this.props.content}

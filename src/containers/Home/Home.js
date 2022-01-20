@@ -7,6 +7,7 @@ import {executeJobs} from '../../helper/jobsOnReset';
 import {servicesHandler} from '../../helper/servicesHandler';
 import {getTheme} from 'src/Themes/Theme.context';
 import {checkIfEULAAgreed, updateEULAUserDecision} from 'app-helper';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -15,6 +16,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import {SERVICES_TYPE} from '../../helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // entities
 import EventTracker from '../../helper/EventTracker';
 // custom components
@@ -81,18 +83,20 @@ class Home extends Component {
       });
     }
 
-    const isEULAAgreed = await checkIfEULAAgreed();
+    if (isConfigActive(CONFIG_KEY.ENABLE_EULA_KEY)) {
+      const isEULAAgreed = await checkIfEULAAgreed();
 
-    if (!isEULAAgreed) {
-      servicesHandler({
-        type: SERVICES_TYPE.EULA_AGREEMENT,
-        backdropPressToClose: false,
-        onAgree: async () => {
-          await updateEULAUserDecision();
-          this.getHomeDataFromApi();
-        },
-      });
-      return;
+      if (!isEULAAgreed) {
+        servicesHandler({
+          type: SERVICES_TYPE.EULA_AGREEMENT,
+          backdropPressToClose: false,
+          onAgree: async () => {
+            await updateEULAUserDecision();
+            this.getHomeDataFromApi();
+          },
+        });
+        return;
+      }
     }
 
     try {

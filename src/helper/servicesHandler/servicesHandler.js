@@ -18,6 +18,8 @@ import {
 } from './radaHandler';
 import {jump, push} from 'app-helper/routing';
 import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from 'app-helper';
+import APIHandler from 'src/network/APIHandler';
+import {CONFIG_KEY, getValueFromConfigKey} from 'app-helper/configKeyHandler';
 
 /**
  * A powerful handler for all app's services.
@@ -765,16 +767,33 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     case SERVICES_TYPE.EULA_AGREEMENT:
       (async () => {
         const isAgreed = await checkIfEULAAgreed();
-
+        const eulaId =
+          service.eulaId || getValueFromConfigKey(CONFIG_KEY.EULA_NEWS_ID);
+        console.log(eulaId);
         Actions.push(appConfig.routes.modalLicense, {
           backdropPressToClose: service.backdropPressToClose,
 
           title: service.title || commonT('eulaAgreement'),
           isHTML: service.isHTML || true,
-          content: service.content || getEULAContent(),
+          content: service.content || (!eulaId && getEULAContent()) || '',
           agreeTitle: isAgreed ? undefined : commonT('iAgree'),
 
           onAgree: service.onAgree || updateEULAUserDecision,
+          apiHandler: eulaId
+            ? async () => {
+                const response = await APIHandler.user_news(eulaId);
+                if (!response || response?.status !== STATUS_SUCCESS) {
+                  flashShowMessage({
+                    type: 'danger',
+                    message: response?.message || commonT('api.error.message'),
+                  });
+                }
+
+                return {
+                  content: response?.data?.content || getEULAContent(),
+                };
+              }
+            : undefined,
         });
       })();
       break;
