@@ -20,6 +20,7 @@ import appConfig from 'app-config';
 import {Actions} from 'react-native-router-flux';
 // custom components
 import CustomAutoHeightWebView from 'src/components/CustomAutoHeightWebview';
+import Loading from '../Loading';
 
 const styles = StyleSheet.create({
   modalLicense: {
@@ -116,13 +117,19 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
   };
 
   state = {
+    content: this.props.content,
     checkboxes: this.props.checkboxes,
     agreeBtnDisabled: true,
+    loading: false,
   };
   refModalLicense = React.createRef<any>();
 
   componentDidMount() {
     Keyboard.dismiss();
+
+    if (this.props.apiHandler) {
+      this.getContent();
+    }
 
     if (this.props.checkboxes?.length === 0) {
       this.setState({
@@ -132,6 +139,13 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
       this.handleBtnAgreeDisabled();
     }
   }
+
+  getContent = async () => {
+    this.setState({loading: true});
+
+    const {content} = await this.props.apiHandler();
+    setTimeout(() => this.setState({content, loading: false}), 3000);
+  };
 
   toggleCheckbox = (index) => {
     this.setState(
@@ -203,6 +217,7 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
         animationDuration={250}
         onClosed={Actions.pop}>
         <View style={styles.container}>
+          {this.state.loading && <Loading center />}
           {!!this.props.title ? (
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{this.props.title}</Text>
@@ -216,9 +231,9 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
               style={styles.contentHtmlContainer}
               contentContainerStyle={[styles.contentTextContainer]}>
               {!!this.props.isHTML ? (
-                <CustomAutoHeightWebView content={this.props.content} />
+                <CustomAutoHeightWebView content={this.state.content} />
               ) : (
-                <Text>{this.props.content}</Text>
+                <Text>{this.state.content}</Text>
               )}
             </ScrollView>
 

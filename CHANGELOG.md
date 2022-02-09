@@ -6,13 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [CU-24bbjej] change logic EULA by [minhnguyenit14@gmail.com].
 
+
+## [r12.2.11] - 2022-01-19
 ### Added
 - android:exported in Manifest for Android 12 target by [minhnguyen14@gmail.com].
 ### Changed
 - Native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
 
-## [r12.2.10]
+## [r12.2.10] - 2021-01-18
 ### Added
 - [CU-1zwaqqn] salesReport to servicesHandler by [minhnguyenit14@gmail.com].
 - [CU-21nmgan] EULA by [minhnguyenit14@gmail.com].
@@ -21,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CU-20dhzmw] Execute BranchIO, OneSignal even after CodePush finished by [minhnguyenit14@gmail.com].
 
-## [r12.2.9]
+## [r12.2.9] - 2021-12-24
 ### Added
 - [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
 - [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
