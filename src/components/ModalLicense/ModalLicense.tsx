@@ -7,6 +7,7 @@ import {
   ScrollView,
   Easing,
   Keyboard,
+  BackHandler,
 } from 'react-native';
 // 3-party libs
 import {withTranslation} from 'react-i18next';
@@ -126,6 +127,7 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
 
   componentDidMount() {
     Keyboard.dismiss();
+    BackHandler.addEventListener('hardwareBackPress', this.handleHardwareBackPress)
 
     if (this.props.apiHandler) {
       this.getContent();
@@ -138,6 +140,18 @@ class ModalLicense extends Component<ModalLicenseProps, ModalLicenseState> {
     } else {
       this.handleBtnAgreeDisabled();
     }
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleHardwareBackPress)
+  }
+  
+  handleHardwareBackPress = () => {
+    if(this.props.backdropPressToClose){
+      this.closeModal();
+    }
+
+    return true;
   }
 
   getContent = async () => {

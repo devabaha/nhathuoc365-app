@@ -6,9 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r12.2.12] - 2022-02-09
 ### Changed
 - [CU-24bbjej] change logic EULA by [minhnguyenit14@gmail.com].
-
 
 ## [r12.2.11] - 2022-01-19
 ### Added
