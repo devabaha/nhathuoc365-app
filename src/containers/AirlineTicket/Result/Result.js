@@ -1,23 +1,19 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Proptypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import Loading from '../../../components/Loading';
-import WebView from 'react-native-webview'
+import WebView from 'react-native-webview';
 
 export default class Result extends Component {
   static propTypes = {
-      url: Proptypes.string.isRequired,
-      jsCode: Proptypes.string
-  }
+    url: Proptypes.string.isRequired,
+    jsCode: Proptypes.string,
+  };
 
   static defaultProps = {
-    jsCode: ''
-  }
+    jsCode: '',
+  };
 
   constructor(props) {
     super(props);
@@ -25,19 +21,19 @@ export default class Result extends Component {
     this.state = {
       showLoading: false,
       url: props.url,
-      jsCode: props.jsCode
-    }
+      jsCode: props.jsCode,
+    };
   }
 
   onLoadStart() {
     this.setState({
-      showLoading: true
+      showLoading: true,
     });
   }
 
   onLoadEnd() {
     this.setState({
-      showLoading: false
+      showLoading: false,
     });
   }
 
@@ -48,7 +44,7 @@ export default class Result extends Component {
 
     if (!existViewApp) {
       this.setState({
-        url: url + (existGet ? '&' : '?') + 'view=app'
+        url: url + (existGet ? '&' : '?') + 'view=app',
       });
     }
   }
@@ -57,14 +53,13 @@ export default class Result extends Component {
     var {url, jsCode} = this.state;
 
     return (
-      
       <View style={[styles.container, this.props.style]}>
         <WebView
           injectedJavaScript={jsCode}
           onNavigationStateChange={this._onNavigationStateChange.bind(this)}
           onLoadStart={this.onLoadStart.bind(this)}
           onLoadEnd={this.onLoadEnd.bind(this)}
-					onLoad={this.onLoadEnd.bind(this)}
+          onLoad={this.onLoadEnd.bind(this)}
           source={{uri: url}}
           style={styles.webView}
         />
@@ -76,10 +71,11 @@ export default class Result extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
   webView: {
-    flex: 1
+    flex: 1,
+    opacity: 0.99,
   },
   loadingBox: {
     position: 'absolute',
@@ -87,13 +83,13 @@ const styles = StyleSheet.create({
     top: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingTitle: {
     fontSize: 14,
     marginTop: 4,
-    color: "#404040"
+    color: '#404040',
   },
 });

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r12.2.13] - 2022-02-11
 ### Fixed
 - [iOS] Uncomment code to enable onesignal push notification by [lamah.dev@gmail.com].
+- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) [minhnguyenit14dev@gmail.com].
 
 ## [r12.2.12] - 2022-02-09
 ### Changed
