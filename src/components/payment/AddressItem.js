@@ -137,7 +137,7 @@ function AddressItem({
   const addressContainerStyle = useMemo(() => {
     return mergeStyles(
       styles.address_box,
-      !selected && selectable && {backgroundColor: theme.color.underlay},
+      // !selected && selectable && {backgroundColor: theme.color.underlay},
     );
   }, [theme, selected, selectable]);
 
@@ -177,7 +177,7 @@ function AddressItem({
 
   const comboAddressStyle = useMemo(() => {
     return mergeStyles(styles.comboAddress, {
-      backgroundColor: theme.color.contentBackgroundWeak,
+      // backgroundColor: theme.color.contentBackgroundWeak,
     });
   }, [theme]);
 

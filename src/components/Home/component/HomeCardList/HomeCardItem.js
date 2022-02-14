@@ -19,6 +19,10 @@ import Loading from '../../../Loading';
 class HomeCardItem extends Component {
   static contextType = ThemeContext;
 
+  static defaultProps = {
+    shadowItem: true,
+  };
+
   state = {
     loading: false,
   };
@@ -91,7 +95,9 @@ class HomeCardItem extends Component {
           disabled={this.state.loading}
           onPress={this.handlePress}
           style={styles.wrapperBtn}>
-          <Card shadow style={styles.containerBtn}>
+          <Card
+            shadow={this.props.shadowItem}
+            style={[styles.containerBtn, this.props.contentContainerStyle]}>
             <ImageBg
               style={[styles.image, this.imageStyle, props.imageStyle]}
               source={{uri: props.imageUrl}}>
@@ -113,7 +119,7 @@ class HomeCardItem extends Component {
             </ImageBg>
             <View style={[styles.titleWrapper, props.textWrapperStyle]}>
               <Typography
-                type={TypographyType.TITLE_MEDIUM}
+                type={TypographyType.LABEL_LARGE}
                 numberOfLines={2}
                 style={this.titleStyle}>
                 {props.title}
@@ -162,7 +168,7 @@ const styles = StyleSheet.create({
   titleWrapper: {
     padding: 15,
   },
-  title: {},
+  title: {  },
   specialSubTitle: {},
   subTitle: {
     marginTop: 5,

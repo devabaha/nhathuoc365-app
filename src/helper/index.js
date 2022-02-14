@@ -2,12 +2,17 @@ import {Linking, Alert} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import i18n from 'i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from 'react-native-flash-message';
 import {
   EULA_AGREEMENT_LAST_UPDATED,
   EULA_AGREEMENT_USER_DECISION_DATA_KEY,
 } from 'src/constants';
 
 import {saveTheme, isDarkMode} from './theme';
+import getPreciseDistance from 'geolib/es/getPreciseDistance';
 
 export {saveTheme, isDarkMode};
 
@@ -198,4 +203,70 @@ export const getEULAContent = () => {
 
 export const randomIntFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+export const flashShowMessage = (props) => {
+  const flashMessageSuccessTheme = {
+    color: 'white',
+    backgroundColor: '#007E33',
+  };
+  const flashMessageDangerTheme = {
+    color: 'white',
+    backgroundColor: '#CC0000',
+  };
+  const flashMessageInfoTheme = {
+    color: 'white',
+    backgroundColor: '#0099CC',
+  };
+  const flashMessageWarningTheme = {
+    color: 'white',
+    backgroundColor: '#FF8800',
+  };
+  let theme = {};
+  switch (props.type) {
+    case 'danger':
+      theme = flashMessageDangerTheme;
+      break;
+    case 'success':
+      theme = flashMessageSuccessTheme;
+      break;
+    case 'info':
+      theme = flashMessageInfoTheme;
+      break;
+    case 'warning':
+      theme = flashMessageWarningTheme;
+      break;
+    default:
+      break;
+  }
+  showMessage({...props, ...theme});
+};
+
+export const calculateDiffDistance = (
+  locationStart,
+  locationEnd,
+  accurate = 100,
+) => {
+  const preciseDistance = getPreciseDistance(
+    locationStart,
+    locationEnd,
+    accurate,
+  );
+
+  return {
+    preciseDistance,
+    inKm: preciseDistance / 1000,
+  };
+};
+
+export const toFixed = (
+  num,
+  totalNumberAfterDecimalPoint = 2,
+  isRound = false,
+) => {
+  return (
+    Math[isRound ? 'round' : 'floor'](
+      num * Math.pow(10, totalNumberAfterDecimalPoint),
+    ) / Math.pow(10, totalNumberAfterDecimalPoint)
+  );
 };

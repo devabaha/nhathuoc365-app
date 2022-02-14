@@ -53,12 +53,14 @@ class Address extends Component {
     selectedAddressId: '',
     isVisibleUserAddress: true,
     isVisibleStoreAddress: false,
+    isUserAddress: false,
   };
 
   state = {
     refreshing: false,
     data: null,
     item_selected: this.defaultSelectedAddressId,
+    selectedAddress: null,
     loading: true,
     continue_loading: false,
     single: !this.props.from_page,
@@ -135,6 +137,7 @@ class Address extends Component {
       const response = await this.getAddressRequest.promise();
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
+          this.setDefaultSelectedAddress(response.data);
           setTimeout(() => {
             this.setState({
               data: [...response.data, {id: 0, type: 'address_add'}],
@@ -161,8 +164,11 @@ class Address extends Component {
   }
 
   _goConfirmPage() {
-    if (this.props.onSelectAddress) {
-      this.props.onSelectAddress(this.state.item_selected);
+    if (this.props.onSelectAddress && !!this.state.item_selected) {
+      this.props.onSelectAddress(
+        this.state.item_selected,
+        this.state.selectedAddress,
+      );
       pop();
       return;
     }
@@ -242,6 +248,7 @@ class Address extends Component {
   // chọn địa chỉ cho đơn hàng
   _addressSelectHandler(item) {
     this.setState({
+      selectedAddress: item,
       item_selected: item.id,
     });
   }
@@ -260,6 +267,7 @@ class Address extends Component {
         title: t('common:screen.address.editTitle'),
         addressReload: this.reloadAddress,
         from_page: this.props.from_page,
+        isUserAddress: this.props.isUserAddress,
       },
       this.theme,
     );
@@ -275,10 +283,21 @@ class Address extends Component {
         goBack: this.props.goBack,
         addressReload: this.reloadAddress,
         from_page: this.props.from_page,
+        isUserAddress: this.props.isUserAddress,
       },
       this.theme,
     );
   }
+
+  setDefaultSelectedAddress = (listAddress) => {
+    if (!this.state.selectedAddress && !!listAddress?.length) {
+      const selectedAddress =
+        listAddress.find(
+          (address) => address.id === this.state.item_selected,
+        ) || listAddress[0];
+      this.setState({selectedAddress});
+    }
+  };
 
   onRefresh = () => {
     this.setState({refreshing: true});
@@ -484,7 +503,7 @@ class Address extends Component {
 
             <BaseButton
               onPress={() => {
-                if (store.cart_data.address_id == 0) {
+                if (store.cart_data?.address_id == 0) {
                   this._goConfirmPage();
                 } else {
                   this._goConfirm();
@@ -531,7 +550,7 @@ class Address extends Component {
                       return this.renderAddButtonContent(index);
                     }
 
-                    var is_selected = false;
+                    let is_selected = false;
 
                     if (this.state.item_selected) {
                       if (this.state.item_selected == item.id) {
@@ -586,6 +605,7 @@ class Address extends Component {
                   this.scrollToSelectedAddress(ADDRESS_TYPE.STORE)
                 }
                 onSelectedAddressLayout={this.handleSelectedStoreAddressLayout}
+                onListAddressStoreChanged={this.setDefaultSelectedAddress}
               />
             </AddressContainer>
           )}

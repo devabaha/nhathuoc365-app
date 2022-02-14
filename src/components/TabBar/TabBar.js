@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {Animated, StyleSheet, Easing} from 'react-native';
+// 3-party libs
+import {reaction} from 'mobx';
 // configs
 import appConfig from 'app-config';
+import store from 'app-store';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
 // routing
@@ -18,14 +21,39 @@ import handleTabBarOnPress from 'app-helper/handleTabBarOnPress';
 class TabBar extends Component {
   static contextType = ThemeContext;
 
+  animatedTabBarValue = new Animated.Value(store.isHideTabbar ? 0 : 1);
+  hideTabbarDisposer = () => {};
+
+  componentDidMount() {
+    this.hideTabbarDisposer = reaction(
+      () => store.isHideTabbar,
+      this.handleHideTabbar,
+    );
+  }
+
+  componentWillUnmount() {
+    this.hideTabbarDisposer();
+  }
+
   get theme() {
     return getTheme(this);
   }
+
+  handleHideTabbar = (isHide) => {
+    Animated.timing(this.animatedTabBarValue, {
+      toValue: isHide ? 0 : 1,
+      duration: 250,
+      easing: Easing.quad,
+      useNativeDriver: true,
+    }).start();
+  };
 
   get containerStyle() {
     return {
       borderTopWidth: this.theme.layout.borderWidthPixel,
       borderColor: this.theme.color.border,
+      opacity: this.animatedTabBarValue,
+      position: store.isHideTabbar ? 'absolute' : 'relative',
     };
   }
 
@@ -34,7 +62,12 @@ class TabBar extends Component {
     const activeTabIndex = state.index;
 
     return (
-      <Container shadow row style={[styles.container, this.containerStyle]}>
+      <Container
+        animated
+        shadow
+        row
+        pointerEvents={store.isHideTabbar ? 'none' : 'auto'}
+        style={[styles.container, this.containerStyle]}>
         {state.routes.map((element, index) => {
           return (
             <BaseButton
@@ -63,6 +96,7 @@ class TabBar extends Component {
 const styles = StyleSheet.create({
   container: {
     height: NAV_BAR_HEIGHT + appConfig.device.bottomSpace,
+    bottom: 0,
   },
 });
 

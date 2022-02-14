@@ -32,6 +32,7 @@ const ListAddressStore = ({
   onChangeAddress = () => {},
   onLoadedData = () => {},
   onSelectedAddressLayout = () => {},
+  onListAddressStoreChanged = (listAddressStore) => {},
 }) => {
   const {theme} = useTheme();
 
@@ -69,6 +70,10 @@ const ListAddressStore = ({
     didMount();
     return unMount;
   }, []);
+
+  useEffect(() => {
+    onListAddressStoreChanged(listStore);
+  }, [listStore]);
 
   useEffect(() => {
     if (refreshing) {
@@ -236,7 +241,9 @@ const ListAddressStore = ({
   };
 
   const isLoadingNoResultTextStyle = useMemo(() => {
-    color: theme.color.textInactive;
+    return {
+      color: theme.color.textInactive,
+    };
   }, [theme]);
 
   const renderListAddress = ({item: storeAddress}) => {

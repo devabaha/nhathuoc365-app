@@ -31,16 +31,23 @@ class HomeCardList extends Component {
     ];
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, props.containerStyle]}>
         <View style={styles.content}>
-          <Typography type={TypographyType.TITLE_LARGE} style={styles.title}>
-            {props.title}
-          </Typography>
+          {!!props.title && (
+            <Typography
+              type={TypographyType.TITLE_LARGE}
+              style={[styles.title, this.props.titleStyle]}>
+              {props.title}
+            </Typography>
+          )}
 
           {props.onShowAll ? (
             <TextButton
               style={styles.showAllBtn}
-              titleStyle={this.showAllTitleStyle}
+              titleStyle={[
+                this.showAllTitleStyle,
+                this.props.showAllTitleStyle,
+              ]}
               onPress={props.onShowAll}>
               {t('viewAll')}
             </TextButton>
@@ -107,7 +114,6 @@ HomeCardList.propTypes = {
 
 HomeCardList.defaultProps = {
   data: [],
-  onShowAll: defaultListener,
   children: defaultListener,
 };
 

@@ -138,3 +138,5 @@ export const NAV_BAR_HEIGHT = Platform.select({
   android: 54,
   windows: 54,
 });
+
+export const STATUS_SUCCESS = 200;

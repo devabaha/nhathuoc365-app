@@ -1,7 +1,7 @@
 import Container from './Container';
 import Card, {CardBorderRadiusType} from './Card';
 import Typography, {TypographyFontSize, TypographyType} from './Typography';
-import Input from './Input';
+import Input, {AppInput} from './Input';
 import ActivityIndicator from './ActivityIndicator';
 import ScreenWrapper from './ScreenWrapper';
 import FlatList from './FlatList';
@@ -28,6 +28,7 @@ import NavBar, {NavBarWrapper} from './NavBar';
 import StatusBar from './StatusBar';
 
 import {Ref as RNRef, ReactChild, ReactChildren} from 'react';
+import {TFunctionResult} from 'i18next';
 
 export {
   Container,
@@ -61,9 +62,14 @@ export {
   CardBorderRadiusType,
   NavBar,
   NavBarWrapper,
-  StatusBar
+  StatusBar,
+  AppInput,
 };
 
-export type SingleChildren = ReactChild | ReactChildren | JSX.Element;
+export type SingleChildren =
+  | ReactChild
+  | ReactChildren
+  | JSX.Element
+  | TFunctionResult;
 export type Children = SingleChildren | SingleChildren[];
 export type Ref = RNRef<any>;

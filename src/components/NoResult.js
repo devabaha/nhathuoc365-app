@@ -15,10 +15,12 @@ const NoResult = ({
   iconName = 'file-remove',
   iconSize = 72,
   message = '',
+  description = '',
   contentContainerStyle = {},
   containerStyle = {},
   textStyle = {},
 
+  renderIcon = undefined,
   renderFooterComponent = () => null,
 }) => {
   const {theme} = useTheme();
@@ -29,6 +31,13 @@ const NoResult = ({
     };
   }, [theme]);
 
+  const iconStyle = useMemo(() => {
+    return {
+      ...textColorStyle,
+      fontSize: iconSize,
+    };
+  }, [textColorStyle, iconSize]);
+
   const titleStyle = useMemo(() => {
     return mergeStyles([styles.text, textColorStyle], textStyle);
   }, [theme, textColorStyle, textStyle]);
@@ -36,17 +45,19 @@ const NoResult = ({
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.contentContainer, contentContainerStyle]}>
-        {icon || (
-          <Icon
-            bundle={iconBundle}
-            name={iconName}
-            size={iconSize}
-            style={textColorStyle}
-          />
-        )}
+        {renderIcon
+          ? renderIcon(iconStyle)
+          : icon || (
+              <Icon bundle={iconBundle} name={iconName} style={iconStyle} />
+            )}
         <Typography type={TypographyType.TITLE_LARGE} style={titleStyle}>
           {message}
         </Typography>
+        {!!description && (
+          <Typography type={TypographyType.LABEL_MEDIUM} style={titleStyle}>
+            {description}
+          </Typography>
+        )}
         {renderFooterComponent && renderFooterComponent()}
       </View>
     </View>
@@ -70,6 +81,7 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 15,
     fontWeight: '500',
+    textAlign: 'center'
   },
 });
 

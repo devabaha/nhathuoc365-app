@@ -409,8 +409,8 @@ class Account extends Component {
       {
         key: 'address',
         icon: 'map-marker',
-        label: t('options.myAdress.label'),
-        desc: t('options.myAdress.desc'),
+        label: t('options.myAddress.label'),
+        desc: t('options.myAddress.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           push(

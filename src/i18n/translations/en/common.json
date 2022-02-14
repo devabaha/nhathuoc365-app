@@ -375,5 +375,9 @@
   "agreeToEulaAgreement": {
     "prefix": "By pressing {{title}}, you agreed to our ",
     "suffix": ""
-  }
+  },
+  "allowLocationAccessLocation": "Allow location access",
+  "location": "Location",
+  "requestTimeout": "Request timeout",
+  "requireLocation": "Please enable Location and grant Location access to the app to get the best usage experience"
 }

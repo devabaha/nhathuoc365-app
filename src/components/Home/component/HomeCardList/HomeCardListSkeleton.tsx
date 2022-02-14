@@ -62,7 +62,7 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
 
   render() {
     return (
-      <Container noBackground style={styles.container}>
+      <Container noBackground style={[styles.container, this.props.containerStyle]}>
         <View style={styles.contentContainer}>
           <View style={styles.content}>
             <Skeleton container style={styles.title} />
@@ -73,18 +73,24 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
             horizontal
             data={Array.from({length: SKELETON_LENGTH}, (_, idx) => `${++idx}`)}
             showsHorizontalScrollIndicator={false}
-            renderItem={() => {
-              return (
-                <View
-                  style={[styles.itemContainer, this.props.itemContainerStyle]}>
-                  <Skeleton
-                    container
-                    style={[styles.itemMain, this.props.mainStyle]}
-                  />
-                  <Skeleton container style={styles.itemSub} />
-                </View>
-              );
-            }}
+            renderItem={
+              this.props.renderItem ||
+              (() => {
+                return (
+                  <View
+                    style={[
+                      styles.itemContainer,
+                      this.props.itemContainerStyle,
+                    ]}>
+                    <Skeleton
+                      container
+                      style={[styles.itemMain, this.props.mainStyle]}
+                    />
+                    <Skeleton container style={styles.itemSub} />
+                  </View>
+                );
+              })
+            }
             keyExtractor={(item, index) => index.toString()}
           />
         </View>

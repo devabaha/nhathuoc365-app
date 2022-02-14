@@ -31,6 +31,7 @@ import {
   TextButton,
   Typography,
 } from 'src/components/base';
+import Loading from '../Loading';
 
 class CreateAddress extends Component {
   static contextType = ThemeContext;
@@ -65,7 +66,8 @@ class CreateAddress extends Component {
 
         default_flag: edit_data.default_flag == 1 ? true : false,
         finish_loading: false,
-        is_user_address: this.props.from_page == 'account',
+        is_user_address:
+          this.props.from_page == 'account' || this.props.isUserAddress,
       };
     } else {
       return {
@@ -89,7 +91,8 @@ class CreateAddress extends Component {
 
         default_flag: false,
         finish_loading: false,
-        is_user_address: this.props.from_page == 'account',
+        is_user_address:
+          this.props.from_page == 'account' || this.props.isUserAddress,
       };
     }
   }
@@ -705,6 +708,7 @@ class CreateAddress extends Component {
 
     return (
       <>
+        {this.state.finish_loading && <Loading center />}
         <ScreenWrapper safeLayout={!store.keyboardTop}>
           <ScrollView
             style={styles.container}

@@ -45,7 +45,8 @@ import {
 
 const styles = StyleSheet.create({
   searchInput: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     margin: 15,
   },
   welcomeMessageContainer: {
