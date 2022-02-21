@@ -80,7 +80,7 @@ function MyVoucherItem(props) {
   return (
     <BaseButton
       onPress={props.onPress}
-      containerStyle={[styles.btnWrapper, {marginBottom: props.last ? 16 : 0}]}>
+      style={[styles.btnWrapper, {marginBottom: props.last ? 16 : 0}]}>
       <View style={[styles.dotLarge, styles.dotTop, dotStyle]} />
       <View style={[styles.dotLarge, styles.dotBottom, dotStyle]} />
 
