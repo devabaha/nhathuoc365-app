@@ -106,10 +106,10 @@ const CUSTOM_SCRIPT = `
 `;
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   webview: {
     width: '100%',
+    opacity: 0.99,
   },
 });
 

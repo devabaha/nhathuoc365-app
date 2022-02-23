@@ -7,12 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.14] - 2022-02-22
+### Added
+- [CU-29bphmw] Image in ProgressTrackingBar by [lamah.dev@gmail.com].
+
+## [r12.2.13] - 2022-02-11
+### Fixed
+- [iOS] Uncomment code to enable onesignal push notification by [lamah.dev@gmail.com].
+- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) [minhnguyenit14dev@gmail.com].
+
+## [r12.2.12] - 2022-02-09
+### Changed
+- [CU-24bbjej] change logic EULA by [minhnguyenit14@gmail.com].
+
+## [r12.2.11] - 2022-01-19
 ### Added
 - android:exported in Manifest for Android 12 target by [minhnguyen14@gmail.com].
 ### Changed
 - Native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
 
-## [r12.2.10]
+## [r12.2.10] - 2021-01-18
 ### Added
 - [CU-1zwaqqn] salesReport to servicesHandler by [minhnguyenit14@gmail.com].
 - [CU-21nmgan] EULA by [minhnguyenit14@gmail.com].
@@ -21,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [CU-20dhzmw] Execute BranchIO, OneSignal even after CodePush finished by [minhnguyenit14@gmail.com].
 
-## [r12.2.9]
+## [r12.2.9] - 2021-12-24
 ### Added
 - [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
 - [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
