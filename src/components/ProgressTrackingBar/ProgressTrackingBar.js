@@ -1,13 +1,23 @@
 import React, {useMemo} from 'react';
 import {SectionList, StyleSheet, View} from 'react-native';
+//configs
+import appConfig from 'app-config';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType, BundleIconSetName} from 'src/components/base';
 // custom components
-import {Card, Container, Typography, Icon} from 'src/components/base';
+import {
+  Card,
+  Container,
+  Typography,
+  Icon,
+  ImageButton,
+} from 'src/components/base';
 import CustomPad from 'src/containers/ProgressTracking/ProgressTrackingDetail/CustomPad';
 import NoResult from 'src/components/NoResult';
 // skeleton
@@ -23,7 +33,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
   },
-  itemWrapper: {},
+  trackWrapper: {},
   trackContainer: {
     position: 'absolute',
     height: '100%',
@@ -47,12 +57,28 @@ const styles = StyleSheet.create({
     paddingBottom: TRACK_WIDTH * 2,
   },
 
-  itemContainer: {
+  itemWrapper: {
     marginTop: 5,
     marginLeft: 15,
     padding: 15,
     marginBottom: 10,
   },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  contentWrapper: {
+    flex: 1,
+  },
+  imageContainer: {
+    marginLeft: 10,
+    alignSelf: 'flex-start',
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
+
   title: {},
   description: {
     marginTop: 5,
@@ -107,6 +133,12 @@ const ProgressTrackingBar = ({
 
   const {t} = useTranslation(['common']);
 
+  const onPressImage = (item) => {
+    push(appConfig.routes.itemImageViewer, {
+      images: item.images,
+    });
+  };
+
   const renderIconSectionHeader = (titleStyle) => {
     return (
       <Icon
@@ -149,7 +181,7 @@ const ProgressTrackingBar = ({
         ? styles.firstTrack
         : index === section.data.length - 1 && styles.lastTrack;
     return (
-      <Container noBackground style={[styles.itemWrapper, trackWrapperStyle]}>
+      <Container noBackground style={[styles.trackWrapper, trackWrapperStyle]}>
         <Container
           shadow
           style={[styles.trackContainer, extraStyle, trackContainerStyle]}>
@@ -161,15 +193,31 @@ const ProgressTrackingBar = ({
           )}
         </Container>
 
-        <Card shadow style={styles.itemContainer}>
-          <Typography type={TypographyType.LABEL_MEDIUM} style={styles.title}>
-            {item.title}
-          </Typography>
-          <Typography
-            type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
-            style={styles.description}>
-            {item.description}
-          </Typography>
+        <Card shadow style={styles.itemWrapper}>
+          <View style={styles.itemContainer}>
+            <View style={styles.contentWrapper}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.title}>
+                {item.title}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
+                style={styles.description}>
+                {item.description}
+              </Typography>
+            </View>
+            {!!item?.images?.length && (
+              <ImageButton
+                onPress={() => onPressImage(item, index)}
+                style={styles.imageContainer}
+                imageStyle={styles.image}
+                source={{
+                  uri: item?.images[0]?.url,
+                }}
+              />
+            )}
+          </View>
         </Card>
       </Container>
     );
