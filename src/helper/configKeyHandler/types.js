@@ -55,5 +55,6 @@ export const CONFIG_KEY = {
 
   PARTNER_REGISTRATION_LINK_KEY: 'partner_registration_link_key',
   
-  SLA_NEWS_ID_KEY: 'sla_news_id_key',
+  ENABLE_EULA_KEY: 'enable_eula_key',
+  EULA_NEWS_ID: 'eula_news_id',
 };

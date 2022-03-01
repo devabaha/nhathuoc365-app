@@ -49,8 +49,8 @@ code-push release-react tick-nhathuoc365-android android -d "Production" -m --de
 code-push release-react tick-nhathuoc365-ios ios -d "Production" -m --description "test codepush"
 code-push release-react tick-nhathuoc365-android android -d "Production" -m --description "test codepush"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "Release tag r12.2.15"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-android -d "Production" -m --description "Release tag r12.2.15"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
