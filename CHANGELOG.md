@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
 
 
+## [r12.2.15] - 2022-02-28
+### Fixed
+- [iOS] Crash app iOS 12 while running Xcode 13 because of LinkPresentaion.framework by [minhnguyenit14dev@gmail.com].
+
 ## [r12.2.14] - 2022-02-22
 ### Added
 - [CU-29bphmw] Image in ProgressTrackingBar by [lamah.dev@gmail.com].
