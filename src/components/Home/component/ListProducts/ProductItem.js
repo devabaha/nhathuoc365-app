@@ -66,7 +66,7 @@ class ProductItem extends PureComponent {
   };
   CTAProduct = new CTAProduct(this);
 
-  unmounted = false;  
+  unmounted = false;
 
   get theme() {
     return getTheme(this);
@@ -233,6 +233,21 @@ class ProductItem extends PureComponent {
                           </Typography>
                         )}
 
+                        <View style={styles.discountContainer}>
+                          {this.props.discount_percent > 0 && (
+                            <Typography
+                              type={TypographyType.DESCRIPTION_MEDIUM}
+                              style={styles.discount}>
+                              <Typography
+                                type={TypographyType.DESCRIPTION_MEDIUM}
+                                style={styles.deletedTitle}>
+                                {this.props.discount_view}
+                              </Typography>
+                              {/* {'/ ' + this.props.unit_name} */}
+                            </Typography>
+                          )}
+                        </View>
+
                         <View style={styles.priceBox}>
                           <Typography
                             type={TypographyType.LABEL_LARGE_PRIMARY}
@@ -338,6 +353,11 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   commissionText: {},
+  discountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   discount: {
     marginTop: 4,
   },
