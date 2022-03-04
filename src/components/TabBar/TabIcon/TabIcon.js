@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
+import {Observer, observer} from 'mobx-react';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -38,7 +40,7 @@ class TabIcon extends Component {
     return getTheme(this);
   }
 
-  renderLabel() {
+  renderLabel = () => {
     return (
       <Typography
         type={TypographyType.LABEL_TINY}
@@ -48,7 +50,7 @@ class TabIcon extends Component {
         {this.props.iconLabel}
       </Typography>
     );
-  }
+  };
 
   renderIcon = (titleStyle, fontStyle) => {
     const SVGIcon = this.props.iconSVG;
@@ -85,14 +87,23 @@ class TabIcon extends Component {
   };
 
   renderNotifyCount() {
-    const notifyCount = normalizeNotify(store.notify[this.props.notifyKey], 20);
     return (
-      <NotiBadge
-        containerStyle={styles.notifyWrapper}
-        label={notifyCount}
-        show={!!notifyCount}
-        animation={!!notifyCount}
-      />
+      <Observer>
+        {() => {
+          const notifyCount = normalizeNotify(
+            store.notify[this.props.notifyKey],
+            20,
+          );
+          return (
+            <NotiBadge
+              containerStyle={styles.notifyWrapper}
+              label={notifyCount}
+              show={!!notifyCount}
+              animation={!!notifyCount}
+            />
+          );
+        }}
+      </Observer>
     );
   }
 
