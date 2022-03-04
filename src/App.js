@@ -608,8 +608,8 @@ class App extends Component {
   handleAddListenerOneSignal = () => {
     OneSignal.setAppId(appConfig.oneSignal.appKey);
     //Prompt for push on iOS
-    OneSignal.promptForPushNotificationsWithUserResponse(response => {
-      console.log("Prompt response:", response);
+    OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+      console.log('Prompt response:', response);
     });
 
     //Method for handling notifications received while app in foreground
@@ -634,8 +634,9 @@ class App extends Component {
       this.handleOpenningNotification(notification);
     });
 
-    OneSignal.getDeviceState().then(this.handleAddPushToken);
-    //
+    OneSignal.addSubscriptionObserver((event) => {
+      OneSignal.getDeviceState().then(this.handleAddPushToken);
+    });
   };
 
   handleAddPushToken = async (device) => {
