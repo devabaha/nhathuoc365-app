@@ -120,7 +120,7 @@ const Scene = ({
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         ListHeaderComponent={
-          !isShowPremiumPoint && renderPremiumBenefitsHeader(premium)
+          isShowPremiumPoint && renderPremiumBenefitsHeader(premium)
         }
         ListFooterComponent={
           <Container row noBackground style={styles.loyaltyContainer}>
