@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
+
+## [r12.2.15] - 2022-02-28
+### Fixed
+- [iOS] Crash app iOS 12 while running Xcode 13 because of LinkPresentaion.framework by [minhnguyenit14dev@gmail.com].
 
 ## [r12.2.14] - 2022-02-22
 ### Added
