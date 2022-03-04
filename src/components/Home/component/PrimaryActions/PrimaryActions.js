@@ -102,7 +102,7 @@ class PrimaryActions extends Component {
         <Card shadow style={[styles.actionsWrapper, actionsWrapper]}>
           {!this.isHideWalletBox && (
             <View style={styles.mainContentWrapper}>
-              {!this.isActiveQRScan ? (
+              {this.isActiveQRScan ? (
                 <View style={styles.pointRechargeBtnContainer}>
                   <QRScanButton
                     useTouchableHighlight={false}
