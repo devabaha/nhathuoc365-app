@@ -103,6 +103,22 @@ export const REQUEST_TYPE = {
 };
 
 export const GPS_LIST_TYPE = {
+  /**
+   * @description list of store in a site
+   */
   GPS_LIST_SITE: 'gps_list_site',
+  /**
+   * @description list of site
+   */
   GPS_LIST_STORE: 'gps_list_store',
 };
+
+export const MEDIA_TYPE = {
+  IMAGE: 'image',
+  YOUTUBE_VIDEO: 'youtube',
+};
+
+export const EULA_AGREEMENT_USER_DECISION_DATA_KEY =
+  'eulaAgreementUserDecisionData';
+
+export const EULA_AGREEMENT_LAST_UPDATED = '2022-01-12';

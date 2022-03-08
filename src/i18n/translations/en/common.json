@@ -306,6 +306,10 @@
   "showLess": "Show less",
   "update": "Update",
   "agree": "OK",
+  "select": "Select",
+  "done": "Done",
+  "iAgree": "I agree",
+  "iDecline": "I decline",
   "codePush": {
     "alert": {
       "hasUpdateTitle": "New update available!",
@@ -326,5 +330,14 @@
     "runInBackground": "Run in background"
   },
   "optional": "optional",
-  "cantOpenLink": "Can not open link!"
+  "cantOpenLink": "Can not open link!",
+  "noStoreFound": "No stores found",
+  "noResultFound": "No results found",
+  "map": "Map",
+  "goShopping": "Go shopping",
+  "eulaAgreement": "User agreement (EULA)",
+  "agreeToEulaAgreement": {
+    "prefix": "By pressing {{title}}, you agreed to our ",
+    "suffix": ""
+  }
 }

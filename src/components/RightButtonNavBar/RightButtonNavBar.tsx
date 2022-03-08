@@ -4,9 +4,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   View,
-  Share,
 } from 'react-native';
-import RNShare from 'react-native-share';
 import {Actions} from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import appConfig from '../../config';
@@ -19,6 +17,7 @@ import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {saveImage} from '../../helper/image';
 import {BUNDLE_ICON_SETS} from 'src/constants';
 import {IWrappedComponent} from 'mobx-react';
+import {share} from 'app-helper/share';
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
@@ -154,35 +153,9 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   async handlePressShare() {
-    try {
-      const message = this.props.shareTitle;
-      const url = this.props.shareURL;
-      const shareContent = url
-        ? {url, message: `Xem ${message} tại ${url}`}
-        : {message};
-
-      const result = await Share.share(shareContent, {
-        dialogTitle: message,
-        tintColor: appConfig.colors.primary,
-      });
-
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error) {
-      console.log('%cerror_sharing', 'color: red', error);
-      //@ts-ignore
-      flashShowMessage({
-        type: 'danger',
-        message: 'Chia sẻ không thành công! Bạn vui lòng thử lại sau!',
-      });
-    }
+    const message = this.props.shareTitle;
+    const url = this.props.shareURL;
+    share(undefined, `Xem ${message} tại ${url}`);
   }
 
   handlePressDownloadImage() {
@@ -193,8 +166,8 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     Actions.push(appConfig.routes.modalActionSheet, {
       options: this.props.moreOptions,
       onPress: this.props.onPressMoreAction,
-      ...this.props.moreActionsProps
-    })
+      ...this.props.moreActionsProps,
+    });
   };
 
   updateNoti() {
@@ -221,9 +194,13 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   render() {
+    if (this.props.type === RIGHT_BUTTON_TYPE.SHARE && !this.props.shareURL)
+      return null;
+
     const TouchableComponent = this.props.touchableOpacity
       ? TouchableOpacity
       : TouchableHighlight;
+
     return (
       <TouchableComponent
         underlayColor="transparent"

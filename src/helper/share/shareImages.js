@@ -1,5 +1,6 @@
 import Share from 'react-native-share';
 import pLimit from 'p-limit';
+import i18n from 'i18next';
 
 import {downloadImage} from 'app-helper/image/imageDownloadingHandler';
 
@@ -13,6 +14,8 @@ export const shareImages = async (
   metadataUrl = '',
   maxLength = 20,
 ) => {
+  const t = i18n.getFixedT(undefined, 'common');
+
   const imagesData = imageURLs.slice(0, maxLength).map((url) => {
     return limit(() =>
       downloadImage(url).then((response) => response?.imageBase64),

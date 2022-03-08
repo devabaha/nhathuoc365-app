@@ -64,6 +64,10 @@ import en_social from './en/social.json';
 import en_salesReport from './en/salesReport.json';
 import en_progressTracking from './en/progressTracking.json';
 import en_request from './en/request.json';
+import vi_gpsStore from './vi/gpsStore.json';
+import en_gpsStore from './en/gpsStore.json';
+import vi_license from './vi/license.json';
+import en_license from './en/license.json';
 
 // zh
 import zh_common from './zh/common.json';
@@ -127,6 +131,8 @@ export default {
     salesReport: vi_salesReport,
     progressTracking: vi_progressTracking,
     request: vi_request,
+    gpsStore: vi_gpsStore,
+    license: vi_license,
   },
   [languages.en.value]: {
     common: en_common,
@@ -160,6 +166,8 @@ export default {
     salesReport: en_salesReport,
     progressTracking: en_progressTracking,
     request: en_request,
+    gpsStore: en_gpsStore,
+    license: en_license,
   },
   [languages.zh.value]: {
     common: zh_common,

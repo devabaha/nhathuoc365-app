@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [b12.2.6] - 2022-03-08
+- [r12.2.6]
+- 
 ## [b12.1.5] - 2021-10-19
 - [r12.1.5]
 
@@ -39,11 +42,139 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -----------------------------------------------------
 
-## [r12.1.5]
+## [r12.2.16] - 2022-03-08
+### Fixed
+- Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
+- Main Voucher screen is not updating quantity when vouchers are received complete by [kienluu612@gmail.com].
+
+## [r12.2.15] - 2022-02-28
+### Fixed
+- [iOS] Crash app iOS 12 while running Xcode 13 because of LinkPresentaion.framework by [minhnguyenit14dev@gmail.com].
+
+## [r12.2.14] - 2022-02-22
+### Added
+- [CU-29bphmw] Image in ProgressTrackingBar by [lamah.dev@gmail.com].
+
+## [r12.2.13] - 2022-02-11
+### Fixed
+- [iOS] Uncomment code to enable onesignal push notification by [lamah.dev@gmail.com].
+- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) [minhnguyenit14dev@gmail.com].
+
+## [r12.2.12] - 2022-02-09
+### Changed
+- [CU-24bbjej] change logic EULA by [minhnguyenit14@gmail.com].
+
+## [r12.2.11] - 2022-01-19
+### Added
+- android:exported in Manifest for Android 12 target by [minhnguyen14@gmail.com].
+### Changed
+- Native things for Apple M1 chip compatible by [minhnguyen14@gmail.com] [laptrinhvien2013@gmail.com].
+
+## [r12.2.10] - 2021-01-18
+### Added
+- [CU-1zwaqqn] salesReport to servicesHandler by [minhnguyenit14@gmail.com].
+- [CU-21nmgan] EULA by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1vrne37] Adjust UI, UX, logic CTAProduct, action buttons in Item [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-20dhzmw] Execute BranchIO, OneSignal even after CodePush finished by [minhnguyenit14@gmail.com].
+
+## [r12.2.9] - 2021-12-24
+### Added
+- [CU-1py4j71] Video control by [minhnguyenit14@gmail.com].
+- [CU-201z7xj] partner_registration_link_key to configKey by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1yzkbud] SocialNews tab to Orders tab also remove Orders option in Account by [minhnguyenit14@gmail.com].
+
+## [r12.2.8] - 2021-12-24
+### Changed
+- [CU-1zb19ye] use GPSListStore to choose warehouse (sale point) by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1yzrma0] UI screen Transaction by [thanhyagami@gmail.com].
+
+## [r12.2.7] - 2021-12-07
+### Fixed
+- [CU-1wfhh1w] Re-getting transactionData when user press back from SDK in Transaction by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1vrne37] Adjust UI, UX, logic CTAProduct, action buttons in Item [minhnguyenit14@gmail.com].
+
+## [r12.2.6] - 2021-11-29
+### Changed
+- [CU-1vrvxqq] condition to show discount_view in CartItem by [minhnguyenit14@gmail.com].
+- Show required sign for input labels in OpRegister by [minhnguyenit14@gmail.com].
+### Fixed
+- [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [minhnguyenit14@gmail.com].
+
+## [r12.2.5] - 2021-11-27
+### Added
+- [CU-1vk2n6q] Check status STATUS_SYNC_FLAG after logging in OTP by [lamah.dev@gmail.com].
+### Changed
+- [CU-1vk24rt] Title Choose store instead Warehouse in OpRegister by [thanhyagami@gmail.com].
+- [CU-1vrqar8] Logic of choose_store_site_key in GPS List Store by [kienluu612@gmail.com].
+
+## [r12.2.4] - 2021-11-24
+### Added
+- [CU-1vdc9bt] [iOS] Language support on the App Store by [lamah.dev@gmail.com].
+
+## [r12.2.3] - 2021-11-22
+### Fixed
+- [CU-1tm27u3] [Android] Can not open link in Chat by [lamah.dev@gmail.com].
+
+## [r12.2.2] - 2021-11-20
+### Added
+- [CU-1tef5vn] hide_affiliate_account_key in Account by [lamah.dev@gmaill.com].
+### Changed
+- Titles of Pricing and Promotion Section in Confirm by [kienluu612@gmail.com]
+- [CU-1t2wc22] UI in GPSListStore by [kienluu612@gmail.com]
+- [CU-1rx6vh1] History content when searching products by [kienluu612@gmail.com].
+### Fixed
+- [Android] can not share url in Notify by [lamah.dev@gmail.com].
+
+## [r12.2.1] - 2021-11-03
+### Added
+- [CU-m83pww] Integrate VNPAY SDK by [minhnguyenit14@gmail.com].
+- [CU-1q9my54] data_va info in Transaction by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] iframe embedded can not open full screen by [minhnguyenit14@gmail.com].
+
+## [r12.1.8] - 2021-11-03
+### Added
+- [CU-1qfavjg] Video in NotifyItem by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-1qfavjg] History UX in stores/Search by [minhnguyenit14@gmail.com].
+### Fixed
+- Not redirect to Confirm  after select address when pick_up_at_the_store_key active by [minhnguyenit14@gmail.com].
+
+## [r12.1.7] - 2021-10-29
+### Added
+- hide_wallet_account_key by [minhnguyenit14@gmail.com].
+- hide_vouchers_account_key by [minhnguyenit14@gmail.com].
+### Changed
+- GPS_LIST_STORE, GPS_LIST_SITE UI, UX by [minhnguyenit14@gmail.com].
+- select_city_key to choose_city_site_key, select_birth_key to choose_birth_site_key, select_store_key to choose_store_site_key by [minhnguyenit14@gmail.com].
+- Hide RightButtonNavBar type share prop shareURL not existed by [minhnguyenit14@gmail.com].
+### Fixed
+- [Android] Can not get current location in the first time by [minhnguyenit14@gmail.com].
+- [Android] In some devices, home page can not show all content by [minhnguyenit14@gmail.com].
+
+## [r12.1.6] - 2021-10-28
+### Added
+- [CU-e00xdw] hide_wallet_homepage_key in Home by [lamah.dev@gmail.com].
+- ModalDateTimePicker by [minhnguyenit14@gmail.com].
+- [CU-1p1jyea] gateway when call api add_payment_method by [minhnguyenit14@gmail.com].
+- [CU-cxj2uh] Include youtube video in product carousel, ItemImageViewer by [minhnguyenit14@gmail.com].
+### Changed
+- Header of MultiLevelCategories by [minhnguyenit14@gmail.com].
+- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
+- [CU-1pd4hmw] Display the box to enter the referral code when clicking the affiliate link by [lamah.dev@gmail.com].
+### Fixed
+- [CU-1p7b8x5] Crash when show DateTime picker by [minhnguyenit14@gmail.com].
+
+## [r12.1.5] - 2021-10-19
 ### Added
 - [CU-e00xdw] Allow user edit, delete their post, comment by [minhnguyenit14@gmail.com].
 - [CU-gvavfv] Wholesale prices detail in product_detail by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
-- [CU-1nvwnbr] hide_register_referral_code_key in OpRegister by [lamah.dev@gmail.com].
+- [CU-1napwg9] Search header in ListSite by [kienluu612@gmail.com].
 ### Changed
 - [CU-1napwg9] ListSite View in HomeScreen by [kienluu612@gmail.com].
 - [CU-1nvxad7] Open link with webview instead of Linking in TickidChat by [lamah.dev@gmail.com].
@@ -54,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-1mtfept] Not showing data when auto scrolling to the selected item in ModalLocation by [minhnguyenit14@gmail.com].
 - Creating address is duplicated in CreateAddress by [lamah.dev@gmail.com].
 
-## [r12.1.4]
+## [r12.1.4] - 2021-10-01
 ### Added
 - [CU-mdwa93] Short content product in Item by [lamah.dev@gmail.com].
 - [CU-e5k8uy] Report for invitation users by [kienluu612@gmail.com] [minhnguyenit14@gmail.com].
@@ -73,7 +204,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-j3fuac] Use title from service as a highest priority for agency_information_register type by [minhnguyenit14@gmail.com].
 - [Android] Doesn't log out firebase when log out app by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
-## [r12.1.3]
+## [r12.1.3] - 2021-09-14
 ### Added
 - [CU-gnnqkm] hide_premium_point_key in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].
 - [CU-e5q6jn] config_key facebook_fanpage in Account by [lamah.dev@gmail.com] [minhnguyenit14@gmail.com].

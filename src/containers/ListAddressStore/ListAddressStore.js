@@ -13,6 +13,7 @@ import store from '../../store/Store';
 import AddressItem from '../../components/payment/AddressItem';
 import NoResult from './NoResult';
 import {getPreciseDistance} from 'geolib';
+import useIsMounted from 'react-is-mounted-hook';
 
 const styles = StyleSheet.create({
   storeContainer: {
@@ -122,6 +123,8 @@ const ListAddressStore = ({
   onLoadedData = () => {},
   onSelectedAddressLayout = () => {},
 }) => {
+  const isMounted = useIsMounted();
+
   const getListAddressStoreRequest = new APIRequest();
   const requests = [getListAddressStoreRequest];
   const appState = useRef('active');
@@ -240,12 +243,24 @@ const ListAddressStore = ({
       distanceFilter: 1,
     };
     Geolocation.clearWatch(watchID.current);
-    watchID.current = Geolocation.watchPosition(
-      (position) => handleSaveLocation(position),
-      (err) => {
-        console.log('watch_position', watchID.current, err);
-        setConnectGPS(false);
-        !listStore?.length && getListAddressStore();
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log('geolocation', watchID.current, position);
+        if (!isMounted()) return;
+
+        watchID.current = Geolocation.watchPosition(
+          (position) => handleSaveLocation(position),
+          (err) => {
+            console.log('watch_position', watchID.current, err);
+            setConnectGPS(false);
+            !listStore?.length && getListAddressStore();
+          },
+          config,
+        );
+        handleSaveLocation(position);
+      },
+      (error) => {
+        console.log('update_location', error);
       },
       config,
     );

@@ -1,10 +1,10 @@
 import React from 'react';
 import {
   SectionList,
-  RefreshControl,
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 
@@ -14,6 +14,8 @@ import Container from '../Layout/Container';
 import CustomPad from 'src/containers/ProgressTracking/ProgressTrackingDetail/CustomPad';
 import NoResult from 'src/components/NoResult';
 import ProgressTrackingBarSkeleton from './ProgressTrackingBarSkeleton';
+import Image from 'src/components/Image';
+import {Actions} from 'react-native-router-flux';
 
 const TRACK_CONTENT_WIDTH = 1;
 const TRACK_PADDING = 2;
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
   },
-  itemWrapper: {},
+  trackWrapper: {},
   trackContainer: {
     position: 'absolute',
     height: '100%',
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
 
-  itemContainer: {
+  itemWrapper: {
     marginTop: 5,
     marginLeft: 15,
     padding: 15,
@@ -71,6 +73,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     ...elevationShadowStyle(3),
   },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  contentWrapper: {
+    flex: 1,
+  },
+  imageContainer: {
+    marginLeft: 10,
+    alignSelf: 'flex-start',
+  },
+  image: {
+    width: 50,
+    height: 50,
+  },
+
   title: {
     color: '#333',
   },
@@ -130,6 +148,12 @@ const ProgressTrackingBar = ({
 }) => {
   const {t} = useTranslation(['common']);
 
+  const onPressImage = (item) => {
+    Actions.item_image_viewer({
+      images: item.images,
+    });
+  };
+
   const renderSectionHeader = ({section}) => {
     return (
       <Container row style={styles.sectionHeader}>
@@ -166,7 +190,7 @@ const ProgressTrackingBar = ({
     return (
       <Container
         centerVertical={false}
-        style={[styles.itemWrapper, trackWrapperStyle]}>
+        style={[styles.trackWrapper, trackWrapperStyle]}>
         <Container
           style={[styles.trackContainer, extraStyle, trackContainerStyle]}>
           <Container style={[styles.track, extraStyle, trackStyle]} />
@@ -177,9 +201,25 @@ const ProgressTrackingBar = ({
           )}
         </Container>
 
-        <Container centerVertical={false} style={styles.itemContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
+        <Container centerVertical={false} style={styles.itemWrapper}>
+          <View style={styles.itemContainer}>
+            <View style={styles.contentWrapper}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
+            </View>
+            {!!item?.images?.length && (
+              <TouchableOpacity
+                onPress={() => onPressImage(item, index)}
+                style={styles.imageContainer}>
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: item?.images[0]?.url,
+                  }}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </Container>
       </Container>
     );

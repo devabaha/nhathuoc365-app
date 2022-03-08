@@ -24,8 +24,12 @@
       "title": "Province/City",
       "placeholder": "Touch to select"
     },
-    "warehouse": {
-      "title": "Warehouse",
+    "chooseStore": {
+      "title": "Choose store",
+      "placeholder": "Touch to select"
+    },
+    "chooseSalePoint": {
+      "title": "Choose sale point",
       "placeholder": "Touch to select"
     }
   },
@@ -39,8 +43,8 @@
     }
   },
   "modal": {
-    "warehouse": {
-      "title": "Select warehouse"
+    "store": {
+      "title": "Select store"
     }
   }
 }

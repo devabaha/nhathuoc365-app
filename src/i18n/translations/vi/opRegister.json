@@ -24,8 +24,12 @@
       "title": "Tỉnh/Thành phố",
       "placeholder": "Chạm để chọn"
     },
-    "warehouse": {
-      "title": "Kho hàng",
+    "chooseStore": {
+      "title": "Chọn cửa hàng",
+      "placeholder": "Chạm để chọn"
+    },
+    "chooseSalePoint": {
+      "title": "Chọn điểm bán",
       "placeholder": "Chạm để chọn"
     }
   },
@@ -39,8 +43,8 @@
     }
   },
   "modal": {
-    "warehouse": {
-      "title": "Chọn kho hàng"
+    "store": {
+      "title": "Chọn cửa hàng"
     }
   }
 }

@@ -863,6 +863,11 @@ class Store {
       })
       .slice();
   }
+
+  @observable isEnterItem = false;
+  @action setEnterItem(isEnterItem) {
+    this.isEnterItem = isEnterItem;
+  }
 }
 
 export default new Store();

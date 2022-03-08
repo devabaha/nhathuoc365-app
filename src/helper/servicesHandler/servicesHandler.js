@@ -1,11 +1,12 @@
 import {Actions} from 'react-native-router-flux';
-import appConfig from 'app-config';
 import {Alert, Linking} from 'react-native';
 import Communications from 'react-native-communications';
+import i18n from 'i18next';
+
+import appConfig from 'app-config';
 import store from 'app-store';
 
 import {SERVICES_TYPE} from './types';
-import {GPS_LIST_TYPE} from 'src/constants';
 import {
   handleUseVoucherOnlineSuccess,
   handleUseVoucherOnlineFailure,
@@ -15,7 +16,11 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
-import i18n from 'src/i18n';
+
+import SearchNavBar from '../../components/stores/SearchNavBar';
+import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from '..';
+import APIHandler from 'src/network/APIHandler';
+import {CONFIG_KEY, getValueFromConfigKey} from 'app-helper/configKeyHandler';
 
 /**
  * A powerful handler for all app's services.
@@ -34,7 +39,7 @@ import i18n from 'src/i18n';
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t, callBack = () => {}) => {
+export const servicesHandler = (service, t = null, callBack = () => {}) => {
   if (!service || !service.type) return;
   const commonT = i18n.getFixedT(undefined, 'common');
   if (!t) {
@@ -353,15 +358,14 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
-      Actions.push(appConfig.routes.gpsListStore, {
-        title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: GPS_LIST_TYPE.GPS_LIST_STORE,
-      });
-      break;
     case SERVICES_TYPE.GPS_LIST_SITE:
       Actions.push(appConfig.routes.gpsListStore, {
-        title: service.title || commonT('screen.gpsListStore.mainTitle'),
-        type: GPS_LIST_TYPE.GPS_LIST_SITE,
+        type: service.type,
+        placeholder: service.placeholder || commonT('home:searchingStore'),
+        autoFocus: service.autoFocus,
+        navBar: service.navBar || SearchNavBar,
+        onPress: service.onPress,
+        selectedStore: service.selectedStore,
       });
       break;
 
@@ -615,6 +619,46 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         wallet,
         tabIndex: service.tabIndex,
       });
+      break;
+
+    /** SALES REPORT */
+    case SERVICES_TYPE.SALES_REPORT:
+      Actions.push(appConfig.routes.salesReport);
+      break;
+
+    /** LICENSE/ AGREEMENT */
+    case SERVICES_TYPE.EULA_AGREEMENT:
+      (async () => {
+        const isAgreed = await checkIfEULAAgreed();
+        const eulaId =
+          service.eulaId || getValueFromConfigKey(CONFIG_KEY.EULA_NEWS_ID);
+        console.log(eulaId);
+        Actions.push(appConfig.routes.modalLicense, {
+          backdropPressToClose: service.backdropPressToClose,
+
+          title: service.title || commonT('eulaAgreement'),
+          isHTML: service.isHTML || true,
+          content: service.content || (!eulaId && getEULAContent()) || '',
+          agreeTitle: isAgreed ? undefined : commonT('iAgree'),
+
+          onAgree: service.onAgree || updateEULAUserDecision,
+          apiHandler: eulaId
+            ? async () => {
+                const response = await APIHandler.user_news(eulaId);
+                if (!response || response?.status !== STATUS_SUCCESS) {
+                  flashShowMessage({
+                    type: 'danger',
+                    message: response?.message || commonT('api.error.message'),
+                  });
+                }
+
+                return {
+                  content: response?.data?.content || getEULAContent(),
+                };
+              }
+            : undefined,
+        });
+      })();
       break;
 
     default:

@@ -108,11 +108,15 @@ const styles = StyleSheet.create({
 Header.propTypes = {
   name: PropTypes.string,
   notify: PropTypes.object,
+  loading: PropTypes.bool,
+  renderLeft: PropTypes.func,
 };
 
 Header.defaultProps = {
   name: '',
   notify: {},
+  loading: false,
+  renderLeft: () => null,
 };
 
 export default withTranslation(['home', 'stores'])(observer(Header));

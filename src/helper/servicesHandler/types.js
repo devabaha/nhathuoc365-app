@@ -1,3 +1,5 @@
+import {GPS_LIST_TYPE} from 'src/constants';
+
 /**
  * All types for all services used through the whole app.
  * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
@@ -74,8 +76,8 @@ export const SERVICES_TYPE = {
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
-  GPS_LIST_STORE: 'gps_list_store',
-  GPS_LIST_SITE: 'gps_list_site',
+  GPS_LIST_STORE: GPS_LIST_TYPE.GPS_LIST_STORE,
+  GPS_LIST_SITE: GPS_LIST_TYPE.GPS_LIST_SITE,
 
   /** COMMUNICATION */
   CALL: 'call',
@@ -137,4 +139,10 @@ export const SERVICES_TYPE = {
 
   /** Wallet */
   WALLET: 'wallet',
+
+  /** REPORT */
+  SALES_REPORT: 'sales_report',
+  
+  /** LICENSE/ AGREEMENT */
+  EULA_AGREEMENT: 'eula_agreement',
 };

@@ -206,10 +206,10 @@ class PhoneAuthenticate {
       const response = await APIHandler.login_sms_verify(formData);
       if (this.isCancel) return;
       this.callBackSuccess(response);
-    } catch (err) {
+    } catch (error) {
       if (this.isCancel) return;
       console.log('error', error);
-      this.callBackFailure(err);
+      this.callBackFailure(error);
     }
   }
 

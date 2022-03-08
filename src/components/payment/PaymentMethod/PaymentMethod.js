@@ -113,6 +113,10 @@ class PaymentMethod extends Component {
     this.setState({loading: true});
 
     const data = {
+      gateway:
+        this.state.selectedPaymentMethodDetail?.gateway !== undefined
+          ? this.state.selectedPaymentMethodDetail.gateway
+          : this.state.selectedMethod.gateway,
       payment_type: this.state.selectedMethod.type,
       payment_content: '',
       payment_method_id: this.state.selectedPaymentMethodDetail?.id || '',
@@ -243,7 +247,7 @@ class PaymentMethod extends Component {
     const extraFee = this.props.extraFee || {};
 
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -296,7 +300,7 @@ class PaymentMethod extends Component {
             onPress={this.handleConfirm}
           />
         )}
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -352,7 +356,7 @@ const styles = StyleSheet.create({
   confirmContainer: {
     backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingBottom: 30,
+    paddingBottom: appConfig.device.bottomSpace || 15,
   },
   totalPriceInfoRow: {
     justifyContent: 'space-between',
@@ -365,11 +369,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  PaymentMethodDetailLogoContainer: {
+  paymentMethodDetailLogoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  PaymentMethodDetailLogo: {
+  paymentMethodDetailLogo: {
     marginLeft: 10,
     resizeMode: 'contain',
     width: 50,
@@ -404,11 +408,11 @@ const TotalPrice = (props) => {
 
 const PaymentMethodDetailLogo = (props) => {
   return (
-    <View style={styles.PaymentMethodDetailLogoContainer}>
+    <View style={styles.paymentMethodDetailLogoContainer}>
       <CachedImage
         mutable
         source={{uri: props.image}}
-        style={styles.PaymentMethodDetailLogo}
+        style={styles.paymentMethodDetailLogo}
       />
     </View>
   );

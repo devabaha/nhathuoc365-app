@@ -92,7 +92,9 @@ declare logo_sub_color_code="#fff"
 declare logo_sub_color="sub: '$logo_sub_color_code'"
 declare logo_addition_color_code="#84C38C"
 declare logo_addition_color="addition: '$logo_addition_color_code'"
-    
+declare android_colors_primary="<item name=\"primary\" type=\"color\">#$primary_color_value</item>"
+declare vnpay_merchant_scheme="scheme: '$bundle_id'"
+
 declare oneSignal_key="1bc53b69-00ec-469c-ba7e-2d1f94dcbb8c"
 
 declare branchIO_key="key_live_kd7jIYLYYZZrHyCsV4t2lomkrze8CimW"
@@ -145,6 +147,8 @@ declare current_logo_sub_color_code="#FFF"
 declare current_logo_sub_color="sub: '$current_logo_sub_color_code'"
 declare current_logo_addition_color_code="#000"
 declare current_logo_addition_color="addition: '$current_logo_addition_color_code'"
+declare current_android_colors_primary="<item name=\"primary\" type=\"color\">#$current_primary_color_value</item>"
+declare current_vnpay_merchant_scheme="scheme: '$current_bundle_id'"
 
 declare current_oneSignal_key="437375e6-9a46-42fd-836e-30d3b1c28cd1"
 
@@ -155,6 +159,7 @@ declare current_firebase_reversed_client_id="com.googleusercontent.apps.72836504
 declare current_code_push_ios_key="U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY"
 declare current_code_push_android_key="5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr"
 
+# path
 #_____ A.N.D.R.O.I.D
 declare gradle_properties_path="$root_path/android/gradle.properties"
 declare buck_path="$root_path/android/app/BUCK"
@@ -164,12 +169,16 @@ declare java_path="$root_path/android/app/src/main/java"
 declare main_activity_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainActivity.java"
 declare main_application_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainApplication.java"
 declare values_string_path="android/app/src/main/res/values/strings.xml"
+declare values_colors_path="android/app/src/main/res/values/colors.xml"
 
 
 #_____ I.O.S
 declare info_plist_path="$root_path/ios/my_food_new/Info.plist"
 declare entitlements_path="$root_path/ios/my_food_new/my_food_new.entitlements"
 declare xcodeproj_path="$root_path/ios/my_food_new.xcodeproj/project.pbxproj"
+declare app_delegate_path="$root_path/ios/my_food_new/AppDelegate.m"
+declare en_info_plist_strings_path="$root_path/ios/en.lproj/InfoPlist.strings"
+declare vi_info_plist_strings_path="$root_path/ios/vi.lproj/InfoPlist.strings"
 
 
 #_____ J.S
@@ -185,7 +194,7 @@ declare constant_path="$root_path/src/lib/Constant.js"
 declare config_path="$root_path/src/config.js"
 declare tickid_phone_card_config="$root_path/src/packages/tickid-phone-card/config.js"
 declare tickid_voucher_config="$root_path/src/packages/tickid-voucher/config.js"
-
+declare vnpay_merchant_path="$root_path/src/helper/VNPayMerchant/VNPayMerchant.js"
 
 #_____ README
 declare readme_path="$root_path/README.md"
@@ -214,9 +223,9 @@ replace_string "$current_project_version" "$project_version" "$xcodeproj_path"
 replace_string "$current_version_code" "$version_code" "$app_gradle_build_path"
 replace_string "$current_version_name" "$version_name" "$app_gradle_build_path"
 
-replace_string "$current_bundle_id" "$bundle_id" "$gradle_properties_path" "$buck_path" "$app_gradle_build_path" "$manifest_path" "$main_activity_path" "$main_application_path" "$info_plist_path" "$xcodeproj_path"
+replace_string "$current_bundle_id" "$bundle_id" "$gradle_properties_path" "$buck_path" "$app_gradle_build_path" "$manifest_path" "$main_activity_path" "$main_application_path" "$info_plist_path" "$xcodeproj_path" "$app_delegate_path"
 
-replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path"
+replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path" "$en_info_plist_strings_path" "$vi_info_plist_strings_path"
 replace_string "$current_app_name_show" "$app_name_show" "$constant_path"
 replace_string "$current_app_name" "$app_name" "$constant_path"
 replace_string "$current_email" "$email" "$constant_path"
@@ -246,6 +255,8 @@ replace_string "$current_primary_color" "$primary_color" "$tickid_phone_card_con
 replace_string "$current_primary_color" "$primary_color" "$tickid_voucher_config"
 replace_string "$current_logo_sub_color" "$logo_sub_color" "$config_path"
 replace_string "$current_logo_addition_color" "$logo_addition_color" "$config_path"
+replace_string "$current_android_colors_primary" "$android_colors_primary" "$values_colors_path"
+replace_string "$current_vnpay_merchant_scheme" "$vnpay_merchant_scheme" "$vnpay_merchant_path"
 
 replace_string "$current_noti_accent_color" "$noti_accent_color" "$manifest_path"
 

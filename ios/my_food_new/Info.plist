@@ -1,134 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>HomeID</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.1.0</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3</string>
-				<string>asia.homeid</string>
-			</array>
-		</dict>
-	</array>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CodePushDeploymentKey</key>
-	<string>DeploymentKey</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>comgooglemapsurl</string>
-		<string>comgooglemaps</string>
-		<string>comgooglemaps-x-callback</string>
-	</array>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>en</string>
+		<key>CFBundleDisplayName</key>
+		<string>HomeID</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>$(PRODUCT_NAME)</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(MARKETING_VERSION)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleURLTypes</key>
+		<array>
 			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3</string>
+					<string>asia.homeid</string>
+				</array>
+			</dict>
+			<!-- for vnpaymerchant scheme -->
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>asia.homeid</string>
+				</array>
+			</dict>
+		</array>
+		<key>CFBundleVersion</key>
+		<string>$(CURRENT_PROJECT_VERSION)</string>
+		<key>CodePushDeploymentKey</key>
+		<string>DeploymentKey</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>comgooglemapsurl</string>
+			<string>comgooglemaps</string>
+			<string>comgooglemaps-x-callback</string>
+		</array>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+			<key>NSExceptionDomains</key>
+			<dict>
+				<key>localhost</key>
+				<dict>
+					<key>NSExceptionAllowsInsecureHTTPLoads</key>
+					<true/>
+				</dict>
 			</dict>
 		</dict>
+		<key>NSAppleMusicUsageDescription</key>
+		<string>Cho phép sử dụng Apple Music</string>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Cho phép luôn luôn sử dụng Bluetooth</string>
+		<key>NSBluetoothPeripheralUsageDescription</key>
+		<string>Cho phép sử dụng Bluetooth</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>Cho phép sử dụng Calendar</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Cho phép ứng dụng sử dụng dụng Camera để quét mã QR và chụp ảnh</string>
+		<key>NSContactsUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Danh bạ</string>
+		<key>NSFaceIDUsageDescription</key>
+		<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Micro</string>
+		<key>NSMotionUsageDescription</key>
+		<string>Cho phép sử dụng nhận dạng chuyển động</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Cho phép ứng dụng truy cập Thư viện ảnh để chuyển ảnh khi chat</string>
+		<key>NSSpeechRecognitionUsageDescription</key>
+		<string>Cho phép sử dụng nhận biết lời nói</string>
+		<key>OneSignal_disable_badge_clearing</key>
+		<false/>
+		<key>UIAppFonts</key>
+		<array>
+			<string>AntDesign.ttf</string>
+			<string>Entypo.ttf</string>
+			<string>EvilIcons.ttf</string>
+			<string>Feather.ttf</string>
+			<string>FontAwesome.ttf</string>
+			<string>FontAwesome5_Brands.ttf</string>
+			<string>FontAwesome5_Regular.ttf</string>
+			<string>FontAwesome5_Solid.ttf</string>
+			<string>Foundation.ttf</string>
+			<string>Ionicons.ttf</string>
+			<string>MaterialIcons.ttf</string>
+			<string>MaterialCommunityIcons.ttf</string>
+			<string>SimpleLineIcons.ttf</string>
+			<string>Octicons.ttf</string>
+			<string>Zocial.ttf</string>
+			<string>Fontisto.ttf</string>
+			<string>SairaStencilOne-Regular.ttf</string>
+			<string>Roboto_medium.ttf</string>
+			<string>Roboto.ttf</string>
+			<string>rubicon-icon-font.ttf</string>
+		</array>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>remote-notification</string>
+		</array>
+		<key>UIRequiredDeviceCapabilities</key>
+		<array>
+			<string>armv7</string>
+		</array>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+		</array>
+		<key>UIUserInterfaceStyle</key>
+		<string>Light</string>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false/>
+		<key>branch_app_domain</key>
+		<string>homeid.app.link</string>
+		<key>branch_key</key>
+		<string>key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6</string>
 	</dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Cho phép sử dụng Apple Music</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Cho phép luôn luôn sử dụng Bluetooth</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cho phép sử dụng Bluetooth</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Cho phép sử dụng Calendar</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Cho phép ứng dụng sử dụng dụng Camera để quét mã QR và chụp ảnh</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Danh bạ</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Micro</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Cho phép sử dụng nhận dạng chuyển động</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Thư viện ảnh để chuyển ảnh khi chat</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Cho phép sử dụng nhận biết lời nói</string>
-	<key>OneSignal_disable_badge_clearing</key>
-	<false/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>AntDesign.ttf</string>
-		<string>Entypo.ttf</string>
-		<string>EvilIcons.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>FontAwesome5_Brands.ttf</string>
-		<string>FontAwesome5_Regular.ttf</string>
-		<string>FontAwesome5_Solid.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>Zocial.ttf</string>
-		<string>Fontisto.ttf</string>
-		<string>SairaStencilOne-Regular.ttf</string>
-		<string>Roboto_medium.ttf</string>
-		<string>Roboto.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>branch_app_domain</key>
-	<string>homeid.app.link</string>
-	<key>branch_key</key>
-	<string>key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6</string>
-</dict>
 </plist>

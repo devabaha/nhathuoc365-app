@@ -93,7 +93,8 @@ class MyVoucher extends BaseContainer {
           config.route.pop();
         }
       },
-      onScanVoucherFail: this.handleScanVoucherFail
+      onScanVoucherFail: this.handleScanVoucherFail,
+      forceReload: this.props.forceReload,
     });
   };
 

@@ -326,14 +326,17 @@ class OrdersItemComponent extends Component {
                         var items_string = '';
                         Object.keys(item.products)
                           .reverse()
-                          .forEach((key) => {
+                          .forEach((key, index) => {
                             let item_product = item.products[key];
                             if (item_product.selected == 1) {
                               items_string +=
                                 item_product.name +
                                 ' (' +
                                 item_product.quantity_view +
-                                '), ';
+                                ')' +
+                                (index !== Object.keys(item.products).length - 1
+                                  ? ', '
+                                  : '');
                             }
                           });
                         return sub_string(items_string, 100);
@@ -485,6 +488,7 @@ const styles = StyleSheet.create({
   orders_item_content_text: {
     marginTop: 8,
     overflow: 'hidden',
+    marginRight: 15,
     // marginLeft: 22,
   },
   orders_item_content_value: {

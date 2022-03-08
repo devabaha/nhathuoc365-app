@@ -365,6 +365,7 @@ class Home extends Component {
             iconStyle={this.headerIconStyle}
             notify={this.props.notify}
             name={name}
+            showCart={false}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
             loading={this.props.storeFetching}
@@ -398,7 +399,7 @@ class Home extends Component {
                 useNativeDriver: true,
               },
             )}
-            style={[appConfig.device.isIOS && {overflow: 'visible'}]}
+            // style={{overflow: 'visible'}}
             contentContainerStyle={{
               // paddingTop: extraTop,
               paddingBottom: 30,
@@ -432,7 +433,6 @@ class Home extends Component {
             loading={this.props.storeFetching}
             onContentLayout={this.handleHeaderLayout.bind(this)}
           /> */}
-            {/* </Animated.View> */}
             <View style={styles.block}>
               {this.isVisibleLoyaltyBox ? (
                 <PrimaryActions
@@ -662,6 +662,7 @@ class Home extends Component {
                             title={item.title}
                             imageUrl={item.image_url}
                             onPress={() => this.props.onPressNewItem(item)}
+                            video={item.video}
                             last={this.props.newses.length - 1 === index}
                           />
                         );
@@ -702,7 +703,7 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#F5F7F8',
+    backgroundColor: appConfig.colors.sceneBackground,
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -745,6 +746,7 @@ let styles = StyleSheet.create({
   },
 
   servicesBlock: {
+    backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },
@@ -756,6 +758,7 @@ let styles = StyleSheet.create({
     marginBottom: 10,
   },
   block: {
+    zIndex: 1,
     marginBottom: 20,
   },
 

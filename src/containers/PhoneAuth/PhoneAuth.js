@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, Keyboard} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import countries from 'world-countries';
 import appConfig from 'app-config';
@@ -16,11 +22,25 @@ import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import firebaseAuth from '@react-native-firebase/auth';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
+  },
+  eulaTextContainer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop:
+      appConfig.device.height -
+      30 -
+      (appConfig.device.isAndroid
+        ? appConfig.device.statusBarHeight
+        : appConfig.device.bottomSpace),
+  },
+  eulaText: {
+    color: appConfig.colors.text,
   },
 });
 
@@ -114,7 +134,7 @@ class PhoneAuth extends Component {
             if (!!firebaseAuth().currentUser) {
               await firebaseAuth().signOut();
             }
-            
+
             this.setState({
               confirmResult: response,
               message: '',
@@ -178,32 +198,11 @@ class PhoneAuth extends Component {
   }
 
   firebaseConfirmCode(response) {
-    if (response && response.status == STATUS_SUCCESS) {
-      this.verifyResponse(response);
-    } else {
-      this.setState({
-        message: response.message,
-      });
-    }
+    this.verifyResponse(response);
   }
 
   backUpConfirmCode(response) {
-    this.setState({isShowIndicator: true}, () => {
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState(
-          {
-            message: '',
-            isShowIndicator: false,
-          },
-          () => this.verifyResponse(response),
-        );
-      } else {
-        this.setState({
-          message: response.message,
-          isShowIndicator: false,
-        });
-      }
-    });
+    this.verifyResponse(response);
   }
 
   confirmCode() {
@@ -261,28 +260,50 @@ class PhoneAuth extends Component {
     this.setState({requestNewOtpCounter: RESEND_OTP_INTERVAL});
   }
 
-  verifyResponse(response) {
-    store.setUserInfo(response.data);
-    store.setAnalyticsUser(response.data);
+  verifyResponse = (response) => {
+    const user = response.data;
+    store.setUserInfo(user);
+    store.setAnalyticsUser(user);
     store.resetCartData();
-    const {t} = this.props;
-    if (response.data && response.data.fill_info_user) {
-      //hien thi chon site
-      Actions.replace('op_register', {
-        title: t('common:screen.register.mainTitle'),
-        name_props: response.data.name,
-      });
-    } else {
-      this.props.setTabVisible({
-        [appConfig.routes.roomTab]: !!response.data.view_beehome,
-        [appConfig.routes.listBeeLand]: response.data.view_beeland
-      });
-      Actions.replace(appConfig.routes.primaryTabbar);
-      if (response.data.room) {
-        Actions.jump(appConfig.routes.roomTab);
-      }
+
+    switch (response.status) {
+      case STATUS_FILL_INFO_USER:
+        this.goToRegister(response.data.name);
+
+        break;
+      case STATUS_SYNC_FLAG:
+        Actions.replace(appConfig.routes.rootGpsStoreLocation);
+        break;
+      case STATUS_SUCCESS:
+        if (response.data?.fill_info_user) {
+          this.goToRegister(response.data.name);
+        } else {
+          this.props.setTabVisible({
+            [appConfig.routes.roomTab]: !!response.data.view_beehome,
+            [appConfig.routes.listBeeLand]: response.data.view_beeland
+          });
+          Actions.replace(appConfig.routes.primaryTabbar);
+          if (response.data.room) {
+            Actions.jump(appConfig.routes.roomTab);
+          }
+        }
+        break;
+      default:
+        this.setState({
+          message: response.message,
+        });
+        break;
     }
-  }
+  };
+
+  goToRegister = (nameProps) => {
+    const {t} = this.props;
+
+    Actions.replace('op_register', {
+      title: t('common:screen.register.mainTitle'),
+      name_props: nameProps,
+    });
+  };
 
   handleChangeCodeInput(codeInput) {
     this.setState({codeInput});
@@ -309,6 +330,14 @@ class PhoneAuth extends Component {
       message: '',
     });
   }
+
+  openEULAAgreement = () => {
+    Keyboard.dismiss();
+
+    servicesHandler({
+      type: SERVICES_TYPE.EULA_AGREEMENT,
+    });
+  };
 
   render() {
     const {
@@ -349,6 +378,14 @@ class PhoneAuth extends Component {
             />
           )}
           {appConfig.device.isIOS && <KeyboardSpacer />}
+
+          <TouchableOpacity
+            style={styles.eulaTextContainer}
+            onPress={this.openEULAAgreement}>
+            <Text style={styles.eulaText}>
+              {this.props.t('common:eulaAgreement')}
+            </Text>
+          </TouchableOpacity>
         </SafeAreaView>
       </KeyboardAwareScrollView>
     );

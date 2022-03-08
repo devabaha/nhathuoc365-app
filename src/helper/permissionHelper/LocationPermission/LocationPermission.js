@@ -12,7 +12,7 @@ const REQUEST_PERMISSION_MESSAGE =
   'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
 
 class LocationPermission {
-  callPermission = async (type, callback = () => {}) => {
+  callPermission = async (type, callback = (result) => {}) => {
     const permissionGranted = await this.handleLocationPermission(type);
     callback(permissionGranted);
     return permissionGranted;
@@ -101,15 +101,15 @@ class LocationPermission {
   };
 
   openPermissionAskingModal({
-    title,
-    errCode,
+    title = undefined,
+    errCode = undefined,
     errContent = '',
     confirmTitle = '',
     cancelTitle = '',
     otherClose = false,
 
-    onConfirm,
-    onCancel,
+    onConfirm = undefined,
+    onCancel = undefined,
     ...props
   }) {
     const content =

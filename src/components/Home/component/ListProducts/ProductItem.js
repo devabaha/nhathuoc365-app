@@ -1,17 +1,8 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableHighlight,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Keyboard} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import appConfig from 'app-config';
-import ImageBackground from '../../../ImageBg';
-import Loading from '../../../Loading';
 import {DiscountBadge} from '../../../Badges';
 import Themes from 'src/Themes';
 import Indicator from 'src/components/Indicator';
@@ -22,6 +13,8 @@ import {CART_TYPES} from 'src/constants/cart';
 import CTAProduct from 'src/components/item/CTAProduct';
 import {debounce} from 'lodash';
 import {isOutOfStock} from 'app-helper/product';
+import {hasVideo} from 'app-helper/product/product';
+import { PRODUCT_BUTTON_ACTION_LOADING_PARAM } from 'src/constants/product';
 
 const homeThemes = Themes.getNameSpace('home');
 const productItemStyle = homeThemes('styles.home.listProduct');
@@ -29,7 +22,7 @@ const productItemStyle = homeThemes('styles.home.listProduct');
 class ProductItem extends PureComponent {
   constructor(props) {
     super(props);
-    this.CTAProduct = new CTAProduct(props.t, this);
+    this.CTAProduct = new CTAProduct(this);
   }
   static propTypes = {
     name: PropTypes.string,
@@ -51,7 +44,7 @@ class ProductItem extends PureComponent {
     price_view: '',
     onPress: () => {},
     last: false,
-    buying: false,
+    [PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART]: false,
   };
 
   state = {
@@ -80,7 +73,13 @@ class ProductItem extends PureComponent {
 
   handlePressActionBtnProduct = () => {
     const {item} = this.props;
-    this.CTAProduct.handlePressMainActionBtnProduct(item, CART_TYPES.NORMAL);
+    if (!!item.has_attr) {
+      Keyboard.dismiss();
+    }
+    this.CTAProduct.handlePressMainActionBtnProduct({
+      product: item,
+      cartType: CART_TYPES.NORMAL,
+    });
   };
 
   handleSelfRequest = () => {
@@ -111,11 +110,20 @@ class ProductItem extends PureComponent {
                   style={[styles.image, extraImageStyle]}
                   resizeMode="cover"
                 />
-                {!!item.brand && (
-                  <View style={styles.brandTagContainer}>
-                    <Text numberOfLines={1} style={styles.brandTag}>
-                      {item.brand}
-                    </Text>
+                {(!!item.brand || hasVideo(item)) && (
+                  <View pointerEvents="none" style={styles.overlayContainer}>
+                    {hasVideo(item) && (
+                      <View style={styles.videoContainer}>
+                        <Icon name="play" style={styles.iconVideo} />
+                      </View>
+                    )}
+                    {!!item.brand && (
+                      <View style={styles.brandTagContainer}>
+                        <Text numberOfLines={1} style={styles.brandTag}>
+                          {item.brand}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
@@ -169,7 +177,7 @@ class ProductItem extends PureComponent {
                       </Text>
 
                       <TouchableOpacity
-                        disabled={isOutOfStock(item)}
+                        disabled={this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART] || isOutOfStock(item)}
                         style={styles.item_add_cart_box}
                         onPress={this.handlePressActionBtnProduct}
                         hitSlop={HIT_SLOP}>
@@ -180,7 +188,7 @@ class ProductItem extends PureComponent {
                             justifyContent: 'center',
                             alignItems: 'center',
                           }}>
-                          {this.state.buying ? (
+                          {this.state[PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART] ? (
                             <Indicator size="small" />
                           ) : this.isServiceProduct(item) ? (
                             <Icon name="calendar-plus-o" style={styles.icon} />
@@ -286,7 +294,8 @@ let styles = StyleSheet.create({
   },
   item_add_cart_box: {
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
+    alignSelf: 'flex-end',
     backgroundColor: hexToRgbA('#ffffff', 0.8),
     paddingVertical: 2,
   },
@@ -303,6 +312,22 @@ let styles = StyleSheet.create({
   deletedTitle: {
     textDecorationLine: 'line-through',
   },
+  overlayContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  videoContainer: {
+    marginLeft: 'auto',
+    marginRight: 7,
+    marginBottom: 7,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
   icon: {
     fontSize: 20,
     color: appConfig.colors.highlight[1],
@@ -310,10 +335,12 @@ let styles = StyleSheet.create({
   iconDisabled: {
     color: '#ddd',
   },
+  iconVideo: {
+    color: appConfig.colors.white,
+    fontSize: appConfig.device.isIOS ? 10 : 9,
+    left: appConfig.device.isIOS ? 1.5 : 0.75,
+  },
   brandTagContainer: {
-    position: 'absolute',
-    bottom: -5,
-    right: 0,
     backgroundColor: '#fff',
     paddingVertical: 2,
     paddingHorizontal: 5,
@@ -325,6 +352,7 @@ let styles = StyleSheet.create({
     borderBottomWidth: 1.2,
     borderColor: '#ddd',
     borderBottomColor: '#ddd',
+    marginBottom: -5,
   },
   brandTag: {
     color: appConfig.colors.primary,

@@ -13,15 +13,21 @@ import {
 } from 'react-native';
 
 //library
+import ImageZoom from 'react-native-image-pan-zoom';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import EventTracker from '../../helper/EventTracker';
+import EventTracker from 'src/helper/EventTracker';
 // import ActionSheet from 'react-native-actionsheet';
 import appConfig from 'app-config';
 import {HIT_SLOP} from 'app-packages/tickid-chat/constants';
-import RightButtonNavBar from '../RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
+import RightButtonNavBar from 'src/components/RightButtonNavBar';
+import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
+import Image from 'src/components/Image';
+import Video from 'src/components/Video';
+import Carousel from 'src/components/Carousel';
+import {MEDIA_TYPE} from 'src/constants';
+import ItemImage from './ItemImage';
 
 const HEADER_BUTTON_TYPE = {
   BACK: 0,
@@ -33,16 +39,24 @@ class ItemImageViewer extends Component {
   static defaultProps = {
     index: 0,
     moreActionSheetOptions: null,
+    scrollEnabled: true,
+    onBack: () => {},
   };
 
   constructor(props) {
     super(props);
 
-    this.isHeaderVisible = true;
-    this.opacity = new Animated.Value(1);
+    this.state = {
+      currentIndex: this.props.index,
+      scrollEnabled: true,
+    };
 
     this.refActionSheet = React.createRef();
     this.refButtonDownloadImage = React.createRef();
+    this.refCarousel = React.createRef();
+
+    this.isHeaderVisible = true;
+    this.opacity = new Animated.Value(1);
   }
 
   eventTracker = new EventTracker();
@@ -57,8 +71,12 @@ class ItemImageViewer extends Component {
     StatusBar.setHidden(false);
   }
 
-  toggleHeaderVisibility = () => {
-    this.isHeaderVisible = !this.isHeaderVisible;
+  handleChangeVideoControlsVisible = (isVisible) => {
+    this.toggleHeaderVisibility(isVisible);
+  };
+
+  toggleHeaderVisibility = (isVisible = !this.isHeaderVisible) => {
+    this.isHeaderVisible = isVisible;
     Animated.timing(this.opacity, {
       toValue: this.isHeaderVisible ? 1 : 0,
       duration: 400,
@@ -97,10 +115,15 @@ class ItemImageViewer extends Component {
 
   handleBack = () => {
     StatusBar.setHidden(false);
+    this.props.onBack();
     Actions.pop();
   };
 
-  handleSwipeDownImage = () => Actions.pop();
+  handleChange = (index) => {
+    this.setState({currentIndex: index});
+  };
+
+  handleSwipeDownImage = () => this.handleBack();
 
   handleLongPressImage = () => {
     if (this.refActionSheet.current) this.refActionSheet.current.show();
@@ -108,12 +131,12 @@ class ItemImageViewer extends Component {
 
   renderIndicator = () => null;
 
-  renderHeader = (currentIndex) => {
+  renderHeader = (currentIndex = this.state.currentIndex) => {
     return (
-      <TouchableWithoutFeedback onPress={this.toggleHeaderVisibility}>
+      <TouchableWithoutFeedback onPress={() => this.toggleHeaderVisibility()}>
         <Animated.View
           style={[styles.headerContainer, {opacity: this.opacity}]}>
-          <SafeAreaView style={styles.headerContentContainter}>
+          <SafeAreaView style={styles.headerContentContainer}>
             <View style={styles.headerContent}>
               <TouchableOpacity
                 hitSlop={HIT_SLOP}
@@ -130,20 +153,25 @@ class ItemImageViewer extends Component {
               </View>
 
               <View style={[styles.headerContent, styles.headerLeftButton]}>
-                <TouchableOpacity
-                  onPress={() =>
-                    this.handlePressHeaderBtn(HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE)
-                  }>
-                  <View pointerEvents="none">
-                    <RightButtonNavBar
-                      ref={this.refButtonDownloadImage}
-                      touchableOpacity
-                      type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
-                      containerStyle={styles.headerRightBtnContainer}
-                      imageUrl={this.props.images[currentIndex].url}
-                    />
-                  </View>
-                </TouchableOpacity>
+                {this.props.images[currentIndex]?.type ===
+                MEDIA_TYPE.YOUTUBE_VIDEO ? null : (
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.handlePressHeaderBtn(
+                        HEADER_BUTTON_TYPE.DOWNLOAD_IMAGE,
+                      )
+                    }>
+                    <View pointerEvents="none">
+                      <RightButtonNavBar
+                        ref={this.refButtonDownloadImage}
+                        touchableOpacity
+                        type={RIGHT_BUTTON_TYPE.DOWNLOAD_IMAGE}
+                        containerStyle={styles.headerRightBtnContainer}
+                        imageUrl={this.props.images[currentIndex].url}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
                 {!!this.props.moreActionSheetOptions && (
                   <TouchableOpacity
                     hitSlop={HIT_SLOP}
@@ -166,12 +194,85 @@ class ItemImageViewer extends Component {
     );
   };
 
+  // renderImage = (imageProps) => {
+  //     <Image source={imageProps.source} />
+  // };
+
+  scaleValue = 1;
+  allowListScroll = (e) => {
+    if (e.nativeEvent.touches.length <= 1 && this.scaleValue <= 1) {
+      !this.state.scrollEnabled && this.setState({scrollEnabled: true});
+    } else {
+      this.state.scrollEnabled && this.setState({scrollEnabled: false});
+    }
+  };
+
+  handleMove = ({scale}) => {
+    this.scaleValue = scale;
+  };
+
+  updateContent = () => {};
+
+  renderImage = ({item: image, index}) => {
+    return (
+      <View
+        onTouchEnd={this.allowListScroll}
+        onTouchStart={this.allowListScroll}>
+        <ItemImage
+          url={image?.url}
+          index={index}
+          type={image?.type}
+          selectedIndex={this.state.currentIndex}
+          onPress={this.toggleHeaderVisibility}
+          onMove={this.handleMove}
+          onRotateFullscreen={this.updateContent}
+          onChangeVideoControlsVisible={this.handleChangeVideoControlsVisible}
+          currentTime={(this.props.videosInfo || [])[index]?.currentTime}
+        />
+        {/* <ImageZoom
+          ref={(inst) => (this.refImage = inst)}
+          // onSwipeDown={Actions.pop}
+          // enableSwipeDown
+          // swipeDownThreshold={100}
+          onStartShouldSetPanResponder={this.handleStartShouldSetPanResponder}
+          onMove={this.handleMove}
+          onClick={this.toggleHeaderVisibility}
+          cropHeight={appConfig.device.height}
+          cropWidth={appConfig.device.width}
+          imageHeight={appConfig.device.height}
+          imageWidth={appConfig.device.width}>
+          {image?.type === MEDIA_TYPE.YOUTUBE_VIDEO ? (
+            <Video
+              type="youtube"
+              videoId={image?.url}
+              containerStyle={{
+                width: appConfig.device.width,
+                height: appConfig.device.height,
+                justifyContent: 'center',
+              }}
+              autoAdjustLayout
+              height={appConfig.device.height}
+              youtubeIframeProps={{
+                play: index === this.state.currentIndex,
+              }}
+            />
+          ) : (
+            <Image source={{uri: image.url}} resizeMode="contain" />
+          )}
+        </ImageZoom> */}
+      </View>
+    );
+  };
+
+  renderPagination = () => {
+    return null;
+  };
+
   render() {
     var {images} = this.props;
-
     return (
       <View style={styles.container}>
-        <ImageViewer
+        {/* <ImageViewer
           style={styles.imageViewerContainer}
           index={this.props.index}
           imageUrls={images}
@@ -183,6 +284,24 @@ class ItemImageViewer extends Component {
           onSwipeDown={this.handleSwipeDownImage}
           onClick={this.toggleHeaderVisibility}
           onLongPress={this.handleLongPressImage}
+          renderImage={this.renderImage}
+          onChange={this.handleChange}
+          failImageSource={{
+            width: appConfig.device.width,
+            height: appConfig.device.height,
+          }}
+        /> */}
+        {this.renderHeader()}
+        <Carousel
+          refCarousel={(inst) => (this.refCarousel.current = inst)}
+          firstItem={this.props.index}
+          wrapperStyle={{backgroundColor: '#000'}}
+          data={images}
+          renderItem={this.renderImage}
+          onChangeIndex={this.handleChange}
+          extraData={this.state.currentIndex}
+          scrollEnabled={this.state.scrollEnabled}
+          renderPagination={this.renderPagination}
         />
       </View>
     );
@@ -213,7 +332,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.65)',
     alignItems: 'center',
   },
-  headerContentContainter: {
+  headerContentContainer: {
     flex: 1,
   },
   headerContent: {

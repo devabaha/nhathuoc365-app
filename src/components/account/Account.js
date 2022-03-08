@@ -47,7 +47,7 @@ class Account extends Component {
 
     this.state = {
       listWarehouse: [],
-      isWarehouseLoading: true,
+      isWarehouseLoading: false,
       refreshing: false,
       logout_loading: false,
       sticker_flag: false,
@@ -171,7 +171,8 @@ class Account extends Component {
         ),
         isHidden:
           !user_info.default_wallet ||
-          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE),
+          isConfigActive(CONFIG_KEY.VIEW_COMMISSIONS_AT_HOMEPAGE) ||
+          isConfigActive(CONFIG_KEY.HIDE_WALLET_ACCOUNT_KEY),
 
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -256,7 +257,9 @@ class Account extends Component {
           </Text>
         ),
         desc: user_info.text_invite,
-        isHidden: !user_info.username,
+        isHidden:
+          !user_info.username ||
+          isConfigActive(CONFIG_KEY.HIDE_AFFILIATE_ACCOUNT_KEY),
         rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.affiliate({
@@ -276,90 +279,63 @@ class Account extends Component {
         ],
         iconColor: '#fff',
       },
-      {
-        key: 'store',
-        isHidden: !isActivePackageOptionConfig(
-          PACKAGE_OPTIONS_TYPE.CHAIN_STORE,
-        ),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="store"
-              style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
-            />
-            <Icon
-              name="map-marker"
-              style={{
-                fontSize: 16,
-                color: '#fff',
-                position: 'absolute',
-                right: -3,
-                top: 0,
-                backgroundColor: 'transparent',
-              }}
-            />
-          </View>
-        ),
-        label: t('options.changeStoreLocation.label'),
-        desc: store.store_data.name,
-        rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#f66',
-          },
-        ],
-      },
-      {
-        key: 'orders',
-        label: t('options.orders.label'),
-        desc: t('options.orders.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="cart"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: appConfig.colors.status.success,
-          },
-        ],
-        iconColor: '#ffffff',
-      },
-      {
-        key: 'vouchers',
-        isHidden: !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS),
-        label: t('options.myVoucher.label'),
-        desc: t('options.myVoucher.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="sale"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
-        rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.myVoucher, {
-            title: t('common:screen.myVoucher.mainTitle'),
-            from: 'home',
-          }),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#ffc3c0',
-          },
-        ],
-        iconColor: '#ffffff',
-      },
+      // {
+      //   key: 'store',
+      //   isHidden: !isActivePackageOptionConfig(
+      //     PACKAGE_OPTIONS_TYPE.CHAIN_STORE,
+      //   ),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="store"
+      //         style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
+      //       />
+      //       <Icon
+      //         name="map-marker"
+      //         style={{
+      //           fontSize: 16,
+      //           color: '#fff',
+      //           position: 'absolute',
+      //           right: -3,
+      //           top: 0,
+      //           backgroundColor: 'transparent',
+      //         }}
+      //       />
+      //     </View>
+      //   ),
+      //   label: t('options.changeStoreLocation.label'),
+      //   desc: store.store_data.name,
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: '#f66',
+      //     },
+      //   ],
+      // },
+      // {
+      //   key: 'orders',
+      //   label: t('options.orders.label'),
+      //   desc: t('options.orders.desc'),
+      //   leftIcon: (
+      //     <View>
+      //       <IconMaterialCommunity
+      //         name="cart"
+      //         style={{fontSize: 16, color: '#fff'}}
+      //       />
+      //     </View>
+      //   ),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () => servicesHandler({type: SERVICES_TYPE.ORDERS}),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: appConfig.colors.status.success,
+      //     },
+      //   ],
+      //   iconColor: '#ffffff',
+      // },
       {
         key: 'address',
         icon: 'map-marker',
@@ -406,7 +382,7 @@ class Account extends Component {
         key: 'warehouse',
         icon: 'warehouse',
         iconType: 'MaterialCommunityIcons',
-        label: t('options.warehouse.label'),
+        label: t('options.salePoint.label'),
         desc: store_name,
         disabled: this.state.isWarehouseLoading,
         rightIcon: this.state.isWarehouseLoading ? (
@@ -418,17 +394,26 @@ class Account extends Component {
           <IconAngleRight />
         ),
         onPress: () =>
-          Actions.push(appConfig.routes.modalList, {
-            heading: this.props.t('opRegister:modal.warehouse.title'),
-            data: this.state.listWarehouse,
-            selectedItem: {id: store_id},
-            onPressItem: this.onSelectWarehouse,
-            onCloseModal: Actions.pop,
-            modalStyle: {
-              height: null,
-              maxHeight: '80%',
+          servicesHandler({
+            type: SERVICES_TYPE.GPS_LIST_STORE,
+            selectedStore: {id: store_id},
+            placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
+            onPress: (store) => {
+              this.onSelectWarehouse(store);
+              Actions.pop();
             },
           }),
+        // Actions.push(appConfig.routes.modalList, {
+        //   heading: this.props.t('opRegister:modal.store.title'),
+        //   data: this.state.listWarehouse,
+        //   selectedItem: {id: store_id},
+        //   onPressItem: this.onSelectWarehouse,
+        //   onCloseModal: Actions.pop,
+        //   modalStyle: {
+        //     height: null,
+        //     maxHeight: '80%',
+        //   },
+        // }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -436,7 +421,8 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY),
       },
 
       {
@@ -460,10 +446,20 @@ class Account extends Component {
       },
 
       {
-        key: '2',
-        icon: 'tags',
+        key: 'vouchers',
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
+          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
         label: t('options.myVoucher.label'),
         desc: t('options.myVoucher.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="sale"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           Actions.push(appConfig.routes.myVoucher, {
@@ -473,7 +469,7 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#F35022',
+            backgroundColor: '#ffc3c0',
           },
         ],
         iconColor: '#ffffff',
@@ -535,28 +531,51 @@ class Account extends Component {
         iconColor: '#ffffff',
       },
 
+      // {
+      //   key: '4',
+      //   icon: 'text-box-check-outline',
+      //   iconType: 'MaterialCommunityIcons',
+      //   label: t('options.termsOfUse.desc'),
+      //   rightIcon: <IconAngleRight />,
+      //   onPress: () =>
+      //     servicesHandler({
+      //       type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+      //       title: t('options.termsOfUse.desc'),
+      //       id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
+      //     }),
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: '#62459b',
+      //     },
+      //   ],
+      //   iconColor: '#fff',
+      //   iconSize: 18,
+      //   iconType: 'MaterialCommunityIcons',
+      //   isHidden: !store.user_info || !store.user_info.tel,
+      // },
       {
-        key: '4',
-        icon: 'text-box-check-outline',
-        iconType: 'MaterialCommunityIcons',
-        label: t('options.termsOfUse.desc'),
+        key: 'partnerRegistration',
+        icon: 'handshake-o',
+        iconType: 'FontAwesome',
+        label: t('options.partnerRegistration.label'),
+        isHidden: !getValueFromConfigKey(
+          CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY,
+        ),
+
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          servicesHandler({
-            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
-            title: t('options.termsOfUse.desc'),
-            id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
-          }),
+        onPress: () => {
+          openLink(
+            getValueFromConfigKey(CONFIG_KEY.PARTNER_REGISTRATION_LINK_KEY),
+          );
+        },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#62459b',
+            backgroundColor: '#5b88d9',
           },
         ],
         iconColor: '#fff',
-        iconSize: 18,
-        iconType: 'MaterialCommunityIcons',
-        isHidden: !store.user_info || !store.user_info.tel,
       },
 
       {
@@ -646,7 +665,7 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () => {
           if (notify.url_update) {
-            Communications.web(notify.url_update);
+            openLink(notify.url_update);
           }
         },
         boxIconStyle: [
@@ -689,7 +708,7 @@ class Account extends Component {
   onRefresh() {
     this.setState({refreshing: true}, () => {
       this.login(1000);
-      this.getListWarehouse();
+      // this.getListWarehouse();
     });
   }
 
@@ -840,7 +859,7 @@ class Account extends Component {
   }
 
   async getListWarehouse() {
-    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
@@ -914,9 +933,8 @@ class Account extends Component {
     }
   }
 
-  onSelectWarehouse = (warehouse, closeModal) => {
+  onSelectWarehouse = (warehouse) => {
     this.setState({isWarehouseLoading: true});
-    closeModal();
     this.updateWarehouse(warehouse);
   };
 
@@ -1274,7 +1292,6 @@ class Account extends Component {
             <CustomAutoHeightWebview
               content={siteContentValue}
               containerStyle={styles.footerSiteContainer}
-              contentStyle={styles.footerSiteContent}
               customStyle={`body {
                 overflow-x: hidden;
               }`}
@@ -1563,7 +1580,7 @@ const styles = StyleSheet.create({
     borderColor: appConfig.colors.primary,
     borderTopWidth: 3,
     backgroundColor: '#ffffff',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   footerSiteContent: {
     width: appConfig.device.width - 24,
@@ -1580,7 +1597,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common', 'opRegister'])(
+export default withTranslation(['account', 'common', 'opRegister', 'gpsStore'])(
   observer(Account),
 );
 

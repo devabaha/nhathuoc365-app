@@ -67,7 +67,7 @@ class Launch extends Component {
 
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
-
+    
     if (isTestDevice) {
       return;
     }

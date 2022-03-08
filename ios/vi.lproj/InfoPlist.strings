@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  my_food_new
+
+  Created by admin on 11/24/21.
+  
+*/
+"CFBundleDisplayName" = "HomeID";
+"CFBundleName" = "HomeID";

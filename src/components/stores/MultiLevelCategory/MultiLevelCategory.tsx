@@ -10,7 +10,13 @@
  * @example Category of Beemart, Tiki.
  */
 import * as React from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import IconFeather from 'react-native-vector-icons/Feather';
 import Button from 'react-native-button';
 import Category from './Category';
@@ -37,11 +43,20 @@ import RightButtonNavBar from '../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
 import EventTracker from '../../../helper/EventTracker';
 import {Container} from 'src/components/Layout';
+import Header from 'src/components/Home/component/Header';
+
+const BACK_IMAGE_BTN = require('src/images/back_chevron.png');
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  headerWrapper: {
+    backgroundColor: appConfig.colors.primary,
+  },
+  headerContentContainer: {
+    paddingBottom: 8,
   },
   mainContainer: {
     flex: 1,
@@ -64,6 +79,13 @@ const styles = StyleSheet.create({
     color: appConfig.colors.white,
     fontSize: 26,
     top: appConfig.device.isAndroid ? 1 : 0,
+  },
+  backContainer: {
+    marginRight: 15,
+  },
+  back: {
+    width: 13,
+    height: 21,
   },
 });
 
@@ -137,6 +159,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     setTimeout(() => {
       Actions.refresh({
         right: this._renderRightButton(),
+        navBar: () => null,
       });
     });
     this.eventTracker.logCurrentView();
@@ -242,6 +265,16 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
       });
     }
   }
+
+  handleBack = () => Actions.pop();
+
+  handleSearch = () => {
+    Actions.push(appConfig.routes.searchStore, {
+      categories: null,
+      category_id: 0,
+      category_name: '',
+    });
+  };
 
   onPressMainCategory(category, isUpdate = true) {
     if (category?.id === this.state.selectedMainCategory?.id) return;
@@ -358,9 +391,28 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     });
   }
 
+  renderBack = () => {
+    return (
+      <TouchableOpacity
+        //@ts-ignore
+        hitSlop={HIT_SLOP}
+        style={styles.backContainer}
+        onPress={this.handleBack}>
+        <Image source={BACK_IMAGE_BTN} style={[styles.back]} />
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <View style={styles.container}>
+        <Header
+          wrapperStyle={styles.headerWrapper}
+          contentContainer={styles.headerContentContainer}
+          placeholder={this.props.title}
+          renderLeft={this.renderBack}
+          goToSearch={this.handleSearch}
+        />
         {this.state.loading && <Loading center />}
         <View style={styles.mainContainer}>
           <View style={styles.mainCategories}>

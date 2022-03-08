@@ -6,18 +6,24 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Actions} from 'react-native-router-flux';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
 
-import appConfig from 'app-config';
 import store from 'app-store';
+import appConfig from 'app-config';
+import {copyToClipboard} from 'app-helper';
+import {saveImage} from 'app-helper/image';
+import VNPayMerchant from 'app-helper/VNPayMerchant/VNPayMerchant';
 
 import {PhotoLibraryPermission} from '../../../helper/permissionHelper';
 import {CART_PAYMENT_STATUS} from '../../../constants/cart/types';
+import {PAYMENT_METHOD_GATEWAY} from 'src/constants/payment/types';
 
 import {APIRequest} from '../../../network/Entity';
 
@@ -29,8 +35,6 @@ import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
 import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
-import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
-import { saveImage } from 'app-helper/image';
 
 const styles = StyleSheet.create({
   container: {
@@ -104,6 +108,16 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     // backgroundColor: '#fafafa',
   },
+  infoButtonContainer: {
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
+    borderRadius: 4,
+    overflow: 'hidden',
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+    // marginLeft: 100,
+    // borderLeftWidth: 100,
+    // paddingLeft: 30,
+  },
   infoTitle: {
     padding: 10,
     backgroundColor: '#f5f5f5',
@@ -112,6 +126,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
+  },
+  copyInfoContainer: {
+    maxWidth: '60%',
+  },
+  copyIcon: {
+    color: appConfig.colors.primary,
+    marginRight: 5,
+  },
+  copyInfoValue: {
+    height: undefined,
   },
   title: {},
   value: {},
@@ -131,7 +155,11 @@ const styles = StyleSheet.create({
 
   btnContainer: {
     backgroundColor: '#fff',
-    ...elevationShadowStyle(7),
+    backgroundColor: '#fff',
+    ...(appConfig.device.isIOS && elevationShadowStyle(7)),
+    paddingVertical: 10,
+    borderTopWidth: appConfig.device.isAndroid ? appConfig.device.pixel : 0,
+    borderColor: appConfig.colors.border,
   },
   confirmBtn: {
     flex: 1,
@@ -167,7 +195,7 @@ const Transaction = ({
   cartId = store?.cart_data?.id,
   onPop = () => {},
 }) => {
-  const {t} = useTranslation();
+  const {t} = useTranslation(['common', 'payment']);
 
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -189,10 +217,18 @@ const Transaction = ({
   const refPopup = useRef(null);
   const refQRCode = useRef();
 
-  const isActiveWebview = () => !transactionData?.data_qrcode && !isPaid;
+  const isActiveWebview = (transaction = transactionData) =>
+    transaction?.url &&
+    !transaction?.data_qrcode &&
+    !isPaid &&
+    !transaction?.data_va?.length;
 
   useEffect(() => {
-    getTransactionData(true);
+    getTransactionData().then((transData) => {
+      if (transData) {
+        handleOpenTransaction(transData);
+      }
+    });
 
     return () => {
       getTransactionDataRequest.cancel();
@@ -218,17 +254,18 @@ const Transaction = ({
             if (response.data) {
               switch (response.data.status) {
                 case CART_PAYMENT_STATUS.PAID:
-                  if (
-                    Actions.currentScene ===
-                    `${appConfig.routes.modalWebview}_1`
-                  ) {
-                    Actions.pop();
-                  }
                   setPaid(true);
                   break;
                 case CART_PAYMENT_STATUS.CANCEL:
                   setError(true);
                   break;
+              }
+
+              if (
+                !!response.data?.close_payment &&
+                Actions.currentScene === `${appConfig.routes.modalWebview}_1`
+              ) {
+                Actions.pop();
               }
             }
             setError(false);
@@ -265,24 +302,20 @@ const Transaction = ({
     };
   }, []);
 
-  const getTransactionData = useCallback(async (isOpenTransaction = false) => {
+  const getTransactionData = useCallback(async () => {
     getTransactionDataRequest.data = APIHandler.payment_cart_payment(
       siteId,
       cartId,
     );
     try {
       const response = await getTransactionDataRequest.promise();
-      console.log(response, siteId, cartId);
+      // console.log(response, siteId, cartId);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             setTransactionData(response.data);
-            if (
-              !response.data.data_qrcode &&
-              response.data.url &&
-              isOpenTransaction
-            ) {
-              handleOpenTransaction(response.data.url);
+            if (isActiveWebview(response.data)) {
+              return response.data;
             }
           }
         } else {
@@ -297,17 +330,19 @@ const Transaction = ({
           message: t('api.error.message'),
         });
       }
+      return null;
     } catch (error) {
       console.log('get_transaction_data', error);
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
       });
+      return null;
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [isPaid]);
 
   const handleSavePhoto = async (dataURL) => {
     await saveImage(undefined, dataURL, 'png');
@@ -376,21 +411,53 @@ const Transaction = ({
     }
   };
 
+  const vnPayMerchantListener = (e) => {
+    switch (e.resultCode) {
+      // user press back
+      case -1:
+      // transaction fail
+      case 98:
+      // user press cancel transaction
+      case 99:
+        break;
+    }
+  };
+
   const handleOpenTransaction = useCallback(
-    (url = transactionData?.url) => {
-      if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
-        if (url) {
-          Actions.push(appConfig.routes.modalWebview, {
-            title: t('screen.transaction.mainTitle'),
-            url,
-          });
-        } else {
-          Alert.alert('Chưa có link thanh toán');
+    async (transData) => {
+      if (!transData) {
+        setLoading(true);
+        transData = await getTransactionData();
+      }
+      if (transData?.url) {
+        switch (transData?.payment_method?.gateway) {
+          case PAYMENT_METHOD_GATEWAY.VNPAY:
+            const vnPayMerchant = new VNPayMerchant(vnPayMerchantListener);
+            vnPayMerchant.show({
+              isSandbox: !!transData.isSandbox,
+              paymentUrl: transData.url,
+              tmn_code: JSON.parse(
+                store?.store_data?.config_vnpay_payment || '{}',
+              )?.terminal_id,
+            });
+            break;
+          default:
+            Actions.push(appConfig.routes.modalWebview, {
+              title: t('screen.transaction.mainTitle'),
+              url: transData.url,
+            });
+            break;
         }
+      } else {
+        Alert.alert(t('payment:transaction.noPaymentInformation'));
       }
     },
     [transactionData],
   );
+
+  const copyAccountNumber = (accountNumber) => {
+    copyToClipboard(accountNumber);
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -428,8 +495,8 @@ const Transaction = ({
     );
   };
 
-  const renderInfo = () => {
-    return transactionData?.details?.map((info, index) => {
+  const renderTransactionInfo = () => {
+    return transactionData.details.map((info, index) => {
       const tempInfo = {...info};
       tempInfo.rightTextStyle = styles.value;
       if (tempInfo.title_highlight) {
@@ -459,6 +526,44 @@ const Transaction = ({
         />
       );
     });
+  };
+
+  const renderPaymentInfo = () => {
+    return transactionData.data_va.map((info, index) => {
+      if (info.copy) {
+        info.renderRight = (titleStyle) => {
+          return (
+            <TouchableOpacity
+              style={styles.copyInfoContainer}
+              onPress={() => copyAccountNumber(info.value)}>
+              <Container style={styles.infoButtonContainer}>
+                <Text style={[titleStyle, styles.copyInfoValue]}>
+                  <Ionicons name="ios-copy" style={styles.copyIcon} />{' '}
+                  {info.value}
+                </Text>
+              </Container>
+            </TouchableOpacity>
+          );
+        };
+      }
+
+      return (
+        <HorizontalInfoItem
+          key={index}
+          containerStyle={styles.infoContainer}
+          data={info}
+        />
+      );
+    });
+  };
+
+  const renderBlockInfo = (title, renderChild = () => {}) => {
+    return (
+      <>
+        <Text style={styles.infoTitle}>{title}</Text>
+        {renderChild()}
+      </>
+    );
   };
 
   const renderNote = () => {
@@ -519,14 +624,7 @@ const Transaction = ({
 
       <ScreenWrapper containerStyle={styles.container}>
         {/* <BlurFilter visible={isLoading} /> */}
-        {isLoading ||
-          (isImageSavingLoading && (
-            <Loading
-              center
-              // highlight={isLoading}
-              // message={isLoading && SAVE_IMAGE_MESSAGE}
-            />
-          ))}
+        {(isLoading || isImageSavingLoading) && <Loading center />}
         {renderPaidStatus()}
 
         <ScrollView
@@ -536,8 +634,10 @@ const Transaction = ({
           }>
           {renderQRCode()}
 
-          <Text style={styles.infoTitle}>Thông tin giao dịch</Text>
-          {renderInfo()}
+          {!!transactionData?.data_va?.length &&
+            renderBlockInfo('Thông tin thanh toán', renderPaymentInfo)}
+          {!!transactionData?.details?.length &&
+            renderBlockInfo('Thông tin giao dịch', renderTransactionInfo)}
           {renderNote()}
         </ScrollView>
 

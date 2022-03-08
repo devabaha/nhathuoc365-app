@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useState, useRef, useEffect} from 'react';
+import React, {MutableRefObject, useState, useEffect} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -19,6 +19,8 @@ import Animated, {
   timing,
   eq,
   concat,
+  clockRunning,
+  neq,
 } from 'react-native-reanimated';
 import AwesomeComboItem from './AwesomeComboItem';
 import appConfig from 'app-config';
@@ -101,6 +103,7 @@ function runTiming(
   };
 
   return block([
+    cond(clockRunning(clock), [], startClock(clock)),
     timing(clock, state, config),
     cond(
       eq(state.finished, 1),
@@ -128,12 +131,11 @@ function AwesomeCombo({
   const isMounted = useIsMounted();
   const [containerPosition, setContainerPosition] = useState(position);
   const [visible, setVisible] = useState(show);
-  const [
-    animatedOpacity,
-    animatedHeight,
-    animatedTranslateX,
-    isShow,
-  ] = useValues(0, 0, 0, 0);
+  const [animatedOpacity, animatedHeight, animatedTranslateX] = useValues(
+    0,
+    0,
+    0,
+  );
   const [opacityClock, heightClock] = useClocks(2);
 
   useEffect(() => {
@@ -142,45 +144,29 @@ function AwesomeCombo({
     }
   }, [show]);
 
+  useCode(
+    () => [
+      set(
+        animatedOpacity,
+        runTiming(
+          opacityClock,
+          200,
+          animatedOpacity,
+          show ? 1 : 0,
+          onFinishHeightAnimation,
+        ),
+      ),
+    ],
+    [show],
+  );
+
   const onFinishHeightAnimation = (position) => {
     if (!isMounted()) return;
 
-    if (!position) {
+    if (!position && visible) {
       setVisible(false);
     }
   };
-
-  useCode(() => set(isShow, show ? 1 : 0), [show]);
-
-  useCode(
-    () =>
-      block([
-        startClock(opacityClock),
-        set(
-          animatedOpacity,
-          runTiming(opacityClock, 200, animatedOpacity, show ? 1 : 0),
-        ),
-      ]),
-    [show],
-  );
-
-  useCode(
-    () =>
-      block([
-        startClock(heightClock),
-        set(
-          animatedHeight,
-          runTiming(
-            heightClock,
-            300,
-            animatedHeight,
-            show ? 100 : 0,
-            onFinishHeightAnimation,
-          ),
-        ),
-      ]),
-    [show],
-  );
 
   function renderItem(item: AwesomeComboItem, index: number) {
     return renderCustomItem ? (
@@ -202,7 +188,6 @@ function AwesomeCombo({
       width: containerWidth,
       height: containerHeight,
     } = e.nativeEvent.layout;
-    // const { x: parentX, y: parentY } = this.props.position;
     const {width: appWidth, height: appHeight} = Dimensions.get('window');
 
     if (parentRef.current) {
@@ -267,7 +252,13 @@ function AwesomeCombo({
               style={[
                 styles.mainContent,
                 {
-                  height: concat(animatedHeight, '%'),
+                  height: concat(
+                    animatedOpacity.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 100],
+                    }),
+                    '%',
+                  ),
                 },
               ]}>
               {data.map((item: AwesomeComboItem, index: number) =>
@@ -281,4 +272,15 @@ function AwesomeCombo({
   );
 }
 
-export default React.memo(AwesomeCombo);
+const areEquals = (prevProps, nextProps) => {
+  return (
+    prevProps.show === nextProps.show &&
+    prevProps.data === nextProps.data &&
+    prevProps.show === nextProps.show &&
+    prevProps.parentRef === nextProps.parentRef &&
+    prevProps.position === nextProps.position &&
+    prevProps.useParentWidth === nextProps.useParentWidth
+  );
+};
+
+export default React.memo(AwesomeCombo, areEquals);
