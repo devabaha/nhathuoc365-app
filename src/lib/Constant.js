@@ -12,7 +12,7 @@ global.HOTLINE = '+8418006284';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'dq825PqnCsKHfU-fNG1-kctcgVf_5qMrsdKJ5',
+  ios: 'EufwXd8Kg4lWNBbz37BXJz5OB0Lm6lOw5zewq',
   android: 'lvcmrPZq9JC1CYOD3J-CLuAk1kSkdXP-byppm'
 };
 

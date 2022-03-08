@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.16] - 2022-03-08
+### Fixed
+- Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
+- Main Voucher screen is not updating quantity when vouchers are received complete by [kienluu612@gmail.com].
+
 ## [r12.2.15] - 2022-02-28
 ### Fixed
 - [iOS] Crash app iOS 12 while running Xcode 13 because of LinkPresentaion.framework by [minhnguyenit14dev@gmail.com].

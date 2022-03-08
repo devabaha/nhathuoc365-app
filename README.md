@@ -29,7 +29,7 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Produ
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Production │ │dq825PqnCsKHfU-fNG1-kctcgVf_5qMrsdKJ5
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging │ │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
+│ Staging │ │EufwXd8Kg4lWNBbz37BXJz5OB0Lm6lOw5zewq
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-tickid-android android react-native
@@ -49,8 +49,8 @@ code-push release-react tick-nhathuoc365-android android -d "Production" -m --de
 code-push release-react tick-nhathuoc365-ios ios -d "Production" -m --description "test codepush"
 code-push release-react tick-nhathuoc365-android android -d "Production" -m --description "test codepush"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "Release tag r12.2.15"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-android -d "Production" -m --description "Release tag r12.2.15"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "Release tag r12.2.16"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-android -d "Production" -m --description "Release tag r12.2.16"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
