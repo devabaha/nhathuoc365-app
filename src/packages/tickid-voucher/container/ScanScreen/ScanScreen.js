@@ -24,6 +24,7 @@ class ScanScreen extends BaseContainer {
     isEnterCode: false,
     onCloseEnterCode: () => {},
     onScanVoucherFail: () => {},
+    forceReload: () => {},
   };
 
   constructor(props) {
@@ -143,9 +144,14 @@ class ScanScreen extends BaseContainer {
       });
       this.apiSending = false;
     } finally {
-      this.setState({
-        showLoading: false,
-      });
+      this.setState(
+        {
+          showLoading: false,
+        },
+        () => {
+          this.props.forceReload();
+        },
+      );
     }
   };
 
@@ -181,9 +187,14 @@ class ScanScreen extends BaseContainer {
       });
       this.apiSending = false;
     } finally {
-      this.setState({
-        showLoading: false,
-      });
+      this.setState(
+        {
+          showLoading: false,
+        },
+        () => {
+          this.props.forceReload();
+        },
+      );
     }
   };
 
