@@ -1,4 +1,5 @@
 import {Platform, Dimensions, PixelRatio} from 'react-native';
+import {getApiLevel} from 'react-native-device-info';
 import {
   isIphoneX,
   getStatusBarHeight,
@@ -13,6 +14,7 @@ import {
 class Config {
   constructor() {
     this._primaryColor = '#812384';
+    getApiLevel().then((apiLevel) => (this.apiLevel = apiLevel));
   }
 
   get tagVersion() {
@@ -59,6 +61,7 @@ class Config {
       isIphoneX: isIphoneX(),
       isAndroid: Platform.OS.toLowerCase() === 'android',
       isIOS: Platform.OS.toLowerCase() === 'ios',
+      apiLevel: this.apiLevel,
       ratio: PixelRatio.get(),
       pixel: 1 / PixelRatio.get(),
       width: Dimensions.get('window').width,
