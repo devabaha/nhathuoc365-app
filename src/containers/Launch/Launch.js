@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 // 3-party libs
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNUxcam from 'react-native-ux-cam';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -11,6 +12,7 @@ import BaseAPI from 'src/network/API/BaseAPI';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {rgbaToRgb, hexToRgba} from 'app-helper';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 // routing
 import {replace} from 'app-helper/routing';
 // context
@@ -19,6 +21,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
 import {languages} from 'src/i18n/constants';
 import {THEME_STORAGE_KEY} from 'src/constants';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // custom components
 import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
@@ -96,6 +99,15 @@ class Launch extends Component {
     const user = response.data || {};
     const site = response.other_data?.site || {};
     store.setStoreData(site);
+    console.log(response);
+
+    if (
+      isConfigActive(CONFIG_KEY.ENABLED_UXCAM_KEY) &&
+      !RNUxcam.isRecording()
+    ) {
+      RNUxcam.optIntoSchematicRecordings(); // Add this line to enable iOS screen recordings
+      RNUxcam.startWithKey(appConfig.uxcam.appKey);
+    }
 
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);

@@ -54,6 +54,12 @@ class Config {
     };
   }
 
+  get uxcam() {
+    return {
+      appKey: 'czxu7sq5jsxv230',
+    };
+  }
+
   get device() {
     return {
       isIphoneX: isIphoneX(),

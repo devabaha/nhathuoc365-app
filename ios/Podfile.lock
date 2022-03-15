@@ -502,6 +502,9 @@ PODS:
     - React-Core
   - RNSVG (12.1.0):
     - React
+  - RNUxcam (5.3.4):
+    - React-Core
+    - UXCam (~> 3.3.9)
   - RNVectorIcons (7.1.0):
     - React
   - SDWebImage (5.10.2):
@@ -514,6 +517,7 @@ PODS:
   - SSZipArchive (2.2.3)
   - Toast (4.0.0)
   - TOCropViewController (2.6.0)
+  - UXCam (3.3.9)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -612,6 +616,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNUxcam (from `../node_modules/react-native-ux-cam`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -651,6 +656,7 @@ SPEC REPOS:
     - SSZipArchive
     - Toast
     - TOCropViewController
+    - UXCam
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -796,6 +802,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-share"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  RNUxcam:
+    :path: "../node_modules/react-native-ux-cam"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -901,6 +909,7 @@ SPEC CHECKSUMS:
   RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
   RNShare: 8ff5f3819c8f2b4f76cd31fa1287315754afee01
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
+  RNUxcam: c4a44f41832e54db0c386b434bf9e8d0c237b326
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   SDWebImage: b969dcfc02c40a5da71eac0b03b8f1a0c794a86f
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
@@ -908,6 +917,7 @@ SPEC CHECKSUMS:
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
+  UXCam: fb294bf954e708fc308a645ae65bb967cac0760e
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
