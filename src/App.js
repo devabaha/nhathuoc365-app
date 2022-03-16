@@ -195,6 +195,7 @@ import {StatusBar} from './components/base';
 import ModalLicense from './components/ModalLicense';
 import {setAppLanguage} from './i18n/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalDeliverySchedule from './components/payment/Confirm/components/DeliveryScheduleSection/ModalDeliverySchedule';
 
 /**
  * Not allow font scaling
@@ -443,10 +444,12 @@ class App extends Component {
     store.branchIOSubscribe(branchIOSubscribe);
   };
 
-  handleOpenningNotification = (notification) => {
+  handleOpeningNotification = ({notification}) => {
     const {t} = this.props;
-    const params = notification.additionalData;
+    const params = notification?.additionalData;
     console.log(params);
+    if (!params) return;
+
     if (store.isHomeLoaded) {
       servicesHandler({...params, theme: store.theme}, t);
     } else {
@@ -600,8 +603,8 @@ class App extends Component {
   handleAddListenerOneSignal = () => {
     OneSignal.setAppId(appConfig.oneSignal.appKey);
     //Prompt for push on iOS
-    OneSignal.promptForPushNotificationsWithUserResponse(response => {
-      console.log("Prompt response:", response);
+    OneSignal.promptForPushNotificationsWithUserResponse((response) => {
+      console.log('Prompt response:', response);
     });
 
     //Method for handling notifications received while app in foreground
@@ -623,11 +626,12 @@ class App extends Component {
     //Method for handling notifications opened
     OneSignal.setNotificationOpenedHandler((notification) => {
       console.log('OneSignal: notification opened:', notification);
-      this.handleOpenningNotification(notification);
+      this.handleOpeningNotification(notification);
     });
 
-    OneSignal.getDeviceState().then(this.handleAddPushToken);
-    //
+    OneSignal.addSubscriptionObserver((event) => {
+      OneSignal.getDeviceState().then(this.handleAddPushToken);
+    });
   };
 
   handleAddPushToken = async (device) => {
@@ -2019,6 +2023,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.modalLicense}
                 component={ModalLicense}
+              />
+
+              {/* ================ MODAL LICENSE================ */}
+              <Stack
+                key={appConfig.routes.modalDeliverySchedule}
+                component={ModalDeliverySchedule}
               />
             </Lightbox>
 

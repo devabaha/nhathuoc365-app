@@ -10,6 +10,7 @@ import AddressSection from './AddressSection';
 import POSSection from './POSSection';
 import ProductSection from './ProductSection';
 import SectionContainer from './SectionContainer';
+import DeliveryScheduleSection from './DeliveryScheduleSection';
 
 export {
   PaymentMethodSection,
@@ -24,4 +25,5 @@ export {
   POSSection,
   ProductSection,
   SectionContainer,
+  DeliveryScheduleSection,
 };

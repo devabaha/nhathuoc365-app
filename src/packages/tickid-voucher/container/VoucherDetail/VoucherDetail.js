@@ -322,9 +322,14 @@ class VoucherDetail extends BaseContainer {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({
-        showLoading: false,
-      });
+      this.setState(
+        {
+          showLoading: false,
+        },
+        () => {
+          this.props.forceReload();
+        },
+      );
     }
   };
 

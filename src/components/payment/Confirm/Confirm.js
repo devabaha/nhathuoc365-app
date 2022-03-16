@@ -51,6 +51,7 @@ import {
   AddressSection,
   POSSection,
   ProductSection,
+  DeliveryScheduleSection,
 } from './components';
 import {
   Input,
@@ -85,6 +86,8 @@ class Confirm extends Component {
     paymentMethod: {},
     loading: false,
     isConfirming: false,
+    scheduleDate: '',
+    scheduleTime: '',
   };
   refs_confirm_page = React.createRef();
   unmounted = false;
@@ -94,9 +97,17 @@ class Confirm extends Component {
   requests = [this.getShippingInfoRequest, this.reorderRequest];
   eventTracker = new EventTracker();
   refNoteModalInput = null;
+  today = new Date();
 
   get theme() {
     return getTheme(this);
+  }
+
+  get todayTime() {
+    return {
+      hour: String(this.today.getHours()).padStart(2, '0'),
+      minute: String(this.today.getMinutes()).padStart(2, '0'),
+    };
   }
 
   get isSiteUseShipNotConfirming() {
@@ -161,6 +172,7 @@ class Confirm extends Component {
       }),
     );
     this.eventTracker.logCurrentView();
+    this.today.setMinutes(this.today.getMinutes() + 10);
   }
 
   componentWillUnmount() {
@@ -305,6 +317,9 @@ class Confirm extends Component {
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
+            delivery_time: !!this.state.scheduleTime
+              ? `${this.state.scheduleDate} ${this.state.scheduleTime}`
+              : null,
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
@@ -506,6 +521,16 @@ class Confirm extends Component {
       },
       this.theme,
     );
+  };
+
+  handlePressDeliveryScheduleActionButton = () => {
+    push(appConfig.routes.modalDeliverySchedule, {
+      selectedDate: this.state.scheduleDate,
+      selectedTime: this.state.scheduleTime,
+      onConfirm: (date, time) => {
+        this.setState({scheduleDate: date, scheduleTime: time});
+      },
+    });
   };
 
   _goPaymentMethod = (cart_data) => {
@@ -1078,6 +1103,23 @@ class Confirm extends Component {
                   ? this._goAddress
                   : () => this._copyAddress(address_data)
               }
+            />
+          )}
+
+          {isConfigActive(CONFIG_KEY.ALLOW_CHOOSE_DELIVERY_TIME) && (
+            <DeliveryScheduleSection
+              title={
+                !!this.state.scheduleDate && !!this.state.scheduleTime
+                  ? t('confirm.schedule.title', {
+                      scheduleTime: this.state.scheduleTime,
+                      scheduleDate: this.state.scheduleDate,
+                    })
+                  : t('confirm.schedule.deliveryNow', {
+                      hour: this.todayTime.hour,
+                      minute: this.todayTime.minute,
+                    })
+              }
+              onPressActionBtn={this.handlePressDeliveryScheduleActionButton}
             />
           )}
 
