@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
 - [CU-2d9hbpd] Integrate UXCam by [minhnguyenit14@gmail.com].
 
+## [r12.2.18] - 2022-03-16
+### Fixed
+- App doesn't get push notification additionalData properly by [minhnguyenit14@gmail.com].
+
+## [r12.2.17] - 2022-03-15
+### Fixed
+- [CU-2df5xur] [Android] Error Webview layout apiLevel <= 11 by [minhnguyenit14@gmail.com].
+
+## [r12.2.16] - 2022-03-08
+### Fixed
+- Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
+- Main Voucher screen is not updating quantity when vouchers are received complete by [kienluu612@gmail.com].
+
 ## [r12.2.15] - 2022-02-28
 ### Fixed
 - [iOS] Crash app iOS 12 while running Xcode 13 because of LinkPresentaion.framework by [minhnguyenit14dev@gmail.com].
