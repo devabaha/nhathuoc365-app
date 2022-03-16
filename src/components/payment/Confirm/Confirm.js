@@ -1684,9 +1684,10 @@ const styles = StyleSheet.create({
   },
 
   success_box: {
-    padding: 15,
+    marginTop: 15,
   },
   success_title: {
+    textAlign: 'center',
     lineHeight: 20,
     color: '#000000',
   },
