@@ -36,7 +36,7 @@ class SelectionList extends Component {
     }
 
     if (typeof item.render === 'function') {
-      return item.render();
+      return item.render(index);
     }
 
     var notifyCount = 0;
@@ -67,7 +67,7 @@ class SelectionList extends Component {
             <>
               <View style={[styles.profile_list_opt_btn, item.containerStyle]}>
                 <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
-                  {item.leftIcon || (
+                  {item.leftIcon || item.svgIcon || (
                     <Icon
                       bundle={iconBundle}
                       name={item.icon}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   profile_list_opt: {},
   profile_list_opt_btn: {
     width: appConfig.device.width,
-    height: 52,
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,

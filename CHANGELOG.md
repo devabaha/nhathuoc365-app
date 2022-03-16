@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
 - [CU-1zgz1kh] ModalDeliverySchedule and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
 - [CU-2d9hbpd] Integrate UXCam by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
 ## [r12.2.18] - 2022-03-16
 ### Fixed
