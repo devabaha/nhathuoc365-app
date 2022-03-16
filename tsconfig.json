@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
+    "lib": ["ES2019"],
     "module": "commonjs",
     "baseUrl": ".",
     /* Base directory to resolve non-absolute module names. */

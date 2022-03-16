@@ -103,6 +103,7 @@ const SectionContainer = ({
                   bundle={BundleIconSetName.FONT_AWESOME_5}
                   style={iconStyle}
                   name={iconName}
+                  solid
                 />
               )}
               <Typography
