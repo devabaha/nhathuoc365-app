@@ -4,7 +4,6 @@ import {View, Easing, StyleSheet, Platform} from 'react-native';
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
-import {Picker} from '@react-native-picker/picker';
 // helpers
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
@@ -14,6 +13,7 @@ import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType} from 'src/components/base';
 // custom components
+import Picker from 'src/components/Picker';
 import {
   Container,
   Typography,
@@ -231,7 +231,12 @@ class ModalPicker extends PureComponent {
             {this.props.selectedLabel}
           </Typography>
         </Container>
-        {this.renderPicker()}
+        {/* {this.renderPicker()} */}
+        <Picker
+          data={this.props.data}
+          selectedValue={this.state.selectedValue}
+          onValueChange={this.onValueChange}
+        />
       </Modal>
     );
   }

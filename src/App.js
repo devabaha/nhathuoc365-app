@@ -195,6 +195,7 @@ import {StatusBar} from './components/base';
 import ModalLicense from './components/ModalLicense';
 import {setAppLanguage} from './i18n/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalDeliverySchedule from './components/payment/Confirm/components/DeliveryScheduleSection/ModalDeliverySchedule';
 
 /**
  * Not allow font scaling
@@ -2019,6 +2020,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.modalLicense}
                 component={ModalLicense}
+              />
+
+              {/* ================ MODAL LICENSE================ */}
+              <Stack
+                key={appConfig.routes.modalDeliverySchedule}
+                component={ModalDeliverySchedule}
               />
             </Lightbox>
 
