@@ -74,7 +74,7 @@
       "popup": {
         "title": "THÀNH CÔNG",
         "loggedIn": {
-          "description": "Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn",
+          "description": "Đã đặt hàng thành công!",
           "accept": "Tiếp tục mua hàng",
           "cancel": "Xem đơn hàng"
         },
