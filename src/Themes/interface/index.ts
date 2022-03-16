@@ -148,7 +148,7 @@ export type Color = {
   // ACCOUNT
   accountDomain: ColorValue;
   accountPremium: ColorValue;
-  accountDefaltWallet: ColorValue;
+  accountDefaultWallet: ColorValue;
   accountRevenueCommissions: ColorValue;
   accountAffiliate: ColorValue;
   accountStore: ColorValue;
@@ -160,7 +160,7 @@ export type Color = {
   accountCommissionIncome: ColorValue;
   accountSaleReport: ColorValue;
   accountResetPassword: ColorValue;
-  accountFacebookFanpage: ColorValue;
+  accountFacebook: ColorValue;
   accountAboutUs: ColorValue;
   accountTermOfUse: ColorValue;
   accountLanguage: ColorValue;
