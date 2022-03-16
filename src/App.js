@@ -451,10 +451,12 @@ class App extends Component {
     store.branchIOSubscribe(branchIOSubscribe);
   };
 
-  handleOpenningNotification = (notification) => {
+  handleOpeningNotification = ({notification}) => {
     const {t} = this.props;
-    const params = notification.additionalData;
+    const params = notification?.additionalData;
     console.log(params);
+    if (!params) return;
+
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
     } else {
@@ -631,7 +633,7 @@ class App extends Component {
     //Method for handling notifications opened
     OneSignal.setNotificationOpenedHandler((notification) => {
       console.log('OneSignal: notification opened:', notification);
-      this.handleOpenningNotification(notification);
+      this.handleOpeningNotification(notification);
     });
 
     OneSignal.addSubscriptionObserver((event) => {

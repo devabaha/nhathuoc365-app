@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r12.2.18] - 2022-03-16
+### Fixed
+- App doesn't get push notification additionalData properly by [minhnguyenit14@gmail.com].
+
 ## [r12.2.17] - 2022-03-15
 ### Fixed
 - [CU-2df5xur] [Android] Error Webview layout apiLevel <= 11 by [minhnguyenit14@gmail.com].
