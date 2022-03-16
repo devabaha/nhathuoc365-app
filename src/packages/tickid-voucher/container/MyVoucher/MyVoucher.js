@@ -115,6 +115,7 @@ class MyVoucher extends BaseContainer {
           }
         },
         onScanVoucherFail: this.handleScanVoucherFail,
+        forceReload: this.props.forceReload,
       },
       this.theme,
     );

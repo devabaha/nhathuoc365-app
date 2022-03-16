@@ -100,6 +100,16 @@
     "copy": {
       "title": "Sao chép",
       "success": "Sao chép thành công"
+    },
+    "schedule": {
+      "title": "Hẹn giao vào {{scheduleTime}} - {{scheduleDate}}",
+      "modalTitle": "Chọn giờ nhận",
+      "deliveryNow": "Giao ngay vào {{hour}}:{{minute}} Hôm nay",
+      "modal": {
+        "todayLabel": "Hôm nay",
+        "deliveryNowLabel": "Giao ngay",
+        "outTimeLabel": "Hết thời gian giao hàng"
+      }
     }
   },
   "callErrorAlert": {

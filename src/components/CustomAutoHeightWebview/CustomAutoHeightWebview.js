@@ -118,7 +118,9 @@ const styles = StyleSheet.create({
   container: {},
   webview: {
     width: '100%',
-    opacity: 0.99,
+    opacity:
+      // fix android 12 (apiLevel 31) crash
+      appConfig.device.isAndroid && appConfig.device.apiLevel >= 31 ? 0.99 : 1,
   },
 });
 

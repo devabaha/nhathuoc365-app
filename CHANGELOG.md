@@ -8,7 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
+- [CU-1zgz1kh] ModalDeliverySchedule and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
+- [CU-2d9hbpd] Integrate UXCam by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
+## [r12.2.18] - 2022-03-16
+### Fixed
+- App doesn't get push notification additionalData properly by [minhnguyenit14@gmail.com].
+
+## [r12.2.17] - 2022-03-15
+### Fixed
+- [CU-2df5xur] [Android] Error Webview layout apiLevel <= 11 by [minhnguyenit14@gmail.com].
+
+## [r12.2.16] - 2022-03-08
+### Fixed
+- Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
+- Main Voucher screen is not updating quantity when vouchers are received complete by [kienluu612@gmail.com].
 
 ## [r12.2.15] - 2022-02-28
 ### Fixed
@@ -21,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r12.2.13] - 2022-02-11
 ### Fixed
 - [iOS] Uncomment code to enable onesignal push notification by [lamah.dev@gmail.com].
-- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) [minhnguyenit14dev@gmail.com].
+- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) by [minhnguyenit14dev@gmail.com].
 
 ## [r12.2.12] - 2022-02-09
 ### Changed
