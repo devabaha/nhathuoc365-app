@@ -418,7 +418,7 @@ const CreatePost = ({
             ]}
           />
           <BaseButton
-            disabled={!isOverNumberOfUploadImages}
+            disabled={isOverNumberOfUploadImages}
             onPress={goToEditImages}
             style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
