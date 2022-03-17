@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r12.2.18] - 2022-03-16
+## [r12.2.18] - 2022-03-17
+### Added
+- [CU-2at9nkq] id in post data of add_payment_method api by [minhnguyenit14@gmail.com].
 ### Changed
 - [CU-2fe0mee] Content of the notice when placing an order by [lamah.dev@gmail.com].
 ### Fixed
