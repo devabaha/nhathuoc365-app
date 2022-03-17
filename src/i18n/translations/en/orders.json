@@ -75,7 +75,7 @@
       "popup": {
         "title": "SUCCESS",
         "loggedIn": {
-          "description": "Your order will be delivered on time. Thank you!",
+          "description": "Ordered successfully!",
           "accept": "Keep shopping",
           "cancel": "View orders"
         },

@@ -1435,6 +1435,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   success_title: {
+    textAlign: 'center',
     lineHeight: 20,
   },
   success_icon_box: {
