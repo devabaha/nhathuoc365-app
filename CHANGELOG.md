@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
 ## [r12.2.18] - 2022-03-16
+### Changed
+- [CU-2fe0mee] Content of the notice when placing an order by [lamah.dev@gmail.com].
 ### Fixed
 - App doesn't get push notification additionalData properly by [minhnguyenit14@gmail.com].
 

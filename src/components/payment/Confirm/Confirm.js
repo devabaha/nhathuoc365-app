@@ -156,6 +156,7 @@ class Confirm extends Component {
   }
 
   componentDidMount() {
+    this.popup_message.open()
     this._initial(this.props);
     const is_paymenting =
       this.state.data && this.state.data.status == CART_STATUS_ORDERING;
@@ -1435,6 +1436,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   success_title: {
+    textAlign: 'center',
     lineHeight: 20,
   },
   success_icon_box: {
