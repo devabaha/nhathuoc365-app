@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 // 3-party libs
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNUxcam from 'react-native-ux-cam';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -100,14 +99,6 @@ class Launch extends Component {
     const site = response.other_data?.site || {};
     store.setStoreData(site);
     console.log(response);
-
-    if (
-      isConfigActive(CONFIG_KEY.ENABLED_UXCAM_KEY) &&
-      !RNUxcam.isRecording()
-    ) {
-      RNUxcam.optIntoSchematicRecordings(); // Add this line to enable iOS screen recordings
-      RNUxcam.startWithKey(appConfig.uxcam.appKey);
-    }
 
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
