@@ -58,6 +58,4 @@ export const CONFIG_KEY = {
   ENABLE_EULA_KEY: 'enable_eula_key',
   EULA_NEWS_ID: 'eula_news_id',
   ALLOW_CHOOSE_DELIVERY_TIME: 'allow_choose_delivery_time',
-
-  ENABLED_UXCAM_KEY: 'enable_uxcam_key',
 };

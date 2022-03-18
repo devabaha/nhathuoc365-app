@@ -13,20 +13,21 @@ exit;
 #version         :1.2
 #===============================================================================
 
+# UXCAM REMOVED -> deprecated
 # Fix issues with taps/ swipes upon implementing UXCam
 # https://help.uxcam.com/hc/en-us/articles/360020821551-Seeing-issues-with-the-taps-swipes-upon-implementing-UXCam-
-declare rn_RCTTouchHandler_path="node_modules/react-native/React/Base/RCTTouchHandler.m";
-declare returnSign="return \[self canBePreventedByGestureRecognizer:otherGestureRecognizer\]";
-declare newReturnSign="\t\/\/ Same";
-declare replaceNewReturn="return NO;$newReturnSign";
-# undo if replaced
-sed -i '' "/${replaceNewReturn}/ s//${newReturnSign//$'\n'/}/" $rn_RCTTouchHandler_path;
-# replace
-sed -i '' "/${newReturnSign}/ s//${replaceNewReturn//$'\n'/}/" $rn_RCTTouchHandler_path;
-# uncomment if commented
-sed -i '' "/${returnSign}/ s/\/\/ //" $rn_RCTTouchHandler_path;
-# comment
-sed -i '' "/${returnSign}/ s/^/\/\/ /" $rn_RCTTouchHandler_path;
+# declare rn_RCTTouchHandler_path="node_modules/react-native/React/Base/RCTTouchHandler.m";
+# declare returnSign="return \[self canBePreventedByGestureRecognizer:otherGestureRecognizer\]";
+# declare newReturnSign="\t\/\/ Same";
+# declare replaceNewReturn="return NO;$newReturnSign";
+# # undo if replaced
+# sed -i '' "/${replaceNewReturn}/ s//${newReturnSign//$'\n'/}/" $rn_RCTTouchHandler_path;
+# # replace
+# sed -i '' "/${newReturnSign}/ s//${replaceNewReturn//$'\n'/}/" $rn_RCTTouchHandler_path;
+# # uncomment if commented
+# sed -i '' "/${returnSign}/ s/\/\/ //" $rn_RCTTouchHandler_path;
+# # comment
+# sed -i '' "/${returnSign}/ s/^/\/\/ /" $rn_RCTTouchHandler_path;
 
 #date            :20211030
 #version         :1.1
