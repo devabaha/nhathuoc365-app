@@ -146,6 +146,7 @@ class PaymentMethod extends Component {
         this.state.selectedPaymentMethodDetail?.gateway !== undefined
           ? this.state.selectedPaymentMethodDetail.gateway
           : this.state.selectedMethod.gateway,
+      id: this.state.selectedMethod.id,
       payment_type: this.state.selectedMethod.type,
       payment_content: '',
       payment_method_id: this.state.selectedPaymentMethodDetail?.id || '',
