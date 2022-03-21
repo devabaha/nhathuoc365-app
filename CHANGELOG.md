@@ -21,10 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r12.2.16] - 2022-03-08
 ### Fixed
-- [CU-2df5xur] [Android] Error Webview layout apiLevel <= 11 by [minhnguyenit14@gmail.com].
-
-## [r12.2.16] - 2022-03-08
-### Fixed
 - Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
 - Main Voucher screen is not updating quantity when vouchers are received complete by [kienluu612@gmail.com].
 
