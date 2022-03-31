@@ -1,5 +1,7 @@
 import BaseHandler from './BaseHandler';
 import CommonAPIHandler from './CommonAPIHandler';
+import HomeIDAPIHandler from './HomeIDAPIHandler';
+import BeeLandAPIHandler from './BeeLandAPIHandler';
 import CommonAirlineTicketAPIHandler from './CommonAirlineTicketAPIHandler';
 import IViewAPIHandler from './IViewAPIHandler';
 import { aggregation } from '../helper';
@@ -14,6 +16,8 @@ import { aggregation } from '../helper';
  * @class
  * @mixes BaseHandler
  * @mixes CommonAPIHandler
+ * @mixes HomeIDAPIHandler
+ * @mixes BeeLandAPIHandler
  * @mixes CommonAirlineTicketAPIHandler
  * @mixes IViewAPIHandler
  */
@@ -21,6 +25,8 @@ import { aggregation } from '../helper';
 const APIHandler = new (aggregation(
   BaseHandler,
   CommonAPIHandler,
+  HomeIDAPIHandler,
+  BeeLandAPIHandler,
   CommonAirlineTicketAPIHandler,
   IViewAPIHandler
 ))();

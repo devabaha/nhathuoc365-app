@@ -28,8 +28,8 @@ class Launch extends Component {
   }
 
   componentDidMount() {
-    this.handleAuthorization();
     this.animateLoading();
+    this.handleAuthorization();
   }
 
   handleAuthorization = async () => {
@@ -78,8 +78,15 @@ class Launch extends Component {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
+        this.props.setTabVisible({
+          [appConfig.routes.roomTab]: !!response.data.view_beehome,
+          [appConfig.routes.listBeeLand]: response.data.view_beeland
+        });
         Actions.replace(appConfig.routes.primaryTabbar);
-        Actions.replace(appConfig.routes.homeTab);
+        if (user.room) {
+          Actions.jump(appConfig.routes.roomTab);
+        } else {
+        }
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);

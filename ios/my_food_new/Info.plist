@@ -5,7 +5,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>en</string>
 		<key>CFBundleDisplayName</key>
-		<string>Abaha</string>
+		<string>HomeID</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
 				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh</string>
-					<string>vn.abahaglobal</string>
+					<string>com.googleusercontent.apps.857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3</string>
+					<string>asia.homeid</string>
 				</array>
 			</dict>
 			<!-- for vnpaymerchant scheme -->
@@ -37,7 +37,7 @@
 				<string>Editor</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>vn.abahaglobal</string>
+					<string>asia.homeid</string>
 				</array>
 			</dict>
 		</array>
@@ -136,8 +136,8 @@
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
 		<key>branch_app_domain</key>
-		<string>abahavn.app.link</string>
+		<string>homeid.app.link</string>
 		<key>branch_key</key>
-		<string>key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9</string>
+		<string>key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6</string>
 	</dict>
 </plist>

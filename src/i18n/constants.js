@@ -12,12 +12,13 @@ export const languages = {
     value: 'en',
     isRTL: false,
     locale: 'en'
+  },
+  zh: {
+    label: '中文',
+    value: 'zh',
+    isRTL: false,
+    locale: 'zh-cn'
   }
-  // cn: {
-  //     label: 'Chinese',
-  //     value: 'cn',
-  //     isRTL: false
-  // },
   // jp: {
   //     label: 'Japanese',
   //     value: 'jp',

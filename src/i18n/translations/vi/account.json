@@ -13,8 +13,8 @@
       "desc": "Quản lý đơn hàng"
     },
     "myVoucher": {
-      "label": "Voucher của tôi",
-      "desc": "Sử dụng các mã giảm giá đã nhận"
+      "label": "Mã giảm giá của tôi",
+      "desc": "Quản lý các mã giảm giá được nhận"
     },
     "fanpage": {
       "label": "Fanpage {{appName}}",

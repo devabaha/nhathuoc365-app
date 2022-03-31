@@ -6,9 +6,11 @@
  */
 
 import { CommonAPI } from './CommonAPI';
-import { IViewAPI } from './IViewAPI';
+import { HomeIDAPI } from './HomeIDAPI';
+import { BeeLandAPI } from './BeeLandAPI';
 import { aggregation } from '../helper';
+import { IViewAPI } from './IViewAPI';
 
-const API = new (aggregation(CommonAPI, IViewAPI))();
+const API = new (aggregation(CommonAPI, HomeIDAPI, BeeLandAPI, IViewAPI))();
 
 export default API;

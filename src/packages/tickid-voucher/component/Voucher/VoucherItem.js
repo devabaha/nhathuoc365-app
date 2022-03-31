@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Button from 'react-native-button';
-import appConfig from 'app-config';
 
 function VoucherItem(props) {
 
@@ -77,8 +76,8 @@ const styles = StyleSheet.create({
     left: 16,
     width: 46,
     height: 46,
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: 8,
+    // borderWidth: 1,
     borderColor: '#fff'
   },
   discountWrapper: {

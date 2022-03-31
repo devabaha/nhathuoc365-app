@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Platform, LayoutAnimation} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Platform, LayoutAnimation, Image } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import getTickUniqueID from '../util/getTickUniqueID';
 import appConfig from 'app-config';
 import Events from './Events';
@@ -385,6 +385,12 @@ const Center = ({ref, style, children}) => (
 );
 global.Center = Center;
 
+global.willUpdateState = (unmounted, callback) => {
+  if (!unmounted) {
+    callback();
+  }
+};
+
 global.setStater = (context, isUnmounted, state, callback = () => {}) => {
   if (!isUnmounted) {
     context.setState({ ...state }, () => callback());
@@ -425,6 +431,13 @@ global.LightenColor = (color, percent) => {
   );
 };
 
+global.normalizeNotify = (notify = '') => {
+  if (isNaN(notify) || !!!notify) {
+    return notify;
+  }
+  return notify > 9 ? '9+' : notify + '';
+};
+
 /**
  * @todo format number to standard format
  * @example 1000 -> 1.000
@@ -448,7 +461,24 @@ global.vndCurrencyFormat = (target, n, x) => {
 };
 
 /**
- * @todo format number to sale form
+ * @todo prefetch images
+ * @param {Array<string>} images
+ * @returns {Promise}
+ */
+global.prefetchImages = images => {
+  return Promise.all(
+    images.map(image => {
+      let img = {
+        ...Image.resolveAssetSource(image),
+        cache: 'force-cache'
+      };
+
+      return Image.prefetch(img);
+    })
+  );
+};
+
+/** @todo format number to sale form
  * @example 25 -> -25%
  */
 global.saleFormat = (sale) => {
@@ -543,14 +573,13 @@ setNativeExceptionHandler((exceptionString) => {
 });
 
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: true,
+};
 
-global.hapticFeedBack = () => {
-  const options = {
-    enableVibrateFallback: true,
-    ignoreAndroidSystemSettings: true,
-  };
-
-  ReactNativeHapticFeedback.trigger('impactLight', options);
+global.hapticFeedBack = (type = 'impactLight', opt = options) => {
+  ReactNativeHapticFeedback.trigger(type, opt);
 };
 
 global.getNumberOnly = (text) => {

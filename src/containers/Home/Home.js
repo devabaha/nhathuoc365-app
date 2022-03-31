@@ -27,6 +27,8 @@ class Home extends Component {
       site: null,
       sites: null,
       title_sites: null,
+      rooms: null,
+      title_rooms: null,
       newses: null,
       notices: null,
       campaigns: null,
@@ -114,6 +116,11 @@ class Home extends Component {
           site: response.data.site,
           sites: response.data.sites,
           title_sites: response.data.title_sites,
+          rooms: response.data.rooms,
+          title_rooms: response.data.title_rooms,
+          title_room_news: response.data.title_room_news,
+          room_news: response.data.room_news,
+          title_newses: response.data.title_newses,
           newses: response.data.newses,
           notices: response.data.notices,
           services: response.data.services,
@@ -259,6 +266,16 @@ class Home extends Component {
     // });
   };
 
+  handlePressRoomItem = room => {
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_ROOM,
+      room_id: room.id,
+      site_id: room.site_id,
+      title: room.name
+    };
+    servicesHandler(service);
+  };
+
   handlePressSiteItem = (store, callBack) => {
     servicesHandler(
       {type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id},
@@ -280,6 +297,14 @@ class Home extends Component {
       title: item.title,
       data: item,
     });
+  };
+
+  handlePressRoomNews = news => {
+    const service = {
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      news
+    };
+    servicesHandler(service);
   };
 
   handlePressButtonChat = () => {
@@ -368,6 +393,11 @@ class Home extends Component {
         site={this.state.site}
         sites={this.state.sites}
         title_sites={this.state.title_sites}
+        rooms={this.state.rooms}
+        title_rooms={this.state.title_rooms}
+        title_room_news={this.state.title_room_news}
+        room_news={this.state.room_news}
+        title_newses={this.state.title_newses}
         newses={this.state.newses}
         notices={this.state.notices}
         services={this.state.services}
@@ -397,12 +427,15 @@ class Home extends Component {
         onShowAllCampaigns={this.handleShowAllCampaigns}
         onShowAllNews={(title, id) => this.handleShowAllNews(title, id)}
         onPressSiteItem={this.handlePressSiteItem}
+        onPressRoomItem={this.handlePressRoomItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
+        onPressRoomNews={this.handlePressRoomNews}
         onPressNoti={this.handlePressButtonChat}
         onPressCommission={this.handlePressCommission}
         goToSocial={this.goToSocial}
         refreshing={this.state.refreshing}
+        groups={this.state.product_groups}
         product_groups={this.state.product_groups}
         goToSearch={this.goToSearch}
         news_categories={this.state.news_categories}

@@ -1,0 +1,42 @@
+{
+  "booking": {
+    "success": {
+      "title": "通知",
+      "message": "您的服务已预定成功!",
+      "accept": "确定"
+    },
+    "fail": {
+      "title": "通知",
+      "message": "失误，请重试",
+      "accept": "确定"
+    }
+  },
+  "web": {
+    "success": {
+      "title": "通知",
+      "message": "您的服务已预定成功!",
+      "accept": "确定"
+    },
+    "fail": {
+      "title": "通知",
+      "message": "失误，请重试",
+      "accept": "确定"
+    }
+  },
+  "welcome": {
+    "defaultUserName": "客户账号",
+    "message": "迎接"
+  },
+  "sections": {
+    "favoriteStore": {
+      "title": "特权商店"
+    },
+    "voucher": {
+      "title": "Tick 优惠券"
+    },
+    "news": {
+      "title": "信息"
+    }
+  },
+  "viewAll": "查看全部信息"
+}

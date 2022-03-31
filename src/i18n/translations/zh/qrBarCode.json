@@ -1,0 +1,13 @@
+{
+  "content": {
+    "description": "使用二维码接收转账"
+  },
+  "invalidQRCode": "无效二维码，请重试",
+  "transferPaymentTitle": "转账到 {{walletName}}",
+  "settingLabel": "设置",
+  "qrGuideMessage": "将相机调整为符合“二维码”以进行扫描",
+  "POSGuideMessage": "将QR码提供给收银员以获取积分",
+  "reload": "60秒后自动升级",
+  "accountDescription": "● 此代表您帐户的条形码",
+  "cashbackDescription": "● 使用此条形码从商店收取退款"
+}

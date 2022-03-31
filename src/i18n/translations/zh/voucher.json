@@ -1,0 +1,87 @@
+{
+  "api": {
+    "error": {
+      "notFound": "无效优惠券!"
+    },
+    "success": {
+      "taken": "您已成功收到优惠券"
+    }
+  },
+  "locationTitle": "地位",
+  "alreadyTaken": {
+    "title": "已使用折扣代码",
+    "btnTitle": "查看我的代码"
+  },
+  "header": {
+    "title": "我的优惠券",
+    "unusedCode": "未用优惠券",
+    "noCode": "无折扣优惠券"
+  },
+  "noResult": {
+    "title": "此地方未有促销",
+    "message": "此地方未有促销活动"
+  },
+  "my": {
+    "noVoucher": {
+      "title": "您未有折扣优惠券",
+      "description": "Đi săn voucher ở {{appName}} Voucher ngay thôi"
+    },
+    "enterVoucher": "输入优惠券代码"
+  },
+  "scan": {
+    "description": "将相机调整为符合“二维码”以进行扫描 可取得优惠券",
+    "enterVoucher": "输入优惠券",
+    "enterStore": "输入商店优惠券",
+    "modal": {
+      "title": "手动输入代码"
+    },
+    "enterCode": "输入代码"
+  },
+  "notification": {
+    "title": "通知",
+    "accept": "关闭"
+  },
+  "confirm": {
+    "redeem": {
+      "title": "交换奖励",
+      "message": "交换 {{point}} 获得此促销?"
+    },
+    "usePromotion": {
+      "title": "使用促销",
+      "message": "将您的订单使用促销?"
+    }
+  },
+  "modal": {
+    "accept": "确定",
+    "cancel": "取消",
+    "close": "关闭",
+    "province": {
+      "title": "选择地区/城市",
+      "placeholder": "搜索",
+      "notFound": "Không có kết quả phù hợp cho \"{{searchText}}\""
+    },
+    "enterCodeManually": {
+      "description": "询问销售人员更多说明",
+      "btnTitle": "发送代码"
+    }
+  },
+  "detail": {
+    "useLater": "以后使用",
+    "useNow": "立即使用",
+    "useTo": "使用于",
+    "redeem": "兑换",
+    "redeemPoint": "兑换积分",
+    "getVoucher": "取得优惠券",
+    "tabs": {
+      "information": {
+        "title": "信息"
+      },
+      "place": {
+        "title": "地位",
+        "address": "商店地址",
+        "shop": "商店"
+      }
+    },
+    "providedBy": "提供者"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "method": {
+    "selectTitle": "请选择付款模式",
+    "emptyMessage": "空付款模式"
+  },
+  "payment": {
+    "tempPrice": "临时价格",
+    "totalPrice": "总价格",
+    "transferFee": "Phí giao dịch"
+  },
+  "confirm": "确认",
+  "agree": "Đồng ý"
+}

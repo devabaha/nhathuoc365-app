@@ -42,7 +42,7 @@ class VNPayMerchant {
     const t = i18next.getFixedT(undefined, 'payment');
     const config = {
       isSandbox: true,
-      scheme: 'vn.abahaglobal',
+      scheme: 'asia.homeid',
       backAlert: t('transaction.cancelPaymentFlowConfirmMessage'),
       title: t('transaction.vnpayTitle'),
       titleColor: appConfig.colors.text,

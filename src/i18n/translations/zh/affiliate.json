@@ -1,0 +1,27 @@
+{
+  "header": {
+    "message": {
+      "title": "发信息"
+    },
+    "email": {
+      "title": "发送电子邮件",
+      "message": "Lời mời tham gia chương trình {{appName}} Affiliate"
+    },
+    "referralCode": {
+      "title": "参考代码"
+    }
+  },
+  "tab": {
+    "referralList": {
+      "title": "参考文献列表",
+      "desc": "帐号的邀请列表"
+    },
+    "programInformation": {
+      "title": "计划信息"
+    }
+  },
+  "programInformationMessage": "输入推荐代码以接收特别奖 {{appName}}",
+  "info": {
+    "content": "介绍营销计划"
+  }
+}

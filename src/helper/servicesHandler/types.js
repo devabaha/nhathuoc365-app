@@ -12,6 +12,20 @@ export const SERVICES_TYPE = {
   RADA_LIST_SERVICE: 'rada_list_service',
   RADA_SERVICE: 'rada_service',
 
+  /** BEEHOME */
+  BEEHOME_SERVICE_TYPE: 'beehome_service',
+  BEEHOME_BUILDING: 'beehome_building',
+  BEEHOME_ROOM: 'beehome_room',
+  BEEHOME_BILLS_PAYMENT: 'beehome_bills_payment',
+  BEEHOME_LIST_BILL: 'beehome_list_bill',
+  BEEHOME_LIST_REQUEST: 'beehome_list_request',
+  BEEHOME_REQUEST: 'beehome_request',
+  BEEHOME_ROOM_CHAT: 'beehome_room_chat',
+  BEEHOME_ROOM_USER: 'beehome_room_user',
+
+  /** BEELAND */
+  BEELAND_BUILDING: 'beeland_building',
+
   /** EXTERNAL LINK */
   EXTERNAL_LINK: 'external_link',
   WEBVIEW: 'webview',

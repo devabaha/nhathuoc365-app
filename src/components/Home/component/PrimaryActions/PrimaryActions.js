@@ -54,7 +54,7 @@ class PrimaryActions extends Component {
         <View style={[styles.actionsWrapper, actionsWrapper]}>
         {!this.isHideWalletBox && (
           <View style={styles.mainContentWrapper}>
-            {this.isActiveQRScan ? (
+            {/* {this.isActiveQRScan ? (
               <View style={styles.pointRechargeBtnContainer}>
                 <QRScanButton
                   wrapperStyle={styles.pointRechargeBtn}
@@ -64,7 +64,7 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : this.isActiveTopUp ? (
+            ) : this.isActiveTopUp ? ( */}
               <View style={styles.pointRechargeBtnContainer}>
                 <PointRechargeButton
                   wrapperStyle={styles.pointRechargeBtn}
@@ -74,7 +74,7 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : null}
+            {/* ) : null} */}
 
             {!this.isActiveCommissions ? (
               <Button

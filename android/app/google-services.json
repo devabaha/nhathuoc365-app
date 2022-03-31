@@ -1,57 +1,50 @@
 {
   "project_info": {
-    "project_number": "728365043840",
-    "project_id": "abaha-global",
-    "storage_bucket": "abaha-global.appspot.com"
+    "project_number": "857380148290",
+    "firebase_url": "https://homeid-6f859.firebaseio.com",
+    "project_id": "homeid-6f859",
+    "storage_bucket": "homeid-6f859.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:728365043840:android:5a57fabaf9f4b33bc61665",
+        "mobilesdk_app_id": "1:857380148290:android:34a687facab39d77fac9db",
         "android_client_info": {
-          "package_name": "vn.abahaglobal"
+          "package_name": "asia.homeid"
         }
       },
       "oauth_client": [
         {
-          "client_id": "728365043840-80abphq5lr9jf7ajnj0emsppbb9ikjtr.apps.googleusercontent.com",
+          "client_id": "857380148290-msot0go7sm4ug7tmdg0qrfm1i4im5nph.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "vn.abahaglobal",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "package_name": "asia.homeid",
+            "certificate_hash": "b710cfc396291859002a5e2b5efe3932cf019be1"
           }
         },
         {
-          "client_id": "728365043840-cup4iuhii5irbajjtr5hfour73064ved.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.abahaglobal",
-            "certificate_hash": "e238bb7fa6d0205f819d32e9e7e5117c9adf992e"
-          }
-        },
-        {
-          "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
+          "client_id": "857380148290-fjqplkf8318261c3a382lqkfmufjb9ea.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAUqOXHxWEs1wDsDmKORL0-xhx_cSJmuoo"
+          "current_key": "AIzaSyBiXPTP7P8gVv8XSpVSSAK36fJWO-XGNk4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
+              "client_id": "857380148290-fjqplkf8318261c3a382lqkfmufjb9ea.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com",
+              "client_id": "857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.abaha",
-                "app_store_id": "1545103650"
+                "bundle_id": "asia.homeid",
+                "app_store_id": "1516452688"
               }
             }
           ]

@@ -25,14 +25,13 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: 'absolute',
-    bottom: -15,
-    width: 60,
-    height: 60,
-    ...elevationShadowStyle(2)
-  },
-  avatar: {
-    width: '100%',
-    height: '100%'
+    top: 138,
+    left: screenWidth / 2 - 29,
+    width: 58,
+    height: 58,
+    borderRadius: 5,
+    // borderWidth: 1,
+    borderColor: config.colors.white
   },
   headerWrapper: {
     backgroundColor: '#ffffff',

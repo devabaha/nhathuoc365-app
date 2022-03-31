@@ -355,6 +355,12 @@ class CommonAPI {
   get USER_GET_FAVOR_SITES() {
     return BaseAPI.apiDomain + 'apiUser/favor_sites';
   }
+  get USER_SEARCH_FAVOR_SITES() {
+    return BaseAPI.apiDomain + 'apiUser/search_favor_sites';
+  }
+  get USER_UPDATE_FAVOR_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/update_favor_site';
+  }
   get USER_RESET_PASSWORD() {
     return BaseAPI.apiDomain + 'apiUser/reset_pass';
   }

@@ -6,18 +6,22 @@ import {
   StyleSheet,
   TouchableHighlight,
   FlatList,
+  RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import Animated from 'react-native-reanimated';
+import Animated, {interpolate} from 'react-native-reanimated';
 import store from '../../store/Store';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import Button from 'react-native-button';
-import appConfig from '../../config';
+import appConfig from 'app-config';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {willUpdateState} from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
+import StoreNavBarHomeID from './StoreNavBarHomeID';
+import HeaderStoreHomeID from './HeaderStoreHomeID';
 import EventTracker from '../../helper/EventTracker';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
@@ -28,6 +32,17 @@ import {isEmpty} from 'lodash';
 import {clearDrawerContent} from '../Drawer';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
+const BANNER_ABSOLUTE_HEIGHT =
+  appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
+const STATUS_BAR_HEIGHT = appConfig.device.isIOS
+  ? appConfig.device.isIphoneX
+    ? 50
+    : 20
+  : 0;
+const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
+const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
+const COLLAPSED_HEADER_VIEW =
+  BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT - STATUS_BAR_HEIGHT;
 
 class Stores extends Component {
   static propTypes = {
@@ -43,7 +58,17 @@ class Stores extends Component {
 
     this.state = {
       loading: true,
+      refreshingCate: false,
       category_nav_index: 0,
+      // scrollY: new Animated.Value(0),
+      moreOptions: [],
+      flatListHeight: undefined,
+      siteNotify: {
+        favor_flag: 0,
+        notify_chat: 0,
+      },
+
+      filterProductHeight: 0,
       categories_data: props.categoriesData || null,
       selected_category: props.categoriesData?.length
         ? props.categoriesData[0]
@@ -53,6 +78,9 @@ class Stores extends Component {
       valueSort: {},
     };
     this.unmounted = false;
+    this.flatListPagesHeight = [];
+    this.refScrollView = React.createRef();
+    this.refCategories = [];
     this.refCates = [];
 
     action(() => {
@@ -62,6 +90,7 @@ class Stores extends Component {
     this.eventTracker = new EventTracker();
     this.animatedScrollY = new Animated.Value(0);
     this.animatedContentOffsetY = new Animated.Value(0);
+    this.scrollY = new Animated.Value(0);
 
     this.disposer = () => {};
   }
@@ -101,7 +130,10 @@ class Stores extends Component {
   };
 
   componentDidMount() {
+    this._getNotifySite();
     this._initial(this.props);
+    // this.state.scrollY.addListener(this.scrollListener);
+
     // pass add store tutorial
     var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
     storage.save({
@@ -110,11 +142,6 @@ class Stores extends Component {
       expires: null,
     });
 
-    setTimeout(() => {
-      Actions.refresh({
-        right: this._renderRightButton(),
-      });
-    });
     this.eventTracker.logCurrentView();
     this.disposer = reaction(
       () => store.selectedFilter,
@@ -124,11 +151,24 @@ class Stores extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    // this.state.scrollY.removeListener(this.scrollListener);
     this.eventTracker.clearTracking();
     this.disposer();
     store.setSelectedFilter({});
     clearDrawerContent();
   }
+
+  scrollListener = ({value}) => {
+    if (value < -70 && this.state.refreshingCate === false) {
+      const refCate = this.refCategories[this.state.category_nav_index];
+      if (refCate) {
+        this.setState({refreshingCate: true}, () => refCate._onRefresh());
+      }
+    }
+    if (value === 0 && this.state.refreshingCate) {
+      this.setState({refreshingCate: false});
+    }
+  };
 
   componentWillReceiveProps(nextProps) {
     if (this.props.title != nextProps.title) {
@@ -193,6 +233,7 @@ class Stores extends Component {
         categories_data: response.data.categories,
         selected_category: response.data.categories[0],
         promotions: response.data.promotions,
+        moreOptions: response.data.more_options,
       },
       // () =>
       //   this.state.categories_data.map((item, index) => {
@@ -205,18 +246,29 @@ class Stores extends Component {
     );
   }
 
+  handleSearchInStore = () => {
+    Actions.push(appConfig.routes.searchStore, {
+      categories: this.state.categories_data,
+      category_id: this.state.selected_category.id,
+      category_name:
+        this.state.selected_category.id !== 0
+          ? this.state.selected_category.name
+          : '',
+    });
+  };
+
   _getCategoriesNavFromServer = async () => {
     const site_id = this.props.siteId || store.store_id;
     try {
       var response = await APIHandler.site_info(site_id, this.props.categoryId);
       if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(
-          () =>
-            willUpdateState(this.unmounted, () =>
-              this.parseDataCategories(response),
-            ),
-          this._delay(),
+        // setTimeout(
+        //   () =>
+        willUpdateState(this.unmounted, () =>
+          this.parseDataCategories(response),
         );
+        //   ,this._delay()
+        // );
       }
     } catch (e) {
       console.log(e + ' site_info');
@@ -261,7 +313,8 @@ class Stores extends Component {
     );
   }
 
-  async _changeCategory(item, index, nav_only) {
+  _changeCategory(item, index, nav_only) {
+    this.setState({flatListHeight: this.flatListPagesHeight[index]});
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
       const end_of_list = categories_count - index - 1 >= 1;
@@ -370,6 +423,51 @@ class Stores extends Component {
     }
   }
 
+  handlePressOrders = async () => {
+    Actions.store_orders({
+      store_id: store.store_id,
+      title: store.store_data.name,
+      tel: store.store_data.tel,
+    });
+  };
+
+  _getNotifySite = async () => {
+    try {
+      var response = await APIHandler.site_notify(store.store_id);
+
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({
+            siteNotify: response.data,
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e + ' site_notify');
+    }
+  };
+
+  handlePressChat = () => {
+    Actions.amazing_chat({
+      titleStyle: {width: 220},
+      phoneNumber: store.store_data.tel,
+      title: store.store_data.name,
+      site_id: store.store_id,
+      user_id: store.user_info.id,
+    });
+  };
+
+  handleLayoutFlatListContent = (e, index) => {
+    if (e.nativeEvent) {
+      const {height} = e.nativeEvent.layout;
+      this.flatListPagesHeight[index] = height;
+
+      this.setState({
+        flatListHeight: height,
+      });
+    }
+  };
+
   measureCategoriesLayout = (ref, category, index) => {
     if (
       ref &&
@@ -388,6 +486,15 @@ class Stores extends Component {
           }
         });
       });
+    }
+  };
+
+  _onRefreshCateEnd = () => {
+    if (!this.unmounted) {
+      appConfig.device.isAndroid &&
+        this.setState({
+          refreshingCate: false,
+        });
     }
   };
 
@@ -414,114 +521,255 @@ class Stores extends Component {
     });
   };
 
+  handleFilterProductLayout = (e) => {
+    this.setState({
+      filterProductHeight: e.nativeEvent.layout.height,
+    });
+  };
+
   render() {
+    const unreadChat = !this.state.siteNotify.notify_chat
+      ? ''
+      : this.state.siteNotify.notify_chat > 9
+      ? '9+'
+      : this.state.siteNotify.notify_chat + '';
+
+    const animated = {
+      transform: [
+        {
+          translateY: interpolate(this.scrollY, {
+            inputRange: [0, COLLAPSED_HEADER_VIEW],
+            outputRange: [0, -COLLAPSED_HEADER_VIEW],
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
+    };
+
+    const infoContainerStyle = {
+      height: BANNER_VIEW_HEIGHT / 1.618,
+      opacity: interpolate(this.scrollY, {
+        inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2],
+        outputRange: [1, 0],
+        extrapolate: 'clamp',
+      }),
+    };
+
+    const imageBgStyle = {
+      transform: [
+        {
+          scale: interpolate(this.scrollY, {
+            inputRange: [0, COLLAPSED_HEADER_VIEW],
+            outputRange: [1, 1.1],
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
+    };
+
     const {t} = this.props;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={[styles.container]}>
+        <StoreNavBarHomeID
+          onPressSearch={this.handleSearchInStore}
+          placeholder={t('navBar.placeholder')}
+          moreOptions={this.state.moreOptions}
+        />
+
+        <HeaderStoreHomeID
+          active={this.state.siteNotify.favor_flag}
+          avatarUrl={store.store_data.logo_url}
+          bannerUrl={store.store_data.image_url}
+          containerStyle={{
+            height: BANNER_ABSOLUTE_HEIGHT,
+            ...animated,
+          }}
+          infoContainerStyle={infoContainerStyle}
+          imageBgStyle={imageBgStyle}
+          onPressChat={this.handlePressChat}
+          onPressOrders={this.handlePressOrders}
+          title={store.store_data.name}
+          subTitle={store.store_data.address}
+          // subTitle={this.state.siteNotify.last_online}
+          // description={this.state.siteNotify.favor_count}
+          unreadChat={unreadChat}
+        />
+
         {this.state.categories_data != null
           ? this.state.categories_data.length > 1 && (
-              <View style={styles.categories_nav_container}>
-                <FlatList
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  ref={(ref) => (this.refs_category_nav = ref)}
-                  onScrollToIndexFailed={() => {}}
-                  data={this.state.categories_data}
-                  extraData={this.state.category_nav_index}
-                  keyExtractor={(item) => `${item.id}`}
-                  horizontal={true}
-                  style={styles.categories_nav}
-                  renderItem={({item, index}) => {
-                    let active = this.state.category_nav_index == index;
-                    return (
-                      <TouchableHighlight
-                        onPress={() => this._changeCategory(item, index)}
-                        underlayColor="transparent">
-                        <View
-                          ref={(inst) =>
-                            this.measureCategoriesLayout(inst, item, index)
-                          }
-                          style={styles.categories_nav_items}>
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.categories_nav_items_title,
-                              active
-                                ? styles.categories_nav_items_title_active
-                                : null,
-                            ]}>
-                            {item.name}
-                          </Text>
+              <Animated.View
+                style={[
+                  styles.categories_nav,
+                  {
+                    zIndex: 2,
+                    transform: [
+                      {
+                        translateY: interpolate(this.scrollY, {
+                          inputRange: [
+                            0,
+                            1,
+                            BANNER_ABSOLUTE_HEIGHT -
+                              NAV_BAR_HEIGHT -
+                              STATUS_BAR_HEIGHT,
+                          ],
+                          outputRange: [
+                            BANNER_VIEW_HEIGHT,
+                            BANNER_VIEW_HEIGHT,
+                            NAV_BAR_HEIGHT,
+                          ],
+                          extrapolate: 'clamp',
+                        }),
+                      },
+                    ],
+                  },
+                ]}>
+                <View style={styles.categories_nav_container}>
+                  <FlatList
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    ref={(ref) => (this.refs_category_nav = ref)}
+                    onScrollToIndexFailed={() => {}}
+                    data={this.state.categories_data}
+                    extraData={this.state.category_nav_index}
+                    keyExtractor={(item) => `${item.id}`}
+                    horizontal={true}
+                    style={styles.categories_nav}
+                    renderItem={({item, index}) => {
+                      let active = this.state.category_nav_index == index;
+                      return (
+                        <TouchableHighlight
+                          onPress={() => this._changeCategory(item, index)}
+                          underlayColor="transparent">
+                          <View
+                            ref={(inst) =>
+                              this.measureCategoriesLayout(inst, item, index)
+                            }
+                            style={styles.categories_nav_items}>
+                            <Text
+                              numberOfLines={2}
+                              style={[
+                                styles.categories_nav_items_title,
+                                active
+                                  ? styles.categories_nav_items_title_active
+                                  : null,
+                              ]}>
+                              {item.name}
+                            </Text>
 
-                          {active && (
-                            <View style={styles.categories_nav_items_active} />
-                          )}
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  }}
-                />
-              </View>
+                            {active && (
+                              <View
+                                style={styles.categories_nav_items_active}
+                              />
+                            )}
+                          </View>
+                        </TouchableHighlight>
+                      );
+                    }}
+                  />
+                  <FilterProduct
+                    onLayout={this.handleFilterProductLayout}
+                    selectedFilter={store.selectedFilter}
+                    onValueSort={this.handleValue}
+                    animatedScrollY={this.animatedScrollY}
+                    animatedContentOffsetY={this.animatedContentOffsetY}
+                  />
+                </View>
+              </Animated.View>
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
-        {!!this.state.categories_data?.length && (
-          <FilterProduct
-            selectedFilter={store.selectedFilter}
-            onValueSort={this.handleValue}
-            animatedScrollY={this.animatedScrollY}
-            animatedContentOffsetY={this.animatedContentOffsetY}
-          />
-        )}
-
-        {this.state.categories_data != null && (
-          <FlatList
-            scrollEnabled={this.state.categories_data?.length > 1}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            ref={(ref) => (this.refs_category_screen = ref)}
-            onScrollToIndexFailed={() => {}}
-            data={this.state.categories_data || []}
-            extraData={this.state.category_nav_index}
-            keyExtractor={(item) => `${item.id}`}
-            horizontal
-            pagingEnabled
-            onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+        <Animated.ScrollView
+          ref={this.refScrollView}
+          refreshControl={
+            appConfig.device.isAndroid ? (
+              <RefreshControl
+                progressViewOffset={BANNER_ABSOLUTE_HEIGHT}
+                refreshing={this.state.refreshingCate}
+                onRefresh={() => this.scrollListener({value: -400})}
+              />
+            ) : null
+          }
+          contentContainerStyle={{flexGrow: 1}}
+          style={[styles.container]}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: (y) =>
+                      Animated.block([
+                        Animated.set(this.scrollY, y),
+                        Animated.call([this.scrollY], ([value]) =>
+                          this.scrollListener({value}),
+                        ),
+                      ]),
+                  },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}>
+          <Animated.View
             style={{
-              width: Util.size.width,
-            }}
-            getItemLayout={(data, index) => {
-              return {
-                length: Util.size.width,
-                offset: Util.size.width * index,
-                index,
-              };
-            }}
-            renderItem={({item, index}) => {
-              const isAutoLoad =
-                (this.state.category_nav_index - 1 >= 0 &&
-                  index === this.state.category_nav_index - 1) ||
-                (this.state.category_nav_index + 1 <=
-                  this.state.categories_data.length - 1 &&
-                  index === this.state.category_nav_index + 1);
-
-              return (
-                <CategoryScreen
-                  item={item}
-                  type={this.props.type}
-                  index={index}
-                  cate_index={this.state.category_nav_index}
-                  isAutoLoad={isAutoLoad}
-                  promotions={this.state.promotions}
-                  animatedScrollY={this.animatedScrollY}
-                  animatedContentOffsetY={this.animatedContentOffsetY}
-                  paramsFilter={this.state.filterParams}
-                />
-              );
+              height: BANNER_VIEW_HEIGHT + this.state.filterProductHeight,
+              width: '100%',
             }}
           />
-        )}
 
+          <Animated.View style={styles.container}>
+            <FlatList
+              scrollEnabled={this.state.categories_data?.length > 1}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ref={(ref) => (this.refs_category_screen = ref)}
+              onScrollToIndexFailed={() => {}}
+              data={this.state.categories_data || []}
+              extraData={this.state.category_nav_index}
+              keyExtractor={(item) => `${item.id}`}
+              horizontal
+              pagingEnabled
+              onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+              style={{
+                width: Util.size.width,
+              }}
+              getItemLayout={(data, index) => {
+                return {
+                  length: Util.size.width,
+                  offset: Util.size.width * index,
+                  index,
+                };
+              }}
+              renderItem={({item, index}) => {
+                const isAutoLoad =
+                  (this.state.category_nav_index - 1 >= 0 &&
+                    index === this.state.category_nav_index - 1) ||
+                  (this.state.category_nav_index + 1 <=
+                    this.state.categories_data.length - 1 &&
+                    index === this.state.category_nav_index + 1);
+
+                return (
+                  <CategoryScreen
+                    ref={(inst) => (this.refCategories[index] = inst)}
+                    scrollEnabled={false}
+                    item={item}
+                    type={this.props.type}
+                    index={index}
+                    cate_index={this.state.category_nav_index}
+                    isAutoLoad={isAutoLoad}
+                    promotions={this.state.promotions}
+                    animatedScrollY={this.animatedScrollY}
+                    animatedContentOffsetY={this.animatedContentOffsetY}
+                    paramsFilter={this.state.filterParams}
+                  />
+                );
+              }}
+            />
+          </Animated.View>
+        </Animated.ScrollView>
+        {/* 
         {store.stores_finish == true && (
           <CartFooter
             prefix="stores"
@@ -539,8 +787,33 @@ class Stores extends Component {
           noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
-        />
-      </View>
+        /> */}
+
+        {/* {store.cart_fly_show && (
+          <View
+            style={{
+              position: 'absolute',
+              top: store.cart_fly_position.py,
+              left: store.cart_fly_position.px,
+              width: store.cart_fly_position.width,
+              height: store.cart_fly_position.height,
+              zIndex: 999,
+              borderWidth: 1,
+              borderColor: DEFAULT_COLOR,
+              overflow: 'hidden',
+            }}>
+            {store.cart_fly_image && (
+              <CachedImage
+                style={{
+                  width: store.cart_fly_position.width,
+                  height: store.cart_fly_position.height,
+                }}
+                source={store.cart_fly_image}
+              />
+            )}
+          </View>
+        )} */}
+      </SafeAreaView>
     );
   }
 }
@@ -551,6 +824,8 @@ const styles = StyleSheet.create({
   },
   right_btn_box: {
     flexDirection: 'row',
+    marginHorizontal: 15,
+    ...elevationShadowStyle(7),
   },
 
   items_box: {
@@ -585,7 +860,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 3,
+    height: 2,
     backgroundColor: DEFAULT_COLOR,
   },
 });

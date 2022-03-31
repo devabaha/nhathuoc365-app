@@ -110,6 +110,9 @@ class PayWallet extends Component {
             this.setState({
               loading: false
             });
+          }
+
+          if (response) {
             flashShowMessage({
               type: 'danger',
               message: response.message

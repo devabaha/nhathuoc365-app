@@ -330,6 +330,7 @@ class ListServices extends Component {
     return (
       <Animated.View style={[styles.container, visibleStyle, this.props.containerStyle]}>
         <Animated.ScrollView
+          style={[appConfig.device.isIOS && {overflow: 'visible'}]}
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}
           horizontal={this.isHorizontal}

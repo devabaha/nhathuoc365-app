@@ -1,0 +1,20 @@
+{
+  "shopTitle": {
+    "preOrder": "预购",
+    "buy": "购买"
+  },
+  "attr": {
+    "notChooseAttrYet": "未选择",
+    "stock": "货库",
+    "quantity": "数量"
+  },
+  "addToCart": "添加到购物车",
+  "liked": "已喜欢",
+  "like": "喜欢的",
+  "information": {
+    "brands": "产品品牌",
+    "origin": "起源"
+  },
+  "relatedItems": "相关项目",
+  "goToStore": "去商店"
+}

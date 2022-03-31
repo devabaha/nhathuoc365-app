@@ -311,6 +311,13 @@ class PhoneAuth extends Component {
       });
     } else {
       Actions.replace(config.routes.primaryTabbar);
+      if (response.data.room) {
+        Actions.jump(appConfig.routes.roomTab);
+      }
+      this.props.setTabVisible({
+        [appConfig.routes.roomTab]: !!response.data.view_beehome,
+        [appConfig.routes.listBeeLand]: response.data.view_beeland
+      });
     }
   };
 

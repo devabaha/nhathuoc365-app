@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "vn.abahaglobal",
+    package = "asia.homeid",
 )
 
 android_resource(
     name = "res",
-    package = "vn.abahaglobal",
+    package = "asia.homeid",
     res = "src/main/res",
 )
 

@@ -638,9 +638,8 @@ class CommonAPIHandler extends BaseHandler {
    */
   async user_update_favor_site(store_id, updateKey) {
     var api = url_for(
-      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey,
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
     );
-    console.log(api);
     return await this.getAPI(api);
   }
 
@@ -685,6 +684,17 @@ class CommonAPIHandler extends BaseHandler {
   user_read_notice(notice_id) {
     const api = url_for(API.USER_READ_NOTICE, notice_id);
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * Cập nhật dữ liệu ví thẻ khách hàng
+   * updateKey: 1 - add, 2 - delete
+   */
+  async user_update_favor_site(store_id, updateKey) {
+    var api = url_for(
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
+    );
+    return await this.getAPI(api);
   }
 
   /**
@@ -873,6 +883,13 @@ class CommonAPIHandler extends BaseHandler {
   async service_orders() {
     var api = url_for(API.SERVICE_ORDERS);
     return await this.getAPI(api);
+  }
+  /**
+   *
+   */
+  async service_rating(order_id, data) {
+    var api = url_for(API.SERVICE_RATING + '/' + order_id);
+    return await this.postAPI(api, data);
   }
 
   /**

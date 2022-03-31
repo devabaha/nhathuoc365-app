@@ -1,9 +1,31 @@
 {
   "search": {
-    "placeholder": {
+    "navBar": {
       "prefix": "Search in",
       "suffix": "shop"
+    },
+    "result": {
+      "prefix": "Result for",
+      "notFound": "Item not found"
+    },
+    "suggest": {
+      "category": {
+        "title": "Category"
+      },
+      "history": {
+        "title": "Search history",
+        "delete": "Delete"
+      }
     }
+  },
+  "navBar": {
+    "placeholder": "Search in shop...",
+    "cancel": "Cancel"
+  },
+  "header": {
+    "follow": "Follow",
+    "following": "Following",
+    "chat": "Chat"
   },
   "tabs": {
     "store": {
@@ -14,7 +36,7 @@
       "categoryTitle": "{{productName}}"
     }
   },
-  "noProduct": "No items",
+  "noProduct": "There are currently no products in the store",
   "item": {
     "more": "MORE"
   }

@@ -1,0 +1,181 @@
+{
+  "api": {
+    "error": {
+      "message": "错误，请重试",
+      "connect": "网络连接失误，请重试"
+    }
+  },
+
+  "appTab": {
+    "tab1": {
+      "title": "Nhà của bạn"
+    },
+    "tab2": {
+      "title": "信息"
+    },
+    "tab3": {
+      "title": "Dự án BĐS"
+    },
+    "tab4": {
+      "title": "订单"
+    },
+    "tab5": {
+      "title": "账号"
+    }
+  },
+
+  "screen": {
+    "listBuilding": {
+      "mainTitle": "Danh sách dự án"
+    },
+    "cardWallet": {
+      "mainTitle": "在HomeID中建立"
+    },
+    "account": {
+      "mainTitle": "账号",
+      "myAccountTitle": "我的账号",
+      "editAccountTitle": "编辑账号信息"
+    },
+    "address": {
+      "mainTitle": "地址",
+      "createTitle": "添加更多地址",
+      "editTitle": "编辑地址"
+    },
+    "register": {
+      "mainTitle": "注册信息"
+    },
+    "affiliate": {
+      "mainTitle": "推荐代码"
+    },
+    "qrBarCode": {
+      "mainTitle": "账号代码",
+      "walletAddressTitle": "钱包地址",
+      "scanTitle": "扫描二维码"
+    },
+    "transfer": {
+      "mainTitle": "转帐"
+    },
+    "payAccount": {
+      "mainTitle": "账号信息"
+    },
+    "contact": {
+      "mainTitle": "联络人"
+    },
+    "rada": {
+      "mainTitle": "Rada服务"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "订单管理"
+    },
+    "voucher": {
+      "mainTitle": "HomeID Voucher"
+    },
+    "myVoucher": {
+      "mainTitle": "我的优惠券"
+    },
+    "news": {
+      "mainTitle": "信息"
+    },
+    "newsDetail": {
+      "mainTitle": "详细信息"
+    },
+    "orders": {
+      "mainTitle": "订单"
+    },
+    "productDetail": {
+      "mainTitle": "产品详细信息"
+    },
+    "ordersDetail": {
+      "mainTitle": "订单详细信息",
+      "confirmTitle": "确认"
+    },
+    "feedback": {
+      "mainTitle": "谢谢！"
+    },
+    "cart": {
+      "mainTitle": "购物车"
+    },
+    "paymentMethod": {
+      "mainTitle": "付款"
+    },
+    "securePayment": {
+      "mainTitle": "安全付款"
+    },
+    "schedule": {
+      "mainTitle": "Chọn ngày và giờ"
+    },
+    "scheduleConfirm": {
+      "mainTitle": "Yêu cầu đặt lịch"
+    },
+    "searchPlaces": {
+      "mainTitle": "Nhập địa chỉ của bạn"
+    },
+    "opRegister": {
+      "mainTitle": "Đăng ký"
+    },
+    "resetPassword": {
+      "mainTitle": "Đặt lại mật khẩu"
+    },
+    "bills": {
+      "mainTitle": "Danh sách hóa đơn",
+      "paymentMethodTitle": "Phương thức thanh toán",
+      "paymentListTitle": "Thanh toán hóa đơn"
+    },
+    "requests": {
+      "mainTitle": "Danh sách phản ánh",
+      "detailTitle": "Chi tiết phản ánh",
+      "creationTitle": "Tạo phản ánh"
+    },
+    "members": {
+      "mainTitle": "Danh sách thành viên"
+    },
+    "transferInfo": {
+      "mainTitle": "Thông tin chuyển khoản"
+    },
+    "registerStore": {
+      "mainTitle": "Đăng ký cửa hàng"
+    },
+    "listBeeLand": {
+      "mainTitle": "Danh sách dự án"
+    },
+    "customerInfo": {
+      "mainTitle": "Thông tin bên mua"
+    },
+    "confirmBooking": {
+      "mainTitle": "Xác nhận thông tin"
+    },
+    "customerSearching": {
+      "mainTitle": "Khách hàng"
+    },
+    "orderManagement": {
+      "mainTitle": "Quản lý giao dịch"
+    },
+    "customerProfile": {
+      "mainTitle": "Thông tin khách hàng",
+      "editTitle": "Sửa khách hàng"
+    }
+  },
+
+  "system": {
+    "settings": {
+      "error": {
+        "accessProblem": "无法进接设置!"
+      }
+    },
+    "camera": {
+      "access": {
+        "request": "申请需求进接摄像机"
+      },
+      "error": {
+        "notSupport": "不支持摄像机",
+        "unavailable": "无法进接摄像机",
+        "accessProblem": "摄像机进接权限"
+      }
+    }
+  },
+
+  "popupConfirm": {
+    "yes": "是",
+    "no": "否"
+  }
+}
