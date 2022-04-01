@@ -279,41 +279,41 @@ class Account extends Component {
         ],
         iconColor: '#fff',
       },
-      // {
-      //   key: 'store',
-      //   isHidden: !isActivePackageOptionConfig(
-      //     PACKAGE_OPTIONS_TYPE.CHAIN_STORE,
-      //   ),
-      //   leftIcon: (
-      //     <View>
-      //       <IconMaterialCommunity
-      //         name="store"
-      //         style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
-      //       />
-      //       <Icon
-      //         name="map-marker"
-      //         style={{
-      //           fontSize: 16,
-      //           color: '#fff',
-      //           position: 'absolute',
-      //           right: -3,
-      //           top: 0,
-      //           backgroundColor: 'transparent',
-      //         }}
-      //       />
-      //     </View>
-      //   ),
-      //   label: t('options.changeStoreLocation.label'),
-      //   desc: store.store_data.name,
-      //   rightIcon: <IconAngleRight />,
-      //   onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
-      //   boxIconStyle: [
-      //     styles.boxIconStyle,
-      //     {
-      //       backgroundColor: '#f66',
-      //     },
-      //   ],
-      // },
+      {
+        key: 'store',
+        isHidden: !isActivePackageOptionConfig(
+          PACKAGE_OPTIONS_TYPE.CHAIN_STORE,
+        ),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="store"
+              style={{fontSize: 15, left: -3, top: 2, color: '#fff'}}
+            />
+            <Icon
+              name="map-marker"
+              style={{
+                fontSize: 16,
+                color: '#fff',
+                position: 'absolute',
+                right: -3,
+                top: 0,
+                backgroundColor: 'transparent',
+              }}
+            />
+          </View>
+        ),
+        label: t('options.changeStoreLocation.label'),
+        desc: store.store_data.name,
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#f66',
+          },
+        ],
+      },
       // {
       //   key: 'orders',
       //   label: t('options.orders.label'),
@@ -336,6 +336,35 @@ class Account extends Component {
       //   ],
       //   iconColor: '#ffffff',
       // },
+      {
+        key: 'vouchers',
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
+          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
+        label: t('options.myVoucher.label'),
+        desc: t('options.myVoucher.desc'),
+        leftIcon: (
+          <View>
+            <IconMaterialCommunity
+              name="sale"
+              style={{fontSize: 16, color: '#fff'}}
+            />
+          </View>
+        ),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.myVoucher, {
+            title: t('common:screen.myVoucher.mainTitle'),
+            from: 'home',
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#ffc3c0',
+          },
+        ],
+        iconColor: '#ffffff',
+      },
       {
         key: 'address',
         icon: 'map-marker',
@@ -446,114 +475,118 @@ class Account extends Component {
       },
 
       {
-        key: 'vouchers',
-        isHidden:
-          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.VOUCHERS) ||
-          isConfigActive(CONFIG_KEY.HIDE_VOUCHERS_ACCOUNT_KEY),
-        label: t('options.myVoucher.label'),
-        desc: t('options.myVoucher.desc'),
-        leftIcon: (
-          <View>
-            <IconMaterialCommunity
-              name="sale"
-              style={{fontSize: 16, color: '#fff'}}
-            />
-          </View>
-        ),
+        key: 'report_npp',
+        iconType: 'MaterialCommunityIcons',
+        icon: 'script-text',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.salesReport.label'),
+        desc: t('options.salesReport.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.myVoucher, {
-            title: t('common:screen.myVoucher.mainTitle'),
-            from: 'home',
-          }),
+        onPress: () => servicesHandler({type: SERVICES_TYPE.SALES_REPORT}),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#ffc3c0',
+            backgroundColor: '#72d4d3',
           },
         ],
-        iconColor: '#ffffff',
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
+
       {
-        key: '-3',
-        icon: 'receipt',
-        iconType: 'MaterialCommunityIcons',
-        label: 'Đơn dịch vụ của tôi',
-        desc: 'Quản lý đơn dịch vụ',
+        key: 'reset_pass',
+        isHidden:
+          !isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TRANSACTION_PASS) ||
+          !store.user_info ||
+          !store.user_info.tel,
+        icon: 'lock-reset',
+        label: t('options.resetPassword.label'),
+        desc: t('options.resetPassword.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => {
-          const service = {
-            type: SERVICES_TYPE.SERVICE_ORDERS,
-          };
-          servicesHandler(service);
+          Actions.push(appConfig.routes.resetPassword);
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#F35022',
+            backgroundColor: '#888',
+          },
+        ],
+        iconColor: '#fff',
+        iconSize: 18,
+        iconType: 'MaterialCommunityIcons',
+        marginTop: true,
+      },
+
+      {
+        key: '2',
+        icon: 'facebook-square',
+        label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
+        desc: t('options.fanpage.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          openLink(FACEBOOK_DOMAIN + facebookFanpage);
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#4267b2',
           },
         ],
         iconColor: '#ffffff',
+        marginTop: !isAdmin,
+        isHidden: !facebookFanpage,
       },
+
       {
-        key: '-1',
-        icon: 'shopping-cart',
-        label: 'Đơn hàng của tôi',
-        desc: 'Quản lý đơn hàng đặt tới cửa hàng',
+        key: '3',
+        icon: 'info',
+        label: t('options.termsOfUse.label'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_DETAIL,
+            news: {
+              title: t('options.termsOfUse.webViewTitle'),
+              id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
+            },
+          });
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: DEFAULT_COLOR,
+          },
+        ],
+        iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
+        // marginTop: true
+      },
+
+      {
+        key: '4',
+        icon: 'text-box-check-outline',
+        iconType: 'MaterialCommunityIcons',
+        label: t('options.termsOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
-          Actions.push(appConfig.routes.ordersTab, {
-            title: 'Đơn hàng của tôi',
-            from: 'home',
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+            title: t('options.termsOfUse.desc'),
+            id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#03A5F0',
+            backgroundColor: '#62459b',
           },
         ],
         iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
+        // marginTop: true
       },
-      {
-        key: '-2',
-        icon: 'store',
-        label: 'Đăng ký cửa hàng trên HomeID',
-        desc: 'Tạo nhanh 1 cửa hàng online',
-        iconType: 'MaterialCommunityIcons',
-        rightIcon: <IconAngleRight />,
-        onPress: () => Actions.push(appConfig.routes.registerStore),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: '#846faa',
-          },
-        ],
-        iconColor: '#ffffff',
-      },
-
-      // {
-      //   key: '4',
-      //   icon: 'text-box-check-outline',
-      //   iconType: 'MaterialCommunityIcons',
-      //   label: t('options.termsOfUse.desc'),
-      //   rightIcon: <IconAngleRight />,
-      //   onPress: () =>
-      //     servicesHandler({
-      //       type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
-      //       title: t('options.termsOfUse.desc'),
-      //       id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
-      //     }),
-      //   boxIconStyle: [
-      //     styles.boxIconStyle,
-      //     {
-      //       backgroundColor: '#62459b',
-      //     },
-      //   ],
-      //   iconColor: '#fff',
-      //   iconSize: 18,
-      //   iconType: 'MaterialCommunityIcons',
-      //   isHidden: !store.user_info || !store.user_info.tel,
-      // },
       {
         key: 'partnerRegistration',
         icon: 'handshake-o',
@@ -607,32 +640,8 @@ class Account extends Component {
       },
 
       {
-        key: '3',
-        icon: 'handshake-o',
-        label: t('options.termsOfUse.label', {appName: APP_NAME_SHOW}),
-        desc: t('options.termsOfUse.desc'),
-        rightIcon: <IconAngleRight />,
-        onPress: () => {
-          servicesHandler({
-            type: SERVICES_TYPE.NEWS_DETAIL,
-            news: {
-              title: t('options.termsOfUse.webViewTitle'),
-              id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
-            },
-          });
-        },
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: DEFAULT_COLOR,
-          },
-        ],
-        iconColor: '#ffffff',
-        marginTop: true,
-      },
-      {
-        key: '4',
-        icon: 'question-circle',
+        key: 'app_info',
+        icon: 'question',
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
@@ -843,7 +852,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
+    // this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;

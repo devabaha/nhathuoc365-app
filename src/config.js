@@ -13,16 +13,16 @@ import {
 
 class Config {
   constructor() {
-    this._primaryColor = '#128C7E';
+    this._primaryColor = '#812384';
     getApiLevel().then((apiLevel) => (this.apiLevel = apiLevel));
   }
 
   get tagVersion() {
-    return 'b12.2.18';
+    return 'r12.2.18';
   }
 
   get appName() {
-    return 'homeid';
+    return 'ABAHAGLOBAL';
   }
 
   get namespace() {
@@ -39,8 +39,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'homeidkey',
-      secretKey: 'homeidkey234jhjksefdsd'
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
     };
   }
 
@@ -52,7 +52,7 @@ class Config {
 
   get oneSignal() {
     return {
-      appKey: '2647d461-03d1-43f0-a17a-31375254aca1'
+      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1',
     };
   }
 
@@ -83,8 +83,8 @@ class Config {
     return {
       logo: {
         main: this.primaryColor,
-        sub: '#6559c5',
-        addition: '#d37ee9'
+        sub: '#f5bb4b',
+        addition: '#f18c21',
       },
       status: {
         danger: '#ef476f',
@@ -220,7 +220,6 @@ class Config {
 
       homeTab: 'homeTab',
       newsTab: 'newsTab',
-      roomTab: 'roomTab',
       accountTab: 'accountTab',
       deepLinkNewsTab: 'deepLinkNewsTab',
       scanQrCodeTab: 'scanQrCodeTab',
@@ -322,36 +321,6 @@ class Config {
 
       //  Reset password
       resetPassword: 'resetPassword',
-
-      // Amazing_chat
-      amazing_chat: 'amazing_chat',
-
-      // HomeID
-      listBuilding: 'listBuilding',
-      listRoom: 'listRoom',
-      building: 'building',
-      room: 'room',
-      supplierStore: 'supplierStore',
-      bills: 'bills',
-      billsPaymentMethod: 'billsPaymentMethod',
-      billsPaymentList: 'billsPaymentList',
-      transferInfo: 'transferInfo',
-      requests: 'requests',
-      requestDetail: 'requestDetail',
-      requestCreation: 'requestCreation',
-      members: 'members',
-      memberModal: 'memberModal',
-      registerStore: 'registerStore',
-
-      // BeeLand
-      listBeeLand: 'listBeeLand',
-      projectBeeLand: 'projectBeeLand',
-      projectProductBeeLand: 'projectProductBeeLand',
-      customerInfoBookingBeeLand: 'customerInfoBookingBeeLand',
-      confirmBookingBeeLand: 'confirmBookingBeeLand',
-      customerSearchingBeeLand: 'customerSearchingBeeLand',
-      orderManagementBeeLand: 'orderManagementBeeLand',
-      customerProfileBeeLand: 'customerProfileBeeLand',
 
       // All serives
       allServices: 'allServices',

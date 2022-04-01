@@ -79,7 +79,6 @@ class PhoneCard extends BaseContainer {
     switch (route.keyView) {
       case 'phone_paid':
         extraProps.errorEmptyMessage = 'Vui lòng nhập số điện thoại';
-        extraProps.hideContact = false;
 
         return (
           <PrepayContainer

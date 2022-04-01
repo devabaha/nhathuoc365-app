@@ -6,7 +6,7 @@ import {servicesHandler, SERVICES_TYPE} from './servicesHandler';
 const touchedTabs = {};
 let productOpening = false;
 
-function handleTabBarOnPress(props) {
+export default function handleTabBarOnPress(props) {
   // const isTouched = () => touchedTabs[props.navigation.state.key];
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
@@ -42,6 +42,4 @@ function handleTabBarOnPress(props) {
 
   store.setSelectedTab(props.navigation.state.key);
   touchedTabs[props.navigation.state.key] = true;
-};
-
-export default handleTabBarOnPress;
+}

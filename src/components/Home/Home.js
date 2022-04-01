@@ -5,8 +5,12 @@ import {
   Image,
   StyleSheet,
   RefreshControl,
-  Text,
+  Platform,
+  StatusBar,
   SafeAreaView,
+  // ScrollView,
+  SectionList,
+  Text,
 } from 'react-native';
 import Animated, {Easing} from 'react-native-reanimated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,8 +24,6 @@ import HomeCardList, {HomeCardItem} from './component/HomeCardList';
 import ListServices from './component/ListServices';
 import ListProducts, {ProductItem} from './component/ListProducts';
 import appConfig from 'app-config';
-import {SERVICES_TYPE} from '../../helper/servicesHandler';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
@@ -56,8 +58,6 @@ class Home extends Component {
   static propTypes = {
     sites: PropTypes.array,
     title_sites: PropTypes.string,
-    rooms: PropTypes.array,
-    title_rooms: PropTypes.string,
     newses: PropTypes.array,
     notices: PropTypes.array,
     services: PropTypes.array,
@@ -96,8 +96,6 @@ class Home extends Component {
   static defaultProps = {
     sites: [],
     title_sites: '',
-    rooms: [],
-    title_rooms: '',
     newses: [],
     notices: [],
     services: [],
@@ -182,20 +180,10 @@ class Home extends Component {
     return Array.isArray(this.props.sites) && this.props.sites.length > 0;
   }
 
-  get hasRooms() {
-    return Array.isArray(this.props.rooms);
-  }
-
   get hasNews() {
     return Array.isArray(this.props.newses) && this.props.newses.length > 0;
   }
 
-  get hasRoomNews() {
-    return (
-      Array.isArray(this.props.room_news) && this.props.room_news.length > 0
-    );
-  }
-  
   get hasSocialPosts() {
     return this.props.social_posts?.length > 0;
   }
@@ -356,7 +344,7 @@ class Home extends Component {
           )}
         </Animated.View>
 
-        {/* <Animated.View
+        <Animated.View
           style={[styles.headerContainerStyle, this.headerContainerStyle]}>
           <Header
             wrapperStyle={this.wrapperAnimatedStyle}
@@ -371,9 +359,9 @@ class Home extends Component {
             loading={this.props.storeFetching}
             onContentLayout={this.handleHeaderLayout.bind(this)}
           />
-        </Animated.View> */}
+        </Animated.View>
 
-        {/* <SafeAreaView> */}
+        <SafeAreaView>
           <ScrollView
             // onScroll={this.showBgrStatusIfOffsetTop}
             onScroll={event(
@@ -401,7 +389,7 @@ class Home extends Component {
             )}
             // style={{overflow: 'visible'}}
             contentContainerStyle={{
-              // paddingTop: extraTop,
+              paddingTop: extraTop,
               paddingBottom: 30,
             }}
             showsVerticalScrollIndicator={false}
@@ -414,24 +402,10 @@ class Home extends Component {
                 tintColor={appConfig.colors.white}
               />
             }>
-            <Header
-              name={name}
-              onPressNoti={this.props.onPressNoti}
-              goToSearch={this.props.goToSearch}
-            />
-            {/* <Animated.View
-          style={[styles.headerContainerStyle, this.headerContainerStyle]}> */}
             {/* <Header
-            wrapperStyle={this.wrapperAnimatedStyle}
-            maskSearchWrapperStyle={this.searchWrapperStyle}
-            maskSubStyle={this.headerAnimatedStyle}
-            iconStyle={this.headerIconStyle}
-            notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
-            loading={this.props.storeFetching}
-            onContentLayout={this.handleHeaderLayout.bind(this)}
           /> */}
             <View style={styles.block}>
               {this.isVisibleLoyaltyBox ? (
@@ -490,52 +464,6 @@ class Home extends Component {
                   onPress={this.props.onPromotionPressed}
                 />
               )}
-
-              {this.hasRooms ? (
-                <HomeCardList
-                  data={this.props.rooms}
-                  onShowAll={null}
-                  title={
-                    this.props.title_rooms
-                      ? this.props.title_rooms
-                      : 'Căn hộ của tôi'
-                  }
-                  extraComponent={this.props.rooms.length === 0 && <NoRoom />}>
-                  {({item, index}) => (
-                    <HomeCardItem
-                      title={item.title}
-                      isShowSubTitle={true}
-                      subTitle={item.address}
-                      iconSubTitle={<Icon name="map-marker" />}
-                      imageUrl={item.image_url}
-                      onPress={() => this.props.onPressRoomItem(item)}
-                      last={this.props.rooms.length - 1 === index}
-                    />
-                  )}
-                </HomeCardList>
-              ) : this.props.apiFetching ? (
-                <HomeCardListSkeleton />
-              ) : null}
-
-              {this.hasRoomNews ? (
-                <HomeCardList
-                  onShowAll={null}
-                  data={this.props.room_news}
-                  title={this.props.title_room_news}>
-                  {({item, index}) => (
-                    <HomeCardItem
-                      title={item.title}
-                      iconSubTitle={<Icon name="building" />}
-                      subTitle={item.shop_name}
-                      imageUrl={item.image_url}
-                      onPress={() => this.props.onPressRoomNews(item)}
-                      last={this.props.room_news.length - 1 === index}
-                    />
-                  )}
-                </HomeCardList>
-              ) : this.props.apiFetching ? (
-                <HomeCardListSkeleton />
-              ) : null}
 
               {this.hasProduct_groups ? (
                 this.props.product_groups.map((productGroup, index) => {
@@ -691,7 +619,7 @@ class Home extends Component {
               ) : null}
             </View>
           </ScrollView>
-        {/* </SafeAreaView> */}
+        </SafeAreaView>
 
         <StatusBarBackground />
       </View>
@@ -781,23 +709,3 @@ let styles = StyleSheet.create({
 styles = Themes.mergeStyles(styles, homeStyles);
 
 export default withTranslation(['home', 'common'])(Home);
-
-const NoRoom = (props) => (
-  <View style={noRoomStyles.container}>
-    <Text style={noRoomStyles.text}>
-      {`Bạn chưa có nhà trên HomeID.\r\rVui lòng liên hệ BQL tòa nhà của bạn và kiểm tra số điện thoại chủ hộ được đăng ký có đúng với số đang đăng nhập không?`}
-    </Text>
-  </View>
-);
-
-const noRoomStyles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderTopWidth: 0.5,
-    borderColor: '#ddd',
-  },
-  text: {
-    color: '#444',
-  },
-});

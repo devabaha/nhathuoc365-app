@@ -134,7 +134,6 @@ class PaymentMethod extends Component {
         if (response && response.status === STATUS_SUCCESS) {
           if (response.data) {
             this.props.onUpdatePaymentMethod(response.data);
-            console.log(response.data)
             store.setCartData(response.data);
             flashShowMessage({
               type: 'success',

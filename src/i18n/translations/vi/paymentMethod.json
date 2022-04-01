@@ -5,9 +5,7 @@
   },
   "payment": {
     "tempPrice": "Tạm tính",
-    "totalPrice": "Thành tiền",
-    "transferFee": "Phí giao dịch"
+    "totalPrice": "Thành tiền"
   },
-  "confirm": "Tiếp tục",
-  "agree": "Đồng ý"
+  "confirm": "Tiếp tục"
 }

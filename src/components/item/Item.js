@@ -4,9 +4,8 @@ import {
   Text,
   TouchableHighlight,
   StyleSheet,
-  ScrollView,
-  RefreshControl,
   Animated,
+  RefreshControl,
   TouchableOpacity,
   FlatList,
 } from 'react-native';

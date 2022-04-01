@@ -5,9 +5,7 @@
   },
   "payment": {
     "tempPrice": "Temporary price",
-    "totalPrice": "Total price",
-    "transferFee": "Transfer fee"
+    "totalPrice": "Total price"
   },
-  "confirm": "Next",
-  "agree": "OK"
+  "confirm": "Next"
 }

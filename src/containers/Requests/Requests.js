@@ -131,7 +131,7 @@ class Requests extends Component {
 
   handlePressRequest(request) {
     servicesHandler({
-      type: SERVICES_TYPE.BEEHOME_REQUEST,
+      type: SERVICES_TYPE.REQUEST_DETAIL,
       site_id: this.props.siteId || this.props.site_id,
       room_id: this.props.roomId || this.props.room_id,
       request_id: request.id,

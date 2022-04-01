@@ -48,7 +48,7 @@ class CardWallet extends PureComponent {
 
           if (finished) {
             this.shaking = true;
-            hapticFeedBack('impactHeavy');
+            HapticFeedBack('impactHeavy');
 
             this.backgroundTimeout = setTimeout(
               () => this.handleCancelLongPress(true),
@@ -123,8 +123,8 @@ class CardWallet extends PureComponent {
         activeOpacity={appConfig.device.isAndroid ? 0.9 : 0.6}
         disabled={this.props.disabled}
         onPress={this.handlePress}
-        onLongPress={this.handleLongPress}
-        onPressOut={() => this.handleCancelLongPress()}
+        // onLongPress={this.handleLongPress}
+        // onPressOut={() => this.handleCancelLongPress()}
         containerStyle={[
           styles.containerBtn,
           this.props.style,

@@ -1,4 +1,4 @@
 <resources>
-	<string moduleConfig="true" name="CodePushDeploymentKey">CodePushDeploymentKey</string>
-    <string name="app_name">HomeID</string>
+    <string name="app_name">Abaha</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">DeploymentKey</string>
 </resources>

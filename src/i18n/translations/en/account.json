@@ -13,8 +13,8 @@
       "desc": "Manage orders"
     },
     "myVoucher": {
-      "label": "Voucher",
-      "desc": "Manage your voucher codes"
+      "label": "My Voucher",
+      "desc": "Use the discount code received"
     },
     "fanpage": {
       "label": "Fanpage {{appName}}",
