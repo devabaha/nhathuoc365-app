@@ -57,4 +57,6 @@ export const CONFIG_KEY = {
   
   ENABLE_EULA_KEY: 'enable_eula_key',
   EULA_NEWS_ID: 'eula_news_id',
+
+  OPTIONAL_KYC_FORM_REGISTER_KEY: 'optional_kyc_form_register_key',
 };
