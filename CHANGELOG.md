@@ -7,44 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [b12.2.18] - 2022-03-31
-- [r12.2.18]
-
-## [b12.2.16] - 2022-03-08
-- [r12.2.16]
-
-## [b12.1.5] - 2021-10-19
-- [r12.1.5]
-
-## [b12.0.1] - 2021-06-22
-- [r12.0.1]
-
-## [b11.6.3] - 2021-05-28
-- [r11.6.3]
-
-## [b11.4.8] - 2021-04-16
-- [r11.5.5]
-
-## [b11.4.7] - 2021-04-16
-- [r11.4.7]
-### Fixed
-- [Android] Setup config for react-native-gesture-handler.
-- Add index for ListRoomStatus.
-
-## [b11.4.6] - 2021-04-02
-### Changed
-- Auto reload when pop from Request Detail.
-
-## [b11.4.5] - 2021-03-26
-### Changed
-- Detail Request will call api to get latest data every 3s.
-### Fixed
-- Bill animatedQuickPaymentTranslateY.
-- key of AwesomeCombo, HomeCardList item.
-- DetailCard in Request hide chat input.
-
------------------------------------------------------
-
 ## [r12.2.18] - 2022-03-17
 ### Added
 - [CU-2at9nkq] id in post data of add_payment_method api by [minhnguyenit14@gmail.com].

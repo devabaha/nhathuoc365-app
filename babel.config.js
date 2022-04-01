@@ -12,12 +12,10 @@ module.exports = {
           'app-store': './src/store',
           'app-config': './src/config',
           'app-packages': './src/packages',
-          'app-components': './src/components',
-          'app-containers': './src/containers',
-          'app-helper': './src/helper'
-        }
-      }
-    ]
+          'app-helper': './src/helper',
+        },
+      },
+    ],
   ],
   env: {
     production: {

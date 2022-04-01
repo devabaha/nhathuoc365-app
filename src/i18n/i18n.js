@@ -5,10 +5,8 @@ import {asyncStorageLanguageKey, arrayLanguages, languages} from './constants';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNLocalize from 'react-native-localize';
-import moment from 'moment';
-
-import 'moment/locale/zh-cn';
 import 'moment/locale/vi';
+import moment from 'moment';
 
 const updateMoment = (t, language) => {
   moment.locale(language);

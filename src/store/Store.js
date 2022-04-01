@@ -547,12 +547,6 @@ class Store {
     this.isHomeLoaded = isHomeLoaded;
   }
 
-  @observable isProjectProductBeeLandReload = false;
-
-  @action forceReloadProjectProductBeeLand(isProjectProductBeeLandReload) {
-    this.isProjectProductBeeLandReload = isProjectProductBeeLandReload;
-  }
-  
   /**
    * Danh sách tắt/ bật cấu hình theo gói sản phẩm.
    */

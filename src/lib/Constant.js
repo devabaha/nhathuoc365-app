@@ -5,15 +5,17 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'https://apiapp.homeid.asia/';
+global.MY_FOOD_API = 'http://apiapp.tickid.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
-global.HOTLINE = '+8492 721 7227';
+global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
+global.HOTLINE = '+8490 345 1368';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'axkVLCubH_6cgpM0cMeFemCdpc2ZQqIwwGGn9r',
-  android: 'Dw5jnQkhORiM9eSdO4loklLjSBayy8k3_CR12J'
+  // ios: '_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  // android: '9qJpK0qBZvKbTEzuKBOKKBr4qaRWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  ios: 'zKau4OSqcixQbDDYbGat7wRm2CMCF8k7yt_LmU',
+  android: 'ZOE-wJXeK71IN8yBLILM326oY0PvzAVxRiXC0W'
 };
 
 // width, height of screen
@@ -44,8 +46,8 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'HOMEID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'HomeID';
+global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'TickID';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
@@ -53,7 +55,7 @@ global.DELAY_UPDATE_NOTICE = 3000;
 global.GA_ID = 'UA-143334124-2';
 
 // color
-global.DEFAULT_COLOR = '#128C7E'; //2c6ca3
+global.DEFAULT_COLOR = '#812384'; //2c6ca3
 global.DEFAULT_COLOR_RED = '#55b947';
 global.DEFAULT_ADMIN_COLOR = '#55b947';
 global.HEADER_BGR = DEFAULT_COLOR;
@@ -141,11 +143,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'abahavietnam@gmail.com';
-global.APP_FANPAGE = '';
-global.APP_INFO = 'https://homeid.asia';
-
-global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
+global.EMAIL_SUPPORT = 'hi@tickid.vn';
+global.APP_FANPAGE = 'http://fanpage.tickid.vn';
+global.APP_INFO = 'http://tickid.vn';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
@@ -169,10 +169,6 @@ global.isIPhoneX = (() => {
 })();
 
 global.heightTabbar = global.isIPhoneX ? 83 : 49;
-
-global.PAYMENT_METHOD_TYPES = {
-  EPAY: '5'
-};
 
 global.REGEX_NUMBER_ONLY = /(?!\d+|-)\D*/g;
 

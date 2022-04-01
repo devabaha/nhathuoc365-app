@@ -40,7 +40,6 @@ function FilterProduct({
   wrapperStyle,
   onValueSort,
   selectedFilter,
-  onLayout
 }) {
   const [options, setOptions] = useState([]);
   const [defaultSelected, setDefaultSelected] = useState({});
@@ -139,7 +138,6 @@ function FilterProduct({
         )}
       />
       <Animated.View
-        onLayout={onLayout}
         style={[styles.wrapper, animatedWrapperStyle.current, wrapperStyle]}>
         <View style={styles.container}>
           <TouchableOpacity

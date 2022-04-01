@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "Your house"
+      "title": "Home"
     },
     "tab2": {
-      "title": "Utilities"
+      "title": "News"
     },
     "tab3": {
-      "title": "Real estate"
+      "title": "Notifications"
     },
     "tab4": {
       "title": "Orders"
@@ -25,11 +25,8 @@
   },
 
   "screen": {
-    "listBuilding": {
-      "mainTitle": "List project"
-    },
     "cardWallet": {
-      "mainTitle": "Building in HomeID"
+      "mainTitle": "Farms"
     },
     "storeLocation": {
       "mainTitle": "Choose location"
@@ -74,7 +71,7 @@
       "mainTitle": "Order management"
     },
     "voucher": {
-      "mainTitle": "HomeID Voucher"
+      "mainTitle": "TickID Voucher"
     },
     "myVoucher": {
       "mainTitle": "My Voucher"
@@ -122,46 +119,8 @@
     "resetPassword": {
       "mainTitle": "Reset Password"
     },
-    "bills": {
-      "mainTitle": "Bill list",
-      "paymentMethodTitle": "Payment method",
-      "paymentListTitle": "Bill payment"
-    },
-    "requests": {
-      "mainTitle": "Request list",
-      "detailTitle": "Request detail",
-      "creationTitle": "Create a request"
-    },
-    "members": {
-      "mainTitle": "Member list"
-    },
-    "transferInfo": {
-      "mainTitle": "Transfer info"
-    },
-    "registerStore": {
-      "mainTitle": "Register store"
-    },
-    "listBeeLand": {
-      "mainTitle": "List project"
-    },
     "allServices": {
       "mainTitle": "Service list"
-    },
-    "customerInfo": {
-      "mainTitle": "Buyer info"
-    },
-    "confirmBooking": {
-      "mainTitle": "Confirm information"
-    },
-    "customerSearching": {
-      "mainTitle": "Customer"
-    },
-    "orderManagement": {
-      "mainTitle": "Transaction management"
-    },
-    "customerProfile": {
-      "mainTitle": "Customer information",
-      "editTitle": "Edit customer"
     },
     "gpsStoreLocation": {
       "mainTitle": "List of store"

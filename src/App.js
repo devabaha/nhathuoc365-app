@@ -51,7 +51,6 @@ import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
 import StoreContainer from './components/stores/Stores';
-import StoreContainerNavBar from './components/stores/StoreNavBar';
 import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
 import SearchStoreContainer from './components/stores/Search';
@@ -141,36 +140,7 @@ import {servicesHandler, SERVICES_TYPE} from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
-import Building, {ListBuilding} from './containers/Building';
-import Room from './containers/Room';
-import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
-import Bills from './containers/Bills';
-import SupplierStore from './components/stores/SupplierStore';
-import {
-  BillsPaymentMethod,
-  BillsPaymentList,
-  BillsTransferInfo,
-} from './containers/Bills/Payment';
-import Members from './containers/Members';
-import MemberModal from './containers/Members/MemberModal';
-import {MultiTaskView} from './components/MultiTaskView/MultiTaskView';
-import {
-  CustomerSearchingBeeLand,
-  ListBeeLand,
-  OrderManagementBeeLand,
-  ProjectBeeLand,
-} from './containers/BeeLand';
-import {ListRoom} from './containers/Room';
-import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
-import ProjectProductBeeLand from './containers/BeeLand/ProjectProductBeeLand';
-import {
-  ConfirmBookingBeeLand,
-  CustomerInfoBeeLand,
-  DepositPaymentBeeLand,
-} from './containers/BeeLand/Booking/';
-import {ProfileBeeLand} from './containers/BeeLand/CustomerProfile';
-
 import CameraView from './components/CameraView/CameraView';
 import {CaptureFaceID} from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
@@ -232,6 +202,7 @@ import Booking from './containers/Booking';
 import ModalCalendar from './components/ModalCalendar';
 import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
+import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
 import ModalLicense from './components/ModalLicense';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -688,8 +659,7 @@ class App extends Component {
   render() {
     return (
       <View style={{overflow: 'scroll', flex: 1}}>
-        {/* <MultiTaskView /> */}
-        {/* <ProjectProductBeeLand /> */}
+        {/* <GPSStoreLocation /> */}
         {this.state.header}
         <NetWorkInfo />
         <RootRouter
@@ -778,10 +748,7 @@ export default withTranslation()(
 
 class RootRouter extends Component {
   state = {
-    tabVisible: {
-      [appConfig.routes.roomTab]: true,
-      [appConfig.routes.listBeeLand]: false,
-    },
+    tabVisible: {},
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -841,7 +808,7 @@ class RootRouter extends Component {
                   appLanguage={this.props.appLanguage}
                   key={appConfig.routes.launch}
                   component={LaunchContainer}
-                  setTabVisible={this.setTabVisible.bind(this)}
+                  initial
                 />
                 <Tabs
                   showLabel={false}
@@ -851,22 +818,21 @@ class RootRouter extends Component {
                   inactiveBackgroundColor="#ffffff"
                   tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
                   {...navBarConfig}>
-                  {/* ================ Tab 1 ================ */}
-                  {this.state.tabVisible[appConfig.routes.roomTab] && (
-                    <Stack
-                      key={appConfig.routes.roomTab}
-                      icon={TabIcon}
-                      iconLabel={t('appTab.tab1.title')}
-                      iconName="sofa"
-                      iconSize={24}>
-                      <Scene
-                        key={`${appConfig.routes.roomTab}_1`}
-                        title="HomeID"
-                        component={Room}
-                        hideNavBar
-                      />
-                    </Stack>
-                  )}
+                  {/* ================ HOME TAB ================ */}
+                  <Stack
+                    key={appConfig.routes.homeTab}
+                    icon={TabIcon}
+                    iconLabel={t('appTab.tab1.title')}
+                    iconName="store"
+                    iconSize={24}
+                    iconSVG={SVGHome}>
+                    <Scene
+                      key={`${appConfig.routes.homeTab}_1`}
+                      title={APP_NAME_SHOW}
+                      component={HomeContainer}
+                      hideNavBar
+                    />
+                  </Stack>
 
                   {/**
                    ************************ Tab 2 ************************
@@ -875,7 +841,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="newspaper"
+                    iconName="bell"
                     iconSize={24}
                     notifyKey="new_totals"
                     iconSVG={SVGNews}>
@@ -885,44 +851,37 @@ class RootRouter extends Component {
                     />
                   </Stack> */}
                   <Stack
-                    key={appConfig.routes.homeTab}
+                    key={appConfig.routes.ordersTab}
                     icon={TabIcon}
-                    iconLabel={t('appTab.tab2.title')}
-                    iconName="home-assistant"
+                    iconLabel={t('appTab.tab4.title')}
+                    iconName="cart"
                     iconSize={24}
-                    initial>
+                    notifyKey="notify_cart"
+                    iconSVG={SVGOrders}>
                     <Scene
-                      key={`${appConfig.routes.homeTab}_1`}
-                      component={HomeContainer}
-                      hideNavBar
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title={t('screen.orders.mainTitle')}
+                      component={Orders}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
                     />
                   </Stack>
 
                   {/* ================ SCAN QR TAB ================ */}
-                  {/* <Stack
+                  <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}>
                     <Scene component={() => null} />
-                  </Stack> */}
+                  </Stack>
 
                   {/**
                    ************************ Tab 3 ************************
                    */}
-                  {this.state.tabVisible[appConfig.routes.listBeeLand] && (
-                    <Stack
-                      key={appConfig.routes.listBeeLand}
-                      icon={TabIcon}
-                      iconLabel={t('appTab.tab3.title')}
-                      iconName="office-building"
-                      iconSize={24}>
-                      <Scene
-                        key={`${appConfig.routes.listBeeLand}_1`}
-                        title={t('screen.listBeeLand.mainTitle')}
-                        component={ListBeeLand}
-                      />
-                    </Stack>
-                  )}
-                  {/* <Stack
+                  <Stack
                     key={appConfig.routes.mainNotify}
                     icon={TabIcon}
                     iconSize={20}
@@ -940,7 +899,7 @@ class RootRouter extends Component {
                         store.setUpdateNotify(false);
                       }}
                     />
-                  </Stack> */}
+                  </Stack>
 
                   {/**
                    ************************ Tab 4 ************************
@@ -1313,17 +1272,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ LIST BUILDING ================ */}
-                <Stack key={appConfig.routes.listBuilding}>
-                  <Scene
-                    key={`${appConfig.routes.listBuilding}_1`}
-                    title={t('screen.listBuilding.mainTitle')}
-                    component={ListBuilding}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 {/* ================ CAPTURE FACEID ================ */}
                 <Stack key={appConfig.routes.captureFaceID}>
                   <Scene
@@ -1335,194 +1283,18 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ BUILDING ================ */}
-                <Scene
-                  navTransparent
-                  key={appConfig.routes.building}
-                  component={Building}
-                  {...navBarConfig}
-                  back={appConfig.device.isIOS}
-                />
-
-                {/* ================ ROOM ================ */}
-                <Scene
-                  navTransparent
-                  key={appConfig.routes.room}
-                  component={Room}
-                  {...navBarConfig}
-                  back={appConfig.device.isIOS}
-                />
-
-                {/* ================ BILLS ================ */}
-                <Stack key={appConfig.routes.bills}>
+                {/* ================ NEWS ================ */}
+                <Stack key={appConfig.routes.newsTab}>
                   <Scene
-                    key={`${appConfig.routes.bills}_1`}
-                    component={Bills}
-                    title={t('screen.bills.mainTitle')}
+                    key={`${appConfig.routes.newsTab}_1`}
+                    {...navBarConfig}
+                    component={SocialNews}
                     {...navBarConfig}
                     back
                   />
                 </Stack>
 
-                {/* ================ BILLS PAYMENT LIST ================ */}
-                <Stack key={appConfig.routes.billsPaymentList}>
-                  <Scene
-                    key={`${appConfig.routes.billsPaymentList}_1`}
-                    component={BillsPaymentList}
-                    title={t('screen.bills.paymentListTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BILLS PAYMENT METHOD ================ */}
-                <Stack key={appConfig.routes.billsPaymentMethod}>
-                  <Scene
-                    key={`${appConfig.routes.billsPaymentMethod}_1`}
-                    component={BillsPaymentMethod}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ REQUESTS ================ */}
-                <Stack key={appConfig.routes.requests}>
-                  <Scene
-                    key={`${appConfig.routes.requests}_1`}
-                    component={Requests}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ REQUEST CREATION ================ */}
-                <Stack key={appConfig.routes.requestCreation}>
-                  <Scene
-                    key={`${appConfig.routes.requestCreation}_1`}
-                    component={RequestCreation}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ REQUEST DETAIL ================ */}
-                <Stack key={appConfig.routes.requestDetail}>
-                  <Scene
-                    key={`${appConfig.routes.requestDetail}_1`}
-                    component={RequestDetail}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ MEMBERS ================ */}
-                <Stack key={appConfig.routes.members}>
-                  <Scene
-                    key={`${appConfig.routes.members}_1`}
-                    component={Members}
-                    title={t('screen.members.mainTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BILLS TRANSFER INFO ================ */}
-                <Stack key={appConfig.routes.transferInfo}>
-                  <Scene
-                    key={`${appConfig.routes.transferInfo}_1`}
-                    title={t('screen.transferInfo.mainTitle')}
-                    component={BillsTransferInfo}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND PROJECT ================ */}
-                <Stack key={appConfig.routes.projectBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.projectBeeLand}_1`}
-                    component={ProjectBeeLand}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND PROJECT PRODUCT ================ */}
-                <Stack key={appConfig.routes.projectProductBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.projectProductBeeLand}_1`}
-                    component={ProjectProductBeeLand}
-                    {...navBarConfig}
-                    hideNavBar
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND CUSTOMER INFO BOOKING ================ */}
-                <Stack key={appConfig.routes.customerInfoBookingBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.customerInfoBookingBeeLand}_1`}
-                    component={CustomerInfoBeeLand}
-                    title={t('screen.customerInfo.mainTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND CONFIRM BOOKING ================ */}
-                <Stack key={appConfig.routes.confirmBookingBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.confirmBookingBeeLand}_1`}
-                    component={ConfirmBookingBeeLand}
-                    title={t('screen.confirmBooking.mainTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND CUSTOMER SEARCHING ================ */}
-                <Stack key={appConfig.routes.customerSearchingBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.customerSearchingBeeLand}_1`}
-                    component={CustomerSearchingBeeLand}
-                    title={t('screen.customerSearching.mainTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND LIST ORDER ================ */}
-                <Stack key={appConfig.routes.orderManagementBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.orderManagementBeeLand}_1`}
-                    component={OrderManagementBeeLand}
-                    title={t('screen.orderManagement.mainTitle')}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ BEELAND CUSTOMER PROFILE ================ */}
-                <Stack key={appConfig.routes.customerProfileBeeLand}>
-                  <Scene
-                    key={`${appConfig.routes.customerProfileBeeLand}_1`}
-                    component={ProfileBeeLand}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ CREATE STORE ================ */}
-                <Stack key={appConfig.routes.registerStore}>
-                  <Scene
-                    key={`${appConfig.routes.registerStore}_1`}
-                    title={t('screen.registerStore.mainTitle')}
-                    component={RegisterStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
+                {/* ================ ORDERS ================ */}
                 <Stack key={appConfig.routes.ordersTab}>
                   <Scene
                     key={`${appConfig.routes.ordersTab}_1`}
@@ -1572,15 +1344,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.ordersTab}>
-                  <Scene
-                    key={`${appConfig.routes.ordersTab}_1`}
-                    title={t('screen.orders.mainTitle')}
-                    component={Orders}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
                 {/* ================ VOUCHER DETAIL ================ */}
                 <Stack key={appConfig.routes.voucherDetail}>
                   <Scene
@@ -1611,15 +1374,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                <Stack key={appConfig.routes.newsTab}>
-                  <Scene
-                    key={`${appConfig.routes.newsTab}_1`}
-                    title="Tin tức"
-                    component={Notify}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
+
                 {/* ================ DEEP LINK FOR TABS ================ */}
 
                 <Stack key={appConfig.routes.deepLinkOrdersTab}>
@@ -1647,7 +1402,9 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
                 {/* ================ END DEEP LINK ================ */}
+
                 <Stack key={appConfig.routes.myAddress}>
                   <Scene
                     key={`${appConfig.routes.myAddress}_1`}
@@ -1712,7 +1469,6 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.phoneAuth}_1`}
                     hideNavBar
                     component={PhoneAuth}
-                    setTabVisible={this.setTabVisible.bind(this)}
                     {...navBarConfig}
                   />
                 </Stack>
@@ -1766,19 +1522,22 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Scene
+                <Stack key={appConfig.routes.store}>
+                  {/* <RNRFDrawer
                   key={appConfig.routes.store}
-                  component={StoreContainer}
-                  navBar={null}
-                />
+                  // hideNavBar={true}
+                  drawerPosition="right"
+                  drawerWidth={350}
+                  hideDrawerButton={true}
+                  contentComponent={(props) => <FilterDrawer {...props} />}> */}
 
-                <Stack key={appConfig.routes.supplierStore}>
                   <Scene
-                    key={`${appConfig.routes.supplierStore}_1`}
-                    component={SupplierStore}
+                    key={`${appConfig.routes.store}_1`}
+                    component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
+                  {/* </RNRFDrawer> */}
                 </Stack>
 
                 <Stack key="stores_list">
@@ -2142,7 +1901,7 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.listChat}_1`}
                     title="Danh sách Chat"
                     component={ListChat}
-                    // navBar={ListChatNavBar}
+                    navBar={ListChatNavBar}
                     {...navBarConfig}
                     back
                   />
@@ -2399,15 +2158,6 @@ class RootRouter extends Component {
 
               {/* ================ MODAL RATE APP ================ */}
               <Stack key={appConfig.routes.modalRateApp} component={RateApp} />
-
-              {/* ================ MODAL MEMBER ================ */}
-              <Stack
-                key={appConfig.routes.memberModal}
-                component={MemberModal}
-              />
-
-              {/* ================ MODAL LIST ROOM ================ */}
-              <Stack key={appConfig.routes.listRoom} component={ListRoom} />
 
               {/* ================ MODAL POPUP ================ */}
               <Stack key={appConfig.routes.modalPopup} component={ModalPopup} />

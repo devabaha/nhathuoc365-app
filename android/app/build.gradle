@@ -141,11 +141,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "asia.homeid"
+        applicationId "vn.abahaglobal"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "1.1.0"
+        versionCode 1
+        versionName "1.0.1"
 
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line
@@ -181,7 +181,6 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // shrinkResources true
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release

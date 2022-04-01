@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "Nhà của bạn"
+      "title": "Trang chủ"
     },
     "tab2": {
-      "title": "Tiện ích"
+      "title": "Tin tức"
     },
     "tab3": {
-      "title": "Dự án BĐS"
+      "title": "Thông báo"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -25,11 +25,8 @@
   },
 
   "screen": {
-    "listBuilding": {
-      "mainTitle": "Danh sách dự án"
-    },
     "cardWallet": {
-      "mainTitle": "Tòa nhà trên HomeID"
+      "mainTitle": "Đặt hàng trực tiếp từ nhà sản xuất"
     },
     "storeLocation": {
       "mainTitle": "Chọn khu vực"
@@ -74,7 +71,7 @@
       "mainTitle": "Quản lý đơn hàng"
     },
     "voucher": {
-      "mainTitle": "HomeID Voucher"
+      "mainTitle": "TickID Voucher"
     },
     "myVoucher": {
       "mainTitle": "Voucher của tôi"
@@ -122,46 +119,8 @@
     "resetPassword": {
       "mainTitle": "Đặt lại mật khẩu"
     },
-    "bills": {
-      "mainTitle": "Danh sách hóa đơn",
-      "paymentMethodTitle": "Phương thức thanh toán",
-      "paymentListTitle": "Thanh toán hóa đơn"
-    },
-    "requests": {
-      "mainTitle": "Danh sách phản ánh",
-      "detailTitle": "Chi tiết phản ánh",
-      "creationTitle": "Tạo phản ánh"
-    },
-    "members": {
-      "mainTitle": "Danh sách thành viên"
-    },
-    "transferInfo": {
-      "mainTitle": "Thông tin chuyển khoản"
-    },
-    "registerStore": {
-      "mainTitle": "Đăng ký cửa hàng"
-    },
-    "listBeeLand": {
-      "mainTitle": "Danh sách dự án"
-    },
     "allServices": {
       "mainTitle": "Danh sách dịch vụ"
-    },
-    "customerInfo": {
-      "mainTitle": "Thông tin bên mua"
-    },
-    "confirmBooking": {
-      "mainTitle": "Xác nhận thông tin"
-    },
-    "customerSearching": {
-      "mainTitle": "Khách hàng"
-    },
-    "orderManagement": {
-      "mainTitle": "Quản lý giao dịch"
-    },
-    "customerProfile": {
-      "mainTitle": "Thông tin khách hàng",
-      "editTitle": "Sửa khách hàng"
     },
     "gpsStoreLocation": {
       "mainTitle": "Danh sách cửa hàng"

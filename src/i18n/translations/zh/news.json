@@ -1,9 +1,0 @@
-{
-  "getNews": {
-    "error": {
-      "message": "无相关信息或已被删除!"
-    }
-  },
-  "noNews": "暂无消息",
-  "relatedItems": "相关项目"
-}

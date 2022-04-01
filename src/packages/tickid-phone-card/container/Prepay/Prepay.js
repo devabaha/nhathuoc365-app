@@ -42,6 +42,7 @@ class Prepay extends Component {
     cardsOfNetwork: {},
     prefix: 'trước',
     onRefresh: () => {},
+    hideContact: false,
     errorEmptyMessage: 'Vui lòng nhập số điện thoại',
     errorLengthMessage: 'Số điện thoại không hợp lệ',
     validLength: 10,
@@ -120,9 +121,9 @@ class Prepay extends Component {
 
   handlePressContact = contact => {
     config.route.pop();
-    this.handleChangePhoneNumber(contact);
     this.setState({
-      contactName: contact.name
+      contactName: contact.name,
+      contactPhone: contact.displayPhone
     });
   };
 
@@ -201,20 +202,11 @@ class Prepay extends Component {
     });
   };
 
-  handleChangePhoneNumber = phone => {
-    let contactPhone = phone,
-      contactName = '';
-
-    if (typeof phone === 'object') {
-      contactPhone = phone.displayPhone;
-      contactName = phone.name;
-    }
-
-    this.updateNetworkByPrefixPhoneNumber(contactPhone);
-
+  handleChangePhoneNumber = text => {
+    this.updateNetworkByPrefixPhoneNumber(text);
     this.setState({
-      contactPhone,
-      contactName,
+      contactPhone: text,
+      contactName: '',
       errorMessage: ''
     });
   };
@@ -249,7 +241,6 @@ class Prepay extends Component {
           keyboardDismissMode={
             Platform.OS === 'ios' ? 'on-drag' : 'interactive'
           }
-          keyboardShouldPersistTaps="handled"
         >
           <EnterPhoneComponent
             editable
@@ -267,10 +258,6 @@ class Prepay extends Component {
             hideContact={this.props.hideContact}
             keyboardType={this.props.keyboardType}
           />
-
-          {!!this.currentService.note && (
-            <Text style={styles.note}>{this.currentService.note}</Text>
-          )}
 
           <SelectCardValueComponent
             data={this.currentCards}
@@ -312,9 +299,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginLeft: 16,
     marginTop: 24
-  },
-  note: {
-    padding: 15
   }
 });
 

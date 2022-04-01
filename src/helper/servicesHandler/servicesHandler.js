@@ -76,79 +76,6 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       });
       break;
 
-    /** BEEHOME */
-    case SERVICES_TYPE.BEEHOME_SERVICE_TYPE:
-      Actions.push(appConfig.routes.listBuilding);
-      break;
-    case SERVICES_TYPE.BEEHOME_BUILDING:
-      Actions.push(appConfig.routes.building, {
-        siteId: service.id,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_ROOM:
-      Actions.push(appConfig.routes.room, {
-        roomId: service.room_id,
-        siteId: service.site_id,
-        title: service.title,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_BILLS_PAYMENT:
-      Actions.push(appConfig.routes.billsPaymentList, {
-        site_id: service.site_id,
-        room_id: service.room_id,
-        rootSceneKey: service.sceneKey,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_LIST_BILL:
-      /**
-       * @type {Object}
-       * @property {(number|string)} siteId
-       * @property {(number|string)} roomId
-       * @property {number} index - tab index in list bill
-       */
-      const billData = {
-        siteId: service.site_id,
-        roomId: service.room_id,
-        index: service.index, // 0: list bill, 1: list receipt
-      };
-      Actions.push(appConfig.routes.bills, billData);
-      break;
-    case SERVICES_TYPE.BEEHOME_LIST_REQUEST:
-      Actions.push(appConfig.routes.requests, {
-        siteId: service.site_id,
-        roomId: service.room_id,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_REQUEST:
-      Actions.push(appConfig.routes.requestDetail, {
-        siteId: service.site_id,
-        roomId: service.room_id,
-        requestId: service.request_id,
-        title: service.title,
-        callbackReload: service.callbackReload,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_ROOM_CHAT:
-      Actions.push(appConfig.routes.amazing_chat, {
-        site_id: service.site_id,
-        user_id: service.user_id,
-        phoneNumber: service.tel,
-        title: service.site_name,
-      });
-      break;
-    case SERVICES_TYPE.BEEHOME_ROOM_USER:
-      Actions.push(appConfig.routes.members, {
-        siteId: service.site_id,
-        roomId: service.room_id,
-        ownerId: service.user_id,
-      });
-      break;
-
-    /** BEELAND */
-    case SERVICES_TYPE.BEELAND_BUILDING:
-      Actions.jump(appConfig.routes.listBeeLand);
-      break;
-
     /** EXTERNAL LINK */
     case SERVICES_TYPE.EXTERNAL_LINK:
       Linking.openURL(service.link).catch((err) => {
@@ -583,7 +510,6 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
     /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
       Actions.push(appConfig.routes.requestCreation, {
-        title: service.title,
         siteId: service.site_id || store.store_id,
         roomId: service.room_id || service.channel_id || 0,
         request: service.request,

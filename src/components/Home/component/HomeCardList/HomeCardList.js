@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 
 import appConfig from 'app-config';
 class HomeCardList extends Component {
@@ -9,17 +9,12 @@ class HomeCardList extends Component {
     const props = this.props;
     const {t} = props;
 
-    const contentContainerStyle = [
-      styles.listContentContainer,
-      this.props.contentContainerStyle,
-    ];
+    const contentContainerStyle = [styles.listContentContainer, this.props.contentContainerStyle]
 
     return (
-      <View
-        onLayout={props.onLayout}
-        style={[styles.container, props.containerStyle]}>
+      <View style={styles.container}>
         <View style={styles.content}>
-          {!!props.title && <Text style={styles.title}>{props.title}</Text>}
+          <Text style={styles.title}>{props.title}</Text>
 
           {props.onShowAll ? (
             <Button
@@ -38,19 +33,16 @@ class HomeCardList extends Component {
             {this.props.renderContent()}
           </View>
         ) : (
-          <Animated.FlatList
-            horizontal={props.horizontal}
+          <FlatList
+            horizontal
             data={props.data}
             showsHorizontalScrollIndicator={false}
             renderItem={props.children}
             keyExtractor={(item, index) => index.toString()}
             style={styles.listContainer}
             contentContainerStyle={contentContainerStyle}
-            refreshControl={props.refreshControl}
-            {...props.flatListProps}
           />
         )}
-        {props.extraComponent}
       </View>
     );
   }
@@ -100,7 +92,6 @@ HomeCardList.defaultProps = {
   data: [],
   onShowAll: defaultListener,
   children: defaultListener,
-  horizontal: true,
 };
 
 export default withTranslation('home')(HomeCardList);

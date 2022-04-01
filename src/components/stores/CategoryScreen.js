@@ -21,7 +21,6 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 class CategoryScreen extends Component {
   static defaultProps = {
     animatedScrollY: new Animated.Value(0),
-    scrollEnabled: true,
   };
   constructor(props) {
     super(props);
@@ -61,10 +60,6 @@ class CategoryScreen extends Component {
   _delay() {
     var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
-  }
-
-  get store_id() {
-    return this.props.store_id || store.store_id;
   }
 
   componentDidMount() {
@@ -159,8 +154,7 @@ class CategoryScreen extends Component {
   // lấy d/s sản phẩm theo category_id
   _getItemByCateId(category_id) {
     var store_category_key =
-      STORE_CATEGORY_KEY + this.store_id + category_id + store.user_info.id;
-
+      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
     this.setState(
       {
         loading: this.state.items_data ? false : true,
@@ -293,11 +287,6 @@ class CategoryScreen extends Component {
       }
     } catch (e) {
       console.log(e + ' site_category_product');
-      !this.unmounted &&
-        this.setState({
-          loading: false,
-          refreshing: false,
-        });
     }
   }
 
@@ -319,9 +308,9 @@ class CategoryScreen extends Component {
 
     return (
       <>
-        <View style={[styles.containerScreen, this.props.containerStyle]}>
+        <View style={styles.containerScreen}>
           <ListStoreProduct
-            useList={this.props.scrollEnabled}
+            useList
             products={items_data}
             onPressLoadMore={this._loadMore}
             listProps={{
@@ -424,35 +413,9 @@ class CategoryScreen extends Component {
 
 const styles = StyleSheet.create({
   containerScreen: {
-    backgroundColor: 'transparent',
     width: Util.size.width,
     flex: 1,
-    paddingBottom: 7,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#888',
-    opacity: 0.8,
-  },
-  emptyIcon: {
-    fontSize: 80,
-    color: DEFAULT_COLOR,
-    marginBottom: 15,
-    opacity: 0.7,
-  },
-  emptyContainer: {
-    flex: 1,
-    width: Util.size.width,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
-export default withTranslation('stores', {withRef: true})(
-  observer(CategoryScreen),
-);
+export default withTranslation('stores')(observer(CategoryScreen));

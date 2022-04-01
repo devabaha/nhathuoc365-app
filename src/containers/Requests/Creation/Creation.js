@@ -378,8 +378,6 @@ class Creation extends Component {
   goToRequestTypeSelection = () => {
     Keyboard.dismiss();
 
-    if (!this.state.requestTypes?.length) return;
-
     Actions.push(appConfig.routes.modalPicker, {
       data: this.state.requestTypes,
       title: 'Chọn loại phản ánh',

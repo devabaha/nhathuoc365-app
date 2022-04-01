@@ -28,9 +28,7 @@ class ModalPicker extends PureComponent {
     selectedValue:
       this.props.selectedValue !== undefined
         ? this.props.selectedValue
-        : this.props.defaultValue ||
-          this.props.data[0]?.value ||
-          this.props.data[0]?.id,
+        : this.props.defaultValue || this.props.data[0]?.value,
     headerHeight: 0,
   };
   refModal = React.createRef();
@@ -122,22 +120,16 @@ class ModalPicker extends PureComponent {
     if (this.refModal.current) {
       this.refModal.current.close();
     } else {
-      this.onClosed();
+      Actions.pop();
     }
   };
 
   onClosed = () => {
-    this.props.onClose();
     Actions.pop();
   };
 
   onSelectPress = () => {
-    const value =
-      this.state.selectedValue !== undefined &&
-      this.state.selectedValue !== null
-        ? this.state.selectedValue
-        : this.props.defaultValue;
-    this.props.onSelect(value);
+    this.props.onSelect(this.state.selectedValue);
     this.onCancelPress();
   };
 

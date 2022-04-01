@@ -278,14 +278,7 @@ class PhoneAuth extends Component {
         if (response.data?.fill_info_user) {
           this.goToRegister(response.data.name);
         } else {
-          this.props.setTabVisible({
-            [appConfig.routes.roomTab]: !!response.data.view_beehome,
-            [appConfig.routes.listBeeLand]: response.data.view_beeland
-          });
           Actions.replace(appConfig.routes.primaryTabbar);
-          if (response.data.room) {
-            Actions.jump(appConfig.routes.roomTab);
-          }
         }
         break;
       default:
