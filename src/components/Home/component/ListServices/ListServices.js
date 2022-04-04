@@ -313,6 +313,8 @@ class ListServices extends Component {
   }
 
   render() {
+    if (!this.props.listService?.length) return null;
+
     const visibleStyle = {
       opacity: this.animatedVisibleValue,
       transform: [

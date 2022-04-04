@@ -334,7 +334,7 @@ class Store {
 
   @action setAppData(data) {
     this.app_data = data;
-    this.app_id = data.id;
+    this.app_id = data?.id;
   }
 
   @action setDeepLinkData(data) {

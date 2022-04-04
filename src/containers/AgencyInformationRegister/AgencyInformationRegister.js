@@ -25,6 +25,7 @@ import Button from '../../components/Button';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import store from 'app-store';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 
 const MyInput = compose(
   handleTextInput,
@@ -83,29 +84,60 @@ const FORM_DATA = {
 
 const REQUIRED_MESSAGE = 'Vui lòng nhập trường này';
 const EMAIL_REQUIRED = 'Vui lòng nhập đúng định dạng email';
-const validationSchema = Yup.object().shape({
-  [FORM_DATA.EMAIL.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .email(EMAIL_REQUIRED)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.ID_CARD.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.IMAGE_ID_CARD_BACK.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  [FORM_DATA.BANK_ACCOUNT.name]: Yup.string()
-    .required(REQUIRED_MESSAGE)
-    .nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.EXPERT_ID.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
-  // [FORM_DATA.BRAND.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE)
-});
 
 class AgencyInformationRegister extends Component {
+  get validationSchema() {
+    const shape = {
+      [FORM_DATA.EMAIL.name]: Yup.string()
+        .required(REQUIRED_MESSAGE)
+        .email(EMAIL_REQUIRED)
+        .nullable(REQUIRED_MESSAGE),
+      [FORM_DATA.ID_CARD.name]: Yup.string()
+        .required(REQUIRED_MESSAGE)
+        .nullable(REQUIRED_MESSAGE),
+      [FORM_DATA.IMAGE_ID_CARD_FRONT.name]: Yup.string()
+        .required(REQUIRED_MESSAGE)
+        .nullable(REQUIRED_MESSAGE),
+      [FORM_DATA.IMAGE_ID_CARD_BACK.name]: Yup.string()
+        .required(REQUIRED_MESSAGE)
+        .nullable(REQUIRED_MESSAGE),
+      [FORM_DATA.BANK_ACCOUNT.name]: Yup.string()
+        .required(REQUIRED_MESSAGE)
+        .nullable(REQUIRED_MESSAGE),
+      // [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
+      // [FORM_DATA.EXPERT_ID.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE),
+      // [FORM_DATA.BRAND.name]: Yup.string().required(REQUIRED_MESSAGE).nullable(REQUIRED_MESSAGE)
+    };
+    if (isConfigActive(CONFIG_KEY.OPTIONAL_KYC_FORM_REGISTER_KEY)) {
+      shape[FORM_DATA.IMAGE_ID_CARD_FRONT.name] = shape[
+        FORM_DATA.IMAGE_ID_CARD_FRONT.name
+      ].notRequired();
+      shape[FORM_DATA.IMAGE_ID_CARD_BACK.name] = shape[
+        FORM_DATA.IMAGE_ID_CARD_BACK.name
+      ].notRequired();
+      shape[FORM_DATA.BANK_ACCOUNT.name] = shape[
+        FORM_DATA.BANK_ACCOUNT.name
+      ].notRequired();
+    }
+
+    return Yup.object().shape(shape);
+  }
+
+  getFormDataValue = (key) => {
+    let {label, name, ...params} = FORM_DATA[key];
+    if (isConfigActive(CONFIG_KEY.OPTIONAL_KYC_FORM_REGISTER_KEY)) {
+      if (
+        name === FORM_DATA.IMAGE_ID_CARD_FRONT.name ||
+        name === FORM_DATA.IMAGE_ID_CARD_BACK.name ||
+        name === FORM_DATA.BANK_ACCOUNT.name
+      ) {
+        label = label.split(/\*/g).join('');
+      }
+    }
+
+    return {label, name, ...params};
+  };
+
   userInfo = store.user_info || {};
   state = {
     loading: false,
@@ -280,6 +312,13 @@ class AgencyInformationRegister extends Component {
       // longitude: this.state.longitude,
       ...values,
     };
+
+    Object.keys(data).map((key) => {
+      if (!data[key]) {
+        data[key] = '';
+      }
+    });
+
     try {
       const response = await APIHandler.user_gold_member_register(data);
       console.log(data, response);
@@ -391,7 +430,7 @@ class AgencyInformationRegister extends Component {
 
   renderFormData({values}) {
     return Object.keys(FORM_DATA).map((key, index) => {
-      const {label, name, type} = FORM_DATA[key];
+      const {label, name, type} = this.getFormDataValue(key);
       let extraProps = null;
 
       switch (name) {
@@ -469,7 +508,7 @@ class AgencyInformationRegister extends Component {
           <Formik
             initialValues={this.initialValues}
             onSubmit={this.onSubmit}
-            validationSchema={validationSchema}
+            validationSchema={this.validationSchema}
             innerRef={this.refForm}>
             {(props) => {
               const disabled = !(props.isValid && props.dirty);
