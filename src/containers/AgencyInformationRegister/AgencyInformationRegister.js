@@ -312,6 +312,13 @@ class AgencyInformationRegister extends Component {
       // longitude: this.state.longitude,
       ...values,
     };
+
+    Object.keys(data).map((key) => {
+      if (!data[key]) {
+        data[key] = '';
+      }
+    });
+
     try {
       const response = await APIHandler.user_gold_member_register(data);
       console.log(data, response);
