@@ -26,11 +26,19 @@ const styles = StyleSheet.create({
   icon: {
     width: 15,
     fontSize: 15,
+    lineHeight: 18,
   },
   title: {
     marginLeft: 8,
+    flex: 1,
+    lineHeight: 18,
   },
-  btnAction: {},
+  btnAction: {
+    alignSelf: 'flex-start',
+  },
+  btnActionTitle: {
+    lineHeight: 18,
+  },
 });
 
 const SectionContainer = ({
@@ -85,7 +93,10 @@ const SectionContainer = ({
 
   const changeTitleStyle = useMemo(() => {
     return mergeStyles(
-      theme.typography[TypographyType.LABEL_SMALL_PRIMARY],
+      [
+        styles.btnActionTitle,
+        theme.typography[TypographyType.LABEL_SMALL_PRIMARY],
+      ],
       actionBtnTitleStyleProps,
     );
   }, [theme, actionBtnTitleStyleProps]);
@@ -95,9 +106,18 @@ const SectionContainer = ({
   ) : (
     <Container style={containerStyle}>
       {!!hasHeading && (
-        <Container row noBackground style={styles.titleWrapper}>
+        <Container
+          row
+          noBackground
+          centerVertical={false}
+          style={styles.titleWrapper}>
           {!!title && (
-            <Container noBackground row>
+            <Container
+              flex
+              noBackground
+              row
+              centerVertical={false}
+              style={{paddingRight: 15}}>
               {customIcon || (
                 <Icon
                   bundle={BundleIconSetName.FONT_AWESOME_5}
