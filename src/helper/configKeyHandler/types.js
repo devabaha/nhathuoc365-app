@@ -57,7 +57,8 @@ export const CONFIG_KEY = {
   PARTNER_REGISTRATION_LINK_KEY: 'partner_registration_link_key',
 
   ENABLE_EULA_KEY: 'enable_eula_key',
+  ENABLE_THEME_SWITCHER_KEY: 'enable_theme_switcher_key',
   EULA_NEWS_ID: 'eula_news_id',
 
-  ENABLE_THEME_SWITCHER_KEY: 'enable_theme_switcher_key'
+  OPTIONAL_KYC_FORM_REGISTER_KEY: 'optional_kyc_form_register_key',
 };

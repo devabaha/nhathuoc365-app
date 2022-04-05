@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
+## [r12.2.19] - 2022-04-04
+### Added
+- Add optional_kyc_form_register_key in AgencyInformationRegister by [minhnguyenit14@gmail.com].
+
 ## [r12.2.18] - 2022-03-17
 ### Added
 - [CU-2at9nkq] id in post data of add_payment_method api by [minhnguyenit14@gmail.com].

@@ -19,10 +19,13 @@ import store from 'app-store';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 // routing
 import {pop, push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // custom components
 import FloatingLabelInput from 'src/components/FloatingLabelInput';
 import Loading from 'src/components/Loading';
@@ -73,24 +76,57 @@ class AgencyInformationRegister extends Component {
 
   requiredMessage = this.props.t('requiredField');
   emailRequired = this.props.t('emailFomartRequried');
-  validationSchema = Yup.object().shape({
-    [this.formData.EMAIL.name]: Yup.string()
-      .required(this.requiredMessage)
-      .email(this.emailRequired)
-      .nullable(this.requiredMessage),
-    [this.formData.ID_CARD.name]: Yup.string()
-      .required(this.requiredMessage)
-      .nullable(this.requiredMessage),
-    [this.formData.IMAGE_ID_CARD_FRONT.name]: Yup.string()
-      .required(this.requiredMessage)
-      .nullable(this.requiredMessage),
-    [this.formData.IMAGE_ID_CARD_BACK.name]: Yup.string()
-      .required(this.requiredMessage)
-      .nullable(this.requiredMessage),
-    [this.formData.BANK_ACCOUNT.name]: Yup.string()
-      .required(this.requiredMessage)
-      .nullable(this.requiredMessage),
-  });
+  get validationSchema() {
+    const shape = {
+      [this.formData.EMAIL.name]: Yup.string()
+        .required(this.requiredMessage)
+        .email(this.emailRequired)
+        .nullable(this.requiredMessage),
+      [this.formData.ID_CARD.name]: Yup.string()
+        .required(this.requiredMessage)
+        .nullable(this.requiredMessage),
+      [this.formData.IMAGE_ID_CARD_FRONT.name]: Yup.string()
+        .required(this.requiredMessage)
+        .nullable(this.requiredMessage),
+      [this.formData.IMAGE_ID_CARD_BACK.name]: Yup.string()
+        .required(this.requiredMessage)
+        .nullable(this.requiredMessage),
+      [this.formData.BANK_ACCOUNT.name]: Yup.string()
+        .required(this.requiredMessage)
+        .nullable(this.requiredMessage),
+      // [this.formData.ADDRESS.name]: Yup.string().required(this.requiredMessage).nullable(this.requiredMessage),
+      // [this.formData.EXPERT_ID.name]: Yup.string().required(this.requiredMessage).nullable(this.requiredMessage),
+      // [this.formData.BRAND.name]: Yup.string().required(this.requiredMessage).nullable(this.requiredMessage)
+    };
+    if (isConfigActive(CONFIG_KEY.OPTIONAL_KYC_FORM_REGISTER_KEY)) {
+      shape[this.formData.IMAGE_ID_CARD_FRONT.name] = shape[
+        this.formData.IMAGE_ID_CARD_FRONT.name
+      ].notRequired();
+      shape[this.formData.IMAGE_ID_CARD_BACK.name] = shape[
+        this.formData.IMAGE_ID_CARD_BACK.name
+      ].notRequired();
+      shape[this.formData.BANK_ACCOUNT.name] = shape[
+        this.formData.BANK_ACCOUNT.name
+      ].notRequired();
+    }
+
+    return Yup.object().shape(shape);
+  }
+
+  getFormDataValue = (key) => {
+    let {label, name, ...params} = this.formData[key];
+    if (isConfigActive(CONFIG_KEY.OPTIONAL_KYC_FORM_REGISTER_KEY)) {
+      if (
+        name === this.formData.IMAGE_ID_CARD_FRONT.name ||
+        name === this.formData.IMAGE_ID_CARD_BACK.name ||
+        name === this.formData.BANK_ACCOUNT.name
+      ) {
+        label = label.split(/\*/g).join('');
+      }
+    }
+
+    return {label, name, ...params};
+  };
 
   userInfo = store.user_info || {};
   state = {
@@ -279,6 +315,13 @@ class AgencyInformationRegister extends Component {
       // longitude: this.state.longitude,
       ...values,
     };
+
+    Object.keys(data).map((key) => {
+      if (!data[key]) {
+        data[key] = '';
+      }
+    });
+
     try {
       const response = await APIHandler.user_gold_member_register(data);
       console.log(data, response);
@@ -390,7 +433,7 @@ class AgencyInformationRegister extends Component {
 
   renderFormData({values}) {
     return Object.keys(this.formData).map((key, index) => {
-      const {label, name, type} = this.formData[key];
+      const {label, name, type} = this.getFormDataValue(key);
       let extraProps = null;
 
       switch (name) {

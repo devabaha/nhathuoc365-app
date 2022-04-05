@@ -2,7 +2,7 @@
   "formData": {
     "email": "Email *",
     "IDCard": "Số CMND *",
-    "imageIDCardFront": "Ảnh CMND (mặt trước) *'",
+    "imageIDCardFront": "Ảnh CMND (mặt trước) *",
     "imageIDCardBack": "Ảnh CMND (mặt sau) *",
     "bankAccount": "Tài khoản ngân hàng (cú pháp: [số tk], [tên chủ tk], [tên ngân hàng]) *"
   },

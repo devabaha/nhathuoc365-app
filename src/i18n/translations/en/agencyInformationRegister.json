@@ -2,7 +2,7 @@
   "formData": {
     "email": "Email *",
     "IDCard": "ID number *",
-    "imageIDCardFront": "ID card image (front) *'",
+    "imageIDCardFront": "ID card image (front) *",
     "imageIDCardBack": "ID card image (back) *",
     "bankAccount": "Bank Account (form : [account number], [owner], [bank name]) *"
   },
