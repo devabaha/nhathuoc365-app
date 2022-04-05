@@ -58,4 +58,6 @@ export const CONFIG_KEY = {
 
   ENABLE_EULA_KEY: 'enable_eula_key',
   EULA_NEWS_ID: 'eula_news_id',
+
+  ENABLE_THEME_SWITCHER_KEY: 'enable_theme_switcher_key'
 };

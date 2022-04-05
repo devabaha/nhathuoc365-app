@@ -11,6 +11,7 @@ import BaseAPI from 'src/network/API/BaseAPI';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {rgbaToRgb, hexToRgba} from 'app-helper';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 // routing
 import {replace} from 'app-helper/routing';
 // context
@@ -19,6 +20,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
 import {languages} from 'src/i18n/constants';
 import {THEME_STORAGE_KEY} from 'src/constants';
+import {BASE_LIGHT_THEME} from 'src/Themes/Theme.light';
 // custom components
 import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
@@ -50,17 +52,22 @@ class Launch extends Component {
     this.animateLoading();
   }
 
-  loadTheme = async () => {
+  loadTheme = async (isActive = false) => {
     try {
+      if (isActive) {
+        await AsyncStorage.removeItem(THEME_STORAGE_KEY);
+      }
+
       let themeStorage = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+
       if (themeStorage) {
         themeStorage = JSON.parse(themeStorage);
-        this.context.updateTheme(themeStorage);
       }
+      this.context.updateTheme(themeStorage || BASE_LIGHT_THEME);
     } catch (error) {
       console.log('load_theme', error);
     } finally {
-      this.handleAuthorization();
+      !isActive && this.handleAuthorization();
     }
   };
 
@@ -96,13 +103,17 @@ class Launch extends Component {
     const user = response.data || {};
     const site = response.other_data?.site || {};
     store.setStoreData(site);
-
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
 
     if (isTestDevice) {
       return;
     }
+
+    if (!isConfigActive(CONFIG_KEY.ENABLE_THEME_SWITCHER_KEY)) {
+      this.loadTheme(true);
+    }
+
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
     // phoneCardConfig.defaultContactPhone = user.tel;
