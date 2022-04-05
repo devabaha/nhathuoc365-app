@@ -86,8 +86,6 @@ class Confirm extends Component {
     paymentMethod: {},
     loading: false,
     isConfirming: false,
-    scheduleDate: '',
-    scheduleTime: '',
   };
   refs_confirm_page = React.createRef();
   unmounted = false;
@@ -97,17 +95,9 @@ class Confirm extends Component {
   requests = [this.getShippingInfoRequest, this.reorderRequest];
   eventTracker = new EventTracker();
   refNoteModalInput = null;
-  today = new Date();
 
   get theme() {
     return getTheme(this);
-  }
-
-  get todayTime() {
-    return {
-      hour: String(this.today.getHours()).padStart(2, '0'),
-      minute: String(this.today.getMinutes()).padStart(2, '0'),
-    };
   }
 
   get isSiteUseShipNotConfirming() {
@@ -157,6 +147,7 @@ class Confirm extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+
     const is_paymenting =
       this.state.data && this.state.data.status == CART_STATUS_ORDERING;
 
@@ -172,7 +163,6 @@ class Confirm extends Component {
       }),
     );
     this.eventTracker.logCurrentView();
-    this.today.setMinutes(this.today.getMinutes() + 10);
   }
 
   componentWillUnmount() {
@@ -317,9 +307,6 @@ class Confirm extends Component {
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
-            delivery_time: !!this.state.scheduleTime
-              ? `${this.state.scheduleDate} ${this.state.scheduleTime}`
-              : null,
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
@@ -525,16 +512,6 @@ class Confirm extends Component {
       },
       this.theme,
     );
-  };
-
-  handlePressDeliveryScheduleActionButton = () => {
-    push(appConfig.routes.modalDeliverySchedule, {
-      selectedDate: this.state.scheduleDate,
-      selectedTime: this.state.scheduleTime,
-      onConfirm: (date, time) => {
-        this.setState({scheduleDate: date, scheduleTime: time});
-      },
-    });
   };
 
   _goPaymentMethod = (cart_data) => {
@@ -1035,6 +1012,9 @@ class Confirm extends Component {
       !this.isPaid &&
       !isConfigActive(CONFIG_KEY.NOT_ALLOW_EDIT_CART_KEY);
 
+    const isAllowedEditScheduleDeliveryTime =
+      cart_data.status < CART_STATUS_PROCESSING;
+
     const comboAddress =
       (address_data?.province_name || '') +
       (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
@@ -1110,20 +1090,13 @@ class Confirm extends Component {
             />
           )}
 
-          {isConfigActive(CONFIG_KEY.ALLOW_CHOOSE_DELIVERY_TIME) && (
+          {isConfigActive(CONFIG_KEY.ALLOW_CHOOSE_DELIVERY_TIME_KEY) && (
             <DeliveryScheduleSection
-              title={
-                !!this.state.scheduleDate && !!this.state.scheduleTime
-                  ? t('confirm.schedule.title', {
-                      scheduleTime: this.state.scheduleTime,
-                      scheduleDate: this.state.scheduleDate,
-                    })
-                  : t('confirm.schedule.deliveryNow', {
-                      hour: this.todayTime.hour,
-                      minute: this.todayTime.minute,
-                    })
-              }
-              onPressActionBtn={this.handlePressDeliveryScheduleActionButton}
+              editable={isAllowedEditScheduleDeliveryTime}
+              dateTime={this.cartData?.delivery_time}
+              siteId={this.cartData.site_id}
+              cartId={this.cartData.id}
+              title={t('confirm.scheduleDelivery.title')}
             />
           )}
 

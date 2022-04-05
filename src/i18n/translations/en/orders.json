@@ -75,7 +75,7 @@
       "popup": {
         "title": "SUCCESS",
         "loggedIn": {
-          "description": "Ordered successfully!",
+          "description": "Your order will be delivered on time. Thank you!",
           "accept": "Keep shopping",
           "cancel": "View orders"
         },
@@ -101,14 +101,14 @@
       "title": "Copy",
       "success": "Copied"
     },
-    "schedule": {
-      "title": "Schedule {{scheduleTime}} - {{scheduleDate}}",
-      "modalTitle": "Schedule Delivery",
-      "deliveryNow": "Delivery now",
+    "scheduleDelivery": {
+      "title": "Delivery time",
+      "detailLabel": "Your order will be delivered at ",
+      "description": "Schedule the delivery time for your order",
       "modal": {
-        "todayLabel": "Today",
-        "deliveryNowLabel": "Delivery Now",
-        "outTimeLabel": "Out of time"
+        "title": "Schedule Delivery",
+        "todayLabel": "Today ",
+        "deliveryNowLabel": "Delivery Now"
       }
     }
   },

@@ -113,11 +113,11 @@ const NoteSection = ({
       title={
         title || (
           <>
-            <Typography type={TypographyType.LABEL_MEDIUM}>{`${t(
+            <Typography type={TypographyType.LABEL_LARGE}>{`${t(
               'confirm.note.title',
             )} `}</Typography>
             <Typography
-              type={TypographyType.DESCRIPTION_SMALL}
+              type={TypographyType.DESCRIPTION_MEDIUM}
               style={styles.input_label_help}>
               ({t('confirm.note.description')} )
             </Typography>

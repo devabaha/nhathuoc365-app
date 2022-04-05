@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
-- [CU-1zgz1kh] ModalDeliverySchedule and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
+- [CU-1zgz1kh] DeliverySchedule section in Confirm and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
 ### Changed
 - [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 

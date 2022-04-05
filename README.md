@@ -20,8 +20,6 @@ Chi tiết
 4. Tạo Google Analytic: Tạo GA cho web
 5. Code Push: chạy các lệnh sau, thay thế bằng 
 
-code-push app add tick-tickid-ios ios react-native
-
 appcenter apps create -d tick-test-ios -o iOS -p React-Native
 appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
@@ -31,8 +29,6 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Produ
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Staging    │  _w4VwxRJU0tFtIiKKDhlEW-ECSsahwyTqiOcq
 └────────────┴──────────────────────────────────────────────────────────────────┘
-
-code-push app add tick-tickid-android android react-native
 
 appcenter apps create -d tick-test-android -o Android -p React-Native
 appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android Production
@@ -62,11 +58,8 @@ appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
 `` Direct to root folder (../src) to execute automation ```**`
 ``***********************************************************`
 
-`IOS`
-bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry"
-`Android`
+bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry" &&
 bash sentrydp -a app.abaha.net-gmail.com/tick-test-android -p android --deployment Production --description "test sentry"
-
 ##### IOS
 
 appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-ios ios ./build/CodePush --deployment "Production" --dist "v246"

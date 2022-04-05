@@ -75,7 +75,7 @@
       "popup": {
         "title": "THÀNH CÔNG",
         "loggedIn": {
-          "description": "Đã đặt hàng thành công!",
+          "description": "Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn",
           "accept": "Tiếp tục mua hàng",
           "cancel": "Xem đơn hàng"
         },
@@ -101,14 +101,14 @@
       "title": "Sao chép",
       "success": "Sao chép thành công"
     },
-    "schedule": {
-      "title": "Hẹn giao vào {{scheduleTime}} - {{scheduleDate}}",
-      "modalTitle": "Chọn giờ nhận",
-      "deliveryNow": "Giao ngay vào {{hour}}:{{minute}} Hôm nay",
+    "scheduleDelivery": {
+      "title": "Thời gian giao hàng",
+      "detailLabel": "Đơn hàng sẽ được giao vào ",
+      "description": "Hẹn lịch giao cho đơn hàng",
       "modal": {
-        "todayLabel": "Hôm nay",
-        "deliveryNowLabel": "Giao ngay",
-        "outTimeLabel": "Hết thời gian giao hàng"
+        "title": "Chọn giờ nhận",
+        "todayLabel": "Hôm nay ",
+        "deliveryNowLabel": "Giao ngay"
       }
     }
   },

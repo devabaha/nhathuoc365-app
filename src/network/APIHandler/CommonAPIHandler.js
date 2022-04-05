@@ -1054,6 +1054,26 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * edit schedule delivery time
+   *
+   */
+  async update_info_cart(site_id, cart_id, data) {
+    const api = url_for(
+      API.SITE_CART_UPDATE_INFO_CART + '/' + site_id + '/' + cart_id,
+    );
+    return await this.postAPI(api, data);
+  }
+
+/**
+   * get schedule delivery date time
+   *
+   */
+  async get_cart_delivery_date(site_id) {
+    const api = url_for(API.GET_CART_DELIVERY_DATE + '/' + site_id);
+    return await this.postAPI(api);
+  }
+
+  /**
    * @todo Lấy thông tin game đoán số
    *
    * @typedef {Object | null} LotteryInfo
