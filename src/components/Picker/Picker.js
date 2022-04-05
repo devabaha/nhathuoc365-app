@@ -65,7 +65,7 @@ const Picker = ({
   selectedValue = undefined,
   androidItemStyle = undefined,
   androidInitNumToRender = undefined,
-  isDeliverySchedule = false,
+  androidInitScrollIndex = undefined,
   androidItemTextStyle = {},
   onValueChange = (value, index) => {},
   getAndroidItemLayout = undefined,
@@ -191,21 +191,8 @@ const Picker = ({
             }}
             initialNumToRender={androidInitNumToRender}
             getItemLayout={getAndroidItemLayout}
+            initialScrollIndex={androidInitScrollIndex}
           />
-          {/* <ScrollView
-            ref={refList}
-            safeLayout
-            style={styles.picker}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}>
-            <Container center style={styles.androidPicker}>
-              {!!data?.length
-                ? data.map((item, index) => renderAndroidData({item, index}))
-                : isDeliverySchedule
-                ? renderListEmpty()
-                : null}
-            </Container>
-          </ScrollView> */}
         </Container>
       );
     default:

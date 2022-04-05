@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e;
+
 declare codepushDeployment="Production";
 
 while [[ "$#" -gt 0 ]]; do
@@ -14,8 +16,29 @@ while [[ "$#" -gt 0 ]]; do
 done
 echo "Getting latest released codepush information...";
 
+declare index=0;
+if [[ $codepushAppPlatform -eq "ios" ]]
+then
+index=0;
+fi
+
 declare codePushInformation=$(appcenter codepush deployment list --output=json  -a "$codepushAppName");
-declare latestReleaseLabel=$(echo $codePushInformation | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[0]["latestRelease"]["label"];');
+
+declare latestReleaseLabel=$(echo $codePushInformation | python -c '
+import json,sys;
+
+obj=json.load(sys.stdin)
+
+label = 0
+def addition(n):
+    if n["name"] == "'$codepushDeployment'":
+       global label
+       label = n["latestRelease"]["label"]
+       return;
+       
+list(map(addition, obj))
+print(label)');
+
 declare latestReleaseLabelNumber="${latestReleaseLabel//[^0-9]/}";
 declare nextReleaseLabelNumber=`expr $latestReleaseLabelNumber + 1`;
 echo "====================================================";

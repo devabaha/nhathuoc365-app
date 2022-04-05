@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {View, Easing, StyleSheet, Platform} from 'react-native';
+import {Easing, StyleSheet, Platform} from 'react-native';
 // 3-party libs
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
@@ -14,12 +14,8 @@ import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import {TypographyType} from 'src/components/base';
 // custom components
 import Picker from 'src/components/Picker';
-import {
-  Container,
-  Typography,
-  ScrollView,
-  TextButton,
-} from 'src/components/base';
+import {Container, ScrollView, TextButton} from 'src/components/base';
+import Header from './Header';
 
 class ModalPicker extends PureComponent {
   static contextType = ThemeContext;
@@ -156,22 +152,6 @@ class ModalPicker extends PureComponent {
     this.onCancelPress();
   };
 
-  cancelTypoProps = {
-    type: TypographyType.TITLE_MEDIUM,
-  };
-
-  languagePickerHeaderContainerStyle = mergeStyles(
-    styles.languagePickerHeaderContainer,
-    {
-      borderBottomColor: this.theme.color.border,
-      borderBottomWidth: this.theme.layout.borderWidth,
-    },
-  );
-
-  selectTypoProps = {
-    type: TypographyType.TITLE_MEDIUM_PRIMARY,
-  };
-
   modalStyle = mergeStyles(styles.modal, {
     borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
     borderTopRightRadius: this.theme.layout.borderRadiusHuge,
@@ -196,41 +176,16 @@ class ModalPicker extends PureComponent {
         swipeToClose={this.props.swipeToClose}
         style={this.modalStyle}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <Container
-          onLayout={this.onHeaderLayout}
-          style={this.languagePickerHeaderContainerStyle}>
-          <View style={styles.languagePickerHeader}>
-            <TextButton
-              hitSlop={HIT_SLOP}
-              onPress={this.onCancelPress}
-              style={styles.languagePickerCancel}
-              title={cancelTitle}
-              titleStyle={styles.languagePickerCancelText}
-              typoProps={this.cancelTypoProps}
-            />
-
-            <Typography
-              type={TypographyType.TITLE_LARGE}
-              style={styles.languagePickerTitle}>
-              {this.props.title}
-            </Typography>
-
-            <TextButton
-              hitSlop={HIT_SLOP}
-              onPress={this.onSelectPress}
-              style={styles.languagePickerSelect}
-              disabled={confirmDisabled}
-              title={selectTitle}
-              titleStyle={styles.languagePickerSelectText}
-              typoProps={this.selectTypoProps}
-            />
-          </View>
-          <Typography
-            type={TypographyType.DESCRIPTION_MEDIUM}
-            style={styles.languagePickerSubTitle}>
-            {this.props.selectedLabel}
-          </Typography>
-        </Container>
+        <Header
+          selectedLabel={this.props.selectedLabel}
+          title={this.props.title}
+          cancelTitle={cancelTitle}
+          confirmTitle={selectTitle}
+          onHeaderLayout={this.onHeaderLayout}
+          onCancelPress={this.onCancelPress}
+          onSelectPress={this.onSelectPress}
+          confirmDisabled={confirmDisabled}
+        />
         {/* {this.renderPicker()} */}
         <Picker
           data={this.props.data}
@@ -246,42 +201,6 @@ const styles = StyleSheet.create({
   modal: {
     overflow: 'hidden',
     height: undefined,
-  },
-  languagePickerHeaderContainer: {
-    zIndex: 1,
-    width: '100%',
-    paddingVertical: 10,
-  },
-  languagePickerHeader: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  languagePickerCancel: {
-    position: 'absolute',
-    left: 15,
-  },
-  languagePickerCancelText: {
-    fontWeight: 'bold',
-  },
-  languagePickerTitle: {
-    fontWeight: '600',
-    textAlign: 'center',
-    alignSelf: 'center',
-  },
-  languagePickerSubTitle: {
-    letterSpacing: 1.15,
-    alignSelf: 'center',
-    marginTop: Platform.select({
-      ios: 5,
-      android: 2,
-    }),
-  },
-  languagePickerSelect: {
-    position: 'absolute',
-    right: 15,
-  },
-  languagePickerSelectText: {
-    fontWeight: 'bold',
   },
   languagePickerSelectTextDisabled: {},
   languagePickerItem: {},

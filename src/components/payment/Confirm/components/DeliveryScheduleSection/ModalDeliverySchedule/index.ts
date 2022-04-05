@@ -5,8 +5,7 @@ export {default} from './ModalDeliverySchedule';
 export interface ModalDeliveryScheduleProps {
   t?: TFunction;
 
-  selectedDate?: string;
-  selectedTime?: string;
-
-  onConfirm?: (date: string, time: string) => void;
+  scheduleDeliveryData?: Array<any>;
+  scheduleDateTime?: string;
+  onConfirm?: (scheduleTime: string) => void;
 }

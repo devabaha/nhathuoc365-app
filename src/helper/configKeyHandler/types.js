@@ -12,6 +12,7 @@ export const CONFIG_KEY = {
   OPEN_SITE_DROP_SHIPPING_KEY: 'open_site_drop_shipping_key',
 
   ALLOW_SITE_SALE_OUT_INVENTORY_KEY: 'allow_site_sale_out_inventory_key',
+  ALLOW_CHOOSE_DELIVERY_TIME_KEY: 'allow_choose_delivery_time_key',
 
   INPUT_ADDRESS_CONFIG_KEY: 'input_address_config_key',
 
@@ -57,5 +58,4 @@ export const CONFIG_KEY = {
 
   ENABLE_EULA_KEY: 'enable_eula_key',
   EULA_NEWS_ID: 'eula_news_id',
-  ALLOW_CHOOSE_DELIVERY_TIME: 'allow_choose_delivery_time',
 };
