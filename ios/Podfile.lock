@@ -103,6 +103,9 @@ PODS:
   - FlipperKit/SKIOSNetworkPlugin (0.75.1):
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
+  - Flurry-iOS-SDK/FlurryConfig (11.4.0):
+    - Flurry-iOS-SDK/FlurrySDK
+  - Flurry-iOS-SDK/FlurrySDK (11.4.0)
   - Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -354,6 +357,12 @@ PODS:
     - React
   - react-native-fingerprint-scanner (6.0.0):
     - React
+  - react-native-flurry-sdk (7.1.1):
+    - react-native-flurry-sdk/FlurrySDK (= 7.1.1)
+  - react-native-flurry-sdk/FlurrySDK (7.1.1):
+    - Flurry-iOS-SDK/FlurryConfig (~> 11.4.0)
+    - Flurry-iOS-SDK/FlurrySDK (~> 11.4.0)
+    - React
   - react-native-geolocation (2.0.2):
     - React
   - react-native-image-picker (2.3.4):
@@ -574,6 +583,7 @@ DEPENDENCIES:
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
+  - react-native-flurry-sdk (from `../node_modules/react-native-flurry-sdk/ios`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
@@ -641,6 +651,7 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
+    - Flurry-iOS-SDK
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
@@ -716,6 +727,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-contacts"
   react-native-fingerprint-scanner:
     :path: "../node_modules/react-native-fingerprint-scanner"
+  react-native-flurry-sdk:
+    :path: "../node_modules/react-native-flurry-sdk/ios"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
@@ -834,6 +847,7 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 8a20b5c5fcf9436cac58551dc049867247f64b00
+  Flurry-iOS-SDK: a1dbf099040d71e89a11cdf3a30c8723c1de950f
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   GoogleAppMeasurement: 8d3c0aeede16ab7764144b5a4ca8e1d4323841b7
@@ -867,6 +881,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 60ba0068826eab1c8d43146191bafd4363ea58a7
   react-native-contacts: 23a5a68151740bae84d5d379545bf5c3579b0d94
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
+  react-native-flurry-sdk: a3833272ef905ea7866c2cb53a1aec68a1505f8b
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: c6d75c4ab2cf46f9289f341242b219cb3c1180d3
   react-native-netinfo: 0212ce8604e88edf686f1481b925b17a42a52449
@@ -925,4 +940,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 02775fcd27340f64453507e0e9cfa5e9f39beb2e
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
