@@ -261,6 +261,6 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 }
 
-export default withTranslation()(
+export default withTranslation('common', {withRef: true})(
   observer(RightButtonNavBar),
 ) as typeof RightButtonNavBar & IWrappedComponent<RightButtonNavBarProps>;
