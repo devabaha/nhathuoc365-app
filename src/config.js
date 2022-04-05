@@ -56,6 +56,13 @@ class Config {
     };
   }
 
+  get sentry() {
+    return {
+      dsn:
+        'https://4401d511194d46688492a8e9b9d0962d@o1077404.ingest.sentry.io/6091956',
+    };
+  }
+
   get device() {
     return {
       isIphoneX: isIphoneX(),

@@ -24,6 +24,7 @@
     "@react-native-firebase/auth": "^10.3.1",
     "@react-native-masked-view/masked-view": "^0.2.0",
     "@react-native-picker/picker": "^2.2.1",
+    "@sentry/react-native": "^3.3.2",
     "@tickid/react-native-accordion": "^1.0.0",
     "@tickid/react-native-tabs": "^1.0.5",
     "@tickid/tickid-rada": "^2.2.5",
