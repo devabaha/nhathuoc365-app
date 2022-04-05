@@ -56,6 +56,13 @@ class Config {
     };
   }
 
+  get flurry() {
+    return {
+      iosKey: 'V6NZYVYC3DGSBFRTMDTM',
+      androidKey: '24VRCS73SHJSS53Y2T3S',
+    };
+  }
+
   get sentry() {
     return {
       dsn:
