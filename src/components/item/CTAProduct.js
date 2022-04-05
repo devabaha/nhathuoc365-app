@@ -95,11 +95,11 @@ class CTAProduct {
   };
 
   handlePressMainActionBtnProduct = ({
-    product,
-    cartType,
-    btnTitle,
+    product = undefined,
+    cartType = undefined,
+    btnTitle = undefined,
     isOrderNow = false,
-    callbackSuccess,
+    callbackSuccess = undefined,
   }) => {
     this.actionFunctionName = 'handlePressMainActionBtnProduct';
 

@@ -8,7 +8,7 @@ import Shimmer from 'react-native-shimmer';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
-//context
+// context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';

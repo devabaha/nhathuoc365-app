@@ -50,6 +50,7 @@ class CartFooter extends Component {
     animatedScrollY: new Animated.Value(0),
     animatedContentOffsetY: new Animated.Value(0),
     animating: false,
+    onProductLoadingStateChange: () => {},
   };
   constructor(props) {
     super(props);
@@ -101,6 +102,22 @@ class CartFooter extends Component {
       //   outputRange: [0, -this.state.containerHeight],
       // }),
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextState.cartItemUpdateQuantityId !==
+        this.state.cartItemUpdateQuantityId ||
+      nextState.cartItemMinusId !== this.state.cartItemMinusId ||
+      nextState.cartItemPlusId !== this.state.cartItemPlusId
+    ) {
+      this.props.onProductLoadingStateChange(
+        !!nextState.cartItemUpdateQuantityId ||
+          !!nextState.cartItemMinusId ||
+          !!nextState.cartItemPlusId,
+      );
+    }
+    return true;
   }
 
   componentDidMount() {
@@ -733,7 +750,7 @@ class CartFooter extends Component {
     var {cart_data, cart_products} = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
-    if (!isset_cart) {
+    if (!isset_cart || this.state.loading) {
       return null;
     }
 

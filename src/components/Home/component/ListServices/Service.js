@@ -150,6 +150,7 @@ class Service extends Component {
             />
           </View>
           <Typography
+            numberOfLines={2}
             type={TypographyType.LABEL_SMALL}
             style={[styles.title, titleStyle]}>
             {service.title}

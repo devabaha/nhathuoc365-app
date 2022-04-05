@@ -1,11 +1,17 @@
 import React, {memo, useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
+// types
+import {AppInputProps} from '.';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from '../Icon';
+// custom components
 import Input from './Input';
 import Container from '../Container';
-import Icon, {BundleIconSetName} from '../Icon';
-import {useTheme} from 'src/Themes/Theme.context';
-import {mergeStyles} from 'src/Themes/helper';
-import {AppInputProps} from '.';
+import Icon from '../Icon';
 
 const styles = StyleSheet.create({
   container: {

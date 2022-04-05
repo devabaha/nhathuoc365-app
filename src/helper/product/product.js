@@ -9,6 +9,7 @@ import store from 'app-store';
 export const isOutOfStock = (product = {}) => {
   return (
     !Number(product.inventory) &&
+    Number(product.inventory) <= 0 &&
     (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
       !!product.sale_in_stock) &&
     product.order_type !== ORDER_TYPES.BOOKING
@@ -40,11 +41,12 @@ export const canTransaction = (cartData = {}) => {
 export const goConfirm = () => {
   if (store.cart_data && store.cart_products) {
     if (store.cart_data.address_id != 0) {
-      setTimeout(() =>
-        Actions.push(appConfig.routes.paymentConfirm, {
-          goConfirm: true,
-        }),
-        200
+      setTimeout(
+        () =>
+          Actions.push(appConfig.routes.paymentConfirm, {
+            goConfirm: true,
+          }),
+        200,
       );
     } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
       Actions.push(appConfig.routes.myAddress, {

@@ -7,7 +7,7 @@ import appConfig from 'app-config';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
-//context
+// context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // custom components
 import Block from './Block';

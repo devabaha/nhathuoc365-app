@@ -22,6 +22,6 @@
   "chooseCategory": "Chọn danh mục",
   "searchHistory": "Lịch sử tìm kiếm",
   "enterToSearch": "Nhập để tìm kiếm",
-  "searchResult": "— Kết quả cho {{keyword}}",
+  "searchResult": "Kết quả cho {{keyword}}",
   "deleteHistory": "Xoá"
 }

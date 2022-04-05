@@ -498,6 +498,10 @@ class Confirm extends Component {
     });
   };
 
+  handleProductLoading = (loading) => {
+    this.setState({loading});
+  };
+
   // on save
   _onSave() {
     if (store.user_cart_note) {
@@ -1155,6 +1159,7 @@ class Confirm extends Component {
             isProductVisible={single}
             isProductActionVisible={single && !this.state.isConfirming}
             onRemoveCartItem={this._removeItemCartConfirm}
+            onProductLoadingStateChange={this.handleProductLoading}
           />
 
           {(!single ||

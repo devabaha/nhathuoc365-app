@@ -11,7 +11,6 @@ import BaseAPI from 'src/network/API/BaseAPI';
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {rgbaToRgb, hexToRgba} from 'app-helper';
-import {isConfigActive} from 'app-helper/configKeyHandler';
 // routing
 import {replace} from 'app-helper/routing';
 // context
@@ -20,7 +19,6 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
 import {languages} from 'src/i18n/constants';
 import {THEME_STORAGE_KEY} from 'src/constants';
-import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // custom components
 import {Container, ScreenWrapper} from 'src/components/base';
 import Image from 'src/components/Image';
@@ -98,7 +96,6 @@ class Launch extends Component {
     const user = response.data || {};
     const site = response.other_data?.site || {};
     store.setStoreData(site);
-    console.log(response);
 
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);

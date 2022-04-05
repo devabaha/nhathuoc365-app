@@ -92,7 +92,7 @@ class Account extends Component {
 
   get options() {
     const {t, i18n} = this.props;
-    const isAdmin = store.user_info.admin_flag == 1;
+    const isAdmin = store.user_info?.admin_flag == 1;
     const isTestDevice = !!store.user_info.is_test_device;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
@@ -650,11 +650,6 @@ class Account extends Component {
   }
 
   initial = (callback) => {
-    const {t, i18n} = this.props;
-    const isAdmin = store.user_info.admin_flag == 1;
-    var notify = store.notify;
-    const isUpdate = notify.updating_version == 1;
-
     this.setState({}, () => {
       if (typeof callback == 'function') {
         callback();
@@ -1131,15 +1126,11 @@ class Account extends Component {
   }
 
   get premiumBoxIconStyle() {
-    return [
-      styles.boxIconStyle,
-    ];
+    return [styles.boxIconStyle];
   }
 
   get rightPremiumContainerStyle() {
-    return [
-      styles.rightPremiumContainer,
-    ];
+    return [styles.rightPremiumContainer];
   }
 
   get premiumProgressContainerStyle() {

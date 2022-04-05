@@ -30,6 +30,7 @@ const ProductSection = ({
   isProductActionVisible = true,
   isProductVisible = true,
   products = [],
+  onProductLoadingStateChange = (loading) => {},
 }) => {
   const {theme} = useTheme();
 
@@ -49,6 +50,7 @@ const ProductSection = ({
               item={product}
               noAction={!isProductActionVisible}
               onRemoveCartItem={onRemoveCartItem}
+              onProductLoadingStateChange={onProductLoadingStateChange}
             />
           );
         })}

@@ -16,6 +16,10 @@ export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   };
 };
 
+export const getBannerSize = () => {
+  return getImageSize(IMAGE_RATIOS.BANNER);
+};
+
 export const getNewsFeedSize = () => {
   return getImageSize(IMAGE_RATIOS.NEWS_FEED);
 };

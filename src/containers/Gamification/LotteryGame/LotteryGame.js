@@ -10,7 +10,7 @@ import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 // routing
 import {refresh} from 'app-helper/routing';
-//context
+// context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {ScreenWrapper, ScrollView} from 'src/components/base';

@@ -179,6 +179,10 @@ const styles = StyleSheet.create({
 class CartItem extends Component {
   static contextType = ThemeContext;
 
+  static defaultProps = {
+    onProductLoadingStateChange: () => {},
+  };
+
   state = {
     check_loading: false,
     increment_loading: false,
@@ -192,6 +196,22 @@ class CartItem extends Component {
 
   get theme() {
     return getTheme(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextState.isUpdateQuantityLoading !==
+        this.state.isUpdateQuantityLoading ||
+      nextState.decrement_loading !== this.state.decrement_loading ||
+      nextState.increment_loading !== this.state.increment_loading
+    ) {
+      this.props.onProductLoadingStateChange(
+        nextState.isUpdateQuantityLoading ||
+          nextState.decrement_loading ||
+          nextState.increment_loading,
+      );
+    }
+    return true;
   }
 
   _checkBoxHandler(item) {

@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 import store from 'app-store';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
+import handleTabBarOnPress from 'app-helper/handleTabBarOnPress';
 // routing
 import {jump} from 'app-helper/routing';
 // context
@@ -16,7 +17,6 @@ import {NAV_BAR_HEIGHT} from 'src/constants';
 // custom components
 import {Container, BaseButton} from 'src/components/base';
 import TabIcon from './TabIcon';
-import handleTabBarOnPress from 'app-helper/handleTabBarOnPress';
 
 class TabBar extends Component {
   static contextType = ThemeContext;

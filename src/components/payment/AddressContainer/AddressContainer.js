@@ -63,13 +63,15 @@ const AddressContainer = ({
 
   return (
     <View onLayout={onLayout} style={containerStyles}>
-      <Container style={titleContainerStyle}>
-        <Typography
-          type={TypographyType.LABEL_MEDIUM_PRIMARY}
-          style={styles.title}>
-          {title}
-        </Typography>
-      </Container>
+      {!!title && (
+        <Container style={titleContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_PRIMARY}
+            style={styles.title}>
+            {title}
+          </Typography>
+        </Container>
+      )}
       {children}
     </View>
   );

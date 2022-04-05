@@ -3,9 +3,6 @@ import {StyleSheet, View} from 'react-native';
 // 3-party libs
 import {Actions} from 'react-native-router-flux';
 import Animated, {Easing, interpolate} from 'react-native-reanimated';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// configs
-import appConfig from 'app-config';
 // helpers
 import {isConfigActive} from 'src/helper/configKeyHandler';
 import {getTheme} from 'src/Themes/Theme.context';
@@ -20,8 +17,6 @@ import {BundleIconSetName, TypographyType} from 'src/components/base';
 import OverlayIconButton from './OverlayIconButton';
 import RightButtonNavBar from '../../RightButtonNavBar';
 import {Icon, Container, Typography, NavBarWrapper} from 'src/components/base';
-
-const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 const styles = StyleSheet.create({
   container: {
@@ -86,6 +81,7 @@ class Header extends Component {
   static defaultProps = {
     item: {},
     onPressWarehouse: () => {},
+    rightButtons: RIGHT_BUTTONS,
   };
   state = {
     titleOriginWidth: 0,
@@ -97,6 +93,8 @@ class Header extends Component {
   animatingScrollUp = false;
   animationDuration = 250;
   iconName = BACK_NAV_ICON_NAME;
+
+  animatedValueListenerId = -1;
 
   get theme() {
     return getTheme(this);
@@ -126,13 +124,32 @@ class Header extends Component {
 
   contentOverlayStyle = [this.iconBackgroundStyle, this.iconOverlayStyle];
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.animatedValue !== this.props.animatedValue) {
+      this.removeAnimatedValueListener(this.props.animatedValue);
+      this.listenToAnimatedValue(nextProps.animatedValue);
+    }
+
+    return true;
+  }
+
   componentDidMount() {
-    this.props.animatedValue.addListener(this.scrollListener);
+    this.listenToAnimatedValue();
   }
 
   componentWillUnmount() {
-    this.props.animatedValue.removeListener(this.scrollListener);
+    this.removeAnimatedValueListener();
   }
+
+  listenToAnimatedValue = (animatedValue = this.props.animatedValue) => {
+    this.animatedValueListenerId = animatedValue.addListener(
+      this.scrollListener,
+    );
+  };
+
+  removeAnimatedValueListener = (animatedValue = this.props.animatedValue) => {
+    animatedValue.removeListener(this.animatedValueListenerId);
+  };
 
   scrollListener = ({value}) => {
     if (value > ACTIVE_OFFSET_TOP) {
@@ -210,20 +227,24 @@ class Header extends Component {
   };
 
   renderRightButtons() {
-    const buttons = [...RIGHT_BUTTONS];
+    const buttons = [...this.props.rightButtons];
 
     if (!isConfigActive(CONFIG_KEY.CHOOSE_STORE_SITE_KEY)) {
-      buttons.splice(
-        buttons.findIndex((btn) => btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE),
-        1,
+      const warehouseIndex = buttons.findIndex(
+        (btn) => btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE,
       );
+      if (warehouseIndex !== -1) {
+        buttons.splice(warehouseIndex, 1);
+      }
     }
 
     if (!this.props.item.url) {
-      buttons.splice(
-        buttons.findIndex((btn) => btn.type === RIGHT_BUTTON_TYPE.SHARE),
-        1,
+      const shareIndex = buttons.findIndex(
+        (btn) => btn.type === RIGHT_BUTTON_TYPE.SHARE,
       );
+      if (shareIndex !== -1) {
+        buttons.splice(shareIndex, 1);
+      }
     }
 
     return buttons.map((btn, index) => {
@@ -301,12 +322,17 @@ class Header extends Component {
       <NavBarWrapper
         noBackground
         appNavBar={false}
-        containerStyle={styles.container}>
+        containerStyle={styles.container}
+        onLayout={this.props.onLayout}>
         <Container flex noBackground>
           <Container
             reanimated
             shadow
-            style={[styles.background, backgroundStyle]}
+            style={[
+              styles.background,
+              backgroundStyle,
+              this.props.backgroundStyle,
+            ]}
           />
           <Container noBackground row style={styles.mainContainer}>
             <OverlayIconButton

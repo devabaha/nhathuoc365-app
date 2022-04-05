@@ -4,7 +4,7 @@ import {View, StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
-//context
+// context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType} from 'src/components/base';

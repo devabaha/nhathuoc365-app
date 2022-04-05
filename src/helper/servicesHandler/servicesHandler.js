@@ -17,7 +17,11 @@ import {
   handleOrderHistoryPress,
 } from './radaHandler';
 import {jump, push} from 'app-helper/routing';
-import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from 'app-helper';
+import {
+  checkIfEULAAgreed,
+  getEULAContent,
+  updateEULAUserDecision,
+} from 'app-helper';
 import APIHandler from 'src/network/APIHandler';
 import {CONFIG_KEY, getValueFromConfigKey} from 'app-helper/configKeyHandler';
 
@@ -273,10 +277,14 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       //   },
       //   service.theme,
       // );
-      push(appConfig.routes.newsTab, {
-        title: service.title,
-        id: service.categoryId,
-      }, service.theme);
+      push(
+        appConfig.routes.newsTab,
+        {
+          title: service.title,
+          id: service.categoryId,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
       push(
@@ -393,7 +401,7 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           placeholder: service.placeholder || commonT('home:searchingStore'),
           autoFocus: service.autoFocus,
           selectedStore: service.selectedStore,
-          onPress: service.onPress
+          onPress: service.onPress,
         },
         service.theme,
       );

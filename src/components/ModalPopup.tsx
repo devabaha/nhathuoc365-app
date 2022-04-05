@@ -16,7 +16,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 // routing
 import {pop} from 'app-helper/routing';
-//context
+// context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName} from 'src/components/base';

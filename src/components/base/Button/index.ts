@@ -6,6 +6,7 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
+import {ContainedTouchableProperties} from 'react-native-gesture-handler';
 import {ImageProps, ImageSource, ImageStyle} from 'src/components/Image';
 
 import {ButtonRoundedType} from './constants';
@@ -42,7 +43,8 @@ export {
 
 export interface BaseButtonProps
   extends TouchableOpacityProps,
-    TouchableHighlightProps {
+    TouchableHighlightProps,
+    ContainedTouchableProperties {
   useGestureHandler?: boolean;
   useTouchableHighlight?: boolean;
   /**

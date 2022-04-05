@@ -22,6 +22,6 @@
   "chooseCategory": "Choose category",
   "searchHistory": "Search history",
   "enterToSearch": "Enter to search",
-  "searchResult": "— Result for {{keyword}}",
+  "searchResult": "Result for {{keyword}}",
   "deleteHistory": "Delete"
 }
