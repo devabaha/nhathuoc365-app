@@ -44,11 +44,62 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android P
 │ Staging    │  G1WZATenLpDMaLKHsPAmTHqRWz1OPthMxoz-t
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
-code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
-
 appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
 appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
+
+## Sentry
+Check latest codepush label then increase it by 1 and fill in dist option under Upload source maps section.
+
+### Check latest codepush information
+##### IOS
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-ios
+##### Android
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
+
+### Upload source maps
+##### Automation
+``***********************************************************`
+`` Direct to root folder (../src) to execute automation ```**`
+``***********************************************************`
+
+`IOS`
+bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry"
+`Android`
+bash sentrydp -a app.abaha.net-gmail.com/tick-test-android -p android --deployment Production --description "test sentry"
+
+##### IOS
+
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-ios ios ./build/CodePush --deployment "Production" --dist "v246"
+##### Android
+
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-android android ./build/CodePush --deployment "Production" --dist "v52"
+
+
+## Sentry
+Check latest codepush label then increase it by 1 and fill in dist option under Upload source maps section.
+
+### Check latest codepush information
+
+##### IOS
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-ios
+##### Android
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
+
+
+### Upload source maps
+
+##### Automation
+`IOS`
+bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry"
+`Android`
+bash sentrydp -a app.abaha.net-gmail.com/tick-test-android -p android --deployment Production --description "test sentry"
+
+##### IOS
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-ios ios ./build/CodePush --deployment "Production" --dist "v246"
+
+##### Android
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-android android ./build/CodePush --deployment "Production" --dist "v36"
+
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 

@@ -27,6 +27,7 @@ import {
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
 import FoodHubCartButton from './components/FoodHubCartButton';
+import * as Sentry from '@sentry/react-native';
 import {CloseButton} from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/statusBar';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
@@ -311,6 +312,14 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // codePush.clearUpdates();
+    if (__DEV__) {
+      console.log('DEVELOPMENT');
+    } else {
+      this.initSentry();
+      this.codePushSyncManually();
+    }
+
     this.state = {
       header: null,
       overlayComponent: null,
@@ -351,12 +360,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // codePush.clearUpdates();
-    if (__DEV__) {
-      console.log('DEVELOPMENT');
-    } else {
-      this.codePushSyncManually();
-    }
     this.codePushGetMetaData();
     this.handleSubscribeBranchIO();
     this.handleAddListenerOneSignal();
@@ -368,6 +371,48 @@ class App extends Component {
   componentWillUnmount() {
     store.branchIOUnsubscribe();
   }
+
+  initSentry = async (update) => {
+    let sentryOptions = {
+      dsn: appConfig.sentry.dsn,
+      release: ``,
+    };
+
+    const formatSentryOptions = (updateData) => {
+      return {
+        ...sentryOptions,
+        release: `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+codepush:${
+          updateData.label
+        }`,
+        dist: updateData.label,
+      };
+    };
+
+    if (update) {
+      sentryOptions = formatSentryOptions(update);
+    } else {
+      try {
+        let codePushUpdate = await AsyncStorage.getItem('codePushUpdate');
+        codePushUpdate = JSON.parse(codePushUpdate);
+
+        if (
+          !!codePushUpdate &&
+          codePushUpdate.appVersion === DeviceInfo.getVersion()
+        ) {
+          sentryOptions = formatSentryOptions(codePushUpdate);
+        } else {
+          sentryOptions = {
+            ...sentryOptions,
+            release: `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${DeviceInfo.getBuildNumber()}`,
+          };
+        }
+      } catch (e) {
+        console.log('sentry init error', e);
+      }
+    }
+
+    Sentry.init(sentryOptions);
+  };
 
   executeTempDeepLinkData = async (tempDeepLinkData = null) => {
     if (!tempDeepLinkData) {
@@ -485,6 +530,8 @@ class App extends Component {
       if (!update) {
         console.log('The app is up to date!');
       } else {
+        AsyncStorage.setItem('codePushUpdate', JSON.stringify(update));
+
         AsyncStorage.setItem(
           'tempDeepLinkData',
           JSON.stringify(this.tempDeepLinkData),
@@ -722,7 +769,7 @@ const styles = StyleSheet.create({
 // wrap App with codepush HOC
 // export default App;
 export default withTranslation()(
-  codePush({checkFrequency: codePush.CheckFrequency.MANUAL})(App),
+  codePush({checkFrequency: codePush.CheckFrequency.MANUAL})(Sentry.wrap(App)),
 );
 
 class RootRouter extends Component {
