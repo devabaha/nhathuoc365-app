@@ -52,15 +52,21 @@ export const ThemeProvider = React.memo<Props>((props) => {
   const toggleTheme = React.useCallback((callback = () => {}) => {
     setTheme((currentTheme) => {
       let nextTheme = BASE_LIGHT_THEME;
-      switch (currentTheme.id) {
+      switch (currentTheme?.id) {
+        // case BASE_LIGHT_THEME_ID:
+        //   nextTheme = CUSTOM_LIGHT_THEME_1;
+        //   break;
+        // case CUSTOM_LIGHT_THEME_1_ID:
+        //   nextTheme = BASE_DARK_THEME;
+        //   break;
+        // case BASE_DARK_THEME_ID:
+        //   nextTheme = BASE_LIGHT_THEME;
+        //   break;
+
         case BASE_LIGHT_THEME_ID:
-          nextTheme = CUSTOM_LIGHT_THEME_1;
-          break;
-        case CUSTOM_LIGHT_THEME_1_ID:
           nextTheme = BASE_DARK_THEME;
           break;
         case BASE_DARK_THEME_ID:
-          nextTheme = BASE_LIGHT_THEME;
           break;
       }
 
