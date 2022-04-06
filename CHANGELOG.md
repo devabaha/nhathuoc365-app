@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r13.0.1] - 2020-04-06
 ### Added
 - [CU-2gat9mt] Integrate Flurry by [lamah.dev@gmail.com].
 - [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].
