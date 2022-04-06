@@ -26,10 +26,11 @@ import NoResult from 'src/components/NoResult';
 import Header from 'src/components/ModalPicker/Header';
 
 const styles = StyleSheet.create({
-  modalLicense: {
+  modal: {
     height: null,
     backgroundColor: 'transparent',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   container: {
     width: '100%',
@@ -51,7 +52,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   pickerWrapper: {
-    minHeight: appConfig.device.height * 0.3,
     flexDirection: 'row',
   },
   pickerContainer: {
@@ -213,6 +213,16 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     );
   };
 
+  get modalStyle() {
+    return [
+      styles.modal,
+      {
+        borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+        borderTopRightRadius: this.theme.layout.borderRadiusHuge,
+      },
+    ];
+  }
+
   get containerStyle() {
     return {
       borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
@@ -250,7 +260,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
         entry="bottom"
         position="bottom"
         swipeToClose={false}
-        style={styles.modalLicense}
+        style={this.modalStyle}
         backdropPressToClose
         isOpen
         // @ts-ignore
@@ -288,8 +298,25 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
                     data={this.formatScheduleData(
                       this.props.scheduleDeliveryData,
                     )}
+                    listEmptyIconBundle={
+                      BundleIconSetName.MATERIAL_COMMUNITY_ICONS
+                    }
+                    listEmptyIconName="clock-alert"
+                    listEmptyIconSize={32}
+                    listEmptyTitleStyle={
+                      this.theme.typography[
+                        TypographyType.DESCRIPTION_MEDIUM_TERTIARY
+                      ]
+                    }
                     androidItemStyle={styles.androidItem}
                     androidItemTextStyle={this.androidItemPickerStyles}
+                    getAndroidItemLayout={(data, index) => {
+                      return {
+                        length: 50,
+                        offset: 50 * index,
+                        index,
+                      };
+                    }}
                   />
                 </Container>
 
@@ -299,6 +326,16 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
                     selectedValue={this.state.selectedTime?.value}
                     onValueChange={this.onTimeChange}
                     data={this.state.selectedDate?.time || []}
+                    listEmptyIconBundle={
+                      BundleIconSetName.MATERIAL_COMMUNITY_ICONS
+                    }
+                    listEmptyIconName="clock-alert"
+                    listEmptyIconSize={32}
+                    listEmptyTitleStyle={
+                      this.theme.typography[
+                        TypographyType.DESCRIPTION_MEDIUM_TERTIARY
+                      ]
+                    }
                     androidItemStyle={styles.androidItem}
                     androidItemTextStyle={this.androidItemPickerStyles}
                     androidInitNumToRender={50}

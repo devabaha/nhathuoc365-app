@@ -5,41 +5,43 @@ import {ThemeContext, useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
 
 const styles = StyleSheet.create({
-  languagePickerSubTitle: {
+  pickerHeaderSubTitle: {
     letterSpacing: 1.15,
     alignSelf: 'center',
     marginTop: Platform.select({
       ios: 5,
       android: 2,
     }),
+    paddingHorizontal: 15,
   },
-  languagePickerSelectText: {
+  pickerHeaderSelectText: {
     fontWeight: 'bold',
   },
-  languagePickerSelect: {
-    position: 'absolute',
-    right: 15,
+  pickerHeaderSelect: {
+    marginLeft: 15,
   },
-  languagePickerTitle: {
+  pickerHeaderTitle: {
+    flex: 1,
     fontWeight: '600',
     textAlign: 'center',
     alignSelf: 'center',
   },
-  languagePickerCancelText: {
+  pickerHeaderCancelText: {
     fontWeight: 'bold',
   },
-  languagePickerCancel: {
-    position: 'absolute',
-    left: 15,
+  pickerHeaderCancel: {
+    marginRight: 15,
   },
-  languagePickerHeader: {
+  pickerHeaderMainContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
-  languagePickerHeaderContainer: {
+  pickerHeaderContainer: {
     zIndex: 1,
     width: '100%',
     paddingVertical: 10,
+    paddingHorizontal: 15,
   },
 });
 
@@ -67,46 +69,44 @@ const Header = ({
     };
   }, []);
 
-  const languagePickerHeaderContainerStyle = useMemo(() => {
-    return mergeStyles(styles.languagePickerHeaderContainer, {
+  const pickerHeaderContainerStyle = useMemo(() => {
+    return mergeStyles(styles.pickerHeaderContainer, {
       borderBottomColor: theme.color.border,
       borderBottomWidth: theme.layout.borderWidth,
     });
   }, [theme]);
 
   return (
-    <Container
-      onLayout={onHeaderLayout}
-      style={languagePickerHeaderContainerStyle}>
-      <View style={styles.languagePickerHeader}>
+    <Container onLayout={onHeaderLayout} style={pickerHeaderContainerStyle}>
+      <View style={styles.pickerHeaderMainContainer}>
         <TextButton
           hitSlop={HIT_SLOP}
           onPress={onCancelPress}
-          style={styles.languagePickerCancel}
+          style={styles.pickerHeaderCancel}
           title={cancelTitle}
-          titleStyle={styles.languagePickerCancelText}
+          titleStyle={styles.pickerHeaderCancelText}
           typoProps={cancelTypoProps}
         />
 
         <Typography
           type={TypographyType.TITLE_LARGE}
-          style={styles.languagePickerTitle}>
+          style={styles.pickerHeaderTitle}>
           {title}
         </Typography>
 
         <TextButton
           hitSlop={HIT_SLOP}
           onPress={onSelectPress}
-          style={styles.languagePickerSelect}
+          style={styles.pickerHeaderSelect}
           disabled={confirmDisabled}
           title={confirmTitle}
-          titleStyle={styles.languagePickerSelectText}
+          titleStyle={styles.pickerHeaderSelectText}
           typoProps={confirmTypoProps}
         />
       </View>
       <Typography
         type={TypographyType.DESCRIPTION_MEDIUM}
-        style={styles.languagePickerSubTitle}>
+        style={styles.pickerHeaderSubTitle}>
         {selectedLabel}
       </Typography>
     </Container>

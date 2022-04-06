@@ -13,8 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].
 - [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
 - [CU-1zgz1kh] DeliverySchedule section in Confirm and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
+- Update autorp to replace color in Themes.
 ### Changed
 - [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
+- [Android] android:forceDarkAllowed to false by [minhnguyenit14@gmail.com].
 
 ## [r12.2.19] - 2022-04-04
 ### Added

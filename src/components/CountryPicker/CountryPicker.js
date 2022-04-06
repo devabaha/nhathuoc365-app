@@ -112,8 +112,8 @@ class CountryPicker extends Component {
 
     return (
       <Modal animationType="slide" visible>
-        <ScreenWrapper style={styles.container}>
-          <Container style={styles.header}>
+        <ScreenWrapper  style={styles.container}>
+          <Container safeTopLayout style={styles.header}>
             <IconButton
               onPress={this.onClose.bind(this)}
               bundle={BundleIconSetName.MATERIAL_ICONS}

@@ -3,7 +3,9 @@ import {StyleSheet, Platform} from 'react-native';
 // 3-party libs
 import {Picker as RNPicker} from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient';
-import {useTranslation} from 'react-i18next/';
+import {useTranslation} from 'react-i18next';
+// configs
+import appConfig from 'app-config';
 // helpers
 import {useTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
@@ -11,7 +13,7 @@ import {rgbaToRgb, hexToRgba} from 'app-helper';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {TypographyType, BundleIconSetName} from 'src/components/base';
+import {TypographyType} from 'src/components/base';
 // custom components
 import {Container, TextButton, FlatList} from 'src/components/base';
 import NoResult from 'src/components/NoResult';
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
         paddingVertical: 0,
       },
       android: {
-        maxHeight: 220,
+        maxHeight: appConfig.device.height * 0.4,
       },
     }),
   },
@@ -54,7 +56,13 @@ const styles = StyleSheet.create({
   androidDataTextSelected: {
     fontWeight: 'bold',
   },
-  listEmpty: {
+  listEmptyContainer: {
+    flex: undefined,
+    width: undefined,
+    height: undefined,
+    maxHeight: appConfig.device.height * 0.4,
+  },
+  listEmptyTitle: {
     paddingHorizontal: 20,
   },
 });
@@ -67,11 +75,23 @@ const Picker = ({
   androidInitNumToRender = undefined,
   androidInitScrollIndex = undefined,
   androidItemTextStyle = {},
+  listEmptyTitleStyle = {},
   onValueChange = (value, index) => {},
   getAndroidItemLayout = undefined,
+  listEmptyTitle = '',
+  listEmptyIconName = undefined,
+  listEmptyIconBundle = undefined,
+  listEmptyIconSize = undefined,
 }) => {
   const {theme} = useTheme(ThemeContext);
   const {t} = useTranslation();
+
+  const pickerContainerStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.surface,
+    };
+  }, [theme]);
+
   const androidSelectedRowStyle = useMemo(() => {
     return mergeStyles(styles.androidDataRowSelected, {
       backgroundColor: rgbaToRgb(hexToRgba(theme.color.primary, 0.1)),
@@ -99,13 +119,8 @@ const Picker = ({
   }, []);
 
   const listEmptyStyle = useMemo(() => {
-    return mergeStyles(
-      {
-        fontSize: theme.typography[TypographyType.LABEL_MEDIUM].fontSize,
-      },
-      styles.listEmpty,
-    );
-  }, [theme]);
+    return mergeStyles(styles.listEmptyTitle, listEmptyTitleStyle);
+  }, [listEmptyTitleStyle]);
 
   const renderAndroidData = ({item, index}) => {
     const isSelected = item.value === selectedValue;
@@ -143,20 +158,23 @@ const Picker = ({
 
   const renderListEmpty = () => {
     return (
-      <NoResult
-        iconBundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
-        iconName="clock-alert"
-        iconSize={32}
-        message={t('common:noTimeDelivery')}
-        textStyle={listEmptyStyle}
-      />
+      <Container center>
+        <NoResult
+          iconBundle={listEmptyIconBundle}
+          iconName={listEmptyIconName}
+          iconSize={listEmptyIconSize}
+          message={listEmptyTitle || t('noResult')}
+          containerStyle={[styles.listEmptyContainer, pickerContainerStyle]}
+          textStyle={listEmptyStyle}
+        />
+      </Container>
     );
   };
 
   switch (Platform.OS) {
     case 'ios':
       return !!data?.length ? (
-        <Container noBackground>
+        <Container noBackground style={pickerContainerStyle}>
           <LinearGradient
             style={styles.pickerMask}
             colors={[theme.color.surface, hexToRgba(theme.color.surface, 0)]}
