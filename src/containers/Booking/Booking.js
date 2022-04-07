@@ -42,6 +42,7 @@ import {
 } from 'src/components/base';
 // skeleton
 import BookingSkeleton from './BookingSkeleton';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const DEBOUNCE_UPDATE_BOOKING_TIME = 500;
 const MIN_QUANTITY = 1;
@@ -573,17 +574,21 @@ export class Booking extends Component {
   };
 
   handleChangeStore = () => {
-    push(appConfig.routes.myAddress, {
-      goBack: true,
-      isVisibleStoreAddress: true,
-      isVisibleUserAddress: false,
-      selectedAddressId: this.state.addressId,
-      onSelectAddress: (addressId) => {
-        if (addressId !== this.state.addressId) {
-          this.setState({addressId, loading: true});
-        }
+    push(
+      appConfig.routes.myAddress,
+      {
+        goBack: true,
+        isVisibleStoreAddress: true,
+        isVisibleUserAddress: false,
+        selectedAddressId: this.state.addressId,
+        onSelectAddress: (addressId) => {
+          if (addressId !== this.state.addressId) {
+            this.setState({addressId, loading: true});
+          }
+        },
       },
-    });
+      this.theme,
+    );
   };
 
   handleChangeDate = (date) => {
@@ -598,14 +603,15 @@ export class Booking extends Component {
   };
 
   handleChangePaymentMethod = () => {
-    push(appConfig.routes.paymentMethod, {
+    servicesHandler({
+      type: SERVICES_TYPE.PAYMENT_METHOD,
       selectedMethod: this.state.booking.payment_method,
       selectedPaymentMethodDetail: this.state.booking.payment_method_detail,
       price: this.state.booking.total_before_view,
       totalPrice: this.state.booking.total_selected,
       extraFee: this.state.booking.item_fee,
-      store_id: this.state.booking.site_id,
-      cart_id: this.state.booking.id,
+      storeId: this.state.booking.site_id,
+      cartId: this.state.booking.id,
       onConfirm: ({paymentType, paymentMethodId}) => {
         pop();
         if (
@@ -615,6 +621,7 @@ export class Booking extends Component {
           this.setState({paymentType, paymentMethodId, loading: true});
         }
       },
+      theme: this.theme,
     });
   };
 

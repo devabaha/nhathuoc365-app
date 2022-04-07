@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   titleError: {},
 
   accessoryContainer: {
-    justifyContent: 'center',
+    height: '100%',
   },
   ratingContainer: {
     marginVertical: 4,
@@ -927,7 +927,6 @@ class Comment extends Component {
       !this.state.isEditingComment && (
         <CustomInputToolbar
           {...props}
-          accessoryStyle={styles.accessoryContainer}
           previewImages={this.state.previewImages}
           replyingName={replyingName}
           replyingUserId={replyingMention?.user_id}
@@ -1122,7 +1121,11 @@ class Comment extends Component {
           break;
       }
     });
-    return <Container row>{accessory}</Container>;
+    return (
+      <Container row style={styles.accessoryContainer}>
+        {accessory}
+      </Container>
+    );
   };
 
   get actionIconDisabledColor() {

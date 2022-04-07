@@ -459,6 +459,9 @@ class Confirm extends Component {
               if (this.props.add_new) {
                 this.props.add_new();
               }
+              this.setState({
+                loading: false,
+              });
             },
           },
         ],
@@ -999,7 +1002,7 @@ class Confirm extends Component {
         </ScreenWrapper>
       );
     }
-
+console.log(typeof cart_data?.commissions?.map)
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const is_ready = cart_data.status == CART_STATUS_READY;

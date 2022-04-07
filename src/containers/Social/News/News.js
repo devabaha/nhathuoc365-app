@@ -16,7 +16,6 @@ import {refresh} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
-import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 import {TypographyType} from 'src/components/base';
 // entities
 import {APIRequest} from 'src/network/Entity';

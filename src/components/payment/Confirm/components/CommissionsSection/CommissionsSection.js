@@ -51,6 +51,8 @@ const CommissionsSection = ({commissions = []}) => {
     };
   }, [theme]);
 
+  if (!commissions?.map) return null;
+
   return (
     <SectionContainer marginTop>
       {commissions.map((commission, index) => {

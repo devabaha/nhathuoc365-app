@@ -167,6 +167,7 @@ const NewsScene = ({id, isFetching = false}) => {
       type: SERVICES_TYPE.NEWS_DETAIL,
       news: feeds,
       title: feeds.title,
+      theme,
     });
   }, []);
 

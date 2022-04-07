@@ -869,45 +869,6 @@ class Item extends Component {
     );
   }
 
-  renderMainActionBtnIcon(product, titleStyle) {
-    return this.state.buying ? (
-      <Indicator size="small" color="#ffffff" />
-    ) : this.isServiceProduct(product) ? (
-      <Icon
-        bundle={BundleIconSetName.FONT_AWESOME}
-        name="calendar-plus-o"
-        style={[styles.item_actions_btn_icon, titleStyle]}
-      />
-    ) : (
-      <Icon
-        bundle={BundleIconSetName.FONT_AWESOME}
-        name="cart-plus"
-        style={[styles.item_actions_btn_icon, titleStyle]}
-      />
-    );
-  }
-
-  renderSubActionBtnIcon(product, titleStyle) {
-    return this.state.like_loading || this.state.isSubActionLoading ? (
-      <Indicator size="small" />
-    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-      !this.isServiceProduct(product) ? (
-      <Icon
-        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
-        name="truck-fast"
-        size={24}
-        style={titleStyle}
-      />
-    ) : (
-      <Icon
-        bundle={BundleIconSetName.FONT_AWESOME}
-        name={this.state.like_flag == 1 ? 'heart' : 'heart-o'}
-        size={20}
-        style={titleStyle}
-      />
-    );
-  }
-
   renderPostForSaleBtnContent = (titleStyle, buttonStyle) => {
     return (
       <>

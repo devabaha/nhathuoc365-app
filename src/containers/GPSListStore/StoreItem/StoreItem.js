@@ -237,7 +237,7 @@ const StoreItem = ({
               <Container style={btnWrapperStyle}>
                 <AppFilledButton
                   primary
-                  onPress={() => openMap(lat, lng)}
+                  onPress={handleCall}
                   style={styles.openMapBtn}
                   typoProps={{type: TypographyType.LABEL_EXTRA_SMALL}}
                   renderIconLeft={(titleStyle) => {
