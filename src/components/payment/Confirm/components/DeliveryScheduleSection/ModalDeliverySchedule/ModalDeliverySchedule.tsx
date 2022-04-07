@@ -149,12 +149,11 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     this.setState(
       (prevState: any) => ({
         selectedDate: this.props.scheduleDeliveryData[dateIndex],
-        // time: timeData,
         selectedTime:
           timeData?.length && timeIndex !== -1
             ? prevState.selectedTime
             : timeData[0]
-            ? timeData[0]?.value || ''
+            ? timeData[0] || ''
             : prevState.selectedTime,
       }),
       () => {
