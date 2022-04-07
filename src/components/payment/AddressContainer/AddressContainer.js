@@ -1,23 +1,22 @@
-import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {Typography, TypographyType} from 'src/components/base';
+// custom components
+import {Container} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: 15,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
   },
   titleContainer: {
     padding: 15,
-    backgroundColor: appConfig.colors.primary,
-    backgroundColor: '#FFF',
-    borderBottomWidth: 2,
-    borderColor: appConfig.colors.primary,
-    borderColor: '#eee',
   },
   title: {
-    color: appConfig.colors.primary,
     fontWeight: 'bold',
     letterSpacing: 1.2,
     textTransform: 'uppercase',
@@ -28,17 +27,51 @@ const styles = StyleSheet.create({
 
 const AddressContainer = ({
   title,
-  containerStyle,
-  titleContainerStyle,
+  containerStyle: containerStyleProp,
+  titleContainerStyle: titleContainerStyleProp,
   children,
 
   onLayout,
 }) => {
+  const {theme} = useTheme();
+
+  const containerStyles = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.container,
+        {
+          borderColor: theme.color.border,
+          borderBottomWidth: theme.layout.borderWidth,
+        },
+      ],
+      containerStyleProp,
+    );
+  }, [theme, containerStyleProp]);
+
+  const titleContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.titleContainer,
+        {
+          borderColor: theme.color.border,
+          borderBottomWidth: theme.layout.borderWidthLarge,
+        },
+      ],
+      titleContainerStyleProp,
+    );
+  }, [theme, titleContainerStyleProp]);
+
   return (
-    <View onLayout={onLayout} style={[styles.container, containerStyle]}>
-      <View style={[styles.titleContainer, titleContainerStyle]}>
-        <Text style={styles.title}>{title}</Text>
-      </View>
+    <View onLayout={onLayout} style={containerStyles}>
+      {!!title && (
+        <Container style={titleContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_PRIMARY}
+            style={styles.title}>
+            {title}
+          </Typography>
+        </Container>
+      )}
       {children}
     </View>
   );

@@ -12,10 +12,6 @@ global.CachedImageBackground = CachedImageBackground;
 
 global.AsyncStorage = AsyncStorage;
 
-// center text
-import CenterText from '../components/CenterText';
-global.CenterText = CenterText;
-
 // components
 import Indicator from '../components/Indicator';
 global.Indicator = Indicator;
@@ -340,7 +336,7 @@ global.sub_string = (s, n, a) => {
   return s.substring(0, cut) + '...';
 };
 
-global.hexToRgbA = (hex, opacity) => {
+global.hexToRgba = (hex, opacity) => {
   var c;
   if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
     c = hex.substring(1).split('');
@@ -367,9 +363,7 @@ global.hexToRgbCode = (hex) => {
       c = [c[0], c[0], c[1], c[1], c[2], c[2]];
     }
     c = '0x' + c.join('');
-    return (
-      [(c >> 16) & 255, (c >> 8) & 255, c & 255]
-    );
+    return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
   }
   throw new Error('Bad Hex');
 };
@@ -387,7 +381,7 @@ global.Center = Center;
 
 global.setStater = (context, isUnmounted, state, callback = () => {}) => {
   if (!isUnmounted) {
-    context.setState({ ...state }, () => callback());
+    context.setState({...state}, () => callback());
   }
 };
 
@@ -486,7 +480,7 @@ global.is1LevelObjectUpdated = (oldObj, newObj) => {
     return true;
   }
 
-  return oldKeys.some(key => oldObj[key] !== newObj[key]);
+  return oldKeys.some((key) => oldObj[key] !== newObj[key]);
 };
 
 /**
@@ -557,41 +551,62 @@ global.getNumberOnly = (text) => {
   return text.replace(REGEX_NUMBER_ONLY, '');
 };
 
-global.dateHandler = function(date = new Date()) {
-  var d=new Date(date);
+global.dateHandler = function (date = new Date()) {
+  var d = new Date(date);
 
-  var s=d.getSeconds();
+  var s = d.getSeconds();
 
-  var m=d.getMinutes();
+  var m = d.getMinutes();
 
-  var h=d.getHours();
+  var h = d.getHours();
 
-  var day=d.getDay();
+  var day = d.getDay();
 
-  var date=d.getDate();
+  var date = d.getDate();
 
-  var month=d.getMonth();
+  var month = d.getMonth();
 
-  var year=d.getFullYear();
+  var year = d.getFullYear();
 
-  var days=new Array("Chủ nhật","Thứ hai","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7");
+  var days = new Array(
+    'Chủ nhật',
+    'Thứ hai',
+    'Thứ 3',
+    'Thứ 4',
+    'Thứ 5',
+    'Thứ 6',
+    'Thứ 7',
+  );
 
-  var months=new Array("1","2","3","4","5","6","7","8","9","10","11","12");
+  var months = new Array(
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+  );
 
-  var month_2 = months[month] < 10 ? ('0' + months[month]) : months[month];
-  var date_2 = date < 10 ? ('0' + date) : date;
+  var month_2 = months[month] < 10 ? '0' + months[month] : months[month];
+  var date_2 = date < 10 ? '0' + date : date;
 
   return {
     date: `${date_2}${month_2}${year}`,
-    dateString: days[day] + ", " + date + " tháng " + months[month] + " " + year,
+    dateString:
+      days[day] + ', ' + date + ' tháng ' + months[month] + ' ' + year,
     current: `${year}-${month_2}-${date_2}`,
   };
-}
+};
 
-global.normalizeNotify = (notify = '') => {
+global.normalizeNotify = (notify = '', max = 9) => {
   if (isNaN(notify) || !!!notify) {
     return notify;
   }
-  return notify > 9 ? '9+' : notify + '';
+  return notify > max ? max + '+' : notify + '';
 };
-

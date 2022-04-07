@@ -1,19 +1,32 @@
-import React, { PureComponent } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import React, {PureComponent} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Icon} from 'src/components/base';
 
 class GradientIcon extends PureComponent {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     icon: null,
-    gradientColors: ['#000', '#fff'],
     locations: [0.3, 0.6],
     useAngle: false,
     angle: 45,
-    size: 16
+    size: 16,
   };
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   render() {
     const {
@@ -25,7 +38,7 @@ class GradientIcon extends PureComponent {
       angle,
       useAngle,
       locations,
-      gradientColors,
+      gradientColors = [this.theme.color.black, this.theme.color.white],
       containerStyle,
       style,
       ...rest
@@ -38,25 +51,24 @@ class GradientIcon extends PureComponent {
             width: size,
             height: size,
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
           },
-          containerStyle
+          containerStyle,
         ]}
-        {...rest}
-      >
+        {...rest}>
         <MaskedView
-          style={{ width: '100%', height: '100%' }}
+          style={{width: '100%', height: '100%'}}
           maskElement={
             <View
               style={{
                 backgroundColor: 'transparent',
                 justifyContent: 'center',
                 alignItems: 'center',
-                flex: 1
-              }}
-            >
+                flex: 1,
+              }}>
               {icon || (
                 <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME_5}
                   name={iconName}
                   size={iconSize}
                   color={iconColor}
@@ -64,14 +76,13 @@ class GradientIcon extends PureComponent {
                 />
               )}
             </View>
-          }
-        >
+          }>
           <LinearGradient
             colors={gradientColors}
             locations={locations}
             angle={angle}
             useAngle={useAngle}
-            style={{ flex: 1 }}
+            style={{flex: 1}}
           />
         </MaskedView>
       </View>
@@ -82,7 +93,7 @@ class GradientIcon extends PureComponent {
 const styles = StyleSheet.create({
   icon: {
     // ...elevationShadowStyle(7)
-  }
+  },
 });
 
 export default GradientIcon;

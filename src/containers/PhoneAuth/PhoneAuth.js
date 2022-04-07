@@ -1,32 +1,37 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Keyboard,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import firebaseAuth from '@react-native-firebase/auth';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import {Actions} from 'react-native-router-flux';
 import countries from 'world-countries';
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
-import {RESEND_OTP_INTERVAL} from './constants';
-import Loading from '../../components/Loading';
-import EventTracker from '../../helper/EventTracker';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import PhoneRegister from './PhoneRegister';
-import {Actions} from 'react-native-router-flux';
-import AuthConfirm from './AuthConfirm';
-import {APIRequest} from '../../network/Entity';
-import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
 import PhoneAuthenticate from '../../helper/PhoneAuthenticate';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
-import firebaseAuth from '@react-native-firebase/auth';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {servicesHandler} from 'app-helper/servicesHandler';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {RESEND_OTP_INTERVAL} from './constants';
+import {LOGIN_MODE, LOGIN_STEP} from '../../constants';
+import {TextButton} from 'src/components/base';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+// entities
+import {APIRequest} from '../../network/Entity';
+import EventTracker from '../../helper/EventTracker';
+// custom components
+import {ScreenWrapper, Container} from 'src/components/base';
+import Loading from '../../components/Loading';
+import PhoneRegister from './PhoneRegister';
+import AuthConfirm from './AuthConfirm';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     flex: 1,
   },
   eulaTextContainer: {
@@ -45,6 +50,7 @@ const styles = StyleSheet.create({
 });
 
 class PhoneAuth extends Component {
+  static contextType = ThemeContext;
   static defaultProps = {
     onCloseOTP: () => {},
   };
@@ -96,6 +102,10 @@ class PhoneAuth extends Component {
     } catch (error) {
       return false;
     }
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -333,6 +343,7 @@ class PhoneAuth extends Component {
   };
 
   render() {
+    const theme = this.theme;
     const {
       confirmResult,
       isShowIndicator,
@@ -342,45 +353,47 @@ class PhoneAuth extends Component {
     } = this.state;
 
     return (
-      <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        bounces={false}
-        style={styles.container}
-        contentContainerStyle={{flexGrow: 1}}>
-        <SafeAreaView style={styles.container}>
-          {isShowIndicator && <Loading center />}
-          {!!confirmResult ? (
-            <AuthConfirm
-              confirmDisabled={!codeInput}
-              phoneNumber={this.formatPhoneNumber(phoneNumber)}
-              onChangeCode={this.handleChangeCodeInput.bind(this)}
-              onConfirmCode={this.confirmCode.bind(this)}
-              onRequestNewOtp={this.requestOTP.bind(this)}
-              onBackToPhoneInput={this.handleBackToPhoneInput.bind(this)}
-              message={message}
-            />
-          ) : (
-            <PhoneRegister
-              country={this.state.currentCountry}
-              phoneNumber={this.state.phoneNumber}
-              registerDisabled={!this.isPhoneNumberValid}
-              onPressCountry={this.openCountryPicker.bind(this)}
-              onChangePhoneNumber={this.handleChangePhoneNumber.bind(this)}
-              onSignIn={() => this.signIn()}
-              message={message}
-            />
-          )}
-          {appConfig.device.isIOS && <KeyboardSpacer />}
+      <Container flex>
+        <ScreenWrapper noBackground>
+          <KeyboardAwareScrollView
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
+            style={styles.container}
+            contentContainerStyle={{flexGrow: 1}}>
+            <Container safeTopLayout style={styles.container}>
+              {isShowIndicator && <Loading center />}
+              {!!confirmResult ? (
+                <AuthConfirm
+                  confirmDisabled={!codeInput}
+                  phoneNumber={this.formatPhoneNumber(phoneNumber)}
+                  onChangeCode={this.handleChangeCodeInput.bind(this)}
+                  onConfirmCode={this.confirmCode.bind(this)}
+                  onRequestNewOtp={this.requestOTP.bind(this)}
+                  onBackToPhoneInput={this.handleBackToPhoneInput.bind(this)}
+                  message={message}
+                />
+              ) : (
+                <PhoneRegister
+                  country={this.state.currentCountry}
+                  phoneNumber={this.state.phoneNumber}
+                  registerDisabled={!this.isPhoneNumberValid}
+                  onPressCountry={this.openCountryPicker.bind(this)}
+                  onChangePhoneNumber={this.handleChangePhoneNumber.bind(this)}
+                  onSignIn={() => this.signIn()}
+                  message={message}
+                />
+              )}
+              {appConfig.device.isIOS && <KeyboardSpacer />}
 
-          <TouchableOpacity
-            style={styles.eulaTextContainer}
-            onPress={this.openEULAAgreement}>
-            <Text style={styles.eulaText}>
-              {this.props.t('common:eulaAgreement')}
-            </Text>
-          </TouchableOpacity>
-        </SafeAreaView>
-      </KeyboardAwareScrollView>
+              <TextButton
+                style={styles.eulaTextContainer}
+                onPress={this.openEULAAgreement}>
+                {this.props.t('common:eulaAgreement')}
+              </TextButton>
+            </Container>
+          </KeyboardAwareScrollView>
+        </ScreenWrapper>
+      </Container>
     );
   }
 }

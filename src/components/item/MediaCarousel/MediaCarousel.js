@@ -1,32 +1,36 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {MEDIA_TYPE} from 'src/constants';
+import {TypographyType} from 'src/components/base';
+import {THUMB_SIZE} from 'src/components/Video/Controls/constants';
+// custom components
 import Carousel from 'src/components/Carousel';
 import Video from 'src/components/Video';
 import Image from 'src/components/Image';
-import {Actions} from 'react-native-router-flux';
-import {MEDIA_TYPE} from 'src/constants';
-import {THUMB_SIZE} from 'src/components/Video/Controls/constants';
+import {BaseButton, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   wrapper: {
     // height: appConfig.device.height / 2,
   },
   paginationContainer: {
-    borderRadius: 20,
     position: 'absolute',
     bottom: 22,
     right: 15,
-    backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  paginationText: {
-    fontSize: 12,
-    color: '#444',
-  },
+  paginationText: {},
 
   mediaContainer: {
     width: appConfig.device.width,
@@ -41,17 +45,18 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     justifyContent: 'center',
-    // height: appConfig.device.height / 2,
-    backgroundColor: '#000',
   },
 });
 
 class MediaCarousel extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     initIndex: 0,
     showPagination: true,
     canPlayVideo: false,
   };
+
   state = {
     currentIndex: this.props.initIndex,
     stopVideo: false,
@@ -59,23 +64,8 @@ class MediaCarousel extends Component {
 
   videosInfo = [];
 
-  get videoContainerStyle() {
-    return [
-      styles.videoContainer,
-      {
-        height: this.props.height,
-      },
-    ];
-  }
-
-  get wrapperMixStyle() {
-    return [
-      styles.wrapper,
-      this.props.wrapperStyle,
-      {
-        height: this.props.height + THUMB_SIZE,
-      },
-    ];
+  get theme() {
+    return getTheme(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -95,7 +85,7 @@ class MediaCarousel extends Component {
 
   goToGallery = (index) => {
     this.setState({stopVideo: true});
-    Actions.item_image_viewer({
+    push(appConfig.routes.itemImageViewer, {
       images: this.props.data,
       index: index,
       onBack: () => this.setState({stopVideo: false}),
@@ -107,8 +97,12 @@ class MediaCarousel extends Component {
     if (!this.props.showPagination) return null;
     const pagingMess = total ? `${index + 1}/${total}` : '0/0';
     return (
-      <View pointerEvents="none" style={styles.paginationContainer}>
-        <Text style={styles.paginationText}>{pagingMess}</Text>
+      <View pointerEvents="none" style={this.paginationContainerStyle}>
+        <Typography
+          type={TypographyType.LABEL_SEMI_MEDIUM}
+          style={[styles.paginationText, this.paginationTextStyle]}>
+          {pagingMess}
+        </Typography>
       </View>
     );
   };
@@ -132,7 +126,9 @@ class MediaCarousel extends Component {
 
   renderItem = ({item: media, index}) => {
     return (
-      <TouchableHighlight
+      <BaseButton
+        useTouchableHighlight
+        useContentContainer
         disabled={media?.type === MEDIA_TYPE.YOUTUBE_VIDEO}
         underlayColor="transparent"
         onPress={() => this.goToGallery(index)}>
@@ -150,9 +146,42 @@ class MediaCarousel extends Component {
             this.renderVideo(media, index)
           )}
         </View>
-      </TouchableHighlight>
+      </BaseButton>
     );
   };
+
+  get videoContainerStyle() {
+    return [
+      styles.videoContainer,
+      {
+        backgroundColor: this.theme.color.black,
+        height: this.props.height,
+      },
+    ];
+  }
+
+  get wrapperMixStyle() {
+    return [
+      styles.wrapper,
+      this.props.wrapperStyle,
+      {
+        height: this.props.height + THUMB_SIZE,
+      },
+    ];
+  }
+
+  get paginationContainerStyle() {
+    return mergeStyles(styles.paginationContainer, {
+      backgroundColor: this.theme.color.overlay30,
+      borderRadius: this.theme.layout.borderRadiusGigantic,
+    });
+  }
+
+  get paginationTextStyle() {
+    return {
+      color: this.theme.color.onOverlay,
+    };
+  }
 
   render() {
     return (

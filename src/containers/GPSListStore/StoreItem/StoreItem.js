@@ -1,27 +1,31 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Button from 'react-native-button';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import Communications from 'react-native-communications';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import appConfig from 'app-config';
+// helpers
 import {openMap} from 'src/helper/map';
-
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
 import Image from 'src/components/Image';
-import {Container} from 'src/components/Layout';
 import Loading from 'src/components/Loading';
+import {
+  Typography,
+  Icon,
+  Container,
+  AppFilledButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   image: {
     width: 75,
     height: 75,
-    borderRadius: 8,
   },
   storeContainer: {
-    backgroundColor: '#fff',
     padding: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
   },
   infoWrapper: {
     paddingLeft: 15,
@@ -35,11 +39,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
   },
   description: {
-    color: '#666',
     marginTop: 3,
   },
   rightIconContainer: {
@@ -56,9 +57,6 @@ const styles = StyleSheet.create({
   distanceContainer: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 15,
-    borderColor: '#ccc',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
   },
   distanceLoadingContainer: {
     position: 'relative',
@@ -67,38 +65,28 @@ const styles = StyleSheet.create({
   },
   distanceLoading: {
     padding: 0,
-    width: 11,
-    height: 11,
+    width: 18,
+    height: 18,
   },
   distanceIcon: {
     fontSize: 11,
-    color: appConfig.colors.primary,
   },
   distanceTxt: {
     marginLeft: 7,
-    fontSize: 11,
-    color: appConfig.colors.primary,
   },
   btnWrapper: {
     overflow: 'hidden',
-    borderRadius: 15,
     marginLeft: 10,
-  },
-  openMapContainer: {
-    backgroundColor: appConfig.colors.primary,
   },
   openMapBtn: {
     paddingHorizontal: 12,
     paddingVertical: 4,
   },
   mapIcon: {
-    fontSize: 11,
     marginRight: 7,
-    color: '#fff',
   },
   openMapTxt: {
     fontSize: 11,
-    color: '#fff',
   },
 });
 
@@ -121,6 +109,8 @@ const StoreItem = ({
 
   rightIcon,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation();
 
   if (!actionBtnIconName) {
@@ -134,25 +124,77 @@ const StoreItem = ({
     if (phone && phone != '') {
       Communications.phonecall(phone, true);
     } else {
-      Alert.alert('Không thể liên lạc');
+      Alert.alert(t('gpsStore:storeItem.cannotConnect'));
     }
   };
 
-  return (
-    <Container row style={styles.storeContainer}>
-      <Image source={{uri: image}} style={styles.image} />
+  const imageStyle = useMemo(() => {
+    return mergeStyles(styles.image, {
+      borderRadius: theme.layout.borderRadiusMedium,
+    });
+  }, [theme]);
 
-      <Container flex centerVertical={false} style={styles.infoWrapper}>
-        <Container style={styles.infoContainer} centerVertical={false}>
+  const storeContainerStyle = useMemo(() => {
+    return mergeStyles(styles.storeContainer, {
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const btnWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.btnWrapper, {
+      borderRadius: theme.layout.borderRadiusMedium,
+    });
+  }, [theme]);
+
+  const distanceContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.distanceContainer,
+        {
+          borderColor: theme.color.border,
+          backgroundColor: theme.color.primary5,
+          borderRadius: theme.layout.borderRadiusHuge,
+        },
+      ],
+      disabledDistanceStyle,
+    );
+  }, [theme, disabledDistanceStyle]);
+
+  const distanceTextStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.distanceTxt,
+        {
+          color: theme.color.primary,
+        },
+      ],
+      disabledDistanceStyle,
+    );
+  }, [theme, disabledDistanceStyle]);
+
+  return (
+    <Container row style={storeContainerStyle}>
+      <Image source={{uri: image}} style={imageStyle} />
+
+      <Container noBackground flex style={styles.infoWrapper}>
+        <Container noBackground style={styles.infoContainer}>
           <View style={styles.infoContentContainer}>
-            <Text style={styles.title}>{name}</Text>
-            <Text style={styles.description}>{address}</Text>
+            <Typography type={TypographyType.LABEL_LARGE} style={styles.title}>
+              {name}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.description}>
+              {address}
+            </Typography>
           </View>
 
           {!!pressable && (
             <View style={styles.rightIconContainer}>
               {rightIcon || (
-                <Ionicons
+                <Icon
+                  bundle={BundleIconSetName.IONICONS}
                   style={styles.rightIcon}
                   name="ios-chevron-forward-sharp"
                 />
@@ -163,54 +205,74 @@ const StoreItem = ({
 
         <Container flex row style={styles.mapInfoContainer}>
           {enableDistance ? (
-            <Container
-              row
-              style={[styles.distanceContainer, disabledDistanceStyle]}>
-              {requestLocationLoading ? (
-                <Loading
-                  style={styles.distanceLoading}
-                  wrapperStyle={styles.distanceLoadingContainer}
-                  size="small"
-                />
-              ) : (
-                <Ionicons
-                  name="ios-navigate"
-                  style={[styles.distanceIcon, disabledDistanceStyle]}
-                />
-              )}
-              <Text style={[styles.distanceTxt, disabledDistanceStyle]}>
+            <Container row style={distanceContainerStyle}>
+              <Typography
+                type={TypographyType.LABEL_EXTRA_SMALL}
+                style={distanceTextStyle}
+                renderIconBefore={(titleStyle, fontStyle) => {
+                  return !!requestLocationLoading ? (
+                    <Loading
+                      style={styles.distanceLoading}
+                      wrapperStyle={styles.distanceLoadingContainer}
+                      size="small"
+                      color={fontStyle.color}
+                    />
+                  ) : (
+                    <Icon
+                      bundle={BundleIconSetName.IONICONS}
+                      name="ios-navigate"
+                      style={[fontStyle, styles.distanceIcon]}
+                    />
+                  );
+                }}>
                 {distance}
-              </Text>
+              </Typography>
             </Container>
           ) : (
             <View />
           )}
 
-          <Container row>
+          <Container row noBackground>
             {!!phone && (
-              <Container style={styles.btnWrapper}>
-                <Button
-                  containerStyle={styles.openMapContainer}
-                  onPress={handleCall}>
-                  <Container row style={styles.openMapBtn}>
-                    <Ionicons name="call" style={styles.mapIcon} />
-                    <Text style={styles.openMapTxt}>Gọi</Text>
-                  </Container>
-                </Button>
+              <Container style={btnWrapperStyle}>
+                <AppFilledButton
+                  primary
+                  onPress={handleCall}
+                  style={styles.openMapBtn}
+                  typoProps={{type: TypographyType.LABEL_EXTRA_SMALL}}
+                  renderIconLeft={(titleStyle) => {
+                    return (
+                      <Icon
+                        bundle={BundleIconSetName.IONICONS}
+                        name="call"
+                        style={[titleStyle, styles.mapIcon]}
+                      />
+                    );
+                  }}>
+                  {t('gpsStore:storeItem.call')}
+                </AppFilledButton>
               </Container>
             )}
 
-            <Container style={styles.btnWrapper}>
-              <Button
-                containerStyle={styles.openMapContainer}
-                onPress={() => {
-                  !!onPressActionBtn ? onPressActionBtn() : openMap(lat, lng);
+            <Container style={btnWrapperStyle}>
+              <AppFilledButton
+                primary
+                onPress={() =>
+                  !!onPressActionBtn ? onPressActionBtn() : openMap(lat, lng)
+                }
+                style={styles.openMapBtn}
+                typoProps={{type: TypographyType.LABEL_EXTRA_SMALL}}
+                renderIconLeft={(titleStyle) => {
+                  return (
+                    <Icon
+                      bundle={BundleIconSetName.IONICONS}
+                      name={actionBtnIconName}
+                      style={[titleStyle, styles.mapIcon]}
+                    />
+                  );
                 }}>
-                <Container row style={styles.openMapBtn}>
-                  <Ionicons name={actionBtnIconName} style={styles.mapIcon} />
-                  <Text style={styles.openMapTxt}>{actionBtnTitle}</Text>
-                </Container>
-              </Button>
+                {actionBtnTitle}
+              </AppFilledButton>
             </Container>
           </Container>
         </Container>

@@ -1,64 +1,48 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  RefreshControl,
-  StyleSheet,
-  TouchableHighlight,
-  View,
-} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
-import Icon from 'react-native-vector-icons/AntDesign';
-
+// configs
 import appConfig from 'app-config';
-
+// helpers
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+//routing
+import {refresh} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {BundleIconSetName} from 'src/components/base';
+// entities
 import {APIRequest} from 'src/network/Entity';
-
+// custom components
+import {IconButton, ScreenWrapper, RefreshControl} from 'src/components/base';
 import NoResult from 'src/components/NoResult';
+import Button from 'src/components/Button';
 import ProgressTrackingBar from 'src/components/ProgressTrackingBar';
-import ScreenWrapper from 'src/components/ScreenWrapper';
 import ProgressItem from '../ProgressItem';
-import {default as CustomButton} from 'src/components/Button';
-import {Actions} from 'react-native-router-flux';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   trackingWrapper: {
     marginHorizontal: 15,
   },
 
-  tabBarContainer: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 0,
-    ...elevationShadowStyle(3),
-  },
-  tabBarLabel: {
-    minWidth: '100%',
-    flex: appConfig.device.isIOS ? undefined : 1,
-    color: '#333',
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-  },
-  tabBarLabelActive: {
-    fontWeight: 'bold',
-    color: appConfig.colors.primary,
-  },
-  indicatorStyle: {
-    backgroundColor: appConfig.colors.primary,
-    height: 2,
-  },
-
   nav_right: {
-    paddingRight: 8,
+    paddingHorizontal: 8,
   },
   nav_right_btn: {
     paddingVertical: 1,
-    paddingHorizontal: 8,
     paddingTop: appConfig.device.isAndroid ? 8 : 4,
+  },
+  iconNav: {
+    fontSize: 28,
   },
 });
 
-const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
+const ProgressTrackingDetail = ({id, index: indexProp = 0, navigation}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['common', 'progressTracking']);
   const isMounted = useIsMounted();
   const [getProgressTrackingDetailRequest] = useState(new APIRequest());
@@ -85,16 +69,24 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
   const [isRefreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
+
+  useEffect(() => {
     getProgressTrackingDetail();
   }, [getProgressTrackingDetail]);
 
   useEffect(() => {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         right: renderRightNavBar(),
       });
     });
-  }, [progressTrackingDetail]);
+  }, [progressTrackingDetail, theme]);
 
   const getProgressTrackingDetail = useCallback(async () => {
     getProgressTrackingDetailRequest.data = APIHandler.user_warranty_detail(id);
@@ -118,8 +110,6 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
                 title: route.title,
               };
             });
-            // const formattedRoutes = routesFormatter(updatedRoutes);
-            console.log(formattedRoutes);
 
             setProgressTrackingDetail(response.data);
             setRoutes(formattedRoutes);
@@ -171,6 +161,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       object_id: progressTrackingDetail.object_id,
       object: progressTrackingDetail,
       onRefresh: (request) => setTimeout(() => goToRequestDetail(request)),
+      theme: theme,
     });
   };
 
@@ -182,6 +173,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       object_type: progressTrackingDetail.object_type,
       object_id: progressTrackingDetail.object_id,
       object: progressTrackingDetail,
+      theme: theme,
     });
   };
 
@@ -191,19 +183,20 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       site_id: progressTrackingDetail.site_id,
       room_id: progressTrackingDetail.room_id,
       request_id: request.id,
+      theme: theme,
     });
   };
 
   const renderRightNavBar = () => {
     return (
       <View style={styles.nav_right}>
-        <TouchableHighlight
+        <IconButton
           underlayColor="transparent"
-          onPress={goToRequestCreation}>
-          <View style={styles.nav_right_btn}>
-            <Icon name="plus" size={22} color="#ffffff" />
-          </View>
-        </TouchableHighlight>
+          onPress={goToRequestCreation}
+          style={styles.nav_right_btn}
+          iconStyle={[styles.iconNav, iconNavStyle]}
+          name="plus"
+          bundle={BundleIconSetName.ENTYPO}></IconButton>
       </View>
     );
   };
@@ -215,6 +208,10 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       )
     );
   };
+
+  const iconNavStyle = useMemo(() => {
+    return {color: theme.color.onPrimary};
+  }, [theme]);
 
   return (
     <ScreenWrapper>
@@ -242,7 +239,8 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0}) => {
       />
 
       {!!progressTrackingDetail?.room_id && (
-        <CustomButton
+        <Button
+          safeLayout
           title={t('screen.requests.mainTitle')}
           onPress={goToRequests}
         />

@@ -1,21 +1,26 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  BackHandler
-} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-import appConfig from 'app-config';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../../Button';
-import { Actions } from 'react-native-router-flux';
-import EventTracker from '../../../../helper/EventTracker';
+import {View, StyleSheet, BackHandler} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import Button from 'src/components/Button';
+import {ScreenWrapper, Typography, Icon, Container} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class Result extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     visible: PropTypes.bool,
     onClose: PropTypes.func,
@@ -24,7 +29,7 @@ class Result extends Component {
     mainTitle: PropTypes.string,
     title: PropTypes.string,
     subTitle: PropTypes.string,
-    btnTitle: PropTypes.string
+    btnTitle: PropTypes.string,
   };
 
   static defaultProps = {
@@ -35,16 +40,20 @@ class Result extends Component {
     mainTitle: '',
     title: '',
     subTitle: '',
-    btnTitle: ''
+    btnTitle: '',
   };
 
   state = {};
   eventTracker = new EventTracker();
 
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     BackHandler.addEventListener(
       'hardwareBackPress',
-      this.backHandlerListener.bind(this)
+      this.backHandlerListener.bind(this),
     );
     this.eventTracker.logCurrentView();
   }
@@ -52,7 +61,7 @@ class Result extends Component {
   componentWillUnmount() {
     BackHandler.removeEventListener(
       'hardwareBackPress',
-      this.backHandlerListener.bind(this)
+      this.backHandlerListener.bind(this),
     );
     this.eventTracker.clearTracking();
   }
@@ -62,144 +71,141 @@ class Result extends Component {
   }
 
   onClose = () => {
-    Actions.pop();
+    pop();
     this.props.onClose();
   };
 
+  get headerStyle() {
+    return {
+      backgroundColor: this.theme.color.navBarBackground,
+    };
+  }
+  get mainIconStyle() {
+    return {
+      fontSize: 80,
+      color: this.theme.color.onNavBarBackground,
+    };
+  }
+
+  get iconBtnStyle() {
+    return {color: this.theme.color.onPrimary};
+  }
+
+  get headerMessageStyle() {
+    return {color: this.theme.color.onNavBarBackground};
+  }
+
+  get notificationStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidth,
+      borderBottomColor: this.theme.color.border,
+    };
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View style={[styles.header]}>
-          {/* <TouchableOpacity style={styles.close} onPress={this.onClose}>
-              <Icon name="close" size={24} color="#ffffff" />
-            </TouchableOpacity> */}
+      <ScreenWrapper>
+        <View style={[this.headerStyle, styles.header]}>
           <View style={[styles.header_content, styles.center]}>
-            <Icon name={this.props.mainIconName} size={80} color="#ffffff" />
-            <Text style={styles.header_mess}>{this.props.mainTitle}</Text>
+            <Icon
+              bundle={BundleIconSetName.ANT_DESIGN}
+              name={this.props.mainIconName}
+              style={this.mainIconStyle}
+            />
+            <Typography
+              type={TypographyType.TITLE_LARGE}
+              style={[styles.header_mess, this.headerMessageStyle]}>
+              {this.props.mainTitle}
+            </Typography>
           </View>
         </View>
-
         <View style={styles.body}>
-          <View style={[styles.notification, styles.center]}>
-            <Text style={styles.noti_mess_title}>{this.props.title}</Text>
+          <Container
+            style={[
+              styles.notification,
+              styles.center,
+              this.notificationStyle,
+            ]}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.noti_mess_title}>
+              {this.props.title}
+            </Typography>
             {!!this.props.subTitle && (
-              <Text style={styles.noti_mess_sub_title}>
+              <Typography
+                type={TypographyType.DESCRIPTION_MEDIUM}
+                style={styles.noti_mess_sub_title}>
                 {this.props.subTitle}
-              </Text>
+              </Typography>
             )}
-          </View>
+          </Container>
         </View>
-
         <Button
-          containerStyle={styles.submitBtn}
+          safeLayout
           title={this.props.btnTitle}
           onPress={this.props.onConfirm}
-          iconLeft={
-            <Icon name="home" color="white" size={22} style={styles.btnIcon} />
-          }
+          renderIconLeft={(titleStyle) => {
+            return (
+              <Icon
+                bundle={BundleIconSetName.ANT_DESIGN}
+                name="home"
+                style={[titleStyle, styles.btnIcon]}
+              />
+            );
+          }}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#E8E8E8'
-  },
   center: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   header: {
     flex: 1,
-    backgroundColor: appConfig.colors.primary,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   header_mess: {
-    color: '#ffffff',
-    fontSize: 22,
     marginTop: 10,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   close: {
     position: 'absolute',
     top: appConfig.device.isIOS ? 35 : 20,
-    right: 20
+    right: 20,
   },
   body: {
-    flex: 2.5
+    flex: 2.5,
   },
   notification: {
     width: '100%',
     padding: 15,
-    backgroundColor: '#ffffff',
     marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#d9d9d9'
   },
   noti_mess_title: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#464646'
   },
   noti_mess_sub_title: {
     marginTop: 10,
     textAlign: 'center',
-    fontSize: 14,
-    color: '#a9a9a9'
   },
   rowInfo: {
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   content: {
     paddingVertical: 10,
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   btnIcon: {
-    marginRight: 10
+    marginRight: 10,
+    fontSize: 22,
   },
-  submitBtn: {
-    marginBottom: appConfig.device.bottomSpace
-  }
 });
 
 export default Result;
-
-const RowInfo = props => {
-  const borderStyle = props.first
-    ? {
-        borderTopWidth: 1,
-        borderBottomWidth: 1
-      }
-    : props.last
-    ? {
-        borderBottomWidth: 1
-      }
-    : {
-        borderBottomWidth: 1
-      };
-
-  const extraProps = !props.onPress && {
-    activeOpacity: 1
-  };
-
-  return (
-    <TouchableOpacity
-      style={[styles.rowInfo, borderStyle]}
-      onPress={props.onPress}
-      {...extraProps}
-    >
-      <View style={[styles.content, borderStyle]}>
-        <Text style={styles.row_label}>{props.label}</Text>
-        <Text style={styles.row_value}>{props.value}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};

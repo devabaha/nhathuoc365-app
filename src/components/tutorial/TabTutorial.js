@@ -33,7 +33,7 @@ export default class TabTutorial extends Component {
         <View style={styles.btnBox}>
           <TouchableHighlight
             style={styles.btn}
-            underlayColor={hexToRgbA(DEFAULT_COLOR, 0.6)}
+            underlayColor={hexToRgba(DEFAULT_COLOR, 0.6)}
             onPress={() => {
               if (onPress) {
                 onPress();
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: hexToRgbA('#000000', 0.8)
+    backgroundColor: hexToRgba('#000000', 0.8)
   },
   content: {
     position: 'absolute',
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     bottom: 36
   },
   btn: {
-    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
+    backgroundColor: hexToRgba(DEFAULT_COLOR, 0.8),
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 3

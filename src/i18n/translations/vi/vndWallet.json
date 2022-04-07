@@ -1,6 +1,7 @@
 {
   "header": {
-    "balance": "Số dư"
+    "balance": "Số dư",
+    "topUp": "Nạp điểm"
   },
   "tabs": {
     "history": {
@@ -11,5 +12,14 @@
       "title": "Thông tin",
       "message": "Thông tin về tài khoản"
     }
+  },
+  "balanceBefore": "Trước đó: ",
+  "rechargeInstructions": "Hướng dẫn nạp",
+
+  "detailHistory": {
+    "transactionCode": "Mã giao dịch",
+    "time": "Thời gian",
+    "content": "Nội dung",
+    "change": "Thay đổi"
   }
 }

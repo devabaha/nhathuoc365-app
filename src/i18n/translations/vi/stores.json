@@ -17,5 +17,11 @@
   "noProduct": "Chưa có mặt hàng nào",
   "item": {
     "more": "XEM THÊM"
-  }
+  },
+  "noCategory": "Chưa có danh mục",
+  "chooseCategory": "Chọn danh mục",
+  "searchHistory": "Lịch sử tìm kiếm",
+  "enterToSearch": "Nhập để tìm kiếm",
+  "searchResult": "Kết quả cho {{keyword}}",
+  "deleteHistory": "Xoá"
 }

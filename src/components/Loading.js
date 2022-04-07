@@ -1,41 +1,51 @@
-import React, {Component, useEffect} from 'react';
+import React, {PureComponent, useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {BlurView} from '@react-native-community/blur';
+import Animated, {Easing, useValue} from 'react-native-reanimated';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// custom components
 import {
   ActivityIndicator,
-  StyleSheet,
-  View,
-  Text,
-  PlatformColor,
-} from 'react-native';
-import {BlurView} from '@react-native-community/blur';
-import appConfig from 'app-config';
-import Animated, {Easing, useValue} from 'react-native-reanimated';
+  Typography,
+  TypographyType,
+  Container,
+} from 'src/components/base';
 
-export default class Loading extends Component {
-  static defaultProps = {
-    color: appConfig.device.isAndroid
-      ? PlatformColor('?attr/colorAccent')
-      : undefined,
-  };
+export default class Loading extends PureComponent {
+  static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   render() {
+    const wrapperStyle = mergeStyles(styles.wrapper, [
+      this.props.center ? styles.centerContainer : {},
+      this.props.wrapperStyle,
+    ]);
+
+    const containerStyle = mergeStyles(styles.container, [
+      (this.props.blur || this.props.highlight) && [
+        styles.blurContentContainer,
+        {
+          backgroundColor: this.theme.color.background,
+          borderRadius: this.theme.layout.borderRadiusLarge,
+        },
+      ],
+      this.props.containerStyle,
+    ]);
+
     return (
-      <View
-        pointerEvents={this.props.pointerEvents}
-        style={[
-          styles.wrapper,
-          this.props.center ? styles.centerContainer : {},
-          this.props.wrapperStyle,
-        ]}>
-        {!!this.props.blur && <BlurFilter visible blurType={this.props.blurType}/>}
-        <View
-          style={[
-            styles.container,
-            (this.props.blur || this.props.highlight) &&
-              styles.blurContentContainer,
-            this.props.containerStyle,
-          ]}>
+      <View pointerEvents={this.props.pointerEvents} style={wrapperStyle}>
+        {!!this.props.blur && (
+          <BlurFilter visible blurType={this.props.blurType} />
+        )}
+        <Container noBackground style={containerStyle}>
           <ActivityIndicator
-            animating={true}
             style={[
               styles.loading,
               this.props.style,
@@ -45,11 +55,13 @@ export default class Loading extends Component {
             size={this.props.size || 'large'}
           />
           {this.props.message && (
-            <Text style={[styles.message, this.props.textStyle]}>
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={[styles.message, this.props.textStyle]}>
               {this.props.message}
-            </Text>
+            </Typography>
           )}
-        </View>
+        </Container>
       </View>
     );
   }
@@ -63,6 +75,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9999,
+    overflow: 'hidden',
   },
   blurContainer: {
     position: 'absolute',
@@ -74,9 +87,7 @@ const styles = StyleSheet.create({
     zIndex: 99,
   },
   blurContentContainer: {
-    backgroundColor: '#eee',
     padding: 20,
-    borderRadius: 10,
   },
   container: {
     alignItems: 'center',
@@ -102,9 +113,7 @@ const styles = StyleSheet.create({
     // height: LOADING_WIDTH
   },
   message: {
-    color: '#333',
     textAlign: 'center',
-    fontSize: 12,
   },
 });
 

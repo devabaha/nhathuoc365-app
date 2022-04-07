@@ -12,6 +12,7 @@ export const CONFIG_KEY = {
   OPEN_SITE_DROP_SHIPPING_KEY: 'open_site_drop_shipping_key',
 
   ALLOW_SITE_SALE_OUT_INVENTORY_KEY: 'allow_site_sale_out_inventory_key',
+  ALLOW_CHOOSE_DELIVERY_TIME_KEY: 'allow_choose_delivery_time_key',
 
   INPUT_ADDRESS_CONFIG_KEY: 'input_address_config_key',
 
@@ -54,8 +55,9 @@ export const CONFIG_KEY = {
   HIDE_AFFILIATE_ACCOUNT_KEY: 'hide_affiliate_account_key',
 
   PARTNER_REGISTRATION_LINK_KEY: 'partner_registration_link_key',
-  
+
   ENABLE_EULA_KEY: 'enable_eula_key',
+  ENABLE_THEME_SWITCHER_KEY: 'enable_theme_switcher_key',
   EULA_NEWS_ID: 'eula_news_id',
 
   OPTIONAL_KYC_FORM_REGISTER_KEY: 'optional_kyc_form_register_key',

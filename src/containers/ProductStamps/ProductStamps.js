@@ -1,39 +1,46 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
-import APIHandler from '../../network/APIHandler';
-import {APIRequest} from '../../network/Entity';
+import React, {useEffect, useState, useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import Loading from '../../components/Loading';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push, pop} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import {
+  ScreenWrapper,
+  Container,
+  Typography,
+  Icon,
+  FlatList,
+  RefreshControl,
+} from 'src/components/base';
+import Button from 'src/components/Button';
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
 import ProductStamp from './ProductStamp';
-import {Actions} from 'react-native-router-flux';
-import NoResult from '../../components/NoResult';
-import Button from 'react-native-button';
-import IonicsIcon from 'react-native-vector-icons/Ionicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const styles = StyleSheet.create({
   getVoucherWrapper: {
-    backgroundColor: appConfig.colors.white,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 7.5,
-    paddingTop: 10,
-    paddingBottom: appConfig.device.bottomSpace + 10,
   },
   getVoucherBtn: {
     flex: 1,
-    backgroundColor: appConfig.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14,
-    marginHorizontal: 7.5,
-    paddingHorizontal: 12,
   },
   getVoucherTitle: {
-    color: appConfig.colors.white,
     textTransform: 'uppercase',
     fontWeight: '600',
-    fontSize: 16,
   },
   btnContentContainer: {
     flexDirection: 'row',
@@ -42,18 +49,28 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: appConfig.colors.white,
     marginRight: 10,
   },
 });
 
-const ProductStamps = () => {
+const ProductStamps = ({navigation}) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation();
+
   const getProductStampsRequest = new APIRequest();
   const requests = [getProductStampsRequest];
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
   const [productStamps, setProductStamps] = useState([]);
-  const {t} = useTranslation();
+
+  useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
 
   useEffect(() => {
     getProductStamps();
@@ -67,7 +84,7 @@ const ProductStamps = () => {
     getProductStampsRequest.data = APIHandler.user_get_product_stamps();
     try {
       const response = await getProductStampsRequest.promise();
-
+      console.log('res', response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           setProductStamps(response.data || []);
@@ -96,7 +113,7 @@ const ProductStamps = () => {
   };
 
   const handlePressProductStamp = (product) => {
-    Actions.push(appConfig.routes.item, {
+    push(appConfig.routes.item, {
       item: product,
       title: product?.name,
       preventUpdate: true,
@@ -121,50 +138,88 @@ const ProductStamps = () => {
   };
 
   const goToScanQR = () => {
-    Actions.push(appConfig.routes.qrBarCodeInputable, {
-      title: t('screen.qrBarCode.scanTitle'),
-      isVisibleBtnEnterCode: true,
-      index: 1,
-      refreshMyVoucher: () => {
-        this.getProductStamps();
+    push(
+      appConfig.routes.qrBarCodeInputable,
+      {
+        title: t('screen.qrBarCode.scanTitle'),
+        isVisibleBtnEnterCode: true,
+        index: 1,
+        refreshMyVoucher: () => {
+          this.getProductStamps();
+        },
+        onCloseEnterCode: () => {
+          if (isEnterCode) {
+            pop();
+          }
+        },
       },
-      onCloseEnterCode: () => {
-        if (isEnterCode) {
-          Actions.pop();
-        }
-      },
-    });
+      theme,
+    );
   };
 
   const enterCodeProduct = ({onSendCode}) => {
-    Actions.push(appConfig.routes.qrBarCodeInputable, {
-      title: t('screen.qrBarCode.scanTitle'),
-      isVisibleBtnEnterCode: true,
-      index: 1,
-      isEnterCode: true,
-      refreshMyVoucher: () => {
-        this.getProductStamps();
+    push(
+      appConfig.routes.qrBarCodeInputable,
+      {
+        title: t('screen.qrBarCode.scanTitle'),
+        isVisibleBtnEnterCode: true,
+        index: 1,
+        isEnterCode: true,
+        refreshMyVoucher: () => {
+          this.getProductStamps();
+        },
+        onCloseEnterCode: () => {
+          pop();
+        },
+        onSendCode: (code) => {
+          setTimeout(() => {
+            pop();
+            setTimeout(() => onSendCode(code), 0);
+          }, 0);
+        },
       },
-      onCloseEnterCode: () => {
-        Actions.pop();
-      },
-      onSendCode: (code) => {
-        setTimeout(() => {
-          Actions.pop();
-          setTimeout(() => onSendCode(code), 0);
-        }, 0);
-      },
-    });
+      theme,
+    );
+  };
+
+  const renderTitleBtnEnterCode = (titleStyle) => {
+    return (
+      <View style={styles.btnContentContainer}>
+        <Icon
+          bundle={BundleIconSetName.MATERIAL_ICONS}
+          name="text-fields"
+          style={[titleStyle, styles.icon]}
+        />
+        <Typography
+          type={TypographyType.TITLE_MEDIUM}
+          style={[styles.getVoucherTitle, titleStyle]}>
+          {t('common:screen.qrBarCode.enterCode')}
+        </Typography>
+      </View>
+    );
+  };
+
+  const renderTitleBtnScanCode = (titleStyle) => {
+    return (
+      <View style={styles.btnContentContainer}>
+        <Icon
+          bundle={BundleIconSetName.IONICONS}
+          name="scan"
+          style={[titleStyle, styles.icon]}
+        />
+        <Typography
+          type={TypographyType.TITLE_MEDIUM}
+          style={[styles.getVoucherTitle, titleStyle]}>
+          {t('common:screen.qrBarCode.scanCode')}
+        </Typography>
+      </View>
+    );
   };
 
   return (
-    <>
+    <ScreenWrapper>
       {isLoading && <Loading center />}
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
-        contentContainerStyle={{flexGrow: 1}}
         data={productStamps || []}
         renderItem={renderProductStamp}
         keyExtractor={(item, index) => index.toString()}
@@ -172,38 +227,28 @@ const ProductStamps = () => {
           !isLoading && (
             <NoResult
               iconName="package-variant"
-              message="Bạn chưa nhận sản phẩm nào"
+              message={t('productStamp:noResult')}
             />
           )
         }
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       />
-      <View style={styles.getVoucherWrapper}>
+      <Container safeLayout style={styles.getVoucherWrapper}>
         <Button
           containerStyle={styles.getVoucherBtn}
-          style={styles.getVoucherTitle}
-          icon
-          onPress={enterCodeProduct}>
-          <View style={styles.btnContentContainer}>
-            <MaterialIcons name="text-fields" style={styles.icon} />
-            <Text style={styles.getVoucherTitle}>
-              {t('common:screen.qrBarCode.enterCode')}
-            </Text>
-          </View>
-        </Button>
+          onPress={enterCodeProduct}
+          renderTitleComponent={renderTitleBtnEnterCode}
+        />
         <Button
           containerStyle={styles.getVoucherBtn}
-          style={styles.getVoucherTitle}
-          onPress={goToScanQR}>
-          <View style={styles.btnContentContainer}>
-            <IonicsIcon name="scan" style={styles.icon} />
-            <Text style={styles.getVoucherTitle}>
-              {t('common:screen.qrBarCode.scanCode')}
-            </Text>
-          </View>
-        </Button>
-      </View>
-    </>
+          onPress={goToScanQR}
+          renderTitleComponent={renderTitleBtnScanCode}
+        />
+      </Container>
+    </ScreenWrapper>
   );
 };
 
-export default ProductStamps;
+export default withTranslation(['productStamp', 'common'])(ProductStamps);

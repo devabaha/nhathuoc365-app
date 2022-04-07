@@ -1,16 +1,20 @@
-export { default } from "./RightButtonNavBar";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { BUNDLE_ICON_SETS_NAME } from "src/constants";
-import { ModalActionSheetProps } from "../ModalActionSheet";
+export {default} from './RightButtonNavBar';
+import {TFunction} from 'i18next';
+import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 
-export type RightButtonNavBar = "shopping_cart" | "chat" | "share";
+import {BundleIconSetName} from '../base/Icon/constants';
+import {ModalActionSheetProps} from '../ModalActionSheet';
+import {RightButtonNavbarType} from './constants';
 
 export interface RightButtonNavBarProps {
-  type: RightButtonNavBar;
+  t?: TFunction;
+
+  type: RightButtonNavbarType;
   icon?: JSX.Element;
-  iconBundle?: BUNDLE_ICON_SETS_NAME;
-  iconName?: string,
-  touchableOpacity?: boolean;
+  iconBundle?: BundleIconSetName;
+  iconName?: string;
+  touchableHighlight?: boolean;
+  disabled?: boolean;
   iconStyle?: StyleProp<TextStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   onPress?: Function;

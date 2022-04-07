@@ -1,13 +1,15 @@
 import React, {useEffect} from 'react';
+// routing
+import {pop} from 'app-helper/routing';
+// custom components
 import PopupConfirm from './PopupConfirm';
-import {Actions} from 'react-native-router-flux';
 import Modal from './account/Transfer/Payment/Modal';
 
 const ModalConfirm = ({
   type,
   yesTitle,
   noTitle,
-  titleStyle,
+  headingStyle,
   yesConfirm = () => {},
   noConfirm = () => {},
   refModal = () => {},
@@ -21,6 +23,8 @@ const ModalConfirm = ({
   title,
   content,
   contentStyle,
+
+  titleStyle,
   ...props
 }) => {
   let _refModal = null;
@@ -35,7 +39,7 @@ const ModalConfirm = ({
     if (_refModal) {
       _refModal.close();
     } else {
-      Actions.pop();
+      pop();
     }
   };
 
@@ -46,7 +50,7 @@ const ModalConfirm = ({
 
   const handleClosed = () => {
     onClosed();
-    Actions.pop();
+    pop();
   };
 
   const handleNoConfirm = () => {
@@ -62,7 +66,7 @@ const ModalConfirm = ({
   return momo ? (
     <Modal
       visible
-      titleStyle={titleStyle}
+      titleStyle={headingStyle}
       contentStyle={contentStyle}
       title={title}
       content={content}
@@ -83,7 +87,7 @@ const ModalConfirm = ({
       isConfirm={isConfirm}
       yesTitle={yesTitle}
       noTitle={noTitle}
-      titleStyle={titleStyle}
+      titleStyle={headingStyle}
       noConfirm={handleNoConfirm}
       yesConfirm={handleYesConfirm}
       onClosed={handleClosed}

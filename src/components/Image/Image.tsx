@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState, useMemo} from 'react';
+import {StyleSheet, Image as RNImage, View} from 'react-native';
+// 3-party libs
 import FastImage from 'react-native-fast-image';
 import Lightbox from 'react-native-lightbox';
+// types
 import {ImageProps} from '.';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   image: {
@@ -15,13 +19,17 @@ const Image = ({
   errorColor = '',
   loadingColor = '',
   canTouch = false,
+  useNative = false,
   style = {},
   containerStyle = {},
   onLoadError = () => {},
   onLoadEnd = () => {},
   renderError,
+  lightBoxProps = {},
   ...props
 }: ImageProps) => {
+  const {theme} = useTheme();
+
   const [isError, setError] = useState(false);
   const [isOpenLightBox, setOpenLightBox] = useState(false);
   const [isLoadEnd, setLoadEnd] = useState(false);
@@ -49,6 +57,18 @@ const Image = ({
     setOpenLightBox(false);
   };
 
+  const isErrorStyle = useMemo(() => {
+    return {backgroundColor: errorColor || theme.color.disabled};
+  }, [theme, errorColor]);
+
+  const isLoadEndStyle = useMemo(() => {
+    return {backgroundColor: loadingColor || theme.color.disabled};
+  }, [theme, loadingColor]);
+
+  const ImageComponent: any = useMemo(() => {
+    return useNative ? RNImage : FastImage;
+  }, [useNative]);
+
   return isError && !!renderError ? (
     renderError()
   ) : canTouch ? (
@@ -59,23 +79,22 @@ const Image = ({
         underlayColor="transparent"
         springConfig={{overshootClamping: true}}
         onOpen={handleOpen}
-        willClose={handleWillClose}>
-        <FastImage
+        willClose={handleWillClose}
+        {...lightBoxProps}>
+        <ImageComponent
           onLoadStart={handleStartLoading}
           onError={handleError}
           onLoadEnd={handleLoadEnd}
           resizeMode={isOpenLightBox ? 'contain' : 'cover'}
           {...props}
-          style={[
-            styles.image,
-            style,
-            isError && {backgroundColor: errorColor || '#eee'},
-          ]}
+          // @ts-ignore
+          style={[styles.image, style, isError && isErrorStyle]}
         />
       </Lightbox>
     </View>
   ) : (
-    <FastImage
+    // @ts-ignore
+    <ImageComponent
       onLoadStart={handleStartLoading}
       onError={handleError}
       onLoadEnd={handleLoadEnd}
@@ -83,8 +102,8 @@ const Image = ({
       style={[
         styles.image,
         style,
-        !isLoadEnd && {backgroundColor: loadingColor || '#eee'},
-        isError && {backgroundColor: errorColor || '#eee'},
+        !isLoadEnd && isLoadEndStyle,
+        isError && isErrorStyle,
       ]}
     />
   );

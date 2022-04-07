@@ -1,143 +1,142 @@
-import React, { useState, useEffect } from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import { View, Text, Image, StyleSheet, Animated } from 'react-native';
-import CampaignEntity from '../../entity/CampaignEntity';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
 import Barcode from 'react-native-barcode-builder';
+// configs
+import config from '../../config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import CampaignEntity from '../../entity/CampaignEntity';
+// custom components
+import {Card, ScreenWrapper, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const BARCODE_FORMAT = 'CODE128';
 
-function ShowBarcode({ voucher, code }) {
-  const [barCodeBorderColor] = useState(new Animated.Value(0));
-  let toggle = true;
+function ShowBarcode({voucher, code}) {
+  const {t} = useTranslation('voucher');
 
-  const startAnimation = () => {
-    if (toggle) {
-      toggle = false;
-    } else {
-      toggle = true;
-    }
-    Animated.timing(barCodeBorderColor, {
-      toValue: toggle ? 150 : 0,
-      duration: 1500
-    }).start(startAnimation);
-  };
+  const {theme} = useTheme();
 
-  useEffect(() => {
-    startAnimation();
-  }, []);
+  const barCodeWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.barCodeWrapper, {
+      borderWidth: theme.layout.borderWidth,
+      borderRadius: theme.layout.borderRadiusMedium,
+      borderColor: theme.color.onSurface,
+    });
+  }, [theme]);
 
-  const interpolateColor = barCodeBorderColor.interpolate({
-    inputRange: [0, 150],
-    outputRange: ['rgb(255, 255, 255)', 'rgb(48, 62, 93)']
-  });
-  const animatedStyle = {
-    borderColor: interpolateColor
-  };
+  const shopAvatarStyle = useMemo(() => {
+    return mergeStyles(styles.shopAvatar, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, [theme]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cardWrapper}>
+    <ScreenWrapper style={styles.container}>
+      <Card style={styles.cardWrapper}>
         <View style={styles.headerWrapper}>
-          <Text style={styles.shopName}>{voucher.data.shop_name}</Text>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={styles.shopName}>
+            {voucher.data.shop_name}
+          </Typography>
           <Image
-            style={styles.shopAvatar}
-            source={{ uri: voucher.data.shop_logo_url }}
+            style={shopAvatarStyle}
+            source={{uri: voucher.data.shop_logo_url}}
           />
         </View>
 
-        <Animated.View style={[styles.barCodeWrapper, animatedStyle]}>
-          <View style={styles.barCodeContainer}>
+        <View style={barCodeWrapperStyle}>
+          <Card noBackground style={styles.barCodeContainer}>
             <Barcode
+              lineColor={theme.color.onSurface}
+              background={theme.color.surface}
               width={2}
               height={60}
               value={code}
               format={BARCODE_FORMAT}
             />
-            <Text style={styles.barcodeValue}>{code}</Text>
-          </View>
-        </Animated.View>
-      </View>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.barcodeValue}>
+              {code}
+            </Typography>
+          </Card>
+        </View>
+      </Card>
 
       <View style={styles.guideWrapper}>
-        <Text style={styles.guideText}>
-          Đưa mã Barcode cho nhân viên cửa hàng để nhận khuyến mại.
-        </Text>
+        <Typography
+          type={TypographyType.LABEL_SEMI_LARGE}
+          style={styles.guideText}>
+          {t('voucher:detail.descriptionShowBarcode')}
+        </Typography>
       </View>
-    </View>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: config.colors.white,
-    marginBottom: config.device.bottomSpace
+    padding: 15,
   },
   cardWrapper: {
     width: config.device.width - 24,
-    marginTop: 26,
-    marginHorizontal: 12,
-    borderRadius: 8,
-    padding: 8,
-    backgroundColor: '#1f2b45'
+    padding: 15,
   },
   headerWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginRight: 8
+    marginRight: 8,
   },
   shopName: {
-    color: config.colors.white,
     fontWeight: '500',
-    fontSize: 16,
     marginTop: 20,
     marginBottom: 16,
-    marginLeft: 8
+    marginLeft: 8,
   },
   shopAvatar: {
     width: 48,
     height: 48,
-    borderRadius: 3
   },
   barCodeWrapper: {
-    borderWidth: 1,
     padding: 8,
-    borderRadius: 8
   },
   barCodeContainer: {
-    borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: config.colors.white,
-    paddingTop: 8
+    paddingTop: 8,
   },
   barcodeValue: {
-    fontSize: 16,
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 2,
-    marginBottom: 12
+    marginBottom: 12,
   },
   guideWrapper: {
-    padding: 16,
-    marginTop: 4
+    paddingVertical: 15,
   },
   guideText: {
-    fontSize: 15,
     fontWeight: '400',
-    color: '#333',
-    lineHeight: 22
-  }
+    lineHeight: 22,
+  },
 });
 
 ShowBarcode.propTypes = {
   code: PropTypes.string.isRequired,
-  voucher: PropTypes.instanceOf(CampaignEntity).isRequired
+  voucher: PropTypes.instanceOf(CampaignEntity).isRequired,
 };
 
 ShowBarcode.defaultProps = {
   code: undefined,
-  voucher: undefined
+  voucher: undefined,
 };
 
 export default ShowBarcode;

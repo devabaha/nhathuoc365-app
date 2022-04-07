@@ -1,17 +1,16 @@
-import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  FlatList,
-} from 'react-native';
-import Octicons from 'react-native-vector-icons/Octicons';
+import React, {useMemo} from 'react';
+import {StyleSheet, View, TouchableWithoutFeedback} from 'react-native';
+// 3-party-libs
 import Modal from 'react-native-modalbox';
-
+// configs
 import appConfig from 'app-config';
-
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
 import Button from 'src/components/Button';
+import {Typography, Icon, Container, FlatList} from 'src/components/base';
 
 const styles = StyleSheet.create({
   modal: {
@@ -22,14 +21,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flex: 1,
   },
+  listContentContainer: {
+    flexGrow: 0,
+  },
   container: {
     maxHeight: appConfig.device.height * 0.8,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     overflow: 'hidden',
     alignItems: 'center',
-    paddingBottom: appConfig.device.bottomSpace,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -40,36 +38,25 @@ const styles = StyleSheet.create({
     width: appConfig.device.width,
   },
   headerIcon: {
-    color: appConfig.colors.primary,
     fontSize: 22,
   },
   headerLabel: {
-    ...appConfig.styles.typography.heading3,
     marginLeft: 10,
     fontWeight: '500',
     textAlign: 'center',
   },
-  headingRow: {
-    borderTopWidth: appConfig.device.pixel,
-    borderBottomWidth: appConfig.device.pixel,
-  },
+  headingRow: {},
   listRow: {
     flexDirection: 'row',
-    borderColor: '#999',
     width: appConfig.device.width,
   },
   cellContent: {
-    fontSize: 13,
-    color: '#8b8b8b',
     padding: 15,
     paddingVertical: 12,
     flex: 1,
     textAlign: 'center',
   },
-  listSeparatorColumn: {
-    borderColor: '#999',
-    borderRightWidth: appConfig.device.pixel,
-  },
+  listSeparatorColumn: {},
   listCell: {
     flex: 1,
     alignItems: 'center',
@@ -77,7 +64,6 @@ const styles = StyleSheet.create({
   },
   rightCellText: {
     flex: 1,
-    color: appConfig.colors.primary,
     fontWeight: '500',
   },
   actionBtn: {
@@ -88,6 +74,8 @@ const styles = StyleSheet.create({
 });
 
 const ModalWholesale = ({data, innerRef = () => {}}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('product');
 
   const refModal = React.useRef();
@@ -103,23 +91,57 @@ const ModalWholesale = ({data, innerRef = () => {}}) => {
 
   const renderWholesaleItem = ({item, index}) => {
     return (
-      <View
-        style={[
-          styles.listRow,
-          index && {
-            borderTopWidth: appConfig.device.pixel,
-          },
-        ]}>
-        <View style={[styles.listCell, styles.listSeparatorColumn]}>
-          <Text>{item.quantity}</Text>
+      <View style={[styles.listRow, listRowStyle]}>
+        <View
+          style={[
+            styles.listCell,
+            styles.listSeparatorColumn,
+            listSeparatorColumnStyle,
+          ]}>
+          <Typography type={TypographyType.LABEL_MEDIUM}>
+            {item.quantity}
+          </Typography>
         </View>
 
         <View style={styles.listCell}>
-          <Text style={styles.rightCellText}>{item.unit_price}</Text>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_PRIMARY}
+            style={styles.rightCellText}>
+            {item.unit_price}
+          </Typography>
         </View>
       </View>
     );
   };
+
+  const modalStyle = useMemo(() => {
+    return {
+      borderTopLeftRadius: theme.layout.borderRadiusHuge,
+      borderTopRightRadius: theme.layout.borderRadiusHuge,
+    };
+  }, [theme]);
+
+  const headingRowStyle = useMemo(() => {
+    return {
+      borderTopWidth: theme.layout.borderWidthSmall,
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
+
+  const listRowStyle = useMemo(() => {
+    return {
+      borderBottomWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
+
+  const listSeparatorColumnStyle = useMemo(() => {
+    return {
+      borderRightWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
 
   return (
     <Modal
@@ -127,23 +149,41 @@ const ModalWholesale = ({data, innerRef = () => {}}) => {
       style={styles.modal}
       position="top"
       swipeToClose={false}>
-      <View style={[styles.modalSafeView]}>
+      <View style={styles.modalSafeView}>
         <TouchableWithoutFeedback onPress={handleClose}>
           <View style={{flex: 1}} />
         </TouchableWithoutFeedback>
 
-        <View style={styles.container}>
+        <Container safeLayout style={[styles.container, modalStyle]}>
           <View style={styles.headerContainer}>
-            <Octicons name="package" style={styles.headerIcon} />
-            <Text style={styles.headerLabel}>{t('wholesale.title')}</Text>
+            <Icon
+              primaryHighlight
+              bundle={BundleIconSetName.OCTICONS}
+              name="package"
+              style={styles.headerIcon}
+            />
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.headerLabel}>
+              {t('wholesale.title')}
+            </Typography>
           </View>
-          <View style={[styles.headingRow, styles.listRow]}>
-            <Text style={styles.cellContent}>{t('wholesale.quantity')}</Text>
+          <View style={[styles.headingRow, styles.listRow, headingRowStyle]}>
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
+              style={styles.cellContent}>
+              {t('wholesale.quantity')}
+            </Typography>
 
-            <Text style={styles.cellContent}>{t('wholesale.unitPrice')}</Text>
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
+              style={styles.cellContent}>
+              {t('wholesale.unitPrice')}
+            </Typography>
           </View>
           <FlatList
             data={data}
+            contentContainerStyle={styles.listContentContainer}
             renderItem={renderWholesaleItem}
             keyExtractor={(_, index) => index.toString()}
           />
@@ -153,7 +193,7 @@ const ModalWholesale = ({data, innerRef = () => {}}) => {
             containerStyle={styles.actionBtn}
             onPress={handleClose}
           />
-        </View>
+        </Container>
       </View>
     </Modal>
   );

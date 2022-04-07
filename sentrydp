@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e;
+
+declare codepushDeployment="Production";
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -p|--platform) codepushAppPlatform="$2"; shift ;;
+        -a|--app) codepushAppName="$2"; shift ;;
+        --description) codepushDescription="$2"; shift;;
+        --deployment) codepushDeployment="$2"; shift;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+echo "Getting latest released codepush information...";
+
+declare index=0;
+if [[ $codepushAppPlatform -eq "ios" ]]
+then
+index=0;
+fi
+
+declare codePushInformation=$(appcenter codepush deployment list --output=json  -a "$codepushAppName");
+
+declare latestReleaseLabel=$(echo $codePushInformation | python -c '
+import json,sys;
+
+obj=json.load(sys.stdin)
+
+label = 0
+def addition(n):
+    if n["name"] == "'$codepushDeployment'":
+       global label
+       label = n["latestRelease"]["label"]
+       return;
+       
+list(map(addition, obj))
+print(label)');
+
+declare latestReleaseLabelNumber="${latestReleaseLabel//[^0-9]/}";
+declare nextReleaseLabelNumber=`expr $latestReleaseLabelNumber + 1`;
+echo "====================================================";
+echo "Latest label  : v$latestReleaseLabelNumber";
+echo "Next label    : v$nextReleaseLabelNumber";
+echo "Deployment    : $codepushDeployment";
+echo "====================================================";
+echo "Codepush & Sentry deploy....";
+
+appcenter codepush release-react -a "$codepushAppName" -d "$codepushDeployment" -m --description \""$codepushDescription"\" --sourcemap-output --output-dir ./build \
+&& export SENTRY_PROPERTIES=./"$codepushAppPlatform"/sentry.properties \
+&& sentry-cli react-native appcenter "$codepushAppName" "$codepushAppPlatform" ./build/CodePush --deployment "$codepushDeployment" --dist "$nextReleaseLabelNumber" \
+&& rm -rf ./build;

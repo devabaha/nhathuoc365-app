@@ -1,13 +1,17 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+// 3-party libs
 import Animated from 'react-native-reanimated';
-
+// helpers
 import {formatTime} from 'app-helper';
-import {themes} from '../themes';
-
-import {Container} from 'src/components/Layout';
+import {getThemes} from '../themes';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, IconButton} from 'src/components/base';
 import ProgressBar from './ProgressBar';
 import Timer from './Timer';
 
@@ -22,7 +26,6 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    color: themes.colors.primary,
     fontSize: 24,
     marginLeft: 20,
   },
@@ -47,6 +50,12 @@ const Tracker = ({
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
   const extraProgressBarStyle = useMemo(() => {
     return {
       paddingHorizontal: isFullscreen ? 30 : 0,
@@ -58,6 +67,12 @@ const Tracker = ({
       bottom: isFullscreen ? 60 : 30,
     };
   }, [isFullscreen]);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: themes.colors.primary,
+    });
+  }, [themes]);
 
   return (
     <Animated.View style={containerStyle}>
@@ -75,6 +90,7 @@ const Tracker = ({
       </Animated.View>
 
       <Container
+        noBackground
         row
         reanimated
         style={[
@@ -88,47 +104,36 @@ const Tracker = ({
           current={formatTime(currentTime)}
           total={formatTime(totalTime)}
         />
-        <Container row>
-          <TouchableOpacity
-            activeOpacity={0.5}
+        <Container row noBackground>
+          <IconButton
+            useGestureHandler
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            name={isMute ? 'volume-off' : 'volume-high'}
+            iconStyle={iconStyle}
             // @ts-ignore
             disallowInterruption
-            // @ts-ignore
-            // hitSlop={HIT_SLOP}
-            onPress={onPressMute}>
-            <MaterialCommunityIcons
-              name={isMute ? 'volume-off' : 'volume-high'}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
+            onPress={onPressMute}
+          />
           {isFullscreen && (
-            <TouchableOpacity
-              activeOpacity={0.5}
+            <IconButton
+              useGestureHandler
+              bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+              name={isFullscreenLandscape ? 'crop-portrait' : 'crop-landscape'}
+              iconStyle={iconStyle}
               // @ts-ignore
               disallowInterruption
-              // @ts-ignore
-              // hitSlop={HIT_SLOP}
-              onPress={onRotateFullscreen}>
-              <MaterialCommunityIcons
-                name={
-                  isFullscreenLandscape ? 'crop-portrait' : 'crop-landscape'
-                }
-                style={styles.icon}
-              />
-            </TouchableOpacity>
+              onPress={onRotateFullscreen}
+            />
           )}
-          <TouchableOpacity
-            activeOpacity={0.5}
+          <IconButton
+            useGestureHandler
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
+            iconStyle={iconStyle}
             // @ts-ignore
             disallowInterruption
-            // @ts-ignore
-            // hitSlop={HIT_SLOP}
-            onPress={onPressFullscreen}>
-            <MaterialCommunityIcons
-              name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
+            onPress={onPressFullscreen}
+          />
         </Container>
       </Container>
     </Animated.View>

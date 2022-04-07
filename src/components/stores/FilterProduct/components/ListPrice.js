@@ -1,13 +1,20 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
-import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
-import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import React, {useMemo, useEffect, useRef, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import {isEmpty, isEqual} from 'lodash';
-import BlockFilterOption from './BlockFilterOption';
-
+// configs
 import appConfig from 'app-config';
-import store from 'app-store';
-import Container from 'src/components/Layout/Container';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+// custom components
+import {Container, Typography, Input} from 'src/components/base';
+import BlockFilterOption from './BlockFilterOption';
 
 const CURRENCY = '₫';
 
@@ -19,6 +26,10 @@ function ListPrice({
   onChangePriceRange = () => {},
   defaultValue = {},
 }) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('filterProduct');
+
   const normalizeTags = (tags) => {
     Object.keys(tags).forEach((tagKey) => {
       tags[tagKey].tag = tagKey;
@@ -57,12 +68,14 @@ function ListPrice({
 
     let tagName = '';
     if (!!from) {
-      tagName = (!!to ? 'Từ ' : 'Tối thiểu ') + vndCurrencyFormat(from);
+      tagName =
+        (!!to ? t('toPrice') + ' ' : t('minimum') + ' ') +
+        vndCurrencyFormat(from);
     }
     if (!!to) {
       tagName += from
-        ? ' đến ' + vndCurrencyFormat(to)
-        : 'Tối đa ' + vndCurrencyFormat(to);
+        ? ' ' + t('fromPrice') + ' ' + vndCurrencyFormat(to)
+        : t('maximum') + ' ' + vndCurrencyFormat(to);
     }
 
     return tagName;
@@ -155,41 +168,80 @@ function ListPrice({
   const renderFooter = () => {
     return (
       <View ref={refInputs}>
-        <Text style={styles.priceText}>Nhập khoảng giá khác</Text>
+        <Typography
+          type={TypographyType.LABEL_SMALL_TERTIARY}
+          style={styles.priceText}>
+          {t('titleInput')}
+        </Typography>
         <View style={styles.textInputWrapper}>
           <Container
             flex
             row
-            style={[styles.inputContainer, error && styles.errorInput]}>
-            <TextInput
+            style={[inputContainerStyle, error && errorInputStyle]}>
+            <Input
               value={formatPriceView(Number(minPrice))}
               onChangeText={handleChangeText('min_price')}
               style={styles.input}
               keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              placeholder="Giá thấp nhất..."
+              placeholder={t('minPrice')}
               onBlur={handleBlurInputPrice}
               onFocus={handleFocusInputPrice}
             />
-            <Text style={styles.currency}>{CURRENCY}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.currency}>
+              {CURRENCY}
+            </Typography>
           </Container>
-          <Text style={styles.currency}>-</Text>
-          <Container flex row style={[styles.inputContainer]}>
-            <TextInput
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.currency}>
+            -
+          </Typography>
+          <Container
+            flex
+            row
+            style={[styles.inputContainer, inputContainerStyle]}>
+            <Input
               value={formatPriceView(Number(maxPrice))}
               onChangeText={handleChangeText('max_price')}
               style={styles.input}
               keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
-              placeholder="Giá cao nhất..."
+              placeholder={t('maxPrice')}
               onBlur={handleBlurInputPrice}
               onFocus={handleFocusInputPrice}
             />
-            <Text style={styles.currency}>{CURRENCY}</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.currency}>
+              {CURRENCY}
+            </Typography>
           </Container>
         </View>
-        {!!error && <Text style={styles.error}>{error}</Text>}
+        {!!error && (
+          <Typography type={TypographyType.LABEL_SMALL} style={errorStyle}>
+            {error}
+          </Typography>
+        )}
       </View>
     );
   };
+
+  const inputContainerStyle = useMemo(() => {
+    return mergeStyles(styles.inputContainer, {
+      borderWidth: theme.layout.borderWidthSmall,
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const errorInputStyle = useMemo(() => {
+    return mergeStyles(styles.errorInput, {borderColor: theme.color.danger});
+  }, [theme]);
+
+  const errorStyle = useMemo(() => {
+    return mergeStyles(styles.error, {color: theme.color.danger});
+  }, [theme]);
 
   return (
     <View style={styles.container}>
@@ -212,9 +264,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputContainer: {
-    borderRadius: 4,
-    borderWidth: 0.5,
-    borderColor: '#ccc',
     flex: 1,
   },
   input: {
@@ -223,13 +272,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   currency: {
-    color: '#666',
     marginHorizontal: 7,
   },
   priceText: {
     marginTop: 10,
-    color: '#777',
-    fontSize: 12,
   },
 
   extraSpacing: {
@@ -237,13 +283,9 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    fontSize: 12,
-    color: appConfig.colors.status.danger,
     marginTop: 5,
   },
-  errorInput: {
-    borderColor: appConfig.colors.status.danger,
-  },
+  errorInput: {},
 });
 
 export default React.memo(ListPrice);

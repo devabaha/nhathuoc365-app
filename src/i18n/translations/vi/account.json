@@ -4,7 +4,7 @@
       "label": "Chọn cửa hàng khác",
       "desc": ""
     },
-    "myAdress": {
+    "myAddress": {
       "label": "Địa chỉ của tôi",
       "desc": "Quản lý địa chỉ nhận hàng"
     },
@@ -63,6 +63,10 @@
     },
     "partnerRegistration": {
       "label": "Đăng ký đối tác",
+      "desc": ""
+    },
+    "appearance": {
+      "label": "Giao diện",
       "desc": ""
     }
   },

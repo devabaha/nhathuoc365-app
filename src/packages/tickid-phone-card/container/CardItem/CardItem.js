@@ -1,15 +1,20 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+// 3-party libs
 import Clipboard from '@react-native-community/clipboard';
-import ActionSheet from 'react-native-actionsheet';
 import Communications from 'react-native-communications';
+import {withTranslation} from 'react-i18next';
+// configs
+import config from '../../config';
+// network
+import {internalFetch} from '../../helper/apiFetch';
+// helpers
+import rnShare from '../../helper/rnShare';
+import {showMessage} from '../../constants';
+// custom components
 import CardItemComponent from '../../component/CardItem';
 import ModalOverlay from '../../component/ModalOverlay';
 import ListItem from '../../component/ListItem';
-import { internalFetch } from '../../helper/apiFetch';
-import rnShare from '../../helper/rnShare';
-import config from '../../config';
-import { showMessage } from '../../constants';
 
 const MARK_AS_USED_ACTION = 0;
 const MARK_AS_NO_USE_YET_ACTION = 0;
@@ -21,12 +26,12 @@ const CANCEL_ACTION = 3;
 class CardItem extends Component {
   static propTypes = {
     isPay: PropTypes.bool,
-    isUsed: PropTypes.bool
+    isUsed: PropTypes.bool,
   };
 
   static defaultProps = {
     isPay: false,
-    isUsed: false
+    isUsed: false,
   };
 
   constructor(props) {
@@ -40,7 +45,7 @@ class CardItem extends Component {
       isDeleted: false,
       isPay: props.isPay,
       isUsed: props.isUsed,
-      statusView: props.statusView
+      statusView: props.statusView,
     };
   }
 
@@ -49,154 +54,153 @@ class CardItem extends Component {
   }
 
   hideSendCardModal = () => {
-    this.setState({ sendCardVisible: false });
+    this.setState({sendCardVisible: false});
   };
 
   hideUseCardNowModal = () => {
-    this.setState({ useCardNowVisible: false });
+    this.setState({useCardNowVisible: false});
   };
 
   hideCopyCardModal = () => {
-    this.setState({ copyCardVisible: false });
+    this.setState({copyCardVisible: false});
   };
 
   handleShowSendCardModal = () => {
     this.setState({
-      sendCardVisible: true
+      sendCardVisible: true,
     });
   };
 
   handleShowUseNowModal = () => {
     this.setState({
-      useCardNowVisible: true
+      useCardNowVisible: true,
     });
   };
 
   handleShowCopyCardCodeModal = () => {
     this.setState({
-      copyCardVisible: true
+      copyCardVisible: true,
     });
   };
 
-  handleSendAllCardInfo = cardInfo => {
+  handleSendAllCardInfo = (cardInfo) => {
     this.hideSendCardModal();
-    const message = cardInfo.map(card => `${card[0]} ${card[1]}`);
+    const message = cardInfo.map((card) => `${card[0]} ${card[1]}`);
+    this.sendCard(message.join('\n'));
+  };
+
+  handleSendPrepaySyntax = (syntax) => {
+    this.hideSendCardModal();
+    this.sendCard(syntax);
+  };
+
+  handleSendPostpaidSyntax = (syntax) => {
+    this.hideSendCardModal();
+    this.sendCard(syntax);
+  };
+
+  sendCard = (message) => {
     setTimeout(() => {
       rnShare({
-        title: 'Gửi thẻ nạp',
-        message: message.join('\n'),
-        successMessage: 'Gửi thẻ nạp thành công!'
+        title: this.props.t('sendCard'),
+        message,
+        successMessage: this.props.t('sendCardSuccess'),
       });
     }, 500);
   };
 
-  handleSendPrepaySyntax = syntax => {
-    this.hideSendCardModal();
-    setTimeout(() => {
-      rnShare({
-        title: 'Gửi thẻ nạp',
-        message: syntax,
-        successMessage: 'Gửi thẻ nạp thành công!'
-      });
-    }, 500);
-  };
-
-  handleSendPostpaidSyntax = syntax => {
-    this.hideSendCardModal();
-    setTimeout(() => {
-      rnShare({
-        title: 'Gửi thẻ nạp',
-        message: syntax,
-        successMessage: 'Gửi thẻ nạp thành công!'
-      });
-    }, 500);
-  };
-
-  handleCallPrepaySyntax = syntax => {
+  handleCallPrepaySyntax = (syntax) => {
     this.hideUseCardNowModal();
     Communications.phonecall(syntax, true);
   };
 
-  handleCallPostpaidSyntax = syntax => {
+  handleCallPostpaidSyntax = (syntax) => {
     this.hideUseCardNowModal();
     Communications.phonecall(syntax, true);
   };
 
-  handleCopyCardCodeAndSeri = cardInfo => {
+  handleCopyCardCodeAndSeri = (cardInfo) => {
     this.hideCopyCardModal();
-    const codeAndSeri = cardInfo.map(card => `${card[0]} ${card[1]}`);
+    const codeAndSeri = cardInfo.map((card) => `${card[0]} ${card[1]}`);
     Clipboard.setString(codeAndSeri);
     showMessage({
       type: 'success',
-      message: 'Đã sao chép mã thẻ và số seri'
+      message: this.props.t('copiedCardCodeAndSerial'),
     });
   };
 
-  handleCopyCardCode = cardCode => {
+  handleCopyCardCode = (cardCode) => {
     this.hideCopyCardModal();
     Clipboard.setString(cardCode);
     showMessage({
       type: 'success',
-      message: 'Đã sao chép mã thẻ'
+      message: this.props.t('copiedCardCode'),
     });
   };
 
-  handleCopyCardSeri = cardSeri => {
+  handleCopyCardSeri = (cardSeri) => {
     this.hideCopyCardModal();
     Clipboard.setString(cardSeri);
     showMessage({
       type: 'success',
-      message: 'Đã sao chép số seri'
+      message: this.props.t('copiedSerial'),
     });
   };
 
-  handleCopyPrepaySyntax = prepaySyntax => {
+  handleCopyPrepaySyntax = (prepaySyntax) => {
     this.hideCopyCardModal();
     Clipboard.setString(prepaySyntax);
     showMessage({
       type: 'success',
-      message: 'Đã sao chép cú pháp nạp trả trước'
+      message: this.props.t('copiedPrepaidSyntax'),
     });
   };
 
-  handleCopyPostpaidSyntax = postpaidSyntax => {
+  handleCopyPostpaidSyntax = (postpaidSyntax) => {
     this.hideCopyCardModal();
     Clipboard.setString(postpaidSyntax);
     showMessage({
       type: 'success',
-      message: 'Đã sao chép cú pháp nạp trả sau'
+      message: this.props.t('copiedPostpaidSyntax'),
     });
   };
 
   handleOnOpenMoreMenu = () => {
-    this.refActionSheet.show();
+    config.route.push(config.routes.modalActionSheet, {
+      title: this.props.t('common:otherOptions'),
+      options: this.moreOptions,
+      cancelButtonIndex: this.isBuyCard ? CANCEL_ACTION : CANCEL_ACTION - 1,
+      destructiveButtonIndex: this.isBuyCard
+        ? DELETE_ACTION
+        : DELETE_ACTION - 1,
+      onPress: this.handleSelectMoreOptions,
+    });
   };
 
   renderSendCardModal = () => {
     const allCardInfo = [
-      ['Nhà mạng:', 'Viettel'],
-      ['Số thẻ:', this.props.cardCode],
-      ['Số seri:', this.props.cardSeri],
-      ['Cú pháp nạp:', this.props.syntaxPrepaid]
+      [`${this.props.t('network')}:`, 'Viettel'],
+      [`${this.props.t('cardNumber')}:`, this.props.cardCode],
+      [`${this.props.t('serialNumber')}:`, this.props.cardSeri],
+      [`${this.props.t('rechargeSyntax')}:`, this.props.syntaxPrepaid],
     ];
     return (
       <ModalOverlay
         visible={this.state.sendCardVisible}
-        heading="Gửi thông tin thẻ nạp"
-        onClose={this.hideSendCardModal}
-      >
+        heading={this.props.t('sendCardInfo')}
+        onClose={this.hideSendCardModal}>
         <ListItem
-          heading="Gửi toàn bộ thông tin thẻ"
+          heading={this.props.t('sendFullCardInfo')}
           texts={allCardInfo}
           onPress={() => this.handleSendAllCardInfo(allCardInfo)}
         />
         <ListItem
-          heading="Cú pháp nạp thẻ trả trước"
+          heading={this.props.t('cardPrepaidRechargeSyntax')}
           text={this.props.syntaxPrepaid}
           onPress={() => this.handleSendPrepaySyntax(this.props.syntaxPrepaid)}
         />
         <ListItem
-          heading="Cú pháp nạp thẻ trả sau"
+          heading={this.props.t('cardPostpaidRechargeSyntax')}
           text={this.props.syntaxPostpaid}
           onPress={() =>
             this.handleSendPostpaidSyntax(this.props.syntaxPostpaid)
@@ -210,16 +214,15 @@ class CardItem extends Component {
     return (
       <ModalOverlay
         visible={this.state.useCardNowVisible}
-        heading="Nạp ngay"
-        onClose={this.hideUseCardNowModal}
-      >
+        heading={this.props.t('rechargeNow')}
+        onClose={this.hideUseCardNowModal}>
         <ListItem
-          heading="Cú pháp nạp thẻ trả trước"
+          heading={this.props.t('cardPrepaidRechargeSyntax')}
           text={this.props.syntaxPrepaid}
           onPress={() => this.handleCallPrepaySyntax(this.props.syntaxPrepaid)}
         />
         <ListItem
-          heading="Cú pháp nạp thẻ trả sau"
+          heading={this.props.t('cardPostpaidRechargeSyntax')}
           text={this.props.syntaxPostpaid}
           onPress={() =>
             this.handleCallPostpaidSyntax(this.props.syntaxPostpaid)
@@ -230,42 +233,38 @@ class CardItem extends Component {
   };
 
   renderCopyCardModal = () => {
+    const cardData = [
+      [`${this.props.t('cardNumber')}:`, this.props.cardCode],
+      [`${this.props.t('serialNumber')}:`, this.props.cardSeri],
+    ];
+
     return (
       <ModalOverlay
         visible={this.state.copyCardVisible}
-        heading="Sao chép thẻ nạp"
-        onClose={this.hideCopyCardModal}
-      >
+        heading={this.props.t('copyCard')}
+        onClose={this.hideCopyCardModal}>
         <ListItem
-          heading="Sao chép mã thẻ và số seri"
-          texts={[
-            ['Số thẻ:', this.props.cardCode],
-            ['Số seri:', this.props.cardSeri]
-          ]}
-          onPress={() =>
-            this.handleCopyCardCodeAndSeri([
-              ['Số thẻ:', this.props.cardCode],
-              ['Số seri:', this.props.cardSeri]
-            ])
-          }
+          heading={this.props.t('copyCardCodeAndSerial')}
+          texts={cardData}
+          onPress={() => this.handleCopyCardCodeAndSeri(cardData)}
         />
         <ListItem
-          heading="Sao chép mã thẻ"
+          heading={this.props.t('copyCardCode')}
           text={this.props.cardCode}
           onPress={() => this.handleCopyCardCode(this.props.cardCode)}
         />
         <ListItem
-          heading="Sao chép số seri"
+          heading={this.props.t('copySerial')}
           text={this.props.cardSeri}
           onPress={() => this.handleCopyCardSeri(this.props.cardSeri)}
         />
         <ListItem
-          heading="Sao chép cú pháp nạp thẻ trả trước"
+          heading={this.props.t('copyPrepaidSyntax')}
           text={this.props.syntaxPrepaid}
           onPress={() => this.handleCopyPrepaySyntax(this.props.syntaxPrepaid)}
         />
         <ListItem
-          heading="Sao chép cú pháp nạp thẻ trả sau"
+          heading={this.props.t('copyPostpaidSyntax')}
           text={this.props.syntaxPostpaid}
           onPress={() =>
             this.handleCopyPostpaidSyntax(this.props.syntaxPostpaid)
@@ -280,23 +279,23 @@ class CardItem extends Component {
 
     if (this.isBuyCard) {
       if (this.state.isUsed) {
-        options[MARK_AS_USED_ACTION] = 'Đánh dấu là chưa dùng';
+        options[MARK_AS_USED_ACTION] = this.props.t('markAsUnused');
       } else {
-        options[MARK_AS_USED_ACTION] = 'Đánh dấu là đã dùng';
+        options[MARK_AS_USED_ACTION] = this.props.t('markAsUsed');
       }
     }
     if (this.state.isPay) {
-      options[MARK_AS_PAID_ACTION] = 'Đánh dấu là chưa thanh toán';
+      options[MARK_AS_PAID_ACTION] = this.props.t('markAsUnpaid');
     } else {
-      options[MARK_AS_PAID_ACTION] = 'Đánh dấu là đã thanh toán';
+      options[MARK_AS_PAID_ACTION] = this.props.t('markAsPaid');
     }
 
-    options[DELETE_ACTION] = 'Xóa';
-    options[CANCEL_ACTION] = 'Đóng lại';
+    options[DELETE_ACTION] = this.props.t('common:delete');
+    options[CANCEL_ACTION] = this.props.t('common:cancel');
     return options;
   }
 
-  handleSelectMoreOptions = index => {
+  handleSelectMoreOptions = (index) => {
     switch (this.isBuyCard ? index : index + 1) {
       case MARK_AS_USED_ACTION:
       case MARK_AS_NO_USE_YET_ACTION:
@@ -310,19 +309,20 @@ class CardItem extends Component {
         const options = {
           method: 'POST',
           body: {
-            delete_flag: 1
-          }
+            delete_flag: 1,
+          },
         };
         internalFetch(config.rest.changeOrder(this.props.cardId), options).then(
-          response => {
+          (response) => {
             showMessage({
-              type: 'success',
-              message: response.message
+              type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+              message:
+                response.message || this.props.t('common:api.error.message'),
             });
             this.setState({
-              isDeleted: true
+              isDeleted: true,
             });
-          }
+          },
         );
         break;
       case CANCEL_ACTION:
@@ -334,20 +334,20 @@ class CardItem extends Component {
     const options = {
       method: 'POST',
       body: {
-        is_used: this.state.isUsed ? 0 : 1
-      }
+        is_used: this.state.isUsed ? 0 : 1,
+      },
     };
     internalFetch(config.rest.changeOrder(this.props.cardId), options).then(
-      response => {
+      (response) => {
         showMessage({
-          type: 'success',
-          message: response.message
+          type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+          message: response.message || this.props.t('common:api.error.message'),
         });
         this.setState({
           isUsed: !!response.data.is_used,
-          statusView: response.data.status_view
+          statusView: response.data.status_view,
         });
-      }
+      },
     );
   };
 
@@ -355,20 +355,20 @@ class CardItem extends Component {
     const options = {
       method: 'POST',
       body: {
-        is_pay: this.state.isPay ? 0 : 1
-      }
+        is_pay: this.state.isPay ? 0 : 1,
+      },
     };
     internalFetch(config.rest.changeOrder(this.props.cardId), options).then(
-      response => {
+      (response) => {
         showMessage({
-          type: 'success',
-          message: response.message
+          type: response?.status === STATUS_SUCCESS ? 'success' : 'danger',
+          message: response.message || this.props.t('common:api.error.message'),
         });
         this.setState({
           isPay: !!response.data.is_pay,
-          statusView: response.data.status_view
+          statusView: response.data.status_view,
         });
-      }
+      },
     );
   };
 
@@ -377,7 +377,7 @@ class CardItem extends Component {
       return null;
     }
     return (
-      <Fragment>
+      <>
         <CardItemComponent
           cardId={this.props.cardId}
           networkType={this.props.networkType}
@@ -403,20 +403,9 @@ class CardItem extends Component {
         {this.renderUseCardNowModal()}
 
         {this.renderCopyCardModal()}
-
-        <ActionSheet
-          ref={ref => (this.refActionSheet = ref)}
-          title={'Tùy chọn khác'}
-          options={this.moreOptions}
-          cancelButtonIndex={this.isBuyCard ? CANCEL_ACTION : CANCEL_ACTION - 1}
-          destructiveButtonIndex={
-            this.isBuyCard ? DELETE_ACTION : DELETE_ACTION - 1
-          }
-          onPress={this.handleSelectMoreOptions}
-        />
-      </Fragment>
+      </>
     );
   }
 }
 
-export default CardItem;
+export default withTranslation(['phoneCard', 'common'])(CardItem);

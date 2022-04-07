@@ -1,26 +1,35 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  View,
-  ActivityIndicator,
-  SafeAreaView
-} from 'react-native';
-import store from '../../store/Store';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
+import appConfig from 'app-config';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
 import NoResult from '../NoResult';
 import ChatRow from './ChatRow';
-import { Actions } from 'react-native-router-flux';
-import appConfig from 'app-config';
-import { setStater } from '../../packages/tickid-chat/helper';
-import EventTracker from 'app-helper/EventTracker';
+import {
+  ScreenWrapper,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+} from 'src/components/base';
+import Loading from '../Loading';
 
-@observer
 class List extends Component {
+  static contextType = ThemeContext;
+
   state = {
-    loading: false,
+    loading: true,
+    loadingMore: false,
     refreshing: false,
-    customers: []
+    customers: [],
   };
   limit = 20;
   offset = 0;
@@ -30,11 +39,11 @@ class List extends Component {
   source = null;
   eventTracker = new EventTracker();
 
-  componentDidMount() {
-    this.setState({
-      loading: true
-    });
+  get theme() {
+    return getTheme(this);
+  }
 
+  componentDidMount() {
     this.getListCustomer();
     this.eventTracker.logCurrentView();
   }
@@ -48,16 +57,12 @@ class List extends Component {
     this.eventTracker.clearTracking();
   }
 
-  handleSearch() {
-    Actions.search_chat();
-  }
-
   startTimeoutGetCustomers() {
     this.timeoutGetListCustomer = setTimeout(() => {
       this.isLoadMore = false;
       this.getListCustomer({
         limit: this.offset,
-        offset: 0
+        offset: 0,
       });
     }, 3000);
   }
@@ -65,9 +70,9 @@ class List extends Component {
   async getListCustomer(
     data = {
       limit: this.limit,
-      offset: this.offset
+      offset: this.offset,
     },
-    delay = 1000
+    delay = 1000,
   ) {
     try {
       clearTimeout(this.timeoutGetListCustomer);
@@ -88,13 +93,9 @@ class List extends Component {
               if (this.isLoadMore) {
                 customers = this.state.customers.concat(customers);
               }
-              this.setState({ customers });
+              this.setState({customers});
             } else {
               this.isLoadMore && (this.offset -= this.limit);
-              flashShowMessage({
-                type: 'danger',
-                message: 'Không còn bản ghi nào!'
-              });
             }
           }
         }
@@ -105,22 +106,17 @@ class List extends Component {
     } finally {
       if (!this.unmounted) {
         this.setState({
-          refreshing: false
+          refreshing: false,
+          loading: false,
+          loadingMore: false,
         });
-        setTimeout(
-          () =>
-            setStater(this, this.unmounted, {
-              loading: false
-            }),
-          1000
-        );
       }
     }
   }
 
   _onRefresh() {
     this.offset = 0;
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.isLoadMore = false;
     this.getListCustomer();
   }
@@ -129,138 +125,95 @@ class List extends Component {
     if (!this.isLoadMore) {
       this.offset += this.limit;
       this.isLoadMore = true;
-      this.setState({ loading: true });
+      this.setState({loadingMore: true});
       this.getListCustomer();
     }
   }
 
   handlePressCustomer(item) {
-    Actions.push(appConfig.routes.amazingUserChat, {
-      phoneNumber: item.tel,
-      user: item,
-      title: item.name,
-      conversation_id: item.id
-    });
+    push(
+      appConfig.routes.amazingUserChat,
+      {
+        phoneNumber: item.tel,
+        user: item,
+        title: item.name,
+        conversation_id: item.id,
+      },
+      this.theme,
+    );
   }
 
   render() {
     const customers = [...this.state.customers];
-    customers.push({ id: 'chat' });
+    customers.push({id: 'chat'});
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        {this.state.customers.length === 0 ? (
-          !!!this.state.loading && (
+      <ScreenWrapper>
+        {this.state.loading && <Loading center />}
+        <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          ListFooterComponent={
             <>
+              {this.props.footerComponent}
+              {this.state.loadingMore ? (
+                <View style={styles.loadingMoreContainer}>
+                  <ActivityIndicator animating />
+                </View>
+              ) : null}
+            </>
+          }
+          showsHorizontalScrollIndicator={false}
+          data={this.state.customers || []}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={this.onLoadMore.bind(this)}
+          onEndReachedThreshold={0.4}
+          renderItem={({item, index}) => {
+            // console.log(item)
+            return (
+              <ChatRow
+                title={item.name}
+                img={item.image}
+                phone={item.tel}
+                unreadChat={
+                  item.unread === '0'
+                    ? ''
+                    : item.unread > 8
+                    ? '9+'
+                    : item.unread + ''
+                }
+                isSeparate={index !== this.state.customers.length - 1}
+                isUnread={item.unread !== '0'}
+                subTitle={item.message}
+                timeAgo={item.time_ago}
+                onPress={() => this.handlePressCustomer(item)}
+              />
+            );
+          }}
+          ListEmptyComponent={
+            !this.state.loading &&
+            !this.state.loadingMore && (
               <NoResult
                 iconName="message-text-outline"
-                message="Bạn chưa có lịch sử chat"
+                message={this.props.t('noConversations')}
               />
-              {this.props.extraEmptyComponent}
-            </>
-          )
-        ) : (
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-            ListFooterComponent={
-              <>
-                {this.props.footerComponent}
-                {this.state.loading ? (
-                  <View
-                    style={{
-                      height: 45,
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <ActivityIndicator animating />
-                  </View>
-                ) : null}
-              </>
-            }
-            style={styles.list}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            data={this.state.customers}
-            keyExtractor={item => item.id.toString()}
-            onEndReached={this.onLoadMore.bind(this)}
-            onEndReachedThreshold={0.4}
-            renderItem={({ item, index }) => {
-              // console.log(item)
-              return (
-                <ChatRow
-                  title={item.name}
-                  img={item.image}
-                  phone={item.tel}
-                  unreadChat={
-                    item.unread === '0'
-                      ? ''
-                      : item.unread > 8
-                      ? '9+'
-                      : item.unread + ''
-                  }
-                  isSeparate={
-                    this.state.customers.length < 10 ||
-                    index !== this.state.customers.length - 1
-                  }
-                  isUnread={item.unread !== '0'}
-                  subTitle={item.message}
-                  timeAgo={item.time_ago}
-                  onPress={() => this.handlePressCustomer(item)}
-                />
-              );
-            }}
-          />
-        )}
-      </SafeAreaView>
+            )
+          }
+        />
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  list: {
-    width: Util.size.width,
-    flexGrow: 1
-  },
-  container: {
-    flex: 1,
-    paddingBottom: 15,
-    backgroundColor: BGR_SCREEN_COLOR
-  },
-  loadingWrapper: {
-    position: 'absolute',
-    width: '100%',
-    height: appConfig.device.isAndroid ? '100%' : appConfig.device.height
-  },
-  button: {
-    marginTop: 20,
-    marginBottom: 30,
-    height: 40,
-    backgroundColor: DEFAULT_COLOR,
-    alignSelf: 'center',
+  loadingMoreContainer: {
+    height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5,
-    minWidth: 150,
-    maxWidth: 220,
-    width: Util.size.width * 0.5
   },
-  buttonText: {
-    color: '#fff',
-    fontFamily: 'Helvetica',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  iconWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    marginRight: 15
-  }
 });
 
-export default List;
+export default withTranslation('chat')(List);

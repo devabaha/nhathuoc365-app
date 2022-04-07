@@ -1,36 +1,52 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Keyboard,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
+import {View, StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-
-import {APIRequest} from 'src/network/Entity';
-import APIHandler from 'src/network/APIHandler';
+import useIsMounted from 'react-is-mounted-hook';
+import {reaction, toJS} from 'mobx';
+import {Observer} from 'mobx-react';
+import {isEmpty, isEqual} from 'lodash';
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import ListTag from '../components/ListTag';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
 import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
+import {mergeStyles} from 'src/Themes/helper';
+import {hideDrawer} from 'src/components/Drawer';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import {
+  BundleIconSetName,
+  NavBarWrapper,
+  TypographyType,
+} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import ListTag from '../components/ListTag';
 import ListPrice from '../components/ListPrice';
-import {reaction, toJS} from 'mobx';
-import {isEmpty, isEqual} from 'lodash';
-import Button from '../../../Button';
-import useIsMounted from 'react-is-mounted-hook';
-import {hideDrawer} from '../../../Drawer';
-import ScreenWrapper from '../../../ScreenWrapper';
-import Container from 'src/components/Layout/Container';
+import Button from 'src/components/Button';
+import {
+  IconButton,
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+  Container,
+  Icon,
+} from 'src/components/base';
 import NoResult from 'src/components/NoResult';
+// skeleton
 import FilterDrawerSkeleton from './FilterDrawerSkeleton';
 
-function FilterDrawer() {
-  const {t} = useTranslation();
+function FilterDrawer(props) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation(['common', 'filterProduct']);
+
   const isMounted = useIsMounted();
 
   const getTagsRequest = new APIRequest();
@@ -149,9 +165,9 @@ function FilterDrawer() {
         !disabled &&
           flashShowMessage({
             type: 'danger',
-            message: 'Giá thấp nhất phải nhỏ hơn giá cao nhất',
+            message: t('filterProduct:priceRange'),
           });
-        setDisabled('Giá thấp nhất phải nhỏ hơn giá cao nhất');
+        setDisabled(t('filterProduct:priceRange'));
         return true;
       }
     }
@@ -178,171 +194,174 @@ function FilterDrawer() {
     store.setSelectedFilter({});
   };
 
+  const renderResetFilterIcon = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="sync"
+        style={[
+          titleStyle,
+          styles.closeIcon,
+          !isResetFilterDisabled() && styles.resetIcon,
+        ]}
+      />
+    );
+  };
+
+  const btnFooterContainerStyle = useMemo(() => {
+    return mergeStyles(styles.btnFooterContainer, {
+      borderColor: theme.color.contentBackgroundStrong,
+      borderTopWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
+
+  const navBarContainerStyle = useMemo(() => {
+    return {backgroundColor: theme.color.navBarBackground};
+  }, [theme]);
+
+  const navBarContentStyle = useMemo(() => {
+    return {color: theme.color.onNavBarBackground};
+  }, [theme]);
+
   return (
-    <View style={styles.wrapper}>
-      {/* {isLoading && <Loading center />} */}
-      <View style={styles.maskTop} />
-      <View style={styles.maskBottom} />
-      <ScreenWrapper containerStyle={styles.safeArea}>
-        <Container row>
+    <ScreenWrapper>
+      <NavBarWrapper containerStyle={navBarContainerStyle}>
+        <Container noBackground row flex>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Lọc sản phẩm</Text>
+            <Typography
+              type={TypographyType.TITLE_SEMI_LARGE}
+              style={[styles.title, navBarContentStyle]}>
+              {t('filterProduct:title')}
+            </Typography>
           </View>
-          <TouchableOpacity onPress={handleCloseFilter}>
-            <FontAwesome5Icon name="times" style={styles.closeIcon} />
-          </TouchableOpacity>
+          <IconButton
+            bundle={BundleIconSetName.FONT_AWESOME_5}
+            name="times"
+            iconStyle={[styles.closeIcon, navBarContentStyle]}
+            onPress={handleCloseFilter}
+          />
         </Container>
+      </NavBarWrapper>
 
-        <ScrollView
-          ref={refScrollView}
-          keyboardShouldPersistTaps="handled"
-          style={styles.listContainer}
-          contentContainerStyle={styles.contentContainer}>
-          {isLoading ? (
-            <FilterDrawerSkeleton />
-          ) : hasData ? (
-            <>
-              <ListTag
-                data={dataFilterTag}
-                onChangeValue={handleSelected}
+      <ScrollView
+        ref={refScrollView}
+        keyboardShouldPersistTaps="handled"
+        style={styles.listContainer}
+        contentContainerStyle={styles.contentContainer}>
+        {isLoading ? (
+          <FilterDrawerSkeleton />
+        ) : hasData ? (
+          <>
+            <ListTag
+              data={dataFilterTag}
+              onChangeValue={handleSelected}
+              defaultValue={defaultSelected}
+              isOpen
+            />
+            {!!priceValueString && (
+              <ListPrice
+                title={t('filterProduct:price')}
                 defaultValue={defaultSelected}
-                isOpen
+                onChangeValue={handleSelectedPrice}
+                onChangePriceRange={checkPriceRange}
+                error={disabled}
+                refScrollView={refScrollView}
               />
-              {!!priceValueString && (
-                <ListPrice
-                  title="Giá tiền"
-                  defaultValue={defaultSelected}
-                  onChangeValue={handleSelectedPrice}
-                  onChangePriceRange={checkPriceRange}
-                  error={disabled}
-                  refScrollView={refScrollView}
-                />
-              )}
-            </>
-          ) : (
-            <NoResult
-              iconName="filter-remove-outline"
-              message="Chưa có bộ lọc"
-            />
-          )}
-        </ScrollView>
-
-        {hasData && (
-          <Container row style={styles.btnFooterContainer}>
-            <Button
-              disabled={isResetFilterDisabled()}
-              containerStyle={styles.btnResetContainer}
-              btnContainerStyle={
-                !isResetFilterDisabled() && styles.btnResetContent
-              }
-              onPress={handleResetFilter}>
-              <AntDesignIcon name="sync" style={[styles.closeIcon, !isResetFilterDisabled() && styles.resetIcon]} />
-            </Button>
-
-            <Button
-              containerStyle={styles.btnApplyContainer}
-              disabled={disabled || isResetFilterDisabled()}
-              title="Áp dụng"
-              onPress={handleApplyFilter}
-            />
-          </Container>
+            )}
+          </>
+        ) : (
+          <NoResult
+            iconName="filter-remove-outline"
+            message={t('filterProduct:noResult')}
+          />
         )}
-        {appConfig.device.isIOS && <KeyboardSpacer />}
-      </ScreenWrapper>
-    </View>
+      </ScrollView>
+
+      {hasData && (
+        <Observer>
+          {() => (
+            <Container
+              safeLayout={!store.keyboardTop}
+              row
+              style={btnFooterContainerStyle}>
+              <Button
+                disabled={isResetFilterDisabled()}
+                neutral
+                containerStyle={styles.btnResetContainer}
+                renderTitleComponent={renderResetFilterIcon}
+                onPress={handleResetFilter}
+              />
+
+              <Button
+                containerStyle={styles.btnApplyContainer}
+                disabled={disabled || isResetFilterDisabled()}
+                title={t('filterProduct:apply')}
+                onPress={handleApplyFilter}
+              />
+            </Container>
+          )}
+        </Observer>
+      )}
+      {appConfig.device.isIOS && <KeyboardSpacer />}
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 10,
   },
-  safeArea: {
-    backgroundColor: 'transparent',
-  },
-  listContainer: {
-    backgroundColor: appConfig.colors.white,
-  },
+  listContainer: {},
   contentContainer: {
     flexGrow: 1,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
     paddingTop: 15,
-  },
-  btnContainer: {
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    backgroundColor: appConfig.colors.primary,
-    marginHorizontal: 15,
   },
   absolute: {
     marginTop: 15,
   },
   titleContainer: {
-    paddingVertical: 15,
     paddingHorizontal: 15,
     flex: 1,
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
     letterSpacing: 1,
     textTransform: 'uppercase',
-  },
-  txtButton: {
-    color: '#fff',
-    fontWeight: '500',
   },
 
   maskTop: {
     position: 'absolute',
-    backgroundColor: appConfig.colors.primary,
     width: '100%',
     height: '50%',
   },
   maskBottom: {
     position: 'absolute',
-    backgroundColor: appConfig.colors.white,
     width: '100%',
     height: '50%',
     bottom: 0,
   },
 
   closeIcon: {
-    color: '#fff',
     fontSize: 20,
     paddingHorizontal: 15,
   },
-  resetIcon: {
-    color: '#333',
-  },
+  resetIcon: {},
 
   btnResetContainer: {
     width: undefined,
     flex: 0.3,
     paddingHorizontal: 10,
   },
-  btnResetContent: {
-    backgroundColor: appConfig.colors.white,
-    borderWidth: .5
-  },
+  btnResetContent: {},
   btnApplyContainer: {
     paddingLeft: 0,
     paddingRight: 10,
     width: undefined,
     flex: 1,
   },
-  btnFooterContainer: {
-    borderColor: '#eee',
-    borderTopWidth: 0.5,
-  },
+  btnFooterContainer: {},
 });
 
 export default React.memo(FilterDrawer);

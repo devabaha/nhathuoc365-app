@@ -1,29 +1,38 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, Modal, StyleSheet, Animated} from 'react-native';
 import PropTypes from 'prop-types';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
-import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  Animated
-} from 'react-native';
-import FingerprintButton from './FingerprintButton';
-import PasswordInput from './PasswordInput';
-import Keyboard from './Keyboard';
-import Header from './Header';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   SHOW_VALUE,
   HIDE_VALUE,
   HIDE_BOTTOM_POSITION,
   SHOW_BUTTON_POSITION,
-  ANIMATION_DURATION
+  ANIMATION_DURATION,
 } from './constants';
+// custom components
+import {
+  BaseButton,
+  Container,
+  TextButton,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
+import FingerprintButton from './FingerprintButton';
+import PasswordInput from './PasswordInput';
+import Keyboard from './Keyboard';
+import Header from './Header';
 
 const defaultListener = () => {};
 
 class AuthenKeyboard extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onClose: PropTypes.func,
     onPressKeyboard: PropTypes.func,
@@ -39,7 +48,7 @@ class AuthenKeyboard extends Component {
     visible: PropTypes.bool,
     hideClose: PropTypes.bool,
     showFingerprint: PropTypes.bool,
-    showForgotPassword: PropTypes.bool
+    showForgotPassword: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -50,38 +59,44 @@ class AuthenKeyboard extends Component {
     onOpenFingerprint: defaultListener,
     description: '',
     passwordValue: '',
-    headerTitle: 'Nhập mật khẩu',
-    forgotText: 'Quên mật khẩu?',
     errorMessage: '',
     fingerprintLabel: undefined,
     visible: false,
     hideClose: false,
     showFingerprint: true,
-    showForgotPassword: true
+    showForgotPassword: true,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    visible: this.props.visible,
+    sideUp: new Animated.Value(
+      this.props.visible ? SHOW_BUTTON_POSITION : HIDE_BOTTOM_POSITION,
+    ),
+    opacity: new Animated.Value(this.props.visible ? SHOW_VALUE : HIDE_VALUE),
+  };
 
-    this.state = {
-      visible: props.visible,
-      sideUp: new Animated.Value(
-        props.visible ? SHOW_BUTTON_POSITION : HIDE_BOTTOM_POSITION
-      ),
-      opacity: new Animated.Value(props.visible ? SHOW_VALUE : HIDE_VALUE)
-    };
+  get theme() {
+    return getTheme(this);
+  }
+
+  get headerTitle() {
+    return this.props.headerTitle || this.props.t('enterPassword');
+  }
+
+  get forgotText() {
+    return this.props.forgotText || this.props.t('forgetPassword') + '?';
   }
 
   async componentDidUpdate(prevProps) {
     if (this.props.visible !== prevProps.visible) {
       if (this.props.visible) {
         await this.setState({
-          visible: true
+          visible: true,
         });
         this.runAnimation(
           this.state.sideUp,
           SHOW_BUTTON_POSITION,
-          ANIMATION_DURATION
+          ANIMATION_DURATION,
         );
         this.runAnimation(this.state.opacity, SHOW_VALUE, ANIMATION_DURATION);
       } else {
@@ -89,22 +104,49 @@ class AuthenKeyboard extends Component {
         await this.runAnimation(
           this.state.sideUp,
           HIDE_BOTTOM_POSITION,
-          ANIMATION_DURATION
+          ANIMATION_DURATION,
         );
         this.setState({
-          visible: false
+          visible: false,
         });
       }
     }
   }
 
   runAnimation(animation, toValue, duration, onDone = () => {}) {
-    return new Promise(resolve => {
-      Animated.timing(animation, { toValue, duration }).start(() => {
+    return new Promise((resolve) => {
+      Animated.timing(animation, {
+        toValue,
+        duration,
+        useNativeDriver: true,
+      }).start(() => {
         resolve();
         onDone();
       });
     });
+  }
+
+  get overlayStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay30,
+    };
+  }
+
+  get forgotTextStyle() {
+    return {
+      color: this.theme.color.accent2,
+    };
+  }
+
+  get errorMessageStyle() {
+    return {color: this.theme.color.danger};
+  }
+
+  get contentStyle() {
+    return {
+      borderTopLeftRadius: this.theme.layout.borderRadiusMedium,
+      borderTopRightRadius: this.theme.layout.borderRadiusMedium,
+    };
   }
 
   render() {
@@ -113,31 +155,40 @@ class AuthenKeyboard extends Component {
         transparent
         animationType="fade"
         visible={this.state.visible}
-        onRequestClose={this.props.onClose}
-      >
-        <View style={styles.overlay}>
-          <TouchableOpacity
+        onRequestClose={this.props.onClose}>
+        <View style={[styles.overlay, this.overlayStyle]}>
+          <BaseButton
             style={styles.closeOverlay}
             onPress={this.props.onClose}
           />
 
-          <Animated.View
+          <Container
+            safeLayout
+            animated
             style={[
               styles.content,
+              this.contentStyle,
               {
-                bottom: this.state.sideUp,
-                opacity: this.state.opacity
-              }
-            ]}
-          >
+                transform: [
+                  {
+                    translateY: this.state.sideUp,
+                  },
+                ],
+                opacity: this.state.opacity,
+              },
+            ]}>
             <Header
-              title={this.props.headerTitle}
+              title={this.headerTitle}
               onClose={this.props.onClose}
               hideClose={this.props.hideClose}
             />
 
             {!!this.props.description && (
-              <Text style={styles.description}>{this.props.description}</Text>
+              <Typography
+                type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                style={styles.description}>
+                {this.props.description}
+              </Typography>
             )}
 
             <PasswordInput value={this.props.passwordValue} />
@@ -149,19 +200,21 @@ class AuthenKeyboard extends Component {
             />
 
             {this.props.showForgotPassword && (
-              <TouchableOpacity
+              <TextButton
+                titleStyle={this.forgotTextStyle}
                 style={styles.forgotBtn}
-                onPress={this.props.onForgotPress}
-              >
-                <Text style={styles.forgotText}>{this.props.forgotText}</Text>
-              </TouchableOpacity>
+                onPress={this.props.onForgotPress}>
+                {this.forgotText}
+              </TextButton>
             )}
 
             {!!this.props.errorMessage && (
               <View style={styles.errorMessageWrap}>
-                <Text style={styles.errorMessage}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={[styles.errorMessage, this.errorMessageStyle]}>
                   {this.props.errorMessage}
-                </Text>
+                </Typography>
               </View>
             )}
 
@@ -169,7 +222,7 @@ class AuthenKeyboard extends Component {
               onPress={this.props.onPressKeyboard}
               onClear={this.props.onClearPassword}
             />
-          </Animated.View>
+          </Container>
         </View>
       </Modal>
     );
@@ -179,45 +232,32 @@ class AuthenKeyboard extends Component {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
   },
   closeOverlay: {
-    flex: 1
+    flex: 1,
   },
   content: {
     overflow: 'hidden',
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    marginBottom: getBottomSpace()
   },
   forgotBtn: {
     marginTop: 12,
     marginBottom: 4,
-    paddingVertical: 8
+    paddingVertical: 8,
+    alignSelf: 'center',
   },
   forgotText: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#0084ff',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   errorMessageWrap: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   errorMessage: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: 'red',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   description: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#333',
     textAlign: 'center',
-    marginTop: 12
-  }
+    marginTop: 12,
+  },
 });
 
-export default AuthenKeyboard;
+export default withTranslation('phoneCard')(AuthenKeyboard);

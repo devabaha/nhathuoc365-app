@@ -7,7 +7,7 @@ import BasePermission from '../BasePermission';
 
 import appConfig from 'app-config';
 import {REQUEST_RESULT_TYPE} from '../constants';
-import {Actions} from 'react-native-router-flux';
+import {push} from 'app-helper/routing';
 
 const CAMERA_PERMISSIONS_TYPE = appConfig.device.isIOS
   ? PERMISSIONS.IOS.CAMERA
@@ -23,7 +23,7 @@ class CameraPermission extends BasePermission {
   }
 
   openPermissionAskingModal() {
-    Actions.push(appConfig.routes.modalConfirm, {
+    push(appConfig.routes.modalConfirm, {
       momo: true,
       title: 'Cho phép sử dụng Camera',
       content: 'Bạn cần cho phép ứng dụng truy cập Camera để có thể chụp ảnh',

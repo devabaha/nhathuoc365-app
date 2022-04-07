@@ -1,20 +1,33 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 FieldItemWrapper.propTypes = {
   children: PropTypes.node,
-  separate: PropTypes.bool
+  separate: PropTypes.bool,
 };
 
 FieldItemWrapper.defaultProps = {
   children: null,
-  separate: false
+  separate: false,
 };
 
 function FieldItemWrapper(props) {
+  const {theme} = useTheme();
+
+  const separateStyle = useMemo(() => {
+    return mergeStyles(styles.separate, {
+      borderBottomWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
-    <View style={[styles.wrapper, props.separate && styles.separate]}>
+    <View style={[styles.wrapper, props.separate && separateStyle]}>
       {props.children}
     </View>
   );
@@ -22,13 +35,11 @@ function FieldItemWrapper(props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 8
+    marginTop: 8,
   },
   separate: {
     paddingBottom: 8,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: StyleSheet.hairlineWidth
-  }
+  },
 });
 
 export default FieldItemWrapper;

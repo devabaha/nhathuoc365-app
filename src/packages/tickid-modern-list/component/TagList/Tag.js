@@ -1,42 +1,64 @@
-import React from 'react';
-import { Text, StyleSheet, TouchableHighlight } from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
+import {isEmpty} from 'lodash';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {AppFilledButton, TypographyType} from 'src/components/base';
 
-const Tag = props => {
-  const activeStyle = props.active
-    ? props.activeStyle
-      ? props.activeStyle
-      : styles.active
-    : {};
+const Tag = (props) => {
+  const {theme} = useTheme();
 
-  const activeTextStyle = props.active
-    ? props.activeTextStyle
-      ? props.activeTextStyle
-      : styles.textActive
-    : {};
+  const activeStyle = useMemo(() => {
+    return props.active
+      ? !isEmpty(props.activeStyle)
+        ? props.activeStyle
+        : {}
+      : {};
+  }, [props, theme]);
 
-  const disabledStyle = props.disabled
-    ? props.disabledStyle
-      ? props.disabledStyle
-      : styles.disabled
-    : {};
+  const activeTextStyle = useMemo(() => {
+    return (
+      props.active && !isEmpty(props.activeTextStyle) && props.activeTextStyle
+    );
+  }, [props.active, props.activeTextStyle, theme]);
 
-  const disabledTextStyle = props.disabled
-    ? props.disabledTextStyle
-      ? props.disabledTextStyle
-      : styles.textDisabled
-    : {};
+  const disabledStyle = useMemo(() => {
+    return (
+      props.disabled && !isEmpty(props.disabledStyle) && props.disabledStyle
+    );
+  }, [props.disabled, props.disabledStyle, theme]);
+
+  const disabledTextStyle = useMemo(() => {
+    return (
+      props.disabled &&
+      !isEmpty(props.disabledTextStyle) &&
+      props.disabledTextStyle
+    );
+  }, [props.disabled, props.disabledTextStyle, theme]);
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      borderRadius: theme.layout.borderRadiusSmall,
+    });
+  }, [theme]);
 
   return (
-    <TouchableHighlight
+    <AppFilledButton
+      useTouchableHighlight
+      typoProps={{type: TypographyType.DESCRIPTION_MEDIUM_TERTIARY}}
       disabled={props.disabled}
-      style={[styles.container, activeStyle, disabledStyle]}
-      onPress={props.onPress}
-      underlayColor="#999"
-    >
-      <Text style={[styles.text, activeTextStyle, disabledTextStyle]}>
-        {props.item}
-      </Text>
-    </TouchableHighlight>
+      primary={props.active}
+      secondary={false}
+      neutral={!props.active}
+      style={[containerStyle, activeStyle, disabledStyle]}
+      titleStyle={[activeTextStyle, disabledTextStyle]}
+      onPress={props.onPress}>
+      {props.item}
+    </AppFilledButton>
   );
 };
 
@@ -44,26 +66,8 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
     paddingVertical: 7,
-    backgroundColor: '#eee',
-    borderRadius: 4,
-    margin: 5
+    margin: 5,
   },
-  text: {
-    fontSize: 14,
-    color: '#404040'
-  },
-  active: {
-    backgroundColor: '#46a6cc'
-  },
-  textActive: {
-    color: '#fff'
-  },
-  disabled: {
-    backgroundColor: '#eee'
-  },
-  textDisabled: {
-    color: '#8c8c8c'
-  }
 });
 
 export default Tag;

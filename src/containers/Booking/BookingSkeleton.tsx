@@ -1,16 +1,13 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-
+// configs
 import appConfig from 'app-config';
-
-import {Container} from 'src/components/Layout';
-import {
-  CONTENT_SKELETON_COLOR,
-  SKELETON_COLOR,
-} from 'src/components/SkeletonLoading/constants';
+// custom components
+import {Typography, Container, ScrollView, Skeleton} from 'src/components/base';
+// skeleton
 import {SectionContainerSkeleton} from 'src/components/payment/Confirm/components/SectionContainer';
-import { ScrollView } from 'react-native';
 
 const styles = StyleSheet.create({
   shimmer: {
@@ -22,9 +19,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginRight: 10,
   },
-  wrapper: {
-    backgroundColor: SKELETON_COLOR,
-  },
+  wrapper: {},
   container: {
     width: appConfig.device.width,
     paddingVertical: 15,
@@ -36,7 +31,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     marginBottom: 0,
-    borderRadius: 8
+    borderRadius: 8,
   },
   block: {
     padding: 15,
@@ -44,7 +39,6 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    backgroundColor: CONTENT_SKELETON_COLOR,
     height: 7,
     width: 150,
     borderRadius: 4,
@@ -69,28 +63,53 @@ const styles = StyleSheet.create({
 });
 
 const BookingSkeleton = () => {
+  const renderSectionContainerSkeleton = useCallback(() => {
+    return (
+      <View>
+        {Array.from({length: 4}).map((value, index) => (
+          <SectionContainerSkeleton key={index} />
+        ))}
+      </View>
+    );
+  }, []);
+
   return (
     <ScrollView>
       <Shimmer style={styles.shimmer}>
-        <Text style={styles.wrapper}>
-          <Container row style={styles.container}>
-            <Container style={[styles.block, styles.imageContainer]}>
-              <View style={[styles.content, styles.image]} />
-            </Container>
+        <Typography style={styles.wrapper}>
+          <Skeleton container>
+            <Container noBackground row style={styles.container}>
+              <Container
+                noBackground
+                style={[styles.block, styles.imageContainer]}>
+                <Skeleton content style={[styles.content, styles.image]} />
+              </Container>
 
-            <Container flex centerVertical={false} style={styles.block}>
-              <View style={[styles.content, styles.title]} />
-              <View style={[styles.content, styles.description1]} />
-              <View style={[styles.content, styles.description2]} />
-              <View style={[styles.content, styles.description3]} />
+              <Container
+                noBackground
+                flex
+                centerVertical={false}
+                style={styles.block}>
+                <Skeleton content style={[styles.content, styles.title]} />
+                <Skeleton
+                  content
+                  style={[styles.content, styles.description1]}
+                />
+                <Skeleton
+                  content
+                  style={[styles.content, styles.description2]}
+                />
+                <Skeleton
+                  content
+                  style={[styles.content, styles.description3]}
+                />
+              </Container>
             </Container>
-          </Container>
-        </Text>
+          </Skeleton>
+        </Typography>
       </Shimmer>
 
-      {Array.from({length: 4}).map((value, index) => (
-        <SectionContainerSkeleton key={index} />
-      ))}
+      {renderSectionContainerSkeleton()}
     </ScrollView>
   );
 };

@@ -1,12 +1,6 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  FlatList,
-  Alert,
-} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
+// 3-party libs
 import Animated, {
   call,
   timing,
@@ -16,30 +10,47 @@ import Animated, {
   interpolate,
   concat,
 } from 'react-native-reanimated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
-import {Actions} from 'react-native-router-flux';
 import Shimmer from 'react-native-shimmer';
-import Button from 'react-native-button';
-
-import appConfig from 'app-config';
-import store from '../../store/Store';
-import {NotiBadge} from '../Badges';
 import {debounce} from 'lodash';
-import PopupConfirm from '../PopupConfirm';
-import CartItem from './CartItem';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {
+  BundleIconSetName,
+  Container,
+  TypographyType,
+} from 'src/components/base';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 import {
   ORDER_BTN_WIDTH,
   CART_ITEM_WHITE_SPACE,
   CART_ITEM_WIDTH,
 } from './constants';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+// custom components
+import {NotiBadge} from 'src/components/Badges';
+import PopupConfirm from 'src/components/PopupConfirm';
+import CartItem from './CartItem';
+import {BaseButton, Icon, Typography, FlatList} from 'src/components/base';
 
 class CartFooter extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     animatedScrollY: new Animated.Value(0),
     animatedContentOffsetY: new Animated.Value(0),
     animating: false,
+    onProductLoadingStateChange: () => {},
   };
   constructor(props) {
     super(props);
@@ -68,6 +79,10 @@ class CartFooter extends Component {
   translateY = new Value(0);
   forceShowingAnimating = false;
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get animatedStyle() {
     return {
       left: concat(
@@ -87,6 +102,22 @@ class CartFooter extends Component {
       //   outputRange: [0, -this.state.containerHeight],
       // }),
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextState.cartItemUpdateQuantityId !==
+        this.state.cartItemUpdateQuantityId ||
+      nextState.cartItemMinusId !== this.state.cartItemMinusId ||
+      nextState.cartItemPlusId !== this.state.cartItemPlusId
+    ) {
+      this.props.onProductLoadingStateChange(
+        !!nextState.cartItemUpdateQuantityId ||
+          !!nextState.cartItemMinusId ||
+          !!nextState.cartItemPlusId,
+      );
+    }
+    return true;
   }
 
   componentDidMount() {
@@ -341,7 +372,7 @@ class CartFooter extends Component {
   }
 
   onPressCartItem = (item) => {
-    Actions.push(appConfig.routes.item, {item, title: item.name});
+    push(appConfig.routes.item, {item, title: item.name}, this.theme);
   };
 
   renderItems({item}) {
@@ -426,7 +457,7 @@ class CartFooter extends Component {
             <View pointerEvents="none" style={styles.maskContainer}>
               <LinearGradient
                 style={styles.maskLinear}
-                colors={['rgba(255,255,255,0)', 'rgba(255,255,255,.4)']}
+                colors={this.maskColors}
                 angle={90}
                 useAngle
                 locations={[0.3, 0.8]}
@@ -436,30 +467,38 @@ class CartFooter extends Component {
         </View>
       );
     } else {
-      return (
-        <View style={styles.store_cart_container}>
-          <CenterText marginTop={-8} title={t('noFooterItems')} />
-        </View>
-      );
+      return null;
     }
   }
 
   _goPayment() {
     if (store.cart_data && store.cart_products) {
       if (store.cart_data.address_id != 0) {
-        Actions.push(appConfig.routes.paymentConfirm, {
-          goConfirm: true,
-        });
-      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)){
-        Actions.push(appConfig.routes.myAddress, {
-          redirect: 'confirm',
-          goBack: true,
-          isVisibleStoreAddress: true,
-        })
+        push(
+          appConfig.routes.paymentConfirm,
+          {
+            goConfirm: true,
+          },
+          this.theme,
+        );
+      } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
+        push(
+          appConfig.routes.myAddress,
+          {
+            redirect: 'confirm',
+            goBack: true,
+            isVisibleStoreAddress: true,
+          },
+          this.theme,
+        );
       } else {
-        Actions.create_address({
-          redirect: 'confirm',
-        });
+        push(
+          appConfig.routes.createAddress,
+          {
+            redirect: 'confirm',
+          },
+          this.theme,
+        );
       }
     } else {
       const {t} = this.props;
@@ -542,7 +581,9 @@ class CartFooter extends Component {
   }
 
   handleContainerLayout = (e) => {
-    const containerHeight = Math.round(e.nativeEvent.layout.height - appConfig.device.bottomSpace);
+    const containerHeight = Math.round(
+      e.nativeEvent.layout.height - appConfig.device.bottomSpace,
+    );
     if (containerHeight !== this.state.containerHeight) {
       this.setState({
         containerHeight,
@@ -582,7 +623,7 @@ class CartFooter extends Component {
   };
 
   renderQuickOpenCartBtn(isset_cart, cart_data) {
-    const extraStyle = {
+    const extraWrapperStyle = {
       right: concat(
         interpolate(this.translateY, {
           inputRange: [0, 1],
@@ -598,46 +639,110 @@ class CartFooter extends Component {
         inputRange: [0, 1],
         outputRange: [0, 1],
       }),
+    };
+
+    const extraContainerStyle = {
       height: this.state.containerHeight * 0.8,
     };
-    const ButtonComponent = appConfig.device.isIOS
-      ? TouchableHighlight
-      : Button;
     return (
-      <Animated.View style={[styles.quickOpenCartBtnWrapper, extraStyle]}>
-        <View style={styles.quickOpenCartBtnContainer}>
-          <ButtonComponent
-            style={styles.quickOpenCartBtnContentWrapper}
-            containerStyle={styles.quickOpenCartBtnContentWrapper}
-            underlayColor={LightenColor(appConfig.colors.primary, -10)}
-            onPress={this.forceShowCart}>
-            <Animated.View style={styles.quickOpenCartBtnContentContainer}>
-              <View style={[styles.checkout_box]}>
-                <View>
-                  <Ionicons name="ios-cart" size={22} color="#fff" />
-                  {isset_cart && (
-                    <NotiBadge
-                      containerStyle={{right: '-50%'}}
-                      label={cart_data.count}
-                      show={!!cart_data.count}
-                      animation
+      <Container
+        noBackground
+        safeLayout
+        reanimated
+        style={[styles.quickOpenCartBtnWrapper, extraWrapperStyle]}>
+        <Animated.View
+          style={[
+            styles.quickOpenCartBtnContainer,
+            extraContainerStyle,
+            this.quickOpenCartBtnContainerStyle,
+          ]}>
+          <View style={styles.quickOpenCartBtnContentContainer}>
+            <BaseButton
+              useTouchableHighlight
+              style={styles.quickOpenCartBtnContentWrapper}
+              onPress={this.forceShowCart}>
+              <Animated.View style={styles.quickOpenCartBtnContentContainer}>
+                <View style={[styles.checkout_box]}>
+                  <View>
+                    <Icon
+                      bundle={BundleIconSetName.IONICONS}
+                      name="ios-cart"
+                      style={[styles.iconCart, this.totalPriceStyle]}
                     />
-                  )}
+                    {isset_cart && (
+                      <NotiBadge
+                        containerStyle={{right: '-50%'}}
+                        label={cart_data.count}
+                        show={!!cart_data.count}
+                        animation
+                      />
+                    )}
+                  </View>
                 </View>
-              </View>
 
-              {isset_cart && (
-                <View style={styles.totalPriceContainer}>
-                  <Text style={styles.totalPrice}>
-                    {cart_data.total_selected}
-                  </Text>
-                </View>
-              )}
-            </Animated.View>
-          </ButtonComponent>
-        </View>
-      </Animated.View>
+                {isset_cart && (
+                  <View style={styles.totalPriceContainer}>
+                    <Typography
+                      type={TypographyType.LABEL_SMALL}
+                      style={[styles.totalPrice, this.totalPriceStyle]}>
+                      {cart_data.total_selected}
+                    </Typography>
+                  </View>
+                )}
+              </Animated.View>
+            </BaseButton>
+          </View>
+        </Animated.View>
+      </Container>
     );
+  }
+
+  get checkoutBtnContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.persistPrimary,
+    };
+  }
+
+  get colorBtnStyle() {
+    return {color: this.theme.color.onPersistPrimary};
+  }
+
+  get discountTxtStyle() {
+    return mergeStyles(styles.discountTxt, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
+
+  get discountContainerStyle() {
+    return mergeStyles(styles.discountContainer, {
+      backgroundColor: this.theme.color.persistPrimary5,
+    });
+  }
+
+  get storeCartContentContainerStyle() {
+    return mergeStyles(styles.store_cart_content_container, {
+      borderTopColor: this.theme.color.border,
+      borderTopWidth: this.theme.layout.borderWidthPixel,
+    });
+  }
+
+  get maskColors() {
+    return [
+      hexToRgba(this.theme.color.surface, 0),
+      hexToRgba(this.theme.color.surface, 0.4),
+    ];
+  }
+
+  get quickOpenCartBtnContainerStyle() {
+    return {
+      backgroundColor: this.theme.color.persistPrimary,
+    };
+  }
+
+  get totalPriceStyle() {
+    return {
+      color: this.theme.color.onPersistPrimary,
+    };
   }
 
   render() {
@@ -645,7 +750,7 @@ class CartFooter extends Component {
     var {cart_data, cart_products} = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
-    if (!isset_cart) {
+    if (!isset_cart || this.state.loading) {
       return null;
     }
 
@@ -660,10 +765,13 @@ class CartFooter extends Component {
         />
 
         <View>
-          {/* {this.props.animating &&
-            this.renderQuickOpenCartBtn(isset_cart, cart_data)} */}
+          {this.props.animating &&
+            this.renderQuickOpenCartBtn(isset_cart, cart_data)}
 
-          <Animated.View
+          <Container
+            reanimated
+            shadow
+            safeLayout
             onLayout={this.handleContainerLayout}
             style={[
               styles.store_cart_box,
@@ -673,63 +781,79 @@ class CartFooter extends Component {
               this.animatedStyle,
             ]}>
             {cart_data.promotions && cart_data.promotions.title && (
-              <View style={styles.discountContainer}>
+              <View style={this.discountContainerStyle}>
                 <Shimmer
                   pauseDuration={5000}
                   opacity={1}
                   animationOpacity={0.6}
                   highlightLength={0.5}
                   animating>
-                  <Text style={styles.discountTxt}>
+                  <Typography
+                    type={TypographyType.LABEL_TINY}
+                    style={this.discountTxtStyle}>
                     {cart_data.promotions.title} {`${t('discount')} `}
                     {cart_data.promotions.discount_text}
-                  </Text>
+                  </Typography>
                 </Shimmer>
               </View>
             )}
 
-            <View style={styles.store_cart_content_container}>
+            <View style={this.storeCartContentContainerStyle}>
               {this._renderContent()}
 
-              <TouchableHighlight
-                onPress={this._goPayment.bind(this)}
-                style={[styles.checkout_btn]}
-                underlayColor={LightenColor(appConfig.colors.primary, -10)}>
-                <View style={styles.checkout_content_btn}>
-                  <View style={[styles.checkout_box]}>
-                    <View>
-                      <Ionicons name="ios-cart" size={22} color="#fff" />
-                      {isset_cart && (
-                        <NotiBadge
-                          containerStyle={{right: '-50%'}}
-                          label={cart_data.count}
-                          show={!!cart_data.count}
-                          animation
+              <View style={this.checkoutBtnContainerStyle}>
+                <BaseButton
+                  useTouchableHighlight
+                  onPress={this._goPayment.bind(this)}
+                  style={styles.checkout_btn}>
+                  <View style={styles.checkout_content_btn}>
+                    <View style={styles.checkout_box}>
+                      <View>
+                        <Icon
+                          bundle={BundleIconSetName.IONICONS}
+                          name="ios-cart"
+                          style={[styles.iconCart, this.colorBtnStyle]}
                         />
-                      )}
+                        {isset_cart && (
+                          <NotiBadge
+                            containerStyle={{right: '-50%'}}
+                            label={cart_data.count}
+                            show={!!cart_data.count}
+                            animation
+                          />
+                        )}
+                      </View>
+                      <View>
+                        {(isset_cart ? t('payment.order') : t('payment.cart'))
+                          .split(' ')
+                          .map((text, index) => (
+                            <Typography
+                              type={TypographyType.LABEL_EXTRA_SMALL}
+                              key={index}
+                              style={[
+                                styles.checkout_title,
+                                this.colorBtnStyle,
+                              ]}>
+                              {text}
+                            </Typography>
+                          ))}
+                      </View>
                     </View>
-                    <View>
-                      {(isset_cart ? t('payment.order') : t('payment.cart'))
-                        .split(' ')
-                        .map((text, index) => (
-                          <Text key={index} style={styles.checkout_title}>
-                            {text}
-                          </Text>
-                        ))}
-                    </View>
-                  </View>
 
-                  {isset_cart && (
-                    <View style={styles.totalPriceContainer}>
-                      <Text style={styles.totalPrice}>
-                        {cart_data.total_selected}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableHighlight>
+                    {isset_cart && (
+                      <View style={styles.totalPriceContainer}>
+                        <Typography
+                          type={TypographyType.LABEL_SMALL}
+                          style={[styles.totalPrice, this.colorBtnStyle]}>
+                          {cart_data.total_selected}
+                        </Typography>
+                      </View>
+                    )}
+                  </View>
+                </BaseButton>
+              </View>
             </View>
-          </Animated.View>
+          </Container>
         </View>
 
         <PopupConfirm
@@ -748,10 +872,7 @@ class CartFooter extends Component {
 const styles = StyleSheet.create({
   store_cart_box: {
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    ...elevationShadowStyle(7, 0, 0),
     width: '100%',
-    paddingBottom: appConfig.device.bottomSpace,
   },
   store_cart_container: {
     flex: 1,
@@ -760,17 +881,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   discountContainer: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     paddingVertical: 5,
     paddingHorizontal: 20,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
     alignItems: 'center',
     justifyContent: 'center',
   },
   discountTxt: {
-    fontSize: 10,
     fontWeight: 'bold',
-    color: appConfig.colors.primary,
     textAlign: 'center',
   },
   store_cart_btn: {
@@ -783,12 +901,12 @@ const styles = StyleSheet.create({
   store_cart_btn_right: {},
   checkout_btn: {
     width: ORDER_BTN_WIDTH,
+    flex: 1,
   },
   checkout_content_btn: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: appConfig.colors.primary,
   },
   checkout_box: {
     flexDirection: 'row',
@@ -797,8 +915,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   checkout_title: {
-    color: '#ffffff',
-    fontSize: 11,
     fontWeight: '500',
     marginLeft: 12,
   },
@@ -808,97 +924,6 @@ const styles = StyleSheet.create({
   store_cart_content_container: {
     minHeight: 75 + 14,
     flexDirection: 'row',
-    borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd',
-  },
-  store_cart_item_container: {
-    width: CART_ITEM_WIDTH,
-    overflow: 'hidden',
-  },
-  store_cart_item: {
-    width: '100%',
-    flexDirection: 'row',
-    borderRightWidth: 0.5,
-    borderColor: '#eee',
-    padding: 7,
-  },
-  store_cart_item_image_box: {
-    width: 75,
-    height: 75,
-  },
-  store_cart_item_image: {
-    flex: 1,
-    resizeMode: 'contain',
-  },
-  store_cart_item_title_box: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  store_cart_item_title: {
-    color: '#404040',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  store_cart_item_sub_title: {
-    color: '#555',
-    fontSize: 10,
-    marginTop: 2,
-  },
-  store_cart_item_price: {
-    fontSize: 12,
-    color: '#fa7f50',
-    fontWeight: '500',
-    marginTop: appConfig.device.isIOS ? 2 : 0,
-  },
-  store_cart_actions: {
-    flexDirection: 'row',
-    marginTop: 7,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  store_cart_calculator: {
-    // marginTop: 7,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  store_cart_item_qnt_change: {
-    width: 22,
-    height: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: Util.pixel,
-    borderColor: '#404040',
-    borderRadius: 3,
-  },
-  store_cart_item_qnt: {
-    textAlign: 'center',
-    fontWeight: '600',
-    color: '#404040',
-    fontSize: 12,
-    paddingHorizontal: 16,
-    maxWidth: CART_ITEM_WIDTH - 75 - 44 - 30,
-  },
-  store_cart_item_remove: {
-    backgroundColor: '#cc7171',
-    borderWidth: 0,
-    position: 'absolute',
-    left: 10,
-    top: 3,
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    // borderTopLeftRadius: 0,
-    // borderBottomLeftRadius: 0,
-    ...elevationShadowStyle(2),
-  },
-  store_cart_item_remove_icon: {
-    color: '#fff',
-  },
-
-  p8: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   maskContainer: {
@@ -915,35 +940,29 @@ const styles = StyleSheet.create({
   quickOpenCartBtnWrapper: {
     position: 'absolute',
     right: 0,
+  },
+  quickOpenCartBtnContainer: {
     minWidth: ORDER_BTN_WIDTH,
     borderTopLeftRadius: ORDER_BTN_WIDTH / 2,
     borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
-    backgroundColor: appConfig.colors.primary,
-    ...elevationShadowStyle(7, 0, 0, 0.5, appConfig.colors.primary),
     overflow: 'hidden',
-    marginBottom: appConfig.device.bottomSpace
+    height: '100%',
   },
-  quickOpenCartBtnContainer: {
+  quickOpenCartBtnContentContainer: {
     flex: 1,
-    // borderTopLeftRadius: ORDER_BTN_WIDTH / 2,
-    // borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
-    // overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
   quickOpenCartBtnContentWrapper: {
     width: '100%',
+    paddingLeft: 12,
+    paddingRight: 7,
   },
   quickOpenCartBtnContentContainer: {
     height: '100%',
-    // minWidth: ORDER_BTN_WIDTH,
-    // borderTopLeftRadius: ORDER_BTN_WIDTH / 2,
-    // borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 12,
-    paddingRight: 7,
   },
   totalPriceContainer: {
     paddingHorizontal: 7,
@@ -952,30 +971,12 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   totalPrice: {
-    fontSize: 12,
-    color: '#fff',
     fontWeight: '600',
     textAlign: 'center',
   },
-  discountBadgeContainer: {
-    position: 'absolute',
-    bottom: 0,
-    height: undefined,
-    backgroundColor: '#fff',
-    width: undefined,
-    ...elevationShadowStyle(3),
-  },
-  discountBadgeContentContainer: {
-    backgroundColor: appConfig.colors.marigold,
-    paddingVertical: 2,
-  },
-  discountBadgeLabel: {
-    fontSize: 10,
-  },
 
-  quantityContainer: {
-    // width: null,
-    // maxWidth: undefined
+  iconCart: {
+    fontSize: 22,
   },
 });
 

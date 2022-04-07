@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
-import ModernListComponent from '../component';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { LIST_TYPE, DEFAULT_LISTENER } from '../constants';
+// constants
+import {LIST_TYPE, DEFAULT_LISTENER} from '../constants';
+// custom components
+import ModernListComponent from '../component';
 
 class ModernList extends Component {
   static propTypes = {
@@ -25,7 +27,7 @@ class ModernList extends Component {
     renderItem: PropTypes.any,
     onPressItem: PropTypes.func,
     onBodyLayout: PropTypes.func,
-    listEmptyComponent: PropTypes.node
+    listEmptyComponent: PropTypes.node,
   };
 
   static defaultProps = {
@@ -49,7 +51,7 @@ class ModernList extends Component {
     renderItem: null,
     onPressItem: DEFAULT_LISTENER,
     onBodyLayout: DEFAULT_LISTENER,
-    listEmptyComponent: null
+    listEmptyComponent: null,
   };
 
   state = {};
@@ -71,7 +73,7 @@ class ModernList extends Component {
         headerLeftComponent={this.props.headerLeftComponent}
         renderItem={this.props.renderItem}
         onPressItem={this.props.onPressItem}
-        onHeaderPress={this.props.onHeaderPress} 
+        onHeaderPress={this.props.onHeaderPress}
         onBodyLayout={this.props.onBodyLayout}
         activeStyle={this.props.activeStyle}
         activeTextStyle={this.props.activeTextStyle}

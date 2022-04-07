@@ -1,73 +1,76 @@
-import React, { Component } from 'react';
-import {
-  SafeAreaView,
-  Modal,
-  View,
-  TouchableOpacity,
-  FlatList,
-  Text,
-  StyleSheet
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {Modal, View, Text, StyleSheet} from 'react-native';
+// 3-party libs
+import {Actions} from 'react-native-router-flux';
 import countries from 'world-countries';
-
-import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  BaseButton,
+  FlatList,
+  Typography,
+  Container,
+  ScreenWrapper,
+  IconButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000'
   },
   header: {
     padding: 10,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   title: {
     textTransform: 'uppercase',
     fontWeight: 'bold',
-    fontSize: 16,
     letterSpacing: 2,
-    color: '#fff'
   },
   closeIcon: {
     fontSize: 26,
-    color: '#fff'
   },
-  listContainer: {
-    backgroundColor: '#ffffff'
-  },
+  listContainer: {},
   itemContainer: {
     width: '100%',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   itemFlag: {
-    fontSize: 25,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   itemTitle: {
-    fontSize: 16,
-    margin: 10
+    margin: 10,
   },
   separator: {
     height: 1,
     width: '100%',
-    backgroundColor: '#eee'
-  }
+  },
 });
 
 class CountryPicker extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     countries,
     onClose: () => {},
-    onPressCountry: () => {}
+    onPressCountry: () => {},
   };
+
   state = {
-    countries: this.props.countries
+    countries: this.props.countries,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   onClose() {
     Actions.pop();
@@ -79,36 +82,58 @@ class CountryPicker extends Component {
     this.props.onPressCountry(item);
   }
 
-  renderItem({ item }) {
+  renderItem({item}) {
     return (
-      <TouchableOpacity onPress={() => this.onPressCountry(item)}>
+      <BaseButton onPress={() => this.onPressCountry(item)}>
         <View style={styles.itemContainer}>
-          {!!item.flag && <Text style={styles.itemFlag}>{item.flag}</Text>}
-          <Text style={styles.itemTitle}>{item.name.common || ''}</Text>
+          {!!item.flag && (
+            <Typography
+              type={TypographyType.DISPLAY_SMALL}
+              style={styles.itemFlag}>
+              {item.flag}
+            </Typography>
+          )}
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={styles.itemTitle}>
+            {item.name.common || ''}
+          </Typography>
         </View>
-      </TouchableOpacity>
+      </BaseButton>
     );
   }
 
   render() {
-    const { t, countries } = this.props;
+    const {t, countries} = this.props;
+
+    const separatorStyle = mergeStyles(styles.separator, {
+      backgroundColor: this.theme.color.surface,
+    });
+
     return (
-      <Modal animationType="slide" visible style={styles.container}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={this.onClose.bind(this)}>
-              <Icon name="close" style={styles.closeIcon} />
-            </TouchableOpacity>
-            <Text style={[styles.title]}>{t('countrySelectionTitle')}</Text>
-          </View>
+      <Modal animationType="slide" visible>
+        <ScreenWrapper  style={styles.container}>
+          <Container safeTopLayout style={styles.header}>
+            <IconButton
+              onPress={this.onClose.bind(this)}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              name="close"
+              iconStyle={styles.closeIcon}
+            />
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={[styles.title]}>
+              {t('countrySelectionTitle')}
+            </Typography>
+          </Container>
           <FlatList
-            style={styles.listContainer}
+            safeLayout
             data={countries}
             renderItem={this.renderItem.bind(this)}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ItemSeparatorComponent={() => <View style={separatorStyle} />}
             keyExtractor={(item, index) => index.toString()}
           />
-        </SafeAreaView>
+        </ScreenWrapper>
       </Modal>
     );
   }

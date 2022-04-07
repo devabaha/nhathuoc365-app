@@ -1,12 +1,15 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-
-import appConfig from 'app-config';
-
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
 import RoundButton from 'src/components/RoundButton';
 import SectionContainer from '../SectionContainer';
-import {Container} from 'src/components/Layout';
+import {Container, Icon} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,16 +30,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 3,
     paddingHorizontal: 15,
-    borderRadius: 4,
     alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: appConfig.device.pixel,
-    borderColor: '#999',
-    backgroundColor: appConfig.colors.marigold,
   },
   addMoreTitle: {
-    color: '#fff',
     marginLeft: 4,
     fontSize: 14,
   },
@@ -52,9 +50,14 @@ const styles = StyleSheet.create({
   btnActionTitle: {
     fontWeight: '500',
   },
+  icon: {
+    fontSize: 16,
+  },
 });
 
 const ActionButtonSection = ({
+  safeLayout = false,
+
   editable,
   onEdit = () => {},
 
@@ -76,22 +79,52 @@ const ActionButtonSection = ({
     return null;
   }
 
+  const {theme} = useTheme();
+
   const {t} = useTranslation('orders');
+
+  const addMoreContainerStyle = useMemo(() => {
+    return mergeStyles(styles.addMoreContainer, {
+      borderRadius: theme.layout.borderRadiusSmall,
+      borderWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+      backgroundColor: theme.color.marigold,
+    });
+  }, [theme]);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: theme.color.white,
+    });
+  }, [theme]);
+
+  const addMoreTitleStyle = useMemo(() => {
+    return mergeStyles(styles.addMoreTitle, {
+      color: theme.color.white,
+    });
+  }, [theme]);
 
   return (
     <SectionContainer marginTop style={styles.container}>
-      <Container centerVertical={false} style={styles.boxButtonActions}>
+      <Container
+        safeLayout={safeLayout}
+        centerVertical={false}
+        style={styles.boxButtonActions}>
         {!!hasMainBlockData && (
-          <Container row centerVertical={false} style={styles.block}>
+          <Container row style={styles.block}>
             {!!editable && (
               <RoundButton
                 onPress={onEdit}
                 wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.info}
+                bgrColor={theme.color.info}
                 width={30}
                 title={t('confirm.edit')}
                 titleStyle={styles.btnActionTitle}>
-                <FontAwesomeIcon name="pencil" size={16} color="#fff" />
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME}
+                  name="pencil"
+                  style={iconStyle}
+                />
               </RoundButton>
             )}
 
@@ -99,11 +132,15 @@ const ActionButtonSection = ({
               <RoundButton
                 onPress={onCancel}
                 wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.danger}
+                bgrColor={theme.color.danger}
                 width={30}
                 title={t('confirm.cancel')}
                 titleStyle={styles.btnActionTitle}>
-                <FontAwesomeIcon name="times" size={16} color="#fff" />
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME}
+                  name="times"
+                  style={iconStyle}
+                />
               </RoundButton>
             )}
 
@@ -111,23 +148,31 @@ const ActionButtonSection = ({
               <RoundButton
                 onPress={onReorder}
                 wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.status.success}
+                bgrColor={theme.color.success}
                 width={30}
                 title={t('confirm.reorder')}
                 titleStyle={styles.btnActionTitle}>
-                <FontAwesomeIcon name="refresh" size={16} color="#fff" />
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME}
+                  name="refresh"
+                  style={iconStyle}
+                />
               </RoundButton>
             )}
 
-            {canFeedback && (
+            {!!canFeedback && (
               <RoundButton
                 onPress={onFeedback}
                 wrapperStyle={styles.buttonActionWrapper}
-                bgrColor={appConfig.colors.marigold}
+                bgrColor={theme.color.marigold}
                 width={30}
                 title={t('confirm.feedback')}
                 titleStyle={styles.btnActionTitle}>
-                <FontAwesomeIcon name="star" size={16} color="#fff" />
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME}
+                  name="star"
+                  style={iconStyle}
+                />
               </RoundButton>
             )}
           </Container>
@@ -138,11 +183,15 @@ const ActionButtonSection = ({
             row
             onPress={onAddMore}
             wrapperStyle={[styles.block, styles.addMoreWrapper]}
-            contentContainerStyle={styles.addMoreContainer}
+            contentContainerStyle={addMoreContainerStyle}
             width={30}
             title={t('confirm.addMoreItems')}
-            titleStyle={styles.addMoreTitle}>
-            <FontAwesomeIcon name="plus" size={16} color="#fff" />
+            titleStyle={addMoreTitleStyle}>
+            <Icon
+              bundle={BundleIconSetName.FONT_AWESOME}
+              name="plus"
+              style={iconStyle}
+            />
           </RoundButton>
         )}
       </Container>

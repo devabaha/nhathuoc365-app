@@ -155,6 +155,12 @@ class CommonAPI {
   get SITE_CART_EDIT_USER_NOTE() {
     return BaseAPI.apiDomain + 'apiCart/edit_user_note';
   }
+  get SITE_CART_UPDATE_INFO_CART() {
+    return BaseAPI.apiDomain + 'apiCart/update_info_cart';
+  }
+  get GET_CART_DELIVERY_DATE() {
+    return BaseAPI.apiDomain + 'apiCart/get_cart_delivery_date';
+  }
   get SITE_CART_ADDING() {
     return BaseAPI.apiDomain + 'apiSite/cartadding';
   }

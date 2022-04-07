@@ -1,30 +1,38 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Animated,
-  Easing
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Animated, Easing} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Input, Typography} from 'src/components/base';
 
 const defaultFunc = () => {};
 
 class FloatingLabelInput extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     onInputContainerLayout: defaultFunc,
     onChangeText: defaultFunc,
     onBlur: defaultFunc,
     onFocus: defaultFunc,
-    inputRef: defaultFunc
+    inputRef: defaultFunc,
   };
   state = {
     animatedFloating: new Animated.Value(0),
     animatedOpacity: new Animated.Value(0),
-    inputContainerHeight: undefined
+    inputContainerHeight: undefined,
   };
   refLabel = React.createRef();
   refInput = null;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.inputContainerHeight !== this.state.inputContainerHeight) {
@@ -32,7 +40,7 @@ class FloatingLabelInput extends Component {
         this.state.animatedFloating.setValue(nextState.inputContainerHeight);
         Animated.spring(this.state.animatedOpacity, {
           toValue: 1,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
       }
     }
@@ -65,13 +73,13 @@ class FloatingLabelInput extends Component {
     this.state.animatedFloating.removeListener(this.floatingListener);
   }
 
-  floatingListener = ({ value }) => {
+  floatingListener = ({value}) => {
     if (this.refLabel.current) {
       if (!this.state.inputContainerHeight) {
         this.refLabel.current.setNativeProps({
           style: {
-            color: '#888'
-          }
+            color: this.theme.color.placeholder,
+          },
         });
         return;
       }
@@ -79,21 +87,21 @@ class FloatingLabelInput extends Component {
       if (value >= (this.state.inputContainerHeight * 9) / 10) {
         this.refLabel.current.setNativeProps({
           style: {
-            color: '#888'
-          }
+            color: this.theme.color.placeholder,
+          },
         });
       } else {
         this.refLabel.current.setNativeProps({
           style: {
-            color: '#242424'
-          }
+            color: this.theme.color.textTertiary,
+          },
         });
       }
     }
   };
 
-  onInputContainerLayout = e => {
-    this.setState({ inputContainerHeight: e.nativeEvent.layout.height });
+  onInputContainerLayout = (e) => {
+    this.setState({inputContainerHeight: e.nativeEvent.layout.height});
     this.props.onInputContainerLayout(e);
   };
 
@@ -113,7 +121,7 @@ class FloatingLabelInput extends Component {
         toValue: 0,
         ease: Easing.cubic,
         duration: 300,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
     this.props.onFocus();
@@ -125,10 +133,31 @@ class FloatingLabelInput extends Component {
         toValue: this.state.inputContainerHeight,
         ease: Easing.cubic,
         duration: 300,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
     this.props.onBlur();
+  }
+
+  get errorTextStyle() {
+    return mergeStyles(
+      [styles.error, {color: this.theme.color.danger}],
+      this.props.errorStyle,
+    );
+  }
+
+  get separatorStyle() {
+    return {
+      height: this.theme.layout.borderWidthSmall,
+      color: this.theme.color.border,
+    };
+  }
+
+  get extraInputStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderBottomColor: this.theme.color.border,
+    };
   }
 
   render() {
@@ -136,7 +165,6 @@ class FloatingLabelInput extends Component {
       label,
       labelStyle,
       error,
-      errorStyle,
       containerStyle,
       inputContainerStyle,
       inputStyle,
@@ -149,33 +177,31 @@ class FloatingLabelInput extends Component {
 
     const extraLabelStyle = {
       opacity: this.state.animatedOpacity,
-      transform: [{ translateY: this.state.animatedFloating }]
+      transform: [{translateY: this.state.animatedFloating}],
     };
-    const extraInputStyle = !last && {
-      borderBottomWidth: 0.5,
-      borderBottomColor: '#ddd'
-    };
+    const extraInputStyle = !last && this.extraInputStyle;
 
     return (
-      <View style={[styles.container, containerStyle]}>
+      <Container style={[styles.container, containerStyle]}>
         <View style={styles.mainContent}>
-          <View pointerEvents="none" style={{ zIndex: 1 }}>
-            <Animated.Text
+          <View pointerEvents="none" style={{zIndex: 1}}>
+            <Typography
+              animated
+              type={TypographyType.LABEL_MEDIUM}
               ref={this.refLabel}
-              style={[styles.label, extraLabelStyle, labelStyle]}
-            >
+              style={[styles.label, extraLabelStyle, labelStyle]}>
               {label}
-            </Animated.Text>
+            </Typography>
           </View>
           <View
             onLayout={this.onInputContainerLayout}
-            style={[styles.inputContainer, inputContainerStyle]}
-          >
-            <TextInput
-              ref={inst => {
+            style={[styles.inputContainer, inputContainerStyle]}>
+            <Input
+              ref={(inst) => {
                 this.refInput = inst;
                 this.props.inputRef(inst);
               }}
+              type={TypographyType.LABEL_LARGE}
               style={[styles.input, extraInputStyle, inputStyle]}
               onFocus={this.onFocus.bind(this)}
               onBlur={this.onBlur.bind(this)}
@@ -184,49 +210,45 @@ class FloatingLabelInput extends Component {
             />
           </View>
           {!!this.props.error && (
-            <Text style={[styles.error, errorStyle]}>{error}</Text>
+            <Typography
+              type={TypographyType.DESCRIPTION_SMALL}
+              style={this.errorTextStyle}>
+              {error}
+            </Typography>
           )}
         </View>
-        {last && <View style={[styles.separator]} />}
-      </View>
+        {last && <View style={this.separatorStyle} />}
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   mainContent: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   label: {
     marginBottom: 10,
     left: 0,
     fontWeight: '500',
-    letterSpacing: 0.15
+    letterSpacing: 0.15,
   },
   inputContainer: {
     height: 30,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   input: {
     paddingVertical: 0,
     padding: 0,
     height: '100%',
-    fontSize: 16,
-    color: '#444'
-  },
-  separator: {
-    height: 0.5,
-    backgroundColor: '#ddd'
   },
   error: {
     zIndex: -1,
-    color: 'red',
-    fontSize: 12,
-    marginTop: 4
-  }
+    marginTop: 4,
+  },
 });
 
 export default FloatingLabelInput;

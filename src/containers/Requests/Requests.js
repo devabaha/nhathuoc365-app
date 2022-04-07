@@ -1,23 +1,29 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  View,
-  TouchableHighlight,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
-import {Actions} from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/AntDesign';
-
-import appConfig from 'app-config';
-
+// helpers
+import {servicesHandler} from 'src/helper/servicesHandler';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+import {SERVICES_TYPE} from 'src/helper/servicesHandler';
+// custom components
 import Request from './Request';
-import Loading from '../../components/Loading';
-import NoResult from '../../components/NoResult';
-import Button from '../../components/Button';
-import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import Button from 'src/components/Button';
+import {
+  ScreenWrapper,
+  FlatList,
+  Icon,
+  RefreshControl,
+  IconButton,
+} from 'src/components/base';
 
 /**
  * A list of all request of this site
@@ -26,6 +32,8 @@ import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
  * @author [Nguyễn Hoàng Minh](https://github.com/minhnguyenit14)
  */
 class Requests extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
       .isRequired,
@@ -43,32 +51,31 @@ class Requests extends Component {
    */
   unmounted = false;
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.getRequests();
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         title: this.props.title || this.props.t('screen.requests.mainTitle'),
         right: this.renderRight(),
       });
     });
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-  }
 
-  renderRight() {
-    return (
-      <View style={styles.nav_right}>
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={this.createRequest}>
-          <View style={styles.nav_right_btn}>
-            <Icon name="plus" size={22} color="#ffffff" />
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
+    this.updateNavBarDisposer();
   }
 
   createRequest = () => {
@@ -79,6 +86,7 @@ class Requests extends Component {
       object_id: this.props.object_id || this.props.objectId,
       object_type: this.props.object_type || this.props.objectType,
       object: this.state.object || this.props.object,
+      theme: this.theme,
       onRefresh: (request) => {
         this.getRequests();
         setTimeout(() =>
@@ -87,6 +95,7 @@ class Requests extends Component {
             site_id: this.props.siteId,
             room_id: this.props.roomId,
             request_id: request.id,
+            theme: this.theme,
           }),
         );
       },
@@ -132,6 +141,7 @@ class Requests extends Component {
   handlePressRequest(request) {
     servicesHandler({
       type: SERVICES_TYPE.REQUEST_DETAIL,
+      theme: this.theme,
       site_id: this.props.siteId || this.props.site_id,
       room_id: this.props.roomId || this.props.room_id,
       request_id: request.id,
@@ -143,6 +153,20 @@ class Requests extends Component {
     this.setState({refreshing: true});
     this.getRequests();
   };
+
+  renderRight() {
+    return (
+      <View style={styles.nav_right}>
+        <IconButton
+          bundle={BundleIconSetName.ENTYPO}
+          name="plus"
+          iconStyle={[styles.iconNavBar, this.iconPlusColor]}
+          style={styles.nav_right_btn}
+          onPress={this.createRequest}
+        />
+      </View>
+    );
+  }
 
   renderRequest = ({item: request}) => {
     return (
@@ -166,9 +190,27 @@ class Requests extends Component {
     );
   };
 
+  renderNoResult = () => {
+    return <NoResult message={this.props.t('noResult')} />;
+  };
+
+  renderIconBtnCreate = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="filetext1"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  get iconPlusColor() {
+    return {color: this.theme.color.onPrimary};
+  }
+
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
         {!!this.state.requests && (
           <FlatList
@@ -182,15 +224,18 @@ class Requests extends Component {
                 onRefresh={this.onRefresh}
               />
             }
-            ListEmptyComponent={NoResultComp}
+            ListEmptyComponent={this.renderNoResult}
           />
         )}
-        <Button
-          title="Tạo yêu cầu"
-          iconLeft={<Icon name="filetext1" style={styles.icon} />}
-          onPress={this.createRequest}
-        />
-      </SafeAreaView>
+        {!this.state.loading && (
+          <Button
+            safeLayout
+            title={this.props.t('createRequest')}
+            renderIconLeft={this.renderIconBtnCreate}
+            onPress={this.createRequest}
+          />
+        )}
+      </ScreenWrapper>
     );
   }
 }
@@ -205,8 +250,7 @@ const styles = StyleSheet.create({
   },
   nav_right_btn: {
     paddingVertical: 1,
-    paddingHorizontal: 8,
-    paddingTop: appConfig.device.isAndroid ? 8 : 4,
+    paddingLeft: 8,
   },
   content: {
     paddingVertical: 15,
@@ -220,18 +264,11 @@ const styles = StyleSheet.create({
   requestItemContainer: {},
   icon: {
     fontSize: 18,
-    color: '#fff',
     marginRight: 7,
+  },
+  iconNavBar: {
+    fontSize: 28,
   },
 });
 
-export default withTranslation()(Requests);
-
-/**
- * Component for no requests display
- */
-const NoResultComp = (
-  <View style={{marginTop: '50%'}}>
-    <NoResult message="Danh sách yêu cầu đang trống" />
-  </View>
-);
+export default withTranslation('request')(Requests);

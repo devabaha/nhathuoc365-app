@@ -1,22 +1,42 @@
 import React, {Component} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
-import appConfig from '../../config';
-import store from '../../store';
-import FastImage from 'react-native-fast-image';
-import {languages} from '../../i18n/constants';
-import BaseAPI, {LIVE_API_DOMAIN} from '../../network/API/BaseAPI';
+// 3-party libs
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// network
+import BaseAPI from 'src/network/API/BaseAPI';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {rgbaToRgb, hexToRgba} from 'app-helper';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+// routing
+import {replace} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {LIVE_API_DOMAIN} from 'src/network/API/BaseAPI';
+import {languages} from 'src/i18n/constants';
+import {THEME_STORAGE_KEY} from 'src/constants';
+import {BASE_LIGHT_THEME} from 'src/Themes/Theme.light';
+// custom components
+import {Container, ScreenWrapper} from 'src/components/base';
+import Image from 'src/components/Image';
 
 class Launch extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      animatedBouncing: new Animated.Value(0),
-      animatedPressing: new Animated.Value(0),
-      animatedSpreading: new Animated.Value(0),
-      animatedSpreadingShadow: new Animated.Value(0),
-    };
+  state = {
+    animatedBouncing: new Animated.Value(0),
+    animatedPressing: new Animated.Value(0),
+    animatedSpreading: new Animated.Value(0),
+    animatedSpreadingShadow: new Animated.Value(0),
+  };
+
+  get theme() {
+    return getTheme(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -28,9 +48,28 @@ class Launch extends Component {
   }
 
   componentDidMount() {
-    this.handleAuthorization();
+    this.loadTheme();
     this.animateLoading();
   }
+
+  loadTheme = async (isActive = false) => {
+    try {
+      if (isActive) {
+        await AsyncStorage.removeItem(THEME_STORAGE_KEY);
+      }
+
+      let themeStorage = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+
+      if (themeStorage) {
+        themeStorage = JSON.parse(themeStorage);
+      }
+      this.context.updateTheme(themeStorage || BASE_LIGHT_THEME);
+    } catch (error) {
+      console.log('load_theme', error);
+    } finally {
+      !isActive && this.handleAuthorization();
+    }
+  };
 
   handleAuthorization = async () => {
     try {
@@ -54,7 +93,7 @@ class Launch extends Component {
       isTestDevice &&
       BaseAPI.apiDomain === LIVE_API_DOMAIN
     ) {
-      Actions.replace(appConfig.routes.domainSelector);
+      replace(appConfig.routes.domainSelector, {}, this.theme);
       return true;
     }
     return false;
@@ -64,13 +103,17 @@ class Launch extends Component {
     const user = response.data || {};
     const site = response.other_data?.site || {};
     store.setStoreData(site);
-
     const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
-    
+
     if (isTestDevice) {
       return;
     }
+
+    if (!isConfigActive(CONFIG_KEY.ENABLE_THEME_SWITCHER_KEY)) {
+      this.loadTheme(true);
+    }
+
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
     // phoneCardConfig.defaultContactPhone = user.tel;
@@ -78,27 +121,34 @@ class Launch extends Component {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
-        Actions.replace(appConfig.routes.primaryTabbar);
-        Actions.replace(appConfig.routes.homeTab);
+        replace(appConfig.routes.primaryTabbar, {}, this.theme);
+        replace(appConfig.routes.homeTab, {}, this.theme);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
-        Actions.replace('op_register', {
-          title: 'Đăng ký thông tin',
-          name_props: user.name,
-          hideBackImage: true,
-        });
+        replace(
+          appConfig.routes.op_register,
+          {
+            name_props: user.name,
+            hideBackImage: true,
+          },
+          this.theme,
+        );
         break;
       case STATUS_UNDEFINED_USER:
-        Actions.replace(appConfig.routes.phoneAuth, {
-          loginMode: user.loginMode ? user.loginMode : 'FIREBASE', //FIREBASE / SMS_BRAND_NAME
-        });
+        replace(
+          appConfig.routes.phoneAuth,
+          {
+            loginMode: user.loginMode ? user.loginMode : 'FIREBASE', //FIREBASE / SMS_BRAND_NAME
+          },
+          this.theme,
+        );
         break;
       case STATUS_SYNC_FLAG:
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
-        Actions.replace(appConfig.routes.rootGpsStoreLocation);
+        replace(appConfig.routes.rootGpsStoreLocation, {}, this.theme);
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);
@@ -171,156 +221,172 @@ class Launch extends Component {
     ).start();
   };
 
+  get leftHalfStyle() {
+    return mergeStyles(styles.leftHalf, {
+      borderTopColor: rgbaToRgb(
+        hexToRgba(this.theme.color.persistPrimary, 0.7),
+      ),
+    });
+  }
+
+  get dotStyle() {
+    return mergeStyles(styles.bouncing, {
+      backgroundColor: this.theme.color.persistPrimary,
+    });
+  }
+
+  get spreadingShadowStyle() {
+    return mergeStyles(styles.spreadingShadow, {
+      backgroundColor: hexToRgba(this.theme.color.persistSecondary, 0.2),
+    });
+  }
+
+  get spreadingStyle() {
+    return mergeStyles(styles.spreading, {
+      backgroundColor: this.theme.color.persistSecondary,
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <FastImage
-            source={require('../../images/logo-640x410.jpg')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <View style={styles.animateLoading}>
-            <Animated.View
-              style={[
-                styles.dot,
-                styles.bouncing,
-                {
-                  opacity: this.state.animatedBouncing.interpolate({
-                    inputRange: [0, 30, 60],
-                    outputRange: [0.6, 1, 0.6],
-                  }),
-                  transform: [
-                    {
-                      translateY: this.state.animatedBouncing.interpolate({
-                        inputRange: [0, 30, 60],
-                        outputRange: [0, 30, 0],
-                      }),
-                    },
-                    {
-                      scale: this.state.animatedBouncing.interpolate({
-                        inputRange: [0, 30, 60],
-                        outputRange: [0.6, 1, 0.6],
-                      }),
-                    },
-                    {
-                      scaleX: this.state.animatedPressing.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.3],
-                      }),
-                    },
-                    {
-                      scaleY: this.state.animatedPressing.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 0.7],
-                      }),
-                    },
-                  ],
-                },
-              ]}>
+      <ScreenWrapper style={styles.container}>
+        <Container flex>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../images/btn-cart.png')}
+              style={styles.logo}
+              resizeMode="contain"
+              loadingColor="transparent"
+            />
+            <View style={styles.animateLoading}>
               <Animated.View
                 style={[
-                  styles.leftHalf,
+                  styles.dot,
+                  this.dotStyle,
                   {
                     opacity: this.state.animatedBouncing.interpolate({
-                      inputRange: [0, 15, 30, 45, 60],
-                      outputRange: [0, 1, 1, 1, 0],
+                      inputRange: [0, 30, 60],
+                      outputRange: [0.6, 1, 0.6],
                     }),
                     transform: [
                       {
-                        rotate: this.state.animatedBouncing.interpolate({
-                          inputRange: [0, 15, 30, 45, 60],
-                          outputRange: [
-                            '-360deg',
-                            '-180deg',
-                            '0deg',
-                            '180deg',
-                            '360deg',
-                          ],
+                        translateY: this.state.animatedBouncing.interpolate({
+                          inputRange: [0, 30, 60],
+                          outputRange: [0, 30, 0],
+                        }),
+                      },
+                      {
+                        scale: this.state.animatedBouncing.interpolate({
+                          inputRange: [0, 30, 60],
+                          outputRange: [0.6, 1, 0.6],
+                        }),
+                      },
+                      {
+                        scaleX: this.state.animatedPressing.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.3],
+                        }),
+                      },
+                      {
+                        scaleY: this.state.animatedPressing.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 0.7],
+                        }),
+                      },
+                    ],
+                  },
+                ]}>
+                <Animated.View
+                  style={[
+                    this.leftHalfStyle,
+                    {
+                      opacity: this.state.animatedBouncing.interpolate({
+                        inputRange: [0, 15, 30, 45, 60],
+                        outputRange: [0, 1, 1, 1, 0],
+                      }),
+                      transform: [
+                        {
+                          rotate: this.state.animatedBouncing.interpolate({
+                            inputRange: [0, 15, 30, 45, 60],
+                            outputRange: [
+                              '-360deg',
+                              '-180deg',
+                              '0deg',
+                              '180deg',
+                              '360deg',
+                            ],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                />
+              </Animated.View>
+
+              <Animated.View
+                style={[
+                  this.spreadingShadowStyle,
+                  {
+                    opacity: this.state.animatedSpreadingShadow.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [0, 1, 0],
+                    }),
+                  },
+                  {
+                    transform: [
+                      {
+                        scaleX: this.state.animatedSpreadingShadow.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 8],
+                        }),
+                      },
+                      {
+                        scaleY: this.state.animatedSpreadingShadow.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.6, 1.5],
                         }),
                       },
                     ],
                   },
                 ]}
               />
-            </Animated.View>
-
-            <Animated.View
-              style={[
-                styles.spreadingShadow,
-                {
-                  opacity: this.state.animatedSpreadingShadow.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0],
-                  }),
-                },
-                {
-                  transform: [
-                    {
-                      scaleX: this.state.animatedSpreadingShadow.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 8],
-                      }),
-                    },
-                    {
-                      scaleY: this.state.animatedSpreadingShadow.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.6, 1.5],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.spreading,
-                {
-                  opacity: this.state.animatedSpreading.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0],
-                  }),
-                  transform: [
-                    {
-                      scaleX: this.state.animatedSpreading.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 5],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            />
+              <Animated.View
+                style={[
+                  this.spreadingStyle,
+                  {
+                    opacity: this.state.animatedSpreading.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [0, 1, 0],
+                    }),
+                    transform: [
+                      {
+                        scaleX: this.state.animatedSpreading.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 5],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </View>
           </View>
-        </View>
-      </View>
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
+  container: {},
   logoContainer: {
     position: 'absolute',
     top: appConfig.device.height * 0.3,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignSelf: 'center',
   },
   logo: {
     width: 200,
     height: 128,
-  },
-  text: {
-    fontSize: 14,
-    color: '#666',
-    // marginTop: 8,
-    fontWeight: '400',
-    textAlign: 'center',
   },
   animateLoading: {
     marginTop: 40,
@@ -335,7 +401,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 10,
     borderRightColor: 'transparent',
     borderTopWidth: 10,
-    borderTopColor: appConfig.colors.logo.sub,
     borderBottomWidth: 10,
     borderBottomColor: 'transparent',
     borderRadius: 10,
@@ -346,12 +411,9 @@ const styles = StyleSheet.create({
     height: 20,
     overflow: 'hidden',
   },
-  bouncing: {
-    backgroundColor: appConfig.colors.logo.main,
-  },
+  bouncing: {},
   spreadingShadow: {
     top: 55,
-    backgroundColor: hexToRgbA(appConfig.colors.logo.addition, 0.2),
     borderRadius: 7.5,
     width: 15,
     height: 15,
@@ -361,7 +423,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spreading: {
-    backgroundColor: appConfig.colors.logo.addition,
     top: 55,
     position: 'absolute',
     alignItems: 'center',

@@ -1,18 +1,14 @@
-import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+// configs
+import store from 'app-store';
+// custom components
 import Confirm from '../payment/Confirm';
-import store from '../../store/Store';
 
 class OrdersItem extends Component {
   static defaultProps = {
-    onReturn: () => {}
+    onReturn: () => {},
   };
   orderEdited = false;
-  // static onEnter = () => {
-  //   Actions.refresh({
-  //     onBack: this.props.onBack
-  //   });
-  // };
 
   componentWillUnmount() {
     if (!this.orderEdited) {
@@ -22,24 +18,15 @@ class OrdersItem extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Confirm
-          {...this.props.passProps}
-          data={this.props.data}
-          tel={this.props.tel}
-          from_page="orders_item"
-          orderEdited={() => (this.orderEdited = true)}
-        />
-      </View>
+      <Confirm
+        {...this.props}
+        data={this.props.data}
+        tel={this.props.tel}
+        from_page="orders_item"
+        orderEdited={() => (this.orderEdited = true)}
+      />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginBottom: 0
-  }
-});
 
 export default OrdersItem;

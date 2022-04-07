@@ -1,9 +1,10 @@
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 import {
   isIphoneX,
   getStatusBarHeight,
-  getBottomSpace
+  getBottomSpace,
 } from 'react-native-iphone-x-helper';
+import appConfig from 'app-config';
 
 const config = {
   appName: '',
@@ -11,7 +12,7 @@ const config = {
   defaultContactPhone: '',
   private: {
     appKey: '',
-    secretKey: ''
+    secretKey: '',
   },
   device: {
     width: Dimensions.get('screen').width,
@@ -24,36 +25,37 @@ const config = {
     store: '',
     isIphoneX: isIphoneX(),
     statusBarHeight: getStatusBarHeight(),
-    bottomSpace: getBottomSpace()
+    bottomSpace: getBottomSpace(),
   },
   rest: {
     endpoint: () => 'https://apiapp.abaha.vn', //http://localhost:8000/
     phoneCardService: () => '/apiService/info/',
     book: () => '/apiService/book',
     password: () => '/apiUser/change_pass',
-    orders: serviceId => `/apiService/orders/${serviceId}`,
-    changeOrder: id => `/apiService/change_order_status/${id}`
+    orders: (serviceId) => `/apiService/orders/${serviceId}`,
+    changeOrder: (id) => `/apiService/change_order_status/${id}`,
   },
   route: {
     push: () => {},
     pop: () => {},
-    pushToMain: () => {}
+    pushToMain: () => {},
   },
   routes: {
     contact: 'tickid_phone_card_contact',
     cardHistory: 'tickid_phone_card_history',
     buyCardConfirm: 'tickid_phone_card_buy_card_confirm',
-    buyCardSuccess: 'tickid_phone_card_buy_card_success'
+    buyCardSuccess: 'tickid_phone_card_buy_card_success',
+    modalActionSheet: appConfig.routes.modalActionSheet,
   },
   httpCode: {
-    success: 200
+    success: 200,
   },
   colors: {
     primary: '#f41820',
     white: '#fff',
     black: '#000',
-    red: 'red'
-  }
+    red: 'red',
+  },
 };
 
 export default config;

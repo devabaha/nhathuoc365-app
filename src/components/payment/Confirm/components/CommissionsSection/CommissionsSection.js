@@ -1,34 +1,24 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import SectionContainer from '../SectionContainer';
-
-import appConfig from 'app-config';
+import {Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
-  container: {
-      backgroundColor: '#fafafa'
-  },
-  address_name_box: {
-    flexDirection: 'row',
-  },
   feeBox: {
     marginTop: 12,
+    flexDirection: 'row',
   },
-  feeLabel: {
-    fontSize: 16,
-    flex: 1,
-  },
-  feeValue: {
-    fontSize: 16,
-  },
-
   firstCommission: {
     marginTop: 0,
   },
   lastCommission: {
-    borderTopWidth: appConfig.device.pixel,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
     marginHorizontal: -15,
     marginVertical: -12,
     paddingVertical: 12,
@@ -36,30 +26,35 @@ const styles = StyleSheet.create({
   },
   commissionTitle: {
     paddingRight: 15,
-  },
-
-  text_total_items: {
-    fontSize: 14,
-    color: '#000000',
+    flex: 1,
   },
   both: {
     fontWeight: '600',
-  },
-
-  address_default_title: {
-    color: '#666666',
-    fontSize: 12,
-  },
-  title_active: {
-    color: appConfig.colors.primary,
   },
 });
 
 const CommissionsSection = ({commissions = []}) => {
   if (!commissions?.length) return null;
-  
+
+  const {theme} = useTheme();
+
+  const lastCommissionStyle = useMemo(() => {
+    return mergeStyles(styles.lastCommission, {
+      borderTopWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const activeTitleStyle = useMemo(() => {
+    return {
+      color: theme.color.primaryHighlight,
+    };
+  }, [theme]);
+
+  if (!commissions?.map) return null;
+
   return (
-    <SectionContainer marginTop style={styles.container}>
+    <SectionContainer marginTop>
       {commissions.map((commission, index) => {
         const isFirst = index === 0;
         const isLast = index === commissions.length - 1;
@@ -67,32 +62,25 @@ const CommissionsSection = ({commissions = []}) => {
           <View
             key={index}
             style={[
-              styles.address_name_box,
               styles.feeBox,
               isFirst && styles.firstCommission,
-              isLast && styles.lastCommission,
+              isLast && lastCommissionStyle,
             ]}>
-            <Text
+            <Typography
+              type={TypographyType.LABEL_LARGE}
               style={[
-                styles.text_total_items,
-                styles.feeLabel,
-                isLast && styles.both,
-                !isLast && styles.title_active,
                 styles.commissionTitle,
+                isLast ? styles.both : activeTitleStyle,
               ]}>
               {commission.name}
-            </Text>
+            </Typography>
 
             <View>
-              <Text
-                style={[
-                  styles.address_default_title,
-                  styles.title_active,
-                  styles.feeValue,
-                  isLast && styles.both,
-                ]}>
+              <Typography
+                type={TypographyType.LABEL_LARGE_PRIMARY}
+                style={isLast && styles.both}>
                 {commission.value_view}
-              </Text>
+              </Typography>
             </View>
           </View>
         );

@@ -1,28 +1,53 @@
-import React, { PureComponent } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-import Loading from '../Loading';
-import CardItem from '../../packages/tickid-phone-card/component/CardItem';
-import NoResult from '../NoResult';
-import { Actions } from 'react-native-router-flux';
+import React, {PureComponent} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import appConfig from 'app-config';
-import EventTracker from '../../helper/EventTracker';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import EventTracker from 'app-helper/EventTracker';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import Loading from 'src/components/Loading';
+import CardItem from 'src/packages/tickid-phone-card/component/CardItem';
+import NoResult from 'src/components/NoResult';
+import {FlatList, ScreenWrapper} from 'src/components/base';
 
 class Orders extends PureComponent {
+  static contextType = ThemeContext;
+
   state = {
     loading: true,
-    serviceOrders: []
+    serviceOrders: [],
   };
   unmounted = false;
   eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.getServiceOrders();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   getServiceOrders = async () => {
@@ -31,11 +56,13 @@ class Orders extends PureComponent {
       console.log(response);
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
-          this.setState({ serviceOrders: response.data || [] });
+          this.setState({
+            serviceOrders: response.data || [],
+          });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || 'Có lỗi xảy ra'
+            message: response.message || this.props.t('common:error.message'),
           });
         }
       }
@@ -43,10 +70,10 @@ class Orders extends PureComponent {
       console.log('get_service_ordesr', err);
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: this.props.t('common:error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
@@ -59,63 +86,70 @@ class Orders extends PureComponent {
       status: serviceOrder.status,
       status_view: serviceOrder.status_view,
       orders_time: serviceOrder.created,
-      total_selected: serviceOrder.price_label
+      total_selected: serviceOrder.price_label,
     };
-
-    Actions.push(appConfig.routes.serviceFeedback, { cart_data });
+    push(appConfig.routes.rating, {cart_data}, this.theme);
   }
 
-  renderServiceOrder = ({ item: serviceOrder }) => {
+  renderServiceOrder = ({item: serviceOrder, index}) => {
     return (
-      <CardItem
-        onPressService={() => this.goToFeedbackService(serviceOrder)}
-        image={serviceOrder.image}
-        cardId={serviceOrder.id}
-        networkType={serviceOrder.type}
-        networkName={serviceOrder.name}
-        code={serviceOrder.code}
-        price={serviceOrder.price_label}
-        isPay={!!serviceOrder.is_pay}
-        isUsed={!!serviceOrder.is_used}
-        buyTime={serviceOrder.created}
-        statusView={serviceOrder.status_view}
-        syntaxPrepaid={serviceOrder.syntax_prepaid}
-        syntaxPostpaid={serviceOrder.syntax_postpaid}
-        cardCode={serviceOrder.data && serviceOrder.data.code}
-        cardSeri={serviceOrder.data && serviceOrder.data.serial}
-      />
+      <View
+        style={
+          index === this.state.serviceOrders?.length - 1 && styles.lastItem
+        }>
+        <CardItem
+          onPressService={() => this.goToFeedbackService(serviceOrder)}
+          image={serviceOrder.image}
+          cardId={serviceOrder.id}
+          networkType={serviceOrder.type}
+          networkName={serviceOrder.name}
+          code={serviceOrder.code}
+          price={serviceOrder.price_label}
+          isPay={!!serviceOrder.is_pay}
+          isUsed={!!serviceOrder.is_used}
+          buyTime={serviceOrder.created}
+          statusView={serviceOrder.status_view}
+          syntaxPrepaid={serviceOrder.syntax_prepaid}
+          syntaxPostpaid={serviceOrder.syntax_postpaid}
+          cardCode={serviceOrder.data && serviceOrder.data.code}
+          cardSeri={serviceOrder.data && serviceOrder.data.serial}
+        />
+      </View>
     );
   };
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading ? (
           <Loading center />
         ) : this.state.serviceOrders.length !== 0 ? (
           <View style={styles.container}>
             <FlatList
+              safeLayout
               data={this.state.serviceOrders}
               renderItem={this.renderServiceOrder}
-              keyExtractor={item => `${item.id}`}
-              ListFooterComponent={<View style={styles.bottomList} />}
+              keyExtractor={(item) => `${item.id}`}
             />
           </View>
         ) : (
-          <NoResult iconName="alert-circle" message="Bạn chưa có đơn dịch vụ" />
+          <NoResult
+            iconName="alert-circle"
+            message={this.props.t('noServiceOrder')}
+          />
         )}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
-  bottomList: {
-    height: 15
-  }
+  lastItem: {
+    marginBottom: 15,
+  },
 });
 
-export default Orders;
+export default withTranslation('orders')(Orders);

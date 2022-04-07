@@ -1,56 +1,92 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/AntDesign';
+import React, {useRef, useState, useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Animated, {call, Easing, timing} from 'react-native-reanimated';
-
-import appConfig from 'app-config';
 import {isEmpty, isEqual} from 'lodash';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import {showDrawer} from '../../Drawer';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {showDrawer} from 'src/components/Drawer';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {
+  BundleIconSetName,
+  TypographyType,
+} from 'src/components/base';
+// custom components
 import FilterDrawer from './FilterDrawer';
-import Container from '../../Layout/Container';
+import {
+  AppFilledButton,
+  BaseButton,
+  Container,
+  TextButton,
+  Typography,
+  Icon,
+} from 'src/components/base';
 
-const SORT_OPTIONS = [
-  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
-  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'desc'},
-  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'desc'},
-  {
-    id: 4,
-    name: 'Giá từ thấp đến cao',
-    value: 'price',
-    isSelected: false,
-    order: 'asc',
-  },
-  {
-    id: 5,
-    name: 'Giá từ cao đến thấp',
-    value: 'price',
-    isSelected: false,
-    order: 'desc',
-  },
-];
-
-function FilterProduct({
-  titleLeft = 'Sắp xếp',
-  titleRight = 'Lọc',
-  options: optionsProp = SORT_OPTIONS,
+const FilterProduct = ({
+  options: optionsProp,
   animatedScrollY = new Animated.Value(0),
   animatedContentOffsetY = new Animated.Value(0),
   wrapperStyle,
   onValueSort,
   selectedFilter,
-}) {
-  const [options, setOptions] = useState([]);
+}) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('filterProduct');
+
+  const SORT_OPTIONS = [
+    {
+      id: 1,
+      name: t('popular'),
+      value: 'ordering',
+      isSelected: false,
+      order: 'asc',
+    },
+    {
+      id: 2,
+      name: t('selling'),
+      value: 'sales',
+      isSelected: false,
+      order: 'desc',
+    },
+    {
+      id: 3,
+      name: t('new'),
+      value: 'created',
+      isSelected: false,
+      order: 'desc',
+    },
+    {
+      id: 4,
+      name: t('priceLowToHigh'),
+      value: 'price',
+      isSelected: false,
+      order: 'asc',
+    },
+    {
+      id: 5,
+      name: t('priceHighToLow'),
+      value: 'price',
+      isSelected: false,
+      order: 'desc',
+    },
+  ];
+
+  const [options, setOptions] = useState(optionsProp || SORT_OPTIONS);
   const [defaultSelected, setDefaultSelected] = useState({});
 
   const showAnimating = useRef(false);
   const hideAnimating = useRef(false);
   const translateY = useRef(new Animated.Value(0));
 
-  useEffect(() => {
-    setOptions(optionsProp);
-  }, []);
+  const titleRightTypoProps = {type: TypographyType.LABEL_MEDIUM_TERTIARY};
 
   const handleRemoveTag = (tag) => () => {
     const newFilterSelected = Object.keys(selectedFilter).reduce((obj, key) => {
@@ -67,10 +103,10 @@ function FilterProduct({
   };
 
   const handleOpenModal = () => {
-    Actions.push(appConfig.routes.filterProduct, {
+    push(appConfig.routes.filterProduct, {
       defaultSelected: defaultSelected,
       data: options,
-      title: titleLeft,
+      title: t('titleLeft'),
       onSelectValueSort: (selected) => {
         const isNotSelected = defaultSelected?.id !== selected.id;
 
@@ -128,6 +164,69 @@ function FilterProduct({
     // ],
   });
 
+  const renderIconFilter = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="filter"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  const renderIconRemoveTag = () => {
+    return (
+      <View style={removeTagContainerStyle}>
+        <Icon
+          bundle={BundleIconSetName.ANT_DESIGN}
+          name="close"
+          style={[styles.smallIcon, activeIconStyle]}
+        />
+      </View>
+    );
+  };
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {color: theme.color.iconInactive});
+  }, [theme]);
+
+  const reanimatedWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.wrapper, {
+      borderColor: theme.color.border,
+      borderBottomWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
+
+  const btnFilterRightStyle = useMemo(() => {
+    return mergeStyles(styles.btnFilterRight, {
+      borderColor: theme.color.border,
+      borderLeftWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
+
+  const tagSelectedStyle = useMemo(() => {
+    return mergeStyles(styles.tagSelected, {
+      backgroundColor: hexToRgba(theme.color.primaryHighlight, 0.15),
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, [theme]);
+
+  const removeTagContainerStyle = useMemo(() => {
+    return mergeStyles(styles.removeTagContainer, {
+      backgroundColor: hexToRgba(theme.color.primaryHighlight, 0.85),
+    });
+  }, [theme]);
+
+  const activeIconStyle = useMemo(() => {
+    return mergeStyles(styles.activeIcon, {
+      color: theme.color.onPrimaryHighlight,
+    });
+  }, [theme]);
+
+  const tagStyle = useMemo(() => {
+    return theme.typography[TypographyType.LABEL_MEDIUM];
+  }, [theme]);
+
   return (
     <>
       <Animated.Code
@@ -137,71 +236,78 @@ function FilterProduct({
             scrollListener(scrollingValue, offsetValue),
         )}
       />
-      <Animated.View
-        style={[styles.wrapper, animatedWrapperStyle.current, wrapperStyle]}>
+      <Container
+        reanimated
+        style={[
+          reanimatedWrapperStyle,
+          animatedWrapperStyle.current,
+          wrapperStyle,
+        ]}>
         <View style={styles.container}>
-          <TouchableOpacity
+          <BaseButton
             hitSlop={HIT_SLOP}
             style={styles.btnFilterLeft}
             onPress={handleOpenModal}>
-            <Text style={styles.title}>{titleLeft}</Text>
-            <Container
-              row
-              centerVertical={false}
-              style={styles.valueTextContainer}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.title}>
+              {t('titleLeft')}
+            </Typography>
+            <Container noBackground row style={styles.valueTextContainer}>
               {!isEmpty(defaultSelected) && (
-                <Text style={styles.valueText}>{defaultSelected.name}</Text>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={styles.valueText}>
+                  {defaultSelected.name}
+                </Typography>
               )}
-              <Icon name="down" style={[styles.icon, styles.smallIcon]} />
+              <Icon
+                bundle={BundleIconSetName.ANT_DESIGN}
+                name="down"
+                style={[iconStyle, styles.smallIcon]}
+              />
             </Container>
-          </TouchableOpacity>
+          </BaseButton>
 
           <Container row centerVertical={false}>
-            <TouchableOpacity
+            <TextButton
+              typoProps={titleRightTypoProps}
               hitSlop={HIT_SLOP}
-              style={styles.btnFilterRight}
+              style={btnFilterRightStyle}
+              titleStyle={[styles.title, styles.titleRight]}
+              renderIconLeft={renderIconFilter}
               onPress={() => {
-                // Actions.drawerOpen();
                 showDrawer({
                   content: <FilterDrawer />,
                 });
               }}>
-              <Icon name="filter" style={styles.icon} />
-              <Text style={[styles.title, styles.titleRight]}>
-                {titleRight}
-              </Text>
-            </TouchableOpacity>
+              {t('titleRight')}
+            </TextButton>
           </Container>
         </View>
+
         {!isEmpty(selectedFilter) ? (
           <View style={styles.tagWrapper}>
             {Object.values(selectedFilter).map((tag, index) => (
-              <TouchableOpacity
-                onPress={handleRemoveTag(tag)}
+              <AppFilledButton
                 key={index}
-                style={styles.tagSelected}>
-                <Text style={styles.tag}>{tag.tag}</Text>
-                <View style={styles.removeTagContainer}>
-                  <Icon
-                    name="close"
-                    style={[styles.icon, styles.smallIcon, styles.activeIcon]}
-                  />
-                </View>
-              </TouchableOpacity>
+                style={tagSelectedStyle}
+                titleStyle={[styles.tag, tagStyle]}
+                renderIconRight={renderIconRemoveTag}
+                onPress={handleRemoveTag(tag)}>
+                {tag.tag}
+              </AppFilledButton>
             ))}
           </View>
         ) : null}
-      </Animated.View>
+      </Container>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#fff',
     width: '100%',
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
   },
   container: {
     flexDirection: 'row',
@@ -209,32 +315,23 @@ const styles = StyleSheet.create({
   },
   btnFilterLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flex: 1,
   },
-  divider: {
-    width: 0.5,
-    height: '100%',
-    backgroundColor: '#ccc',
-    marginRight: 5,
-  },
+
   btnFilterRight: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
-    borderLeftWidth: 0.5,
-    borderColor: '#ccc',
     paddingLeft: 10,
   },
   title: {
-    color: '#555',
     marginRight: 5,
   },
   valueTextContainer: {
     flex: 0.8,
   },
   valueText: {
-    color: '#242424',
     marginRight: 5,
     fontWeight: '600',
   },
@@ -248,8 +345,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   tag: {
-    color: '#333',
-    fontSize: 12,
     paddingHorizontal: 4,
   },
   tagSelected: {
@@ -257,8 +352,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.15),
     flexDirection: 'row',
     paddingVertical: 3,
     paddingHorizontal: 5,
@@ -266,7 +359,6 @@ const styles = StyleSheet.create({
   },
 
   removeTagContainer: {
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.85),
     margin: -5,
     padding: 3,
     marginLeft: 5,
@@ -276,12 +368,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   icon: {
-    color: '#555',
     fontSize: 18,
   },
-  activeIcon: {
-    color: '#fff',
-  },
+  activeIcon: {},
 });
 
 export default React.memo(FilterProduct);

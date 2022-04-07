@@ -1,23 +1,20 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-} from 'react-native';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-
+import React, {useEffect, useRef, useState, useMemo} from 'react';
+import {Animated, Easing, StyleSheet, View} from 'react-native';
+// helpers
+import {isDarkTheme, mergeStyles} from 'src/Themes/helper';
+import {hexToRgba} from 'app-helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import SectionContainer from '../SectionContainer';
-
-import appConfig from 'app-config';
-import Container from 'src/components/Layout/Container';
+import {Typography, Container} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   container: {
     zIndex: 1,
-    backgroundColor: '#fff',
   },
   maskContainer: {
     position: 'absolute',
@@ -28,47 +25,15 @@ const styles = StyleSheet.create({
   },
   mask: {
     flex: 1,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
-    borderColor: appConfig.colors.primary,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
   },
   maskHighlight: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.1),
     transform: [{scale: 1.5}],
   },
   titleWrapper: {
     paddingTop: 12,
-  },
-  titleContainer: {},
-  icon: {
-    width: 15,
-    color: '#999',
-    fontSize: 15,
-  },
-  title: {
-    fontSize: 16,
-    color: '#000000',
-    marginLeft: 8,
-  },
-  actionTitle: {
-    flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-  },
-  btnAction: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  changeTitle: {
-    color: appConfig.colors.primary,
-    fontSize: 12,
   },
 
   descriptionContainer: {
@@ -83,14 +48,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   descriptionTitle: {
-    fontSize: 14,
-    color: '#333',
     fontWeight: '600',
     flex: 1,
-  },
-
-  placeholder: {
-    color: '#999999',
   },
 });
 
@@ -99,6 +58,8 @@ const PaymentMethodSection = ({
   cartData,
   onPressChange = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('orders');
   const [animatedShow] = useState(new Animated.Value(0));
   const maskStyle = useRef({
@@ -126,30 +87,51 @@ const PaymentMethodSection = ({
     }).start();
   }, []);
 
+  const maskThemeStyle = useMemo(() => {
+    return mergeStyles(styles.mask, {
+      backgroundColor: hexToRgba(
+        theme.color.primaryHighlight,
+        isDarkTheme(theme) ? 0.15 : 0.05,
+      ),
+      borderColor: theme.color.primaryHighlight,
+      borderTopWidth: theme.layout.borderWidth,
+      borderBottomWidth: theme.layout.borderWidth,
+    });
+  }, [theme]);
+
+  const maskHighlightStyle = useMemo(() => {
+    return mergeStyles(styles.maskHighlight, {
+      backgroundColor: hexToRgba(theme.color.primaryHighlight, 0.2),
+    });
+  }, [theme]);
+
+  const placeholderStyle = useMemo(() => {
+    return {color: theme.color.placeholder};
+  }, [theme]);
+
   return (
     <SectionContainer
       marginTop
-      style={styles.container}
+      style={[styles.container, {backgroundColor: theme.color.surface}]}
       title={t('confirm.paymentMethod.title')}
       iconName="dollar-sign"
       actionBtnTitle={!!isUnpaid && t('confirm.change')}
       onPressActionBtn={onPressChange}>
       <View pointerEvents="none" style={styles.maskContainer}>
-        <View style={styles.mask} />
-        <Animated.View style={[styles.maskHighlight, maskStyle.current]} />
+        <View style={maskThemeStyle} />
+        <Container
+          noBackground
+          animated
+          style={[maskHighlightStyle, maskStyle.current]}
+        />
       </View>
 
       <View>
-        <Container row style={styles.descriptionContainer}>
+        <Container noBackground row style={styles.descriptionContainer}>
           {!!cartData ? (
             <View style={styles.paymentMethodContainer}>
               {!!cartData?.payment_method_detail?.image && (
-                // <CachedImage
-                //   mutable
-                //   source={{uri: cart_data.payment_method.image}}
-                //   style={styles.imagePaymentMethod}
-                // />
-                <CachedImage
+                <Image
                   mutable
                   source={{
                     uri: cartData.payment_method_detail.image,
@@ -158,27 +140,19 @@ const PaymentMethodSection = ({
                 />
               )}
               {!!cartData?.payment_method?.name && (
-                <Text style={[styles.descriptionTitle]}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={[styles.descriptionTitle]}>
                   {cartData.payment_method.name}
-                </Text>
+                </Typography>
               )}
-              {/* {!!cartData?.payment_method_detail?.image && (
-                        <CachedImage
-                          mutable
-                          source={{
-                            uri: cartData?.payment_method_detail?.image,
-                          }}
-                          style={[
-                            styles.imagePaymentMethod,
-                            styles.imagePaymentMethodDetail,
-                          ]}
-                        />
-                      )} */}
             </View>
           ) : (
-            <Text style={styles.placeholder}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={placeholderStyle}>
               {t('confirm.paymentMethod.unselected')}
-            </Text>
+            </Typography>
           )}
         </Container>
       </View>

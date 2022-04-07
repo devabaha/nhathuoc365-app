@@ -1,16 +1,22 @@
 /* @flow */
 
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text } from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, ScrollView, Typography} from 'src/components/base';
 
-const Info = props => {
-  const { t } = props;
+const Info = (props) => {
+  const {t} = props;
+
   return (
     <ScrollView
-      contentContainerStyle={{
-        padding: 15,
-        width: Util.size.width
-      }}
+      safeLayout
+      directionalLockEnabled
+      contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="always"
       // refreshControl={
       //     <RefreshControl
@@ -20,28 +26,28 @@ const Info = props => {
       // }
     >
       {!props.loading && (
-        <Text style={[styles.des]}>
-          {props.content ? props.content : t('tabs.information.message')}
-        </Text>
+        <Container style={styles.descriptionContainer}>
+          <Typography
+            type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+            style={styles.description}>
+            {props.content ? props.content : t('tabs.information.message')}
+          </Typography>
+        </Container>
       )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  heading: {
-    fontSize: 24,
-    color: '#404040'
+  container: {
+    width: appConfig.device.width,
   },
-  des: {
-    fontSize: 16,
-    marginBottom: 2
+  descriptionContainer: {
+    padding: 15,
   },
-  notice: {
-    fontSize: 18,
-    color: '#404040',
-    marginBottom: 2
-  }
+  description: {
+    marginBottom: 2,
+  },
 });
 
 export default withTranslation('vndWallet')(Info);

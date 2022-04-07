@@ -1,11 +1,21 @@
 import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import Proptypes from 'prop-types';
-import {View, Text, StyleSheet} from 'react-native';
 
-import Loading from '../../../components/Loading';
+// 3-party libs
 import WebView from 'react-native-webview';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import {ScreenWrapper} from 'src/components/base';
 
 export default class Result extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     url: Proptypes.string.isRequired,
     jsCode: Proptypes.string,
@@ -15,14 +25,26 @@ export default class Result extends Component {
     jsCode: '',
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    showLoading: false,
+    url: this.props.url,
+    jsCode: this.props.jsCode,
+  };
+  updateNavBarDisposer = () => {};
 
-    this.state = {
-      showLoading: false,
-      url: props.url,
-      jsCode: props.jsCode,
-    };
+  get theme() {
+    return getTheme(this);
+  }
+
+  componentDidMount() {
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+  }
+
+  componentWillUnmount() {
+    this.updateNavBarDisposer();
   }
 
   onLoadStart() {
@@ -49,11 +71,17 @@ export default class Result extends Component {
     }
   }
 
+  get webViewStyle() {
+    return mergeStyles(styles.webView, {
+      backgroundColor: this.theme.color.background,
+    });
+  }
+
   render() {
     var {url, jsCode} = this.state;
 
     return (
-      <View style={[styles.container, this.props.style]}>
+      <ScreenWrapper style={[styles.container, this.props.style]}>
         <WebView
           injectedJavaScript={jsCode}
           onNavigationStateChange={this._onNavigationStateChange.bind(this)}
@@ -61,9 +89,9 @@ export default class Result extends Component {
           onLoadEnd={this.onLoadEnd.bind(this)}
           onLoad={this.onLoadEnd.bind(this)}
           source={{uri: url}}
-          style={styles.webView}
+          style={this.webViewStyle}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -71,25 +99,8 @@ export default class Result extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   webView: {
     flex: 1,
-    opacity: 0.99,
-  },
-  loadingBox: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#ebebeb',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingTitle: {
-    fontSize: 14,
-    marginTop: 4,
-    color: '#404040',
   },
 });

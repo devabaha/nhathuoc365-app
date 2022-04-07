@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     bottom: 36
   },
   btn: {
-    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
+    backgroundColor: hexToRgba(DEFAULT_COLOR, 0.8),
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 3

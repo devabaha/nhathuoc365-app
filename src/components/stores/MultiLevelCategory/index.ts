@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 export {default} from './MultiLevelCategory';
 
 export type Category = {
@@ -9,6 +10,7 @@ export type Category = {
 export type CategoryType = 'fix' | 'scroll';
 
 export interface MultiLevelCategoryProps {
+  t?: TFunction;
   /**
    * show full data even sub category.
    * scroll all sub categories in a view
@@ -17,4 +19,5 @@ export interface MultiLevelCategoryProps {
   siteId?: string | number;
   title?: string | number;
   categoryId?: string;
+  navigation?: any;
 }

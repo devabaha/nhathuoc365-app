@@ -1,34 +1,39 @@
-/* @flow */
-
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Typography, Icon} from 'src/components/base';
 
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
+class CenterText extends Component {
+  renderIconBefore(iconStyle) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="smile-o"
+        style={[iconStyle, styles.icon]}
+      />
+    );
+  }
 
-export default class CenterText extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
           style={{
-            fontSize: this.props.fontSize || 14,
-            color: this.props.color || '#404040',
             marginTop:
               this.props.marginTop != undefined
                 ? this.props.marginTop
                 : -NAV_HEIGHT / 2,
-            textAlign: 'center'
+            textAlign: 'center',
             // lineHeight: 20
           }}
-        >
-          {this.props.showIcon && (
-            <Icon name="smile-o" size={28} color={DEFAULT_COLOR} />
-          )}
+          renderIconBefore={this.props.showIcon ? this.renderIconBefore : null}>
           {this.props.showIcon && '\n\n'}
-          {this.props.title || 'Vui lòng nhập text'}
-        </Text>
+          {this.props.title}
+        </Typography>
       </View>
     );
   }
@@ -38,13 +43,18 @@ CenterText.propTypes = {
   title: PropTypes.string.isRequired,
   color: PropTypes.string,
   fontSize: PropTypes.number,
-  marginTop: PropTypes.number
+  marginTop: PropTypes.number,
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
+  icon: {
+    fontSize: 28,
+  },
 });
+
+export default CenterText;

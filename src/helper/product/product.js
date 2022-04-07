@@ -8,6 +8,7 @@ import store from 'app-store';
 
 export const isOutOfStock = (product = {}) => {
   return (
+    !Number(product.inventory) &&
     Number(product.inventory) <= 0 &&
     (!isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) ||
       !!product.sale_in_stock) &&

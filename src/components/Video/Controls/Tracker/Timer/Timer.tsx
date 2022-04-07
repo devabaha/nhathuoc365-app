@@ -1,33 +1,73 @@
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import {Container} from 'src/components/Layout';
-import {themes} from '../../themes';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {getThemes} from '../../themes';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography, Container} from 'src/components/base';
 
 const styles = StyleSheet.create({
   title: {
-    color: themes.colors.secondary,
-    fontSize: 12,
     fontWeight: '500',
   },
-  highlight: {
-    color: themes.colors.primary,
-  },
+  highlight: {},
 });
 
 const Timer = ({
   current,
   total = '',
   containerStyle = {},
-  titleStyle = {},
-  highlightStyle = {},
-  onLayout = () => {}
+  titleStyle: titleStyleProp = {},
+  highlightStyle: highlightStyleProp = {},
+  onLayout = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
+  const titleStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.title,
+        {
+          color: themes.colors.secondary,
+        },
+      ],
+      titleStyleProp,
+    );
+  }, [themes, titleStyleProp]);
+
+  const highlightStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.highlight,
+        {
+          color: themes.colors.primary,
+        },
+      ],
+      highlightStyleProp,
+    );
+  }, [themes, highlightStyleProp]);
+
   return (
-    <Container onLayout={onLayout} row reanimated style={containerStyle}>
-      <Text style={[styles.title, titleStyle]}>
-        <Text style={[styles.highlight, highlightStyle]}>{current}</Text>
+    <Container
+      noBackground
+      onLayout={onLayout}
+      row
+      reanimated
+      style={containerStyle}>
+      <Typography type={TypographyType.LABEL_SMALL} style={titleStyle}>
+        <Typography type={TypographyType.LABEL_SMALL} style={highlightStyle}>
+          {current}
+        </Typography>
         {!!total && ` / ${total}`}
-      </Text>
+      </Typography>
     </Container>
   );
 };

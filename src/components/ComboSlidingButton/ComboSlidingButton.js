@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Animated } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// custom components
 import SlidingView from './SlidingView';
 
 class ComboSlidingButton extends Component {
   static defaultProps = {
     selectedItems: [],
     data: [],
-    onFinishAnimation: () => {}
+    onFinishAnimation: () => {},
   };
 
   state = {};
@@ -25,16 +26,15 @@ class ComboSlidingButton extends Component {
   componentDidMount() {}
 
   renderElement() {
-    return this.props.data.map(item => {
+    return this.props.data.map((item) => {
       return (
         <SlidingView
           key={item.id}
           style={styles.animatedView}
           slide={this.props.selectedItems.includes(item.id)}
-          onFinishAnimation={isClosed =>
+          onFinishAnimation={(isClosed) =>
             this.props.onFinishAnimation(item, isClosed)
-          }
-        >
+          }>
           {item.view}
         </SlidingView>
       );
@@ -43,12 +43,11 @@ class ComboSlidingButton extends Component {
 
   render() {
     const extraStyle = this.state.containerHeight && {
-      height: this.state.containerHeight
+      height: this.state.containerHeight,
     };
     return (
       <View
-        style={[styles.container, extraStyle, this.props.comboContainerStyle]}
-      >
+        style={[styles.container, extraStyle, this.props.comboContainerStyle]}>
         {this.renderElement()}
       </View>
     );
@@ -60,8 +59,8 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden'
-  }
+    overflow: 'hidden',
+  },
 });
 
 export default ComboSlidingButton;

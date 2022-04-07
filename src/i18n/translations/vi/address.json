@@ -6,6 +6,7 @@
   },
   "address": {
     "title": "1. Địa chỉ",
+    "myAddress": "Địa chỉ của tôi",
     "receive": "Địa chỉ nhận hàng",
     "new": "Thêm địa chỉ mới",
     "delivery": "Giao tới địa chỉ này",
@@ -14,7 +15,8 @@
     "permissionNotGranted": "Không xác định được vị trí của bạn",
     "confirmPermission": "Cấp quyền Vị trí",
     "noStore": "Không có cửa hàng",
-    "store": "Địa chỉ cửa hàng"
+    "store": "Địa chỉ cửa hàng",
+    "errMsgNotAllowLocationPermission": "Vui lòng cho phép truy cập vị trí để hiển thị cửa hàng theo thứ tự gần nhất!"
   },
   "confirm": {
     "title": "2. Xác nhận"

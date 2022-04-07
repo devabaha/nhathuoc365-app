@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import React, {useEffect, useState, useCallback, memo, useMemo} from 'react';
+import {Animated, StyleSheet, View} from 'react-native';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
-const ProgressBar = props => {
+const ProgressBar = (props) => {
   const {
     height,
     progress,
@@ -12,9 +14,14 @@ const ProgressBar = props => {
     onCompletion,
     onProgressChange = () => {},
     backgroundColor,
-    foregroundColor = "#A6A6A6",
-    containerStyle
+    foregroundColor: foregroundColorProp,
+    containerStyle: containerStyleProp,
   } = props;
+  const {theme} = useTheme();
+
+  const foregroundColor = useMemo(() => {
+    return foregroundColorProp || theme.color.background;
+  }, [theme, foregroundColorProp]);
 
   const [timer] = useState(new Animated.Value(0));
   const [width] = useState(new Animated.Value(0));
@@ -23,7 +30,7 @@ const ProgressBar = props => {
     duration: indeterminateDuration,
     toValue: 1,
     useNativeDriver: true,
-    isInteraction: false
+    isInteraction: false,
   });
 
   useEffect(() => {
@@ -41,8 +48,8 @@ const ProgressBar = props => {
     } else {
       Animated.timing(width, {
         duration: animated ? progressDuration : 0,
-        toValue: progress
-      }).start(({ finished }) => {
+        toValue: progress,
+      }).start(({finished}) => {
         onProgressChange();
         finished && onCompletion();
       });
@@ -56,7 +63,7 @@ const ProgressBar = props => {
     progress,
     progressDuration,
     timer,
-    width
+    width,
   ]);
 
   const stopAnimation = useCallback(() => {
@@ -66,7 +73,7 @@ const ProgressBar = props => {
       duration: 200,
       toValue: 0,
       useNativeDriver: true,
-      isInteraction: false
+      isInteraction: false,
     }).start();
   }, [indeterminateAnimation, width]);
 
@@ -77,48 +84,55 @@ const ProgressBar = props => {
             {
               translateX: timer.interpolate({
                 inputRange: [0, 0.5, 1],
-                outputRange: [-0.6 * 320, -0.5 * 0.8 * 320, 0.7 * 320]
-              })
+                outputRange: [-0.6 * 320, -0.5 * 0.8 * 320, 0.7 * 320],
+              }),
             },
             {
               scaleX: timer.interpolate({
                 inputRange: [0, 0.5, 1],
-                outputRange: [0.0001, 0.8, 0.0001]
-              })
-            }
-          ]
+                outputRange: [0.0001, 0.8, 0.0001],
+              }),
+            },
+          ],
         }
       : {
           width: width.interpolate({
             inputRange: [0, 100],
-            outputRange: ['0%', '100%']
-          })
+            outputRange: ['0%', '100%'],
+          }),
         };
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      width: '100%',
-      height,
-      overflow: 'hidden',
-      borderRadius: 4
-    },
-    progressBar: {
-      flex: 1,
-      borderRadius: height / 2
-    }
-  });
+  const contentStyle = useMemo(() => {
+    return [
+      styles.container,
+      {
+        height,
+        backgroundColor: foregroundColor,
+        borderRadius: theme.layout.borderRadiusSmall,
+      },
+    ];
+  }, [foregroundColor, height]);
+
+  const progressBarStyle = useMemo(() => {
+    return [
+      styles.progressBar,
+      {
+        borderRadius: height / 2,
+      },
+    ];
+  }, [height]);
 
   return (
-    <View style={containerStyle}>
-      <Animated.View style={[styles.container, { backgroundColor: foregroundColor }]}>
+    <View style={containerStyleProp}>
+      <Animated.View style={contentStyle}>
         <Animated.View
           style={[
-            styles.progressBar,
+            progressBarStyle,
             {
               backgroundColor,
-              ...styleAnimation()
-            }
+              ...styleAnimation(),
+            },
           ]}
         />
       </Animated.View>
@@ -126,15 +140,24 @@ const ProgressBar = props => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    overflow: 'hidden',
+  },
+  progressBar: {
+    flex: 1,
+  },
+});
+
 ProgressBar.defaultProps = {
-  state: 'black',
   height: 2,
   progress: 0,
   animated: true,
   indeterminate: false,
   indeterminateDuration: 1100,
   progressDuration: 1100,
-  onCompletion: () => {}
+  onCompletion: () => {},
 };
 
-export default ProgressBar;
+export default memo(ProgressBar);

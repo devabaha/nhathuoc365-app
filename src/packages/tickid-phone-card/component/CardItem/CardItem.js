@@ -1,15 +1,31 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import Button from 'react-native-button';
-import getNetworkImage from '../../helper/getNetworkImage';
-import moreImage from '../../assets/images/more.png';
-import config from '../../config';
-import { SERVICE_TYPE } from '../../constants';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {SERVICE_TYPE} from '../../constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Typography,
+  BaseButton,
+  Card,
+  IconButton,
+  TextButton,
+} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const defaultListener = () => {};
 
 class CardItem extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     cardId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     image: PropTypes.string,
@@ -30,7 +46,7 @@ class CardItem extends Component {
     onCopyCardCode: PropTypes.func,
     onSendCard: PropTypes.func,
     onUseNow: PropTypes.func,
-    onPressService: PropTypes.func
+    onPressService: PropTypes.func,
   };
 
   static defaultProps = {
@@ -53,232 +69,260 @@ class CardItem extends Component {
     onCopyCardCode: defaultListener,
     onSendCard: defaultListener,
     onUseNow: defaultListener,
-    onPressService: defaultListener
+    onPressService: defaultListener,
   };
+
+  copyTitleTypoProps = {type: TypographyType.LABEL_SMALL};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get isUsedOrPaid() {
+    return this.props.isUsed || this.props.isPay;
+  }
+
+  get cardStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+      opacity: this.isUsedOrPaid ? 0.5 : 1,
+    };
+  }
+
+  get copyTextColor() {
+    return this.theme.color.accent2;
+  }
+
+  get copyTextStyle() {
+    return {
+      color: this.copyTextColor,
+    };
+  }
+
+  get codeBoxStyle() {
+    return {
+      backgroundColor: hexToRgba(this.copyTextColor, 0.05),
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
+
+  get usedOverlayStyle() {
+    return {
+      backgroundColor: hexToRgba(this.theme.color.onPrimaryHighlight, 0.6),
+    };
+  }
 
   render() {
     return (
-      <TouchableOpacity
-        onPress={this.props.onPressService}
-        style={[
-          styles.container,
-          this.props.isUsed && styles.isUsed,
-          this.props.isPay && styles.isPay
-        ]}
-      >
-        <View style={styles.cardInfoWrapper}>
-          {!!this.props.image && (
-            <Image
-              style={styles.cardImage}
-              source={{ uri: this.props.image }}
-            />
+      <Card style={[styles.wrapper, this.cardStyle]}>
+        <BaseButton
+          disabled={this.isUsedOrPaid}
+          onPress={this.props.onPressService}
+          style={styles.container}>
+          <View style={styles.cardInfoWrapper}>
+            {!!this.props.image && (
+              <Image
+                style={styles.cardImage}
+                source={{uri: this.props.image}}
+              />
+            )}
+            <View style={styles.cardInfoBox}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.networkName}>
+                {this.props.networkName}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_SEMI_LARGE_PRIMARY}
+                style={styles.cardValue}>
+                {this.props.code ? this.props.code + ' - ' : ''}
+                {this.props.price}
+              </Typography>
+              <Typography
+                type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+                style={styles.cardBuyTime}>
+                {this.props.buyTime}
+              </Typography>
+            </View>
+          </View>
+          {!this.props.isBuyCard && (
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM_PRIMARY}
+              style={styles.statusView}>
+              {this.props.isPay
+                ? this.props.t('paidCard')
+                : this.props.statusView}
+            </Typography>
           )}
-          <View style={styles.cardInfoBox}>
-            <Text style={styles.networkName}>{this.props.networkName}</Text>
-            <Text style={styles.cardValue}>
-              {this.props.code ? this.props.code + ' - ' : ''}
-              {this.props.price}
-            </Text>
-            <Text style={styles.cardBuyTime}>{this.props.buyTime}</Text>
-          </View>
-        </View>
-        {!this.props.isBuyCard && (
-          <Text style={styles.statusView}>
-            {this.props.isPay ? 'Thẻ đã thanh toán' : this.props.statusView}
-          </Text>
-        )}
-        {!!this.props.cardCode && this.props.type === SERVICE_TYPE.PHONE_CARD && (
-          <View style={styles.codeBox}>
-            <Text style={styles.cardCode}>
-              {this.props.cardCode} {this.props.package}
-            </Text>
-            <Button
-              style={styles.copyText}
-              containerStyle={styles.copyBtn}
-              onPress={() => this.props.onCopyCardCode(this.props.cardId)}
-            >
-              SAO CHÉP
-            </Button>
-          </View>
-        )}
-
-        {!!this.props.cardSeri && (
-          <Text style={styles.cardSeri}>Số seri: {this.props.cardSeri}</Text>
-        )}
-
-        {this.props.isBuyCard && (
-          <View style={styles.buttonBox}>
-            {!this.props.isUsed && !this.props.isPay && (
-              <Button
-                style={styles.sendCardText}
-                containerStyle={styles.sendCardBtn}
-                onPress={() => this.props.onSendCard(this.props.cardId)}
-              >
-                Gửi thẻ nạp
-              </Button>
+          {!!this.props.cardCode &&
+            this.props.type === SERVICE_TYPE.PHONE_CARD && (
+              <View style={[styles.codeBox, this.codeBoxStyle]}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={styles.cardCode}>
+                  {this.props.cardCode} {this.props.package}
+                </Typography>
+                <TextButton
+                  hitSlop={HIT_SLOP}
+                  typoProps={this.copyTitleTypoProps}
+                  titleStyle={[styles.copyText, this.copyTextStyle]}
+                  style={styles.copyBtn}
+                  onPress={() => this.props.onCopyCardCode(this.props.cardId)}>
+                  {this.props.t('common:copy')}
+                </TextButton>
+              </View>
             )}
 
-            <Button
-              style={styles.useNowText}
-              containerStyle={styles.useNowBtn}
-              onPress={() => this.props.onUseNow(this.props.cardId)}
-            >
-              {this.props.isPay
-                ? 'Thẻ đã thanh toán'
-                : this.props.isUsed
-                ? 'Thẻ đã sử dụng'
-                : 'Nạp ngay'}
-            </Button>
-          </View>
-        )}
+          {!!this.props.cardSeri && (
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM}
+              style={styles.cardSeri}>
+              {this.props.t('serialNumber')}: {this.props.cardSeri}
+            </Typography>
+          )}
 
-        {false && ( //this.props.showMoreMenu
-          <Button
-            style={styles.moreText}
-            containerStyle={styles.moreBtn}
-            onPress={this.props.onOpenMoreMenu}
-          >
-            <Image style={styles.moreImage} source={moreImage} />
-          </Button>
-        )}
+          {this.props.isBuyCard && (
+            <View style={styles.buttonBox}>
+              {!this.isUsedOrPaid && (
+                <TextButton
+                  neutral
+                  hitSlop={HIT_SLOP}
+                  titleStyle={styles.sendCardText}
+                  style={styles.sendCardBtn}
+                  onPress={() => this.props.onSendCard(this.props.cardId)}>
+                  {this.props.t('sendCard')}
+                </TextButton>
+              )}
 
-        {(this.props.isUsed || this.props.isPay) && (
-          <View style={styles.usedOverlay} />
-        )}
-      </TouchableOpacity>
+              <TextButton
+                primaryHighlight
+                hitSlop={HIT_SLOP}
+                titleStyle={styles.useNowText}
+                style={styles.useNowBtn}
+                onPress={() => this.props.onUseNow(this.props.cardId)}>
+                {this.props.isPay
+                  ? this.props.t('paidCard')
+                  : this.props.isUsed
+                  ? this.props.t('usedCard')
+                  : this.props.t('rechargeNow')}
+              </TextButton>
+            </View>
+          )}
+
+          {false && ( //this.props.showMoreMenu
+            <IconButton
+              bundle={BundleIconSetName.IONICONS}
+              name="ios-ellipsis-horizontal"
+              style={styles.moreBtn}
+              iconStyle={styles.moreIcon}
+              onPress={this.props.onOpenMoreMenu}
+            />
+          )}
+        </BaseButton>
+      </Card>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    minHeight: 90,
-    marginTop: 16,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    justifyContent: 'center',
+  wrapper: {
+    marginTop: 15,
+    marginHorizontal: 15,
     overflow: 'hidden',
-    paddingVertical: 10,
-    paddingHorizontal: 8
   },
-  isUsed: {
-    borderColor: '#f1f1f1'
-  },
-  isPay: {
-    borderColor: '#f1f1f1'
+  container: {
+    minHeight: 90,
+    justifyContent: 'center',
+    padding: 15,
   },
   usedOverlay: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    ...StyleSheet.absoluteFill
+    ...StyleSheet.absoluteFill,
   },
   cardInfoWrapper: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cardImage: {
     width: 60,
-    height: 60
+    height: 60,
+    marginRight: 8,
   },
   cardInfoBox: {
-    marginLeft: 8,
-    flex: 1
+    flex: 1,
   },
   networkName: {
-    color: '#333',
-    fontSize: 14,
     fontWeight: 'bold',
-    marginTop: 2
+    marginTop: 2,
   },
   cardValue: {
-    color: config.colors.primary,
-    fontSize: 15,
     fontWeight: 'bold',
-    marginTop: 2
+    marginTop: 2,
   },
   cardBuyTime: {
-    color: '#666',
-    fontSize: 12,
-    fontWeight: '400',
-    marginTop: 2
+    marginTop: 2,
   },
   codeBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#f1f6f9',
     paddingHorizontal: 16,
-    borderRadius: 3,
-    marginTop: 16
+    marginTop: 16,
   },
   cardCode: {
-    color: config.colors.black,
-    fontSize: 16,
-    fontWeight: '400',
-    marginTop: 2
+    marginTop: 2,
   },
   copyText: {
-    fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
   copyBtn: {
     paddingVertical: 13,
-    paddingLeft: 32
+    paddingLeft: 32,
   },
   cardSeri: {
-    fontSize: 13,
     fontWeight: '600',
     marginTop: 8,
-    color: config.colors.black
   },
   buttonBox: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   sendCardText: {
-    fontSize: 15,
-    color: '#777',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   sendCardBtn: {
-    paddingTop: 16
+    paddingTop: 16,
   },
   useNowText: {
-    fontSize: 15,
-    color: config.colors.primary,
     fontWeight: 'bold',
-    marginLeft: 24
+    marginLeft: 15,
   },
   useNowBtn: {
-    paddingTop: 16
+    paddingTop: 16,
   },
   moreText: {},
   moreImage: {
     width: 20,
-    height: 20
+    height: 20,
   },
   moreBtn: {
     position: 'absolute',
     top: -4,
     right: 0,
     padding: 12,
-    zIndex: 1
   },
   statusView: {
-    fontSize: 13,
-    fontWeight: '400',
     flex: 1,
     alignSelf: 'flex-end',
     textAlign: 'right',
-    // position: 'absolute',
-    // bottom: 4,
     right: 10,
-    color: config.colors.primary
-  }
+  },
+  moreIcon: {
+    fontSize: 20,
+  },
 });
 
-export default CardItem;
+export default withTranslation(['phoneCard', 'common'])(CardItem);

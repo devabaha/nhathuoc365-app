@@ -1,16 +1,8 @@
-import React, {PureComponent, Component} from 'react';
+import React, {PureComponent} from 'react';
+import {View, StyleSheet, Animated, Easing} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  TouchableHighlight,
-  StyleSheet,
-  Animated,
-  Easing,
-} from 'react-native';
-// import Animated, {Easing} from 'react-native-reanimated';
+// 3-party libs
 import Swiper from 'react-native-swiper';
-import appConfig from 'app-config';
-import Icon from 'react-native-vector-icons/Entypo';
 import Svg, {
   Circle,
   Defs,
@@ -19,13 +11,30 @@ import Svg, {
   Stop,
   Use,
 } from 'react-native-svg';
-import Image from 'src/components/Image';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 
-const AnimatedIcon = Animated.createAnimatedComponent(Icon);
-const PAGINATION_WIDTH = 10;
+// constants
+import {
+  PAGINATION_WIDTH,
+  PAGINATION_COLOR,
+  PAGINATION_SHADOW,
+} from './Pagination';
+// custom components
+import {BundleIconSetName, ImageButton, Icon} from 'src/components/base';
+import Pagination from './Pagination';
+
 const PAGINATION_SPACE = 8;
+const PAGINATION_ACTIVE_SHADOW_STROKE = 'rgba(0,0,0,.2)';
+const PAGINATION_ACTIVE_FILL = '#000';
 
 class Promotion extends PureComponent {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array.isRequired,
     ratio: PropTypes.string,
@@ -36,7 +45,7 @@ class Promotion extends PureComponent {
     data: [],
     ratio: '3:1',
     padding: 16,
-    containerSlideStyle: {},
+    containerStyle: {},
   };
 
   constructor(props) {
@@ -47,26 +56,9 @@ class Promotion extends PureComponent {
     this.paginationLeft = new Animated.Value(0);
   }
 
-  renderItem = (promotion, index, dimensionStyle) => {
-    return (
-      <View
-        key={index}
-        style={[styles.promotionItem, this.props.promotionItemStyle]}>
-        <TouchableHighlight
-          onPress={() => this.props.onPress(promotion, index)}
-          underlayColor="transparent">
-          <Image
-            source={{uri: promotion.banner}}
-            style={[
-              styles.bannerImage,
-              dimensionStyle,
-              this.props.bannerImageStyle,
-            ]}
-          />
-        </TouchableHighlight>
-      </View>
-    );
-  };
+  get theme() {
+    return getTheme(this);
+  }
 
   onIndexChanged(selectedIndex) {
     this.index = selectedIndex;
@@ -94,7 +86,7 @@ class Promotion extends PureComponent {
     this.handleAnimation(index, total);
 
     return (
-      <View style={styles.paginationWrapper}>
+      <View style={[styles.paginationWrapper, this.paginationWrapperStyle]}>
         {this.props.data.map((promotion, index) => {
           return (
             <Pagination
@@ -108,7 +100,9 @@ class Promotion extends PureComponent {
         })}
 
         {appConfig.device.isIOS ? (
-          <AnimatedIcon
+          <Icon
+            animated
+            bundle={BundleIconSetName.ENTYPO}
             name="circle"
             style={[styles.paginationActive, {left: this.paginationLeft}]}
           />
@@ -117,7 +111,7 @@ class Promotion extends PureComponent {
             style={{
               width: PAGINATION_WIDTH + 1,
               height: PAGINATION_WIDTH + 1,
-              borderRadius: PAGINATION_WIDTH / 2,
+              borderRadius: (PAGINATION_WIDTH + 1) / 2,
               overflow: 'hidden',
               position: 'absolute',
 
@@ -132,8 +126,16 @@ class Promotion extends PureComponent {
                   cy={PAGINATION_WIDTH / 2}
                   rx={PAGINATION_WIDTH / 2}
                   ry={PAGINATION_WIDTH / 2}>
-                  <Stop offset="0.3" stopColor="#fff" stopOpacity="0" />
-                  <Stop offset="1" stopColor="#fff" stopOpacity="1" />
+                  <Stop
+                    offset="0.3"
+                    stopColor={PAGINATION_COLOR}
+                    stopOpacity="0"
+                  />
+                  <Stop
+                    offset="1"
+                    stopColor={PAGINATION_COLOR}
+                    stopOpacity="1"
+                  />
                 </RadialGradient>
                 <Mask
                   id="Mask"
@@ -157,10 +159,14 @@ class Promotion extends PureComponent {
                   cy={(PAGINATION_WIDTH + 1) / 2}
                   r={PAGINATION_WIDTH / 2}
                   strokeWidth="4"
-                  stroke="rgba(0,0,0,.2)"
+                  stroke={PAGINATION_ACTIVE_SHADOW_STROKE}
                 />
               </Defs>
-              <Use href="#Text" fill="#000" mask="url(#Mask)" />
+              <Use
+                href="#Text"
+                fill={PAGINATION_ACTIVE_FILL}
+                mask="url(#Mask)"
+              />
             </Svg>
             <Svg
               width={PAGINATION_WIDTH}
@@ -171,7 +177,7 @@ class Promotion extends PureComponent {
                 cy={(PAGINATION_WIDTH + 1) / 2}
                 r={(PAGINATION_WIDTH - 2) / 2}
                 strokeWidth="1"
-                stroke="#fff"
+                stroke={PAGINATION_COLOR}
               />
             </Svg>
           </Animated.View>
@@ -179,6 +185,42 @@ class Promotion extends PureComponent {
       </View>
     );
   };
+
+  renderItem = (promotion, index, dimensionStyle) => {
+    return (
+      <ImageButton
+        key={index}
+        activeOpacity={0.9}
+        style={[styles.promotionItem, this.props.promotionItemStyle]}
+        onPress={() => this.props.onPress(promotion, index)}
+        source={{uri: promotion.banner}}
+        imageStyle={[
+          styles.bannerImage,
+          dimensionStyle,
+          this.props.bannerImageStyle,
+        ]}
+      />
+    );
+  };
+
+  get shadowStyle() {
+    return {
+      shadowColor: this.theme.color.shadow,
+      ...this.theme.layout.shadow,
+    };
+  }
+
+  get sliderContainerStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
+  get paginationWrapperStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
 
   render() {
     const [width, height] = this.getRatio();
@@ -188,17 +230,25 @@ class Promotion extends PureComponent {
     };
 
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <View
+        style={[
+          styles.container,
+          // shadow for ios
+          this.shadowStyle,
+          this.props.containerStyle,
+        ]}>
         <Swiper
           autoplay
           key={this.props.data?.length}
           autoplayTimeout={5}
-          backgroundColor="#fafafa"
           // removeClippedSubviews={false}
           renderPagination={this.renderPagination}
           onIndexChanged={this.onIndexChanged.bind(this)}
           containerStyle={{
-            ...styles.slideContainerStyle,
+            ...styles.slideContainer,
+            ...this.sliderContainerStyle,
+            // shadow for android
+            ...this.shadowStyle,
             ...dimensionStyle,
             ...this.props.containerStyle,
           }}
@@ -215,15 +265,10 @@ class Promotion extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    // shadow for ios
-    ...appConfig.styles.shadow,
   },
-  slideContainerStyle: {
+  slideContainer: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 8,
-    // shadow for android
-    ...appConfig.styles.shadow,
   },
   slideStyle: {},
   bannerImage: {},
@@ -233,63 +278,21 @@ const styles = StyleSheet.create({
   paginationWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    // width: 300,
     height: PAGINATION_WIDTH,
     marginHorizontal: 15,
     position: 'absolute',
     bottom: 15,
-    borderRadius: 8,
   },
   pagination: {
     height: 1,
     width: PAGINATION_WIDTH,
-    backgroundColor: '#fff',
-    ...elevationShadowStyle(2, 0, 0, 0.6),
   },
   paginationActive: {
     fontSize: PAGINATION_WIDTH + 1,
-    color: '#fff',
+    color: PAGINATION_COLOR,
     position: 'absolute',
-    ...elevationShadowStyle(2, 0, 0, 0.6),
+    ...PAGINATION_SHADOW,
   },
 });
 
 export default Promotion;
-
-class Pagination extends Component {
-  state = {};
-  animatedShow = new Animated.Value(this.animatedValue);
-
-  get animatedValue() {
-    if (this.props.active) {
-      return 0;
-    }
-
-    return 1;
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.active !== this.props.active) {
-      Animated.timing(this.animatedShow, {
-        toValue: nextProps.active ? 0 : 1,
-        easing: Easing.quad,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    }
-
-    return true;
-  }
-
-  render() {
-    const animatedStyle = {
-      opacity: this.animatedShow,
-    };
-
-    return (
-      <Animated.View
-        style={[styles.pagination, animatedStyle, this.props.style]}
-      />
-    );
-  }
-}

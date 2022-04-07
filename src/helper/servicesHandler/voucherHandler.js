@@ -1,4 +1,4 @@
-import { Actions } from 'react-native-router-flux';
+import {pop} from 'app-helper/routing';
 
 /**
  * A group of functions to handler voucher jobs.
@@ -16,11 +16,11 @@ import { Actions } from 'react-native-router-flux';
  */
 export function handleUseVoucherOnlineSuccess(
   cartData,
-  fromDetailVoucher = false
+  fromDetailVoucher = false,
 ) {
-  Actions.pop();
+  pop();
   if (fromDetailVoucher) {
-    setTimeout(Actions.pop, 0);
+    setTimeout(pop, 0);
   }
   action(() => {
     store.setCartData(cartData);

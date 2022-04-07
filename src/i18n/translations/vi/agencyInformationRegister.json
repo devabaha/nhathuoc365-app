@@ -1,0 +1,20 @@
+{
+  "formData": {
+    "email": "Email *",
+    "IDCard": "Số CMND *",
+    "imageIDCardFront": "Ảnh CMND (mặt trước) *",
+    "imageIDCardBack": "Ảnh CMND (mặt sau) *",
+    "bankAccount": "Tài khoản ngân hàng (cú pháp: [số tk], [tên chủ tk], [tên ngân hàng]) *"
+  },
+  "requiredField": "Vui lòng nhập trường này",
+  "emailFomartRequried": "Vui lòng nhập đúng định dạng email",
+  "register": "Đăng ký",
+  "chooseCareer": "Chọn ngành nghề",
+
+  "takePicture": {
+    "title": "Chụp ảnh CMND",
+    "cancel": "Hủy",
+    "takePhoto": "Chụp ảnh",
+    "chooseFromLibrary": "Mở thư viện"
+  }
+}

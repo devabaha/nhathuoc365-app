@@ -1,26 +1,44 @@
-import React, { memo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
-import Icon from 'react-native-vector-icons/Fontisto';
-import { AREA_SIZE, CENTER_POINT_COOR } from '../constants';
+import React, {memo, useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import Svg, {Circle} from 'react-native-svg';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {
+  AREA_SIZE,
+  CENTER_POINT_COOR,
+} from 'src/components/ResetPassword/constants';
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Typography, Icon} from 'src/components/base';
 
 const Header = () => {
-  const { t } = useTranslation(['resetPassword', 'common']);
+  const {theme} = useTheme();
+
+  const {t} = useTranslation(['resetPassword', 'common']);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {color: theme.color.onPersistPrimary});
+  }, [theme]);
+
   return (
     <View style={styles.header}>
       <View style={styles.headerContent}>
         <Svg style={styles.iconBackground}>
           <Circle
             strokeWidth={10}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.3)}
+            stroke={hexToRgba(theme.color.persistPrimary, 0.3)}
             cx={CENTER_POINT_COOR}
             cy={CENTER_POINT_COOR}
             r="50"
-            fill={DEFAULT_COLOR}
+            fill={theme.color.persistPrimary}
           />
           <Circle
             strokeWidth={3}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.4)}
+            stroke={hexToRgba(theme.color.persistPrimary, 0.4)}
             strokeDasharray={[3, 15]}
             strokeLinecap="round"
             cx={CENTER_POINT_COOR}
@@ -30,19 +48,23 @@ const Header = () => {
           />
           <Circle
             strokeWidth={2.5}
-            stroke={hexToRgbA(DEFAULT_COLOR, 0.3)}
+            stroke={hexToRgba(theme.color.persistPrimary, 0.3)}
             cx={13}
             cy={CENTER_POINT_COOR - 8}
             r={8}
-            fill="#fff"
+            fill={theme.color.surface}
           />
         </Svg>
-        <Icon name="key" style={styles.icon} />
+        <Icon bundle={BundleIconSetName.FONTISO} name="key" style={iconStyle} />
       </View>
-      <Text style={styles.title}>
+      <Typography type={TypographyType.TITLE_HUGE} style={styles.title}>
         {t('common:screen.resetPassword.mainTitle')}
-      </Text>
-      <Text style={styles.description}>{t('instruction')}</Text>
+      </Typography>
+      <Typography
+        type={TypographyType.LABEL_SEMI_MEDIUM_TERTIARY}
+        style={styles.description}>
+        {t('instruction')}
+      </Typography>
     </View>
   );
 };
@@ -51,36 +73,30 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginTop: 40,
-    marginBottom: 20
+    marginBottom: 20,
   },
   headerContent: {
     height: AREA_SIZE,
     width: AREA_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   iconBackground: {
     position: 'absolute',
-    zIndex: 0
+    zIndex: 0,
   },
   icon: {
     fontSize: 40,
-    color: '#fff'
   },
   title: {
-    fontSize: 24,
-    fontWeight: '500',
-    color: '#242424'
+    fontWeight: 'bold',
   },
   description: {
-    marginTop: 5,
+    marginTop: 15,
     maxWidth: 300,
-    fontSize: 13,
     textAlign: 'center',
-    color: '#666'
-  }
+  },
 });
 
 export default memo(Header);

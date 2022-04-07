@@ -1,16 +1,22 @@
 import React, {Component} from 'react';
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {ScrollView, View, StyleSheet} from 'react-native';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
+// custom components
+import {
+  Typography,
+  Input,
+  ScreenWrapper,
+  IconButton,
+  TextButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {},
@@ -26,62 +32,53 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     marginBottom: 10,
-    fontSize: 15,
   },
   desText: {
-    color: 'black',
-    fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
     fontWeight: '300',
   },
   phoneNumber: {
-    fontSize: 17,
     fontWeight: '500',
     marginTop: 0,
     marginBottom: 20,
   },
   txtNote: {
-    color: 'red',
     marginTop: 20,
   },
   txtCode: {
-    fontWeight: '800',
+    fontWeight: appConfig.device.isIOS ? '800' : 'bold',
     fontSize: 20,
     padding: 10,
   },
   continueText: {
-    color: 'black',
-    fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
     marginTop: 20,
   },
   backIcon: {
     fontSize: 36,
-    color: '#333',
   },
   txtDesCode: {
-    fontSize: 17,
     fontWeight: '200',
-    color: 'black',
     marginTop: 20,
   },
   txtDescription: {
-    fontSize: 17,
     fontWeight: '200',
-    color: 'black',
     marginTop: 20,
   },
   resSendOTP: {
-    fontSize: 17,
-    color: '#528BC5',
     fontWeight: '700',
     marginTop: 15,
+  },
+  buttonStyle: {
+    alignSelf: 'flex-start',
   },
 });
 
 class AuthConfirm extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     onBackToPhoneInput: () => {},
   };
@@ -93,6 +90,10 @@ class AuthConfirm extends Component {
   };
   timer = -1;
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get isReSendable() {
     return this.state.requestNewOtpCounter <= 0;
   }
@@ -103,6 +104,10 @@ class AuthConfirm extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   reStartCountDown() {
@@ -141,6 +146,23 @@ class AuthConfirm extends Component {
     } : ${parseInt(second) < 10 ? '0' + parseInt(second) : parseInt(second)}`;
   }
 
+  resSendOTPStyle = mergeStyles(styles.resSendOTP, {
+    color: this.theme.color.accent2,
+  });
+
+  styleContinueText = mergeStyles(styles.continueText, {
+    color: !this.props.confirmDisabled
+      ? this.theme.color.textPrimary
+      : this.theme.color.textInactive,
+  });
+
+  txtNoteStyle = mergeStyles(styles.txtNote, {
+    color: this.theme.color.danger,
+  });
+
+  resentOTPTypoProps = {type: TypographyType.TITLE_MEDIUM};
+  continueBtnTypoProps = {type: TypographyType.TITLE_LARGE};
+
   render() {
     const {codeInput, requestNewOtpCounter} = this.state;
     const {
@@ -155,18 +177,26 @@ class AuthConfirm extends Component {
     return (
       <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
-          <TouchableOpacity onPress={this.onBack.bind(this)}>
-            <Icon name="chevron-left" style={styles.backIcon} />
-          </TouchableOpacity>
+          <IconButton
+            style={styles.buttonStyle}
+            onPress={this.onBack.bind(this)}
+            bundle={BundleIconSetName.MATERIAL_ICONS}
+            name="chevron-left"
+            iconStyle={styles.backIcon}
+          />
         </View>
         <View style={styles.contentContainer}>
-          <Text style={[styles.desText, styles.codeInput]}>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={[styles.desText, styles.codeInput]}>
             {t('verifyCodeInputTitle')}
-          </Text>
-          <Text style={[styles.desText, styles.phoneNumber]}>
+          </Typography>
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={[styles.desText, styles.phoneNumber]}>
             {phoneNumber}
-          </Text>
-          <TextInput
+          </Typography>
+          <Input
             autoFocus
             onChangeText={onChangeCode}
             placeholder={t('verifyCodeInputPlaceholder')}
@@ -176,33 +206,44 @@ class AuthConfirm extends Component {
             maxLength={6}
             onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
           />
-          <TouchableOpacity
-            activeOpacity={0.5}
+          <TextButton
             onPress={onConfirmCode}
-            disabled={confirmDisabled}>
-            <Text
-              style={[
-                styles.continueText,
-                {color: !confirmDisabled ? 'black' : 'lightgray'},
-              ]}>
-              {t('verifyCodeInputConfirmMessage')}
-            </Text>
-          </TouchableOpacity>
-          {!!message && <Text style={styles.txtNote}>{message}</Text>}
-          <Text style={styles.txtDesCode}>{t('notReceiveCode')}</Text>
-          <TouchableOpacity
+            disabled={confirmDisabled}
+            title={t('verifyCodeInputConfirmMessage')}
+            style={this.styleContinueText}
+            typoProps={this.continueBtnTypoProps}
+          />
+          {!!message && (
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={this.txtNoteStyle}>
+              {message}
+            </Typography>
+          )}
+          <Typography
+            type={TypographyType.TITLE_MEDIUM}
+            style={styles.txtDesCode}>
+            {t('notReceiveCode')}
+          </Typography>
+
+          <TextButton
+            style={styles.buttonStyle}
+            titleStyle={this.resSendOTPStyle}
             onPress={this.reStartCountDown.bind(this)}
-            disabled={!this.isReSendable}>
-            <Text style={styles.resSendOTP}>
-              {!this.isReSendable
-                ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
-                    requestNewOtpCounter,
-                  )}`
-                : t('requestNewCode')}
-            </Text>
-          </TouchableOpacity>
+            disabled={!this.isReSendable}
+            typoProps={this.resentOTPTypoProps}>
+            {!this.isReSendable
+              ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
+                  requestNewOtpCounter,
+                )}`
+              : t('requestNewCode')}
+          </TextButton>
           {this.state.showDescription && (
-            <Text style={styles.txtDescription}>{t('description')}</Text>
+            <Typography
+              type={TypographyType.TITLE_MEDIUM}
+              style={styles.txtDescription}>
+              {t('description')}
+            </Typography>
           )}
         </View>
       </ScrollView>

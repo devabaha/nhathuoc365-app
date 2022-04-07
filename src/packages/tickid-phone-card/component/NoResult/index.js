@@ -1,12 +1,24 @@
 import React from 'react';
+import {View, StyleSheet, ViewPropTypes} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, ViewPropTypes } from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 function NoResult(props) {
   return (
     <View style={[styles.noResultWrapper, props.style]}>
-      <Text style={styles.noResultTitle}>{props.title}</Text>
-      <Text style={styles.noResultText}>{props.text}</Text>
+      <Typography
+        type={TypographyType.TITLE_SEMI_LARGE}
+        style={styles.noResultTitle}>
+        {props.title}
+      </Typography>
+      <Typography
+        type={TypographyType.TITLE_MEDIUM_TERTIARY}
+        style={styles.noResultText}>
+        {props.text}
+      </Typography>
     </View>
   );
 }
@@ -16,25 +28,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
   noResultTitle: {
-    fontSize: 18,
     fontWeight: '600',
-    color: '#333'
   },
   noResultText: {
-    fontSize: 16,
     fontWeight: '400',
-    color: '#666',
-    marginTop: 8
-  }
+    marginTop: 8,
+  },
 });
 
 NoResult.propTypes = {
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  style: ViewPropTypes.style
+  style: ViewPropTypes.style,
 };
 
 export default NoResult;

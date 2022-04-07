@@ -1,0 +1,19 @@
+{
+  "title": "Domains",
+  "label": "Change API - change your life",
+  "placeholder": {
+    "aipDomain": "api domain",
+    "imageDomain": "image domain (optional)",
+    "socialDomain": "social domain (optional)"
+  },
+  "save": "Lưu lại nhé?",
+  "noteTitle": "Có thể bạn cần biết!",
+  "note": [
+    "Nhập 'hs ' để gõ nhanh 'https://'.",
+    "Nhập 'ht ' để gõ nhanh 'http://'.",
+    "Nếu bỏ trống image/ social domain thì hệ thống sẽ tự lựa chọn dựa theo theo api domain đã chọn:\r\n- Api domain là live domain -> image/ social domain sử dụng live domain.\r\n- Api domain không phải live domain -> image/ social domain sử dụng dev domain"
+  ],
+  "historyTitle": "Bạn đã nhập gì?",
+  "historyLabel": "Chỉ lưu {{maxSave}} dữ liệu gần nhất!",
+  "noHistory": "Chưa nhập gì :)"
+}

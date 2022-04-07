@@ -1,12 +1,20 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
-import appConfig from 'app-config';
-
+import {StyleSheet, View, ViewStyle} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// types
+import {BookingProductInfoProps} from '.';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import AttributeSelection from 'src/components/stores/ItemAttribute/AttributeSelection';
 import ProductInfo from 'src/components/stores/ItemAttribute/ProductInfo';
 import NumberSelection from 'src/components/stores/NumberSelection';
-import {BookingProductInfoProps} from '.';
+import {Container, Typography} from 'src/components/base';
 
 const MIN_QUANTITY = 1;
 
@@ -28,42 +36,24 @@ const styles = StyleSheet.create({
     flex: undefined,
   },
   quantity: {
-    flexDirection: 'row',
-    borderColor: '#eee',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 15,
-    backgroundColor: appConfig.colors.white,
   },
-  label: {
-    color: '#444',
-    fontSize: 16,
-  },
-  description: {
-    color: '#666',
-  },
-
   quantityViewOnlyWrapper: {
     position: 'absolute',
     bottom: -20,
     right: 0,
   },
   quantityViewOnlyContainer: {
-    // borderRadius: 15,
     padding: 2,
     paddingHorizontal: 12,
-    backgroundColor: '#eee',
-  },
-  quantityViewOnly: {
-    fontSize: 12,
-    color: appConfig.colors.text,
   },
 });
 
 class BookingProductInfo extends Component<BookingProductInfoProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     product: {},
     editable: true,
@@ -77,6 +67,10 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
     model: '',
     quantity: this.props.product?.quantity || MIN_QUANTITY,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.quantity !== this.state.quantity) {
@@ -118,6 +112,20 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
     }
   };
 
+  get quanlityStyle(): ViewStyle {
+    return {
+      borderColor: this.theme.color.border,
+      borderTopWidth: this.theme.layout.borderWidth,
+      borderBottomWidth: this.theme.layout.borderWidth,
+    };
+  }
+
+  get quantityViewOnlyContainerStyle(): ViewStyle {
+    return {
+      backgroundColor: this.theme.color.contentBackground,
+    };
+  }
+
   render() {
     const product = this.props.product || {};
     const selectedAttrViewData = this.state.selectedAttrViewData;
@@ -143,10 +151,16 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
           extraInfoComponent={
             !this.props.editable && (
               <View style={styles.quantityViewOnlyWrapper}>
-                <View style={styles.quantityViewOnlyContainer}>
-                  <Text style={styles.quantityViewOnly}>
+                <View
+                  style={[
+                    this.quantityViewOnlyContainerStyle,
+                    styles.quantityViewOnlyContainer,
+                  ]}>
+                  <Typography
+                    onContentBackground
+                    type={TypographyType.LABEL_SMALL}>
                     x {this.state.quantity}
-                  </Text>
+                  </Typography>
                 </View>
               </View>
             )
@@ -164,11 +178,13 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
         )}
 
         {this.props.editable && (
-          <View style={styles.quantity}>
-            <Text style={styles.label}>{this.props.t('attr.quantity')}</Text>
+          <Container row center style={[styles.quantity, this.quanlityStyle]}>
+            <Typography type={TypographyType.LABEL_LARGE}>
+              {this.props.t('attr.quantity') as string}
+            </Typography>
             <View style={styles.quantityWrapper}>
               <NumberSelection
-                containerStyle={[styles.quantityContainer]}
+                containerStyle={styles.quantityContainer}
                 textContainer={styles.quantityTxtContainer}
                 value={this.state.quantity}
                 min={MIN_QUANTITY}
@@ -181,12 +197,11 @@ class BookingProductInfo extends Component<BookingProductInfoProps> {
                 // disabled={disabled}
               />
             </View>
-          </View>
+          </Container>
         )}
       </View>
     );
   }
 }
 
-// @ts-ignore
 export default withTranslation('product')(BookingProductInfo);

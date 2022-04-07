@@ -1,22 +1,35 @@
-import React, { Component } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  RefreshControl
-} from 'react-native';
-import { ScheduleDateTimePicker } from '../../components/Schedule';
-import SlotPicker from '../../components/Schedule/SlotPicker/SlotPicker';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import moment from 'moment';
-import { DATE_FORMAT } from '../../components/Schedule/constants';
-import { Actions } from 'react-native-router-flux';
-import { APIRequest } from '../../network/Entity';
+// configs
 import appConfig from 'app-config';
-import Loading from '../../components/Loading';
-import NoResult from '../../components/NoResult';
-import EventTracker from '../../helper/EventTracker';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+import {DATE_FORMAT} from 'src/components/Schedule/constants';
+// entities
+import {APIRequest} from 'src/network/Entity';
+import EventTracker from 'app-helper/EventTracker';
+// custom components
+import {ScheduleDateTimePicker} from 'src/components/Schedule';
+import SlotPicker from 'src/components/Schedule/SlotPicker/SlotPicker';
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import {
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+  Container,
+  RefreshControl,
+} from 'src/components/base';
 
 const SLOTS = [
   '9:00',
@@ -38,11 +51,13 @@ const SLOTS = [
   '9:00',
   '9:00',
   '9:00',
-  '9:00'
+  '9:00',
 ];
 class Schedule extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
-    serviceId: '508'
+    serviceId: '508',
   };
   state = {
     serviceTitle: '',
@@ -62,11 +77,17 @@ class Schedule extends Component {
     slotsMessage: '',
     user: {},
     loading: true,
-    refreshing: false
+    refreshing: false,
   };
   getScheduleDataRequest = new APIRequest();
   requests = [this.getScheduleDataRequest];
   eventTracker = new EventTracker();
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get hasDateData() {
     return !!this.state.startDate;
@@ -79,15 +100,22 @@ class Schedule extends Component {
   componentDidMount() {
     this.getScheduleData();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   async getScheduleData() {
-    const { t } = this.props;
+    const {t} = this.props;
     const errMess = t('common:api.error.message');
     try {
       const serviceId = this.props.serviceId;
@@ -107,36 +135,36 @@ class Schedule extends Component {
               site: response.data.site,
               serviceId,
               confirmNote: response.data.content,
-              serviceTitle: response.data.name
+              serviceTitle: response.data.name,
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || errMess
+              message: response.message || errMess,
             });
           }
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || errMess
+            message: response.message || errMess,
           });
         }
       } else {
         flashShowMessage({
           type: 'danger',
-          message: errMess
+          message: errMess,
         });
       }
     } catch (err) {
       console.log('%cget_schedule_data', 'color:red', err);
       flashShowMessage({
         type: 'danger',
-        message: errMess
+        message: errMess,
       });
     } finally {
       this.setState({
         loading: false,
-        refreshing: false
+        refreshing: false,
       });
     }
   }
@@ -152,28 +180,28 @@ class Schedule extends Component {
     const minutesDiff = moment(time1).diff(time2, 'minutes');
 
     if (yearsDiff) {
-      diffMess = yearsDiff + ' năm từ ';
+      diffMess = yearsDiff + ' ' + this.props.t('diffTime.yearFrom') + ' ';
     } else if (monthsDiff) {
-      diffMess = monthsDiff + ' tháng từ ';
+      diffMess = monthsDiff + ' ' + this.props.t('diffTime.monthFrom') + ' ';
     } else if (weeksDiff) {
-      diffMess = weeksDiff + ' tuần từ ';
+      diffMess = weeksDiff + ' ' + this.props.t('diffTime.weeksFrom') + ' ';
     } else if (daysDiff) {
-      diffMess = daysDiff + ' ngày từ ';
+      diffMess = daysDiff + ' ' + this.props.t('diffTime.dayFrom') + ' ';
     } else if (hoursDiff) {
-      diffMess = hoursDiff + ' giờ từ ';
+      diffMess = hoursDiff + ' ' + this.props.t('diffTime.hourFrom') + ' ';
     } else {
-      diffMess = minutesDiff + ' phút từ ';
+      diffMess = minutesDiff + ' ' + this.props.t('diffTime.minuteFrom') + ' ';
     }
 
     if (diffMess) {
       const [diffTime, affix] = diffMess.split(' ');
       if (diffTime < 0) {
-        diffMess = `Đã trễ ${Math.abs(diffTime)} ${affix}`;
+        diffMess = `${this.props.t('delayed')} ${Math.abs(diffTime)} ${affix}`;
       } else {
-        diffMess += 'bây giờ';
+        diffMess += this.props.t('now');
       }
     } else {
-      diffMess = 'bây giờ';
+      diffMess = this.props.t('now');
     }
     return diffMess;
   }
@@ -185,7 +213,7 @@ class Schedule extends Component {
 
       string.forEach(
         (str, index) =>
-          (newString[index] = str.charAt(0).toUpperCase() + str.slice(1))
+          (newString[index] = str.charAt(0).toUpperCase() + str.slice(1)),
       );
       return newString.join(' ');
     }
@@ -195,7 +223,7 @@ class Schedule extends Component {
 
   getTitleSlotPicker(date) {
     const momentDate = moment(date);
-    const { t, i18n } = this.props;
+    const {t, i18n} = this.props;
 
     const prefix = momentDate.isSame(moment(), 'day')
       ? t('prefix.today')
@@ -204,58 +232,63 @@ class Schedule extends Component {
       : momentDate.isSame(moment().subtract(1, 'days'), 'day')
       ? t('prefix.yesterday')
       : this.capitalizeFirstLetter(
-          momentDate
-            .locale(i18n.language)
-            .format('dddd')
-            .split(' ')
+          momentDate.locale(i18n.language).format('dddd').split(' '),
         );
 
     return prefix + ', ' + momentDate.format('DD MMMM');
   }
 
-  handlePressDate = selectedDate => {
+  handlePressDate = (selectedDate) => {
     const titleSlotPicker = this.getTitleSlotPicker(selectedDate.fullDate);
 
     this.setState({
       selectedDate: selectedDate.fullDate,
-      titleSlotPicker
+      titleSlotPicker,
     });
   };
 
   handlePressSlot(slot) {
-    Actions.push(appConfig.routes.scheduleConfirm, {
-      title: this.state.serviceTitle,
-      siteId: this.state.siteId,
-      serviceId: this.state.serviceId,
+    push(
+      appConfig.routes.scheduleConfirm,
+      {
+        title: this.state.serviceTitle,
+        siteId: this.state.siteId,
+        serviceId: this.state.serviceId,
 
-      dateView: this.state.titleSlotPicker,
-      date: this.state.selectedDate,
-      dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
-      timeRange: slot,
-      // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
-      appointmentName: this.state.site.name,
-      appointmentDescription: this.state.site.address,
-      image: this.state.site.logo_url,
-      description: this.state.confirmNote
-    });
+        dateView: this.state.titleSlotPicker,
+        date: this.state.selectedDate,
+        dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
+        timeRange: slot,
+        // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
+        appointmentName: this.state.site.name,
+        appointmentDescription: this.state.site.address,
+        image: this.state.site.logo_url,
+        description: this.state.confirmNote,
+      },
+      this.theme,
+    );
   }
 
   onRefresh() {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.getScheduleData();
   }
 
   renderExtraMessage() {
     return (
       this.props.extraMessage && (
-        <View style={styles.container}>
-          <Text style={styles.extraMessageTitle}>
+        <Container noBackground style={styles.container}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.extraMessageTitle}>
             {this.props.extraMessage.title}
-          </Text>
-          <Text style={styles.extraMessageContent}>
+          </Typography>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={styles.extraMessageContent}>
             {this.props.extraMessage.content}
-          </Text>
-        </View>
+          </Typography>
+        </Container>
       )
     );
   }
@@ -275,47 +308,56 @@ class Schedule extends Component {
     );
   }
 
+  get dateTimePickerStyle() {
+    return mergeStyles(styles.dateTimePicker, {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loading center />}
-        {this.hasDateData && (
-          <ScheduleDateTimePicker
-            containerStyle={styles.dateTimePicker}
-            onPress={this.handlePressDate}
-            // date-format: YYYY-MM-DD
-            selectedDate={this.state.selectedDate}
-            // startDate (today) - (margin-left)
-            startDate={this.state.startDate}
-            // endDate - (margin-right)
-            endDate={this.state.endDate}
-            // disabledDates (flexible)
-            disabledDates={this.state.disabledDates}
-          />
-        )}
-
-        <ScrollView
-          style={styles.slotPicker}
-          contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh.bind(this)}
+      <ScreenWrapper style={styles.container}>
+        <Container flex>
+          {this.state.loading && <Loading center />}
+          {this.hasDateData && (
+            <ScheduleDateTimePicker
+              containerStyle={this.dateTimePickerStyle}
+              onPress={this.handlePressDate}
+              // date-format: YYYY-MM-DD
+              selectedDate={this.state.selectedDate}
+              // startDate (today) - (margin-left)
+              startDate={this.state.startDate}
+              // endDate - (margin-right)
+              endDate={this.state.endDate}
+              // disabledDates (flexible)
+              disabledDates={this.state.disabledDates}
             />
-          }
-        >
-          {this.renderExtraMessage()}
+          )}
 
-          {this.hasSlotsData
-            ? this.renderSlotPicker()
-            : !this.state.loading && (
-                <NoResult
-                  iconName="calendar-remove-outline"
-                  message="Chưa có khung giờ cho ngày này."
-                />
-              )}
-        </ScrollView>
-      </SafeAreaView>
+          <ScrollView
+            safeLayout
+            style={styles.slotPickerContainer}
+            contentContainerStyle={styles.slotPickerContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh.bind(this)}
+              />
+            }>
+            {this.renderExtraMessage()}
+
+            {this.hasSlotsData
+              ? this.renderSlotPicker()
+              : !this.state.loading && (
+                  <NoResult
+                    iconName="calendar-remove-outline"
+                    message={this.props.t('noSlot')}
+                  />
+                )}
+          </ScrollView>
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
@@ -323,25 +365,19 @@ class Schedule extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
   dateTimePicker: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#bababa',
     paddingBottom: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
-  slotPicker: {
+  slotPickerContainer: {
     paddingHorizontal: 15,
-    backgroundColor: '#f8f8f8'
   },
-  extraMessageTitle: {
-    color: '#555'
+  slotPickerContent: {
+    flexGrow: 1,
   },
-  extraMessageContent: {
-    color: '#555',
-    fontSize: 14
-  }
+  extraMessageTitle: {},
+  extraMessageContent: {},
 });
 
 export default withTranslation(['schedule', 'common'])(Schedule);

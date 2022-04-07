@@ -1,19 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import LinearGradient from 'react-native-linear-gradient';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
 
 const SCANNER_HEIGHT = 2;
 
 const styles = StyleSheet.create({
   background: {
     position: 'absolute',
-    backgroundColor: '#000',
   },
   scanAreaContainer: {
     position: 'absolute',
-    borderWidth: 0.5,
-    borderColor: '#fff',
     ...elevationShadowStyle(1, 0, 0, 1, appConfig.colors.primary),
   },
   scanArea: {
@@ -23,7 +24,6 @@ const styles = StyleSheet.create({
   scanner: {
     height: SCANNER_HEIGHT,
     width: '100%',
-    backgroundColor: hexToRgbA('#fff', 0.8),
     ...(appConfig.device.isAndroid
       ? elevationShadowStyle(1, 0, 0, 1, appConfig.colors.primary)
       : {}),
@@ -41,6 +41,8 @@ const QRBackground = ({
 }) => {
   const animatedTranslateY = new Animated.Value(0);
   const animatedRotate = new Animated.Value(0);
+
+  const {theme} = useTheme();
 
   useEffect(() => {
     animateScanner();
@@ -82,12 +84,32 @@ const QRBackground = ({
     ).start();
   };
 
+  const backgroundStyle = useMemo(() => {
+    return mergeStyles(styles.background, {
+      backgroundColor: theme.color.black,
+    });
+  }, [theme]);
+
+  const scanAreaContainerStyle = useMemo(() => {
+    return {
+      borderWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.white,
+    };
+  }, [theme]);
+
+  const scannerStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.white,
+    };
+  }, [theme]);
+
   return (
     <>
       {/* Background Overlay */}
       <View
         style={[
           styles.background,
+          backgroundStyle,
           {
             opacity,
             height: scanAreaTop,
@@ -98,6 +120,7 @@ const QRBackground = ({
       <View
         style={[
           styles.background,
+          backgroundStyle,
           {
             opacity,
             top: scanAreaTop,
@@ -109,6 +132,7 @@ const QRBackground = ({
       <View
         style={[
           styles.background,
+          backgroundStyle,
           {
             opacity,
             top: scanAreaTop,
@@ -122,6 +146,7 @@ const QRBackground = ({
       <View
         style={[
           styles.background,
+          backgroundStyle,
           {
             opacity,
             top: scanAreaTop + scanAreaHeight,
@@ -135,6 +160,7 @@ const QRBackground = ({
       <View
         style={[
           styles.scanAreaContainer,
+          scanAreaContainerStyle,
           {
             left: scanAreaLeft,
             top: scanAreaTop,
@@ -146,6 +172,7 @@ const QRBackground = ({
           <Animated.View
             style={[
               styles.scanner,
+              scannerStyle,
               {
                 transform: [
                   {
@@ -169,8 +196,8 @@ const QRBackground = ({
             {/* <LinearGradient
               style={{flex: 1}}
               colors={[
-                hexToRgbA(appConfig.colors.primary, 0),
-                hexToRgbA(appConfig.colors.primary, 1),
+                hexToRgba(appConfig.colors.primary, 0),
+                hexToRgba(appConfig.colors.primary, 1),
               ]}
               locations={[0.4, 0.8]}
             /> */}

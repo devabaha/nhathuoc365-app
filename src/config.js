@@ -18,7 +18,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r12.2.19';
+    return 'r13.0.1';
   }
 
   get appName() {
@@ -53,6 +53,20 @@ class Config {
   get oneSignal() {
     return {
       appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1',
+    };
+  }
+
+  get flurry() {
+    return {
+      iosKey: 'V6NZYVYC3DGSBFRTMDTM',
+      androidKey: '24VRCS73SHJSS53Y2T3S',
+    };
+  }
+
+  get sentry() {
+    return {
+      dsn:
+        'https://4401d511194d46688492a8e9b9d0962d@o1077404.ingest.sentry.io/6091956',
     };
   }
 
@@ -204,12 +218,6 @@ class Config {
 
   get routes() {
     return {
-      // ?deprecated
-      forgetActive: 'forget_active',
-      forgetVerify: 'forget_verify',
-      newPass: 'new_pass',
-      // ----
-
       sceneWrapper: 'sceneWrapper',
       launch: 'launch',
 
@@ -237,7 +245,6 @@ class Config {
       transferConfirm: 'transfer_confirm',
       transferResult: 'transfer_result',
 
-      scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
       qrBarCodeInputable: 'qrBarCodeInputable',
 
@@ -249,10 +256,12 @@ class Config {
 
       profileDetail: 'profile_detail',
       editProfile: 'edit_profile',
+      affiliate: 'affiliate',
 
       store: 'store',
       searchStore: 'searchStore',
       myAddress: 'myAddress',
+      createAddress: 'create_address',
 
       storeOrders: 'store_orders',
       ordersChat: 'ordersChat',
@@ -290,7 +299,6 @@ class Config {
 
       itemAttribute: 'itemAttribute',
       serviceOrders: 'serviceOrders',
-      serviceFeedback: 'serviceFeedback',
 
       // Schedule
       schedule: 'schedule',
@@ -318,7 +326,7 @@ class Config {
       modalActionSheet: 'modalActionSheet',
       modalDateTimePicker: 'modalDateTimePicker',
       modalLicense: 'modalLicense',
-
+      modalDeliverySchedule: 'modalDeliverySchedule',
       //  Reset password
       resetPassword: 'resetPassword',
 
@@ -376,16 +384,20 @@ class Config {
       listChat: 'listChat',
       listUserChat: 'listUserChat',
       amazingUserChat: 'amazingUserChat',
+      amazingChat: 'amazing_chat',
+      searchChat: 'searchChat',
+      searchUserChat: 'searchUserChat',
 
       listAddressStore: 'listAddressStore',
 
       itemImageViewer: 'item_image_viewer',
 
+      // Airline ticket
       airlineTicket: 'airlineTicket',
-      datePicker: 'datePicker',
-      place: 'place',
-      customer: 'customer',
-      result: 'result',
+      airlineTicketDatePicker: 'airlineTicketDatePicker',
+      airlineTicketPlace: 'airlineTicketPlace',
+      airlineTicketCustomer: 'airlineTicketCustomer',
+      airlineTicketResult: 'airlineTicketResult',
 
       booking: 'booking',
 
@@ -393,6 +405,9 @@ class Config {
       requests: 'requests',
       requestDetail: 'requestDetail',
       requestCreation: 'requestCreation',
+
+      // Rating
+      rating: 'rating',
     };
   }
 }

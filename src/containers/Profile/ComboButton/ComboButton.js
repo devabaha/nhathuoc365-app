@@ -1,60 +1,98 @@
-import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Button from 'src/components/Button';
+import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// images
 import SVGPhone from 'src/images/phone.svg';
 import SVGChat from 'src/images/chat.svg';
+// custom components
+import Button from 'src/components/Button';
+import {Container} from 'src/components/base';
 
 class ComboButton extends Component {
+  static contextType = ThemeContext;
+
   state = {};
+
+  renderCallIcon = (titleStyle) => {
+    return (
+      <SVGPhone
+        style={styles.icon}
+        width={20}
+        height={20}
+        fill={this.iconFillColor}
+      />
+    );
+  };
+
+  renderChatIcon = (titleStyle) => {
+    return (
+      <SVGChat
+              style={styles.icon}
+              width={20}
+              height={20}
+              fill={this.iconFillColor}
+            />
+    );
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get btnCallStyle() {
+    return {
+      backgroundColor: this.theme.color.accent1,
+    };
+  }
+
+  get iconFillColor() {
+    return this.theme.color.onSecondary;
+  }
+
   render() {
     return (
-      <View style={[styles.container, this.props.style]}>
+      <Container row style={[styles.container, this.props.style]}>
         <Button
           onPress={this.props.onCall}
-          title="Gọi"
+          title={this.props.t('call')}
           containerStyle={styles.btnContainer}
-          btnContainerStyle={[styles.btnContent, styles.btnCall]}
+          btnContainerStyle={[styles.btnContent, this.btnCallStyle]}
           titleStyle={styles.btnTitle}
-          iconLeft={
-            <SVGPhone style={styles.icon} width={20} height={20} fill="#fff" />
-          }
+          renderIconLeft={this.renderCallIcon}
         />
         <Button
           onPress={this.props.onChat}
-          title="Chat"
+          title={this.props.t('chat')}
           containerStyle={styles.btnContainer}
           btnContainerStyle={[styles.btnContent]}
           titleStyle={styles.btnTitle}
-          iconLeft={
-            <SVGChat style={styles.icon} width={20} height={20} fill="#fff" />
-          }
+          renderIconLeft={this.renderChatIcon}
         />
-      </View>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    paddingVertical: 5
+    paddingVertical: 5,
   },
   btnContainer: {
     width: null,
-    flex: 1
+    flex: 1,
   },
   btnContent: {
-    paddingVertical: 12
-  },
-  btnCall: {
-    backgroundColor: '#03ac12'
+    paddingVertical: 12,
   },
   icon: {
-    marginRight: 7
+    marginRight: 7,
   },
   btnTitle: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });
 
-export default ComboButton;
+export default withTranslation('profileDetail')(ComboButton);

@@ -28,5 +28,14 @@
     "warningDescription": "You will not receive promotional notifications from your stores until you log back in.",
     "cancel": "Cancel",
     "successMessage": "Sign out successfully"
-  }
+  },
+  "profession": "Profession",
+  "brand": "Brand",
+  "limitPhotosUploadNoti": "You can only upload upto {{maxImagesUpload}} photos",
+  "uploadPhotos": " Upload photos",
+  "noPhoto": "No photo yet",
+  "photoLabel": "Photos",
+  "aboutLabel": "About",
+  "call": "Call",
+  "chat": "Chat"
 }

@@ -11,6 +11,12 @@
     },
     "cancelBooking": {
       "message": "Huỷ đơn đặt lịch này, bạn đã chắc chắn chưa?"
+    },
+    "reorder": {
+      "message": "Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn đặt lại đơn hàng này?"
+    },
+    "changeCartType": {
+      "message": "\r\n• Giỏ hàng đang đặt thuộc loại {{cartTypeKeyword}}.\r\n\r\n• Chọn {{btnTitle}} để hủy giỏ hàng đang đặt và tạo giỏ hàng mới.\r\n"
     }
   },
   "notification": {
@@ -27,5 +33,6 @@
     "total": "TỔNG CỘNG",
     "order": "ĐẶT HÀNG",
     "cart": "GIỎ HÀNG"
-  }
+  },
+  "quantityInput": "Nhập số lượng"
 }

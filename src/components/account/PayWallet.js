@@ -1,63 +1,83 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, StyleSheet, Alert, Platform} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  Alert,
-  TextInput,
-  Platform
-} from 'react-native';
-
-//library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import EventTracker from '../../helper/EventTracker';
-import store from '../../store/Store';
+  AppFilledButton,
+  BaseButton,
+  Container,
+  ScreenWrapper,
+} from 'src/components/base';
+import {Input, Typography, Icon} from 'src/components/base';
+import Indicator from 'src/components/Indicator';
 
 class PayWallet extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      historiesData: null,
-      wallet: props.wallet,
-      address: props.address,
-      loading: false,
-      amount: 0
-    };
-    this.eventTracker = new EventTracker();
+  state = {
+    historiesData: null,
+    wallet: this.props.wallet,
+    address: this.props.address,
+    loading: false,
+    amount: 0,
+  };
+  eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
-  
+
   // thực hiện add cửa hàng vào account của user
   _onSave() {
-    var { wallet, address, amount } = this.state;
+    const {t} = this.props;
+    const {wallet, address, amount} = this.state;
     if (!address) {
       return Alert.alert(
-        'Thông báo',
-        'Địa chỉ không chính xác',
-        [{ text: 'Đồng ý' }],
-        { cancelable: false }
+        t('notification'),
+        t('inactiveAddress'),
+        [{text: t('common:agree')}],
+        {cancelable: false},
       );
     }
 
     if (!amount || !validateMoney(amount)) {
-      return Alert.alert('Thông báo', 'Số lượng nhập không đúng', [
+      return Alert.alert(t('notification'), t('inactiveQuantity'), [
         {
-          text: 'Đồng ý',
+          text: t('common:agree'),
           onPress: () => {
             this.amountInput.focus();
-          }
-        }
+          },
+        },
       ]);
     }
 
@@ -84,401 +104,245 @@ class PayWallet extends Component {
     //, password, refer
     this.setState(
       {
-        loading: true
+        loading: true,
       },
       async () => {
         try {
           const response = await APIHandler.user_transfer_balance({
-            zone_code: wallet.zone_code,
+            zone_code: wallet?.zone_code,
             receive_address: address,
-            amount: amount
+            amount: amount,
           });
           if (response && response.status == STATUS_SUCCESS) {
             action(() => {
               this.setState(
                 {
-                  loading: false
+                  loading: false,
                 },
-                () => {}
+                () => {},
               );
             })();
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
           } else {
             this.setState({
-              loading: false
+              loading: false,
             });
             flashShowMessage({
               type: 'danger',
-              message: response.message
+              message: response.message,
             });
           }
         } catch (e) {
           this.setState({
-            loading: false
+            loading: false,
           });
         } finally {
           this.setState({
-            loading: false
+            loading: false,
           });
         }
-      }
+      },
     );
   }
 
   renderTopLabelCoin() {
-    var { wallet } = this.state;
-    const { user_info } = store;
+    const {wallet} = this.state;
     return (
       <View>
-        <View style={styles.add_store_actions_box}>
-          <TouchableHighlight
-            // onPress={this._goScanQRCode.bind(this)}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box_balance}>
-              <Icon name={wallet.icon} size={24} color="#333333" />
-              <Text style={styles.add_store_action_label_balance}>
-                {wallet.name}
-              </Text>
+        <View style={[this.topLabelBoxStyle, styles.add_store_actions_box]}>
+          <BaseButton useTouchableHighlight style={styles.add_store_action_btn}>
+            <View
+              style={[
+                this.topLabelBalanceBoxStyle,
+                styles.add_store_action_btn_box_balance,
+              ]}>
+              <Typography
+                renderIconBefore={(titleStyle) =>
+                  this.renderTopLabelIcon(titleStyle, wallet)
+                }
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.add_store_action_label_balance}>
+                {wallet?.name}
+              </Typography>
               {/* <Text style={styles.add_store_action_label_balance}>{wallet.address}</Text> */}
             </View>
-          </TouchableHighlight>
+          </BaseButton>
 
-          <TouchableHighlight
-            // onPress={() => Actions.vnd_wallet({})}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
+          <BaseButton useTouchableHighlight style={styles.add_store_action_btn}>
             <View
               style={[
                 styles.add_store_action_btn_box_balance,
-                { borderRightWidth: 0 }
-              ]}
-            >
-              <Text style={styles.add_store_action_label_balance}>Số dư</Text>
-              <Text style={styles.add_store_action_content}>
-                {wallet.balance_view}
-              </Text>
+                {borderRightWidth: 0},
+              ]}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.add_store_action_label_balance}>
+                {this.props.t('balance')}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
+                style={styles.add_store_action_content}>
+                {wallet?.balance_view}
+              </Typography>
             </View>
-          </TouchableHighlight>
+          </BaseButton>
         </View>
       </View>
     );
   }
 
-  render() {
-    var { wallet, address, loading } = this.state;
+  renderTopLabelIcon = (titleStyle, wallet) => {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            marginBottom: store.keyboardTop
-          }
-        ]}
-      >
-        {this.renderTopLabelCoin()}
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name={wallet?.icon}
+        style={(titleStyle, styles.topLabelIcon)}
+      />
+    );
+  };
 
-        <Text style={styles.historyCoinText}>
-          <Icon name="bank" size={15} color="#333333" /> Chuyển khoản{' '}
-          {wallet.name} tới địa chỉ
-        </Text>
-        <Text style={styles.historyCoinTextAddress}>{address}</Text>
-        <View style={styles.invite_text_input}>
-          <View style={styles.invite_text_input_sub}>
-            <Text
-              style={{
-                fontWeight: '500',
-                color: '#444444',
-                fontSize: 16,
-                marginLeft: 0,
-                marginBottom: 8
-              }}
-            >
-              Nhập số lượng {wallet.currency} trong {wallet.name} cần chuyển
-            </Text>
-            <TextInput
-              underlineColorAndroid="transparent"
-              ref={ref => (this.amountInput = ref)}
-              style={{
-                height: 42,
-                width: 250,
-                borderColor: '#dddddd',
-                borderWidth: 1,
-                marginHorizontal: 15,
-                paddingHorizontal: 8,
-                borderRadius: 2,
-                color: '#404040',
-                fontSize: 18,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#ffffff',
-                marginBottom: 10
-              }}
-              placeholder=""
-              keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-              onChangeText={value => {
-                this.setState({
-                  amount: value.replaceAll(' ', '')
-                });
-              }}
-              // autoFocus
-              value={this.state.amount}
-            />
-            <Text style={styles.disclaimerText}>
-              Hãy xác nhận đúng địa chỉ Ví, không thể lấy lại nếu đã chuyển đi.
-            </Text>
-            <TouchableHighlight
-              style={[
-                styles.buttonAction,
-                {
-                  marginTop: 6
-                }
-              ]}
-              onPress={this._onSave.bind(this)}
-              underlayColor="transparent"
-            >
-              <View
-                style={[
-                  styles.boxButtonAction,
-                  {
-                    backgroundColor: '#fa7f50',
-                    borderColor: '#999999'
-                  }
-                ]}
-              >
-                {loading ? (
-                  <View
-                    style={{
-                      width: 16
-                    }}
-                  >
+  renderTransferIcon = (titleStyle, _, fontStyle) => (
+    <Icon
+      bundle={BundleIconSetName.FONT_AWESOME}
+      name="bank"
+      style={[fontStyle, styles.transferIcon]}
+    />
+  );
+
+  get topLabelBoxStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    };
+  }
+  get topLabelBalanceBoxStyle() {
+    return {
+      borderRightWidth: this.theme.layout.borderWidthPixel,
+      borderRightColor: this.theme.color.border,
+    };
+  }
+
+  get inputStyle() {
+    return {
+      borderColor: this.theme.color.neutral,
+      borderWidth: this.theme.layout.borderWidth,
+    };
+  }
+
+  render() {
+    const {wallet, address, loading} = this.state;
+    const {t} = this.props;
+
+    return (
+      <ScreenWrapper safeLayout={store.keyboardTop}>
+        <Container style={{paddingVertical: 15}}>
+          {this.renderTopLabelCoin()}
+
+          <Container row noBackground style={styles.historyCoinContainer}>
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE}
+              style={styles.historyCoinText}
+              renderIconBefore={this.renderTransferIcon}>
+              {t('transferTitle', {walletName: wallet?.name})}
+            </Typography>
+          </Container>
+          <Typography
+            type={TypographyType.LABEL_SEMI_HUGE}
+            style={styles.historyCoinTextAddress}>
+            {address}
+          </Typography>
+          <View style={styles.invite_text_input}>
+            <View style={styles.invite_text_input_sub}>
+              <Typography
+                type={TypographyType.LABEL_LARGE_TERTIARY}
+                style={{
+                  fontWeight: '500',
+                  marginBottom: 8,
+                }}>
+                {t('transferPlaceholder', {
+                  currency: wallet?.currency,
+                  walletName: wallet?.name,
+                })}
+              </Typography>
+              <Input
+                ref={(ref) => (this.amountInput = ref)}
+                type={TypographyType.LABEL_SEMI_HUGE}
+                style={[this.inputStyle, styles.input]}
+                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+                onChangeText={(value) => {
+                  this.setState({
+                    amount: value.replaceAll(' ', ''),
+                  });
+                }}
+                // autoFocus
+                value={this.state.amount}
+              />
+              <Typography type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}>
+                {t('transferMessage')}
+              </Typography>
+              <AppFilledButton
+                disabled={!this.state.amount}
+                renderIconLeft={(titleStyle) => {
+                  return loading ? (
                     <Indicator size="small" />
-                  </View>
-                ) : (
-                  <Icon name="check" size={16} color="#ffffff" />
-                )}
-                <Text
-                  style={[
-                    styles.buttonActionTitle,
-                    {
-                      color: '#ffffff'
-                    }
-                  ]}
-                >
-                  Chuyển khoản
-                </Text>
-              </View>
-            </TouchableHighlight>
+                  ) : (
+                    <Icon
+                      bundle={BundleIconSetName.FONT_AWESOME}
+                      name="check"
+                      style={[titleStyle, {marginRight: 5, fontSize: 16}]}
+                    />
+                  );
+                }}
+                typoProps={{type: TypographyType.LABEL_MEDIUM}}
+                onPress={this._onSave.bind(this)}
+                style={styles.boxButtonAction}>
+                {t('transfer')}
+              </AppFilledButton>
+            </View>
           </View>
-        </View>
-      </View>
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-
-    marginBottom: 0,
-    backgroundColor: '#ffffff'
-  },
-  profile_list_opt_btn: {
-    width: Util.size.width,
-    height: 32,
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 4,
-    marginTop: 20,
-    borderTopWidth: 0,
-    borderColor: '#dddddd'
-  },
-  point_icon: {
-    width: 60,
-    height: 60
-  },
-  iconView: {
-    alignItems: 'center',
-    flex: 1
-  },
-  profile_list_icon_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-    height: 70
-  },
-  profile_list_label: {
-    fontSize: 18,
-    color: '#000000',
-    fontWeight: '400'
-  },
-  profile_list_small_label: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 2
-  },
-  labelCoinParentView: {
-    flex: 5,
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10
-  },
-  labelCoinView: {
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  lineView: {
-    marginTop: 10,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 10,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  lineViewWallet: {
-    marginTop: 1,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 1,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  lineRowView: {
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  newsCoinView: {
-    flexDirection: 'row',
-    height: 30,
-    marginTop: 10,
-    alignItems: 'center'
-  },
-  historyCoinText: {
+  historyCoinContainer: {
     marginTop: 15,
     marginLeft: 20,
     marginBottom: 10,
+  },
+  historyCoinText: {
     fontWeight: 'bold',
-    fontSize: 18,
-    color: 'rgb(0,0,0)'
+    flex: 1,
   },
   historyCoinTextAddress: {
     alignItems: 'center',
     marginLeft: 20,
     marginRight: 20,
-    marginBottom: 0,
-    fontSize: 18,
-    color: 'rgb(0,0,0)'
   },
-  containerRowView: {
-    flex: 1,
-    height: 70,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  bottomRowView: {
-    marginTop: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  dateText: {
-    fontSize: 12,
-    color: 'rgb(150,150,150)'
-  },
-  pointText: {
-    fontSize: 16,
-    color: 'rgb(0,0,0)',
-    fontWeight: 'bold',
-    marginRight: 15
-  },
-
-  profile_cover_box: {
-    width: '100%',
-    backgroundColor: '#ccc',
-    height: 120
-  },
-  profile_cover: {
-    width: '100%',
-    height: '100%'
-  },
-  profile_avatar_box: {
-    position: 'absolute',
-    bottom: 20,
-    left: 24,
-    width: 70,
-    height: 70,
-    backgroundColor: '#cccccc',
-    borderWidth: 2,
-    borderColor: '#ffffff',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden'
-  },
-  profile_avatar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38
-    // resizeMode: 'cover'
-  },
-  stores_box: {
-    marginBottom: 8,
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd'
-  },
-
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
   },
   add_store_action_btn: {
-    paddingVertical: 4
-  },
-  add_store_action_btn_box: {
-    alignItems: 'center',
-    // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 4),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    paddingVertical: 4,
   },
   add_store_action_btn_box_balance: {
     alignItems: 'center',
-    width: ~~(Util.size.width / 2),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
-  },
-  add_store_action_label: {
-    fontSize: 12,
-    color: '#404040',
-    marginTop: 4
+    width: ~~(appConfig.device.width / 2),
   },
   add_store_action_label_balance: {
-    fontSize: 14,
-    color: '#333333',
     marginTop: 4,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   add_store_action_content: {
-    fontSize: 18,
     marginTop: 5,
-    color: '#51A9FF',
-    fontWeight: '800'
+    fontWeight: '800',
   },
 
   invite_text_input: {
@@ -486,39 +350,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: "",
     // marginTop: 30,
-    marginTop: 20
+    marginTop: 20,
   },
 
   invite_text_input_sub: {
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: "",
     marginLeft: 20,
-    marginRight: 20
-  },
-  boxButtonActions: {
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16
+    marginRight: 20,
   },
   boxButtonAction: {
+    marginTop: 8,
     flexDirection: 'row',
-    borderWidth: Util.pixel,
-    borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 5,
-    width: Util.size.width / 2 - 24,
-    alignItems: 'center',
-    justifyContent: 'center'
   },
-  buttonActionTitle: {
-    color: '#333333',
-    marginLeft: 4,
-    fontSize: 14
-  }
+  topLabelIcon: {
+    fontSize: 24,
+  },
+  transferIcon: {
+    fontSize: 15,
+    marginRight: 10,
+  },
+  input: {
+    height: 42,
+    width: 250,
+    marginHorizontal: 15,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
 });
 
-export default observer(PayWallet);
+export default withTranslation('payWallet')(observer(PayWallet));

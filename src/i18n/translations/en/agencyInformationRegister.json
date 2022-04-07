@@ -1,0 +1,20 @@
+{
+  "formData": {
+    "email": "Email *",
+    "IDCard": "ID number *",
+    "imageIDCardFront": "ID card image (front) *",
+    "imageIDCardBack": "ID card image (back) *",
+    "bankAccount": "Bank Account (form : [account number], [owner], [bank name]) *"
+  },
+  "requiredField": "Please fill out this field",
+  "emailFomartRequried": "Please enter a valid email address",
+  "register": "Register",
+  "chooseCareer": "Choose career",
+
+  "takePicture": {
+    "title": "Take ID card picture",
+    "cancel": "Cancel",
+    "takePhoto": "Take Photo",
+    "chooseFromLibrary": "Choose from library"
+  }
+}

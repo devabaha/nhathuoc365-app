@@ -1,20 +1,37 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
-import {APIRequest} from 'src/network/Entity';
-import Posts from './Posts';
-import store from 'app-store';
-import Image from 'src/components/Image';
 import LinearGradient from 'react-native-linear-gradient';
 import {Actions} from 'react-native-router-flux';
-
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// configs
+import store from 'app-store';
+// helpers
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {TypographyType} from 'src/components/base';
+import {mergeStyles} from 'src/Themes/helper';
+import {hexToRgba} from 'app-helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import {
+  Container,
+  ScreenWrapper,
+  BaseButton,
+  Typography,
+  FlatList,
+} from 'src/components/base';
+import Image from 'src/components/Image';
+import Posts from './Posts';
+// skeleton
 import ListGroupThumbnailSkeleton from './ListGroupThumbnailSkeleton';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    marginBottom: 15,
     height: 130,
   },
   contentContainer: {
@@ -23,12 +40,12 @@ const styles = StyleSheet.create({
     flex: 0,
   },
 
+  groupThumbnailsContainer: {
+    marginBottom: 15,
+  },
   groupContainer: {
     width: 90,
     height: 90,
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: '#ddd',
     overflow: 'hidden',
     marginRight: 15,
   },
@@ -36,7 +53,6 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     position: 'absolute',
-    // bottom: '-30%',
   },
   image: {
     flex: 1,
@@ -50,20 +66,29 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   groupName: {
-    color: '#fff',
-    fontSize: 13,
     padding: 5,
     fontWeight: '600',
   },
 });
 
 const Social = ({title, siteId = store.store_data?.id}) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation();
 
   const [thumbnailGroups, setThumbnailGroups] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
+
+  const linearGradientValues = useMemo(() => {
+    return [
+      hexToRgba(theme.color.coreOverlay, 0),
+      hexToRgba(theme.color.coreOverlay, 0.2),
+      hexToRgba(theme.color.coreOverlay, 0.5),
+      hexToRgba(theme.color.coreOverlay, 0.9),
+    ];
+  }, [theme]);
 
   const [getThumbnailGroupsRequest] = useState(new APIRequest());
 
@@ -91,7 +116,7 @@ const Social = ({title, siteId = store.store_data?.id}) => {
 
     try {
       const response = await getThumbnailGroupsRequest.promise();
-      console.log(response);
+      // console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -132,33 +157,32 @@ const Social = ({title, siteId = store.store_data?.id}) => {
       type: SERVICES_TYPE.SOCIAL_GROUP,
       id: group.id,
       name: group.name,
+      theme,
     });
   }, []);
 
   const renderGroup = ({item: thumbnailGroup}) => {
     return (
-      <TouchableOpacity onPress={() => goToGroup(thumbnailGroup)}>
-        <View style={styles.groupContainer}>
+      <BaseButton onPress={() => goToGroup(thumbnailGroup)}>
+        <View style={groupContainerStyle}>
           <Image source={{uri: thumbnailGroup.banner}} style={styles.image} />
           <LinearGradient
-            colors={[
-              'rgba(0,0,0,0)',
-              'rgba(0,0,0,.2)',
-              'rgba(0,0,0,.45)',
-              'rgba(0,0,0,.5)',
-            ]}
-            locations={[0.5, 0.75, 0.88, 1]}
+            colors={linearGradientValues}
+            locations={[0.5, 0.62, 0.8, 1]}
             angle={180}
             useAngle
             style={[styles.gradient]}
           />
           <View style={styles.groupNameContainer}>
-            <Text numberOfLines={2} style={styles.groupName}>
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM}
+              numberOfLines={2}
+              style={groupNameStyle}>
               {thumbnailGroup.name}
-            </Text>
+            </Typography>
           </View>
         </View>
-      </TouchableOpacity>
+      </BaseButton>
     );
   };
 
@@ -167,7 +191,7 @@ const Social = ({title, siteId = store.store_data?.id}) => {
       <ListGroupThumbnailSkeleton />
     ) : (
       !!thumbnailGroups?.length && (
-        <View>
+        <Container style={styles.groupThumbnailsContainer}>
           <FlatList
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
@@ -179,16 +203,33 @@ const Social = ({title, siteId = store.store_data?.id}) => {
               item?.id ? String(item.id) : index.toString()
             }
           />
-        </View>
+        </Container>
       )
     );
   };
 
+  const groupContainerStyle = useMemo(() => {
+    return mergeStyles(styles.groupContainer, {
+      borderColor: theme.color.border,
+      borderWidth: theme.layout.borderWidth,
+      borderRadius: theme.layout.borderRadiusLarge,
+    });
+  });
+
+  const groupNameStyle = useMemo(() => {
+    return mergeStyles(styles.groupName, {
+      color: theme.color.onOverlay,
+    });
+  }, [theme]);
+
   return (
-    <Posts
-      onRefresh={onRefresh}
-      ListHeaderComponent={renderThumbnailGroups()}
-    />
+    <ScreenWrapper>
+      <Posts
+        safeLayout
+        onRefresh={onRefresh}
+        ListHeaderComponent={renderThumbnailGroups()}
+      />
+    </ScreenWrapper>
   );
 };
 

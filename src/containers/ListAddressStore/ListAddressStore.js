@@ -1,128 +1,41 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {AppState, Text, StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
+import {AppState, View} from 'react-native';
+// 3-party libs
 import Geolocation from '@react-native-community/geolocation';
+import useIsMounted from 'react-is-mounted-hook';
+import {getPreciseDistance} from 'geolib';
+// configs
 import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
 import {
-  LocationPermission,
   LOCATION_PERMISSION_TYPE,
   REQUEST_RESULT_TYPE,
-} from '../../helper/permissionHelper';
-import Loading from '../../components/Loading';
-import {APIRequest} from '../../network/Entity';
-import store from '../../store/Store';
-import AddressItem from '../../components/payment/AddressItem';
+} from 'app-helper/permissionHelper';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+import {LocationPermission} from 'app-helper/permissionHelper';
+// custom components
+import AddressItem from 'src/components/payment/AddressItem';
 import NoResult from './NoResult';
-import {getPreciseDistance} from 'geolib';
-import useIsMounted from 'react-is-mounted-hook';
-
-const styles = StyleSheet.create({
-  storeContainer: {
-    marginTop: 8,
-    backgroundColor: '#fff',
-    padding: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
-  },
-  infoContainer: {
-    paddingHorizontal: 10,
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontWeight: '500',
-    fontSize: 16,
-    color: '#333',
-  },
-  description: {
-    color: '#666',
-    marginTop: 5,
-  },
-
-  address_selected_box: {
-    flex: 1,
-    justifyContent: 'center',
-    bottom: 45,
-    alignItems: 'center',
-  },
-
-  containerDescription: {
-    flexDirection: 'row',
-  },
-  mapInfoContainer: {
-    justifyContent: 'space-between',
-    marginTop: 15,
-  },
-  distanceContainer: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 15,
-    borderColor: '#ccc',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
-  },
-  disabledDistance: {
-    backgroundColor: '#f5f5f5',
-    color: '#aaa',
-  },
-  distanceLoadingContainer: {
-    position: 'relative',
-    top: undefined,
-    left: undefined,
-  },
-  distanceLoading: {
-    padding: 0,
-    width: 11,
-    height: 11,
-  },
-  distanceIcon: {
-    fontSize: 11,
-    color: appConfig.colors.primary,
-  },
-  distanceTxt: {
-    marginLeft: 7,
-    fontSize: 11,
-    color: appConfig.colors.primary,
-  },
-  openMapWrapper: {
-    overflow: 'hidden',
-    borderRadius: 15,
-    marginLeft: 15,
-  },
-  openMapContainer: {
-    backgroundColor: appConfig.colors.primary,
-  },
-  openMapBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  mapIcon: {
-    fontSize: 11,
-    marginRight: 7,
-    color: '#fff',
-  },
-  openMapTxt: {
-    fontSize: 11,
-    color: '#fff',
-  },
-  containerEmptyText: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontStyle: 'italic',
-    color: '#666',
-  },
-  textData: {
-    ...appConfig.styles.typography.secondary,
-  },
-});
+import {Typography} from 'src/components/base';
 
 const ListAddressStore = ({
   refreshing,
   selectedAddressId,
+  navigation,
   onChangeAddress = () => {},
   onLoadedData = () => {},
   onSelectedAddressLayout = () => {},
+  onListAddressStoreChanged = (listAddressStore) => {},
 }) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
 
   const getListAddressStoreRequest = new APIRequest();
@@ -143,15 +56,24 @@ const ListAddressStore = ({
   const [latitude, setLatitude] = useState();
   const [listStore, setListStore] = useState([]);
 
-  const errContent =
-    'Vui lòng cho phép truy cập vị trí để hiển hị cửa hàng theo thứ tự gần nhất!';
-
   const {t} = useTranslation(['address', 'common']);
+
+  useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
 
   useEffect(() => {
     didMount();
     return unMount;
   }, []);
+
+  useEffect(() => {
+    onListAddressStoreChanged(listStore);
+  }, [listStore]);
 
   useEffect(() => {
     if (refreshing) {
@@ -297,7 +219,7 @@ const ListAddressStore = ({
     isGoToSetting.current = true;
     LocationPermission.openPermissionAskingModal({
       errCode,
-      errContent,
+      errContent: t('address.errMsgNotAllowLocationPermission'),
     });
   };
 
@@ -307,19 +229,22 @@ const ListAddressStore = ({
 
   const calculateDiffDistance = (lng, lat) => {
     if (latitude && longitude) {
-      return (
-        <Text>
-          {getPreciseDistance(
-            {latitude, longitude},
-            {latitude: Number(lat), longitude: Number(lng)},
-            100,
-          ) / 1000}{' '}
-          <Text style={styles.distanceUnitTxt}>km</Text>
-        </Text>
-      );
+      return `${
+        getPreciseDistance(
+          {latitude, longitude},
+          {latitude: Number(lat), longitude: Number(lng)},
+          100,
+        ) / 1000
+      } km`;
     }
     return '';
   };
+
+  const isLoadingNoResultTextStyle = useMemo(() => {
+    return {
+      color: theme.color.textInactive,
+    };
+  }, [theme]);
 
   const renderListAddress = ({item: storeAddress}) => {
     const disabledDistanceStyle = !isConnectGPS;
@@ -367,7 +292,11 @@ const ListAddressStore = ({
       {isLoading && (
         <NoResult
           renderTitle={() => (
-            <Text style={styles.textData}>{t('common:loading')}</Text>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM}
+              style={isLoadingNoResultTextStyle}>
+              {t('common:loading')}
+            </Typography>
           )}
         />
       )}

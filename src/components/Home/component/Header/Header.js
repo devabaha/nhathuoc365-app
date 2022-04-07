@@ -1,29 +1,54 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Button from 'react-native-button';
-import appConfig from 'app-config';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import store from 'app-store';
-import RightButtonOrders from '../../../RightButtonOrders';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Animated from 'react-native-reanimated';
-import RightButtonChat from '../../../RightButtonChat';
-import RightButtonNavBar from '../../../RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from '../../../RightButtonNavBar/constants';
-import Loading from '../../../Loading';
-
-const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+// configs
+import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {RIGHT_BUTTON_TYPE} from 'src/components/RightButtonNavBar/constants';
+import {BundleIconSetName} from 'src/components/base';
+import {HOME_HEADER_HEIGHT} from '../../constants';
+// custom components
+import RightButtonNavBar from 'src/components/RightButtonNavBar';
+import Loading from 'src/components/Loading';
+import {BaseButton, Container, Input, Icon} from 'src/components/base';
 
 class Header extends Component {
+  static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get searchIconStyle() {
+    return mergeStyles(styles.searchIcon, {
+      color: this.theme.color.onOverlay,
+    });
+  }
+
+  get searchInputStyle() {
+    return mergeStyles(styles.searchInput);
+  }
+
+  get iconStyle() {
+    return {
+      color: this.theme.color.onPrimary,
+    };
+  }
+
+  get searchWrapperStyle() {
+    return mergeStyles(styles.searchWrapper, {
+      backgroundColor: this.theme.color.overlay30,
+      borderRadius: this.theme.layout.borderRadiusGigantic,
+    });
+  }
+
   render() {
     return (
       <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
@@ -35,46 +60,58 @@ class Header extends Component {
             style={[styles.contentContainer, this.props.contentContainer]}>
             {this.props.renderLeft()}
             <View style={styles.userNameWrapper}>
-              <TouchableOpacity
+              <BaseButton
                 disabled={this.props.loading}
                 onPress={this.props.goToSearch}>
-                <Animated.View style={[styles.searchWrapper, styles.maskSub]} />
-                <Animated.View
+                <Container
+                  reanimated
+                  style={[this.searchWrapperStyle, styles.maskSub]}
+                />
+                <Container
+                  reanimated
                   style={[
-                    styles.searchWrapper,
+                    this.searchWrapperStyle,
                     styles.maskMain,
                     this.props.maskSearchWrapperStyle,
                   ]}
                 />
                 <View pointerEvents="none" style={styles.searchWrapper}>
-                  <Ionicons style={styles.searchIcon} name="ios-search" />
-                  <TextInput
+                  <Icon
+                    bundle={BundleIconSetName.IONICONS}
+                    style={this.searchIconStyle}
+                    name="ios-search"
+                  />
+                  <Input
                     style={styles.searchInput}
                     placeholder={
                       this.props.placeholder ||
                       (store.store_data ? store.store_data.name : '')
                     }
-                    placeholderTextColor={appConfig.colors.white}
+                    placeholderTextColor={this.theme.color.onOverlay}
                     numberOfLines={1}
                   />
                   {this.props.loading && (
                     <Loading wrapperStyle={styles.loading} size="small" />
                   )}
                 </View>
-              </TouchableOpacity>
+              </BaseButton>
             </View>
 
             <RightButtonNavBar
               type={RIGHT_BUTTON_TYPE.SHOPPING_CART}
               icon={
                 <View>
-                  <AnimatedIcon
-                    style={[styles.icon, styles.iconMask]}
+                  <Icon
+                    bundle={BundleIconSetName.ANT_DESIGN}
+                    reanimated
+                    style={[this.iconStyle, styles.iconMask]}
                     name="shoppingcart"
                     size={25}
                   />
-                  <AnimatedIcon
-                    style={[styles.icon, this.props.iconStyle]}
+                  <Icon
+                    bundle={BundleIconSetName.ANT_DESIGN}
+                    reanimated
+                    style={[this.iconStyle, this.props.iconStyle]}
                     name="shoppingcart"
                     size={25}
                   />
@@ -87,13 +124,17 @@ class Header extends Component {
               style={styles.chatIconStyle}
               icon={
                 <View>
-                  <AnimatedIcon
-                    style={[styles.icon, styles.iconMask]}
+                  <Icon
+                    bundle={BundleIconSetName.ANT_DESIGN}
+                    reanimated
+                    style={[this.iconStyle, styles.iconMask]}
                     name="message1"
                     size={23}
                   />
-                  <AnimatedIcon
-                    style={[styles.icon, this.props.iconStyle]}
+                  <Icon
+                    bundle={BundleIconSetName.ANT_DESIGN}
+                    reanimated
+                    style={[this.iconStyle, this.props.iconStyle]}
                     name="message1"
                     size={23}
                   />
@@ -111,21 +152,24 @@ const styles = StyleSheet.create({
   wrapper: {
     // position: 'absolute',
     // top: 0,
-    // width: '100%'
+    // width: '100%',
+    height: HOME_HEADER_HEIGHT,
   },
   container: {
-    padding: 15,
-    paddingBottom: 0,
+    // padding: 15,
+    // paddingBottom: 0,
     flexDirection: 'row',
-    paddingTop: Platform.select({
-      ios: appConfig.device.statusBarHeight * 1.5,
-    }),
+    // paddingTop: Platform.select({
+    //   ios: appConfig.device.statusBarHeight * 1.5,
+    // }),
     alignItems: 'center',
   },
   contentContainer: {
+    padding: 15,
+
     flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: 15,
+    // paddingBottom: 15,
   },
   maskMain: {
     width: '100%',
@@ -136,7 +180,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    // backgroundColor: appConfig.colors.white
   },
   notificationWrapper: {
     top: -2,
@@ -150,9 +193,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     position: 'relative',
   },
-  icon: {
-    color: '#fff',
-  },
+  icon: {},
   iconMask: {
     position: 'absolute',
   },
@@ -186,16 +227,14 @@ const styles = StyleSheet.create({
   },
   searchWrapper: {
     paddingHorizontal: 10,
-    borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,.3)',
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
     paddingVertical: isAndroid ? 5 : 10,
-    color: appConfig.colors.white,
+    // color: appConfig.colors.white,
   },
   chatIconStyle: {
     marginRight: 0,
@@ -205,7 +244,6 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     fontSize: 20,
-    color: appConfig.colors.white,
   },
 });
 
