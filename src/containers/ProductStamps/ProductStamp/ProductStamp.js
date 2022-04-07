@@ -1,21 +1,27 @@
-import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import FastImage from 'react-native-fast-image';
-
-import Container from '../../../components/Layout/Container';
-
-import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    marginTop: 5,
+    marginBottom: 5,
+  },
+  contentContainer: {
+    padding: 15,
   },
   image: {
     width: 75,
     height: 75,
-    borderRadius: 4,
-    backgroundColor: '#fafafa',
   },
   infoContainer: {
     flex: 1,
@@ -23,9 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   titleContainer: {
-    borderBottomLeftRadius: 8,
-    backgroundColor: '#fafafa',
-    borderColor: '#ddd',
     marginTop: -15,
     paddingTop: 15,
     marginRight: -15,
@@ -34,96 +37,150 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   title: {
-    color: '#333',
     fontWeight: '500',
   },
   label: {
     justifyContent: 'center',
-    color: '#666',
-    fontSize: 12,
   },
   valueContainer: {
     marginLeft: 10,
     paddingVertical: 3,
     paddingHorizontal: 5,
-    borderColor: appConfig.colors.primary,
-    borderRadius: 4,
-    borderWidth: 1,
   },
   value: {
-    color: appConfig.colors.primary,
     fontWeight: '500',
   },
   footer: {
     paddingVertical: 5,
     paddingHorizontal: 15,
     alignSelf: 'flex-end',
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
     width: '100%',
   },
   timeContainer: {
     justifyContent: 'flex-end',
   },
   timeValueContainer: {
-    borderLeftWidth: 0.5,
-    borderColor: '#eee',
     paddingHorizontal: 7,
     marginLeft: 7,
   },
-  timeValue: {
-    color: '#333',
-    fontSize: 12,
-  },
+  timeValue: {},
 
   decor: {
     position: 'absolute',
-    borderColor: appConfig.colors.sceneBackground,
-    borderLeftWidth: 7,
-    borderTopWidth: 7,
-    borderBottomWidth: 7,
-    borderRightWidth: 7,
+    borderWidth: 7,
     borderLeftColor: 'transparent',
     borderBottomColor: 'transparent',
     right: 0,
   },
 });
 
-const ACTIVE_TIME_LABEL = "Ngày nhận";
-const QR_CODE_TITLE = "Mã QR";
-
 const ProductStamp = ({image, name, qrcode, activeTime, onPress}) => {
+  const {theme} = useTheme();
+  const {t} = useTranslation();
+
+  const imageStyle = useMemo(() => {
+    return mergeStyles(styles.image, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  });
+
+  const titleContainerStyle = useMemo(() => {
+    return mergeStyles(styles.titleContainer, {
+      backgroundColor: theme.color.contentBackgroundWeak,
+      borderColor: theme.color.border,
+      borderBottomLeftRadius: theme.layout.borderRadiusMedium,
+    });
+  });
+
+  const timeValueContainerStyle = useMemo(() => {
+    return mergeStyles(styles.timeValueContainer, {
+      borderColor: theme.color.border,
+      borderLeftWidth: theme.layout.borderWidthSmall,
+    });
+  });
+
+  const valueContainerStyle = useMemo(() => {
+    return mergeStyles(styles.valueContainer, {
+      borderColor: theme.color.primaryHighlight,
+      borderWidth: theme.layout.borderWidth,
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  });
+
+  const valueStyle = useMemo(() => {
+    return mergeStyles(styles.value, {
+      color: theme.color.primaryHighlight,
+    });
+  });
+
+  const footerStyle = useMemo(() => {
+    return mergeStyles(styles.footer, {
+      borderColor: theme.color.border,
+      borderTopWidth: theme.layout.borderWidthSmall,
+    });
+  });
+
+  const decorStyle = useMemo(() => {
+    return mergeStyles(styles.decor, {
+      borderTopColor: theme.color.background,
+      borderRightColor: theme.color.background,
+    });
+  });
+
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
-      <View style={styles.container}>
-        <Container padding={15} row centerVertical={false}>
-          <FastImage style={styles.image} source={{uri: image}} />
+    <BaseButton onPress={onPress}>
+      <Container style={styles.container}>
+        <Container
+          noBackground
+          row
+          centerVertical={false}
+          style={styles.contentContainer}>
+          <Image style={imageStyle} source={{uri: image}} />
           <View style={styles.infoContainer}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title} numberOfLines={2}>
+            <Container noBackground style={titleContainerStyle}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.title}
+                numberOfLines={2}>
                 {name}
-              </Text>
-            </View>
+              </Typography>
+            </Container>
             <Container row>
-              <Text style={styles.label}>{QR_CODE_TITLE}</Text>
-              <View style={styles.valueContainer}>
-                <Text style={styles.value}>{qrcode}</Text>
+              <Typography
+                type={TypographyType.LABEL_SMALL_TERTIARY}
+                style={styles.label}>
+                {t('productStamp:qrCode')}
+              </Typography>
+              <View style={valueContainerStyle}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                  style={valueStyle}>
+                  {qrcode}
+                </Typography>
               </View>
             </Container>
           </View>
         </Container>
-        <View style={styles.footer}>
+        <View style={footerStyle}>
           <Container row style={styles.timeContainer}>
-            <Text style={styles.label}>{ACTIVE_TIME_LABEL}</Text>
-            <View style={styles.timeValueContainer}>
-              <Text style={styles.timeValue}>{activeTime}</Text>
+            <Typography
+              type={TypographyType.LABEL_SMALL_SECONDARY}
+              style={styles.label}>
+              {t('productStamp:receivedDate')}
+            </Typography>
+            <View style={timeValueContainerStyle}>
+              <Typography
+                type={TypographyType.LABEL_SMALL_TERTIARY}
+                style={styles.timeValue}>
+                {activeTime}
+              </Typography>
             </View>
           </Container>
         </View>
-        <View style={styles.decor} />
-      </View>
-    </TouchableOpacity>
+        <View style={decorStyle} />
+      </Container>
+    </BaseButton>
   );
 };
 
-export default ProductStamp;
+export default withTranslation('productStamp')(ProductStamp);

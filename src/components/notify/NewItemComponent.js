@@ -1,124 +1,162 @@
-/* @flow */
-
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableHighlight,
-  StyleSheet
-} from 'react-native';
-
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+import {BaseButton, Container, Typography, Icon} from 'src/components/base';
+import Image from 'src/components/Image';
 
 export default class NewItemComponent extends Component {
+  static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
+
   _goDetail(item) {
-    Actions.notify_item({
-      title: item.title,
-      data: item
+    push(
+      appConfig.routes.notifyDetail,
+      {
+        title: item.title,
+        data: item,
+      },
+      this.theme,
+    );
+  }
+
+  renderMapIcon = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="map-marker"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  renderClockIcon = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="clock-o"
+        style={[titleStyle, styles.icon]}
+      />
+    );
+  };
+
+  get notifyItemContainerStyle() {
+    return mergeStyles(styles.notify_item, {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+    });
+  }
+
+  get iconStyle() {
+    return mergeStyles(styles.icon, {color: this.theme.color.textTertiary});
+  }
+
+  get notifyItemImageStyle() {
+    return mergeStyles(styles.notify_item_image, {
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
     });
   }
 
   render() {
-    var { item } = this.props;
+    const {item} = this.props;
 
     return (
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={this._goDetail.bind(this, item)}
-      >
-        <View
-          style={[
-            styles.notify_item,
-            item.read_flag == 0 ? styles.notify_item_active : null
-          ]}
-        >
-          <View style={styles.notify_item_image_box}>
-            <CachedImage
-              mutable
-              style={styles.notify_item_image}
-              source={{ uri: item.image_url }}
+      <BaseButton onPress={this._goDetail.bind(this, item)}>
+        <Container style={styles.notify_item}>
+          <Container noBackground style={styles.notify_item_image_box}>
+            <Image
+              style={this.notifyItemImageStyle}
+              source={{uri: item.image_url}}
             />
-          </View>
+          </Container>
 
           <View style={styles.notify_item_content}>
             <View style={styles.notify_item_content_box}>
-              <Text style={styles.notify_item_title}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.notify_item_title}>
                 {sub_string(item.title, 60)}
-              </Text>
+              </Typography>
               <View style={styles.notify_item_time_box}>
-                <Text style={styles.notify_item_time}>
-                  <Icon name="map-marker" size={10} color="#666666" />
+                <Typography
+                  type={TypographyType.LABEL_TINY_TERTIARY}
+                  style={styles.notify_item_time}
+                  renderIconBefore={this.renderMapIcon}>
                   {' ' + item.shop_name + '    '}
-                  <Icon name="clock-o" size={10} color="#666666" />
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_TINY_TERTIARY}
+                  style={styles.notify_item_time}
+                  renderIconBefore={this.renderClockIcon}>
                   {' ' + item.created}
-                </Text>
+                </Typography>
               </View>
-              <Text style={styles.notify_item_desc}>
+              <Typography
+                type={TypographyType.LABEL_SMALL}
+                style={styles.notify_item_desc}>
                 {sub_string(item.short_content, 60)}
-              </Text>
+              </Typography>
             </View>
           </View>
-        </View>
-      </TouchableHighlight>
+        </Container>
+      </BaseButton>
     );
   }
 }
 
 const styles = StyleSheet.create({
   notify_item: {
-    backgroundColor: '#ffffff',
     paddingVertical: 8,
     paddingHorizontal: 15,
     flexDirection: 'row',
     height: isIOS ? 116 : 124,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
-  },
-  notify_item_active: {
-    backgroundColor: '#ebebeb'
+    marginBottom: 2,
   },
   notify_item_image_box: {
-    backgroundColor: '#ebebeb',
     width: 80,
     height: 80,
-    marginTop: 8
+    marginTop: 8,
   },
   notify_item_image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    borderRadius: 2
   },
   notify_item_content: {
-    flex: 1
+    flex: 1,
   },
   notify_item_content_box: {
     flex: 1,
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   notify_item_title: {
-    fontSize: 14,
-    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
-    marginTop: 8
+    marginTop: 8,
   },
   notify_item_desc: {
     marginTop: 8,
-    color: '#404040',
-    fontSize: 12,
-    lineHeight: isIOS ? 16 : 18
+    lineHeight: isIOS ? 16 : 18,
   },
   notify_item_time_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 4,
   },
-  notify_item_time: {
+  notify_item_time: {},
+  icon: {
     fontSize: 10,
-    color: '#666666'
-  }
+  },
 });

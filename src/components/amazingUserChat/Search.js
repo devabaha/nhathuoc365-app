@@ -1,131 +1,142 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
-  FlatList,
-  Dimensions,
   Keyboard,
   TouchableWithoutFeedback,
-  SafeAreaView
 } from 'react-native';
-import NoResult from '../NoResult';
-import { Actions } from 'react-native-router-flux';
-import { debounce } from 'lodash';
-import store from '../../store';
-import ChatRow from './ChatRow';
+// 3-party libs
+import {debounce} from 'lodash';
+import {withTranslation} from 'react-i18next';
+// helpers
 import EventTracker from 'app-helper/EventTracker';
-
-const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
+import {getTheme} from 'src/Themes/Theme.context';
+import {servicesHandler} from 'app-helper/servicesHandler';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+// custom components
+import NoResult from '../NoResult';
+import ChatRow from './ChatRow';
+import {ScreenWrapper, FlatList} from 'src/components/base';
+import Indicator from '../Indicator';
 
 class Search extends Component {
+  static contextType = ThemeContext;
+
   state = {
     customers: [],
     searchValue: '',
     loading: undefined,
-    searchValue: ''
+    searchValue: '',
   };
   unmounted = false;
   eventTracker = new EventTracker();
 
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.handleChangeSearch('');
     setTimeout(() =>
-      Actions.refresh({
-        onChangeSearch: this.handleChangeSearch.bind(this)
-      })
+      refresh({
+        onChangeSearch: this.handleChangeSearch.bind(this),
+      }),
     );
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
-    this.setState({ loading: false });
+    this.setState({loading: false});
     this.unmounted = true;
     this.eventTracker.clearTracking();
   }
 
   searchCustomer = debounce(async (search = '') => {
-    const { store_id } = store;
     if (!this.unmounted) {
-      this.setState({ loading: true });
+      this.setState({loading: true});
     }
     try {
       var response = await APIHandler.site_search_conversations(0, {
-        search
+        search,
       });
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS && response.data) {
-          this.setState({ customers: response.data });
+          this.setState({customers: response.data});
         } else {
-          this.setState({ customers: [] });
+          this.setState({customers: []});
         }
       }
     } catch (e) {
-      console.warn(e + ' site_search_conversations');
-      store.addApiQueue('site_search_conversations', this.searchCustomer);
+      console.log(e + ' site_search_conversations');
     } finally {
       if (!this.unmounted) {
-        this.setState({ loading: false, isTyping: false });
+        this.setState({loading: false, isTyping: false});
       }
     }
   }, 500);
 
   handleChangeSearch(searchValue) {
-    this.setState({ searchValue, isTyping: true });
+    this.setState({searchValue, isTyping: true});
     this.searchCustomer(searchValue);
   }
 
   onPressCustomer(item) {
-    Actions.amazing_chat({
+    servicesHandler({
+      type: SERVICES_TYPE.USER_CHAT,
+      theme: this.theme,
       site_id: item.site_id,
       user_id: item.user_id,
       phoneNumber: item.tel,
       title: item.name,
-      fromSearchScene: true
+      conversation_id: item.id,
+      fromSearchScene: true,
     });
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && (
-          <View style={{ position: 'absolute', width: '100%', height: '100%' }}>
+          <View style={StyleSheet.absoluteFillObject}>
             <Indicator fullScreen />
           </View>
         )}
 
         <FlatList
+          safeLayout
           data={this.state.customers}
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
           onTouchMove={Keyboard.dismiss}
-          renderItem={({ item, index }) => (
+          renderItem={({item, index}) => (
             <ChatRow
               title={item.name}
               img={item.avatar}
               subTitle={item.tel}
               onPress={() => this.onPressCustomer(item)}
-              isSeparate={
-                this.state.customers.length < 10 ||
-                index !== this.state.customers.length - 1
-              }
+              isSeparate={index !== this.state.customers.length - 1}
             />
           )}
           ListEmptyComponent={
             <TouchableWithoutFeedback
-              style={{ flex: 1 }}
-              onPress={Keyboard.dismiss}
-            >
-              <View style={{ flex: 1, width: WIDTH, height: HEIGHT }}>
+              style={{flex: 1}}
+              onPress={Keyboard.dismiss}>
+              <View style={{flex: 1}}>
                 {!this.state.searchValue ? (
                   <NoResult
                     iconName="file-search"
-                    message="Nhập để tìm kiếm..."
+                    message={this.props.t('enterToSearch')}
                   />
                 ) : (
                   !this.state.isTyping && (
                     <NoResult
                       iconName="magnify-close"
-                      message="Không tìm thấy dữ liệu"
+                      message={this.props.t('chat:noConversationsFound')}
                     />
                   )
                 )}
@@ -134,17 +145,9 @@ class Search extends Component {
           }
           keyExtractor={(item, index) => String(item.id)}
         />
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    height: '100%'
-  }
-});
-
-export default Search;
+export default withTranslation(['common', 'chat'])(Search);

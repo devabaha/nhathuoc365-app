@@ -1,113 +1,68 @@
-/* @flow */
-
 import React from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  TouchableHighlight,
-  Text
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, ScrollView, Typography} from 'src/components/base';
+import HistoryRow from './HistoryRow';
 
-//library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Communications from 'react-native-communications';
+const History = (props) => {
+  const historyData = props.historyData ? props.historyData : [];
+  const {t} = props;
 
-const History = props => {
-  var historyData = props.historyData ? props.historyData : [];
-  const { t } = props;
-  const historyRender = historyData.map(history => (
-    <HistoryRow
-      key={history.id}
-      id={history.id}
-      title={history.name}
-      tel={history.tel}
-      date={history.created}
-    />
-  ));
+  const historyRender = historyData.map((history) => {
+    return (
+      <HistoryRow
+        key={history.id}
+        id={history.id}
+        title={history.name}
+        tel={history.tel}
+        date={history.created}
+      />
+    );
+  });
+
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 15,
-        width: Util.size.width
-      }}
-      keyboardShouldPersistTaps="always"
-      // refreshControl={
-      //     <RefreshControl
-      //         refreshing={loadingHistory || loadingHistoryWithdraw}
-      //         onRefresh={this._getData.bind(this)}
-      //     />
-      // }
-    >
-      {props.loading ? null : historyData.length ? (
-        historyRender
-      ) : (
-        <Text style={styles.note}>{t('tab.referralList.desc')}</Text>
-      )}
-    </ScrollView>
+    <Container flex>
+      <ScrollView
+        safeLayout
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="always"
+        // refreshControl={
+        //     <RefreshControl
+        //         refreshing={loadingHistory || loadingHistoryWithdraw}
+        //         onRefresh={this._getData.bind(this)}
+        //     />
+        // }
+      >
+        {props.loading ? null : historyData.length ? (
+          historyRender
+        ) : (
+          <View style={styles.descriptionContainer}>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+              style={styles.note}>
+              {t('tab.referralList.desc')}
+            </Typography>
+          </View>
+        )}
+      </ScrollView>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
-  history_row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingBottom: 10,
-    paddingTop: 10,
-    width: '100%',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+  contentContainer: {
+    width: appConfig.device.width,
   },
-  history_row_main_content: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginLeft: 10
-  },
-  history_row_last_content: {
-    justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'flex-end'
-  },
-  title: {
-    fontSize: 16,
-    color: '#404040'
-  },
-  des: {
-    fontSize: 12,
-    color: '#404040'
+  descriptionContainer: {
+    padding: 15,
   },
   note: {
-    fontSize: 16,
-    marginBottom: 2
-  }
+    marginBottom: 2,
+  },
 });
 
 export default withTranslation('affiliate')(History);
-
-const HistoryRow = props => {
-  return (
-    <View style={[styles.history_row]}>
-      <TouchableHighlight
-        onPress={() => Communications.phonecall(props.tel, true)}
-        underlayColor="transparent"
-      >
-        <View
-          style={[
-            {
-              flexDirection: 'row',
-              alignItems: 'center'
-            }
-          ]}
-        >
-          <Icon name="user" color={'#333333'} size={24} />
-          <View style={[styles.history_row_main_content]}>
-            <Text style={[styles.title]}>{props.title}</Text>
-            <Text style={[styles.des]}>{props.tel}</Text>
-            <Text style={[styles.des]}>{props.date}</Text>
-          </View>
-        </View>
-      </TouchableHighlight>
-    </View>
-  );
-};

@@ -15,6 +15,6 @@ export const KEYBOARD_DEFINITION = [
 
 export const SHOW_VALUE = 1;
 export const HIDE_VALUE = 0;
-export const HIDE_BOTTOM_POSITION = -50;
+export const HIDE_BOTTOM_POSITION = 50;
 export const SHOW_BUTTON_POSITION = 0;
 export const ANIMATION_DURATION = 250;

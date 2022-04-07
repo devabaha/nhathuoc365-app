@@ -15,10 +15,23 @@
     }
   },
   "transferBtnTitle": "Transfer",
+  "paymentWallet": {
+    "cashSource": "Source",
+    "balance": "Balance"
+  },
   "transaction": {
     "title": "Payment",
     "vnpayTitle": "VNPAY Payment",
     "noPaymentInformation": "No payment information yet",
-    "cancelPaymentFlowConfirmMessage": "You will have to remake the payment flow if you close. Are you sure you want to close?"
+    "cancelPaymentFlowConfirmMessage": "You will have to remake the payment flow if you close. Are you sure you want to close?",
+    "paymentInformationTitle": "Payment Information",
+    "transactionInformationTitle": "Transaction information",
+    "saveQRCodeTitle": "Save QR code",
+    "statusSuccessTitle": "Payment successfully",
+    "statusInProgressTitle": "In progress...",
+    "statusErrorTitle": "Payment checkout error",
+    "openWebviewTitle": "Pay now",
+    "backHomeTitle": "Back to home",
+    "cancelTransactionWarningTitle": "Are you sure to settle this transaction later?"
   }
 }

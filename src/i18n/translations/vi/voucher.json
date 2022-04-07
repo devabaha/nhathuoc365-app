@@ -56,8 +56,10 @@
     "accept": "Xác nhận",
     "cancel": "Hủy",
     "close": "Đóng",
+    "noTitle": "Chưa có tiêu đề",
+    "message": "Message mặc định!",
     "province": {
-      "title": "Chọn Tỉnh/Thành phố",
+      "title": "Chọn Tỉnh/ Thành phố",
       "placeholder": "Tìm kiếm",
       "notFound": "Không có kết quả phù hợp cho \"{{searchText}}\""
     },
@@ -83,6 +85,8 @@
         "shop": "cửa hàng"
       }
     },
-    "providedBy": "Cung cấp bởi"
+    "providedBy": "Cung cấp bởi",
+    "map": "Bản đồ",
+    "descriptionShowBarcode": "Đưa mã Barcode cho nhân viên cửa hàng để nhận khuyến mại."
   }
 }

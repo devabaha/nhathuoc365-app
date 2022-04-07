@@ -1,41 +1,55 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Image,
-  StyleSheet,
-  RefreshControl,
-  Platform,
-  StatusBar,
-  SafeAreaView,
-  // ScrollView,
-  SectionList,
-  Text,
-} from 'react-native';
+// 3-party libs
 import Animated, {Easing} from 'react-native-reanimated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Svg, {Path} from 'react-native-svg';
+import {withSafeAreaInsets} from 'react-native-safe-area-context';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getPackageOptionValue} from 'app-helper/packageOptionsHandler';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgbCode} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
+import {HOME_HEADER_HEIGHT} from './constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, {HomeCardItem} from './component/HomeCardList';
 import ListServices from './component/ListServices';
-import ListProducts, {ProductItem} from './component/ListProducts';
-import appConfig from 'app-config';
+import ListProducts from './component/ListProducts';
+import Posts from 'src/containers/Social/Posts';
+import {
+  NavBarWrapper,
+  ScreenWrapper,
+  RefreshControl,
+  Icon,
+  Container,
+  Typography,
+  ScrollView,
+} from 'src/components/base';
+// skeleton
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+// themes
 import Themes from 'src/Themes';
-import {
-  getPackageOptionValue,
-  PACKAGE_OPTIONS_TYPE,
-} from '../../helper/packageOptionsHandler';
-import Posts from 'src/containers/Social/Posts';
+
+import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
 
 const homeThemes = Themes.getNameSpace('home');
 const homeStyles = homeThemes('styles.home.home');
+
+const HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT = 40;
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
@@ -45,7 +59,6 @@ const STATUS_BAR_STYLE = {
 const {
   set,
   Extrapolate,
-  ScrollView,
   color,
   interpolate,
   Value,
@@ -55,6 +68,8 @@ const {
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 class Home extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     sites: PropTypes.array,
     title_sites: PropTypes.string,
@@ -83,7 +98,6 @@ class Home extends Component {
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
     onPressProduct: PropTypes.func,
-    onPressSiteItem: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
@@ -122,7 +136,6 @@ class Home extends Component {
     onShowAllNews: defaultListener,
     onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
-    onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
     onPressNoti: defaultListener,
@@ -157,6 +170,10 @@ class Home extends Component {
       });
     }
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get hasServices() {
     return (
@@ -235,34 +252,35 @@ class Home extends Component {
     EXTRAPOLATE_RANGE / 2,
   );
 
-  wrapperAnimatedStyle = {
-    opacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
-      outputRange: [0, 1],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    ...elevationShadowStyle(3),
-    elevation: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-      outputRange: [0, 0, 5],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    shadowOpacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-      outputRange: [0, 0, 0.15],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-    backgroundColor: color(
-      255,
-      255,
-      255,
-      interpolate(this.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 1],
+  get wrapperAnimatedStyle() {
+    return {
+      ...styles.headerContainer,
+      opacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
+        outputRange: [0, 1],
         extrapolate: Extrapolate.CLAMP,
       }),
-    ),
-  };
+      ...elevationShadowStyle(3),
+      elevation: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 5],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+      shadowOpacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 0.15],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+      backgroundColor: color(
+        ...hexToRgbCode(this.theme.color.surface),
+        interpolate(this.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+          outputRange: [0, 0, 1],
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
+    };
+  }
 
   headerAnimatedStyle = {
     opacity: interpolate(this.animatedHeaderValue, {
@@ -280,37 +298,113 @@ class Home extends Component {
     }),
   };
 
-  headerIconStyle = {
-    color:
-      this.homeThemes('styles.home.header_search_wrapper_active')
-        ?.backgroundColor || appConfig.colors.primary,
-    opacity: interpolate(this.animatedHeaderValue, {
-      inputRange: [0, EXTRAPOLATE_RANGE],
-      outputRange: [0, 1],
-      extrapolate: Extrapolate.CLAMP,
-    }),
-  };
+  get headerIconStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+      opacity: interpolate(this.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE],
+        outputRange: [0, 1],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+    };
+  }
 
-  searchWrapperStyle = [
-    this.homeThemes('styles.home.header_search_wrapper_active'),
-    {
-      backgroundColor: color(
-        ...hexToRgbCode(
-          this.homeThemes('styles.home.header_search_wrapper_active')
-            ?.backgroundColor || '#f5f5f5',
+  get searchWrapperStyle() {
+    return [
+      this.homeThemes('styles.home.header_search_wrapper_active'),
+      {
+        backgroundColor: color(
+          ...hexToRgbCode(this.theme.color.contentBackgroundStrong),
+          interpolate(this.animatedHeaderValue, {
+            inputRange: [0, EXTRAPOLATE_RANGE],
+            outputRange: [0, 1],
+            extrapolate: Extrapolate.CLAMP,
+          }),
         ),
-        interpolate(this.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP,
-        }),
-      ),
-    },
-  ];
+      },
+    ];
+  }
 
   headerContainerStyle = {
     opacity: this.animatedHeaderContainerValue,
   };
+
+  headerBackgroundStyle = [
+    styles.headerBackground,
+    this.headerBackgroundOpacity,
+  ];
+
+  get headerBackgroundDimensions() {
+    return {
+      width: appConfig.device.width,
+      height: HOME_HEADER_HEIGHT + this.props.insets.top,
+    };
+  }
+
+  renderHeaderBackground = () => {
+    return (
+      <Container
+        noBackground
+        reanimated
+        style={[
+          this.headerBackgroundStyle,
+          {
+            width: this.headerBackgroundDimensions.width,
+            height:
+              this.headerBackgroundDimensions.height +
+              HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT,
+          },
+        ]}>
+        <View style={styles.headerBackgroundContentContainer}>
+          <Svg>
+            <Path
+              fill={this.theme.color.navBarBackground}
+              d={`M 0 0 H ${this.headerBackgroundDimensions.width} V ${
+                this.headerBackgroundDimensions.height +
+                HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT / 2
+              } q -${
+                this.headerBackgroundDimensions.width / 2
+              } ${HEADER_BACKGROUND_EXTRA_CURVE_HEIGHT} -${
+                this.headerBackgroundDimensions.width
+              } 0`}
+            />
+          </Svg>
+        </View>
+      </Container>
+    );
+  };
+
+  renderHeaderComponent = () => {
+    return (
+      <NavBarWrapper
+        reanimated
+        appNavBar={false}
+        containerStyle={this.wrapperAnimatedStyle}>
+        <Animated.View
+          style={[styles.headerContainerStyle, this.headerContainerStyle]}>
+          <Header
+            // wrapperStyle={this.wrapperAnimatedStyle}
+            maskSearchWrapperStyle={this.searchWrapperStyle}
+            maskSubStyle={this.headerAnimatedStyle}
+            iconStyle={this.headerIconStyle}
+            notify={this.props.notify}
+            // name={name}
+            showCart={false}
+            onPressNoti={this.props.onPressNoti}
+            goToSearch={this.props.goToSearch}
+            loading={this.props.storeFetching}
+            onContentLayout={this.handleHeaderLayout.bind(this)}
+          />
+        </Animated.View>
+      </NavBarWrapper>
+    );
+  };
+
+  get siteIconStyle() {
+    return {
+      color: this.theme.color.onSurface,
+    };
+  }
 
   render() {
     const {t} = this.props;
@@ -319,310 +413,289 @@ class Home extends Component {
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
-    const extraTop =
-      (this.state.headerHeight || 0) +
-      10 +
-      (appConfig.device.isIOS
-        ? -5 + (!!appConfig.device.bottomSpace ? -10 : 0)
-        : 0);
 
     return (
-      <View style={styles.container}>
-        {/* <LoadingComponent loading={this.props.apiFetching} /> */}
+      <ScreenWrapper>
         {/* <StatusBar
           // barStyle={this.state.statusBarStyle}
           backgroundColor={appConfig.colors.primary}
         /> */}
+        {this.renderHeaderBackground()}
+        {this.renderHeaderComponent()}
 
-        <Animated.View
-          style={[styles.headerBackground, this.headerBackgroundOpacity]}>
-          {this.props.site && this.props.site.app_event_banner_image && (
-            <Image
-              style={styles.headerImage}
-              source={{uri: this.props.site.app_event_banner_image}}
-            />
-          )}
-        </Animated.View>
-
-        <Animated.View
-          style={[styles.headerContainerStyle, this.headerContainerStyle]}>
-          <Header
-            wrapperStyle={this.wrapperAnimatedStyle}
-            maskSearchWrapperStyle={this.searchWrapperStyle}
-            maskSubStyle={this.headerAnimatedStyle}
-            iconStyle={this.headerIconStyle}
-            notify={this.props.notify}
-            name={name}
-            showCart={false}
-            onPressNoti={this.props.onPressNoti}
-            goToSearch={this.props.goToSearch}
-            loading={this.props.storeFetching}
-            onContentLayout={this.handleHeaderLayout.bind(this)}
-          />
-        </Animated.View>
-
-        <SafeAreaView>
-          <ScrollView
-            // onScroll={this.showBgrStatusIfOffsetTop}
-            onScroll={event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: (y) =>
-                        block([
-                          set(this.animatedHeaderValue, y),
-                          call([y], ([offsetY]) => {
-                            this.showBgrStatusIfOffsetTop({
-                              nativeEvent: {contentOffset: {y: offsetY}},
-                            });
-                            this.handleAnimatedScroll({value: offsetY});
-                          }),
-                        ]),
-                    },
+        <ScrollView
+          reanimated
+          onScroll={event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: (y) =>
+                      block([
+                        set(this.animatedHeaderValue, y),
+                        call([y], ([offsetY]) => {
+                          this.showBgrStatusIfOffsetTop({
+                            nativeEvent: {contentOffset: {y: offsetY}},
+                          });
+                          this.handleAnimatedScroll({value: offsetY});
+                        }),
+                      ]),
                   },
                 },
-              ],
-              {
-                useNativeDriver: true,
               },
-            )}
-            // style={{overflow: 'visible'}}
-            contentContainerStyle={{
-              paddingTop: extraTop,
-              paddingBottom: 30,
-            }}
-            showsVerticalScrollIndicator={false}
-            scrollEventThrottle={16}
-            refreshControl={
-              <RefreshControl
-                progressViewOffset={extraTop}
-                refreshing={this.props.refreshing}
-                onRefresh={this.props.onPullToRefresh}
-                tintColor={appConfig.colors.white}
-              />
-            }>
-            {/* <Header
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          style={{
+            marginTop:
+              appConfig.device.statusBarHeight + HOME_HEADER_HEIGHT / 3,
+          }}
+          contentContainerStyle={{
+            paddingTop:
+              this.headerBackgroundDimensions.height -
+              appConfig.device.statusBarHeight -
+              HOME_HEADER_HEIGHT / 3,
+            paddingBottom: 30,
+          }}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              progressViewOffset={this.headerBackgroundDimensions.height}
+              refreshing={this.props.refreshing}
+              onRefresh={this.props.onPullToRefresh}
+              tintColor={this.theme.color.onNavBarBackground}
+            />
+          }>
+          {/* <Header
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
           /> */}
-            <View style={styles.block}>
-              {this.isVisibleLoyaltyBox ? (
-                <PrimaryActions
-                  walletName={
-                    // this.props.userInfo && this.props.userInfo.default_wallet
-                    //   ? this.props.userInfo.default_wallet.name
-                    //   : ''
-                    name
-                  }
-                  surplus={
-                    this.props.userInfo && this.props.userInfo.default_wallet
-                      ? this.props.userInfo.default_wallet.balance_view
-                      : ''
-                  }
-                  primaryActions={
-                    this.props.showPrimaryActions
-                      ? this.props.primaryActions
-                      : null
-                  }
-                  onPressItem={this.props.onActionPress}
-                  onSurplusNext={this.props.onSurplusNext}
-                  onPressCommission={this.props.onPressCommission}
-                />
-              ) : (
-                this.hasPromotion && (
-                  <Promotion
-                    data={this.props.promotions}
-                    onPress={this.props.onPromotionPressed}
-                  />
-                )
-              )}
-            </View>
-
-            {this.hasServices ? (
-              <ListServices
-                selfRequest={(service, callBack) =>
-                  this.props.onPressService(service, callBack)
+          <View style={styles.block}>
+            {this.isVisibleLoyaltyBox ? (
+              <PrimaryActions
+                walletName={
+                  // this.props.userInfo && this.props.userInfo.default_wallet
+                  //   ? this.props.userInfo.default_wallet.name
+                  //   : ''
+                  name
                 }
-                listService={this.props.listService}
-                type={this.props.listServiceType}
-                itemsPerRow={this.props.listServiceItemsPerRow}
-                onItemPress={this.props.onPressService}
-                containerStyle={styles.servicesBlock}
-                contentContainerStyle={styles.servicesContent}
+                surplus={
+                  this.props.userInfo && this.props.userInfo.default_wallet
+                    ? this.props.userInfo.default_wallet.balance_view
+                    : ''
+                }
+                primaryActions={
+                  this.props.showPrimaryActions
+                    ? this.props.primaryActions
+                    : null
+                }
+                onPressItem={this.props.onActionPress}
+                onSurplusNext={this.props.onSurplusNext}
+                onPressCommission={this.props.onPressCommission}
               />
-            ) : this.props.apiFetching ? (
-              <ListServiceSkeleton />
-            ) : null}
-
-            <View style={styles.contentWrapper}>
-              {this.isVisibleLoyaltyBox && this.hasPromotion && (
+            ) : (
+              this.hasPromotion && (
                 <Promotion
-                  containerStyle={styles.promotionBlock}
                   data={this.props.promotions}
                   onPress={this.props.onPromotionPressed}
                 />
-              )}
+              )
+            )}
+          </View>
 
-              {this.hasProduct_groups ? (
-                this.props.product_groups.map((productGroup, index) => {
-                  let {id, products, title, display_type} = productGroup;
+          {this.hasServices ? (
+            <ListServices
+              selfRequest={(service, callBack) =>
+                this.props.onPressService(service, callBack)
+              }
+              listService={this.props.listService}
+              type={this.props.listServiceType}
+              itemsPerRow={this.props.listServiceItemsPerRow}
+              onItemPress={this.props.onPressService}
+              containerStyle={styles.servicesBlock}
+              contentContainerStyle={styles.servicesContent}
+            />
+          ) : this.props.apiFetching ? (
+            <ListServiceSkeleton />
+          ) : null}
+
+          <View style={styles.contentWrapper}>
+            {this.isVisibleLoyaltyBox && this.hasPromotion && (
+              <Promotion
+                containerStyle={styles.promotionBlock}
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
+
+            {this.hasProduct_groups ? (
+              this.props.product_groups.map((productGroup, index) => {
+                let {id, products, title, display_type} = productGroup;
+                return (
+                  <ListProducts
+                    key={id}
+                    type={display_type}
+                    data={products}
+                    title={title}
+                    onPressProduct={this.props.onPressProduct}
+                    onShowAll={() =>
+                      this.props.onShowAllGroupProduct(productGroup)
+                    }
+                  />
+                );
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
+
+            {this.hasSites && (
+              <HomeCardList
+                onShowAll={this.props.onShowAllSites}
+                data={this.props.sites}
+                title={
+                  this.props.title_sites
+                    ? this.props.title_sites
+                    : t('sections.favoriteStore.title')
+                }>
+                {({item, index}) => (
+                  <HomeCardItem
+                    selfRequest={(callBack) =>
+                      this.props.onPressSiteItem(item, callBack)
+                    }
+                    title={item.title}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressSiteItem(item)}
+                    last={this.props.sites.length - 1 === index}
+                    subTitle={
+                      !!item.address && (
+                        <Typography
+                          type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                          renderIconBefore={(titleStyle) => (
+                            <Icon
+                              bundle={BundleIconSetName.IONICONS}
+                              name="ios-location-sharp"
+                              style={[titleStyle, styles.siteIcon]}
+                            />
+                          )}>
+                          {' '}
+                          {item.address}
+                        </Typography>
+                      )
+                    }
+                    titleStyle={styles.siteTitleContent}
+                  />
+                )}
+              </HomeCardList>
+            )}
+
+            {this.hasCampaigns && (
+              <HomeCardList
+                onShowAll={this.props.onShowAllCampaigns}
+                data={this.props.campaigns}
+                title={t('sections.voucher.title')}>
+                {({item, index}) => {
                   return (
-                    <ListProducts
-                      key={id}
-                      type={display_type}
-                      data={products}
-                      title={title}
-                      onPressProduct={this.props.onPressProduct}
-                      onShowAll={() =>
-                        this.props.onShowAllGroupProduct(productGroup)
-                      }
+                    <HomeCardItem
+                      title={item.title}
+                      isShowSubTitle={item.point !== '0'}
+                      specialSubTitle={item.point + ' '}
+                      subTitle={item.point_currency}
+                      imageUrl={item.image_url}
+                      onPress={() => this.props.onPressCampaignItem(item)}
+                      last={this.props.campaigns.length - 1 === index}
                     />
                   );
-                })
-              ) : this.props.apiFetching ? (
-                <ListProductSkeleton />
-              ) : null}
+                }}
+              </HomeCardList>
+            )}
 
-              {this.hasSites && (
-                <HomeCardList
-                  onShowAll={this.props.onShowAllSites}
-                  data={this.props.sites}
-                  title={
-                    this.props.title_sites
-                      ? this.props.title_sites
-                      : t('sections.favoriteStore.title')
-                  }>
-                  {({item, index}) => (
-                    <HomeCardItem
-                      selfRequest={(callBack) =>
-                        this.props.onPressSiteItem(item, callBack)
-                      }
-                      title={item.title}
-                      imageUrl={item.image_url}
-                      onPress={() => this.props.onPressSiteItem(item)}
-                      last={this.props.sites.length - 1 === index}
-                      subTitle={item.address}
-                      titleStyle={styles.siteTitleContent}
-                      subTitleStyle={styles.siteSubtitleContent}
-                      iconSubTitle={
-                        <Ionicons
-                          name="ios-location-sharp"
-                          style={styles.siteIcon}
+            {this.hasProduct_categories ? (
+              this.props.product_categories.map((productCategory, index) => {
+                let {id, products, title, display_type} = productCategory;
+                return (
+                  <ListProducts
+                    key={id}
+                    type={display_type}
+                    data={products}
+                    title={title}
+                    onPressProduct={this.props.onPressProduct}
+                    onShowAll={
+                      !id
+                        ? null
+                        : () =>
+                            this.props.onShowAllGroupProduct(productCategory)
+                    }
+                  />
+                );
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
+
+            {!!this.hasSocialPosts && (
+              <HomeCardList
+                onShowAll={this.props.goToSocial}
+                title={t('common:screen.social.mainTitle')}
+                contentContainerStyle={styles.socialPostContainer}
+                renderContent={() => (
+                  <Posts
+                    disablePostUpdating
+                    disableLoadMore
+                    posts={this.props.social_posts}
+                  />
+                )}
+              />
+            )}
+
+            {this.hasNewsGroups ? (
+              this.props.news_categories.map((newsGroup, index) => {
+                let {id, news, title} = newsGroup;
+                return (
+                  <HomeCardList
+                    key={id}
+                    onShowAll={() => this.props.onShowAllNews(title, id)}
+                    data={news}
+                    title={title}>
+                    {({item, index}) => {
+                      return (
+                        <HomeCardItem
+                          title={item.title}
+                          imageUrl={item.image_url}
+                          onPress={() => this.props.onPressNewItem(item)}
+                          video={item.video}
+                          last={this.props.newses.length - 1 === index}
                         />
-                      }
-                    />
-                  )}
-                </HomeCardList>
-              )}
+                      );
+                    }}
+                  </HomeCardList>
+                );
+              })
+            ) : this.hasNews ? (
+              <HomeCardList
+                onShowAll={() => this.props.onShowAllNews()}
+                data={this.props.newses}
+                title={t('sections.news.title')}>
+                {({item, index}) => (
+                  <HomeCardItem
+                    title={item.title}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressNewItem(item)}
+                    last={this.props.newses.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
+          </View>
+        </ScrollView>
 
-              {this.hasCampaigns && (
-                <HomeCardList
-                  onShowAll={this.props.onShowAllCampaigns}
-                  data={this.props.campaigns}
-                  title={t('sections.voucher.title')}>
-                  {({item, index}) => {
-                    return (
-                      <HomeCardItem
-                        title={item.title}
-                        isShowSubTitle={item.point !== '0'}
-                        specialSubTitle={item.point + ' '}
-                        subTitle={item.point_currency}
-                        imageUrl={item.image_url}
-                        onPress={() => this.props.onPressCampaignItem(item)}
-                        last={this.props.campaigns.length - 1 === index}
-                      />
-                    );
-                  }}
-                </HomeCardList>
-              )}
-              {this.hasProduct_categories ? (
-                this.props.product_categories.map((productCategory, index) => {
-                  let {id, products, title, display_type} = productCategory;
-                  return (
-                    <ListProducts
-                      key={id}
-                      type={display_type}
-                      data={products}
-                      title={title}
-                      onPressProduct={this.props.onPressProduct}
-                      onShowAll={
-                        !id
-                          ? null
-                          : () =>
-                              this.props.onShowAllGroupProduct(productCategory)
-                      }
-                    />
-                  );
-                })
-              ) : this.props.apiFetching ? (
-                <ListProductSkeleton />
-              ) : null}
-
-              {!!this.hasSocialPosts && (
-                <HomeCardList
-                  onShowAll={this.props.goToSocial}
-                  title={t('common:screen.social.mainTitle')}
-                  contentContainerStyle={styles.socialPostContainer}
-                  renderContent={() => (
-                    <Posts
-                      disablePostUpdating
-                      disableLoadMore
-                      posts={this.props.social_posts}
-                    />
-                  )}
-                />
-              )}
-
-              {this.hasNewsGroups ? (
-                this.props.news_categories.map((newsGroup, index) => {
-                  let {id, news, title} = newsGroup;
-                  return (
-                    <HomeCardList
-                      key={id}
-                      onShowAll={() => this.props.onShowAllNews(title, id)}
-                      data={news}
-                      title={title}>
-                      {({item, index}) => {
-                        return (
-                          <HomeCardItem
-                            title={item.title}
-                            imageUrl={item.image_url}
-                            onPress={() => this.props.onPressNewItem(item)}
-                            video={item.video}
-                            last={this.props.newses.length - 1 === index}
-                          />
-                        );
-                      }}
-                    </HomeCardList>
-                  );
-                })
-              ) : this.hasNews ? (
-                <HomeCardList
-                  onShowAll={() => this.props.onShowAllNews()}
-                  data={this.props.newses}
-                  title={t('sections.news.title')}>
-                  {({item, index}) => (
-                    <HomeCardItem
-                      title={item.title}
-                      imageUrl={item.image_url}
-                      onPress={() => this.props.onPressNewItem(item)}
-                      last={this.props.newses.length - 1 === index}
-                    />
-                  )}
-                </HomeCardList>
-              ) : this.props.apiFetching ? (
-                <HomeCardListSkeleton />
-              ) : this.props.apiFetching ? (
-                <HomeCardListSkeleton />
-              ) : null}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-
-        <StatusBarBackground />
-      </View>
+        {/* <StatusBarBackground /> */}
+      </ScreenWrapper>
     );
   }
 }
@@ -630,27 +703,17 @@ class Home extends Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
-    backgroundColor: appConfig.colors.sceneBackground,
+  },
+
+  headerContainer: {
+    position: 'absolute',
+    zIndex: 9999,
   },
   headerBackground: {
-    backgroundColor: appConfig.colors.primary,
-    alignItems: 'center',
-    overflow: 'hidden',
-    width: appConfig.device.width * 3,
-    height: appConfig.device.width * 3,
-    borderRadius: appConfig.device.width * 3,
     position: 'absolute',
-    top:
-      -(appConfig.device.width * 3) +
-      120 -
-      (appConfig.device.isAndroid
-        ? appConfig.device.statusBarHeight / 2
-        : appConfig.device.bottomSpace
-        ? -appConfig.device.statusBarHeight / 2
-        : 0),
-    left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
-    transform: [{scaleX: 1.2}],
+  },
+  headerBackgroundContentContainer: {
+    flex: 1,
   },
   headerImage: {
     height: appConfig.device.width / 3,
@@ -659,22 +722,17 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  contentWrapper: {
-    backgroundColor: appConfig.colors.sceneBackground,
-    // marginBottom: 32,
-  },
+  contentWrapper: {},
   primaryActionsWrapper: {
     paddingBottom: 8,
   },
   headerContainerStyle: {
-    position: 'absolute',
     top: 0,
     width: '100%',
     zIndex: 9999,
   },
 
   servicesBlock: {
-    backgroundColor: appConfig.colors.sceneBackground,
     paddingBottom: 10,
     marginTop: -20,
   },
@@ -698,14 +756,11 @@ let styles = StyleSheet.create({
   siteTitleContent: {
     fontWeight: '500',
   },
-  siteSubtitleContent: {
-    color: '#666',
-  },
+  siteSubtitleContent: {},
   siteIcon: {
     fontSize: 15,
-    color: '#000',
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);
 
-export default withTranslation(['home', 'common'])(Home);
+export default withTranslation(['home', 'common'])(withSafeAreaInsets(Home));

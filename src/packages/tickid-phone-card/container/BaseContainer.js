@@ -1,6 +1,8 @@
-import { Component } from 'react';
+import {Component} from 'react';
+// configs
 import config from '../config';
-import { INITIALIZED } from '../constants';
+// constants
+import {INITIALIZED} from '../constants';
 
 class BaseContainer extends Component {
   constructor(props) {
@@ -8,7 +10,7 @@ class BaseContainer extends Component {
 
     if (config[INITIALIZED] !== true) {
       throw new Error(
-        'Run initialize method before using the Phone Card package!'
+        'Run initialize method before using the Phone Card package!',
       );
     }
   }

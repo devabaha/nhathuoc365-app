@@ -1,17 +1,32 @@
 import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
-import {StyleSheet, View, Text} from 'react-native';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-// import Button from 'react-native-button';
-import config from '../../config';
+// 3-party libs
 import LoadingComponent from '@tickid/tickid-rn-loading';
-import QRScanner from '../../../../components/QRBarCode/QRScanner';
-import Button from '../../../../components/Button';
+// configs
+import config from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
+import QRScanner from 'src/components/QRBarCode/QRScanner';
+import Button from 'src/components/Button';
 
 class ScanScreen extends Component {
+  static contextType = ThemeContext;
+
   state = {
     permissionCameraGranted: false,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   handleCameraPermission = (permissionCameraGranted) => {
     this.setState({permissionCameraGranted});
@@ -19,7 +34,7 @@ class ScanScreen extends Component {
 
   onReadedCode = (event) => {
     this.props.onReadedCode(event.data);
-  }
+  };
 
   renderBottomContent = () => {
     return (
@@ -34,10 +49,18 @@ class ScanScreen extends Component {
   renderTopContent = () => {
     return (
       <View style={styles.topContent}>
-        <Text style={styles.topContentText}>{this.props.topContentText}</Text>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM}
+          style={this.topContentTextStyle}>
+          {this.props.topContentText}
+        </Typography>
       </View>
     );
   };
+
+  get topContentTextStyle() {
+    return mergeStyles(styles.topContentText, {color: this.theme.color.white});
+  }
 
   render() {
     return (
@@ -59,10 +82,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: config.device.bottomSpace,
   },
-  containerStyle: {
-    backgroundColor: config.colors.sceneBackground,
-    flex: 1,
-  },
   topContent: {
     position: 'absolute',
     top: 0,
@@ -71,9 +90,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   topContentText: {
-    fontSize: 15,
     fontWeight: '500',
-    color: '#fff',
     lineHeight: 22,
     textAlign: 'center',
   },

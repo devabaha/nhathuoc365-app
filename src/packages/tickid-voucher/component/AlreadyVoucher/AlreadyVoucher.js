@@ -1,10 +1,20 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, StyleSheet, Animated} from 'react-native';
 import PropTypes from 'prop-types';
+// configs
 import config from '../../config';
-import Button from 'react-native-button';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Typography} from 'src/components/base';
+import Button from 'src/components/Button';
 import Header from './Header';
-import EventTracker from '../../../../helper/EventTracker';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
@@ -12,18 +22,20 @@ const ANIMATION_CLOSE_TIME = 150;
 const defaultListener = () => {};
 
 class AlreadyVoucher extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onClose: PropTypes.func,
     onCheckMyVoucher: PropTypes.func,
     heading: PropTypes.string,
-    message: PropTypes.string
+    message: PropTypes.string,
   };
 
   static defaultProps = {
     onClose: defaultListener,
     onCheckMyVoucher: defaultListener,
     heading: '',
-    message: ''
+    message: '',
   };
 
   constructor(props) {
@@ -31,9 +43,13 @@ class AlreadyVoucher extends Component {
 
     this.state = {
       opacity: new Animated.Value(0),
-      bottom: new Animated.Value(-20)
+      bottom: new Animated.Value(-20),
     };
     this.eventTracker = new EventTracker();
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -47,7 +63,7 @@ class AlreadyVoucher extends Component {
   }
 
   startAnimation(animation, toValue, duration) {
-    Animated.timing(animation, { toValue, duration }).start();
+    Animated.timing(animation, {toValue, duration}).start();
   }
 
   runCloseAnimation() {
@@ -79,25 +95,38 @@ class AlreadyVoucher extends Component {
     }, ANIMATION_CLOSE_TIME);
   };
 
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      backgroundColor: this.theme.color.overlay30,
+    });
+  }
+
+  get contentStyle() {
+    return mergeStyles(styles.content, {
+      borderTopLeftRadius: this.theme.layout.borderRadiusSmall,
+      borderTopRightRadius: this.theme.layout.borderRadiusSmall,
+    });
+  }
+
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
 
     const containerStyle = {
       opacity: this.state.opacity,
-      bottom: this.state.bottom
+      bottom: this.state.bottom,
     };
     if (this.state.keyboardShow) {
       containerStyle.top = 0;
       containerStyle.bottom = this.state.keyboardHeight;
     }
     return (
-      <Animated.View style={[styles.container, containerStyle]}>
-        <Button
+      <Container animated style={[this.containerStyle, containerStyle]}>
+        <BaseButton
           containerStyle={styles.btnCloseTransparent}
           onPress={this.onClose}
         />
 
-        <View style={styles.content}>
+        <Container style={this.contentStyle}>
           <Header
             onClose={this.onClose}
             closeTitle={t('modal.close')}
@@ -105,17 +134,18 @@ class AlreadyVoucher extends Component {
           />
 
           <View style={styles.body}>
-            <Text style={styles.message}>{this.props.message}</Text>
-            <Button
-              style={styles.submitButtonTitle}
-              containerStyle={styles.submitButton}
-              onPress={this.onCheckMyVoucher}
-            >
-              {t('alreadyTaken.btnTitle')}
-            </Button>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.message}>
+              {this.props.message}
+            </Typography>
           </View>
-        </View>
-      </Animated.View>
+
+          <Button onPress={this.onCheckMyVoucher}>
+            {t('alreadyTaken.btnTitle')}
+          </Button>
+        </Container>
+      </Container>
     );
   }
 }
@@ -127,7 +157,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
   },
   btnCloseTransparent: {
     position: 'absolute',
@@ -135,41 +164,26 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    zIndex: 1
+    zIndex: 1,
   },
   content: {
     position: 'absolute',
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: config.colors.white,
     minHeight: 40,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
     zIndex: 2,
-    marginBottom: config.device.bottomSpace
+    marginBottom: config.device.bottomSpace,
   },
   body: {
-    padding: 16
+    padding: 15,
+    paddingBottom: 0,
   },
   message: {
-    fontSize: 14,
     fontWeight: '500',
-    color: '#333',
     marginBottom: 20,
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  submitButton: {
-    backgroundColor: config.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14
-  },
-  submitButtonTitle: {
-    color: config.colors.white,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16
-  }
 });
 
 export default withTranslation('voucher')(AlreadyVoucher);

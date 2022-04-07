@@ -1,0 +1,19 @@
+{
+  "title": "Contacts",
+  "searchContactsPlaceholder": "Searching by name or phone number",
+  "notInContactsFamilyName": "Not in your contacts yet",
+  "requestContactsPermission": {
+    "message": "Allowing access to contacts will help choosing information more quickly and accurately",
+    "allowAccessContacts": "Allow access"
+  },
+  "modalAllowPermission": {
+    "title": "Allow access to contacts",
+    "descriptionPromo": "Please allow {{appName}} access to Contacts to selecting phone number more quickly",
+    "descriptionAllowing": " Press 'Allow access' and Agree / OK",
+    "or": "Hoặc:",
+    "descriptionStep1": "1. Go to Settings",
+    "descriptionStep2": "2. Find the icon {{appName}}",
+    "descriptionStep3": "3. Turn on permission to access Contacts",
+    "allowAccessContacts": "Allow access"
+  }
+}

@@ -1,21 +1,35 @@
-import React, { Component } from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import config from '../../config';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {FlatList, Typography, ImageButton} from 'src/components/base';
 
 class NetworkProvider extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     onSelectNetwork: PropTypes.func,
-    networkType: PropTypes.string
+    networkType: PropTypes.string,
   };
 
   static defaultProps = {
     data: [],
     onSelectNetwork: () => {},
-    networkType: ''
+    networkType: '',
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   renderNetworks() {
     return (
@@ -24,35 +38,60 @@ class NetworkProvider extends Component {
         data={this.props.data}
         extraData={this.props.networkType}
         renderItem={this.renderNetworkItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         showsHorizontalScrollIndicator={false}
       />
     );
   }
 
-  renderNetworkItem = ({ item: network, index }) => {
+  renderNetworkItem = ({item: network, index}) => {
     const isActive = this.props.networkType === network.type;
     const last = index === this.props.data.length - 1;
     return (
-      <Button
-        onPress={() => this.props.onSelectNetwork(network)}
-        containerStyle={[
+      <ImageButton
+        source={network.localImage}
+        style={[
           styles.networkBtn,
-          isActive && styles.networkBtnActive,
+          this.networkBtnStyle,
+          isActive && this.networkBtnActiveStyle,
           {
-            marginRight: last ? 0 : 16
-          }
+            marginRight: last ? 0 : 16,
+          },
         ]}
-      >
-        <Image style={styles.networkImage} source={network.localImage} />
-      </Button>
+        imageStyle={[styles.networkImage, this.networkImageStyle]}
+        onPress={() => this.props.onSelectNetwork(network)}
+      />
     );
   };
+
+  get networkBtnStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidthLarge,
+      borderColor: this.theme.color.border,
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
+  get networkBtnActiveStyle() {
+    return {
+      borderColor: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get networkImageStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderWidth: this.theme.layout.borderWidthSmall,
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Chọn nhà mạng</Text>
+        <Typography type={TypographyType.TITLE_SEMI_LARGE} style={styles.label}>
+          {this.props.t('selectNetwork')}
+        </Typography>
 
         {this.renderNetworks()}
       </View>
@@ -64,27 +103,20 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 10,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18,
-    marginBottom: 16
+    marginBottom: 16,
   },
   networkBtn: {
-    borderWidth: 2,
-    borderColor: '#e6e6e6',
-    borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
-  networkBtnActive: {
-    borderColor: config.colors.primary
-  },
+  networkBtnActive: {},
   networkImage: {
-    width: 71,
-    height: 71
-  }
+    width: 70,
+    height: 70,
+  },
 });
 
-export default NetworkProvider;
+export default withTranslation('phoneCard')(NetworkProvider);

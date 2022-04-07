@@ -1,14 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-
+// configs
 import appConfig from 'app-config';
-import {
-  SKELETON_COLOR,
-  CONTENT_SKELETON_COLOR,
-} from 'src/components/SkeletonLoading/constants';
-
-import {Container} from 'src/components/Layout';
+// custom components
+import {Container, Skeleton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   shimmer: {
@@ -47,9 +44,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     paddingLeft: 15,
   },
-  contentContainer: {
-    backgroundColor: SKELETON_COLOR,
-  },
+  contentContainer: {},
   padContainer: {
     padding: 15,
     borderRadius: 8,
@@ -57,7 +52,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   content: {
-    backgroundColor: CONTENT_SKELETON_COLOR,
     height: 7,
     width: 70,
     borderRadius: 4,
@@ -84,23 +78,32 @@ const styles = StyleSheet.create({
 
 const ProgressTrackingBarSkeleton = () => {
   return (
-    <Container centerVertical={false} style={styles.container}>
+    <Container style={styles.container}>
       <Shimmer style={styles.shimmer}>
         <Text style={styles.wrapper}>
-          <Container centerVertical={false} style={styles.block}>
-            <View style={[styles.content, styles.title]} />
-            <Container row>
-              <View style={[styles.contentContainer, styles.trackContainer]} />
+          <Container noBackground style={styles.block}>
+            <Skeleton content style={[styles.content, styles.title]} />
+            <Container noBackground row>
+              <Skeleton
+                container
+                style={styles.trackContainer}
+              />
               <View>
                 {Array.from({length: 5}).map((_, index) => (
                   <View key={index} style={styles.contentWrapper}>
-                    <View style={[styles.content, styles.pad]} />
-                    <Container
-                      centerVertical={false}
+                    <Skeleton content style={[styles.content, styles.pad]} />
+                    <Skeleton
+                      container
                       style={[styles.contentContainer, styles.padContainer]}>
-                      <View style={[styles.content, styles.description1]} />
-                      <View style={[styles.content, styles.description2]} />
-                    </Container>
+                      <Skeleton
+                        content
+                        style={[styles.content, styles.description1]}
+                      />
+                      <Skeleton
+                        content
+                        style={[styles.content, styles.description2]}
+                      />
+                    </Skeleton>
                   </View>
                 ))}
               </View>

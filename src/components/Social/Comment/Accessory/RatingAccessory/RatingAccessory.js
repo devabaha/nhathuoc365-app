@@ -1,22 +1,16 @@
 import React, {PureComponent} from 'react';
-import {
-  StyleSheet,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Animated, {color, Extrapolate} from 'react-native-reanimated';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-
-import appConfig from 'app-config';
-
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import Ratings from 'src/components/Ratings';
-import {Container} from 'src/components/Layout';
-
-const AnimatedFontAwesomeIcon = Animated.createAnimatedComponent(
-  FontAwesomeIcon,
-);
+import {Container, Icon, IconButton, TextButton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   ratingWrapper: {
@@ -26,21 +20,16 @@ const styles = StyleSheet.create({
   },
   ratingContainer: {
     justifyContent: 'center',
-    borderRadius: 4,
   },
 
   ratingTitleContainer: {
     paddingVertical: 7,
     paddingHorizontal: 10,
-    borderRadius: 4,
   },
   ratingTitle: {
-    color: appConfig.colors.status.other,
     fontWeight: '500',
-    fontSize: 12,
   },
   ratingIcon: {
-    color: appConfig.colors.status.other,
     alignSelf: 'center',
     marginRight: 5,
   },
@@ -53,20 +42,20 @@ const styles = StyleSheet.create({
     marginLeft: 7,
   },
   closeRatingIconContainer: {
-    backgroundColor: appConfig.colors.status.danger,
     justifyContent: 'center',
     alignItems: 'center',
     width: 20,
     height: 20,
     borderRadius: 20,
     padding: 3,
+    marginLeft: 12,
   },
-  closeRatingIcon: {
-    color: appConfig.colors.white,
-  },
+  closeRatingIcon: {},
 });
 
 class RatingAccessory extends PureComponent {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     defaultRating: 5,
     onChangeRating: () => {},
@@ -79,8 +68,16 @@ class RatingAccessory extends PureComponent {
     ratingWidth: 0,
   };
   ratingValue = this.props.defaultRating;
+  ratingTitleTypoProps = {
+    reanimated: true,
+    type: TypographyType.LABEL_SMALL,
+  };
 
   animatedVisibleRating = new Animated.Value(0);
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     if (this.props.isDefaultVisible) {
@@ -117,6 +114,17 @@ class RatingAccessory extends PureComponent {
     this.setState({ratingWidth: e.nativeEvent.layout.width});
   };
 
+  renderRatingIcon = (titleStyle) => {
+    return (
+      <Icon
+        reanimated
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="star"
+        style={[styles.ratingIcon, titleStyle, this.animatedRatingTitleStyle]}
+      />
+    );
+  };
+
   get animatedRatingContainerStyle() {
     return {
       width: !!this.state.ratingContainerWidth
@@ -130,7 +138,7 @@ class RatingAccessory extends PureComponent {
           })
         : undefined,
       backgroundColor: color(
-        ...hexToRgbCode(appConfig.colors.status.warning),
+        ...hexToRgbCode(this.theme.color.warning),
         this.animatedVisibleRating.interpolate({
           inputRange: [0, 1],
           outputRange: [1, 0],
@@ -138,6 +146,36 @@ class RatingAccessory extends PureComponent {
         }),
       ),
     };
+  }
+
+  get ratingContainerStyle() {
+    return mergeStyles(styles.ratingContainer, {
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get ratingTitleContainerStyle() {
+    return mergeStyles(styles.ratingTitleContainer, {
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
+  }
+
+  get ratingTitleStyle() {
+    return mergeStyles(styles.ratingTitle, {
+      color: this.theme.color.other,
+    });
+  }
+
+  get closeRatingIconContainerStyle() {
+    return mergeStyles(styles.closeRatingIconContainer, {
+      backgroundColor: this.theme.color.danger,
+    });
+  }
+
+  get closeRatingIconStyle() {
+    return mergeStyles(styles.closeRatingIcon, {
+      color: this.theme.color.white,
+    });
   }
 
   animatedRatingTitleStyle = {
@@ -165,27 +203,24 @@ class RatingAccessory extends PureComponent {
 
   render() {
     return (
-      <View style={styles.ratingWrapper}>
+      <Container style={styles.ratingWrapper}>
         <Animated.View
           onLayout={this.handleRatingContainerLayout}
-          style={[styles.ratingContainer, this.animatedRatingContainerStyle]}>
-          <TouchableHighlight
+          style={[
+            this.ratingContainerStyle,
+            this.animatedRatingContainerStyle,
+          ]}>
+          <TextButton
+            useTouchableHighlight
             disabled={this.state.isVisibleRating}
             hitSlop={HIT_SLOP}
-            underlayColor="rgba(0,0,0,.1)"
-            style={styles.ratingTitleContainer}
-            onPress={() => this.toggleRating()}>
-            <Container row>
-              <AnimatedFontAwesomeIcon
-                name="star"
-                style={[styles.ratingIcon, this.animatedRatingTitleStyle]}
-              />
-              <Animated.Text
-                style={[styles.ratingTitle, this.animatedRatingTitleStyle]}>
-                {this.props.title || this.props.t('common:rate')}
-              </Animated.Text>
-            </Container>
-          </TouchableHighlight>
+            typoProps={this.ratingTitleTypoProps}
+            titleStyle={[this.ratingTitleStyle, this.animatedRatingTitleStyle]}
+            style={this.ratingTitleContainerStyle}
+            onPress={() => this.toggleRating()}
+            renderIconLeft={this.renderRatingIcon}>
+            {this.props.title || this.props.t('common:rate')}
+          </TextButton>
 
           <Container
             reanimated
@@ -200,17 +235,18 @@ class RatingAccessory extends PureComponent {
               startingValue={this.props.defaultRating}
               onFinishRating={this.handleFinishRating}
             />
-            <TouchableOpacity
+
+            <IconButton
               hitSlop={HIT_SLOP}
-              style={styles.closeRatingContainer}
-              onPress={() => this.toggleRating()}>
-              <View style={styles.closeRatingIconContainer}>
-                <AntDesignIcon name="close" style={styles.closeRatingIcon} />
-              </View>
-            </TouchableOpacity>
+              bundle={BundleIconSetName.ANT_DESIGN}
+              name="close"
+              style={this.closeRatingIconContainerStyle}
+              iconStyle={this.closeRatingIconStyle}
+              onPress={() => this.toggleRating()}
+            />
           </Container>
         </Animated.View>
-      </View>
+      </Container>
     );
   }
 }

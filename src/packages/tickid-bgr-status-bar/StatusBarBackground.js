@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Animated, Platform } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Animated, Platform} from 'react-native';
+// configs
 import config from './config';
+// custom components
+import {Container} from 'src/components/base';
 
 const SHOW_FLAG = 1;
 const HIDE_FLAG = 0;
@@ -8,7 +11,7 @@ const DURATION = 250;
 
 function StatusBarBackground(props) {
   const [opacity] = useState(
-    new Animated.Value(props.visible ? SHOW_FLAG : HIDE_FLAG)
+    new Animated.Value(props.visible ? SHOW_FLAG : HIDE_FLAG),
   );
 
   useEffect(() => {
@@ -20,7 +23,7 @@ function StatusBarBackground(props) {
     Animated.timing(opacity, {
       toValue: SHOW_FLAG,
       duration: DURATION,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   };
 
@@ -28,13 +31,13 @@ function StatusBarBackground(props) {
     Animated.timing(opacity, {
       toValue: HIDE_FLAG,
       duration: DURATION,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   };
 
   if (Platform.OS !== 'ios') return null;
 
-  return <Animated.View style={[styles.statusBar, { opacity }]} />;
+  return <Container animated style={[styles.statusBar, {opacity}]} />;
 }
 
 const styles = StyleSheet.create({
@@ -43,9 +46,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     position: 'absolute',
-    backgroundColor: '#fff',
-    height: config.device.statusBarHeight
-  }
+    height: config.device.statusBarHeight,
+  },
 });
 
 export default StatusBarBackground;

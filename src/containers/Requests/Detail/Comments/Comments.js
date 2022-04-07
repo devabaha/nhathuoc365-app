@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Animated, Text} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import Reanimated, {Easing} from 'react-native-reanimated';
-// librarys
+// configs
 import appConfig from 'app-config';
-import TickidChat from '../../../../packages/tickid-chat';
+// constants
+import {languages} from 'src/i18n/constants';
+import {TypographyType} from 'src/components/base';
+// custom components
+import TickidChat from 'app-packages/tickid-chat';
 import {default as DetailCard} from '../Card';
-import {languages} from '../../../../i18n/constants';
+import {Typography} from 'src/components/base';
 
 const UPLOAD_URL = APIHandler.url_user_upload_image();
 
@@ -126,7 +131,11 @@ class Comments extends Component {
       />
     ) : (
       !this.props.loading && (
-        <Text style={styles.emptyText}>Không có thông tin phản ánh</Text>
+        <Typography
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={styles.emptyText}>
+          {this.props.t('noRequestInformation')}
+        </Typography>
       )
     );
   };
@@ -145,7 +154,7 @@ class Comments extends Component {
             setHeader={this.props.setHeader}
             defaultStatusBarColor={appConfig.colors.primary}
             containerStyle={{backgroundColor: 'transparent'}}
-            placeholder="Nhập nội dung..."
+            placeholder={this.props.t('request:enterMessage')}
             // Refs
             ref={(inst) => (this.refTickidChat = inst)}
             refGiftedChat={(inst) => (this.refGiftedChat = inst)}
@@ -198,7 +207,6 @@ class Comments extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     position: 'absolute',
@@ -213,9 +221,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     padding: 15,
-    color: '#666',
     fontStyle: 'italic',
   },
 });
 
-export default withTranslation()(observer(Comments));
+export default withTranslation(['common', 'request'])(observer(Comments));

@@ -1,130 +1,140 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
-  FlatList,
   Dimensions,
   Keyboard,
   TouchableWithoutFeedback,
-  SafeAreaView
 } from 'react-native';
+import {withTranslation} from 'react-i18next';
+import {debounce} from 'lodash';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+import {push, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
 import NoResult from '../NoResult';
-import { Actions } from 'react-native-router-flux';
-import { debounce } from 'lodash';
-import store from '../../store';
 import ChatRow from './ChatRow';
-import EventTracker from '../../helper/EventTracker';
-const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
+import {ScreenWrapper, FlatList} from 'src/components/base';
 
 class Search extends Component {
+  static contextType = ThemeContext;
+
   state = {
     customers: [],
     searchValue: '',
     loading: undefined,
-    searchValue: ''
+    searchValue: '',
   };
   unmounted = false;
   eventTracker = new EventTracker();
 
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.handleChangeSearch('');
     setTimeout(() =>
-      Actions.refresh({
-        onChangeSearch: this.handleChangeSearch.bind(this)
-      })
+      refresh({
+        onChangeSearch: this.handleChangeSearch,
+      }),
     );
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
-    this.setState({ loading: false });
+    this.setState({loading: false});
     this.unmounted = true;
     this.eventTracker.clearTracking();
   }
 
-  searchCustomer = debounce(async (search = '') => {
-    const { store_id } = store;
+  searchCustomer = async (search = '') => {
     if (!this.unmounted) {
-      this.setState({ loading: true });
     }
     try {
       var response = await APIHandler.site_search_conversations(0, {
-        search
+        search,
       });
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS && response.data) {
-          this.setState({ customers: response.data });
+          this.setState({customers: response.data});
         } else {
-          this.setState({ customers: [] });
+          this.setState({customers: []});
         }
       }
     } catch (e) {
       console.warn(e + ' site_search_conversations');
-      store.addApiQueue('site_search_conversations', this.searchCustomer);
     } finally {
       if (!this.unmounted) {
-        this.setState({ loading: false, isTyping: false });
+        this.setState({loading: false, isTyping: false});
       }
     }
+  };
+
+  handleChangeSearch = debounce((searchValue) => {
+    this.setState({searchValue, isTyping: true, loading: true}, () => {
+      this.searchCustomer(searchValue);
+    });
   }, 500);
 
-  handleChangeSearch(searchValue) {
-    this.setState({ searchValue, isTyping: true });
-    this.searchCustomer(searchValue);
-  }
-
   onPressCustomer(item) {
-    Actions.amazing_chat({
-      site_id: item.site_id,
-      user_id: item.user_id,
-      phoneNumber: item.tel,
-      title: item.name,
-      fromSearchScene: true
-    });
+    push(
+      appConfig.routes.amazingChat,
+      {
+        site_id: item.site_id,
+        user_id: item.user_id,
+        phoneNumber: item.tel,
+        title: item.name,
+        fromSearchScene: true,
+      },
+      this.theme,
+    );
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && (
-          <View style={{ position: 'absolute', width: '100%', height: '100%' }}>
+          <View style={{position: 'absolute', width: '100%', height: '100%'}}>
             <Indicator fullScreen />
           </View>
         )}
 
         <FlatList
+          safeLayout
           data={this.state.customers}
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="on-drag"
           onTouchMove={Keyboard.dismiss}
-          renderItem={({ item, index }) => (
+          renderItem={({item, index}) => (
             <ChatRow
               title={item.name}
               img={item.avatar}
               subTitle={item.tel}
               onPress={() => this.onPressCustomer(item)}
-              isSeparate={
-                this.state.customers.length < 10 ||
-                index !== this.state.customers.length - 1
-              }
+              isSeparate={index !== this.state.customers.length - 1}
             />
           )}
           ListEmptyComponent={
             <TouchableWithoutFeedback
-              style={{ flex: 1 }}
-              onPress={Keyboard.dismiss}
-            >
-              <View style={{ flex: 1, width: WIDTH, height: HEIGHT }}>
-                {!this.state.searchValue ? (
+              style={styles.listEmptyWrapper}
+              onPress={Keyboard.dismiss}>
+              <View style={styles.listEmptyContainer}>
+                {!this.state.searchValue && !this.state.loading ? (
                   <NoResult
                     iconName="file-search"
-                    message="Nhập để tìm kiếm..."
+                    message={this.props.t('enterToSearch')}
                   />
                 ) : (
                   !this.state.isTyping && (
                     <NoResult
                       iconName="magnify-close"
-                      message="Không tìm thấy dữ liệu"
+                      message={this.props.t('chat:noConversationsFound')}
                     />
                   )
                 )}
@@ -133,17 +143,20 @@ class Search extends Component {
           }
           keyExtractor={(item, index) => String(item.id)}
         />
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  listEmptyWrapper: {
     flex: 1,
-    width: '100%',
-    height: '100%'
-  }
+  },
+  listEmptyContainer: {
+    flex: 1,
+    width: appConfig.device.width,
+    height: appConfig.device.height,
+  },
 });
 
-export default Search;
+export default withTranslation(['common', 'chat'])(Search);

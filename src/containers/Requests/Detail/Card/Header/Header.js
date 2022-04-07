@@ -1,9 +1,13 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-import {DiscountBadge} from '../../../../../components/Badges';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {DiscountBadge} from 'src/components/Badges';
 import RequestTagTitle from 'src/containers/Requests/Request/RequestTagTitle';
+import {Typography} from 'src/components/base';
 
 const Header = ({title, subTitle, type, tagCode, tagName}) => {
   return (
@@ -22,8 +26,16 @@ const Header = ({title, subTitle, type, tagCode, tagName}) => {
         name={tagName}
         containerStyle={styles.tagContainer}
       />
-      <Text style={styles.title}>{title}</Text>
-      {!!subTitle && <Text style={styles.subTitle}>{subTitle}</Text>}
+      <Typography type={TypographyType.TITLE_SEMI_LARGE_PRIMARY} style={styles.title}>
+        {title}
+      </Typography>
+      {!!subTitle && (
+        <Typography
+          type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+          style={styles.subTitle}>
+          {subTitle}
+        </Typography>
+      )}
     </View>
   );
 };
@@ -42,17 +54,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    color: appConfig.colors.primary,
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   subTitle: {
     textAlign: 'center',
-    color: '#666',
-    fontSize: 12,
   },
-
   tagContainer: {
     marginBottom: 15,
   },

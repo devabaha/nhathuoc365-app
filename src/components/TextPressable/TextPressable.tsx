@@ -1,18 +1,22 @@
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
+import React, {useCallback, useMemo, useState} from 'react';
+import {TouchableWithoutFeedback} from 'react-native';
+// types
 import {TextPressableProps} from '.';
-
-import appConfig from 'app-config';
-
-const styles = StyleSheet.create({
-  highlight: {
-    // @ts-ignore
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.2),
-  },
-});
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {Typography, TypographyType} from '../base';
 
 const TextPressable = ({children, ...textProps}: TextPressableProps) => {
+  const {theme} = useTheme();
+
   const [isHighlight, setHighlight] = useState(false);
+
+  const highlightStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.primary20,
+    };
+  }, [theme]);
 
   const handleLongPress = useCallback(() => {
     setHighlight(true);
@@ -29,12 +33,14 @@ const TextPressable = ({children, ...textProps}: TextPressableProps) => {
       onLongPress={handleLongPress}
       delayLongPress={100}
       onPressOut={handlePressOut}>
-      <Text
+      <Typography
+        type={TypographyType.LABEL_MEDIUM}
         suppressHighlighting
         {...textProps}
-        style={[isHighlight && styles.highlight, textProps.style]}>
+        // @ts-ignore
+        style={[isHighlight ? highlightStyle : {}, textProps.style]}>
         {children}
-      </Text>
+      </Typography>
     </TouchableWithoutFeedback>
   );
 };

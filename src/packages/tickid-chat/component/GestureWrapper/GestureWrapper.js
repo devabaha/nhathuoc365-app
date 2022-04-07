@@ -7,24 +7,30 @@ import {
   Dimensions,
 } from 'react-native';
 import PropTypes from 'prop-types';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   isAndroid,
-  isIos,
-  WIDTH,
   HEIGHT,
   HEADER_HEIGHT,
-  MIN_HEIGHT_COMPOSER,
   BOTTOM_SPACE_IPHONE_X,
   BOTTOM_OFFSET_GALLERY,
   isAndroidEmulator,
   ANDROID_STATUS_BAR_HEIGHT,
   HAS_NOTCH,
 } from '../../constants';
+// custom components
+import {Container} from 'src/components/base';
 
 const DURATION_SHOW_BODY_CONTENT = 300;
 const defaultListener = () => {};
 
 class GestureWrapper extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     extraData: PropTypes.any,
     visible: PropTypes.bool,
@@ -155,6 +161,10 @@ class GestureWrapper extends Component {
       }
     },
   });
+
+  get theme() {
+    return getTheme(this);
+  }
 
   goToBottom = () => {
     setTimeout(() => this.props.onCollapsingBodyContent());
@@ -382,6 +392,13 @@ class GestureWrapper extends Component {
     this.animatedTranslateYScrollViewValue = value;
   }
 
+  get panResponderStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    };
+  }
+
   render() {
     console.log('== render gesture');
     const scrollPan = this.props.isActivePanResponder && {
@@ -399,10 +416,12 @@ class GestureWrapper extends Component {
     return (
       <>
         {this.props.renderBefore}
-        <Animated.View
+        <Container
+          animated
           style={[
             styles.container,
             styles.panResponder,
+            this.panResponderStyle,
             {
               height: this.actualScrollViewHeight,
               transform: [
@@ -414,7 +433,7 @@ class GestureWrapper extends Component {
           ]}
           {...scrollPan}>
           {this.props.children}
-        </Animated.View>
+        </Container>
       </>
     );
   }
@@ -426,8 +445,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
-    borderTopWidth: 0.5,
-    borderColor: '#d9d9d9',
   },
   contentContainerStyle: {
     flexGrow: 1,
@@ -437,7 +454,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   itemsRow: {
     flex: 1,

@@ -1,79 +1,100 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, SectionList} from 'react-native';
-
-import appConfig from 'app-config';
-
-import HorizontalInfoItem from './HorizontalInfoItem';
-import EventTracker from '../../helper/EventTracker';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Clipboard from '@react-native-community/clipboard';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import EventTracker from 'app-helper/EventTracker';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import HorizontalInfoItem from './HorizontalInfoItem';
+import {ScreenWrapper, SectionList, TypographyType} from 'src/components/base';
 
 class DetailHistoryPayment extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      sections: [
-        {
-          id: 'id_section_1',
-          data: [
-            {
-              id: 'ma_giao_dich',
-              title: 'Mã giao dịch',
-              value: this.props.transaction_hash,
-              select: true,
-              rightTextStyle: {
-                fontSize: 13,
+  eventTracker = new EventTracker();
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get sections() {
+    return [
+      {
+        id: 'id_section_1',
+        data: [
+          {
+            id: 'ma_giao_dich',
+            title: this.props.t('detailHistory.transactionCode'),
+            value: this.props.transaction_hash,
+            select: true,
+            rightTextStyle: [
+              {
+                maxWidth: '65%',
+                right: 0,
+                left: 40,
               },
-            },
-            {
-              id: 'thoi_gian',
-              title: 'Thời gian',
-              value: this.props.created,
-            },
-          ],
-        },
-        {
-          id: 'id_section_2',
-          data: [
-            {
-              id: 'noi_dung',
-              title: 'Nội dung',
-              value: this.props.content,
-              rightTextStyle: {
-                fontWeight: '500',
-              },
-            },
-          ],
-        },
-        {
-          id: 'id_section_3',
-          data: [
-            {
-              id: 'thay_doi',
-              title: 'Thay đổi',
-              value: this.props.amount_view,
-              rightTextStyle: {
+              this.theme.typography[TypographyType.LABEL_SEMI_MEDIUM],
+            ],
+          },
+          {
+            id: 'thoi_gian',
+            title: this.props.t('detailHistory.time'),
+            value: this.props.created,
+          },
+        ],
+      },
+      {
+        id: 'id_section_2',
+        data: [
+          {
+            id: 'noi_dung',
+            title: this.props.t('detailHistory.content'),
+            value: this.props.content,
+          },
+        ],
+      },
+      {
+        id: 'id_section_3',
+        data: [
+          {
+            id: 'thay_doi',
+            title: this.props.t('detailHistory.change'),
+            value: this.props.amount_view,
+            rightTextStyle: [
+              this.theme.typography[TypographyType.LABEL_LARGE],
+              {
                 fontWeight: 'bold',
-                fontSize: 16,
                 color:
                   this.props.amount > 0
-                    ? appConfig.colors.status.success
-                    : appConfig.colors.status.danger,
+                    ? this.theme.color.success
+                    : this.theme.color.danger,
               },
-            },
-          ],
-        },
-      ],
-    };
-    this.eventTracker = new EventTracker();
+            ],
+          },
+        ],
+      },
+    ];
   }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   handleSelectValue = (transaction) => {
@@ -100,16 +121,17 @@ class DetailHistoryPayment extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <SectionList
-          style={{flex: 1}}
+          safeLayout
+          style={styles.sectionList}
           renderItem={this._renderItems}
           SectionSeparatorComponent={this._renderSectionSeparator}
           ItemSeparatorComponent={this._renderItemSeparator}
-          sections={this.state.sections}
+          sections={this.sections}
           keyExtractor={(item, index) => `${item.id}-${index}`}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -120,7 +142,10 @@ const styles = StyleSheet.create({
 
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#EFEFF4',
+  },
+
+  sectionList: {
+    flex: 1,
   },
 
   separatorSection: {
@@ -130,23 +155,7 @@ const styles = StyleSheet.create({
 
   separatorItem: {
     height: 1,
-    backgroundColor: '#EFEFF4',
-  },
-
-  rightBtnEdit: {
-    width: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-  },
-
-  txtEdit: {
-    fontSize: 14,
-    color: '#ffffff',
   },
 });
 
-export default withTranslation()(observer(DetailHistoryPayment));
+export default withTranslation('vndWallet')(observer(DetailHistoryPayment));

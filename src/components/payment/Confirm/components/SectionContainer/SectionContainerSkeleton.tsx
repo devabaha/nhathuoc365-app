@@ -1,13 +1,15 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-
+// configs
 import appConfig from 'app-config';
-import {
-  SKELETON_COLOR,
-  CONTENT_SKELETON_COLOR,
-} from 'src/components/SkeletonLoading/constants';
-import {Container} from 'src/components/Layout';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import {Typography, Container, Skeleton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   shimmer: {
@@ -28,7 +30,6 @@ const styles = StyleSheet.create({
   },
   block: {
     marginBottom: 1,
-    backgroundColor: SKELETON_COLOR,
     paddingVertical: 12,
     paddingHorizontal: 15,
   },
@@ -37,10 +38,9 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    backgroundColor: CONTENT_SKELETON_COLOR,
     height: 7,
-    width: 70,
     borderRadius: 4,
+    width: 70,
   },
   description1: {
     marginTop: 5,
@@ -53,23 +53,32 @@ const styles = StyleSheet.create({
 });
 
 const SectionContainerSkeleton = () => {
+  const {theme} = useTheme();
+
+  const contentStyle = useMemo(() => {
+    return mergeStyles(styles.content, {
+      borderRadius: theme.layout.borderRadiusSmall,
+    });
+  }, [theme]);
+
   return (
     <Shimmer style={styles.shimmer}>
-      <Text style={styles.wrapper}>
+      <Typography style={styles.wrapper}>
         <Container centerVertical={false} style={styles.container}>
-          <Container row style={styles.block}>
-            <View style={[styles.content, styles.icon]} />
-            <View style={[styles.content]} />
-          </Container>
-          <Container
+          <Skeleton container noBackground row style={styles.block}>
+            <Skeleton content style={[styles.content, styles.icon]} />
+            <Skeleton content style={[styles.content]} />
+          </Skeleton>
+          <Skeleton
+            container
             flex
             centerVertical={false}
             style={[styles.block, styles.bodyBlock]}>
-            <View style={[styles.content, styles.description1]} />
-            <View style={[styles.content, styles.description2]} />
-          </Container>
+            <Skeleton content style={[styles.content, styles.description1]} />
+            <Skeleton content style={[styles.content, styles.description2]} />
+          </Skeleton>
         </Container>
-      </Text>
+      </Typography>
     </Shimmer>
   );
 };

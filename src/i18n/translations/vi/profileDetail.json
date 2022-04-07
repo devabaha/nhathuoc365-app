@@ -28,5 +28,14 @@
     "warningDescription": "Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.",
     "cancel": "Hủy",
     "successMessage": "Đăng xuất thành công"
-  }
+  },
+  "profession": "Ngành nghề",
+  "brand": "Thương hiệu",
+  "limitPhotosUploadNoti": "Bạn chỉ có thể upload tối đa {{maxImagesUpload}} ảnh",
+  "uploadPhotos": " Tải thêm ảnh",
+  "noPhoto": "Chưa có ảnh",
+  "photoLabel": "Ảnh",
+  "aboutLabel": "Giới thiệu",
+  "call": "Gọi",
+  "chat": "Chat"
 }

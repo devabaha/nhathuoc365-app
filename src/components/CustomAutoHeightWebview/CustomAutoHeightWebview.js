@@ -1,41 +1,50 @@
 import React, {Component} from 'react';
-import {Linking, StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet} from 'react-native';
+// 3-party libs
 import AutoHeightWebView from 'react-native-autoheight-webview';
-
+// configs
 import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
 import {openLink} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container} from 'src/components/base';
 
 const ACTION_TYPE = {
   GET_INNER_TEXT: 'webview_get_inner_text',
   CLICK_LINK: 'native_click_link',
 };
 
-const CUSTOM_STYLE = `
+const getCustomStyle = (theme) => {
+  return `
   body {
     padding-left: 15px;
     padding-right: 15px;
+    color: ${theme.typography[TypographyType.LABEL_LARGE].color}
   }
   * {
     font-family: 'arial';
   }
-  body {
-    padding-left: 15px;
-    padding-right: 15px;
-  },
   a {
     // pointer-events:none;
     // text-decoration: none !important;
-    // color: ${appConfig.colors.primary} !important;
+    color: ${theme.color.primaryHighlight}!important
   }
   p, li, span {
-    font-size: 14px;
-    line-height: 24px
+    font-size: ${theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
+    line-height: 24px;
+    color: ${theme.typography[TypographyType.LABEL_LARGE].color}
   }
   img {
     max-width: 100% !important;
     height: auto !important;
   }
 `;
+};
 
 const CUSTOM_SCRIPT = `
   const userAgent = window.navigator.userAgent.toLowerCase(),
@@ -116,6 +125,8 @@ const styles = StyleSheet.create({
 });
 
 class CustomAutoHeightWebview extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     zoomable: false,
     scrollEnabled: false,
@@ -123,6 +134,16 @@ class CustomAutoHeightWebview extends Component {
   };
 
   refWebview = React.createRef();
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get customStyle() {
+    const style = getCustomStyle(this.theme) + this.props.customStyle || '';
+
+    return style;
+  }
 
   getInnerText() {
     this.sendMessage('', ACTION_TYPE.GET_INNER_TEXT);
@@ -173,7 +194,7 @@ class CustomAutoHeightWebview extends Component {
 
   render() {
     return (
-      <View
+      <Container
         style={[styles.container, this.props.containerStyle]}
         onLayout={this.props.onLayout}>
         <AutoHeightWebView
@@ -192,9 +213,10 @@ class CustomAutoHeightWebview extends Component {
           javaScriptEnabled
           onMessage={this.handleMessage}
           customScript={CUSTOM_SCRIPT}
-          customStyle={CUSTOM_STYLE + this.props.customStyle}
+          customStyle={this.customStyle}
+          allowsFullscreenVideo={true}
         />
-      </View>
+      </Container>
     );
   }
 }

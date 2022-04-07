@@ -1,35 +1,50 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableHighlight,
-  Switch,
-  Keyboard,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions, ActionConst} from 'react-native-router-flux';
-import store from '../../store/Store';
-import PopupConfirm from '../PopupConfirm';
-import appConfig from 'app-config';
-import EventTracker from '../../helper/EventTracker';
-import {CONFIG_KEY} from 'src/helper/configKeyHandler';
-import HorizontalInfoItem from '../account/HorizontalInfoItem';
+import {View, StyleSheet, Switch, Keyboard} from 'react-native';
+// 3-party libs
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import {INPUT_ADDRESS_TYPE} from 'src/helper/configKeyHandler/configKeyHandler';
-import {COMBO_LOCATION_TYPE} from '../ModalComboLocation/constants';
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop, push, refresh, replace} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+import {INPUT_ADDRESS_TYPE} from 'src/helper/configKeyHandler';
+import {COMBO_LOCATION_TYPE} from 'src/components/ModalComboLocation/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import Button from 'src/components/Button';
+import PopupConfirm from 'src/components/PopupConfirm';
+import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
+import {
+  Container,
+  Icon,
+  ScreenWrapper,
+  ScrollView,
+  TextButton,
+  Typography,
+} from 'src/components/base';
+import Loading from '../Loading';
 
 class CreateAddress extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    var edit_data = props.edit_data;
+  state = this.initState;
 
+  unmounted = false;
+  eventTracker = new EventTracker();
+
+  get initState() {
+    const edit_data = this.props.edit_data;
     if (edit_data) {
-      this.state = {
+      return {
         edit_mode: true,
         address_id: edit_data.id,
         name: edit_data.name || '',
@@ -51,10 +66,11 @@ class CreateAddress extends Component {
 
         default_flag: edit_data.default_flag == 1 ? true : false,
         finish_loading: false,
-        is_user_address: props.from_page == 'account',
+        is_user_address:
+          this.props.from_page == 'account' || this.props.isUserAddress,
       };
     } else {
-      this.state = {
+      return {
         address_id: 0,
         name: '',
         tel: '',
@@ -75,12 +91,16 @@ class CreateAddress extends Component {
 
         default_flag: false,
         finish_loading: false,
-        is_user_address: props.from_page == 'account',
+        is_user_address:
+          this.props.from_page == 'account' || this.props.isUserAddress,
       };
     }
+  }
 
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   get disabled() {
@@ -247,10 +267,10 @@ class CreateAddress extends Component {
     actions.onBack = () => {
       this._unMount();
 
-      Actions.pop();
+      pop();
     };
 
-    setTimeout(() => Actions.refresh(actions));
+    setTimeout(() => refresh(actions));
 
     if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
@@ -258,11 +278,17 @@ class CreateAddress extends Component {
       }, 450);
     }
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
   _unMount() {
@@ -277,38 +303,39 @@ class CreateAddress extends Component {
 
   handlePressComboAddress(data, type, location, parentId) {
     Keyboard.dismiss();
-
-    Actions.push(appConfig.routes.modalComboLocation, {
-      type,
-      parentId,
-      provinceId: this.state.province_id,
-      districtId: this.state.district_id,
-      wardsId: this.state.ward_id,
-      provinceName: this.state.province_name,
-      districtName: this.state.district_name,
-      wardsName: this.state.ward_name,
-      onCloseModal: (province, district, wards) => {
-        // console.log(province, district, wards);
-      },
-      onSelectProvince: (province) => {
-        this.setState({
-          province_id: province.id,
-          province_name: province.name,
-        });
-      },
-      onSelectDistrict: (district) => {
-        this.setState({
-          district_id: district.id,
-          district_name: district.name,
-        });
-      },
-      onSelectWards: (wards) => {
-        this.setState({
-          ward_id: wards.id,
-          ward_name: wards.name,
-        });
-      },
-    });
+    setTimeout(() => {
+      push(appConfig.routes.modalComboLocation, {
+        type,
+        parentId,
+        provinceId: this.state.province_id,
+        districtId: this.state.district_id,
+        wardsId: this.state.ward_id,
+        provinceName: this.state.province_name,
+        districtName: this.state.district_name,
+        wardsName: this.state.ward_name,
+        onCloseModal: (province, district, wards) => {
+          // console.log(province, district, wards);
+        },
+        onSelectProvince: (province) => {
+          this.setState({
+            province_id: province.id,
+            province_name: province.name,
+          });
+        },
+        onSelectDistrict: (district) => {
+          this.setState({
+            district_id: district.id,
+            district_name: district.name,
+          });
+        },
+        onSelectWards: (wards) => {
+          this.setState({
+            ward_id: wards.id,
+            ward_name: wards.name,
+          });
+        },
+      });
+    }, 200);
   }
 
   _onSave() {
@@ -377,8 +404,8 @@ class CreateAddress extends Component {
     //       {
     //         text: t('confirmNotification.accept'),
     //         onPress: () => {
-    //           Actions.push(appConfig.routes.modalSearchPlaces, {
-    //             onCloseModal: Actions.pop,
+    //           push(appConfig.routes.modalSearchPlaces, {
+    //             onCloseModal: pop,
     //             onPressItem: this.handlePressAddress.bind(this),
     //           });
     //         },
@@ -461,14 +488,12 @@ class CreateAddress extends Component {
             this._reloadParent();
 
             if (this.props.goBack) {
-              Actions.pop();
+              pop();
             }
             if (this.props.redirect == 'confirm') {
-              Actions.replace(appConfig.routes.paymentConfirm, {
-                type: ActionConst.REPLACE,
-              });
+              replace(appConfig.routes.paymentConfirm, {}, this.theme);
             } else {
-              Actions.pop();
+              pop();
             }
 
             flashShowMessage({
@@ -539,7 +564,7 @@ class CreateAddress extends Component {
         // auto reload address list
         this._reloadParent();
 
-        Actions.pop();
+        pop();
       } else {
         flashShowMessage({
           type: 'danger',
@@ -573,12 +598,55 @@ class CreateAddress extends Component {
     });
   }
 
+  get defaultAddressBtnContainerStyle() {
+    return mergeStyles(styles.input_box, {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderTopWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get deleteAddressBtnStyle() {
+    return [
+      this.defaultAddressBtnContainerStyle,
+      {
+        marginTop: 0,
+        justifyContent: 'flex-start',
+      },
+    ];
+  }
+  get deleteAddressBtnTitleStyle() {
+    return {color: this.theme.color.danger};
+  }
+
+  get trackColor() {
+    return {
+      true: appConfig.device.isAndroid
+        ? this.theme.color.persistPrimary20
+        : this.theme.color.persistPrimary,
+      false: this.theme.color.disabled,
+    };
+  }
+
+  get thumbColor() {
+    return appConfig.device.isAndroid ? this.theme.color.persistPrimary : '';
+  }
+
+  get deleteBtnTypoProps() {
+    return {type: TypographyType.LABEL_MEDIUM};
+  }
+
   renderInput() {
+    const containerStyle = mergeStyles(styles.horizontalInfoStyle, {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    });
+
     return this.metadata.map((data, index) => {
       return (
         <HorizontalInfoItem
           key={index}
-          containerStyle={styles.horizontalInfoStyle}
+          containerStyle={containerStyle}
           data={data}
           inputProps={data.inputProps}
           onChangeInputValue={data.onChangeInputValue}
@@ -587,6 +655,49 @@ class CreateAddress extends Component {
       );
     });
   }
+  renderBtnSaveContent = (is_go_confirm, titleStyle) => {
+    const {t} = this.props;
+
+    return (
+      <Container
+        style={{flexDirection: is_go_confirm ? 'row-reverse' : 'row'}}
+        row
+        noBackground>
+        <View>
+          {this.state.continue_loading ? (
+            <Indicator size="small" />
+          ) : (
+            <Icon
+              bundle={BundleIconSetName.FONT_AWESOME}
+              name={
+                this.state.edit_mode
+                  ? 'save'
+                  : is_go_confirm
+                  ? 'chevron-right'
+                  : 'check'
+              }
+              style={titleStyle}
+              size={18}
+            />
+          )}
+        </View>
+        <Typography
+          style={[
+            titleStyle,
+            {
+              marginLeft: is_go_confirm ? 0 : 8,
+              marginRight: is_go_confirm ? 8 : 0,
+            },
+          ]}>
+          {this.state.edit_mode
+            ? t('btn.save')
+            : is_go_confirm
+            ? t('btn.next')
+            : t('btn.finish')}
+        </Typography>
+      </Container>
+    );
+  };
 
   render() {
     var {edit_mode} = this.state;
@@ -597,23 +708,18 @@ class CreateAddress extends Component {
 
     return (
       <>
-        <View style={styles.container}>
+        {this.state.finish_loading && <Loading center />}
+        <ScreenWrapper safeLayout={!store.keyboardTop}>
           <ScrollView
             style={styles.container}
             contentContainerStyle={styles.listContentContainer}
             keyboardShouldPersistTaps="handled">
             {this.renderInput()}
 
-            <View
-              style={[
-                styles.input_box,
-                {
-                  marginTop: 12,
-                  borderTopWidth: Util.pixel,
-                  borderColor: '#dddddd',
-                },
-              ]}>
-              <Text style={styles.input_label}>{t('setDefault')}</Text>
+            <Container style={this.defaultAddressBtnContainerStyle}>
+              <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
+                {t('setDefault')}
+              </Typography>
 
               <View style={styles.input_text_box}>
                 <Switch
@@ -623,91 +729,33 @@ class CreateAddress extends Component {
                     });
                   }}
                   value={this.state.default_flag}
-                  trackColor={{
-                    true: appConfig.device.isAndroid
-                      ? hexToRgbA(appConfig.colors.primary, 0.3)
-                      : appConfig.colors.primary,
-                    false: appConfig.colors.sceneBackground,
-                  }}
-                  thumbColor={
-                    appConfig.device.isAndroid ? appConfig.colors.primary : ''
-                  }
+                  trackColor={this.trackColor}
+                  thumbColor={this.thumbColor}
                 />
               </View>
-            </View>
+            </Container>
 
             {edit_mode && (
-              <TouchableHighlight
-                underlayColor="transparent"
-                onPress={this._confirmDeleteAddress.bind(this)}
-                style={[
-                  styles.input_box,
-                  {
-                    marginTop: 12,
-                    borderTopWidth: Util.pixel,
-                    borderColor: '#dddddd',
-                  },
-                ]}>
-                <Text style={[styles.input_label, {color: 'red'}]}>
+              <Container style={styles.deleteAddressBtnContainer}>
+                <TextButton
+                  underlayColor="transparent"
+                  onPress={this._confirmDeleteAddress.bind(this)}
+                  titleStyle={this.deleteAddressBtnTitleStyle}
+                  typoProps={this.deleteBtnTypoProps}
+                  style={this.deleteAddressBtnStyle}>
                   {t('delete')}
-                </Text>
-              </TouchableHighlight>
+                </TextButton>
+              </Container>
             )}
           </ScrollView>
 
-          <TouchableHighlight
+          <Button
             disabled={disabled}
-            underlayColor="transparent"
             onPress={this._onSave.bind(this)}
-            style={styles.address_continue}>
-            <View
-              style={[
-                styles.address_continue_content,
-                disabled && styles.disabled,
-                {flexDirection: is_go_confirm ? 'row-reverse' : 'row'},
-              ]}>
-              <View
-                style={{
-                  minWidth: 20,
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                {this.state.finish_loading ? (
-                  <Indicator size="small" color="#ffffff" />
-                ) : (
-                  <Icon
-                    name={
-                      this.state.edit_mode
-                        ? 'save'
-                        : is_go_confirm
-                        ? 'chevron-right'
-                        : 'check'
-                    }
-                    style={[
-                      styles.address_continue_title,
-                      disabled && styles.textDisabled,
-                    ]}
-                  />
-                )}
-              </View>
-              <Text
-                style={[
-                  styles.address_continue_title,
-                  disabled && styles.textDisabled,
-                  {
-                    marginLeft: is_go_confirm ? 0 : 8,
-                    marginRight: is_go_confirm ? 8 : 0,
-                  },
-                ]}>
-                {this.state.edit_mode
-                  ? t('btn.save')
-                  : is_go_confirm
-                  ? t('btn.next')
-                  : t('btn.finish')}
-              </Text>
-            </View>
-          </TouchableHighlight>
+            renderTitleComponent={(titleStyle) =>
+              this.renderBtnSaveContent(is_go_confirm, titleStyle)
+            }
+          />
 
           <PopupConfirm
             ref_popup={(ref) => (this.refs_remove_item_confirm = ref)}
@@ -716,9 +764,8 @@ class CreateAddress extends Component {
             noConfirm={this._closePopupConfirm.bind(this)}
             yesConfirm={this._removeAddressItem.bind(this)}
             otherClose={false}
-            isConfirm
           />
-        </View>
+        </ScreenWrapper>
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </>
     );
@@ -736,87 +783,22 @@ const styles = StyleSheet.create({
   input_box: {
     width: '100%',
     height: 52,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
+    marginTop: 12,
   },
   input_text_box: {
     flex: 1,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
-  input_label: {
-    fontSize: 14,
-    color: '#000',
-  },
-  input_text: {
-    width: '96%',
-    height: 44,
-    paddingLeft: 8,
-    color: '#666',
-    fontSize: 14,
-    textAlign: 'right',
-    paddingVertical: 0,
-  },
 
-  input_address_box: {
-    width: '100%',
-    minHeight: 100,
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd',
+  deleteAddressBtnContainer: {
+    marginTop: 12,
   },
-  input_label_help: {
-    fontSize: 12,
-    marginTop: 2,
-    color: '#666666',
-  },
-  input_address_text: {
-    width: '100%',
-    color: '#666',
-    fontSize: 14,
-    marginTop: 8,
-    paddingVertical: 0,
-  },
-
-  address_continue: {
-    // position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-    height: 60,
-  },
-  address_continue_content: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: DEFAULT_COLOR,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  address_continue_title: {
-    color: '#ffffff',
-    fontSize: 18,
-  },
-
   horizontalInfoStyle: {
     paddingHorizontal: 15,
-    borderColor: '#eee',
-    borderBottomWidth: 0.5,
-  },
-
-  icon: {
-    fontSize: 20,
-    color: '#fff',
-  },
-  disabled: {
-    backgroundColor: '#aaa',
   },
 });
 

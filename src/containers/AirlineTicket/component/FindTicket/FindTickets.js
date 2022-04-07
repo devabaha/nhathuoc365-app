@@ -1,38 +1,60 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableHighlight, Switch} from 'react-native';
-
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Actions} from 'react-native-router-flux';
-import Store from '../../../../store';
+import {View, StyleSheet, Switch} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
+import Store from 'app-store';
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  ScreenWrapper,
+  Icon,
+  Typography,
+  BaseButton,
+  IconButton,
+} from 'src/components/base';
+
 class FindTickets extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    var date = new Date();
-    var from_date = dateHandler(date.setDate(date.getDate() + 1));
-    var to_date = dateHandler(date.setDate(date.getDate() + 2));
+  date = new Date();
+  from_date = dateHandler(this.date.setDate(this.date.getDate() + 1));
+  to_date = dateHandler(this.date.setDate(this.date.getDate() + 2));
 
-    this.state = {
-      khu_hoi: true,
-      from: 'HAN',
-      from_view: 'Hà Nội (HAN)',
-      to: 'SGN',
-      to_view: 'Hồ Chí Minh (SGN)',
-      from_date: {
-        date: from_date.date,
-        dateString: from_date.dateString,
-        current: from_date.current,
-      },
-      to_date: {
-        date: to_date.date,
-        dateString: to_date.dateString,
-        current: to_date.current,
-      },
-      nguoi_lon: 1,
-      tre_em: 0,
-      tre_so_sinh: 0,
-    };
+  state = {
+    khu_hoi: true,
+    from: 'HAN',
+    from_view: 'Hà Nội (HAN)',
+    to: 'SGN',
+    to_view: 'Hồ Chí Minh (SGN)',
+    from_date: {
+      date: this.from_date.date,
+      dateString: this.from_date.dateString,
+      current: this.from_date.current,
+    },
+    to_date: {
+      date: this.to_date.date,
+      dateString: this.to_date.dateString,
+      current: this.to_date.current,
+    },
+    nguoi_lon: 1,
+    tre_em: 0,
+    tre_so_sinh: 0,
+  };
+
+  onSearch = React.createRef();
+
+  get theme() {
+    return getTheme(this);
   }
 
   _khuHoiChange(value) {
@@ -87,75 +109,109 @@ class FindTickets extends Component {
     }
 
     var url = Store.site_data?.result_url + '?Request=' + params;
-    Actions.result({
-      title: `${from_view} - ${to_view}`,
-      url,
-    });
+    push(
+      appConfig.routes.airlineTicketResult,
+      {
+        title: `${from_view} - ${to_view}`,
+        url,
+      },
+      this.theme,
+    );
   };
 
   _fromDateSelected() {
     var {from_date, to_date, khu_hoi} = this.state;
 
-    Actions.datePicker({
-      current: from_date.current,
-      onSelected: (value) => {
-        var date = dateHandler(value);
+    push(
+      appConfig.routes.airlineTicketDatePicker,
+      {
+        current: from_date.current,
+        onSelected: (value) => {
+          var date = dateHandler(value);
 
-        var _from_date, _to_date;
-        _from_date = {
-          date: date.date,
-          dateString: date.dateString,
-          current: date.current,
-        };
-        _to_date = to_date;
-
-        const cal_date = () => {
-          var date = new Date(_from_date.current);
-          var cal_from_date = dateHandler(date.setDate(date.getDate() + 2));
-
-          _to_date = {
-            date: cal_from_date.date,
-            dateString: cal_from_date.dateString,
-            current: cal_from_date.current,
+          var _from_date, _to_date;
+          _from_date = {
+            date: date.date,
+            dateString: date.dateString,
+            current: date.current,
           };
-        };
+          _to_date = to_date;
 
-        if (khu_hoi) {
-          if (_from_date.current > to_date.current) {
+          const cal_date = () => {
+            var date = new Date(_from_date.current);
+            var cal_from_date = dateHandler(date.setDate(date.getDate() + 2));
+
+            _to_date = {
+              date: cal_from_date.date,
+              dateString: cal_from_date.dateString,
+              current: cal_from_date.current,
+            };
+          };
+
+          if (khu_hoi) {
+            if (_from_date.current > to_date.current) {
+              cal_date();
+            }
+          } else {
             cal_date();
           }
-        } else {
-          cal_date();
-        }
 
-        this.setState({
-          from_date: _from_date,
-          to_date: _to_date,
-        });
+          this.setState({
+            from_date: _from_date,
+            to_date: _to_date,
+          });
+        },
       },
-    });
+      this.theme,
+    );
   }
 
   _toDateSelected() {
     var {to_date, from_date} = this.state;
-    Actions.datePicker({
-      current: to_date.current,
-      minDate: from_date.current,
-      onSelected: (value) => {
-        var date = dateHandler(value);
-        this.setState({
-          to_date: {
-            date: date.date,
-            dateString: date.dateString,
-            current: date.current,
-          },
-        });
+    push(
+      appConfig.routes.airlineTicketDatePicker,
+      {
+        current: to_date.current,
+        minDate: from_date.current,
+        onSelected: (value) => {
+          var date = dateHandler(value);
+          this.setState({
+            to_date: {
+              date: date.date,
+              dateString: date.dateString,
+              current: date.current,
+            },
+          });
+        },
       },
+      this.theme,
+    );
+  }
+
+  get iconStyle() {
+    return mergeStyles(styles.icon, {color: this.theme.color.primaryHighlight});
+  }
+
+  get switchBtnStyle() {
+    return mergeStyles(styles.switchBtn, {
+      backgroundColor: this.theme.color.primaryHighlight,
+    });
+  }
+
+  get iconPlaceSwitchStyle() {
+    return mergeStyles(styles.iconPlaceSwitch, {
+      color: this.theme.color.onPrimaryHighlight,
+    });
+  }
+
+  get boxBtnStyle() {
+    return mergeStyles(styles.boxBtn, {
+      borderColor: this.theme.color.contentBackgroundStrong,
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
     });
   }
 
   render() {
-    console.log('Store fin', Store);
     var {
       khu_hoi,
       from_view,
@@ -169,19 +225,23 @@ class FindTickets extends Component {
 
     var customer_to_string = [];
     if (nguoi_lon) {
-      customer_to_string.push(nguoi_lon + ' người lớn');
+      customer_to_string.push(
+        nguoi_lon + ' ' + this.props.t('customer.adults'),
+      );
     }
     if (tre_em) {
-      customer_to_string.push(tre_em + ' trẻ em');
+      customer_to_string.push(tre_em + ' ' + this.props.t('customer.children'));
     }
     if (tre_so_sinh) {
-      customer_to_string.push(tre_so_sinh + ' trẻ sơ sinh');
+      customer_to_string.push(
+        tre_so_sinh + ' ' + this.props.t('customer.infant'),
+      );
     }
 
     customer_to_string = customer_to_string.join(', ');
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <View>
           <View
             style={[
@@ -192,101 +252,132 @@ class FindTickets extends Component {
             ]}>
             <View style={styles.boxIcon}>
               <Icon
-                style={styles.icon}
+                bundle={BundleIconSetName.MATERIAL_ICONS}
+                style={this.iconStyle}
                 name="flight-takeoff"
-                size={24}
-                color={DEFAULT_COLOR}
               />
             </View>
 
-            <TouchableHighlight
+            <BaseButton
               onPress={() => {
-                Actions.place({
-                  onSelected: this._fromSelected.bind(this),
-                });
+                push(
+                  appConfig.routes.airlineTicketPlace,
+                  {
+                    onSelected: this._fromSelected.bind(this),
+                  },
+                  this.theme,
+                );
               }}
               underlayColor="transparent"
               style={styles.boxInput}>
               <View
                 style={[
-                  styles.boxBtn,
+                  this.boxBtnStyle,
                   {
-                    width: Util.size.width - BOX_ICON_WIDTH - 50,
+                    width: appConfig.device.width - BOX_ICON_WIDTH - 50,
                   },
                 ]}>
-                <Text style={styles.inputLabel}>Điểm khởi hành</Text>
-                <Text style={styles.inputValue}>{from_view}</Text>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                  style={styles.inputLabel}>
+                  {this.props.t('departure')}
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={styles.inputValue}>
+                  {from_view}
+                </Typography>
               </View>
-            </TouchableHighlight>
+            </BaseButton>
           </View>
 
           <View style={styles.groupInput}>
             <View style={styles.boxIcon}>
               <Icon
-                style={styles.icon}
+                bundle={BundleIconSetName.MATERIAL_ICONS}
+                style={this.iconStyle}
                 name="flight-land"
-                size={24}
-                color={DEFAULT_COLOR}
               />
             </View>
 
-            <TouchableHighlight
+            <BaseButton
               onPress={() => {
-                Actions.place({
-                  onSelected: this._toSelected.bind(this),
-                });
+                push(
+                  appConfig.routes.airlineTicketPlace,
+                  {
+                    onSelected: this._toSelected.bind(this),
+                  },
+                  this.theme,
+                );
               }}
-              underlayColor="transparent"
               style={styles.boxInput}>
-              <View style={styles.boxBtn}>
-                <Text style={styles.inputLabel}>Điểm đến</Text>
-                <Text style={styles.inputValue}>{to_view}</Text>
+              <View style={this.boxBtnStyle}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                  style={styles.inputLabel}>
+                  {this.props.t('destination')}
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={styles.inputValue}>
+                  {to_view}
+                </Typography>
               </View>
-            </TouchableHighlight>
+            </BaseButton>
           </View>
 
-          <TouchableHighlight
+          <IconButton
             onPress={this._placeSwitch.bind(this)}
             underlayColor="transparent"
-            style={styles.switchBtn}>
-            <View style={styles.switchBtnContent}>
-              <Icon name="swap-vert" size={24} color="#ffffff" />
-            </View>
-          </TouchableHighlight>
+            style={this.switchBtnStyle}
+            name="swap-vert"
+            bundle={BundleIconSetName.MATERIAL_ICONS}
+            iconStyle={this.iconPlaceSwitchStyle}
+          />
         </View>
 
         <View style={styles.groupInput}>
           <View style={styles.boxIcon}>
             <Icon
-              style={styles.icon}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              style={this.iconStyle}
               name="date-range"
-              size={24}
-              color={DEFAULT_COLOR}
             />
           </View>
 
-          <TouchableHighlight
+          <BaseButton
             onPress={this._fromDateSelected.bind(this)}
             underlayColor="transparent"
             style={styles.boxInput}>
             <View
               style={[
-                styles.boxBtn,
+                this.boxBtnStyle,
                 {
                   width: Util.size.width - BOX_ICON_WIDTH - 80,
                 },
               ]}>
-              <Text style={styles.inputLabel}>Ngày đi</Text>
-              <Text style={styles.inputValue}>{from_date.dateString}</Text>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={styles.inputLabel}>
+                {this.props.t('departureDate')}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.inputValue}>
+                {from_date.dateString}
+              </Typography>
             </View>
-          </TouchableHighlight>
+          </BaseButton>
 
           <View style={styles.boxKhuHoi}>
-            <Text style={styles.textKhuHoi}>Khứ hồi?</Text>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.textKhuHoi}>
+              {this.props.t('roundTrip')}
+            </Typography>
 
             <Switch
               onValueChange={this._khuHoiChange.bind(this)}
-              onTintColor="#0071ce"
               value={khu_hoi}
             />
           </View>
@@ -302,58 +393,76 @@ class FindTickets extends Component {
           ]}>
           <View style={styles.boxIcon}>
             <Icon
-              style={styles.icon}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              style={this.iconStyle}
               name="date-range"
-              size={24}
-              color={DEFAULT_COLOR}
             />
           </View>
 
-          <TouchableHighlight
+          <BaseButton
             onPress={this._toDateSelected.bind(this)}
             underlayColor="transparent"
             style={styles.boxInput}>
-            <View style={styles.boxBtn}>
-              <Text style={styles.inputLabel}>Ngày về</Text>
-              <Text style={styles.inputValue}>{to_date.dateString}</Text>
+            <View style={this.boxBtnStyle}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={styles.inputLabel}>
+                {this.props.t('returnDate')}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.inputValue}>
+                {to_date.dateString}
+              </Typography>
             </View>
-          </TouchableHighlight>
+          </BaseButton>
         </View>
 
         <View style={styles.groupInput}>
           <View style={styles.boxIcon}>
             <Icon
-              style={styles.icon}
+              bundle={BundleIconSetName.MATERIAL_ICONS}
+              style={this.iconStyle}
               name="supervisor-account"
-              size={24}
-              color={DEFAULT_COLOR}
             />
           </View>
 
-          <TouchableHighlight
+          <BaseButton
             onPress={() => {
-              Actions.customer({
-                nguoi_lon,
-                tre_em,
-                tre_so_sinh,
-                onSelected: ({nguoi_lon, tre_em, tre_so_sinh}) => {
-                  this.setState({
-                    nguoi_lon,
-                    tre_em,
-                    tre_so_sinh,
-                  });
+              push(
+                appConfig.routes.airlineTicketCustomer,
+                {
+                  nguoi_lon,
+                  tre_em,
+                  tre_so_sinh,
+                  onSelected: ({nguoi_lon, tre_em, tre_so_sinh}) => {
+                    this.setState({
+                      nguoi_lon,
+                      tre_em,
+                      tre_so_sinh,
+                    });
+                  },
                 },
-              });
+                this.theme,
+              );
             }}
             underlayColor="transparent"
             style={styles.boxInput}>
-            <View style={styles.boxBtn}>
-              <Text style={styles.inputLabel}>Hành khách</Text>
-              <Text style={styles.inputValue}>{customer_to_string}</Text>
+            <View style={this.boxBtnStyle}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                style={styles.inputLabel}>
+                {this.props.t('passenger')}
+              </Typography>
+              <Typography
+                type={TypographyType.LABEL_LARGE}
+                style={styles.inputValue}>
+                {customer_to_string}
+              </Typography>
             </View>
-          </TouchableHighlight>
+          </BaseButton>
         </View>
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -363,7 +472,7 @@ const BOX_ICON_WIDTH = 42;
 
 const styles = StyleSheet.create({
   container: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     zIndex: 999,
   },
   groupInput: {
@@ -382,47 +491,40 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 24,
     marginLeft: 4,
+    fontSize: 24,
   },
   boxBtn: {
-    borderColor: '#b8b8b8',
-    borderBottomWidth: Util.pixel,
     width: Util.size.width - BOX_ICON_WIDTH - 16,
     height: '100%',
   },
   inputLabel: {
-    color: '#888888',
-    fontSize: 14,
     marginTop: 12,
   },
   inputValue: {
     marginTop: 8,
-    color: '#404040',
-    fontSize: 16,
   },
   switchBtn: {
     position: 'absolute',
-    top: 42,
-    right: 8,
-    padding: 8,
-  },
-  switchBtnContent: {
+    top: 48,
+    right: 12,
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   boxKhuHoi: {
-    width: 70,
-    height: '100%',
-    marginLeft: 10,
+    marginLeft: appConfig.device.isIOS ? 10 : 0,
+    right: 12,
+    alignItems: 'center',
   },
   textKhuHoi: {
-    color: '#909090',
-    fontSize: 14,
     marginBottom: 4,
   },
+  iconPlaceSwitch: {
+    fontSize: 24,
+  },
 });
-export default FindTickets;
+
+export default withTranslation('airlineTicket', {withRef: true})(FindTickets);

@@ -1,21 +1,19 @@
 import React from 'react';
-import {ScrollView, View, StyleSheet, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import Shimmer from 'react-native-shimmer';
-import {
-  CONTENT_SKELETON_COLOR,
-  SKELETON_COLOR,
-} from 'src/components/SkeletonLoading/constants';
+// configs
 import appConfig from 'app-config';
-import Container from 'src/components/Layout/Container';
+// helpers
 import {getNewsFeedSize} from 'app-helper/image';
+// custom components
+import {Typography, Container, Skeleton} from 'src/components/base';
 
 const styles = StyleSheet.create({
   shimmer: {
     marginBottom: 15,
   },
-  wrapper: {
-    backgroundColor: '#fff',
-  },
+  wrapper: {},
   container: {
     width: appConfig.device.width,
     height: 128,
@@ -25,20 +23,14 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
 
-  block: {
-    backgroundColor: SKELETON_COLOR,
-  },
+  block: {},
 
   bannerContainer: {
     ...getNewsFeedSize(),
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
-    backgroundColor: SKELETON_COLOR,
     justifyContent: 'flex-end',
   },
   groupInfoContainer: {
     padding: 15,
-    backgroundColor: '#fff',
     width: appConfig.device.width,
   },
 
@@ -65,16 +57,25 @@ const styles = StyleSheet.create({
 const GroupHeaderSkeleton = () => {
   return (
     <Shimmer style={styles.shimmer}>
-      <Text style={styles.wrapper}>
-        <View>
-          <View style={styles.bannerContainer} />
-          <View style={styles.groupInfoContainer}>
-            <View style={[styles.block, styles.content, styles.title]} />
-            <View style={[styles.block, styles.content, styles.description]} />
-            <View style={[styles.block, styles.content, styles.description2]} />
-          </View>
-        </View>
-      </Text>
+      <Typography>
+        <Container>
+          <Skeleton container style={styles.bannerContainer} />
+          <Container style={styles.groupInfoContainer}>
+            <Skeleton
+              content
+              style={[styles.block, styles.content, styles.title]}
+            />
+            <Skeleton
+              content
+              style={[styles.block, styles.content, styles.description]}
+            />
+            <Skeleton
+              content
+              style={[styles.block, styles.content, styles.description2]}
+            />
+          </Container>
+        </Container>
+      </Typography>
     </Shimmer>
   );
 };

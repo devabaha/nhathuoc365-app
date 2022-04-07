@@ -1,26 +1,49 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 FieldItem.propTypes = {
   boldValue: PropTypes.bool,
   label: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 FieldItem.defaultProps = {
   boldValue: false,
   label: '',
-  value: ''
+  value: '',
 };
 
 function FieldItem(props) {
+  const {theme} = useTheme();
+
+  const boldValue = useMemo(() => {
+    return mergeStyles(
+      styles.boldValue,
+      theme.typography[TypographyType.LABEL_SEMI_HUGE],
+    );
+  }, [theme]);
+
   return (
     <View style={styles.fieldWrapper}>
-      <Text style={styles.label}>{props.label}</Text>
-      <Text style={[styles.value, props.boldValue && styles.boldValue]}>
+      <Typography
+        type={TypographyType.LABEL_MEDIUM_TERTIARY}
+        style={styles.label}>
+        {props.label}
+      </Typography>
+      <Typography
+        type={TypographyType.LABEL_MEDIUM}
+        style={[styles.value, props.boldValue && boldValue]}>
         {props.value}
-      </Text>
+      </Typography>
     </View>
   );
 }
@@ -31,22 +54,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 4,
-    minHeight: 32
+    minHeight: 32,
   },
-  label: {
-    color: '#666',
-    fontSize: 14,
-    fontWeight: '400'
-  },
-  value: {
-    color: '#000',
-    fontSize: 14,
-    fontWeight: '400'
-  },
+  label: {},
+  value: {},
   boldValue: {
-    fontSize: 18,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default FieldItem;

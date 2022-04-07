@@ -1,17 +1,18 @@
 import React, {Component} from 'react';
-import {
-  TouchableOpacity,
-  // Animated,
-  StyleSheet,
-  ViewPropTypes,
-  Text,
-} from 'react-native';
-import Animated from 'react-native-reanimated';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import appConfig from 'app-config';
+import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
+import Animated from 'react-native-reanimated';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Icon, BaseButton} from 'src/components/base';
 
-const AnimatedIonicons = new Animated.createAnimatedComponent(Ionicons);
 const styles = StyleSheet.create({
   container: {
     borderRadius: 20,
@@ -25,22 +26,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.5)',
   },
   icon: {
     fontSize: 22,
-    color: appConfig.colors.primary,
   },
   contentOverlay: {
     position: 'absolute',
     zIndex: 1,
   },
-  iconOverlay: {
-    color: '#fff',
+  iconOverlay: {},
+  disabled: {
+    opacity: 0.3,
   },
 });
 
 class OverlayIconButton extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     disabled: PropTypes.bool,
     renderMainIcon: PropTypes.func,
@@ -48,6 +50,10 @@ class OverlayIconButton extends Component {
   };
 
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
@@ -64,13 +70,15 @@ class OverlayIconButton extends Component {
 
   renderMainIcon = () => {
     if (typeof this.props.renderMainIcon === 'function') {
-      return this.props.renderMainIcon(styles.icon);
+      return this.props.renderMainIcon(this.iconStyle);
     }
 
     return (
-      <AnimatedIonicons
+      <Icon
+        reanimated
+        bundle={BundleIconSetName.IONICONS}
         name={this.props.iconName}
-        style={[styles.icon, this.props.iconStyle]}
+        style={[this.iconStyle, this.props.iconStyle]}
       />
     );
   };
@@ -78,18 +86,20 @@ class OverlayIconButton extends Component {
   renderOverlayIcon = () => {
     if (typeof this.props.renderOverlayIcon === 'function') {
       return this.props.renderOverlayIcon(
-        styles.icon,
-        styles.iconOverlay,
+        this.iconStyle,
+        this.iconOverlayStyle,
         styles.contentOverlay,
       );
     }
 
     return (
-      <AnimatedIonicons
+      <Icon
+        reanimated
+        bundle={BundleIconSetName.IONICONS}
         name={this.props.iconName}
         style={[
-          styles.icon,
-          styles.iconOverlay,
+          this.iconStyle,
+          this.iconOverlayStyle,
           styles.contentOverlay,
           this.props.contentOverlayStyle,
         ]}
@@ -97,21 +107,50 @@ class OverlayIconButton extends Component {
     );
   };
 
+  get iconStyle() {
+    return mergeStyles(styles.icon, {
+      color: this.theme.color.primaryHighlight,
+    });
+  }
+
+  get iconOverlayStyle() {
+    return mergeStyles(styles.iconOverlay, {
+      color: this.theme.color.onOverlay,
+    });
+  }
+
+  get backgroundStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay60,
+    };
+  }
+
   render() {
     return (
-      <Animated.View style={this.props.wrapperStyle}>
-        <TouchableOpacity
+      <Animated.View
+        onStartShouldSetResponderCapture={() => this.props.disabled}
+        style={this.props.wrapperStyle}>
+        <BaseButton
           hitSlop={HIT_SLOP}
           disabled={this.props.disabled}
           onPress={this.props.onPress}>
-          <Animated.View style={[styles.container, this.props.containerStyle]}>
+          <Animated.View
+            style={[
+              styles.container,
+              this.props.disabled && styles.disabled,
+              this.props.containerStyle,
+            ]}>
             <Animated.View
-              style={[styles.background, this.props.backgroundStyle]}
+              style={[
+                styles.background,
+                this.backgroundStyle,
+                this.props.backgroundStyle,
+              ]}
             />
             {this.renderMainIcon()}
             {this.renderOverlayIcon()}
           </Animated.View>
-        </TouchableOpacity>
+        </BaseButton>
       </Animated.View>
     );
   }

@@ -1,14 +1,25 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {View, Text, FlatList, StyleSheet} from 'react-native';
-import ListProductSkeleton from './ListProductSkeleton';
+// configs
 import store from 'app-store';
-import {HOME_CARD_TYPE} from '../../constants';
 import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+import {HOME_CARD_TYPE} from '../../constants';
+// custom components
 import ProductItem from './ProductItem';
-import Button from 'react-native-button';
+import {Typography, TextButton, FlatList} from 'src/components/base';
+// skeleton
+import ListProductSkeleton from './ListProductSkeleton';
 
 class ListProducts extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     title: PropTypes.string,
@@ -22,6 +33,10 @@ class ListProducts extends Component {
     itemsPerRow: 3,
     onShowAll: null,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get hasProducts() {
     return Array.isArray(this.props.data) && this.props.data.length !== 0;
@@ -78,7 +93,7 @@ class ListProducts extends Component {
   renderItemHorizontal = ({item: product, index}) => {
     const extraProps = {
       last: this.props.data.length - 1 === index,
-      horizontal: true
+      horizontal: true,
     };
     return this.renderProduct(product, extraProps);
   };
@@ -109,17 +124,26 @@ class ListProducts extends Component {
     }
   }
 
+  get showAllTitleStyle() {
+    return {color: this.theme.color.accent2};
+  }
+
   render() {
     return this.hasProducts ? (
       <View style={[styles.container, this.props.containerStyle]}>
         <View style={styles.headingWrapper}>
-          <Text numberOfLines={2} style={styles.heading}>
+          <Typography
+            type={TypographyType.TITLE_LARGE}
+            numberOfLines={2}
+            style={styles.heading}>
             {this.props.title}
-          </Text>
+          </Typography>
           {!!this.props.onShowAll && (
-            <Button underlayColor="transparent" onPress={this.props.onShowAll}>
-              <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
-            </Button>
+            <TextButton
+              titleStyle={this.showAllTitleStyle}
+              onPress={this.props.onShowAll}>
+              {this.props.t('viewAll')}
+            </TextButton>
           )}
         </View>
         {this.renderFlatList()}
@@ -138,12 +162,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   heading: {
     flex: 1,
     marginRight: 20,
-    ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
     paddingHorizontal: 7.5,
@@ -169,10 +192,7 @@ const styles = StyleSheet.create({
   itemVerticalImage: {
     height: (appConfig.device.width / 2) * 0.75,
   },
-  viewAll: {
-    ...appConfig.styles.typography.title,
-    color: '#0084ff',
-  },
+  viewAll: {},
 });
 
 export default withTranslation('home')(observer(ListProducts));

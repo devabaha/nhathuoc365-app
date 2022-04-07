@@ -1,28 +1,35 @@
-import React from 'react';
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import appConfig from 'app-config';
-import {Container} from '../Layout';
-import Image from '../Image';
+import React, {useCallback, useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {
+  BundleIconSetName,
+  TextButton,
+  TypographyType,
+} from 'src/components/base';
+// custom components
+import Image from 'src/components/Image';
+import {
+  Card,
+  Container,
+  Typography,
+  Icon,
+  BaseButton,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   address_box: {
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: '#ffffff',
     minHeight: 120,
-    borderBottomColor: '#dddddd',
-    borderBottomWidth: Util.pixel,
   },
-  uncheckOverlay: {
-    backgroundColor: hexToRgbA('#000', 0.03),
-  },
+  uncheckOverlay: {},
 
   imageContainer: {
     alignSelf: 'flex-start',
-    borderRadius: 8,
     overflow: 'hidden',
     marginRight: 12,
   },
@@ -41,14 +48,11 @@ const styles = StyleSheet.create({
   },
   address_name: {
     flex: 1,
-    fontSize: 16,
-    color: '#3c3c3c',
     fontWeight: 'bold',
     marginRight: 10,
   },
   address_edit_btn: {
-    fontSize: 22,
-    color: appConfig.colors.primary,
+    fontSize: 16,
   },
   address_edit_box: {
     flexDirection: 'row',
@@ -58,20 +62,15 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   address_edit_label: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 5,
+    marginHorizontal: 5,
   },
   address_content_phone: {
     color: '#333',
   },
   address_content_address_detail: {
-    color: '#888',
-    fontSize: 13,
     marginTop: 5,
   },
   address_content_map_address: {
-    color: '#666',
     fontSize: 12,
     marginTop: 4,
   },
@@ -84,11 +83,8 @@ const styles = StyleSheet.create({
     marginHorizontal: -15,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: '#f5f5f5',
-    color: '#333',
     letterSpacing: 0.2,
     marginTop: 10,
-    fontSize: 13,
     fontWeight: '400',
   },
 
@@ -97,22 +93,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
     borderRadius: 15,
-    borderColor: '#ccc',
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
   },
   distanceIcon: {
     fontSize: 11,
-    color: appConfig.colors.primary,
   },
   distanceTxt: {
     marginLeft: 8,
-    fontSize: 11,
-    color: appConfig.colors.primary,
   },
 });
 
 function AddressItem({
-  image = null,
+  image = '',
   address = null,
   selectable = true,
   editable = false,
@@ -124,6 +115,8 @@ function AddressItem({
 }) {
   if (!address) return null;
 
+  const {theme} = useTheme();
+
   const {t} = useTranslation('address', 'common');
 
   const comboAddress =
@@ -131,57 +124,120 @@ function AddressItem({
     (address.district_name ? ' • ' + address.district_name : '') +
     (address.ward_name ? ' • ' + address.ward_name : '');
 
+  const renderEditIcon = useCallback((titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="pencil-square-o"
+        style={[styles.address_edit_label, titleStyle]}
+      />
+    );
+  }, []);
+
+  const addressContainerStyle = useMemo(() => {
+    return mergeStyles(
+      styles.address_box,
+      // !selected && selectable && {backgroundColor: theme.color.underlay},
+    );
+  }, [theme, selected, selectable]);
+
+  const addressIconMarkStyle = useMemo(() => {
+    return mergeStyles(styles.address_edit_btn, {
+      color: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const distanceContainerStyle = useMemo(() => {
+    return mergeStyles(styles.distanceContainer, {
+      backgroundColor: theme.color.primary5,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const distanceMainStyle = useMemo(() => {
+    return {
+      color: theme.color.primary,
+    };
+  }, [theme]);
+
+  const distanceIconStyle = useMemo(() => {
+    return mergeStyles(styles.distanceIcon, distanceMainStyle);
+  }, [theme, distanceMainStyle]);
+
+  const distanceTextStyle = useMemo(() => {
+    return mergeStyles(styles.distanceTxt, distanceMainStyle);
+  }, [theme, distanceMainStyle]);
+
+  const addressSelectorStyle = useMemo(() => {
+    return {
+      fontSize: 24,
+      color: theme.color.primaryHighlight,
+    };
+  }, [theme]);
+
+  const comboAddressStyle = useMemo(() => {
+    return mergeStyles(styles.comboAddress, {
+      // backgroundColor: theme.color.contentBackgroundWeak,
+    });
+  }, [theme]);
+
+  const editTypoProps = useMemo(() => {
+    return {
+      type: TypographyType.DESCRIPTION_SMALL,
+    };
+  }, []);
+
   return (
-    <TouchableOpacity
+    <BaseButton
       onLayout={onLayout}
       disabled={!selectable}
-      activeOpacity={0.7}
       onPress={onSelectAddress}
-      style={{backgroundColor: '#fff', marginTop: 1}}>
-      <View
-        style={[
-          styles.address_box,
-          !selected && selectable && styles.uncheckOverlay,
-        ]}>
-        <Container row centerVertical={false}>
+      style={{marginTop: 2}}>
+      <Container style={addressContainerStyle}>
+        <Container noBackground row>
           {!!image && (
-            <View style={styles.imageContainer}>
+            <Card noBackground style={styles.imageContainer}>
               <Image source={{uri: image}} style={styles.image} />
-            </View>
+            </Card>
           )}
 
-          <Container flex centerVertical={false}>
+          <Container noBackground flex>
             <View style={styles.address_name_box}>
-              <Text numberOfLines={2} style={styles.address_name}>
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                numberOfLines={2}
+                style={styles.address_name}>
                 {address.name}
                 {'  '}
                 {address.default_flag == 1 && (
-                  <FontAwesomeIcon
+                  <Icon
+                    bundle={BundleIconSetName.FONT_AWESOME}
                     name="map-marker"
-                    style={styles.address_edit_btn}
+                    style={addressIconMarkStyle}
                   />
                 )}
-              </Text>
+              </Typography>
               {!!editable ? (
-                <TouchableOpacity activeOpacity={0.7} onPress={onEditPress}>
-                  <View style={styles.address_edit_box}>
-                    <FontAwesomeIcon
-                      name="pencil-square-o"
-                      style={styles.address_edit_label}
-                    />
-                    <Text style={styles.address_edit_label}>
-                      {t('address.edit')}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                <TextButton
+                  onPress={onEditPress}
+                  typoProps={editTypoProps}
+                  style={styles.address_edit_box}
+                  renderIconLeft={renderEditIcon}>
+                  {t('address.edit')}
+                </TextButton>
               ) : (
                 !!gpsDistance && (
-                  <Container row style={[styles.distanceContainer]}>
-                    <Ionicons
+                  <Container row style={distanceContainerStyle}>
+                    <Icon
+                      bundle={BundleIconSetName.IONICONS}
                       name="ios-navigate"
-                      style={[styles.distanceIcon]}
+                      style={distanceIconStyle}
                     />
-                    <Text style={[styles.distanceTxt]}>{gpsDistance}</Text>
+                    <Typography
+                      type={TypographyType.LABEL_EXTRA_SMALL_PRIMARY}
+                      style={distanceTextStyle}>
+                      {gpsDistance}
+                    </Typography>
                   </Container>
                 )
               )}
@@ -189,14 +245,20 @@ function AddressItem({
 
             <View style={styles.address_name_box}>
               <View style={styles.address_content}>
-                <Text style={styles.address_content_phone}>{address.tel}</Text>
-                <Text style={styles.address_content_address_detail}>
+                <Typography type={TypographyType.LABEL_MEDIUM}>
+                  {address.tel}
+                </Typography>
+
+                <Typography
+                  type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+                  style={styles.address_content_address_detail}>
                   {address.address}
-                </Text>
+                </Typography>
                 {!!address.map_address && (
-                  <Text style={styles.address_content_map_address}>
+                  <Typography
+                    type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}>
                     {address.map_address}
-                  </Text>
+                  </Typography>
                 )}
               </View>
 
@@ -206,21 +268,26 @@ function AddressItem({
                     styles.address_selected_box,
                     {opacity: selected ? 1 : 0},
                   ]}>
-                  <Ionicons
+                  <Icon
+                    bundle={BundleIconSetName.IONICONS}
                     name="ios-checkmark-sharp"
-                    size={24}
-                    color={appConfig.colors.primary}
+                    style={addressSelectorStyle}
                   />
                 </View>
               )}
             </View>
           </Container>
         </Container>
+
         {!!comboAddress && (
-          <Text style={styles.comboAddress}>{comboAddress}</Text>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={comboAddressStyle}>
+            {comboAddress}
+          </Typography>
         )}
-      </View>
-    </TouchableOpacity>
+      </Container>
+    </BaseButton>
   );
 }
 

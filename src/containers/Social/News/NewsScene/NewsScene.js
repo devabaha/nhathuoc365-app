@@ -6,28 +6,35 @@ import React, {
   useRef,
 } from 'react';
 import {StyleSheet} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-
-import {ListFeeds} from 'src/components/Social';
-import Feeds from 'src/components/Social/ListFeeds/Feeds';
+// 3-party libs
 import {reaction} from 'mobx';
 import {Observer} from 'mobx-react';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
-
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-
-import NewsSceneSkeleton from './NewsSceneSkeleton';
-import NoResult from 'src/components/NoResult';
-
-import {APIRequest} from 'src/network/Entity';
+// helpers
 import {
   calculateLikeCountFriendly,
   getSocialLikeCount,
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import NoResult from 'src/components/NoResult';
+import {ListFeeds} from 'src/components/Social';
+import Feeds from 'src/components/Social/ListFeeds/Feeds';
+// skeleton
+import NewsSceneSkeleton from './NewsSceneSkeleton';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -39,6 +46,8 @@ const styles = StyleSheet.create({
 });
 
 const NewsScene = ({id, isFetching = false}) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation(['news', 'common']);
 
   const reactionDisposer = useRef(() => {});
@@ -118,10 +127,14 @@ const NewsScene = ({id, isFetching = false}) => {
             (newsItem) => newsItem.id === store.deep_link_data.id,
           );
           if (news) {
-            Actions.notify_item({
-              title: news.title,
-              data: news,
-            });
+            push(
+              appConfig.routes.notifyDetail,
+              {
+                title: news.title,
+                data: news,
+              },
+              theme,
+            );
           } else {
             flashShowMessage({
               type: 'danger',
@@ -154,12 +167,23 @@ const NewsScene = ({id, isFetching = false}) => {
       type: SERVICES_TYPE.NEWS_DETAIL,
       news: feeds,
       title: feeds.title,
+      theme,
     });
   }, []);
 
-  const handleActionBarPress = useCallback((type, feeds) => {
-    handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, feeds);
-  }, []);
+  const handleActionBarPress = useCallback(
+    (type, feeds) => {
+      handleSocialActionBarPress(
+        SOCIAL_DATA_TYPES.NEWS,
+        type,
+        feeds,
+        undefined,
+        undefined,
+        theme,
+      );
+    },
+    [theme],
+  );
 
   const renderFeeds = ({item: feeds, index}) => {
     return (
@@ -186,6 +210,8 @@ const NewsScene = ({id, isFetching = false}) => {
                   SOCIAL_BUTTON_TYPES.COMMENT,
                   feeds,
                   false,
+                  undefined,
+                  theme,
                 )
               }
             />

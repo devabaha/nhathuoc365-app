@@ -1,24 +1,24 @@
 import React, {Component} from 'react';
-import {
-  Image,
-  Text,
-  View,
-  StyleSheet,
-  Animated,
-  Easing,
-  TouchableHighlight,
-} from 'react-native';
-// import Animated, { Easing, interpolate } from 'react-native-reanimated';
+import {Image, View, StyleSheet, Animated, Easing} from 'react-native';
+// types
 import {CategoryProps} from '.';
-//@ts-ignore
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   wrapper: {
     overflow: 'hidden',
   },
   activeMask: {
-    backgroundColor: appConfig.colors.primary,
     position: 'absolute',
     borderRadius: 100,
     width: '100%',
@@ -30,8 +30,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: '10%',
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 0.5,
   },
   imageContainer: {
     width: '55%',
@@ -44,10 +42,8 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: '5%',
-    fontSize: 12,
     letterSpacing: 0.5,
     textAlign: 'center',
-    color: '#333',
     fontWeight: '500',
   },
   maskTitle: {
@@ -56,6 +52,8 @@ const styles = StyleSheet.create({
 });
 
 class Category extends Component<CategoryProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     isActive: false,
     numberOfLines: 2,
@@ -65,6 +63,9 @@ class Category extends Component<CategoryProps> {
   state = {};
   animatedActiveValue = new Animated.Value(0);
 
+  get theme() {
+    return getTheme(this);
+  }
   shouldComponentUpdate(nextProps: CategoryProps, nextState: any) {
     if (nextProps.isActive !== this.props.isActive) {
       this.animateActive(nextProps.isActive ? 1 : 0);
@@ -94,18 +95,46 @@ class Category extends Component<CategoryProps> {
     }).start();
   }
 
-  render() {
-    const activeContainerStyle = {
-      opacity: this.animatedActiveValue,
-      transform: [
+  get activeMaskStyle() {
+    return mergeStyles(styles.activeMask, {
+      backgroundColor: this.theme.color.primaryHighlight,
+    });
+  }
+
+  get containerStyle() {
+    return mergeStyles(
+      [
+        styles.container,
         {
-          scale: this.animatedActiveValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1.5],
-          }),
+          borderBottomColor: this.theme.color.border,
+          borderBottomWidth: this.theme.layout.borderWidthSmall,
         },
       ],
-    };
+      this.props.containerStyle,
+    );
+  }
+
+  render() {
+    const activeContainerStyle = mergeStyles(
+      [
+        styles.activeMask,
+        //@ts-ignore
+        {
+          opacity: this.animatedActiveValue,
+          transform: [
+            {
+              scale: this.animatedActiveValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1.5],
+              }),
+            },
+          ],
+        },
+      ],
+      {
+        backgroundColor: this.theme.color.primaryHighlight,
+      },
+    );
     // const activeContainerStyle = {
     //     opacity: this.animatedActiveValue,
     //     transform: [{
@@ -116,24 +145,23 @@ class Category extends Component<CategoryProps> {
     //         })
     //     }]
     // };
-    const activeTitleStyle = {
-      opacity: this.animatedActiveValue,
-      color: '#fff',
-    };
+    const activeTitleStyle = mergeStyles(
+      [styles.maskTitle, styles.title, this.props.titleStyle],
+      //@ts-ignore
+      {
+        opacity: this.animatedActiveValue,
+        color: this.theme.color.onPrimaryHighlight,
+      },
+    );
+
     return (
-      <View style={styles.wrapper}>
+      <Container style={styles.wrapper}>
         <>
-          <Animated.View
-            style={[
-              styles.activeMask,
-              //@ts-ignore
-              activeContainerStyle,
-            ]}
-          />
-          <TouchableHighlight
-            style={[styles.container, this.props.containerStyle]}
+          <Animated.View style={activeContainerStyle} />
+          <BaseButton
+            useTouchableHighlight
+            style={this.containerStyle}
             disabled={this.props.disabled}
-            underlayColor="#e5e5e5"
             onPress={this.props.onPress}>
             <>
               {!!this.props.image && (
@@ -146,32 +174,26 @@ class Category extends Component<CategoryProps> {
               )}
               {!!this.props.title && (
                 <View>
-                  <Text
+                  <Typography
+                    type={TypographyType.LABEL_SMALL}
                     numberOfLines={this.props.numberOfLines}
-                    style={[
-                      styles.title,
-                      // activeTitleStyle,
-                      this.props.titleStyle,
-                    ]}>
+                    style={[styles.title, this.props.titleStyle]}>
                     {this.props.title}
-                  </Text>
-                  <Animated.Text
+                  </Typography>
+                  <Typography
+                    animated
+                    type={TypographyType.LABEL_SMALL}
                     numberOfLines={this.props.numberOfLines}
-                    style={[
-                      styles.maskTitle,
-                      styles.title,
-                      activeTitleStyle,
-                      this.props.titleStyle,
-                    ]}>
+                    style={activeTitleStyle}>
                     {this.props.title}
-                  </Animated.Text>
+                  </Typography>
                 </View>
               )}
               {this.props.children}
             </>
-          </TouchableHighlight>
+          </BaseButton>
         </>
-      </View>
+      </Container>
     );
   }
 }

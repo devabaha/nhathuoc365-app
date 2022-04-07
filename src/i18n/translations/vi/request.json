@@ -1,4 +1,30 @@
 {
-    "closeRequest": "Đóng yêu cầu",
-    "reopenRequest": "Mở lại yêu cầu"
+  "closeRequest": "Đóng yêu cầu",
+  "reopenRequest": "Mở lại yêu cầu",
+  "createRequest": "Tạo yêu cầu",
+  "noResult": "Danh sách yêu cầu đang trống",
+  "editRequest": "Sửa yêu cầu",
+  "requestTypes": "Chọn loại phản ánh",
+
+  "formData": {
+    "title": "Tiêu đề *",
+    "requestType": "Loại phản ánh *",
+    "content": "Nội dung *",
+    "image": "Hình ảnh",
+    "required": "Vui lòng nhập trường này"
+  },
+
+  "option": {
+    "title": "Tải ảnh phản ánh"
+  },
+
+  "noRequestInformation": "Không có thông tin phản ánh",
+  "enterMessage": "Nhập nội dung",
+
+  "detail": {
+    "status": "Trạng thái",
+    "staffInCharge": "Nhân viên tiếp nhận",
+    "createdTime": "Thời gian tạo",
+    "content": "Nội dung"
+  }
 }

@@ -10,5 +10,16 @@
       "placeholder": "Type your note here..."
     },
     "requestAppointment": "Request appointment"
-  }
+  },
+  "diffTime": {
+    "yearFrom": "year from",
+    "monthFrom": "month from",
+    "weekFrom": "week from",
+    "dayFrom": "day from",
+    "hourFrom": "hour from",
+    "minuteFrom": "minute from"
+  },
+  "delayed": "Delay ",
+  "now": "now",
+  "noSlot": "There is no time slot for this date."
 }

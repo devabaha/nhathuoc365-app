@@ -1,18 +1,21 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Keyboard} from 'react-native';
-
+// 3-party libs
 import Reanimated, {Easing, Extrapolate} from 'react-native-reanimated';
-
-import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
 import Header from './Header';
 import Row from './Row';
 import Images from './Images';
 import Toggle from './Toggle';
-
-const EXTEND_MESSAGE = 'Mở rộng';
-const COLLAPSE_MESSAGE = 'Thu gọn';
+import {Card as BaseCard} from 'src/components/base';
 
 class Card extends Component {
+  static contextType = ThemeContext;
+
   state = {
     isExpanded: false,
     isKeyboardOpening: false,
@@ -21,6 +24,10 @@ class Card extends Component {
     animatedVisible: new Reanimated.Value(0),
     heightCollapsable: undefined,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     Keyboard.addListener('keyboardDidShow', this.handleShowKeyboard);
@@ -143,7 +150,16 @@ class Card extends Component {
     this.props.onContainerLayout(e);
   }
 
+  get statusStyle() {
+    return {
+      backgroundColor: this.theme.color.persistPrimary,
+      color: this.theme.color.onPersistPrimary,
+    };
+  }
+
   render() {
+    if (this.props.forceUpdate) return null;
+
     const {
       title,
       department,
@@ -190,88 +206,80 @@ class Card extends Component {
     };
 
     const statusStyle = [
-      {
-        backgroundColor: bgColor,
-        padding: 7,
-        color: '#fff',
-      },
+      styles.status,
+      this.statusStyle,
       textColor && {color: textColor},
+      bgColor && {backgroundColor: bgColor},
     ];
 
-    if (this.props.forceUpdate) return null;
-
     return (
-      <>
-        <Reanimated.View
-          onLayout={this.onContainerLayout.bind(this)}
-          style={[showUpStyle, this.props.containerStyle]}
-          pointerEvents="box-none">
-          <View pointerEvents="box-none" style={[styles.container]}>
-            <View
-              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
-              <Header
-                tagCode={object?.warranty_code}
-                tagName={object?.title}
-                type={request_type}
-                title={title}
-                subTitle={created}
-              />
-            </View>
-            <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
-            <View
-              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
-              <Reanimated.View
-                onLayout={this.handleLayoutAnimatedArea}
-                style={animatedHeight}>
-                <Row label="Nhân viên tiếp nhận" value={admin_name} />
-                {/* <Row label="Thời gian yêu cầu" value={created} /> */}
-                <Row
-                  isColumn
-                  label="Nội dung"
-                  labelStyle={{marginBottom: 10}}
-                  value={content}
-                  valueContainerProps={{
-                    bounces: false,
-                    style: {
-                      height: 50,
-                    },
-                  }}
-                  extraComponent={<Images images={images} />}
-                  scrollable
-                />
-              </Reanimated.View>
-            </View>
-            <View pointerEvents="box-none">
-              <Row
-                disabled={false}
-                isColumn
-                valueComponent={
-                  <Toggle
-                    value={toggleValue}
-                    animatedIconStyle={animatedIconStyle}
-                  />
-                }
-                onPressValue={this.onTogglePress}
-                valueStyle={styles.imagesValue}
-              />
-            </View>
+      <Reanimated.View
+        onLayout={this.onContainerLayout.bind(this)}
+        style={[showUpStyle, this.props.containerStyle]}
+        pointerEvents="box-none">
+        <BaseCard shadow pointerEvents="box-none">
+          <View pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
+            <Header
+              tagCode={object?.warranty_code}
+              tagName={object?.title}
+              type={request_type}
+              title={title}
+              subTitle={created}
+            />
           </View>
-        </Reanimated.View>
-      </>
+          <Row
+            label={this.props.t('request:detail.status')}
+            value={status}
+            valueStyle={statusStyle}
+          />
+          <View pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}>
+            <Reanimated.View
+              onLayout={this.handleLayoutAnimatedArea}
+              style={animatedHeight}>
+              <Row
+                label={this.props.t('request:detail.staffInCharge')}
+                value={admin_name}
+              />
+              {/* <Row label={this.props.t('request:detail.createdTime')} value={created} /> */}
+              <Row
+                isColumn
+                label={this.props.t('request:detail.content')}
+                labelStyle={{marginBottom: 10}}
+                value={content}
+                valueContainerProps={{
+                  bounces: false,
+                  style: {
+                    height: 50,
+                  },
+                }}
+                extraComponent={<Images images={images} />}
+                scrollable
+              />
+            </Reanimated.View>
+          </View>
+          <View pointerEvents="box-none">
+            <Row
+              disabled={false}
+              isColumn
+              valueComponent={
+                <Toggle
+                  value={toggleValue}
+                  animatedIconStyle={animatedIconStyle}
+                />
+              }
+              onPressValue={this.onTogglePress}
+            />
+          </View>
+        </BaseCard>
+      </Reanimated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    ...elevationShadowStyle(7),
-  },
-  imagesValue: {
-    alignSelf: 'center',
-    color: appConfig.colors.primary,
+  status: {
+    padding: 7,
   },
 });
 
-export default withTranslation()(Card);
+export default withTranslation(['common', 'request'])(Card);

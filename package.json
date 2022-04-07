@@ -8,22 +8,24 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "bash setup"
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "@alessiocancian/react-native-actionsheet": "^3.0.3",
+    "@alessiocancian/react-native-actionsheet": "^3.1.1",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/cameraroll": "^4.0.1",
     "@react-native-community/clipboard": "^1.5.1",
-    "@react-native-community/datetimepicker": "^3.0.8",
+    "@react-native-community/datetimepicker": "^5.1.0",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/netinfo": "^5.9.9",
     "@react-native-firebase/analytics": "^10.3.1",
     "@react-native-firebase/app": "^10.2.0",
     "@react-native-firebase/auth": "^10.3.1",
     "@react-native-masked-view/masked-view": "^0.2.0",
+    "@react-native-picker/picker": "^2.2.1",
+    "@sentry/react-native": "^3.3.2",
     "@tickid/react-native-accordion": "^1.0.0",
     "@tickid/react-native-tabs": "^1.0.5",
     "@tickid/tickid-rada": "^2.2.5",
@@ -35,6 +37,7 @@
     "@types/react-native-keyboard-spacer": "^0.4.2",
     "@types/react-native-modalbox": "^1.4.9",
     "@types/react-native-snap-carousel": "^3.8.4",
+    "@types/react-native-table-component": "^1.2.3",
     "@types/react-native-video": "^5.0.8",
     "autobind-decorator": "^2.4.0",
     "axios": "^0.21.0",
@@ -52,6 +55,8 @@
     "moment": "^2.29.1",
     "native-base": "^2.13.15",
     "p-limit": "^3.1.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
     "react-i18next": "^11.8.4",
@@ -77,6 +82,7 @@
     "react-native-fast-image": "^8.3.4",
     "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-flash-message": "^0.1.18",
+    "react-native-flurry-sdk": "^7.1.1",
     "react-native-formik": "^1.7.8",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.9.0",
@@ -106,6 +112,7 @@
     "react-native-redash": "14.2.2",
     "react-native-render-html": "^5.0.1",
     "react-native-router-flux": "^4.2.0",
+    "react-native-safe-area-context": "^3.3.2",
     "react-native-screen-brightness": "^2.0.0-alpha",
     "react-native-screens": "^2.16.1",
     "react-native-share": "^6.3.0",
@@ -158,7 +165,10 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "@react-native-community/cli-debugger-ui": "^4.13.1"
+    "@react-native-community/cli-debugger-ui": "^4.13.1",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-vector-icons": "^7.1.0",
+    "react-native-webview": "^11.0.2"
   },
   "husky": {
     "hooks": {

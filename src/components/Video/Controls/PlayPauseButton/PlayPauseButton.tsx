@@ -1,5 +1,6 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useMemo, useRef} from 'react';
 import {StyleSheet} from 'react-native';
+// 3-party libs
 import Animated, {
   call,
   Easing,
@@ -7,9 +8,16 @@ import Animated, {
   useValue,
 } from 'react-native-reanimated';
 import Svg, {Path} from 'react-native-svg';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
-import {themes} from '../themes';
+// helpers
+import {hexToRgba} from 'app-helper';
+import {getThemes} from '../themes';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {HIT_SLOP} from 'src/constants';
+// custom components
+import {BaseButton} from 'src/components/base';
 
 const MAIN_ICON_ACTUAL_SIZE = 512;
 const MAIN_ICON_SIZE = 42;
@@ -22,8 +30,6 @@ const styles = StyleSheet.create({
     width: CONTAINER_SIZE,
     height: CONTAINER_SIZE,
     borderRadius: CONTAINER_SIZE / 2,
-    //@ts-ignore
-    borderColor: hexToRgbA(themes.colors.primary, 0.2),
 
     justifyContent: 'center',
     alignItems: 'center',
@@ -31,17 +37,16 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themes.colors.primary,
   },
 });
 
-const PlayPauseButton = ({
-  onPress,
-  refPath,
-  path,
-  fill = themes.colors.primary,
-  strokeWidth = 0,
-}) => {
+const PlayPauseButton = ({onPress, refPath, path, fill = undefined, strokeWidth = 0}) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
   const isPressOut = useRef(true);
   const pressInValue = useRef(0);
   const isAnimatedPressInFinished = useRef(true);
@@ -99,49 +104,50 @@ const PlayPauseButton = ({
     return [call([animatedPressInValue], handlePressInValueChange)];
   }, []);
 
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      borderColor: hexToRgba(themes.colors.primary, 0.2),
+      borderWidth: animatedPressOutValue.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, 2, 0],
+      }),
+    });
+  }, [themes]);
+
+  const maskStyle = useMemo(() => {
+    return mergeStyles(styles.mask, {
+      backgroundColor: themes.colors.primary,
+      opacity: animatedPressInValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 0.2],
+      }),
+    });
+  }, [themes]);
+
   return (
-    <TouchableOpacity
+    <BaseButton
+      useGestureHandler
       onPress={onPress}
-      //@ts-ignore
       hitSlop={HIT_SLOP}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       activeOpacity={1}
       //@ts-ignore
       disallowInterruption>
-      <Animated.View
-        style={[
-          styles.container,
-          {
-            borderWidth: animatedPressOutValue.interpolate({
-              inputRange: [0, 0.5, 1],
-              outputRange: [0, 2, 0],
-            }),
-          },
-        ]}>
-        <Animated.View
-          style={[
-            styles.mask,
-            {
-              opacity: animatedPressInValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 0.2],
-              }),
-            },
-          ]}
-        />
+      <Animated.View style={containerStyle}>
+        <Animated.View style={maskStyle} />
         <Svg width={MAIN_ICON_SIZE} height={MAIN_ICON_SIZE}>
           <Path
             ref={refPath}
             d={path}
-            fill={fill}
+            fill={fill || themes.colors.primary}
             stroke={themes.colors.primary}
             strokeWidth={strokeWidth}
             scale={MAIN_ICON_SCALE_RATIO}
           />
         </Svg>
       </Animated.View>
-    </TouchableOpacity>
+    </BaseButton>
   );
 };
 

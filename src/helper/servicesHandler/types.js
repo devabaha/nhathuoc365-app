@@ -48,6 +48,7 @@ export const SERVICES_TYPE = {
 
   /** ACCOUNT */
   MY_ADDRESS: 'my_address',
+  CREATE_ADDRESS: 'create_address',
 
   /** NEWS */
   NEWS: 'news',
@@ -59,11 +60,14 @@ export const SERVICES_TYPE = {
   CHAT_NOTI: 'chat_noti',
   LIST_CHAT: 'list_chat',
   LIST_USER_CHAT: 'list_user_chat',
+  CHAT: 'chat',
+  USER_CHAT: 'user_chat',
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
   GPS_LIST_STORE: GPS_LIST_TYPE.GPS_LIST_STORE,
   GPS_LIST_SITE: GPS_LIST_TYPE.GPS_LIST_SITE,
+  SEARCH_STORE: 'search_store',
 
   /** COMMUNICATION */
   CALL: 'call',
@@ -84,6 +88,7 @@ export const SERVICES_TYPE = {
 
   /** PAYMENT */
   PAYMENT_METHOD: 'payment_method',
+  PAYMENT_TRANSACTION: 'payment_transaction',
 
   /** POPUP */
   POP_UP: 'popup',
@@ -123,9 +128,12 @@ export const SERVICES_TYPE = {
   CREATE_REQUEST: 'create_request',
   REQUEST_DETAIL: 'request_detail',
 
-  /** Wallet */
+  /** WALLET */
   WALLET: 'wallet',
 
+  /** RATING */
+  RATING: 'rating',
+  
   /** REPORT */
   SALES_REPORT: 'sales_report',
   

@@ -7,5 +7,16 @@
     "tempPrice": "Tạm tính",
     "totalPrice": "Thành tiền"
   },
+  "bankTransfer": {
+    "owner": "Chủ TK: ",
+    "accountNumber": "Số TK: ",
+    "branch": "Chi nhánh: "
+  },
+  "detailModal": {
+    "searchPlaceholder": "Tìm kiếm...",
+    "informationNotFound": "Không tìm thấy thông tin",
+    "noInformation": "Chưa có thông tin"
+  },
+  "copyCompleteMessage": "Đã sao chép số TK vào bộ nhớ tạm",
   "confirm": "Tiếp tục"
 }

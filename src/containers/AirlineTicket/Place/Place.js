@@ -1,18 +1,30 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SectionList,
-  TouchableHighlight,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
-import { Actions} from 'react-native-router-flux';
-import Store from '../../../store';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// configs
+import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {
+  Container,
+  ScreenWrapper,
+  Typography,
+  SectionList,
+  BaseButton,
+} from 'src/components/base';
+import NoResult from 'src/components/NoResult';
 
-@observer
 class Place extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onSelected: PropTypes.func,
   };
@@ -25,13 +37,17 @@ class Place extends Component {
 
   static onExit = () => {
     action(() => {
-      Store.setPlaceData(Store.place_data_static);
+      store.setPlaceData(store.place_data_static);
     })();
   };
 
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         onChangeText: this._onChangeText,
       }),
     );
@@ -41,83 +57,80 @@ class Place extends Component {
     clearTimeout(this._timerSearch);
     if (value) {
       this._timerSearch = setTimeout(() => {
-        Store.getAirportData({
+        store.getAirportData({
           query: value,
         });
       }, 300);
     } else {
       action(() => {
-        Store.setPlaceData(Store.place_data_static);
+        store.setPlaceData(store.place_data_static);
       })();
     }
   };
 
   _onSelected(item) {
     this.props.onSelected(item);
-    Actions.pop();
+    pop();
   }
 
-  _renderItem = ({ item, index }) => {
-    return (     
-      <TouchableHighlight
-        onPress={this._onSelected.bind(this, item)}
-        underlayColor="transparent">
-        <View
-          style={{
-            height: 60,
-            justifyContent: 'center',
-            paddingHorizontal: 15,
-            backgroundColor: '#ffffff',
-            borderBottomWidth: Util.pixel,
-            borderColor: '#dddddd',
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#404040',
-            }}>{`${item.city_name_vi}, ${item.country_name_vi}`}</Text>
-          <Text
-            style={{
-              fontSize: 12,
-              color: '#999999',
-            }}>{`${item.code} - ${item.name_vi}`}</Text>
-        </View>
-      </TouchableHighlight>
+  _renderItem = ({item, index}) => {
+    return (
+      <Container style={this.itemStyle}>
+        <BaseButton
+          useTouchableHighlight
+          style={styles.itemContent}
+          onPress={this._onSelected.bind(this, item)}>
+          <>
+            <Typography type={TypographyType.LABEL_LARGE}>
+              {`${item.city_name_vi}, ${item.country_name_vi}`}
+            </Typography>
+            <Typography type={TypographyType.LABEL_SMALL_TERTIARY}>
+              {`${item.code} - ${item.name_vi}`}
+            </Typography>
+          </>
+        </BaseButton>
+      </Container>
     );
   };
 
-  renderSectionHeader = ({ section }) => {
+  renderSectionHeader = ({section}) => {
     return (
-      <View
-        style={{
-          backgroundColor: '#f1f1f1',
-          justifyContent: 'center',
-          paddingHorizontal: 15,
-          height: 36,
-          borderBottomWidth: Util.pixel,
-          borderColor: '#dddddd',
-        }}>
-        <Text
-          style={{
-            fontSize: 16,
-            color: '#666666',
-            fontWeight: '500',
-          }}>
+      <Container style={this.sectionHeaderContainerStyle}>
+        <Typography
+          type={TypographyType.LABEL_LARGE_TERTIARY}
+          style={styles.sectionHeaderContent}>
           {section.title}
-        </Text>
-      </View>
+        </Typography>
+      </Container>
     );
   };
+
+  get sectionHeaderContainerStyle() {
+    return mergeStyles(styles.sectionHeaderContainer, {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+      backgroundColor: this.theme.color.background,
+    });
+  }
+
+  get itemStyle() {
+    return mergeStyles(styles.item, {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    });
+  }
 
   render() {
-    var { place_data, formattedList } = Store;
+    var {place_data, formattedList} = store;
+
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         {place_data ? (
           <SectionList
+            safeLayout={!store.keyboardTop}
             keyboardShouldPersistTaps="always"
             style={{
-              marginBottom: Store.keyboardTop,
+              marginBottom: store.keyboardTop,
             }}
             renderItem={this._renderItem}
             renderSectionHeader={this.renderSectionHeader}
@@ -125,12 +138,12 @@ class Place extends Component {
             keyExtractor={(item) => item.id}
           />
         ) : (
-          <View style={styles.noValue}>
-            <Icon style={styles.icon} name="airplane-off" size={40} color='#666666' />
-              <Text style={styles.textValue} >Chưa có sân bay</Text>
-          </View>
+          <NoResult
+            iconName="airplane-off"
+            message={this.props.t('noResult')}
+          />
         )}
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -138,17 +151,20 @@ class Place extends Component {
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    flex: 1,
   },
-  noValue: {
-    alignContent:'center',
-    justifyContent:'center',
-    alignItems:'center',
+  sectionHeaderContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    height: 36,
   },
-  textValue: {
-    marginTop:5,
-    fontSize:14,
-    color:'#666666'
-  }
+  sectionHeaderContent: {
+    fontWeight: '500',
+  },
+  item: {},
+  itemContent: {
+    paddingHorizontal: 15,
+    justifyContent: 'center',
+    height: 60,
+  },
 });
-export default Place;
+export default withTranslation('airlineTicket')(observer(Place));

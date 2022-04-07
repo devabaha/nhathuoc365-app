@@ -1,11 +1,20 @@
 import {Linking, Alert} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
-import i18n from 'src/i18n';
+import i18n from 'i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from 'react-native-flash-message';
 import {
   EULA_AGREEMENT_LAST_UPDATED,
   EULA_AGREEMENT_USER_DECISION_DATA_KEY,
 } from 'src/constants';
+
+import {saveTheme, isDarkMode} from './theme';
+import getPreciseDistance from 'geolib/es/getPreciseDistance';
+
+export {saveTheme, isDarkMode};
 
 export const openLink = (url) => {
   const t = i18n.getFixedT(undefined, 'common');
@@ -69,6 +78,56 @@ export const copyToClipboard = (
   }
 };
 
+export const hexToRgbCode = (hex) => {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length == 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return [(c >> 16) & 255, (c >> 8) & 255, c & 255];
+  }
+  throw new Error('Bad Hex');
+};
+
+export const hexToRgba = (hex, opacity) => {
+  return 'rgba(' + hexToRgbCode(hex).join(',') + ',' + opacity + ')';
+};
+
+export const rgbaToRgbCode = (rgba, background = '#ffffff') => {
+  const [bgRed, bgGreen, bgBlue] = hexToRgbCode(background);
+  const [inputRed, inputGreen, inputBlue, inputAlpha] = rgba
+    .replace(/rgba|\(|\)/g, '')
+    .split(',')
+    .map((value) => Number(value));
+
+  const isCorrectFormat =
+    inputRed >= 0 &&
+    inputRed <= 255 &&
+    inputGreen >= 0 &&
+    inputGreen <= 255 &&
+    inputBlue >= 0 &&
+    inputBlue <= 255 &&
+    inputAlpha >= 0 &&
+    inputAlpha <= 1;
+
+  if (isCorrectFormat) {
+    const getColorChanel = (color, alpha, background) =>
+      color * alpha + background * (1 - alpha);
+
+    const redChanel = getColorChanel(inputRed, inputAlpha, bgRed);
+    const greenChanel = getColorChanel(inputGreen, inputAlpha, bgGreen);
+    const blueChanel = getColorChanel(inputBlue, inputAlpha, bgBlue);
+    return [redChanel, greenChanel, blueChanel];
+  }
+  throw new Error('Bad Rgba');
+};
+
+export const rgbaToRgb = (rgba, background = '#fff') => {
+  return 'rgb(' + rgbaToRgbCode(rgba, background).join(',') + ')';
+};
+
 export const cancelRequests = (requests) => {
   if (Array.isArray(requests)) {
     requests.forEach((request) => {
@@ -99,6 +158,20 @@ export const lightenColor = (color, percent) => {
   );
 };
 
+export const elevationShadowStyle = (
+  elevation,
+  width = 0,
+  height = 0,
+  shadowOpacity = 0.25,
+  shadowColor = 'black',
+) => ({
+  elevation,
+  shadowColor,
+  shadowOffset: {width: width, height: height || 0.5 * elevation},
+  shadowOpacity,
+  shadowRadius: 0.8 * elevation,
+});
+
 export const checkIfEULAAgreed = async () => {
   // AsyncStorage.removeItem(EULA_AGREEMENT_USER_DECISION_DATA_KEY);
   const isEULAAgreed = await AsyncStorage.getItem(
@@ -125,5 +198,75 @@ export const getEULAContent = () => {
   return (
     t('eula.lastUpdated', {lastUpdated: EULA_AGREEMENT_LAST_UPDATED}) +
     t('eula.content').reduce((prev, next) => prev + next, '')
+  );
+};
+
+export const randomIntFromInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+export const flashShowMessage = (props) => {
+  const flashMessageSuccessTheme = {
+    color: 'white',
+    backgroundColor: '#007E33',
+  };
+  const flashMessageDangerTheme = {
+    color: 'white',
+    backgroundColor: '#CC0000',
+  };
+  const flashMessageInfoTheme = {
+    color: 'white',
+    backgroundColor: '#0099CC',
+  };
+  const flashMessageWarningTheme = {
+    color: 'white',
+    backgroundColor: '#FF8800',
+  };
+  let theme = {};
+  switch (props.type) {
+    case 'danger':
+      theme = flashMessageDangerTheme;
+      break;
+    case 'success':
+      theme = flashMessageSuccessTheme;
+      break;
+    case 'info':
+      theme = flashMessageInfoTheme;
+      break;
+    case 'warning':
+      theme = flashMessageWarningTheme;
+      break;
+    default:
+      break;
+  }
+  showMessage({...props, ...theme});
+};
+
+export const calculateDiffDistance = (
+  locationStart,
+  locationEnd,
+  accurate = 100,
+) => {
+  const preciseDistance = getPreciseDistance(
+    locationStart,
+    locationEnd,
+    accurate,
+  );
+
+  return {
+    preciseDistance,
+    inKm: preciseDistance / 1000,
+  };
+};
+
+export const toFixed = (
+  num,
+  totalNumberAfterDecimalPoint = 2,
+  isRound = false,
+) => {
+  return (
+    Math[isRound ? 'round' : 'floor'](
+      num * Math.pow(10, totalNumberAfterDecimalPoint),
+    ) / Math.pow(10, totalNumberAfterDecimalPoint)
   );
 };

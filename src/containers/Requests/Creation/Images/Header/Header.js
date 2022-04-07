@@ -1,6 +1,9 @@
-import React, { PureComponent } from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, {PureComponent} from 'react';
+import {StyleSheet, View} from 'react-native';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {IconButton} from 'src/components/base';
 
 class Header extends PureComponent {
   state = {};
@@ -13,14 +16,19 @@ class Header extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.props.onClose}>
-          <Icon name="close-circle" style={styles.icon} />
-        </TouchableOpacity>
+        <IconButton
+          bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+          iconStyle={styles.icon}
+          onPress={this.props.onClose}
+        />
 
         {!this.props.isEdit && (
-          <TouchableOpacity onPress={this.handleDelete}>
-            <Icon name="delete" style={styles.icon} />
-          </TouchableOpacity>
+          <IconButton
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            iconStyle={styles.icon}
+            name="delete"
+            onPress={this.handleDelete}
+          />
         )}
       </View>
     );
@@ -31,14 +39,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 30
+    paddingVertical: 30,
   },
   icon: {
-    color: '#fff',
+    // color: '#fff',
     fontSize: 28,
     paddingLeft: 15,
-    ...elevationShadowStyle(7)
-  }
+    // ...elevationShadowStyle(7),
+  },
 });
 
 export default Header;

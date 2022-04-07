@@ -1,23 +1,35 @@
 import React, {PureComponent} from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  TouchableHighlight,
-  Text,
-  SafeAreaView,
-  RefreshControl,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
-import appConfig from 'app-config';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {Actions} from 'react-native-router-flux';
-import EventTracker from '../../helper/EventTracker';
-import {APIRequest} from '../../network/Entity';
-import Loading from '../Loading';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import NoResult from '../NoResult';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import Image from 'src/components/Image';
+import {
+  Container,
+  ScreenWrapper,
+  Icon,
+  FlatList,
+  Input,
+  RefreshControl,
+  Typography,
+  BaseButton,
+} from 'src/components/base';
 
 const NUM_COLUMS = 3;
 const LIST_PAYMENT_METHOD_DETAIL = [
@@ -72,6 +84,8 @@ const LIST_PAYMENT_METHOD_DETAIL = [
 ];
 
 class PaymentMethodDetailModal extends PureComponent {
+  static contextType = ThemeContext;
+
   static propTypes = {
     siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
       .isRequired,
@@ -94,13 +108,26 @@ class PaymentMethodDetailModal extends PureComponent {
   getPaymentMethodDetailRequest = new APIRequest();
   eventTracker = new EventTracker();
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.getPaymentMethodDetail();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   async getPaymentMethodDetail() {
@@ -172,7 +199,7 @@ class PaymentMethodDetailModal extends PureComponent {
 
   onPressPaymentMethodDetail = (item) => {
     this.props.onPressPaymentMethodDetail(item);
-    Actions.pop();
+    pop();
   };
 
   onRefresh = () => {
@@ -183,35 +210,100 @@ class PaymentMethodDetailModal extends PureComponent {
   renderPaymentMethodDetail(data, {item, index}) {
     const isRightOutermost = (index + 1) % NUM_COLUMS === 0;
     const isLastRow =
-      index >= (data.length % NUM_COLUMS) * NUM_COLUMS ||
-      data.length < NUM_COLUMS;
+      index >=
+        (data.length % NUM_COLUMS === 0
+          ? data.length - NUM_COLUMS
+          : Math.floor(data.length / NUM_COLUMS) * NUM_COLUMS) ||
+      data.length <= NUM_COLUMS;
 
     return (
-      <TouchableHighlight
-        underlayColor="#bababa"
+      <BaseButton
+        useTouchableHighlight
         onPress={() => this.onPressPaymentMethodDetail(item)}
         style={styles.itemContainer}>
         <View style={styles.itemWrapper}>
           {!isRightOutermost && (
-            <View style={styles.borderRightContainer}>
-              <View style={styles.borderRight} />
+            <View style={this.borderRightContainerStyle}>
+              <View style={this.borderRightStyle} />
             </View>
           )}
           <View style={[styles.itemInnerWrapper]}>
             <View style={styles.imageContainer}>
-              <CachedImage source={{uri: item.image}} style={styles.image} />
+              <Image
+                source={{uri: item.image}}
+                resizeMode="contain"
+                style={styles.image}
+              />
             </View>
-            <Text style={styles.name}>{item.short_name || item.name}</Text>
+            <Typography
+              type={TypographyType.LABEL_SEMI_MEDIUM}
+              style={styles.name}>
+              {item.short_name || item.name}
+            </Typography>
           </View>
-          {!isLastRow && <View style={styles.borderBottom} />}
+          {!isLastRow && <View style={this.borderBottomStyle} />}
           {!isLastRow && !isRightOutermost && (
             <View style={styles.dotContainer}>
-              <View style={styles.dot} />
+              <View style={this.dotStyle} />
             </View>
           )}
         </View>
-      </TouchableHighlight>
+      </BaseButton>
     );
+  }
+
+  get searchContainerStyle() {
+    return [
+      styles.searchContainer,
+      {
+        borderBottomWidth: this.theme.layout.borderWidthSmall,
+        borderColor: this.theme.color.border,
+        borderRadius: this.theme.layout.borderRadiusExtraSmall,
+        shadowColor: this.theme.color.shadow,
+        ...this.theme.layout.shadow,
+      },
+    ];
+  }
+
+  get searchIconStyle() {
+    return [
+      styles.searchIcon,
+      {
+        color: this.theme.color.placeholder,
+      },
+    ];
+  }
+
+  get borderBottomStyle() {
+    return [
+      styles.borderBottom,
+      {
+        height: this.theme.layout.borderWidthPixel,
+        backgroundColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get borderRightStyle() {
+    return [
+      styles.borderRight,
+      {
+        backgroundColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get borderRightContainerStyle() {
+    return [
+      styles.borderRightContainer,
+      {
+        width: this.theme.layout.borderWidthPixel,
+      },
+    ];
+  }
+
+  get dotStyle() {
+    return [styles.dot, {backgroundColor: this.theme.color.border}];
   }
 
   render() {
@@ -219,54 +311,61 @@ class PaymentMethodDetailModal extends PureComponent {
       ? this.state.searchData
       : this.state.data;
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.isLoading && <Loading center />}
-        <View style={styles.searchContainer}>
-          <Icon name="search" style={styles.searchIcon} />
-          <TextInput
-            placeholder="Tìm kiếm..."
-            placeholderTextColor={appConfig.colors.placeholder}
-            style={styles.input}
-            onChangeText={this.onChangeText}
-            value={this.state.text}
-            clearButtonMode="while-editing"
-          />
-        </View>
-        <FlatList
-          contentContainerStyle={{flexGrow: 1}}
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={NUM_COLUMS}
-          renderItem={({item, index}) =>
-            this.renderPaymentMethodDetail(data, {item, index})
-          }
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="on-drag"
-          style={styles.listContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
+      <ScreenWrapper>
+        <Container flex>
+          {this.state.isLoading && <Loading center />}
+          <Container style={this.searchContainerStyle}>
+            <Icon
+              bundle={BundleIconSetName.FEATHER}
+              name="search"
+              style={styles.searchIcon}
             />
-          }
-          ListEmptyComponent={
-            !this.state.isLoading && (
-              <NoResult
-                iconName={
-                  this.state.text
-                    ? 'magnify-close'
-                    : 'credit-card-remove-outline'
-                }
-                message={
-                  this.state.text
-                    ? 'Không tìm thấy thông tin'
-                    : 'Chưa có thông tin'
-                }
+            <Input
+              placeholder={this.props.t('detailModal.searchPlaceholder')}
+              style={[
+                styles.input,
+                this.theme.typography[TypographyType.LABEL_SEMI_HUGE],
+              ]}
+              onChangeText={this.onChangeText}
+              value={this.state.text}
+              clearButtonMode="while-editing"
+            />
+          </Container>
+          <FlatList
+            safeLayout
+            data={data}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={NUM_COLUMS}
+            renderItem={({item, index}) =>
+              this.renderPaymentMethodDetail(data, {item, index})
+            }
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag"
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
               />
-            )
-          }
-        />
-      </SafeAreaView>
+            }
+            ListEmptyComponent={
+              !this.state.isLoading && (
+                <NoResult
+                  iconName={
+                    this.state.text
+                      ? 'magnify-close'
+                      : 'credit-card-remove-outline'
+                  }
+                  message={
+                    this.state.text
+                      ? this.props.t('detailModal.informationNotFound')
+                      : this.props.t('detailModal.noInformation')
+                  }
+                />
+              )
+            }
+          />
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
@@ -278,26 +377,17 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     padding: 15,
-    borderRadius: 4,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
     zIndex: 1,
-    ...elevationShadowStyle(5),
   },
   searchIcon: {
     marginHorizontal: 10,
     fontSize: 22,
-    color: appConfig.colors.placeholder,
   },
   input: {
     flex: 1,
-    fontSize: 18,
   },
-  listContainer: {
-    backgroundColor: '#fff',
-  },
+
   itemContainer: {
     width: appConfig.device.width / NUM_COLUMS,
     height: appConfig.device.width / NUM_COLUMS,
@@ -325,32 +415,25 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    resizeMode: 'contain',
   },
   name: {
     marginTop: 10,
     textAlign: 'center',
-    color: '#333',
-    fontSize: 13,
   },
   borderRightContainer: {
     position: 'absolute',
     height: '100%',
-    right: -Util.pixel / 2,
-    width: Util.pixel,
+    right: -appConfig.device.pixel / 2,
     justifyContent: 'center',
   },
   borderRight: {
     height: '80%',
     width: '100%',
-    backgroundColor: '#ddd',
   },
   borderBottom: {
     position: 'absolute',
     width: '80%',
-    height: Util.pixel,
-    bottom: -Util.pixel / 2,
-    backgroundColor: '#ddd',
+    bottom: -appConfig.device.pixel / 2,
     alignSelf: 'center',
   },
   dotContainer: {
@@ -362,8 +445,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 2,
     height: 2,
-    backgroundColor: '#888',
   },
 });
 
-export default withTranslation()(PaymentMethodDetailModal);
+export default withTranslation('paymentMethod')(PaymentMethodDetailModal);

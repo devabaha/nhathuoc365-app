@@ -1,122 +1,156 @@
-import React, { useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Text } from 'react-native';
-import Container from '../../Layout/Container';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { NavBarProps } from './index';
-import appConfig from 'app-config';
-import { BACK_NAV_ICON_NAME } from '../../../constants';
-import { COMBO_LOCATION_TYPE } from '../constants';
-import Animated, { Easing, useValue, interpolate } from 'react-native-reanimated';
-
-const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
+import React, {useEffect, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// types
+import {Style} from 'src/Themes/interface';
+import {NavBarProps} from './index';
+// 3-party libs
+import Animated, {Easing, useValue, interpolate} from 'react-native-reanimated';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BACK_NAV_ICON_NAME} from 'src/constants';
+import {COMBO_LOCATION_TYPE} from '../constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {BaseButton, Container, Icon, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
-    container: {
-        borderBottomWidth: .5,
-        borderColor: '#ddd'
-    },
-    icon: {
-        fontSize: 24,
-        color: '#333',
-        padding: 15,
-        paddingLeft: 10,
-    },
-    iconClose: {
-        position: 'absolute',
-    },
-    navTextContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        zIndex: -1,
-        paddingHorizontal: 50,
-    },
-    title: {
-        textAlign: 'center',
-        color: '#333',
-        textTransform: 'uppercase',
-        fontWeight: '500',
-        letterSpacing: 1
-    },
-    descriptionContainer: {
-        backgroundColor: '#f5f5f5',
-    },
-    description: {
-        textAlign: 'center',
-        color: appConfig.colors.primary,
-        fontSize: 12,
-        paddingHorizontal: 5,
-        letterSpacing: .2
-    }
-})
+  icon: {
+    fontSize: 24,
+    padding: 15,
+    paddingLeft: 10,
+  },
+  iconClose: {
+    position: 'absolute',
+  },
+  navTextContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: -1,
+    paddingHorizontal: 50,
+  },
+  title: {
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontWeight: '500',
+    letterSpacing: 1,
+  },
+  descriptionContainer: {
+    paddingVertical: 10,
+  },
+  description: {
+    textAlign: 'center',
+    paddingHorizontal: 5,
+    letterSpacing: 0.2,
+  },
+});
 
+const NavBar = ({title, description, type, onPressBack}: NavBarProps) => {
+  const {theme} = useTheme();
 
-const NavBar = ({
-    title,
-    description,
-    type,
-    onPressBack
-}: NavBarProps) => {
-    const animatedOpacity = useValue(type === COMBO_LOCATION_TYPE.PROVINCE ? 0 : 1);
+  const animatedOpacity = useValue(
+    type === COMBO_LOCATION_TYPE.PROVINCE ? 0 : 1,
+  );
 
-    useEffect(() => {
-        Animated.timing(animatedOpacity, {
-            toValue: type === COMBO_LOCATION_TYPE.PROVINCE ? 0 : 1,
-            duration: 300,
-            easing: Easing.quad,
-        }).start();
-    }, [type])
+  useEffect(() => {
+    Animated.timing(animatedOpacity, {
+      toValue: type === COMBO_LOCATION_TYPE.PROVINCE ? 0 : 1,
+      duration: 300,
+      easing: Easing.quad,
+    }).start();
+  }, [type]);
 
-    return (
-        <>
-            <Container row style={styles.container}>
-                <TouchableOpacity onPress={onPressBack}>
-                    <AnimatedIcon
-                        name={BACK_NAV_ICON_NAME}
-                        style={[styles.icon, {
-                            opacity: animatedOpacity.interpolate({
-                                inputRange: [0, .4, 1],
-                                outputRange: [0, 1, 1]
-                            }),
-                            transform: [{
-                                translateX: interpolate(animatedOpacity, {
-                                    inputRange: [0, 1],
-                                    outputRange: [-10, 0]
-                                })
-                            }]
-                        }]}
-                    />
-                    <AnimatedIcon
-                        name="close"
-                        style={[styles.icon, styles.iconClose, {
-                            opacity: interpolate(animatedOpacity, {
-                                inputRange: [0, .4, 1],
-                                outputRange: [1, 0, 0]
-                            }),
-                            transform: [{
-                                translateX: interpolate(animatedOpacity, {
-                                    inputRange: [0, 1],
-                                    outputRange: [0, -10]
-                                })
-                            }]
-                        }]}
-                    />
-                </TouchableOpacity>
+  const containerStyle = useMemo(() => {
+    return {
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
 
-                <Container style={styles.navTextContainer}>
-                    <Text style={styles.title}>{title}</Text>
-                </Container>
-            </Container>
+  const descriptionContainerStyle = useMemo(() => {
+    return mergeStyles(styles.descriptionContainer, {
+      backgroundColor: theme.color.underlay,
+    });
+  }, [theme]);
 
-            {!!description && <Container paddingVertical={10} style={[ styles.descriptionContainer]}>
-                <Text numberOfLines={2} style={styles.description}>{description}</Text>
-            </Container>}
-        </>
-    );
-}
+  const iconBackAnimatedStyle: Style = useMemo(() => {
+    return {
+      opacity: animatedOpacity.interpolate({
+        inputRange: [0, 0.4, 1],
+        outputRange: [0, 1, 1],
+      }),
+      transform: [
+        {
+          translateX: interpolate(animatedOpacity, {
+            inputRange: [0, 1],
+            outputRange: [-10, 0],
+          }),
+        },
+      ],
+    };
+  }, []);
+
+  const iconCloseAnimatedStyle: Style = useMemo(() => {
+    return {
+      opacity: animatedOpacity.interpolate({
+        inputRange: [0, 0.4, 1],
+        outputRange: [1, 0, 0],
+      }),
+      transform: [
+        {
+          translateX: interpolate(animatedOpacity, {
+            inputRange: [0, 1],
+            outputRange: [0, -10],
+          }),
+        },
+      ],
+    };
+  }, []);
+
+  return (
+    <>
+      <Container row style={containerStyle}>
+        <BaseButton onPress={onPressBack}>
+          <Icon
+            bundle={BundleIconSetName.IONICONS}
+            reanimated
+            name={BACK_NAV_ICON_NAME}
+            style={[styles.icon, iconBackAnimatedStyle]}
+          />
+          <Icon
+            bundle={BundleIconSetName.IONICONS}
+            reanimated
+            name="close"
+            style={[styles.icon, styles.iconClose, iconCloseAnimatedStyle]}
+          />
+        </BaseButton>
+
+        <Container style={styles.navTextContainer}>
+          <Typography type={TypographyType.TITLE_MEDIUM} style={styles.title}>
+            {title}
+          </Typography>
+        </Container>
+      </Container>
+
+      {!!description && (
+        <Container style={descriptionContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_SMALL_PRIMARY}
+            numberOfLines={2}
+            style={styles.description}>
+            {description}
+          </Typography>
+        </Container>
+      )}
+    </>
+  );
+};
 
 export default React.memo(NavBar);

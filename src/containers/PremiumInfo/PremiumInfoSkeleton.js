@@ -1,60 +1,63 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Easing, Animated } from 'react-native';
-import Container from '../../components/Layout/Container';
+import React, {Component} from 'react';
+import {View, StyleSheet, Easing, Animated} from 'react-native';
+import {ScreenWrapper, Container} from 'src/components/base';
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
 import SkeletonLoading from '../../components/SkeletonLoading';
 
 const styles = StyleSheet.create({
   wrapper: {
-    flex: 1
+    flex: 1,
   },
   container: {
-    flex: 1,
     position: 'absolute',
-    height: '100%'
+    height: '100%',
   },
   premiumContainer: {
     paddingVertical: 10,
     paddingHorizontal: 5,
-    backgroundColor: '#fff',
     width: '100%',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   premium: {
-    borderRadius: 8
+    borderRadius: 8,
   },
   benefit: {
-    backgroundColor: '#fff',
     marginTop: 15,
-    padding: 15
+    padding: 15,
   },
   iconContainer: {
-    borderRadius: 30
+    borderRadius: 30,
   },
   benefitContainer: {
     flex: 1,
-    marginLeft: 15
+    marginLeft: 15,
   },
   benefitTitle: {
     marginBottom: 5,
-    borderRadius: 8
+    borderRadius: 8,
   },
   benefitDescription: {
     marginTop: 10,
-    borderRadius: 5
+    borderRadius: 5,
   },
   loyaltyContainer: {
-    backgroundColor: '#fff',
     padding: 15,
     marginTop: 15,
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 });
 
 class PremiumInfoSkeleton extends Component {
+  static contextType = ThemeContext;
+
   state = {
-    loading: this.props.loading
+    loading: this.props.loading,
   };
   animatedOpacity = new Animated.Value(1);
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.loading !== this.props.loading) {
@@ -62,11 +65,11 @@ class PremiumInfoSkeleton extends Component {
         toValue: nextProps.loading ? 1 : 0,
         duration: 200,
         easing: Easing.quad,
-        useNativeDriver: true
-      }).start(({ finished }) => {
+        useNativeDriver: true,
+      }).start(({finished}) => {
         if (finished) {
           this.setState({
-            loading: nextProps.loading
+            loading: nextProps.loading,
           });
         }
       });
@@ -113,26 +116,28 @@ class PremiumInfoSkeleton extends Component {
 
   render() {
     return (
-      <View style={styles.wrapper}>
-        <Animated.View
+      <>
+        <Container
+          noBackground
+          animated
+          flex
           style={[
             {
-              flex: 1,
               opacity: this.animatedOpacity.interpolate({
                 inputRange: [0, 1],
-                outputRange: [1, 0]
-              })
-            }
-          ]}
-        >
+                outputRange: [1, 0],
+              }),
+            },
+          ]}>
           {this.props.children}
-        </Animated.View>
+        </Container>
 
-        <Animated.View
+        <Container
+          noBackground
+          animated
           pointerEvents="none"
-          style={[styles.container, { opacity: this.animatedOpacity }]}
-        >
-          <Container row style={styles.premiumContainer}>
+          style={[styles.container, {opacity: this.animatedOpacity}]}>
+          <Container row style={[styles.premiumContainer]}>
             {this.renderPremium()}
           </Container>
           {this.renderBenefits()}
@@ -141,8 +146,8 @@ class PremiumInfoSkeleton extends Component {
             <SkeletonLoading width="80%" height={15} style={styles.premium} />
             <SkeletonLoading width="10%" height={15} style={styles.premium} />
           </Container>
-        </Animated.View>
-      </View>
+        </Container>
+      </>
     );
   }
 }

@@ -1,8 +1,8 @@
-import React from 'react';
-import {TextProps} from 'react-native';
+import {Children} from 'src/components/base';
+import {TypographyProps} from 'src/components/base/Typography';
 
 export {default} from './TextPressable';
 
-export interface TextPressableProps extends TextProps {
-    children: React.ReactNode
+export interface TextPressableProps extends TypographyProps {
+  children: Children;
 }

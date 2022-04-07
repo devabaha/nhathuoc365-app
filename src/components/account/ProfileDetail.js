@@ -1,37 +1,42 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  SectionList,
-  TouchableHighlight,
-  Alert,
-} from 'react-native';
-import store from '../../store/Store';
-import HorizontalInfoItem from './HorizontalInfoItem';
-import {Actions} from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import Button from '../Button';
+import {View, StyleSheet, Alert} from 'react-native';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
-import Loading from '../Loading';
-import EventTracker from '../../helper/EventTracker';
-import firebaseAuth from '@react-native-firebase/auth';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+// routing
+import {refresh, reset, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import HorizontalInfoItem from './HorizontalInfoItem';
+import Button from 'src/components/Button';
+import Loading from 'src/components/Loading';
+import {
+  ScreenWrapper,
+  Icon,
+  IconButton,
+  SectionList,
+} from 'src/components/base';
 
 class ProfileDetail extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      logout_loading: false,
-    };
-    this.eventTracker = new EventTracker();
-    this.unmounted = false;
-  }
+  state = {
+    logout_loading: false,
+  };
+  eventTracker = new EventTracker();
+  unmounted = false;
 
-  componentWillUnmount() {
-    this.unmounted = true;
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   get sectionData() {
@@ -93,33 +98,33 @@ class ProfileDetail extends Component {
 
   componentDidMount() {
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         right: this._renderRightButton,
       }),
     );
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
+
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
-  _renderRightButton = () => {
-    return (
-      <TouchableHighlight
-        style={styles.rightBtnEdit}
-        underlayColor="transparent"
-        onPress={this._onShowEditProfile}
-        hitSlop={HIT_SLOP}>
-        <Icon name="edit" size={24} color="#ffffff" />
-      </TouchableHighlight>
-    );
-  };
-
   _onShowEditProfile = () => {
-    Actions.push(appConfig.routes.editProfile, {
-      userInfo: this.props.userInfo,
-    });
+    push(
+      appConfig.routes.editProfile,
+      {
+        user_info: this.props.userInfo,
+      },
+      this.theme,
+    );
   };
 
   handleLogout = () => {
@@ -158,7 +163,7 @@ class ProfileDetail extends Component {
             message: t('signOut.successMessage'),
             type: 'success',
           });
-          Actions.reset(appConfig.routes.sceneWrapper);
+          reset(appConfig.routes.sceneWrapper);
           break;
         default:
           console.log(response);
@@ -185,32 +190,49 @@ class ProfileDetail extends Component {
     return <HorizontalInfoItem data={item} />;
   };
 
+  renderIconLogout = () => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+        name="logout-variant"
+        style={[styles.iconLogOut, this.iconStyle]}
+      />
+    );
+  };
+
+  _renderRightButton = () => {
+    return (
+      <IconButton
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="edit"
+        iconStyle={[styles.iconRightBtn, this.iconStyle]}
+        style={styles.rightBtnEdit}
+        underlayColor="transparent"
+        onPress={this._onShowEditProfile}
+        hitSlop={HIT_SLOP}
+      />
+    );
+  };
+
+  get iconStyle() {
+    return {color: this.theme.color.white};
+  }
+
   render() {
     const sections = this.sectionData;
     const {t} = this.props;
 
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <SectionList
-          style={{flex: 1}}
+          safeLayout
+          style={styles.sectionList}
           renderItem={this._renderItems}
           ListFooterComponent={() => (
             <Button
-              iconRight={
-                <IconMaterialCommunity
-                  name="logout-variant"
-                  size={24}
-                  color="#333"
-                  style={{
-                    position: 'absolute',
-                    right: 15,
-                    alignSelf: 'center',
-                  }}
-                />
-              }
-              // shadow
+              neutral
+              iconRight={this.renderIconLogout()}
               containerStyle={styles.logoutContainerStyle}
-              btnContainerStyle={styles.logoutBtn}
               titleStyle={styles.logoutTitleBtn}
               title={t('signOut.title')}
               onPress={this.handleLogout}
@@ -222,42 +244,46 @@ class ProfileDetail extends Component {
           keyExtractor={(item, index) => `${item.id}-${index}`}
           extraData={store.user_info}
         />
-
         {this.state.logout_loading && <Loading center />}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#EFEFF4',
+  },
+  sectionList: {
+    flex: 1,
   },
   logoutBtn: {
-    marginBottom: 10,
-    backgroundColor: '#dfdfdf',
+    alignSelf: 'center',
     width: '80%',
   },
-  logoutTitleBtn: {
-    color: '#333',
-  },
+  logoutTitleBtn: {},
   separatorSection: {
     width: '100%',
     height: 5,
   },
   logoutContainerStyle: {
-    marginTop: 50,
+    marginTop: 15,
   },
   separatorItem: {
     height: 1,
-    backgroundColor: '#EFEFF4',
   },
   rightBtnEdit: {
     padding: 10,
+  },
+  iconLogOut: {
+    fontSize: 24,
+    position: 'absolute',
+    right: 15,
+    alignSelf: 'center',
+  },
+  iconRightBtn: {
+    fontSize: 24,
   },
 });
 

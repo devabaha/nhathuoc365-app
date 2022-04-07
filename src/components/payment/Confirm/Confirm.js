@@ -1,41 +1,44 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  TextInput,
-  Keyboard,
-  Alert,
-} from 'react-native';
+import {View, StyleSheet, Keyboard, Alert} from 'react-native';
+// 3-party libs
 import Clipboard from '@react-native-community/clipboard';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon5 from 'react-native-vector-icons/FontAwesome5';
-import {Actions, ActionConst} from 'react-native-router-flux';
-import store from '../../../store/Store';
-import ListHeader from '../../stores/ListHeader';
-import PopupConfirm from '../../PopupConfirm';
-import Sticker from '../../Sticker';
-import RightButtonChat from '../../RightButtonChat';
+import {debounce} from 'lodash';
+// configs
 import appConfig from 'app-config';
-import {USE_ONLINE} from 'app-packages/tickid-voucher';
-import EventTracker from '../../../helper/EventTracker';
-import {ANALYTICS_EVENTS_NAME} from '../../../constants';
-import CartItem from '../CartItem';
-import Loading from '../../Loading';
+import store from 'app-store';
+// network
+import APIHandler from '../../../network/APIHandler';
+// helpers
 import {
   isConfigActive,
-  CONFIG_KEY,
   getValueFromConfigKey,
-} from '../../../helper/configKeyHandler';
-import APIHandler from '../../../network/APIHandler';
-import {APIRequest} from '../../../network/Entity';
-import Container from '../../Layout/Container/Container';
+} from 'app-helper/configKeyHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+import {servicesHandler} from 'app-helper/servicesHandler';
+// routing
+import {pop, push, refresh, reset} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ANALYTICS_EVENTS_NAME} from '../../../constants';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 import {
   CART_PAYMENT_STATUS,
   CART_PAYMENT_TYPES,
 } from '../../../constants/cart/types';
+import {USE_ONLINE} from 'app-packages/tickid-voucher';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from '../../../network/Entity';
+import EventTracker from 'app-helper/EventTracker';
+// custom components
+import Loading from '../../Loading';
+import ListHeader from '../../stores/ListHeader';
+import PopupConfirm from '../../PopupConfirm';
+import Sticker from '../../Sticker';
+import RightButtonChat from '../../RightButtonChat';
 import {
   PaymentMethodSection,
   DeliverySection,
@@ -45,44 +48,56 @@ import {
   CommissionsSection,
   ActionButtonSection,
   OrderInfoSection,
+  AddressSection,
+  POSSection,
+  ProductSection,
+  DeliveryScheduleSection,
 } from './components';
-import AddressSection from './components/AddressSection';
-import {debounce} from 'lodash';
-import POSSection from './components/POSSection';
+import {
+  Input,
+  ScreenWrapper,
+  Container,
+  Icon,
+  Typography,
+} from 'src/components/base';
+import Button from 'src/components/Button';
+import Indicator from 'src/components/Indicator';
 
 class Confirm extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     orderEdited: () => {},
   };
-  constructor(props) {
-    super(props);
 
-    const is_paymenting =
-      props.data && props.data.status == CART_STATUS_ORDERING;
+  state = {
+    single:
+      this.props.from_page != 'orders_item' ||
+      (this.props.data && this.props.data?.status == CART_STATUS_ORDERING),
+    copy_sticker_flag: false,
+    address_height: 50,
+    continue_loading: false,
+    data: this.props.data || store.cart_data,
+    noteOffset: 0,
+    suggest_register: false,
+    name_register: '',
+    tel_register: '',
+    pass_register: '',
+    paymentMethod: {},
+    loading: false,
+    isConfirming: false,
+  };
+  refs_confirm_page = React.createRef();
+  unmounted = false;
+  resetScrollToCoords = {x: 0, y: 0};
+  getShippingInfoRequest = new APIRequest();
+  reorderRequest = new APIRequest();
+  requests = [this.getShippingInfoRequest, this.reorderRequest];
+  eventTracker = new EventTracker();
+  refNoteModalInput = null;
 
-    this.state = {
-      single: this.props.from_page != 'orders_item' || is_paymenting,
-      coppy_sticker_flag: false,
-      address_height: 50,
-      continue_loading: false,
-      data: props.data || store.cart_data,
-      noteOffset: 0,
-      suggest_register: false,
-      name_register: '',
-      tel_register: '',
-      pass_register: '',
-      paymentMethod: {},
-      loading: false,
-      isConfirming: false,
-    };
-    this.refs_confirm_page = React.createRef();
-    this.unmounted = false;
-    this.resetScrollToCoords = {x: 0, y: 0};
-    this.getShippingInfoRequest = new APIRequest();
-    this.reorderRequest = new APIRequest();
-    this.requests = [this.getShippingInfoRequest, this.reorderRequest];
-    this.eventTracker = new EventTracker();
-    this.refNoteModalInput = null;
+  get theme() {
+    return getTheme(this);
   }
 
   get isSiteUseShipNotConfirming() {
@@ -115,7 +130,7 @@ class Confirm extends Component {
     );
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (this.props.notice_data != nextProps.notice_data) {
       this.setState(
         {
@@ -126,10 +141,13 @@ class Confirm extends Component {
         },
       );
     }
+
+    return true;
   }
 
   componentDidMount() {
     this._initial(this.props);
+
     const is_paymenting =
       this.state.data && this.state.data.status == CART_STATUS_ORDERING;
 
@@ -140,7 +158,7 @@ class Confirm extends Component {
       this._getOrdersItem(this.props.data.site_id, this.props.data.id, false);
     }
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         right: this._renderRightButton(),
       }),
     );
@@ -160,22 +178,7 @@ class Confirm extends Component {
           props.notice_data.page_id,
         );
       }
-    } else {
-      // callback when unmount this sreen
-      store.setStoreUnMount('confirm_head', this._unMount.bind(this));
-
-      Actions.refresh({
-        onBack: () => {
-          this._unMount();
-
-          Actions.pop();
-        },
-      });
     }
-  }
-
-  _unMount() {
-    Keyboard.dismiss();
   }
 
   async _siteInfo(site_id) {
@@ -189,7 +192,7 @@ class Confirm extends Component {
 
           this.cart_tel = response.data.tel;
 
-          Actions.refresh({
+          refresh({
             title: '#' + this.state.data.cart_code,
             right: this._renderRightButton.bind(this),
           });
@@ -324,7 +327,7 @@ class Confirm extends Component {
               });
 
               // hide back button
-              Actions.refresh({
+              refresh({
                 hideBackImage: true,
                 onBack: () => false,
                 panHandlers: null,
@@ -456,6 +459,9 @@ class Confirm extends Component {
               if (this.props.add_new) {
                 this.props.add_new();
               }
+              this.setState({
+                loading: false,
+              });
             },
           },
         ],
@@ -471,7 +477,8 @@ class Confirm extends Component {
   }
 
   goToTransaction = (siteId, cartId) => {
-    Actions.push(appConfig.routes.transaction, {
+    servicesHandler({
+      type: SERVICES_TYPE.PAYMENT_TRANSACTION,
       siteId,
       cartId,
       onPop: () => {
@@ -481,27 +488,12 @@ class Confirm extends Component {
     });
   };
 
+  handleProductLoading = (loading) => {
+    this.setState({loading});
+  };
+
   // on save
   _onSave() {
-    // required cart note
-
-    // if (!store.user_cart_note) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Vui lòng nhập phần ghi chú',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         if (this.refs_cart_note) {
-    //           this.refs_cart_note.focus();
-    //         }
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-    // end required cart note
-
     if (store.user_cart_note) {
       // update cart note
       this._updateCartNote(() => {
@@ -515,27 +507,27 @@ class Confirm extends Component {
   }
 
   _goAddress = () => {
-    const onBack = () => {
-      Actions.push(appConfig.routes.paymentConfirm, {
-        type: ActionConst.REPLACE,
-      });
-    };
-
-    Actions.push(appConfig.routes.myAddress, {
-      isVisibleStoreAddress: true,
-      addressId: store.cart_data?.address?.id,
-    });
+    push(
+      appConfig.routes.myAddress,
+      {
+        isVisibleStoreAddress: true,
+        addressId: store.cart_data?.address?.id,
+      },
+      this.theme,
+    );
   };
 
   _goPaymentMethod = (cart_data) => {
-    Actions.push(appConfig.routes.paymentMethod, {
+    servicesHandler({
+      type: SERVICES_TYPE.PAYMENT_METHOD,
+      theme: this.theme,
       selectedMethod: cart_data.payment_method,
       selectedPaymentMethodDetail: cart_data.payment_method_detail,
       price: cart_data.total_before_view,
       totalPrice: cart_data.total_selected,
       extraFee: cart_data.item_fee,
-      store_id: cart_data.site_id,
-      cart_id: cart_data.id,
+      storeId: cart_data.site_id,
+      cartId: cart_data.id,
       onUpdatePaymentMethod: (data) => {
         if (!this.state.single) {
           this.setState({data});
@@ -553,13 +545,13 @@ class Confirm extends Component {
   };
 
   // show popup confirm remove item in cart
-  _removeItemCartConfirm(item) {
+  _removeItemCartConfirm = (item) => {
     if (this.refs_remove_item_confirm) {
       this.refs_remove_item_confirm.open();
     }
 
     this.cartItemConfirmRemove = item;
-  }
+  };
 
   // close popup confirm remove item in cart
   _closePopupConfirm() {
@@ -611,7 +603,7 @@ class Confirm extends Component {
 
             if (store.cart_data == null || store.cart_products == null) {
               store.setRefreshHomeChange(store.refresh_home_change + 1);
-              Actions.pop();
+              pop();
             }
           }, this._delay());
 
@@ -639,19 +631,19 @@ class Confirm extends Component {
   _showSticker() {
     this.setState(
       {
-        coppy_sticker_flag: true,
+        copy_sticker_flag: true,
       },
       () => {
         setTimeout(() => {
           this.setState({
-            coppy_sticker_flag: false,
+            copy_sticker_flag: false,
           });
         }, 2000);
       },
     );
   }
 
-  _coppyAddress(address) {
+  _copyAddress(address) {
     const {t} = this.props;
     var address_string = `${t('confirm.address.title')}: ${address.name}, ${
       address.tel
@@ -722,23 +714,21 @@ class Confirm extends Component {
      * for the case this screen pushed from Orders
      * so Orders can refresh to update status of this cart before it shown.
      */
-    Actions.refresh({});
+    refresh({});
 
     this._goBack();
 
     clearTimeout(this._delayViewOrders);
     this._delayViewOrders = setTimeout(() => {
-      Actions.orders_item({
-        title: `#${store.cart_data.cart_code}`,
-        data: store.cart_data,
-        tel: store.store_data.tel,
-      });
-
-      // add stack unmount
-      store.setStoreUnMount('confirm', () => {
-        store.resetCartData();
-        Actions.pop();
-      });
+      push(
+        appConfig.routes.ordersDetail,
+        {
+          title: `#${store.cart_data.cart_code}`,
+          data: store.cart_data,
+          tel: store.store_data.tel,
+        },
+        this.theme,
+      );
     }, 500);
   }
 
@@ -752,7 +742,7 @@ class Confirm extends Component {
   }
 
   _goBack() {
-    Actions.pop();
+    pop();
   }
 
   _onLayout(event) {
@@ -763,60 +753,9 @@ class Confirm extends Component {
     }
   }
 
-  // _scrollToTop(top = 0) {
-  //   if (this.refs_confirm_page.current) {
-  //     this.refs_confirm_page.current.scrollTo({ x: 0, y: top, animated: true });
-  //     this.setState({
-  //       scrollTop: top
-  //     });
-  //   }
-  // }
-
-  openMyVoucher = () => {
-    Actions.push(appConfig.routes.myVoucher, {
-      mode: USE_ONLINE,
-      siteId: this.props.store
-        ? this.props.store.cart_store_id
-        : store.cart_store_id,
-      onUseVoucherOnlineSuccess: this.handleUseVoucherOnlineSuccess,
-      onUseVoucherOnlineFailure: this.handleUseOnlineFailure,
-    });
-  };
-
-  openCurrentVoucher = (userVoucher) => {
-    Actions.push(appConfig.routes.voucherDetail, {
-      mode: USE_ONLINE,
-      title: userVoucher.voucher_name,
-      voucherId: userVoucher.id,
-      onRemoveVoucherSuccess: this.handleRemoveVoucherSuccess,
-      onRemoveVoucherFailure: this.handleRemoveVoucherFailure,
-    });
-  };
-
-  handleUseVoucherOnlineSuccess = (cartData, fromDetailVoucher = false) => {
-    Actions.pop();
-    if (fromDetailVoucher) {
-      setTimeout(Actions.pop, 0);
-    }
-    action(() => {
-      store.setCartData(cartData);
-    })();
-  };
-
-  handleUseOnlineFailure = (response) => {};
-
-  handleRemoveVoucherSuccess = (cartData) => {
-    Actions.pop();
-    action(() => {
-      store.setCartData(cartData);
-    })();
-  };
-
-  handleRemoveVoucherFailure = (response) => {};
-
   goBackStores(item) {
     if (store.no_refresh_home_change) {
-      Actions.pop();
+      pop();
     } else {
       store.setStoreData({
         id: item.site_id,
@@ -825,9 +764,7 @@ class Confirm extends Component {
       });
       store.goStoreNow = true;
 
-      Actions.primaryTabbar({
-        type: ActionConst.RESET,
-      });
+      reset(appConfig.routes.primaryTabbar);
     }
   }
 
@@ -875,12 +812,12 @@ class Confirm extends Component {
   }
 
   _onRegister() {
-    Actions.push(appConfig.routes.phoneAuth, {
+    push(appConfig.routes.phoneAuth, {
       tel: store.cart_data.address.tel,
     });
   }
 
-  async _coppyCart() {
+  async _copyCart() {
     if (this.item_coppy) {
       this.reorderRequest.data = APIHandler.cart_reorder(
         this.item_coppy.site_id,
@@ -890,23 +827,25 @@ class Confirm extends Component {
         var response = await this.reorderRequest.promise();
 
         if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-            Events.trigger(RELOAD_STORE_ORDERS);
-          })();
+          store.setCartData(response.data);
+          store.setOrdersKeyChange(store.orders_key_change + 1);
+          Events.trigger(RELOAD_STORE_ORDERS);
 
           flashShowMessage({
             type: 'success',
             message: response.message,
           });
 
-          Actions.pop();
+          pop();
 
           setTimeout(() => {
-            Actions.push(appConfig.routes.paymentConfirm, {
-              goConfirm: true,
-            });
+            push(
+              appConfig.routes.paymentConfirm,
+              {
+                goConfirm: true,
+              },
+              this.theme,
+            );
           }, 1000);
         }
       } catch (e) {
@@ -914,7 +853,7 @@ class Confirm extends Component {
       }
     }
 
-    this._closePopupCoppy();
+    this._closePopupCopy();
   }
 
   async _editCart() {
@@ -957,13 +896,13 @@ class Confirm extends Component {
     }
   }
 
-  _closePopupCoppy() {
+  _closePopupCopy() {
     if (this.refs_coppy_cart) {
       this.refs_coppy_cart.close();
     }
   }
 
-  confirmCoppyCart(item) {
+  confirmCopyCart(item) {
     this.item_coppy = item;
 
     if (this.refs_coppy_cart) {
@@ -980,9 +919,13 @@ class Confirm extends Component {
   }
 
   confirmFeedback(cart_data) {
-    Actions.rating({
-      cart_data,
-    });
+    push(
+      appConfig.routes.rating,
+      {
+        cart_data,
+      },
+      this.theme,
+    );
   }
 
   handleScroll = (e) => {
@@ -997,26 +940,29 @@ class Confirm extends Component {
     };
   };
 
-  renderCartProducts(products, single) {
+  renderCheckIcon = (titleStyle) => {
     return (
-      <View style={styles.items_box}>
-        {products.map((product, index) => {
-          if (!single && product.selected != 1) {
-            return null;
-          }
-
-          return (
-            <CartItem
-              key={index}
-              parentCtx={this}
-              item={product}
-              onRemoveCartItem={() => this._removeItemCartConfirm(product)}
-              noAction={!single || this.state.isConfirming}
-            />
-          );
-        })}
-      </View>
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        name="check-circle"
+        style={[titleStyle, styles.checkIcon]}
+      />
     );
+  };
+
+  get successBoxInputStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
+
+  get successBoxStyle() {
+    return {
+      borderTopLeftRadius: this.theme.layout.borderRadiusSmall,
+      borderTopRightRadius: this.theme.layout.borderRadiusSmall,
+    };
   }
 
   render() {
@@ -1051,12 +997,12 @@ class Confirm extends Component {
       (cart_data.status == CART_STATUS_ORDERING && address_data == null)
     ) {
       return (
-        <View style={styles.container}>
+        <ScreenWrapper style={styles.container}>
           <Indicator />
-        </View>
+        </ScreenWrapper>
       );
     }
-
+console.log(typeof cart_data?.commissions?.map)
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const is_ready = cart_data.status == CART_STATUS_READY;
@@ -1069,12 +1015,15 @@ class Confirm extends Component {
       !this.isPaid &&
       !isConfigActive(CONFIG_KEY.NOT_ALLOW_EDIT_CART_KEY);
 
+    const isAllowedEditScheduleDeliveryTime =
+      cart_data.status < CART_STATUS_PROCESSING;
+
     const comboAddress =
       (address_data?.province_name || '') +
       (address_data?.district_name ? ' • ' + address_data?.district_name : '') +
       (address_data?.ward_name ? ' • ' + address_data?.ward_name : '');
 
-    const POSCode = cart_data?.pos_details;
+    const posCode = cart_data?.pos_details;
 
     const deliveryCode =
       cart_data.delivery_details &&
@@ -1090,13 +1039,14 @@ class Confirm extends Component {
     const storeInfo = cart_data?.store;
 
     return (
-      <>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
 
         <KeyboardAwareScrollView
           ref={this.refs_confirm_page}
           style={styles.container}
           scrollEventThrottle={16}
+          extraScrollHeight={100}
           keyboardShouldPersistTaps="handled"
           resetScrollToCoords={this.resetScrollToCoords}
           onMomentumScrollEnd={this.handleScroll}
@@ -1111,14 +1061,15 @@ class Confirm extends Component {
             paymentStatusView={cart_data.payment_status_name}
           />
 
-          {!!cart_data?.pos_details && <POSSection code={POSCode} />}
+          {!!cart_data?.pos_details && <POSSection code={posCode} />}
 
           {!!cart_data?.delivery_details && (
             <DeliverySection
               statusName={cart_data.delivery_details?.status_name}
               statusColor={
-                appConfig.colors.delivery[cart_data.delivery_details?.status] ||
-                appConfig.colors.cartType[cart_data.cart_type]
+                this.theme.color.deliveryStatus[
+                  cart_data.delivery_details?.status
+                ] || this.theme.color.cartType[cart_data.cart_type]
               }
               code={deliveryCode}
             />
@@ -1137,8 +1088,18 @@ class Confirm extends Component {
               onPressActionBtn={
                 single && !this.state.isConfirming
                   ? this._goAddress
-                  : () => this._coppyAddress(address_data)
+                  : () => this._copyAddress(address_data)
               }
+            />
+          )}
+
+          {isConfigActive(CONFIG_KEY.ALLOW_CHOOSE_DELIVERY_TIME_KEY) && (
+            <DeliveryScheduleSection
+              editable={isAllowedEditScheduleDeliveryTime}
+              dateTime={this.cartData?.delivery_time}
+              siteId={this.cartData.site_id}
+              cartId={this.cartData.id}
+              title={t('confirm.scheduleDelivery.title')}
             />
           )}
 
@@ -1166,24 +1127,16 @@ class Confirm extends Component {
             />
           )}
 
-          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <View style={styles.address_name_box}>
-              <View style={styles.box_icon_label}>
-                <Icon5
-                  style={styles.icon_label}
-                  name="shopping-cart"
-                  size={12}
-                />
-                <Text style={styles.input_label}>
-                  {single
-                    ? t('confirm.items.selected')
-                    : t('confirm.items.shopped')}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {this.renderCartProducts(cart_products_confirm, single)}
+          <ProductSection
+            title={
+              single ? t('confirm.items.selected') : t('confirm.items.shopped')
+            }
+            products={cart_products_confirm}
+            isProductVisible={single}
+            isProductActionVisible={single && !this.state.isConfirming}
+            onRemoveCartItem={this._removeItemCartConfirm}
+            onProductLoadingStateChange={this.handleProductLoading}
+          />
 
           {(!single ||
             !getValueFromConfigKey(CONFIG_KEY.SITE_USE_SHIP) ||
@@ -1207,33 +1160,35 @@ class Confirm extends Component {
             siteId={cart_data.site_id}
             voucherStatus={cart_data.voucher_status}
           />
+
           <CommissionsSection commissions={cart_data?.commissions} />
 
           <ActionButtonSection
+            safeLayout={!single && !this.canTransaction}
             editable={isAllowedEditCart}
             onEdit={this.confirmEditCart.bind(this, cart_data)}
             cancelable={is_ready}
             onCancel={this.confirmCancelCart.bind(this, cart_data)}
             canReorder={can_reorder}
-            onReorder={this.confirmCoppyCart.bind(this, cart_data)}
+            onReorder={this.confirmCopyCart.bind(this, cart_data)}
             // canAddMore={is_paymenting}
             onAddMore={this.goBackStores.bind(this, cart_data)}
             canFeedback={is_completed && cart_data.status > 1}
             onFeedback={this.confirmFeedback.bind(this, cart_data)}
           />
 
-          {is_paymenting && <View style={styles.mt8}></View>}
+          {(single || this.canTransaction) && <View style={styles.mt8}></View>}
         </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (
           <PopupConfirm
+            allPositive
             ref_popup={(ref) => (this.popup_message = ref)}
             title={t('confirm.order.popup.notLoggedIn.description')}
-            noTitle={t('confirm.order.popup.notLoggedIn.cancel')}
-            noBlur
-            noConfirm={this._viewOrders.bind(this)}
-            yesTitle={t('confirm.order.popup.notLoggedIn.accept')}
-            yesConfirm={this._onRegister.bind(this)}
+            yesTitle={t('confirm.order.popup.notLoggedIn.cancel')}
+            yesConfirm={this._viewOrders.bind(this)}
+            noTitle={t('confirm.order.popup.notLoggedIn.accept')}
+            noConfirm={this._onRegister.bind(this)}
             height={300}
             otherClose={false}
             style={{
@@ -1241,29 +1196,33 @@ class Confirm extends Component {
             }}
             content={(title) => {
               return (
-                <View style={styles.success_box}>
+                <Container style={[styles.success_box, this.successBoxStyle]}>
                   <View style={styles.success_icon_box}>
-                    <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                    <Text style={styles.success_icon_label}>
+                    <Typography
+                      type={TypographyType.TITLE_MEDIUM_PRIMARY}
+                      style={styles.success_icon_label}
+                      renderIconBefore={this.renderCheckIcon}>
                       {t('confirm.order.popup.title')}
-                    </Text>
+                    </Typography>
                   </View>
-                  <Text style={styles.success_title}>{title}</Text>
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={styles.success_title}>
+                    {title}
+                  </Typography>
 
-                  <TextInput
+                  <Input
                     ref={(ref) => (this.refs_name_register = ref)}
-                    style={{
-                      borderWidth: Util.pixel,
-                      borderColor: '#dddddd',
-                      padding: 8,
-                      borderRadius: 3,
-                      marginTop: 12,
-                    }}
+                    style={[
+                      {
+                        padding: 8,
+                        marginTop: 12,
+                      },
+                      this.successBoxInputStyle,
+                    ]}
                     keyboardType="default"
                     maxLength={100}
                     placeholder={t('confirm.order.popup.userPlaceholder')}
-                    placeholderTextColor="#999999"
-                    underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
                         name_register: value,
@@ -1272,20 +1231,18 @@ class Confirm extends Component {
                     value={this.state.name_register}
                   />
 
-                  <TextInput
+                  <Input
                     ref={(ref) => (this.refs_tel_register = ref)}
-                    style={{
-                      borderWidth: Util.pixel,
-                      borderColor: '#dddddd',
-                      padding: 8,
-                      borderRadius: 3,
-                      marginTop: 8,
-                    }}
+                    style={[
+                      {
+                        padding: 8,
+                        marginTop: 8,
+                      },
+                      this.successBoxInputStyle,
+                    ]}
                     keyboardType="default"
                     maxLength={250}
                     placeholder={t('confirm.order.popup.telPlaceholder')}
-                    placeholderTextColor="#999999"
-                    underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
                         tel_register: value,
@@ -1293,12 +1250,13 @@ class Confirm extends Component {
                     }}
                     value={this.state.tel_register}
                   />
-                </View>
+                </Container>
               );
             }}
           />
         ) : (
           <PopupConfirm
+            allPositive
             ref_popup={(ref) => (this.popup_message = ref)}
             title={t('confirm.order.popup.loggedIn.description')}
             noTitle={t('confirm.order.popup.loggedIn.cancel')}
@@ -1309,22 +1267,28 @@ class Confirm extends Component {
             otherClose={false}
             content={(title) => {
               return (
-                <View style={styles.success_box}>
+                <Container style={[styles.success_box, this.successBoxStyle]}>
                   <View style={styles.success_icon_box}>
-                    <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                    <Text style={styles.success_icon_label}>
+                    <Typography
+                      type={TypographyType.TITLE_MEDIUM_PRIMARY}
+                      style={styles.success_icon_label}
+                      renderIconBefore={this.renderCheckIcon}>
                       {t('confirm.order.popup.title')}
-                    </Text>
+                    </Typography>
                   </View>
-                  <Text style={styles.success_title}>{title}</Text>
-                </View>
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM}
+                    style={styles.success_title}>
+                    {title}
+                  </Typography>
+                </Container>
               );
             }}
           />
         )}
 
         <Sticker
-          active={this.state.coppy_sticker_flag}
+          active={this.state.copy_sticker_flag}
           message={t('confirm.copy.success')}
         />
 
@@ -1348,10 +1312,10 @@ class Confirm extends Component {
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_coppy_cart = ref)}
-          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
+          title={t('cart:popup.reorder.message')}
           height={110}
-          noConfirm={this._closePopupCoppy.bind(this)}
-          yesConfirm={this._coppyCart.bind(this)}
+          noConfirm={this._closePopupCopy.bind(this)}
+          yesConfirm={this._copyCart.bind(this)}
           otherClose={false}
         />
 
@@ -1364,72 +1328,65 @@ class Confirm extends Component {
           otherClose={false}
         />
 
-        {single ? (
-          <Container row style={{bottom: store.keyboardTop}}>
-            {this.state.isConfirming && (
-              <TouchableHighlight
-                style={styles.cart_payment_btn_box}
-                underlayColor="transparent"
-                onPress={this.handleEditConfirmingCart.bind(this)}>
-                <View
-                  style={[styles.cart_payment_btn, {backgroundColor: '#bbb'}]}>
-                  <View style={styles.cart_payment_btn_icon}>
-                    <Icon name="edit" size={20} color="#fff" />
-                  </View>
-                  <Text style={styles.cart_payment_btn_title}>
-                    {t('confirm.edit')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
+        {(single || this.canTransaction) && (
+          <Container
+            row
+            safeLayout={!store.keyboardTop}
+            style={{bottom: store.keyboardTop}}>
+            {single && this.state.isConfirming && (
+              <Button
+                neutral
+                containerStyle={[
+                  styles.cart_payment_btn_box,
+                  {paddingRight: 0},
+                ]}
+                titleStyle={styles.cart_payment_btn_title}
+                onPress={this.handleEditConfirmingCart.bind(this)}
+                renderIconLeft={(titleStyle, buttonStyle, fontStyle) => {
+                  return (
+                    <Icon
+                      bundle={BundleIconSetName.FONT_AWESOME}
+                      name="edit"
+                      style={[fontStyle, styles.btnBoxIcon]}
+                    />
+                  );
+                }}>
+                {t('confirm.edit')}
+              </Button>
             )}
-            <TouchableHighlight
-              style={styles.cart_payment_btn_box}
-              underlayColor="transparent"
-              onPress={() => this.handleSubmit(cart_data)}>
-              <View style={styles.cart_payment_btn}>
-                <View style={styles.cart_payment_btn_icon}>
-                  {this.state.continue_loading ? (
-                    <Indicator size="small" color="#ffffff" />
-                  ) : (
-                    <Icon name="check" size={20} color="#ffffff" />
-                  )}
-                </View>
-                <Text style={styles.cart_payment_btn_title}>
-                  {this.isSiteUseShipNotConfirming
-                    ? t('confirm.confirmOrder')
-                    : this.canTransaction
-                    ? t('confirm.order.payTitle')
-                    : t('confirm.order.title')}
-                </Text>
-              </View>
-            </TouchableHighlight>
+
+            <Button
+              containerStyle={styles.cart_payment_btn_box}
+              titleStyle={styles.cart_payment_btn_title}
+              onPress={
+                single
+                  ? () => this.handleSubmit(cart_data)
+                  : this.canTransaction &&
+                    (() =>
+                      this.goToTransaction(cart_data.site_id, cart_data.id))
+              }
+              renderIconLeft={(titleStyle, buttonStyle, fontStyle) => {
+                return (
+                  <Icon
+                    bundle={BundleIconSetName.FONT_AWESOME}
+                    name="check"
+                    style={[fontStyle, styles.btnBoxIcon]}
+                  />
+                );
+              }}>
+              {single
+                ? this.isSiteUseShipNotConfirming
+                  ? t('confirm.confirmOrder')
+                  : this.canTransaction
+                  ? t('confirm.order.payTitle')
+                  : t('confirm.order.title')
+                : this.canTransaction
+                ? t('confirm.order.payTitle')
+                : ''}
+            </Button>
           </Container>
-        ) : (
-          this.canTransaction && (
-            <Container row style={{bottom: store.keyboardTop}}>
-              <TouchableHighlight
-                style={styles.cart_payment_btn_box}
-                underlayColor="transparent"
-                onPress={() =>
-                  this.goToTransaction(cart_data.site_id, cart_data.id)
-                }>
-                <View style={styles.cart_payment_btn}>
-                  <View style={styles.cart_payment_btn_icon}>
-                    {this.state.continue_loading ? (
-                      <Indicator size="small" color="#ffffff" />
-                    ) : (
-                      <Icon name="check" size={20} color="#ffffff" />
-                    )}
-                  </View>
-                  <Text style={styles.cart_payment_btn_title}>
-                    {t('confirm.order.payTitle')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            </Container>
-          )
         )}
-      </>
+      </ScreenWrapper>
     );
   }
 }
@@ -1444,252 +1401,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-  rows: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: '#ffffff',
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
-  address_name_box: {
-    flexDirection: 'row',
-  },
-  address_name: {
-    fontSize: 14,
-    color: '#000000',
-    fontWeight: '600',
-    flex: 1,
-  },
-  address_default_box: {
-    flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  address_default_title: {
-    color: '#666666',
-    fontSize: 12,
-  },
-  title_active: {
-    color: DEFAULT_COLOR,
-  },
-  address_content: {
-    marginTop: 12,
-    marginLeft: 22,
-  },
-  address_content_phone: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 4,
-    fontWeight: '600',
-  },
-  address_content_address_detail: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 4,
-    lineHeight: 20,
-    paddingRight: 15,
-  },
-  address_content_phuong: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 4,
-  },
-  address_content_city: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 4,
-  },
-  address_content_tinh: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 4,
-  },
-
-  desc_content: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 4,
-    marginLeft: 22,
-  },
-  orders_status_box: {
-    alignItems: 'center',
-  },
-  orders_status: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
-  },
-  borderBottom: {
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
-
-  cart_item_box: {
-    width: '100%',
-    paddingVertical: 8,
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
-    alignItems: 'center',
-  },
-  cart_item_image_box: {
-    width: 50,
-  },
-  cart_item_image: {
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  cart_item_info: {
-    flex: 1,
-  },
-  cart_item_info_content: {
-    paddingHorizontal: 15,
-  },
-  cart_item_info_name: {
-    color: '#000000',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  cart_item_sub_info_name: {
-    color: '#555',
-    fontSize: 12,
-  },
-  cart_item_actions: {
-    flexDirection: 'row',
-    marginTop: 8,
-    alignItems: 'center',
-  },
-  cart_item_actions_btn: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 22,
-    height: 22,
-    borderWidth: Util.pixel,
-    borderColor: '#666666',
-    borderRadius: 3,
-  },
-  cart_item_remove_btn: {
-    backgroundColor: '#babbbf',
-    marginRight: 15,
-    borderWidth: 0,
-  },
-  cart_item_remove_icon: {
-    color: '#fff',
-  },
-  cart_item_actions_quantity: {
-    paddingHorizontal: 8,
-    minWidth: '30%',
-    textAlign: 'center',
-    color: '#404040',
-    fontWeight: '500',
-  },
-  cart_item_btn_label: {
-    color: '#404040',
-    fontSize: 20,
-    lineHeight: isIOS ? 20 : 24,
-  },
-
-  cart_item_price_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  separator: {
-    width: '100%',
-    height: Util.pixel,
-    backgroundColor: '#dddddd',
-  },
-  cart_item_weight: {
-    position: 'absolute',
-    right: 15,
-    bottom: 8,
-    color: '#666666',
-    fontSize: 12,
-  },
-
-  cart_item_price_price_safe_off: {
-    textDecorationLine: 'line-through',
-    fontSize: 14,
-    color: '#666666',
-    marginRight: 4,
-  },
-  cart_item_price_price: {
-    fontSize: 14,
-    color: DEFAULT_COLOR,
-  },
-
   cart_payment_btn_box: {
-    // position: 'absolute',
     flex: 1,
-    // width: '100%',
-    height: 60,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  cart_payment_btn: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: DEFAULT_COLOR,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cart_payment_btn_icon: {
-    minWidth: 20,
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   cart_payment_btn_title: {
-    color: '#ffffff',
-    fontSize: 18,
     marginLeft: 8,
-    textTransform: 'uppercase',
   },
 
   mt8: {
     marginTop: 8,
   },
-  text_total_items: {
-    fontSize: 14,
-    color: '#000000',
-  },
-
-  input_address_text: {
-    width: '100%',
-    color: '#000000',
-    fontSize: 14,
-    marginTop: 4,
-  },
-  input_label: {
-    fontSize: 16,
-    color: '#000000',
-    marginLeft: 8,
-  },
-  input_label_help: {
-    fontSize: 12,
-    marginTop: 2,
-    color: '#666666',
-  },
-
-  box_icon_label: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon_label: {
-    width: 15,
-    color: '#999',
-  },
 
   success_box: {
-    marginTop: 15,
+    padding: 15,
   },
   success_title: {
     textAlign: 'center',
     lineHeight: 20,
-    color: '#000000',
   },
   success_icon_box: {
     flexDirection: 'row',
@@ -1698,206 +1426,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   success_icon_label: {
-    color: DEFAULT_COLOR,
-    fontSize: 18,
     fontWeight: '600',
     marginLeft: 8,
   },
-  input_note_value: {
-    fontSize: 14,
-    marginTop: 8,
-    color: '#404040',
-    marginLeft: 22,
+  checkIcon: {
+    fontSize: 24,
   },
-
-  item_safe_off: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: '100%',
-    height: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  item_safe_off_percent: {
-    backgroundColor: '#fa7f50',
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  },
-  item_safe_off_percent_val: {
-    color: '#ffffff',
-    fontSize: 12,
-  },
-
-  boxButtonActions: {
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 30,
-  },
-  buttonAction: {
-    flex: 1,
-  },
-  boxButtonAction: {
-    flex: 1,
-    flexDirection: 'row',
-    borderWidth: Util.pixel,
-    borderColor: '#666666',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-    // width: Util.size.width / 2 - 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonActionTitle: {
-    color: '#333333',
-    marginLeft: 4,
-    fontSize: 14,
-  },
-  starReviews: {
-    marginLeft: 2,
-  },
-  feeBox: {
-    marginTop: 12,
-  },
-  feeLabel: {
-    fontSize: 16,
-    flex: 1,
-  },
-  feeValue: {
-    fontSize: 16,
-  },
-  both: {
-    fontWeight: '600',
-  },
-  profile_list_icon_box: {
-    // backgroundColor: "#cc9900",
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 30,
-    height: 30,
-    marginLeft: 4,
-    marginRight: -20,
-  },
-  profile_list_icon_box_angle: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    height: '100%',
-  },
-  useVoucherLabelWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  useVoucherLabel: {
-    marginLeft: 4,
-  },
-  addVoucherWrapper: {
-    flex: 1,
-    borderLeftWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ebebeb',
-  },
-  addVoucherLabel: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#333',
-  },
-  paymentMethodContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  imagePaymentMethod: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-    marginRight: 7,
-  },
-  imagePaymentMethodDetail: {
-    // marginLeft: 15,
-    marginRight: 10,
-  },
-  placeholder: {
-    color: '#999999',
-  },
-
-  tagContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 7,
-    paddingLeft: 20,
-  },
-  cartTypeMainContainer: {},
-  cartTypeContainer: {},
-  cartTypeLabelContainer: {
-    // marginRight: 5,
-    paddingVertical: 3,
-  },
-  cartTypeLabel: {
-    fontSize: 9,
-    textTransform: 'uppercase',
-  },
-
-  comboAddress: {
-    marginHorizontal: -15,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: '#f0f0f0',
-    color: '#333',
-    letterSpacing: 0.2,
-    marginTop: 10,
-    fontSize: 13,
-    fontWeight: '400',
-  },
-
-  commissionContainer: {
-    borderTopWidth: 0,
-    backgroundColor: '#fafafa',
-    marginBottom: 12,
-    paddingTop: 0,
-  },
-  lastCommission: {
-    borderTopWidth: 0.5,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
-    marginHorizontal: -15,
-    marginVertical: -12,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  commissionTitle: {
-    paddingRight: 15,
-  },
-
-  paymentStatusContainer: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    marginTop: 5,
-    borderRadius: 4,
-    // alignSelf: 'flex-start',
-  },
-  paymentStatusTitle: {
-    fontSize: 12,
-  },
-
-  buttonActionWrapper: {
-    flex: 1,
-    marginHorizontal: 10,
-    justifyContent: 'flex-start',
-  },
-  btnActionTitle: {
-    fontWeight: '500',
+  btnBoxIcon: {
+    fontSize: 20,
   },
 });
 

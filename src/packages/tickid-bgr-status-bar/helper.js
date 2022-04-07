@@ -1,7 +1,6 @@
 import config from './config';
-import { Platform, StatusBar } from 'react-native';
-import appConfig from 'app-config';
-import store from '../../store';
+import {Platform, StatusBar} from 'react-native';
+import store from 'app-store';
 
 export const show = () => {
   config.methods.show();
@@ -12,7 +11,7 @@ export const hide = () => {
 };
 
 export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
-  return event => {
+  return (event) => {
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > offsetTop) {
       if (Platform.OS === 'ios') {
@@ -20,10 +19,14 @@ export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
           config.statusBarState[currentScene] = config.mode.dark;
           // show();
         }
-        StatusBar.setBarStyle('dark-content', true);
+        StatusBar.setBarStyle(
+          store.theme?.layout?.statusBarSurfaceModeStyle,
+          true,
+        );
       } else {
-        StatusBar.setBackgroundColor('#000');
-        store.setHomeBarBackgroundColor('#000');
+        // StatusBar.setBarStyle('dark-content');
+        // StatusBar.setBackgroundColor(store.theme?.color?.surface);
+        // store.setHomeBarBackgroundColor(store.theme?.color?.surface);
       }
     } else {
       if (Platform.OS === 'ios') {
@@ -31,10 +34,11 @@ export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
           config.statusBarState[currentScene] = config.mode.light;
           // hide();
         }
-        StatusBar.setBarStyle('light-content', true);
+        StatusBar.setBarStyle(store.theme?.layout?.statusBarStyle, true);
       } else {
-        StatusBar.setBackgroundColor(appConfig.colors.primary);
-        store.setHomeBarBackgroundColor(appConfig.colors.primary);
+        // StatusBar.setBarStyle('light-content');
+        // StatusBar.setBackgroundColor(store.theme?.color?.navBarBackground);
+        // store.setHomeBarBackgroundColor(store.theme?.color?.navBarBackground);
       }
     }
   };

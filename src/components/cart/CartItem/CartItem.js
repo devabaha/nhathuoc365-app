@@ -1,18 +1,23 @@
-import React from 'react';
-import {
-  View,
-  TouchableHighlight,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import {DiscountBadge} from '../../Badges';
-
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
 import {CART_ITEM_WIDTH} from '../constants';
-import {Actions} from 'react-native-router-flux';
+// custom components
+import {DiscountBadge} from '../../Badges';
 import ExtraQuantityInput from './ExtraQuantityInput';
+import {BaseButton, Typography, Icon, IconButton} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   store_cart_item_container: {
@@ -22,8 +27,6 @@ const styles = StyleSheet.create({
   store_cart_item: {
     width: '100%',
     flexDirection: 'row',
-    borderRightWidth: 0.5,
-    borderColor: '#eee',
     padding: 7,
   },
   store_cart_item_image_box: {
@@ -39,19 +42,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   store_cart_item_title: {
-    color: '#404040',
-    fontSize: 12,
     fontWeight: '500',
   },
   store_cart_item_sub_title: {
-    color: '#555',
-    fontSize: 10,
     marginTop: 2,
   },
   store_cart_item_price: {
-    fontSize: 12,
-    color: '#fa7f50',
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginTop: appConfig.device.isIOS ? 2 : 0,
   },
   store_cart_actions: {
@@ -65,21 +62,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     height: undefined,
-    backgroundColor: '#fff',
     width: undefined,
-    ...elevationShadowStyle(3),
   },
   discountBadgeContentContainer: {
-    backgroundColor: appConfig.colors.sale,
     paddingVertical: 2,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
-  discountBadgeLabel: {
-    fontSize: 13,
-  },
+  discountBadgeLabel: {},
 
   store_cart_calculator: {
-    // marginTop: 7,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -91,38 +82,25 @@ const styles = StyleSheet.create({
   store_cart_item_qnt: {
     textAlign: 'center',
     fontWeight: '600',
-    color: '#404040',
-    fontSize: 12,
   },
   store_cart_item_qnt_change: {
     width: 24,
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: Util.pixel,
-    borderColor: '#404040',
-    borderRadius: 3,
   },
 
   store_cart_item_remove: {
-    backgroundColor: '#333',
-    borderWidth: 0,
     position: 'absolute',
     left: 5,
     top: 5,
     width: 20,
     height: 20,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    // borderTopLeftRadius: 0,
-    // borderBottomLeftRadius: 0,
-    ...elevationShadowStyle(2),
   },
-  store_cart_item_remove_icon: {
-    color: '#fff',
+  storeCartItemQntChangeContainer: {
+    overflow: 'hidden',
   },
-
   btn_left: {
     zIndex: 1,
   },
@@ -130,6 +108,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  icon: {fontSize: 14},
 });
 
 const MIN_QUANTITY = 1;
@@ -157,6 +136,10 @@ const CartItem = ({
   onPressCartItem = () => {},
   onUpdateQuantity = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation(['cart', 'common']);
+
   let refModal = null;
 
   const handleSelectQuantity = (quantity) => {
@@ -167,10 +150,10 @@ const CartItem = ({
   };
 
   const onShowModalChangeQuantity = () => {
-    Actions.push(appConfig.routes.modalInput, {
+    push(appConfig.routes.modalInput, {
       backdropPressToClose: true,
-      title: 'Nhập số lượng',
-      btnTitle: 'Chọn',
+      title: t('quantityInput'),
+      btnTitle: t('common:select'),
       onSubmit: handleSelectQuantity,
       description: `${name}${classification && '\r\n' + classification}`,
       value: quantity.toString(),
@@ -186,14 +169,38 @@ const CartItem = ({
     });
   };
 
+  const storeCartItemStyle = useMemo(() => {
+    return mergeStyles(styles.store_cart_item, {
+      borderColor: theme.color.border,
+      borderRightWidth: theme.layout.borderWidthSmall,
+    });
+  }, [theme]);
+
+  const storeCartItemQntChangeContainerStyle = useMemo(() => {
+    return mergeStyles(styles.store_cart_item_qnt_change, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+      borderColor: theme.color.border,
+      borderWidth: theme.layout.borderWidth,
+    });
+  }, [theme]);
+
+  const storeCartItemRemoveStyle = useMemo(() => {
+    return mergeStyles(styles.store_cart_item_remove, {
+      backgroundColor: theme.color.contentBackgroundStrong,
+      borderWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+      shadowColor: theme.color.shadow,
+      ...theme.layout.shadow,
+    });
+  }, [theme]);
+
   return (
     <View style={[styles.store_cart_item_container, containerStyle]}>
-      <TouchableHighlight underlayColor="#fafafa" onPress={onPressCartItem}>
-        <View style={styles.store_cart_item}>
+      <BaseButton useTouchableHighlight onPress={onPressCartItem}>
+        <View style={storeCartItemStyle}>
           <View style={styles.store_cart_item_image_box}>
             {!!image && (
-              <CachedImage
-                mutable
+              <Image
                 style={styles.store_cart_item_image}
                 source={{uri: image}}
               />
@@ -201,35 +208,57 @@ const CartItem = ({
           </View>
           <View style={styles.store_cart_item_title_box}>
             <View style={{flex: 1}}>
-              <Text numberOfLines={1} style={styles.store_cart_item_title}>
+              <Typography
+                type={TypographyType.LABEL_SMALL}
+                numberOfLines={1}
+                style={styles.store_cart_item_title}>
                 {name}
-              </Text>
+              </Typography>
               {!!classification && (
-                <Text
+                <Typography
+                  type={TypographyType.DESCRIPTION_TINY_TERTIARY}
                   numberOfLines={1}
                   style={[styles.store_cart_item_sub_title]}>
                   {classification}
-                </Text>
+                </Typography>
               )}
-              <Text style={styles.store_cart_item_price}>{priceView}</Text>
+              <Typography
+                type={TypographyType.LABEL_SMALL_PRIMARY}
+                style={styles.store_cart_item_price}>
+                {priceView}
+              </Typography>
             </View>
             <View style={styles.store_cart_actions}>
               <View style={styles.store_cart_calculator}>
-                <TouchableHighlight
-                  onPress={disabled || isMinusLoading ? () => {} : onMinus}
-                  underlayColor="#eee"
+                <BaseButton
+                  useTouchableHighlight
+                  onPress={
+                    disabled ||
+                    isUpdateQuantityLoading ||
+                    isMinusLoading ||
+                    isPlusLoading
+                      ? () => {}
+                      : onMinus
+                  }
                   hitSlop={HIT_SLOP}
-                  style={[styles.btn_left, styles.p8]}>
-                  <View style={styles.store_cart_item_qnt_change}>
-                    {isMinusLoading ? (
-                      <Indicator size="small" />
-                    ) : (
-                      <AntDesignIcon name="minus" size={14} color="#404040" />
-                    )}
-                  </View>
-                </TouchableHighlight>
+                  style={[
+                    styles.storeCartItemQntChangeContainer,
+                    styles.btn_left,
+                    styles.p8,
+                    storeCartItemQntChangeContainerStyle,
+                  ]}>
+                  {isMinusLoading ? (
+                    <Indicator size="small" />
+                  ) : (
+                    <Icon
+                      bundle={BundleIconSetName.ANT_DESIGN}
+                      name="minus"
+                      style={styles.icon}
+                    />
+                  )}
+                </BaseButton>
 
-                <TouchableOpacity
+                <BaseButton
                   hitSlop={HIT_SLOP}
                   onPress={
                     disabled ||
@@ -243,57 +272,62 @@ const CartItem = ({
                     {isUpdateQuantityLoading ? (
                       <Indicator size="small" />
                     ) : (
-                      <Text
+                      <Typography
+                        type={TypographyType.LABEL_SMALL}
                         numberOfLines={2}
                         style={styles.store_cart_item_qnt}>
                         {quantityView}
-                      </Text>
+                      </Typography>
                     )}
                   </View>
-                </TouchableOpacity>
+                </BaseButton>
 
-                <TouchableHighlight
-                  onPress={disabled || isPlusLoading ? () => {} : onPlus}
-                  underlayColor="#eee"
+                <BaseButton
+                  useTouchableHighlight
+                  onPress={
+                    disabled ||
+                    isUpdateQuantityLoading ||
+                    isMinusLoading ||
+                    isPlusLoading
+                      ? () => {}
+                      : onPlus
+                  }
                   hitSlop={HIT_SLOP}
-                  style={styles.p8}>
-                  <View style={styles.store_cart_item_qnt_change}>
-                    {isPlusLoading ? (
-                      <Indicator size="small" />
-                    ) : (
-                      <AntDesignIcon name="plus" size={14} color="#404040" />
-                    )}
-                  </View>
-                </TouchableHighlight>
+                  style={[
+                    styles.storeCartItemQntChangeContainer,
+                    styles.p8,
+                    storeCartItemQntChangeContainerStyle,
+                  ]}>
+                  {isPlusLoading ? (
+                    <Indicator size="small" />
+                  ) : (
+                    <Icon
+                      bundle={BundleIconSetName.ANT_DESIGN}
+                      name="plus"
+                      style={styles.icon}
+                    />
+                  )}
+                </BaseButton>
               </View>
             </View>
           </View>
         </View>
-      </TouchableHighlight>
+      </BaseButton>
 
       {!!discountPercent && (
         <DiscountBadge
           containerStyle={styles.discountBadgeContainer}
           contentContainerStyle={styles.discountBadgeContentContainer}
-          label={
-            <Text style={styles.discountBadgeLabel}>
-              {saleFormat(discountPercent)}
-            </Text>
-          }
+          label={saleFormat(discountPercent)}
         />
       )}
-      <TouchableOpacity
-        onPress={onRemove}
+      <IconButton
         hitSlop={HIT_SLOP}
-        style={[
-          styles.store_cart_item_qnt_change,
-          styles.store_cart_item_remove,
-        ]}>
-        <AntDesignIcon
-          name="close"
-          style={styles.store_cart_item_remove_icon}
-        />
-      </TouchableOpacity>
+        name="close"
+        bundle={BundleIconSetName.ANT_DESIGN}
+        style={[styles.store_cart_item_qnt_change, storeCartItemRemoveStyle]}
+        onPress={onRemove}
+      />
     </View>
   );
 };

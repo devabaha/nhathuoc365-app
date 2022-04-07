@@ -1,5 +1,13 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 import Container from 'src/components/Layout/Container';
 
 const styles = StyleSheet.create({
@@ -7,19 +15,32 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.35)',
   },
   title: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 });
 
 const Overlay = ({title}) => {
+  const {theme} = useTheme();
+
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      backgroundColor: theme.color.overlay30,
+    });
+  }, [theme]);
+
+  const titleStyle = useMemo(() => {
+    return mergeStyles(styles.title, {color: theme.color.onOverlay});
+  }, [theme]);
+
   return (
-    <Container center style={styles.container}>
-      {!!title && <Text style={styles.title}>+{title}</Text>}
+    <Container center style={containerStyle}>
+      {!!title && (
+        <Typography type={TypographyType.LABEL_HUGE} style={titleStyle}>
+          +{title}
+        </Typography>
+      )}
     </Container>
   );
 };

@@ -1,17 +1,26 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import Communications from 'react-native-communications';
-
-import {Container} from '../../../../Layout';
-import SectionContainer from '../SectionContainer';
-import Image from '../../../../Image';
-
-import SVGMap from '../../../../../images/map.svg';
-
-import appConfig from 'app-config';
+// helpers
 import {openMap} from 'app-helper/map';
+// constants
+import {
+  TypographyType,
+  BundleIconSetName,
+  AppOutlinedButton,
+} from 'src/components/base';
+// images
+import SVGMap from 'src/images/map.svg';
+// custom components
+import SectionContainer from '../SectionContainer';
+import Image from 'src/components/Image';
+import {
+  Typography,
+  Container,
+  AppFilledButton,
+  Icon,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,11 +43,7 @@ const styles = StyleSheet.create({
   mainContentContainer: {
     justifyContent: 'space-between',
   },
-  title: {
-    ...appConfig.styles.typography.heading3,
-  },
   description: {
-    ...appConfig.styles.typography.sub,
     marginTop: 5,
     flex: 1,
   },
@@ -48,28 +53,18 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   callContainer: {
-    width: '100%',
+    // width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 15,
-    backgroundColor: appConfig.colors.primary,
   },
   mapContainer: {
-    width: '100%',
+    // width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 7,
     padding: 5,
     paddingHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: appConfig.colors.primary,
-  },
-  icon: {
-    color: '#fff',
-  },
-  btnTitle: {
-    color: '#fff',
   },
 });
 
@@ -117,6 +112,16 @@ const StoreInfoSection = ({
     destinationLongitude,
   ]);
 
+  const renderTelIcon = (titleStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.IONICONS}
+        style={titleStyle}
+        name="ios-call"
+      />
+    );
+  };
+
   return (
     <SectionContainer
       marginTop
@@ -126,45 +131,43 @@ const StoreInfoSection = ({
       iconStyle={styles.iconHeading}
       iconName="warehouse"
       onPressActionBtn={onPressActionBtn}>
-      <Container row style={styles.contentContainer}>
+      <Container noBackground row style={styles.contentContainer}>
         {customContent || (
           <>
             <View style={styles.imageContainer}>
               <Image source={{uri: image}} />
             </View>
 
-            <Container
-              flex
-              centerVertical={false}
-              style={styles.mainContentContainer}>
-              <Text numberOfLines={2} style={styles.title}>
+            <Container noBackground flex style={styles.mainContentContainer}>
+              <Typography numberOfLines={2} type={TypographyType.LABEL_LARGE}>
                 {name}
-              </Text>
-              <Text numberOfLines={2} style={styles.description}>
+              </Typography>
+              <Typography
+                numberOfLines={2}
+                style={styles.description}
+                type={TypographyType.LABEL_SMALL}>
                 {address}
-              </Text>
+              </Typography>
             </Container>
 
-            <Container style={styles.rightContainer}>
+            <Container noBackground style={styles.rightContainer}>
               {!!tel && (
-                <TouchableOpacity
+                <AppFilledButton
+                  primary
                   hitSlop={HIT_SLOP}
                   style={styles.callContainer}
-                  onPress={handleCall}>
-                  <Container row>
-                    <Ionicons name="ios-call" style={styles.icon} />
-                  </Container>
-                </TouchableOpacity>
+                  onPress={handleCall}
+                  renderTitleComponent={renderTelIcon}
+                />
               )}
               {!!showMapBtn && (
-                <TouchableOpacity
+                <AppOutlinedButton
+                  primary
                   hitSlop={HIT_SLOP}
                   style={styles.mapContainer}
                   onPress={goToMapView}>
-                  <Container row>
-                    <SVGMap width={20} height={20} />
-                  </Container>
-                </TouchableOpacity>
+                  <SVGMap width={20} height={20} />
+                </AppOutlinedButton>
               )}
             </Container>
           </>

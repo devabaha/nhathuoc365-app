@@ -1,0 +1,18 @@
+{
+  "imageGallery": {
+    "noSupportLibrary": "Nền tảng không hỗ trợ truy cập thư viện",
+    "libraryAccessRequestUnavailable": "Quyền truy cập Thư viện không khả dụng",
+    "libraryAccessRequestError": "Lỗi yêu cầu quyền truy cập Thư viện",
+    "noSupportCamera": "Nền tảng không hỗ trợ truy cập Camera",
+    "cameraAccessRequestUnavailable": "Quyền truy cập Camera không khả dụng",
+    "cameraAccessRequestError": "Lỗi yêu cầu quyền truy cập Camera",
+    "cantAccessSetting": "Ứng dụng không thể truy cập vào Cài đặt!"
+  },
+  "takePhoto": "Chụp ảnh",
+  "needCameraAccess": "Ứng dụng cần quyền truy cập Camera",
+  "needLibraryAccess": "Ứng dụng cần quyền truy cập Thư viện",
+  "loadingMore": "Đang tải thêm...",
+  "makeConversation": "Bắt đầu cuộc trò chuyện thôi!",
+  "noConversations": "Bạn chưa có cuộc trò chuyện nào!",
+  "noConversationsFound": "Không tìm thấy cuộc trò chuyện nào!"
+}

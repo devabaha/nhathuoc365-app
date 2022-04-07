@@ -1,17 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import {USE_ONLINE, showMessage} from '../../constants';
-import BaseContainer from '../BaseContainer';
-import {internalFetch} from '../../helper/apiFetch';
-import MyVoucherComponent from '../../component/MyVoucher';
-import CampaignEntity from '../../entity/CampaignEntity';
+// configs
 import store from 'app-store';
-import EventTracker from '../../../../helper/EventTracker';
+import config from '../../config';
+// helpers
+import {internalFetch} from '../../helper/apiFetch';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {showMessage} from '../../constants';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {USE_ONLINE} from '../../constants';
+// entities
+import CampaignEntity from '../../entity/CampaignEntity';
+// custom components
+import BaseContainer from '../BaseContainer';
+import MyVoucherComponent from '../../component/MyVoucher';
 
 const defaultFn = () => {};
 
 class MyVoucher extends BaseContainer {
+  static contextType = ThemeContext;
+
   static propTypes = {
     mode: PropTypes.string,
     from: PropTypes.oneOf(['home']),
@@ -29,6 +40,10 @@ class MyVoucher extends BaseContainer {
     onUseVoucherOnlineFailure: defaultFn,
     forceReload: defaultFn,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get isFromHome() {
     return this.props.from === 'home';
@@ -61,41 +76,49 @@ class MyVoucher extends BaseContainer {
 
   handleScanVoucherFail = () => {
     this.props.forceReload();
-        this.getMyVouchers();
-  }
+    this.getMyVouchers();
+  };
 
   handlePressVoucher = (voucher) => {
-    config.route.push(config.routes.voucherDetail, {
-      voucherId: voucher.data.id,
-      from: this.props.from,
-      title: voucher.data.title,
-      orderId: this.props.orderId,
-      orderType: this.props.orderType,
-      isUseOnlineMode: this.isUseOnlineMode,
-      onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
-      onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure,
-      forceReload: this.handleScanVoucherFail
-    });
+    config.route.push(
+      config.routes.voucherDetail,
+      {
+        voucherId: voucher.data.id,
+        from: this.props.from,
+        title: voucher.data.title,
+        orderId: this.props.orderId,
+        orderType: this.props.orderType,
+        isUseOnlineMode: this.isUseOnlineMode,
+        onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
+        onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure,
+        forceReload: this.handleScanVoucherFail,
+      },
+      this.theme,
+    );
   };
 
   handlePressEnterVoucher = (isEnterCode = false) => {
     const {t} = this.props;
-    config.route.push(config.routes.voucherScanner, {
-      placeholder: t('scan.enterVoucher'),
-      topContentText: t('scan.description'),
-      isFromMyVoucher: true,
-      refreshMyVoucher: () => {
-        this.getMyVouchers();
+    config.route.push(
+      config.routes.voucherScanner,
+      {
+        placeholder: t('scan.enterVoucher'),
+        topContentText: t('scan.description'),
+        isFromMyVoucher: true,
+        refreshMyVoucher: () => {
+          this.getMyVouchers();
+        },
+        isEnterCode,
+        onCloseEnterCode: () => {
+          if (isEnterCode) {
+            config.route.pop();
+          }
+        },
+        onScanVoucherFail: this.handleScanVoucherFail,
+        forceReload: this.props.forceReload,
       },
-      isEnterCode,
-      onCloseEnterCode: () => {
-        if (isEnterCode) {
-          config.route.pop();
-        }
-      },
-      onScanVoucherFail: this.handleScanVoucherFail,
-      forceReload: this.props.forceReload,
-    });
+      this.theme,
+    );
   };
 
   getMyVouchers = async (showLoading = true, siteId = null) => {
@@ -163,7 +186,12 @@ class MyVoucher extends BaseContainer {
 
     try {
       const response = await internalFetch(
-        config.rest.useVoucherOnline(this.props.siteId, voucher.data.id, this.props.orderId, this.props.orderType),
+        config.rest.useVoucherOnline(
+          this.props.siteId,
+          voucher.data.id,
+          this.props.orderId,
+          this.props.orderType,
+        ),
       );
       if (response.status === config.httpCode.success) {
         showMessage({

@@ -1,26 +1,18 @@
 import React, {useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-import Container from 'src/components/Layout/Container';
-
+// constants
 import {
   IMAGES_WRAPPER_WIDTH,
   IMAGE_SPACING,
   IMAGE_VERTICAL_HIGHLIGHT_DIMENSIONS,
 } from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import GridImage from './GridImage';
 
 const styles = StyleSheet.create({
   container: {
     width: IMAGES_WRAPPER_WIDTH,
-  },
-  imageContainer: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
-    marginTop: IMAGE_SPACING,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
 });
 
@@ -96,9 +88,11 @@ const H1 = ({images}) => {
   };
 
   return (
-    <Container centerVertical={false} style={styles.container}>
+    <Container style={styles.container}>
       {renderHighlight()}
-      <Container row>{renderNormal()}</Container>
+      <Container row centerVertical>
+        {renderNormal()}
+      </Container>
     </Container>
   );
 };

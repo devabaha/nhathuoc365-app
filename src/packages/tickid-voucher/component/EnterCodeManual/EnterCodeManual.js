@@ -1,17 +1,20 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import Button from 'react-native-button';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Animated,
-  Keyboard
-} from 'react-native';
+import {View, StyleSheet, Animated, Keyboard} from 'react-native';
+// configs
+import config from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography, Input, BaseButton} from 'src/components/base';
+import Button from 'src/components/Button';
 import Header from './Header';
-import EventTracker from '../../../../helper/EventTracker';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
@@ -19,12 +22,14 @@ const ANIMATION_CLOSE_TIME = 150;
 const defaultListener = () => {};
 
 class EnterCodeManual extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onClose: PropTypes.func,
     onSendCode: PropTypes.func,
     heading: PropTypes.string,
     message: PropTypes.string,
-    placeholder: PropTypes.string
+    placeholder: PropTypes.string,
   };
 
   static defaultProps = {
@@ -32,7 +37,7 @@ class EnterCodeManual extends Component {
     onSendCode: defaultListener,
     heading: '',
     message: '',
-    placeholder: ''
+    placeholder: '',
   };
 
   constructor(props) {
@@ -42,9 +47,13 @@ class EnterCodeManual extends Component {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20),
       keyboardShow: false,
-      code: ''
+      code: '',
     };
     this.eventTracker = new EventTracker();
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -56,11 +65,11 @@ class EnterCodeManual extends Component {
   UNSAFE_componentWillMount() {
     this.keyboardWillShowListener = Keyboard.addListener(
       'keyboardWillShow',
-      this.keyboardWillShow
+      this.keyboardWillShow,
     );
     this.keyboardWillHideListener = Keyboard.addListener(
       'keyboardWillHide',
-      this.keyboardWillHide
+      this.keyboardWillHide,
     );
     this.eventTracker.clearTracking();
   }
@@ -70,22 +79,26 @@ class EnterCodeManual extends Component {
     this.keyboardWillHideListener.remove();
   }
 
-  keyboardWillShow = e => {
+  keyboardWillShow = (e) => {
     this.setState({
-      keyboardShow: true
+      keyboardShow: true,
     });
     this.startAnimation(this.state.bottom, e.endCoordinates.height, 200);
   };
 
   keyboardWillHide = () => {
     this.setState({
-      keyboardShow: false
+      keyboardShow: false,
     });
     this.startAnimation(this.state.bottom, 0, 200);
   };
 
   startAnimation(animation, toValue, duration) {
-    Animated.timing(animation, { toValue, duration, useNativeDriver: false }).start();
+    Animated.timing(animation, {
+      toValue,
+      duration,
+      useNativeDriver: false,
+    }).start();
   }
 
   runCloseAnimation() {
@@ -117,71 +130,71 @@ class EnterCodeManual extends Component {
     }, ANIMATION_CLOSE_TIME);
   };
 
-  handleChangeCode = code => {
-    this.setState({ code });
+  handleChangeCode = (code) => {
+    this.setState({code});
   };
 
+  get codeInputStyle() {
+    return mergeStyles(styles.codeInput, {
+      color: this.theme.color.onSurface,
+      borderBottomWidth: this.theme.layout.borderWidth,
+      borderBottomColor: this.theme.color.border,
+    });
+  }
+
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      backgroundColor: this.theme.color.overlay60,
+    });
+  }
+
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     const containerStyle = {
       opacity: this.state.opacity,
-      bottom: this.state.bottom
+      bottom: this.state.bottom,
     };
     if (this.state.keyboardShow) {
       containerStyle.top = 0;
     }
     return (
-      <Animated.View style={[styles.container, containerStyle]}>
-        <Button
-          containerStyle={styles.btnCloseTransparent}
-          onPress={this.onClose}
-        />
-
+      <Container animated style={[this.containerStyle, containerStyle]}>
+        <BaseButton style={styles.btnCloseTransparent} onPress={this.onClose} />
         <View
           style={[
             styles.content,
             {
               marginBottom: this.state.keyboardShow
                 ? 0
-                : config.device.bottomSpace
-            }
-          ]}
-        >
+                : config.device.bottomSpace,
+            },
+          ]}>
           <Header
             onClose={this.onClose}
             title={this.props.heading}
             closeTitle={t('modal.close')}
           />
 
-          <View style={styles.body}>
-            <TextInput
-              style={styles.codeInput}
+          <Container style={styles.body}>
+            <Input
+              style={this.codeInputStyle}
               value={this.state.code}
               placeholder={this.props.placeholder}
-              placeholderTextColor="#c1c1c1"
+              placeholderTextColor={this.theme.color.placeholder}
               onChangeText={this.handleChangeCode}
               autoFocus
             />
-            <Text style={styles.codeHelp}>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM}
+              style={styles.codeHelp}>
               {t('modal.enterCodeManually.description')}
-            </Text>
-            <Button
-              style={styles.submitButtonTitle}
-              containerStyle={[
-                styles.submitButton,
-                {
-                  backgroundColor: this.state.code
-                    ? config.colors.primary
-                    : '#c1c1c1'
-                }
-              ]}
-              onPress={this.onSendCode}
-            >
+            </Typography>
+            <Button onPress={this.onSendCode}>
               {t('modal.enterCodeManually.btnTitle')}
             </Button>
-          </View>
+          </Container>
         </View>
-      </Animated.View>
+      </Container>
     );
   }
 }
@@ -193,8 +206,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    zIndex: 99999
+    zIndex: 99999,
   },
   btnCloseTransparent: {
     position: 'absolute',
@@ -202,48 +214,34 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    zIndex: 1
+    zIndex: 1,
   },
   content: {
     position: 'absolute',
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: config.colors.white,
     minHeight: 40,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    zIndex: 2
+    zIndex: 2,
   },
   body: {
-    padding: 16
+    padding: 16,
   },
   codeInput: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    marginTop: 12
+    marginTop: 12,
   },
   codeHelp: {
-    fontSize: 14,
-    color: '#666',
     fontWeight: '400',
     marginTop: 8,
-    marginBottom: 20
-  },
-  submitButton: {
-    borderRadius: 8,
-    paddingVertical: 14
+    marginBottom: 20,
   },
   submitButtonTitle: {
-    color: config.colors.white,
     textTransform: 'uppercase',
     fontWeight: '600',
-    fontSize: 16
-  }
+  },
 });
 
 export default withTranslation('voucher')(EnterCodeManual);

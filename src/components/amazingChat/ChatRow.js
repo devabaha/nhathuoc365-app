@@ -1,144 +1,152 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
-import { CachedImage } from 'react-native-img-cache';
-import appConfig from 'app-config';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography, Container, BaseButton} from 'src/components/base';
+import Image from 'src/components/Image';
+import {NotiBadge} from '../Badges';
 
 class ChatRow extends Component {
+  static contextType = ThemeContext;
+
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   onPressChatRow() {
     this.props.onPress();
   }
 
+  get separatorStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
   render() {
     const textProps = {
-      numberOfLines: 1
+      numberOfLines: 1,
     };
 
     return (
-      <View
+      <Container
         style={[
           styles.wrapper,
-          !this.props.subTitle && styles.onlyTitleWrapper
-        ]}
-      >
-        <TouchableHighlight
+          !this.props.subTitle && styles.onlyTitleWrapper,
+        ]}>
+        <BaseButton
+          useTouchableHighlight
           onPress={this.onPressChatRow.bind(this)}
-          underlayColor="rgba(0,0,0,.1)"
-          style={[styles.container, styles.row]}
-        >
-          <>
+          style={styles.container}>
+          <Container flex noBackground row>
             <View style={styles.left}>
-              <CachedImage
-                style={styles.img}
-                source={{ uri: this.props.img }}
-              />
+              <Image style={styles.img} source={{uri: this.props.img}} />
             </View>
             <View
               style={[
                 styles.content,
-                this.props.isSeparate && styles.separator
-              ]}
-            >
-              <View style={[styles.row, styles.addtionForRow]}>
-                <Text
+                this.props.isSeparate && this.separatorStyle,
+              ]}>
+              <View style={[styles.row, styles.additionForRow]}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
                   style={[
                     styles.title,
                     this.props.isUnread && styles.unreadText,
-                    !this.props.subTitle && styles.onlyTitle
+                    !this.props.subTitle && styles.onlyTitle,
                   ]}
-                  {...textProps}
-                >
+                  {...textProps}>
                   {this.props.title}
-                </Text>
-                <Text
+                </Typography>
+                <Typography
+                  type={TypographyType.DESCRIPTION_SMALL}
                   style={[
                     styles.recentOnlineTime,
-                    this.props.isUnread && styles.unreadText
-                  ]}
-                >
+                    this.props.isUnread && styles.unreadText,
+                  ]}>
                   {this.props.timeAgo}
-                </Text>
+                </Typography>
               </View>
 
               {!!this.props.subTitle && (
                 <View
-                  style={[styles.row, styles.addtionForRow, { marginTop: 8 }]}
-                >
+                  style={[styles.row, styles.additionForRow, {marginTop: 8}]}>
                   <View style={[styles.subTitleContainer]}>
-                    <Text
-                      style={[
-                        styles.subTitle,
-                        this.props.isUnread && styles.unreadText
-                      ]}
-                      {...textProps}
-                    >
+                    <Typography
+                      type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                      style={[this.props.isUnread && styles.unreadText]}
+                      {...textProps}>
                       {this.props.subTitle}
-                    </Text>
+                    </Typography>
                   </View>
-                  {!!this.props.unreadChat && (
-                    <View style={[styles.badge, { paddingHorizontal: 7 }]}>
-                      <Text style={styles.notiMess}>
-                        {this.props.unreadChat}
-                      </Text>
-                    </View>
-                  )}
+                  <NotiBadge
+                    show={!!this.props.unreadChat}
+                    alert
+                    animation
+                    wrapperStyle={styles.badgeWrapper}
+                    containerStyle={styles.badgeContainer}
+                    label={this.props.unreadChat}
+                  />
                 </View>
               )}
             </View>
-          </>
-        </TouchableHighlight>
-      </View>
+          </Container>
+        </BaseButton>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
-  addtionForRow: {
-    justifyContent: 'space-between'
+  additionForRow: {
+    justifyContent: 'space-between',
   },
   col: {
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   unreadText: {
-    fontWeight: appConfig.device.isIOS ? '600' : '500',
-    color: '#404040'
+    fontWeight: '600',
   },
   onlyTitleWrapper: {
-    height: 80
+    height: 80,
   },
   wrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 90,
-    width: '100%'
+    width: '100%',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     height: '100%',
     padding: 15,
-    paddingLeft: 0
+    paddingLeft: 0,
   },
-  separator: {
-    borderColor: '#d9d9d9',
-    borderBottomWidth: 0.5
-  },
+  separator: {},
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 0
+    padding: 0,
   },
   left: {
     flex: 0.25,
     maxWidth: 150,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   img: {
     width: 50,
@@ -146,59 +154,35 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25
+    borderRadius: 25,
   },
   title: {
     flex: 0.9,
     maxWidth: 500,
-    color: '#353535',
-    fontSize: 16,
-    fontWeight: isIOS ? '500' : '400'
+    fontWeight: '500',
   },
   onlyTitle: {
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   subTitleContainer: {
     justifyContent: 'center',
-    flex: 1
+    flex: 1,
   },
-  subTitle: {
-    fontSize: 14,
-    color: '#404040'
-  },
-  iconWrapper: {
-    marginRight: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex'
-  },
-  badge: {
-    borderRadius: 13,
+  subTitle: {},
+  badgeWrapper: {
     maxWidth: 30,
-    height: 19,
     marginLeft: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'red'
+    position: undefined,
   },
-  notiMess: {
-    color: 'white',
-    fontSize: 10
-  },
-  right: {
-    flex: 0.2,
-    minWidth: 40,
-    maxWidth: 60,
-    paddingRight: 15,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    flexDirection: 'column'
+  badgeContainer: {
+    top: 0,
   },
   recentOnlineTime: {
     justifyContent: 'center',
     alignSelf: 'center',
-    fontSize: 12
-  }
+  },
 });
 
 export default ChatRow;

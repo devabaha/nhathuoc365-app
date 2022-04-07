@@ -1,29 +1,43 @@
-import React, { Component, Fragment } from 'react';
-import {
-  ScrollView,
-  View,
-  RefreshControl,
-  StyleSheet,
-  SafeAreaView,
-  FlatList
-} from 'react-native';
-import { internalFetch } from '../../helper/apiFetch';
-import NoResult from '../../component/NoResult';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
 import Loading from '@tickid/tickid-rn-loading';
-import CardItem from '../CardItem';
+// configs
 import config from '../../config';
+// network
+import {internalFetch} from '../../helper/apiFetch';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
 import EventTracker from '../../../../helper/EventTracker';
+// custom components
+import NoResult from '../../component/NoResult';
+import CardItem from '../CardItem';
+import {FlatList, RefreshControl, ScreenWrapper} from 'src/components/base';
+
+const styles = StyleSheet.create({
+  lastCard: {
+    marginBottom: 15,
+  },
+});
 
 class CardHistory extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      orders: [],
-      refreshing: false,
-      isReady: false
-    };
-    this.eventTracker = new EventTracker();
+  state = {
+    orders: [],
+    refreshing: false,
+    isReady: false,
+  };
+  updateNavBarDisposer = () => {};
+  eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
   }
 
   get hasOrders() {
@@ -32,16 +46,21 @@ class CardHistory extends Component {
 
   componentDidMount() {
     this.getOrders(this.props.serviceId);
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
+    this.updateNavBarDisposer();
     this.eventTracker.clearTracking();
   }
 
   onRefresh = () => {
     this.setState({
-      refreshing: true
+      refreshing: true,
     });
 
     setTimeout(() => {
@@ -49,36 +68,27 @@ class CardHistory extends Component {
     }, 1000);
   };
 
-  getOrders = serviceId => {
+  getOrders = (serviceId) => {
     internalFetch(config.rest.orders(serviceId))
-      .then(response => {
+      .then((response) => {
         this.setState({
-          orders: response.data
+          orders: response.data,
         });
       })
       .finally(() => {
         this.setState({
           isReady: true,
-          refreshing: false
+          refreshing: false,
         });
       });
   };
 
-  renderOrders = () => {
+  renderOrder = ({item, index}) => {
     return (
-      <FlatList
-        data={this.state.orders}
-        keyExtractor={item => `${item.id}`}
-        renderItem={this.renderOrder}
-      />
-    );
-  };
-
-  renderOrder = ({ item }) => {
-    return (
-      <Fragment>
-        {/* <Text style={styles.heading}>09/2019</Text> */}
-
+      <View
+        style={
+          index === (this.state.orders?.length || 0) - 1 && styles.lastCard
+        }>
         <CardItem
           cardId={item.id}
           networkType={item.type}
@@ -94,57 +104,39 @@ class CardHistory extends Component {
           cardCode={item.data && item.data.code}
           cardSeri={item.data && item.data.serial}
         />
-      </Fragment>
+      </View>
     );
   };
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        >
-          {!this.state.isReady ? (
-            <Loading loading />
-          ) : this.hasOrders ? (
-            this.renderOrders()
-          ) : (
-            <NoResult
-              style={styles.noResult}
-              title="Chưa có lịch sử"
-              text="Chưa có hoạt động nạp tiền hoặc mua thẻ nào"
-            />
-          )}
-          <View style={styles.bottomSpace} />
-        </ScrollView>
-      </SafeAreaView>
+      <ScreenWrapper>
+        {!this.state.isReady ? (
+          <Loading loading />
+        ) : (
+          <FlatList
+            safeLayout
+            data={this.state.orders || []}
+            // data={[]}
+            keyExtractor={(item) => `${item.id}`}
+            renderItem={this.renderOrder}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+            ListEmptyComponent={
+              <NoResult
+                title={this.props.t('noHistory')}
+                text={this.props.t('noHistoryDescription')}
+              />
+            }
+          />
+        )}
+      </ScreenWrapper>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff'
-  },
-  bottomSpace: {
-    marginBottom: 16
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 16,
-    marginLeft: 16,
-    color: config.colors.black
-  },
-  noResult: {
-    marginTop: config.device.height / 2 - config.device.statusBarHeight - 48
-  }
-});
-
-export default CardHistory;
+export default withTranslation('phoneCard')(CardHistory);

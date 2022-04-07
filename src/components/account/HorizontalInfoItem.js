@@ -1,29 +1,36 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Keyboard,
-} from 'react-native';
-
+import {View, StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
 import {isEmpty, isFunction} from 'lodash';
 import {Actions} from 'react-native-router-flux';
-
+// configs
 import appConfig from 'app-config';
+// helpers
 import {isValidDate} from 'app-helper';
-
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {
+  Container,
+  Typography,
+  BaseButton,
+  TextButton,
+  Input,
+} from 'src/components/base';
 import Loading from '../Loading';
-import {Container} from '../Layout';
 
 export default class HorizontalInfoItem extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      selectedDate: null,
-    };
+  state = {
+    selectedDate: null,
+  };
+
+  get theme() {
+    return getTheme(this);
   }
 
   goToMap() {
@@ -74,30 +81,30 @@ export default class HorizontalInfoItem extends Component {
     }
     if (!input && !select) {
       return (
-        <Text
+        <Typography
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
           style={[
             styles.detailTitle,
+            specialColor && {color: specialColor},
             {
-              color: specialColor ? specialColor : appConfig.colors.text,
               height: undefined,
-              // paddingVertical: 15,
             },
-            !!defaultValue && !value && {color: appConfig.colors.placeholder},
+            !!defaultValue && !value && {color: this.theme.color.placeholder},
             detailTitleStyle,
             rightTextStyle,
           ]}
           {...inputProps}>
           {value || defaultValue}
-        </Text>
+        </Typography>
       );
     } else if (input) {
       if (mapField) {
         return (
-          <TouchableOpacity
+          <BaseButton
             style={{flex: 1, width: '100%'}}
             onPress={this.goToMap.bind(this)}>
             <View pointerEvents="none">
-              <TextInput
+              <Input
                 style={[styles.detailTitle, detailTitleStyle, rightTextStyle]}
                 value={value}
                 placeholder={defaultValue}
@@ -106,11 +113,11 @@ export default class HorizontalInfoItem extends Component {
                 {...inputProps}
               />
             </View>
-          </TouchableOpacity>
+          </BaseButton>
         );
       }
       return (
-        <TextInput
+        <Input
           style={[styles.detailTitle, detailTitleStyle, rightTextStyle]}
           value={value}
           placeholder={defaultValue}
@@ -125,36 +132,29 @@ export default class HorizontalInfoItem extends Component {
 
         return (
           <View style={styles.btnSelect}>
-            <TouchableOpacity
-              onPress={() => this.openDateTimePicker(dateValue)}>
-              <Text
-                style={StyleSheet.compose(
-                  styles.btnSelectTitle,
-                  detailTitleStyle,
-                  rightTextStyle,
-                )}>
-                {isValidDate(dateValue) ? dateValue : defaultValue}
-              </Text>
-            </TouchableOpacity>
+            <TextButton
+              onPress={() => this.openDateTimePicker(dateValue)}
+              style={[styles.btnSelectTitle, detailTitleStyle, rightTextStyle]}>
+              {isValidDate(dateValue) ? dateValue : defaultValue}
+            </TextButton>
           </View>
         );
       } else {
         return (
-          <TouchableOpacity
+          <TextButton
             onPress={this._onSelectValue}
-            style={styles.btnSelect}>
-            <Text
-              style={{
-                fontSize: 14,
-                color: isEmpty(value) ? appConfig.colors.placeholder : 'black',
-                ...styles.btnSelectTitle,
-                ...detailTitleStyle,
-                ...rightTextStyle,
-              }}
-              {...inputProps}>
-              {isEmpty(value) ? defaultValue : value}
-            </Text>
-          </TouchableOpacity>
+            style={styles.btnSelect}
+            titleStyle={[
+              isEmpty(value) && {
+                color: this.theme.color.placeholder,
+              },
+              styles.btnSelectTitle,
+              detailTitleStyle,
+              rightTextStyle,
+            ]}
+            {...inputProps}>
+            {isEmpty(value) ? defaultValue : value}
+          </TextButton>
         );
       }
     } else {
@@ -173,6 +173,16 @@ export default class HorizontalInfoItem extends Component {
       this.props.onSelectedValue(this.props.data);
     }
   };
+
+  extraTitleStyle = this.props.columnView && styles.columnViewTitle;
+  linkStyle = mergeStyles(styles.link, {
+    color: this.theme.color.primaryHighlight,
+  });
+
+  extraDetailTitleStyle = [
+    this.props.data?.isLink && this.linkStyle,
+    this.props.data?.columnView && styles.columnViewValue,
+  ];
 
   render() {
     const {
@@ -204,30 +214,26 @@ export default class HorizontalInfoItem extends Component {
     if (isHidden) return null;
 
     const extraContainerStyle = columnView && styles.columnViewContainer;
-    const extraTitleStyle = columnView && styles.columnViewTitle;
-    const extraDetailTitleStyle = {
-      ...(isLink && styles.link),
-      ...(columnView && styles.columnViewValue),
+    const containerDisabledStyle = {
+      backgroundColor: this.theme.color.disabled,
     };
 
     return (
-      <View
+      <Container
         style={[
           styles.container,
           extraContainerStyle,
-          // {backgroundColor: disable ? '#eeF0F4' : '#ffffff'},
-          {
-            backgroundColor: '#fff',
-            opacity: disable ? 0.6 : 1,
-          },
+          disable && containerDisabledStyle,
           containerStyle,
           dataContainerStyle,
         ]}>
-        <Container row flex>
+        <Container noBackground row flex>
           {leftTitle}
-          <Text style={[styles.title, extraTitleStyle, titleStyle]}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_TERTIARY}
+            style={[styles.title, this.extraTitleStyle, titleStyle]}>
             {title}
-          </Text>
+          </Typography>
         </Container>
         {renderRight
           ? renderRight(styles.detailTitle)
@@ -241,11 +247,11 @@ export default class HorizontalInfoItem extends Component {
               multiline,
               mapField,
               inputProps,
-              extraDetailTitleStyle,
+              this.extraDetailTitleStyle,
               rightTextStyle,
               isLoading,
             )}
-      </View>
+      </Container>
     );
   }
 }
@@ -260,37 +266,26 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 14,
-    color: '#888',
     textAlign: 'left',
     marginRight: 30,
   },
 
   detailTitle: {
-    // flex: 1,
+    flex: 1,
     height: '100%',
-    fontSize: 14,
-    color: '#242424',
-    paddingLeft: 0,
+    paddingLeft: 1,
     textAlign: 'right',
     paddingVertical: 0,
     textAlignVertical: 'center',
   },
 
   btnSelect: {
-    flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'flex-end',
-    // paddingVertical: 15,
     marginVertical: -15,
   },
   btnSelectTitle: {
-    fontSize: 14,
-    color: '#242424',
     paddingLeft: 0,
     textAlign: 'right',
     paddingVertical: 15,
-    // marginVertical: -15,
   },
   columnViewContainer: {
     flexDirection: 'column',
@@ -300,7 +295,6 @@ const styles = StyleSheet.create({
   },
   columnViewTitle: {
     flex: 0,
-    // paddingVertical: 10,
     paddingTop: 15,
     paddingBottom: 10,
     marginTop: -15,
@@ -312,7 +306,6 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     flex: 1,
     width: '100%',
-    color: '#242244',
   },
 
   loadingWrapper: {
@@ -327,7 +320,6 @@ const styles = StyleSheet.create({
   },
 
   link: {
-    color: appConfig.colors.primary,
     textDecorationLine: 'underline',
   },
 });

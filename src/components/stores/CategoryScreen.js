@@ -1,18 +1,25 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, RefreshControl} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import Swiper from 'react-native-swiper';
 import Animated from 'react-native-reanimated';
-import Items from './Items';
-import store from 'app-store';
-import {Actions} from 'react-native-router-flux';
-import NoResult from '../NoResult';
-import ListStoreProductSkeleton from './ListStoreProductSkeleton';
-import APIHandler from 'src/network/APIHandler';
 import {isEmpty, isEqual} from 'lodash';
-import {APIRequest} from 'src/network/Entity';
-
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
+// network
+import APIHandler from 'src/network/APIHandler';
+// routing
+import {push} from 'app-helper/routing';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import NoResult from 'src/components/NoResult';
 import ListStoreProduct from './ListStoreProduct';
+import {RefreshControl} from 'src/components/base';
+import Image from 'src/components/Image';
+// skeleton
+import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -55,7 +62,6 @@ class CategoryScreen extends Component {
     this.requests = [this.getProductsRequest];
     this.page = 0;
   }
-
   // thời gian trễ khi chuyển màn hình
   _delay() {
     var delay = 400 - Math.abs(time() - this.start_time);
@@ -133,7 +139,7 @@ class CategoryScreen extends Component {
 
   // tới màn hình chi tiết item
   _goItem(item) {
-    Actions.item({
+    push(appConfig.routes.item, {
       title: item.name,
       item,
     });
@@ -315,33 +321,26 @@ class CategoryScreen extends Component {
             onPressLoadMore={this._loadMore}
             listProps={{
               numColumns: 2,
-              ListHeaderComponent: this.state.isAll &&
+              ListHeaderComponent: fetched &&
+                this.state.isAll &&
                 this.state.promotions &&
                 this.state.promotions.length > 0 && (
                   <Swiper
                     style={{
-                      marginVertical: 8,
+                      marginBottom: 10,
                     }}
-                    width={Util.size.width}
-                    height={Util.size.width * 0.96 * (50 / 320) + 16}
+                    width={appConfig.device.width}
+                    height={appConfig.device.width * 0.96 * (50 / 320) + 16}
                     autoplayTimeout={3}
                     showsPagination={false}
                     horizontal
                     autoplay>
                     {this.state.promotions.map((banner, i) => {
                       return (
-                        <View
-                          key={i}
-                          style={{
-                            width: Util.size.width,
-                            alignItems: 'center',
-                          }}>
-                          <CachedImage
+                        <View key={i} style={styles.promotionImageContainer}>
+                          <Image
                             source={{uri: banner.banner}}
-                            style={{
-                              width: Util.size.width * 0.96,
-                              height: Util.size.width * 0.96 * (50 / 320),
-                            }}
+                            style={styles.promotionImage}
                           />
                         </View>
                       );
@@ -364,7 +363,7 @@ class CategoryScreen extends Component {
                 flexGrow: 1,
                 // paddingTop: 15,
                 paddingBottom: store.cart_data
-                  ? 5
+                  ? 120
                   : appConfig.device.bottomSpace,
               },
               scrollEventThrottle: 16,
@@ -413,8 +412,16 @@ class CategoryScreen extends Component {
 
 const styles = StyleSheet.create({
   containerScreen: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     flex: 1,
+  },
+  promotionImageContainer: {
+    width: appConfig.device.width,
+    alignItems: 'center',
+  },
+  promotionImage: {
+    width: appConfig.device.width * 0.96,
+    height: appConfig.device.width * 0.96 * (50 / 320),
   },
 });
 

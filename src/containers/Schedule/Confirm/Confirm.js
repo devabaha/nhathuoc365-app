@@ -1,29 +1,45 @@
 import React, {Component} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  Image,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Button from '../../../components/Button';
-import appConfig from 'app-config';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import {APIRequest} from '../../../network/Entity';
-import EventTracker from '../../../helper/EventTracker';
-import {Actions} from 'react-native-router-flux';
-import {ORDER_TYPES} from '../../../constants';
-import Loading from '../../../components/Loading';
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {pop, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ORDER_TYPES} from 'src/constants';
+import {TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+import EventTracker from 'app-helper/EventTracker';
+// custom components
+import Button from 'src/components/Button';
+import Loading from 'src/components/Loading';
+import {
+  ScreenWrapper,
+  ScrollView,
+  Container,
+  Typography,
+} from 'src/components/base';
+import Image from 'src/components/Image';
+import ConfirmRow from './ConfirmRow';
+import {observer} from 'mobx-react';
 
 class Confirm extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     date: '',
     dateSubTitle: '',
     timeRange: '',
-    noteTitle: 'Ghi chú về cuộc hẹn',
+    noteTitle: '',
     appointmentName: '',
     description: '',
     btnMessage: '',
@@ -38,20 +54,31 @@ class Confirm extends Component {
   requests = [this.bookServiceRequest];
   eventTracker = new EventTracker();
 
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         title:
           this.props.title ||
           this.props.t('common:screen.scheduleConfirm.mainTitle'),
       }),
     );
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   getAPIHandler() {
@@ -91,7 +118,7 @@ class Confirm extends Component {
               type: 'success',
               message: response.message,
             });
-            Actions.pop();
+            pop();
           } else {
             flashShowMessage({
               type: 'danger',
@@ -145,6 +172,33 @@ class Confirm extends Component {
     ));
   }
 
+  get bgHeaderStyle() {
+    return mergeStyles(styles.bgHeader, {
+      backgroundColor: this.theme.color.contentBackgroundStrong,
+    });
+  }
+
+  get logoContainerStyle() {
+    return mergeStyles(styles.logoContainer, {
+      borderColor: this.theme.color.border,
+      borderWidth: this.theme.layout.borderWidthSmall,
+    });
+  }
+
+  get borderContentStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
+  get btnContainerStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
   render() {
     const {t} = this.props;
     const rows = [
@@ -167,62 +221,78 @@ class Confirm extends Component {
       },
     ];
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loading center />}
-        <ScrollView style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.bgHeader}>
-              {!!this.props.cover && <Image
-                source={{uri: this.props.cover}}
-                style={styles.logo}
-                resizeMode="contain"
-              />}
+      <ScreenWrapper>
+        <Container flex>
+          {this.state.loading && <Loading center />}
+          <ScrollView style={styles.container}>
+            <View style={styles.header}>
+              <Container style={this.bgHeaderStyle}>
+                {!!this.props.cover && (
+                  <Image
+                    source={{uri: this.props.cover}}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                )}
+              </Container>
+              <View style={[styles.infoContainer, this.borderContentStyle]}>
+                <Container style={this.logoContainerStyle}>
+                  <Image
+                    source={{uri: this.props.image}}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                </Container>
+                {!!this.props.appointmentName && (
+                  <Typography
+                    type={TypographyType.TITLE_LARGE}
+                    style={styles.heading}>
+                    {this.props.appointmentName}
+                  </Typography>
+                )}
+                {!!this.props.appointmentDescription && (
+                  <Typography
+                    type={TypographyType.LABEL_SEMI_LARGE_TERTIARY}
+                    style={styles.subHeading}>
+                    {this.props.appointmentDescription}
+                  </Typography>
+                )}
+              </View>
             </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.logoContainer}>
-                <Image
-                  source={{uri: this.props.image}}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-              </View>
-              {!!this.props.appointmentName && (
-                <Text style={styles.heading}>{this.props.appointmentName}</Text>
-              )}
-              {!!this.props.appointmentDescription && (
-                <Text style={styles.subHeading}>
-                  {this.props.appointmentDescription}
-                </Text>
+
+            <View style={styles.bodyContainer}>
+              {this.renderRows(rows)}
+              {!!this.props.description && (
+                <View style={styles.descriptionContainer}>
+                  <Typography
+                    type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                    style={styles.description}>
+                    {this.props.description}
+                  </Typography>
+                </View>
               )}
             </View>
-          </View>
+          </ScrollView>
 
-          <View style={styles.bodyContainer}>
-            {this.renderRows(rows)}
-            {!!this.props.description && (
-              <View style={styles.descriptionContainer}>
-                <Text style={styles.description}>{this.props.description}</Text>
-              </View>
-            )}
-          </View>
-        </ScrollView>
-
-        <Button
-          onPress={this.bookService.bind(this)}
-          containerStyle={styles.btnContainerStyle}
-          renderBefore={
-            !!this.props.btnMessage && (
-              <View style={styles.btnMessageContainer}>
-                {/* <Icon name="cube-send" style={styles.btnIcon} /> */}
-                <Text style={styles.rowSubTitle}>{this.props.btnMessage}</Text>
-              </View>
-            )
-          }
-          title={t('confirm.requestAppointment')}
-        />
+          <Button
+            safeLayout={!store.keyboardTop}
+            onPress={this.bookService.bind(this)}
+            containerStyle={this.btnContainerStyle}
+            renderBefore={
+              !!this.props.btnMessage && (
+                <View style={styles.btnMessageContainer}>
+                  <Typography style={styles.rowSubTitle}>
+                    {this.props.btnMessage}
+                  </Typography>
+                </View>
+              )
+            }
+            title={t('confirm.requestAppointment')}
+          />
+        </Container>
 
         {appConfig.device.isIOS && <KeyboardSpacer />}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
@@ -230,10 +300,8 @@ class Confirm extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   bgHeader: {
-    backgroundColor: '#888',
     width: '100%',
     height: 100,
     position: 'absolute',
@@ -244,83 +312,33 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#aaa',
   },
   logoContainer: {
     width: 100,
     height: 100,
-    borderColor: '#555',
-    borderWidth: 0.5,
-    backgroundColor: '#fff',
   },
   logo: {
     width: '100%',
     height: '100%',
   },
   heading: {
-    color: '#242424',
     marginTop: 15,
-    fontSize: 22,
     fontWeight: '500',
     letterSpacing: 0.5,
   },
   subHeading: {
-    color: '#888',
     marginTop: 7,
-    fontSize: 15,
   },
   bodyContainer: {
     paddingVertical: 15,
     paddingHorizontal: 15,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 7,
-  },
-  rowIcon: {
-    color: '#aaa',
-    fontSize: 30,
-    paddingVertical: 10,
-    paddingRight: 20,
-  },
-  rowInfo: {
-    flex: 1,
-  },
-  rowTitle: {
-    color: '#333',
-    fontWeight: '500',
-    fontSize: 16,
-  },
-  rowSubTitle: {
-    color: '#888',
-    marginTop: 5,
-    // fontSize: 13
-  },
-  input: {
-    // fontSize: 13
-    marginTop: 7,
-    paddingBottom: 7,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
-  },
+
   descriptionContainer: {
     marginTop: 5,
     paddingVertical: 20,
   },
-  description: {
-    color: '#777',
-  },
-  btnIcon: {
-    marginRight: 10,
-    fontSize: 20,
-    color: '#aaa',
-  },
-  btnContainerStyle: {
-    borderTopColor: '#aaa',
-    borderTopWidth: 0.5,
-  },
+  description: {},
   btnMessageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -329,27 +347,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['schedule', 'common'])(Confirm);
-
-const ConfirmRow = (props) => {
-  return (
-    <View style={styles.row}>
-      <Icon name={props.iconName} style={styles.rowIcon} />
-      <View style={styles.rowInfo}>
-        <Text style={styles.rowTitle}>{props.title}</Text>
-        {props.editable ? (
-          <TextInput
-            style={styles.input}
-            placeholder={props.placeholder}
-            placeholderTextColor={appConfig.colors.placeholder}
-            onChangeText={props.onChangeText}
-          />
-        ) : (
-          !!props.subTitle && (
-            <Text style={styles.rowSubTitle}>{props.subTitle}</Text>
-          )
-        )}
-      </View>
-    </View>
-  );
-};
+export default withTranslation(['schedule', 'common'])(observer(Confirm));

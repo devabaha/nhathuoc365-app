@@ -1,26 +1,29 @@
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  ViewPropTypes,
-  Text,
-  Dimensions,
-  TouchableOpacity,
-  View,
-  Image
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, ViewPropTypes, Text, View} from 'react-native';
 import PropTypes from 'prop-types';
-const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+import {isIos, WIDTH} from 'app-packages/tickid-chat/constants';
+// custom components
+import {BaseButton, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const defaultListener = () => {};
 
 class AlbumItem extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     leftStyle: ViewPropTypes.style,
     onPress: PropTypes.func,
     title: PropTypes.string,
     subTitle: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     rightComponent: PropTypes.node,
-    coverSource: PropTypes.any.isRequired
+    coverSource: PropTypes.any.isRequired,
   };
 
   static defaultProps = {
@@ -28,10 +31,14 @@ class AlbumItem extends Component {
     onPress: defaultListener,
     title: '',
     subTitle: '',
-    rightComponent: <Text>\/</Text>
+    rightComponent: <Text>\/</Text>,
   };
 
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -49,27 +56,43 @@ class AlbumItem extends Component {
     return false;
   }
 
+  get containerStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderBottomColor: this.theme.color.border,
+    };
+  }
+
   render() {
     return (
-      <TouchableOpacity
-        style={[styles.container]}
-        onPress={() => this.props.onPress()}
-      >
+      <BaseButton
+        style={[styles.container, this.containerStyle]}
+        onPress={() => this.props.onPress()}>
         <View style={[styles.wrapper]}>
           <View style={[styles.leftWrapper, this.props.leftStyle]}>
-            <Image style={styles.leftContent} source={this.props.coverSource} />
+            <Image
+              useNative={isIos}
+              style={styles.leftContent}
+              source={this.props.coverSource}
+            />
           </View>
           <View style={[styles.centerWrapper]}>
-            <Text numberOfLines={1} style={[styles.title]}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              numberOfLines={1}
+              style={[styles.title]}>
               {this.props.title}
-            </Text>
-            <Text numberOfLines={1} style={[styles.subTitle]}>
+            </Typography>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+              numberOfLines={1}
+              style={[styles.subTitle]}>
               {this.props.subTitle}
-            </Text>
+            </Typography>
           </View>
           <View style={[styles.rightWrapper]}>{this.props.rightComponent}</View>
         </View>
-      </TouchableOpacity>
+      </BaseButton>
     );
   }
 }
@@ -83,44 +106,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#d9d9d9'
   },
   wrapper: {
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   leftWrapper: {
-    flex: 0.2
+    flex: 0.2,
   },
   leftContent: {
     height: '95%',
     width: '95%',
     left: 0,
     resizeMode: 'cover',
-    top: 0
+    top: 0,
   },
   centerWrapper: {
     flex: 0.8,
     paddingLeft: 10,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   rightWrapper: {
     position: 'absolute',
     right: 15,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   title: {
     fontWeight: 'bold',
-    color: '#404040',
-    fontSize: 16
   },
-  subTitle: {
-    color: 'gray',
-    fontSize: 14
-  }
+  subTitle: {},
 });
 
 export default AlbumItem;

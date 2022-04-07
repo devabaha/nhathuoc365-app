@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useMemo, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
-
+// 3-party libs
 import {debounce} from 'lodash';
 import {
   PanGestureHandler,
@@ -16,15 +16,12 @@ import Animated, {
   ceil,
   cond,
   eq,
-  greaterOrEq,
   greaterThan,
   lessThan,
   max,
   min,
-  multiply,
   neq,
   or,
-  round,
   set,
   sub,
   useCode,
@@ -34,13 +31,16 @@ import {
   useTapGestureHandler,
   useValue,
 } from 'react-native-redash';
-
-import appConfig from 'app-config';
-import {TRACKER_HEIGHT, THUMB_SIZE, TIMER_PADDING} from '../../constants';
-import {themes} from '../../themes';
+// helpers
+import {getThemes} from '../../themes';
 import {timingFunction} from '../../helper';
+import {mergeStyles} from 'src/Themes/helper';
 import {formatTime} from 'app-helper';
-
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TRACKER_HEIGHT, THUMB_SIZE, TIMER_PADDING} from '../../constants';
+// custom components
 import Timer from '../Timer';
 
 const styles = StyleSheet.create({
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themes.colors.primary,
     opacity: 0.4,
   },
   tracker: {
@@ -71,11 +70,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     opacity: 0.4,
     height: '100%',
-    backgroundColor: appConfig.colors.sceneBackground,
   },
   background: {
     height: '100%',
-    backgroundColor: appConfig.colors.primary,
   },
   thumbContainer: {
     position: 'absolute',
@@ -88,7 +85,6 @@ const styles = StyleSheet.create({
     height: THUMB_SIZE,
     borderRadius: THUMB_SIZE / 2,
     left: -THUMB_SIZE / 2,
-    backgroundColor: appConfig.colors.primary,
   },
   timerContainer: {
     position: 'absolute',
@@ -101,11 +97,17 @@ const ProgressBar = ({
   total = 1,
   bufferProgress = 0,
   isFullscreen = false,
-  thumbStyle = {},
+  thumbStyle: thumbStyleProp = {},
   animatedVisibleValue = new Animated.Value(0),
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
   const refPanGesture = useRef<any>();
   const refLongPressGesture = useRef<any>();
 
@@ -343,6 +345,57 @@ const ProgressBar = ({
     return isFullscreen && styles.trackerFullscreen;
   }, [isFullscreen]);
 
+  const maskStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.mask,
+        {
+          backgroundColor: themes.colors.primary,
+        },
+      ],
+      animatedProgressBarFullscreen,
+    );
+  }, [themes, animatedProgressBarFullscreen]);
+
+  const foregroundStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.foreground,
+        {
+          backgroundColor: themes.colors.background,
+          width: bufferProgress * containerWidth,
+        },
+      ],
+      animatedProgressBarFullscreen,
+    );
+  }, [themes, animatedProgressBarFullscreen]);
+
+  const backgroundStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.background,
+        {
+          width: ceil(positionX),
+          backgroundColor: theme.color.primaryHighlight,
+        },
+      ],
+      animatedProgressBarFullscreen,
+    );
+  }, [themes, theme, animatedProgressBarFullscreen]);
+
+  const thumbStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.thumb,
+        {
+          backgroundColor: theme.color.primaryHighlight,
+        },
+        animatedThumbStyle,
+      ],
+      thumbStyleProp,
+    );
+  }, [theme, thumbStyleProp]);
+
   return (
     <Animated.View
       onLayout={handleContainerLayout}
@@ -365,29 +418,11 @@ const ProgressBar = ({
                 <Animated.View style={[styles.wrapper, wrapperFullscreenStyle]}>
                   <Animated.View
                     style={[styles.container, animatedProgressBarFullscreen]}>
-                    <View
-                      style={[styles.mask, animatedProgressBarFullscreen]}
-                    />
-                    <Animated.View
-                      style={[
-                        styles.foreground,
-                        {
-                          width: bufferProgress * containerWidth,
-                        },
-                        animatedProgressBarFullscreen,
-                      ]}
-                    />
+                    <View style={maskStyle} />
+                    <Animated.View style={foregroundStyle} />
 
                     <View style={styles.tracker}>
-                      <Animated.View
-                        style={[
-                          styles.background,
-                          {
-                            width: ceil(positionX),
-                          },
-                          animatedProgressBarFullscreen,
-                        ]}
-                      />
+                      <Animated.View style={backgroundStyle} />
                       <Animated.View
                         style={[
                           styles.thumbContainer,
@@ -444,9 +479,7 @@ const ProgressBar = ({
                             ]}
                           />
                         )}
-                        <Animated.View
-                          style={[styles.thumb, animatedThumbStyle, thumbStyle]}
-                        />
+                        <Animated.View style={thumbStyle} />
                       </Animated.View>
                     </View>
                   </Animated.View>

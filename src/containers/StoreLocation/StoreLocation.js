@@ -1,14 +1,18 @@
-import React, { Component } from 'react';
-import { default as StoreLocationComponent } from '../../components/StoreLocation';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+// configs
 import appConfig from 'app-config';
-import Loading from '../../components/Loading';
+// routing
+import {push, pop, reset} from 'app-helper/routing';
+// custom components
+import {default as StoreLocationComponent} from 'src/components/StoreLocation';
+import Loading from 'src/components/Loading';
+import {ScreenWrapper, ScrollView} from 'src/components/base';
 
 class StoreLocation extends Component {
   state = {
     loading: true,
     locations: [],
-    selectedLocation: null
+    selectedLocation: null,
   };
   unmounted = false;
 
@@ -25,21 +29,77 @@ class StoreLocation extends Component {
       const response = await APIHandler.user_list_store_location();
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
-          const locations = this.formatLocations(response.data);
-          this.setState({ locations });
+          const locations = this.formatLocations([
+            {
+              // image: 'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1 uio',
+              districts: [
+                {
+                  district_name: 'Nguyen Trai, Thanh Xuan',
+                  name: 'Ha Noi',
+                },
+              ],
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+            {
+              image:
+                'https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300',
+              name: 'test1',
+            },
+          ]);
+          this.setState({locations});
         }
       }
     } catch (err) {
       console.log('getLocations', err);
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
   formatLocations(locations) {
-    locations.forEach(location => {
+    locations.forEach((location) => {
       if (location.districts) {
-        location.districts.forEach(district => {
+        location.districts.forEach((district) => {
           district.title = district.district_name;
           district.description = district.name;
         });
@@ -49,57 +109,60 @@ class StoreLocation extends Component {
     return locations;
   }
 
-  handleSelectLocation = async location => {
+  handleSelectLocation = async (location) => {
     try {
       const response = await APIHandler.user_choose_store_location(
-        location.site_id
+        location.site_id,
       );
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
-          Actions.reset(appConfig.routes.sceneWrapper);
+          reset(appConfig.routes.sceneWrapper);
         }
       }
     } catch (err) {
       console.log('getLocations', err);
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   };
 
-  onPressLocation = selectedLocation => {
+  onPressLocation = (selectedLocation) => {
     if (selectedLocation.districts) {
-      this.setState({ selectedLocation });
+      this.setState({selectedLocation});
 
       const districts = selectedLocation ? selectedLocation.districts : [];
 
       const title = selectedLocation ? selectedLocation.name : '';
 
-      Actions.push(appConfig.routes.modalList, {
+      push(appConfig.routes.modalList, {
         heading: title,
         data: districts,
+        modalStyle: {height: null},
         onCloseModal: this.onCloseModal.bind(this),
-        onPressItem: this.handleSelectLocation
+        onPressItem: this.handleSelectLocation,
       });
     } else {
-      this.handleSelectLocation({ site_id: selectedLocation.site_id });
+      this.handleSelectLocation({site_id: selectedLocation.site_id});
     }
   };
 
   onCloseModal() {
-    Actions.pop();
-    this.setState({ selectedLocation: null });
+    pop();
+    this.setState({selectedLocation: null});
   }
 
   render() {
     return (
-      <>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
-        <StoreLocationComponent
-          onPressLocation={this.onPressLocation}
-          locations={this.state.locations}
-          numColumn={2}
-        />
-      </>
+        <ScrollView safeLayout>
+          <StoreLocationComponent
+            onPressLocation={this.onPressLocation}
+            locations={this.state.locations}
+            numColumn={2}
+          />
+        </ScrollView>
+      </ScreenWrapper>
     );
   }
 }

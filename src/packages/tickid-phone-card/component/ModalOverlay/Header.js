@@ -1,19 +1,43 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import { View, Text, StyleSheet } from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {TextButton, Typography} from 'src/components/base';
 
 function Header(props) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation();
+
+  const closeTitle = props.closeTitle || t('close');
+
+  const headerStyle = useMemo(() => {
+    return mergeStyles(styles.header, {
+      borderBottomWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
-    <View style={styles.header}>
-      <Button
+    <View style={headerStyle}>
+      <TextButton
+        neutral
         onPress={props.onClose}
-        containerStyle={styles.btnClose}
-        style={styles.closeTitle}
-      >
-        {props.closeTitle}
-      </Button>
-      <Text style={styles.headerTitle}>{props.title}</Text>
+        style={styles.btnClose}
+        titleStyle={styles.closeTitle}>
+        {closeTitle}
+      </TextButton>
+      <Typography type={TypographyType.TITLE_MEDIUM} style={styles.headerTitle}>
+        {props.title}
+      </Typography>
     </View>
   );
 }
@@ -21,28 +45,21 @@ function Header(props) {
 Header.propTypes = {
   title: PropTypes.string,
   closeTitle: PropTypes.string,
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
 };
 
 Header.defaultProps = {
-  title: 'Chưa có tiêu đề',
-  closeTitle: 'Đóng',
-  onClose: () => {}
+  onClose: () => {},
 };
 
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'center',
-    position: 'relative',
     paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f1f1'
   },
   headerTitle: {
-    fontSize: 15,
-    color: '#333',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   btnClose: {
     position: 'absolute',
@@ -50,13 +67,11 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   closeTitle: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default Header;

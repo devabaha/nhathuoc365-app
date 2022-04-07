@@ -1,23 +1,31 @@
-import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
 import LinearGradient from 'react-native-linear-gradient';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {TextButton, Typography} from 'src/components/base';
 
 const MIN_WIDTH_MESSAGE = 120;
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    minWidth: MIN_WIDTH_MESSAGE,
-    alignItems: 'flex-end',
-    alignSelf: 'flex-end',
-    zIndex: 1,
+    // position: 'absolute',
+    // minWidth: MIN_WIDTH_MESSAGE,
+    // alignItems: 'flex-end',
+    // alignSelf: 'flex-end',
+    // zIndex: 1,
   },
   btnContainer: {
     right: 0,
     borderBottomRightRadius: 15,
   },
   label: {
-    color: '#777',
     paddingRight: 15,
   },
   mask: {
@@ -33,36 +41,54 @@ const SeeMoreBtn = ({
   lineHeight,
   containerStyle,
   titleStyle,
-  bgColor = '#fff',
+  bgColor: bgColorProp,
   onPress = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('social');
 
-  return (
-    <View style={[styles.container, containerStyle]}>
-      <TouchableOpacity
-        hitSlop={HIT_SLOP}
-        activeOpacity={0.9}
-        onPress={onPress}
-        style={styles.btnContainer}>
-        <LinearGradient
+  const bgColor = useMemo(() => {
+    return bgColorProp || theme.color.surface;
+  }, [theme, bgColorProp]);
+
+  const labelStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.label,
+        {
+          lineHeight,
+        },
+      ],
+      titleStyle,
+    );
+  }, [theme, titleStyle, lineHeight]);
+
+  const renderTitle = useCallback(() => {
+    return (
+      <>
+        {/* <LinearGradient
           style={styles.mask}
-          colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+          colors={[hexToRgba(bgColor, 1), hexToRgba(bgColor, 0)]}
           locations={[0.77, 1]}
           angle={-90}
           useAngle
-        />
-        <Text
-          style={[
-            styles.label,
-            {
-              lineHeight,
-            },
-            titleStyle,
-          ]}>
+        /> */}
+        <Typography type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY} style={labelStyle}>
           {title || t('seeMore')}
-        </Text>
-      </TouchableOpacity>
+        </Typography>
+      </>
+    );
+  }, [bgColor, labelStyle, title]);
+
+  return (
+    <View style={[styles.container, containerStyle]}>
+      <TextButton
+        hitSlop={HIT_SLOP}
+        onPress={onPress}
+        style={styles.btnContainer}
+        renderTitleComponent={renderTitle}
+      />
     </View>
   );
 };

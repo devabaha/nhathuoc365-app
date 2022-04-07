@@ -16,9 +16,12 @@ import {
   handleServicePress,
   handleOrderHistoryPress,
 } from './radaHandler';
-
-import SearchNavBar from '../../components/stores/SearchNavBar';
-import {checkIfEULAAgreed, getEULAContent, updateEULAUserDecision} from '..';
+import {jump, push} from 'app-helper/routing';
+import {
+  checkIfEULAAgreed,
+  getEULAContent,
+  updateEULAUserDecision,
+} from 'app-helper';
 import APIHandler from 'src/network/APIHandler';
 import {CONFIG_KEY, getValueFromConfigKey} from 'app-helper/configKeyHandler';
 
@@ -30,12 +33,12 @@ import {CONFIG_KEY, getValueFromConfigKey} from 'app-helper/configKeyHandler';
  *
  * @typedef {Object} Service - an abstract for all kind of services.
  * @property {string} type - type of a service.
- * @property {*} others - any other param(s) for specific case.
+ * @property {any} theme - type of a service.
  */
 
 /**
  *
- * @param {Service} service
+ * @param {..Service} service
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
@@ -92,53 +95,85 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
-      Actions.push(appConfig.routes.qrBarCode, {
-        title: t('common:screen.qrBarCode.mainTitle'),
-      });
+      push(
+        appConfig.routes.qrBarCode,
+        {
+          title: t('common:screen.qrBarCode.mainTitle'),
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.QRCODE_SCAN_TYPE:
     case SERVICES_TYPE.QRCODE_SCAN:
-      Actions.push(appConfig.routes.qrBarCode, {
-        index: 1,
-        title: t('common:screen.qrBarCode.scanTitle'),
-        wallet: store.user_info.default_wallet,
-      });
+      push(
+        appConfig.routes.qrBarCode,
+        {
+          index: 1,
+          title: t('common:screen.qrBarCode.scanTitle'),
+          wallet: store.user_info.default_wallet,
+        },
+        service.theme,
+      );
       break;
 
     /** VOUCHER */
     case SERVICES_TYPE.LIST_VOUCHER:
-      Actions.push(appConfig.routes.mainVoucher, {
-        from: 'home',
-      });
+      push(
+        appConfig.routes.mainVoucher,
+        {
+          from: service.from,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.MY_VOUCHER_TYPE:
     case SERVICES_TYPE.MY_VOUCHER:
-      Actions.push(appConfig.routes.myVoucher, {
-        title: t('common:screen.myVoucher.mainTitle'),
-        from: 'home',
-      });
+      push(
+        appConfig.routes.myVoucher,
+        {
+          title: t('common:screen.myVoucher.mainTitle'),
+          from: service.from,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.MY_VOUCHER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.myVoucher, {
-        title: t('common:screen.myVoucher.mainTitle'),
-        from: 'home',
-        onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
-        onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure,
-      });
+      push(
+        appConfig.routes.myVoucher,
+        {
+          title: t('common:screen.myVoucher.mainTitle'),
+          from: service.from,
+          onUseVoucherOnlineSuccess:
+            service.onUseVoucherOnlineSuccess || handleUseVoucherOnlineSuccess,
+          onUseVoucherOnlineFailure:
+            service.onUseVoucherOnlineFailure || handleUseVoucherOnlineFailure,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.VOUCHER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.mainVoucher, {
-        from: 'deeplink',
-      });
+      push(
+        appConfig.routes.mainVoucher,
+        {
+          from: service.from,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.VOUCHER_CAMPAIGN_DETAIL:
-      Actions.push(appConfig.routes.voucherDetail, {
-        voucherId: service.voucherId,
-        campaignId: service.campaignId,
-        title: service.name,
-      });
+      push(
+        appConfig.routes.voucherDetail,
+        {
+          voucherId: service.voucherId,
+          campaignId: service.campaignId,
+          title: service.title,
+          from: service.from,
+          mode: service.mode,
+        },
+        service.theme,
+      );
       break;
 
     /** TRANSACTION */
@@ -151,30 +186,38 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** ORDER */
     case SERVICES_TYPE.STORE_ORDERS:
-      Actions.push(appConfig.routes.storeOrders, {
-        tel: service.tel,
-        title: service.site_name,
-        store_id: service.store_id,
-      });
+      push(
+        appConfig.routes.storeOrders,
+        {
+          tel: service.tel,
+          title: service.site_name,
+          store_id: service.store_id,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.ORDERS:
     case SERVICES_TYPE.ORDERS_TAB:
-      Actions.push(appConfig.routes.ordersTab);
+      push(appConfig.routes.ordersTab, {}, service.theme);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
       store.setDeepLinkData({id: service.id});
-      Actions.push(appConfig.routes.deepLinkOrdersTab);
+      push(appConfig.routes.deepLinkOrdersTab, {}, service.theme);
       break;
 
     /** TICKID-PHONE-CARD */
     case SERVICES_TYPE.UP_TO_PHONE:
-      Actions.push(appConfig.routes.upToPhone, {
-        service_type: service.type,
-        service_id: service.id,
-        indexTab: service.tab,
-        title: service.name,
-        serviceId: service.serviceId ? service.serviceId : 100,
-      });
+      push(
+        appConfig.routes.upToPhone,
+        {
+          service_type: service.type,
+          service_id: service.id,
+          indexTab: service.tab,
+          title: service.name,
+          serviceId: service.serviceId ? service.serviceId : 100,
+        },
+        service.theme,
+      );
       break;
 
     /** 30DAY */
@@ -193,55 +236,111 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         from_page: 'account',
       });
       break;
+    case SERVICES_TYPE.CREATE_ADDRESS:
+      push(
+        appConfig.routes.createAddress,
+        {
+          from_page: service.from_page,
+          edit_data: service.edit_data,
+          title: service.edit_data
+            ? t('common:screen.address.editTitle')
+            : t('common:screen.address.createTitle'),
+          addressReload: service.addressReload,
+          redirect: service.redirect,
+        },
+        service.theme,
+      );
+      break;
 
     /** NEWS */
     case SERVICES_TYPE.NEWS:
       Actions.push(appConfig.routes.newsTab);
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
-      Actions.notify_item({
-        title: service.title || service.news?.title,
-        data: service.news,
-        newsId: service.news_id,
-      });
+      push(
+        appConfig.routes.notifyDetail,
+        {
+          title: service.title || service.news?.title,
+          data: service.news,
+          newsId: service.news_id,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
       store.setSelectedNewsId(service.categoryId || '');
-      // Actions.push(appConfig.routes.notifies, {
-      //   title: service.title,
-      //   id: service.categoryId,
-      // });
-      Actions.jump(appConfig.routes.newsTab, {
-        title: service.title,
-        id: service.categoryId,
-      });
+      // push(
+      //   appConfig.routes.newsTab,
+      //   {
+      //     title: commonT('screen.news.mainTitle'),
+      //     id: service.categoryId,
+      //   },
+      //   service.theme,
+      // );
+      push(
+        appConfig.routes.newsTab,
+        {
+          title: service.title,
+          id: service.categoryId,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
-      Actions.push(appConfig.routes.notifiesVertical, {
-        title: service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.notifiesVertical,
+        {
+          title: service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** CHAT */
-    case SERVICES_TYPE.CHAT_NOTI:
-      Actions.amazing_chat({
-        titleStyle: {width: 220},
-        phoneNumber: service.tel,
-        title: service.site_name,
-        site_id: service.site_id,
-        user_id: service.user_id,
-      });
-      break;
     case SERVICES_TYPE.LIST_CHAT:
-      Actions.push(appConfig.routes.listChat, {
-        titleStyle: {width: 220},
+      push(appConfig.routes.listChat, {
+        title: service.title || commonT('screen.listChat.mainTitle'),
+        titleStyle: service.titleStyle || {width: 220},
       });
       break;
     case SERVICES_TYPE.LIST_USER_CHAT:
       Actions.push(appConfig.routes.listUserChat, {
-        titleStyle: {width: 220},
+        titleStyle: service.titleStyle || {width: 220},
+        title: service.title || commonT('screen.listUserChat.mainTitle'),
       });
+      break;
+    case SERVICES_TYPE.CHAT_NOTI:
+    case SERVICES_TYPE.CHAT:
+      push(
+        appConfig.routes.amazingChat,
+        {
+          titleStyle: service.titleStyle || {width: 220},
+          phoneNumber: service.tel,
+          title: service.site_name || service.title,
+          site_id: service.site_id,
+          user_id: service.user_id,
+          fromSearchScene: service.fromSearchScene,
+          setHeader: service.setHeader,
+        },
+        service.theme,
+      );
+      break;
+    case SERVICES_TYPE.USER_CHAT:
+      push(
+        appConfig.routes.amazingUserChat,
+        {
+          titleStyle: service.titleStyle || {width: 220},
+          phoneNumber: service.tel,
+          title: service.site_name || service.title,
+          site_id: service.site_id,
+          user_id: service.user_id,
+          fromSearchScene: service.fromSearchScene,
+          conversation_id: service.conversation_id,
+          setHeader: service.setHeader,
+        },
+        service.theme,
+      );
       break;
 
     /** STORE */
@@ -258,16 +357,24 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
               response.data.config_menu_categories &&
               service.categoryId === undefined
             ) {
-              Actions.push(appConfig.routes.multiLevelCategory, {
-                title: response.data.name,
-                siteId: service.siteId,
-                categoryId: service.categoryId || 0,
-              });
+              push(
+                appConfig.routes.multiLevelCategory,
+                {
+                  title: response.data.name,
+                  siteId: service.siteId,
+                  categoryId: service.categoryId || 0,
+                },
+                service.theme,
+              );
             } else {
-              Actions.push(appConfig.routes.store, {
-                title: service.name || response.data.name,
-                categoryId: service.categoryId || 0,
-              });
+              push(
+                appConfig.routes.store,
+                {
+                  title: service.name || response.data.name,
+                  categoryId: service.categoryId || 0,
+                },
+                service.theme,
+              );
             }
           } else {
             throw Error(
@@ -286,11 +393,29 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
       break;
     case SERVICES_TYPE.GPS_LIST_STORE:
     case SERVICES_TYPE.GPS_LIST_SITE:
-      Actions.push(appConfig.routes.gpsListStore, {
-        type: service.type,
-        placeholder: service.placeholder || commonT('home:searchingStore'),
+      push(
+        appConfig.routes.gpsListStore,
+        {
+          type: service.type,
+          title: service.title || commonT('screen.listSite.mainTitle'),
+          placeholder: service.placeholder || commonT('home:searchingStore'),
+          autoFocus: service.autoFocus,
+          selectedStore: service.selectedStore,
+          onPress: service.onPress,
+        },
+        service.theme,
+      );
+      break;
+    case SERVICES_TYPE.SEARCH_STORE:
+      push(appConfig.routes.searchStore, {
+        categories: service.categories,
+        category_id: service.category_id,
+        category_name: service.category_name,
         autoFocus: service.autoFocus,
-        navBar: service.navBar || SearchNavBar,
+        categoriesCollapsed: service.categoriesCollapsed,
+        qr_code: service.qr_code,
+        from_item: service.from_item,
+        itemRefresh: service.itemRefresh,
         onPress: service.onPress,
         selectedStore: service.selectedStore,
       });
@@ -303,6 +428,17 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
+      if (service.product) {
+        push(
+          appConfig.routes.item,
+          {
+            title: service.title,
+            item: service.product,
+          },
+          service.theme,
+        );
+        return;
+      }
       if (service.callback) {
         service.callback();
       }
@@ -332,11 +468,15 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
         .finally(callBack);
       break;
     case SERVICES_TYPE.GROUP_PRODUCT:
-      Actions.push(appConfig.routes.store, {
-        categoriesData: [{id: service.groupId, name: service.title}],
-        title: service.title,
-        type: SERVICES_TYPE.GROUP_PRODUCT,
-      });
+      push(
+        appConfig.routes.store,
+        {
+          categoriesData: [{id: service.groupId, name: service.title}],
+          title: service.title || commonT('screen.groupProduct.mainTitle'),
+          type: SERVICES_TYPE.GROUP_PRODUCT,
+        },
+        service.theme,
+      );
       break;
     case SERVICES_TYPE.PRODUCT_STAMPS:
       Actions.push(appConfig.routes.productStamps);
@@ -349,7 +489,13 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** SERVICE ORDERS */
     case SERVICES_TYPE.SERVICE_ORDERS:
-      Actions.push(appConfig.routes.serviceOrders);
+      push(
+        appConfig.routes.serviceOrders,
+        {
+          title: service.title || commonT('screen.serviceOrder.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /** ALL SERVICES */
@@ -359,24 +505,32 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** PAYMENT */
     case SERVICES_TYPE.PAYMENT_METHOD:
-      const selectedMethod =
-        service.default_payment_method_id !== undefined
-          ? {
-              id: service.default_payment_method_id,
-              type: service.default_payment_method_type,
-            }
-          : null;
-      Actions.push(appConfig.routes.paymentMethod, {
-        selectedMethod: selectedMethod,
-        price: service.total_before_view,
-        totalPrice: service.total_selected,
-        extraFee: service.item_fee,
-        showPrice: service.showPrice,
-        showSubmit: service.showSubmit,
-        onUpdatePaymentMethod: (data) => callBack(false, data),
-        store_id: service.storeId,
-        cart_id: service.cartId,
-        title: service.title,
+      push(
+        appConfig.routes.paymentMethod,
+        {
+          selectedMethod: service.selectedMethod,
+          selectedPaymentMethodDetail: service.selectedPaymentMethodDetail,
+          price: service.price,
+          totalPrice: service.totalPrice,
+          extraFee: service.extraFee,
+          showPrice: service.showPrice,
+          showSubmit: service.showSubmit,
+          store_id: service.storeId,
+          cart_id: service.cartId,
+          title: service.title || commonT('screen.paymentMethod.mainTitle'),
+          onUpdatePaymentMethod: service.onUpdatePaymentMethod,
+          onConfirm: service.onConfirm,
+        },
+        service.theme,
+      );
+      break;
+
+    case SERVICES_TYPE.PAYMENT_TRANSACTION:
+      push(appConfig.routes.transaction, {
+        siteId: service.siteId,
+        cartId: service.cartId,
+        onPop: service.onPop,
+        title: service.title || commonT('screen.transaction.paymentTitle'),
       });
       break;
 
@@ -398,83 +552,110 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** SCHEDULE BOOKING */
     case SERVICES_TYPE.SCHEDULE_BOOKING:
-      Actions.push(appConfig.routes.schedule, {
-        serviceId: service.service_id,
-      });
+      push(
+        appConfig.routes.schedule,
+        {
+          serviceId: service.service_id,
+        },
+        service.theme,
+      );
       break;
 
     /** PREMIUMS */
     case SERVICES_TYPE.PREMIUM_INFO:
       if (Actions.currentScene === `${appConfig.routes.premiumInfo}_1`) {
-        Actions.jump(appConfig.routes.accountTab);
+        jump(appConfig.routes.accountTab);
       }
-      Actions.push(appConfig.routes.premiumInfo);
+      push(appConfig.routes.premiumInfo, {}, {theme: service.theme});
       break;
 
     /** COMMISSION */
     case SERVICES_TYPE.COMMISSION_INCOME_STATEMENT:
-      Actions.push(appConfig.routes.commissionIncomeStatement);
+      push(appConfig.routes.commissionIncomeStatement, {}, service.theme);
       break;
 
     /** GAMIFICATION */
     /** Lottery */
     case SERVICES_TYPE.LOTTERY_GAME:
-      console.log(service);
-      Actions.push(appConfig.routes.lotteryGame, {
-        title: service.news?.title || service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.lotteryGame,
+        {
+          title: service.news?.title || service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** SOCIAL */
     /** Social */
     case SERVICES_TYPE.SOCIAL:
-      Actions.push(appConfig.routes.social, {
-        title: service.title,
-        siteId: service.id,
-      });
+      push(
+        appConfig.routes.social,
+        {
+          title: service.title || commonT('screen.social.mainTitle'),
+          siteId: service.id,
+        },
+        service.theme,
+      );
       break;
     /** Social Group */
     case SERVICES_TYPE.SOCIAL_GROUP:
-      Actions.push(appConfig.routes.socialGroup, {
-        id: service.id,
-        groupName: service.name,
-      });
+      push(
+        appConfig.routes.socialGroup,
+        {
+          id: service.id,
+          groupName: service.name,
+        },
+        service.theme,
+      );
       break;
     /** Social Create Post */
     case SERVICES_TYPE.SOCIAL_CREATE_POST:
-      Actions.push(appConfig.routes.socialCreatePost, {
-        title: service.title || t('screen.createPost.mainTitle'),
-        group: service.group,
-        groupId: service.group_id,
-        editMode: service.editMode,
-        postId: service.post_id,
-        siteId: service.site_id || store?.store_data?.id,
-        avatar: service.avatar || store?.user_info?.img,
-        contentText: service.content,
-        images: service.images,
-        isOpenImagePicker: service.isOpenImagePicker,
-      });
+      push(
+        appConfig.routes.socialCreatePost,
+        {
+          title: service.title || t('screen.createPost.mainTitle'),
+          group: service.group,
+          groupId: service.group_id,
+          editMode: service.editMode,
+          postId: service.post_id,
+          siteId: service.site_id || store?.store_data?.id,
+          avatar: service.avatar || store?.user_info?.img,
+          contentText: service.content,
+          images: service.images,
+          isOpenImagePicker: service.isOpenImagePicker,
+        },
+        service.theme,
+      );
       break;
 
     /** PROGRESS TRACKING */
     /** LIST */
     case SERVICES_TYPE.LIST_PROGRESS_TRACKING:
-      Actions.push(appConfig.routes.listProgressTracking, {
-        title: service.title,
-      });
+      push(
+        appConfig.routes.listProgressTracking,
+        {
+          title: service.title,
+        },
+        service.theme,
+      );
       break;
     /** DETAIL */
     case SERVICES_TYPE.PROGRESS_TRACKING_DETAIL:
-      Actions.push(appConfig.routes.progressTrackingDetail, {
-        title: service.title,
-        id: service.id,
-      });
+      push(
+        appConfig.routes.progressTrackingDetail,
+        {
+          title: service.title,
+          id: service.id,
+        },
+        service.theme,
+      );
       break;
 
     /** PERSONAL PROFILE */
     case SERVICES_TYPE.PERSONAL_PROFILE:
-      Actions.push(appConfig.routes.personalProfile, {
+      push(appConfig.routes.personalProfile, {
         isMainUser: service.isMainUser,
         userInfo: service.userInfo,
         title: service.title || service.userInfo?.name,
@@ -483,51 +664,74 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
 
     /** AIRLINE TICKET */
     case SERVICES_TYPE.AIRLINE_TICKET:
-      Actions.push(appConfig.routes.airlineTicket);
+      push(
+        appConfig.routes.airlineTicket,
+        {
+          title: service.title || commonT('screen.airlineTicket.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /** AGENCY INFORMATION REGISTER */
     case SERVICES_TYPE.AGENCY_INFORMATION_REGISTER:
-      Actions.push(appConfig.routes.agencyInformationRegister, {
-        title:
-          service.title ||
-          commonT('screen.agencyInformationRegister.mainTitle'),
-      });
+      push(
+        appConfig.routes.agencyInformationRegister,
+        {
+          title:
+            service.title ||
+            commonT('screen.agencyInformationRegister.mainTitle'),
+        },
+        service.theme,
+      );
       break;
 
     /**  REQUEST */
     /** List */
     case SERVICES_TYPE.REQUESTS:
-      Actions.push(appConfig.routes.requests, {
-        title: service.title,
-        siteId: service.site_id || store.store_id,
-        roomId: service.room_id || service.channel_id || 0,
-        objectType: service.object_type,
-        objectId: service.object_id,
-        object: service.object,
-      });
+      push(
+        appConfig.routes.requests,
+        {
+          title: service.title || commonT('screen.requests.mainTitle'),
+          siteId: service.site_id || store.store_id,
+          roomId: service.room_id || service.channel_id || 0,
+          objectType: service.object_type,
+          objectId: service.object_id,
+          object: service.object,
+        },
+        service.theme,
+      );
       break;
     /** Create */
     case SERVICES_TYPE.CREATE_REQUEST:
-      Actions.push(appConfig.routes.requestCreation, {
-        siteId: service.site_id || store.store_id,
-        roomId: service.room_id || service.channel_id || 0,
-        request: service.request,
-        objectType: service.object_type,
-        objectId: service.object_id,
-        object: service.object,
-        onRefresh: service.onRefresh,
-      });
+      push(
+        appConfig.routes.requestCreation,
+        {
+          siteId: service.site_id || store.store_id,
+          roomId: service.room_id || service.channel_id || 0,
+          request: service.request,
+          objectType: service.object_type,
+          objectId: service.object_id,
+          object: service.object,
+          onRefresh: service.onRefresh,
+          title: service.title || commonT('screen.requests.creationTitle'),
+        },
+        service.theme,
+      );
       break;
     /** Detail */
     case SERVICES_TYPE.REQUEST_DETAIL:
-      Actions.push(appConfig.routes.requestDetail, {
-        siteId: service.site_id,
-        roomId: service.room_id,
-        requestId: service.request_id,
-        title: service.title,
-        callbackReload: service.callbackReload,
-      });
+      push(
+        appConfig.routes.requestDetail,
+        {
+          siteId: service.site_id,
+          roomId: service.room_id,
+          requestId: service.request_id,
+          title: service.title || commonT('screen.requests.detailTitle'),
+          callbackReload: service.callbackReload,
+        },
+        service.theme,
+      );
       break;
 
     /** WALLET */
@@ -540,16 +744,31 @@ export const servicesHandler = (service, t = null, callBack = () => {}) => {
           : store.user_info?.default_wallet
         : store.user_info?.default_wallet;
       console.log(wallet, service);
-      Actions.push(appConfig.routes.vndWallet, {
-        title: service.name || wallet?.name,
-        wallet,
-        tabIndex: service.tabIndex,
-      });
+      push(
+        appConfig.routes.vndWallet,
+        {
+          title: service.name || wallet?.name,
+          wallet,
+          tabIndex: service.tabIndex,
+        },
+        service.theme,
+      );
+      break;
+
+    /** RATING */
+    case SERVICES_TYPE.RATING:
+      push(
+        appConfig.routes.rating,
+        {
+          cart_data: service.cart_data,
+        },
+        service.theme,
+      );
       break;
 
     /** SALES REPORT */
     case SERVICES_TYPE.SALES_REPORT:
-      Actions.push(appConfig.routes.salesReport);
+      push(appConfig.routes.salesReport, {}, service.theme);
       break;
 
     /** LICENSE/ AGREEMENT */

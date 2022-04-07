@@ -1,48 +1,62 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+// 3-party libs
 import ScreenBrightness from 'react-native-screen-brightness';
-import ShowBarcodeComponent from '../../component/ShowBarcode';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
 import CampaignEntity from '../../entity/CampaignEntity';
-import EventTracker from '../../../../helper/EventTracker';
+// custom components
+import ShowBarcodeComponent from '../../component/ShowBarcode';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
 
 class ShowBarcode extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     code: PropTypes.string.isRequired,
-    voucher: PropTypes.instanceOf(CampaignEntity).isRequired
+    voucher: PropTypes.instanceOf(CampaignEntity).isRequired,
   };
 
   static defaultProps = {
     code: undefined,
-    voucher: undefined
+    voucher: undefined,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    originLuminous: MIN_LUMINOUS,
+  };
+  eventTracker = new EventTracker();
 
-    this.state = {
-      originLuminous: MIN_LUMINOUS
-    };
-    this.eventTracker = new EventTracker();
-  }
+  updateNavBarDisposer = () => {};
 
   componentDidMount() {
     this.handleBrightness();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     ScreenBrightness.setBrightness(this.state.originLuminous);
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   handleBrightness = () => {
-    ScreenBrightness.getBrightness().then(originLuminous => {
+    ScreenBrightness.getBrightness().then((originLuminous) => {
       if (originLuminous < MIN_LUMINOUS) {
-        this.setState({ originLuminous }, () =>
-          ScreenBrightness.setBrightness(MAXIMUM_LUMINOUS)
+        this.setState({originLuminous}, () =>
+          ScreenBrightness.setBrightness(MAXIMUM_LUMINOUS),
         );
       }
     });

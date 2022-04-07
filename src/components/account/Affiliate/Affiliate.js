@@ -1,51 +1,68 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  FlatList
-} from 'react-native';
-
-//library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import store from '../../../store/Store';
-
-//component
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {share} from 'app-helper/share';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import History from './History';
 import Info from './Info';
-import Loading from '../../Loading';
-import EventTracker from '../../../helper/EventTracker';
-import appConfig from 'app-config';
-import { share } from '../../../helper/share'
+import Loading from 'src/components/Loading';
+import {
+  Typography,
+  Icon,
+  FlatList,
+  Container,
+  BaseButton,
+  ScreenWrapper,
+} from 'src/components/base';
 
 class Affiliate extends Component {
-  constructor(props) {
-    super(props);
-    // props.i18n.changeLanguage('en')
-    this.state = {
-      historiesData: null,
-      content: props.aff_content
-        ? props.aff_content
-        : props.t('programInformationMessage', { appName: APP_NAME_SHOW }),
-      activeTab: 0,
-      loading: true
-    };
+  static contextType = ThemeContext;
 
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
+  // props.i18n.changeLanguage('en')
+  state = {
+    historiesData: null,
+    content: this.props.aff_content
+      ? this.props.aff_content
+      : this.props.t('programInformationMessage', {appName: APP_NAME_SHOW}),
+    activeTab: 0,
+    loading: true,
+  };
+
+  unmounted = false;
+  eventTracker = new EventTracker();
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this._getInviteList();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   async _getInviteList() {
@@ -53,16 +70,19 @@ class Affiliate extends Component {
       const response = await APIHandler.user_invite_history();
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
-          this.setState({ historiesData: response.data.histories });
+          this.setState({historiesData: response.data?.histories});
         }
       }
     } catch (e) {
       console.log(e);
     } finally {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     }
   }
 
+  handleShare = (userInfo) => {
+    share(null, userInfo.text_sms);
+  };
   // _sms
 
   _onScrollEnd(e) {
@@ -75,91 +95,116 @@ class Affiliate extends Component {
     this.changeActiveTab(pageNum);
   }
 
-  changeActiveTab = activeTab => {
+  changeActiveTab = (activeTab) => {
     if (this.flatlist) {
-      this.flatlist.scrollToIndex({ index: activeTab, animated: true });
+      this.flatlist.scrollToIndex({index: activeTab, animated: true});
     }
     if (activeTab !== this.state.activeTab) {
       let state = this.state;
       state.activeTab = activeTab;
-      this.setState({ ...state });
+      this.setState({...state});
     }
   };
 
   renderTopLabelCoin() {
-    const { user_info } = store;
-    const { t } = this.props;
+    const {user_info} = store;
+    const {t} = this.props;
 
     return (
-      <View>
-        <View style={styles.add_store_actions_box}>
-
-          <TouchableHighlight
-            underlayColor="transparent"
-            style={styles.add_store_action_btn, {flex: 1}}
-          >
-            <View
-              style={[
-                styles.add_store_action_btn_box_balance,
-                { borderRightWidth: 0,}
-              ]}
-            >
-              <Text
-                style={[
-                  styles.add_store_action_label_balance,
-                  {
-                    // textAlign: 'center',
-                    width: '100%',
-                    paddingHorizontal: 22
-                  }
-                ]}
-              >
-                {/* <Icon name="slideshare" size={16} /> */}
-                {t('header.referralCode.title')}
-              </Text>
-              <Text
-                style={[
-                  styles.add_store_action_content,
-                  {
-                    // textAlign: 'center',
-                    width: '100%',
-                    paddingHorizontal: 22
-                  }
-                ]}
-              >
-                {user_info.username}
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() =>
-              share(null, user_info.text_sms)
-            }
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="share-alt" size={22} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('header.share.title')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </View>
+      <Container style={styles.add_store_actions_box}>
+        <BaseButton
+          useTouchableHighlight
+          style={(styles.add_store_action_btn, {flex: 1})}>
+          <View style={[styles.add_store_action_btn_box_balance]}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={[styles.add_store_action_label_balance]}>
+              {/* <Icon name="slideshare" size={16} /> */}
+              {t('header.referralCode.title')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
+              style={styles.add_store_action_content}>
+              {user_info.username}
+            </Typography>
+          </View>
+        </BaseButton>
+        <BaseButton
+          onPress={() => this.handleShare(user_info)}
+          style={styles.add_store_action_btn}>
+          <View style={this.rightButtonHeaderStyle}>
+            <Icon
+              bundle={BundleIconSetName.FONT_AWESOME}
+              name="share-alt"
+              size={22}
+            />
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.add_store_action_label}>
+              {t('header.share.title')}
+            </Typography>
+          </View>
+        </BaseButton>
+      </Container>
     );
   }
 
+  get rightButtonHeaderStyle() {
+    return [
+      styles.add_store_action_btn_box,
+      {
+        borderLeftWidth: this.theme.layout.borderWidthPixel,
+        borderColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get headerContainerStyle() {
+    return [
+      styles.add_store_actions_box,
+      {
+        borderBottomWidth: this.theme.layout.borderWidthPixel,
+        borderColor: this.theme.color.border,
+      },
+    ];
+  }
+
+  get tabContentContainerStyle() {
+    return [
+      styles.tabHeaderContainer,
+      {
+        borderBottomColor: this.theme.color.border,
+        borderBottomWidth: this.theme.layout.borderWidth,
+      },
+    ];
+  }
+
+  get activeTabStyle() {
+    return [
+      styles.activeTab,
+      {
+        borderBottomColor: this.theme.color.primaryHighlight,
+      },
+    ];
+  }
+
+  get tabRightSeparatorStyle() {
+    return {
+      borderRightColor: this.theme.color.border,
+      borderRightWidth: this.theme.layout.borderWidth,
+    };
+  }
+
   render() {
-    const { activeTab, content, historiesData } = this.state;
-    const { t } = this.props;
+    const {activeTab, content, historiesData} = this.state;
+    const {t} = this.props;
     const data = [
       {
         key: 0,
         title: t('tab.referralList.title'),
         component: (
           <History loading={this.state.loading} historyData={historiesData} />
-        )
+        ),
       },
       // {
       //   key: 1,
@@ -174,284 +219,109 @@ class Affiliate extends Component {
       {
         key: 1,
         title: t('tab.programInformation.title'),
-        component: <Info loading={this.state.loading} content={content} />
-      }
+        component: <Info loading={this.state.loading} content={content} />,
+      },
     ];
     const tabHeader = data.map((d, i) => (
-      <TouchableHighlight
+      <BaseButton
+        useTouchableHighlight
         key={d.key}
         underlayColor="transparent"
         style={[
-          styles.tabStyle,
-          d.key === activeTab && styles.activeTab,
-          ,
-          { paddingVertical: 15 }
+          styles.tabContainer,
+          d.key === activeTab && this.activeTabStyle,
         ]}
-        onPress={this.changeActiveTab.bind(this, d.key)}
-      >
-        <View
-          style={[
-            i !== data.length - 1 && {
-              borderRightColor: '#dddddd',
-              borderRightWidth: 1
-            }
-          ]}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              color: '#404040'
-            }}
-          >
+        onPress={this.changeActiveTab.bind(this, d.key)}>
+        <View style={[i !== data.length - 1 && this.tabRightSeparatorStyle]}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={[
+              styles.tabLabel,
+              d.key === activeTab && {fontWeight: 'bold'},
+            ]}>
             {d.title}
-          </Text>
+          </Typography>
         </View>
-      </TouchableHighlight>
+      </BaseButton>
     ));
+
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
         {this.renderTopLabelCoin()}
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#dddddd',
-            borderBottomWidth: 1
-          }}
-        >
-          {tabHeader}
-        </View>
+        <Container style={this.tabContentContainerStyle}>{tabHeader}</Container>
         <FlatList
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          ref={ref => (this.flatlist = ref)}
+          ref={(ref) => (this.flatlist = ref)}
           data={data}
-          keyExtractor={item => item.key.toString()}
+          keyExtractor={(item) => item.key.toString()}
           horizontal={true}
-          onScrollToIndexFailed={() => {}}
           pagingEnabled
           style={{
-            width: Util.size.width
-          }}
-          contentContainerStyle={{
-            flexGrow: 1
+            width: appConfig.device.width,
           }}
           onMomentumScrollEnd={this._onScrollEnd.bind(this)}
           getItemLayout={(data, index) => {
             return {
-              length: Util.size.width,
-              offset: Util.size.width * index,
-              index
+              length: appConfig.device.width,
+              offset: appConfig.device.width * index,
+              index,
             };
           }}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return item.component;
           }}
         />
-        <View />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-
-    marginBottom: 0,
-    backgroundColor: '#ffffff'
-  },
-  profile_list_opt_btn: {
-    width: Util.size.width,
-    height: 32,
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 4,
-    marginTop: 20,
-    borderTopWidth: 0,
-    borderColor: '#dddddd'
-  },
-  point_icon: {
-    width: 60,
-    height: 60
-  },
-  iconView: {
-    alignItems: 'center',
-    flex: 1
-  },
-  profile_list_icon_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-    height: 70
-  },
-  profile_list_label: {
-    fontSize: 18,
-    color: '#000000',
-    fontWeight: '400'
-  },
-  profile_list_small_label: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 2
-  },
-  labelCoinParentView: {
-    flex: 5,
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10
-  },
-  labelCoinView: {
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  lineView: {
-    marginTop: 10,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 10,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  lineViewWallet: {
-    marginTop: 1,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 1,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  lineRowView: {
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10,
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-  newsCoinView: {
-    flexDirection: 'row',
-    height: 30,
-    marginTop: 10,
-    alignItems: 'center'
-  },
-  historyCoinText: {
-    marginLeft: 20,
-    marginBottom: 20,
-    fontSize: 18,
-    color: 'rgb(0,0,0)'
-  },
-  containerRowView: {
-    flex: 1,
-    height: 60,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  bottomRowView: {
-    marginTop: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  dateText: {
-    fontSize: 12,
-    color: 'rgb(150,150,150)'
-  },
-  pointText: {
-    fontSize: 16,
-    color: 'rgb(0,0,0)',
-    fontWeight: 'bold',
-    marginRight: 15
-  },
-
-  profile_cover_box: {
-    width: '100%',
-    backgroundColor: '#ccc',
-    height: 120
-  },
-  profile_cover: {
-    width: '100%',
-    height: '100%'
-  },
-  profile_avatar_box: {
-    position: 'absolute',
-    bottom: 20,
-    left: 24,
-    width: 70,
-    height: 70,
-    backgroundColor: '#cccccc',
-    borderWidth: 2,
-    borderColor: '#ffffff',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden'
-  },
-  profile_avatar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38
-    // resizeMode: 'cover'
-  },
-  stores_box: {
-    marginBottom: 8,
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd'
-  },
-
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
   },
   add_store_action_btn: {
-    paddingVertical: 4
+    paddingVertical: 5,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 4),
-    borderLeftWidth: Util.pixel,
-    borderLeftColor: '#ebebeb'
+    width: ~~(appConfig.device.width / 4),
   },
   add_store_action_btn_box_balance: {
     alignItems: 'center',
-    width: ~~(Util.size.width / 2),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    width: ~~(appConfig.device.width / 2),
+    paddingHorizontal: 15,
   },
   add_store_action_label: {
-    fontSize: 14,
-    color: '#404040',
-    marginTop: 4
+    marginTop: 4,
   },
   add_store_action_label_balance: {
-    fontSize: 14,
-    color: '#333333',
     marginTop: 4,
-    fontWeight: '600'
+    fontWeight: '600',
+    width: '100%',
   },
   add_store_action_content: {
-    fontSize: 19,
     marginTop: 5,
-    color: appConfig.colors.primary,
-    fontWeight: '800'
+    fontWeight: '800',
+    width: '100%',
   },
-  tabStyle: {
+  tabHeaderContainer: {
+    flexDirection: 'row',
+  },
+  tabLabel: {
+    textAlign: 'center',
+  },
+  tabContainer: {
     flex: 1,
-    borderBottomColor: '#dddddd',
-    borderBottomWidth: 1
+    paddingVertical: 15,
   },
   activeTab: {
-    borderBottomColor: DEFAULT_COLOR,
-    borderBottomWidth: 4
-  }
+    borderBottomWidth: 4,
+  },
 });
 
 export default withTranslation('affiliate')(observer(Affiliate));

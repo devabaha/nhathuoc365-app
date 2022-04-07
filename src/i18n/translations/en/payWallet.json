@@ -1,0 +1,10 @@
+{
+  "notification": "Notification",
+  "inactiveAddress": "Incorrect address",
+  "inactiveQuantity": "Incorrect quantity",
+  "transfer": "Transfer",
+  "transferTitle": "Transfer {{walletName}} to this address",
+  "transferMessage": "Please confirm the wallet, you can not take back when the point been transferred.",
+  "transferPlaceholder": "Enter {{currency}} in {{walletName}} you want to transfer",
+  "balance": "Balance"
+}

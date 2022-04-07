@@ -1,20 +1,21 @@
-import React, { Component } from 'react';
-import {
-  View,
-  TextInput,
-  Animated,
-  ViewPropTypes,
-  TouchableOpacity,
-  StyleSheet
-} from 'react-native';
+import React, {Component} from 'react';
+import {View, Animated, ViewPropTypes, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Icon from 'react-native-vector-icons/AntDesign';
-import appConfig from 'app-config';
-import { formatMoney } from './helper';
+// helpers
+import {formatMoney} from './helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {IconButton, Input as BaseInput, Typography} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class Input extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     title: PropTypes.string,
     value: PropTypes.string,
@@ -27,7 +28,7 @@ class Input extends Component {
     placeholder: PropTypes.string,
     inputStyle: ViewPropTypes.style,
     multiline: PropTypes.bool,
-    maxLength: PropTypes.number
+    maxLength: PropTypes.number,
   };
 
   static defaultProps = {
@@ -43,7 +44,7 @@ class Input extends Component {
     placeholder: '',
     inputStyle: {},
     multiline: false,
-    maxLength: 12
+    maxLength: 12,
   };
 
   state = {
@@ -51,9 +52,13 @@ class Input extends Component {
     error: '',
     focus: undefined,
     animatedOpacity: new Animated.Value(0),
-    animatedHeight: new Animated.Value(0)
+    animatedHeight: new Animated.Value(0),
   };
   input = React.createRef();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get inputText() {
     return this.state.value;
@@ -73,23 +78,23 @@ class Input extends Component {
         Animated.timing(this.state.animatedOpacity, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
       } else if (!nextState.value && this.state.value) {
         Animated.timing(this.state.animatedOpacity, {
           toValue: 0,
           duration: 200,
-          useNativeDriver: true
+          useNativeDriver: true,
         }).start();
       }
     }
     if (nextProps.errorMess !== this.props.errorMess) {
       if (nextProps.errorMess && nextProps.errorMess !== nextState.error) {
-        this.setState({ error: nextProps.errorMess }, () =>
+        this.setState({error: nextProps.errorMess}, () =>
           Animated.timing(this.state.animatedHeight, {
             toValue: 18,
-            duration: 200
-          }).start()
+            duration: 200,
+          }).start(),
         );
       } else if (
         !nextProps.errorMess &&
@@ -97,8 +102,8 @@ class Input extends Component {
       ) {
         Animated.timing(this.state.animatedHeight, {
           toValue: 0,
-          duration: 200
-        }).start(() => this.setState({ error: '' }));
+          duration: 200,
+        }).start(() => this.setState({error: ''}));
       }
     }
 
@@ -119,7 +124,7 @@ class Input extends Component {
         nextProps.value !== this.props.value &&
         nextProps.value !== nextState.value
       ) {
-        this.setState({ value: nextProps.value });
+        this.setState({value: nextProps.value});
       }
 
       return true;
@@ -128,7 +133,7 @@ class Input extends Component {
     return false;
   }
 
-  onChange = e => {
+  onChange = (e) => {
     let value = e.nativeEvent.text;
 
     if (this.props.keyboardType === 'number-pad' && value) {
@@ -142,59 +147,80 @@ class Input extends Component {
       }
       this.setState({
         value,
-        value_view
+        value_view,
       });
       this.props.onChange(e, value);
     }
   };
 
-  onFocus = e => {
-    this.setState({ focus: true });
+  onFocus = (e) => {
+    this.setState({focus: true});
     this.props.onFocus(e);
   };
 
-  onBlur = e => {
-    this.setState({ focus: false });
+  onBlur = (e) => {
+    this.setState({focus: false});
     this.props.onBlur(e);
   };
 
   onClear = () => {
-    this.setState({ value: '', value_view: '' });
+    this.setState({value: '', value_view: ''});
     this.props.onClear();
     this.input.current && this.input.current.focus();
   };
 
-  render() {
-    const inputStyle = {
+  get inputStyle() {
+    return {
       ...styles.moneyInput,
+      borderBottomWidth: this.theme.layout.borderWidthLarge,
       borderBottomColor: this.state.error
-        ? 'red'
+        ? this.theme.color.danger
         : this.state.focus
-        ? appConfig.colors.primary
-        : '#d9d9d9'
+        ? this.theme.color.primaryHighlight
+        : this.theme.color.border,
     };
+  }
 
+  get errorMessStyle() {
+    return {
+      color: this.theme.color.danger,
+    };
+  }
+
+  get titleStyle() {
+    return (
+      this.state.focus && {
+        color: this.theme.color.primaryHighlight,
+      }
+    );
+  }
+
+  render() {
     const titleStyle = {
       opacity: this.state.animatedOpacity,
-      color: this.state.focus ? appConfig.colors.primary : '#404040'
     };
 
     const errorStyle = {
-      height: this.state.animatedHeight
+      height: this.state.animatedHeight,
     };
 
     return (
       <View style={[styles.paymentInput, this.props.containerStyle]}>
-        <Animated.Text style={titleStyle}>{this.props.title}</Animated.Text>
+        <Typography
+          animated
+          type={TypographyType.LABEL_MEDIUM_TERTIARY}
+          style={[titleStyle, this.titleStyle]}>
+          {this.props.title}
+        </Typography>
 
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <TextInput
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <BaseInput
+            type={TypographyType.LABEL_MEDIUM}
             ref={this.input}
             onChange={this.onChange}
             keyboardType={this.props.keyboardType}
             placeholder={this.props.placeholder}
-            placeholderTextColor={appConfig.colors.placeholder}
-            style={[inputStyle, this.props.inputStyle]}
+            style={[this.inputStyle, this.props.inputStyle]}
             multiline={this.props.multiline}
             value={this.state.value_view}
             onFocus={this.onFocus}
@@ -203,22 +229,23 @@ class Input extends Component {
             underlineColorAndroid="transparent"
           />
           {!!this.state.value && (
-            <TouchableOpacity
+            <IconButton
+              bundle={BundleIconSetName.ANT_DESIGN}
+              neutral
+              name="closesquareo"
               style={styles.clearBtn}
+              iconStyle={styles.clearIcon}
               onPress={this.onClear}
-              hitSlop={{ right: 10, bottom: 10, left: 10, top: 10 }}
-            >
-              <Icon
-                name="closesquareo"
-                size={22}
-                color={appConfig.colors.placeholder}
-              />
-            </TouchableOpacity>
+              hitSlop={{right: 10, bottom: 10, left: 10, top: 10}}
+            />
           )}
         </View>
-        <Animated.Text style={[errorStyle, styles.errorMess]}>
+        <Typography
+          animated
+          type={TypographyType.DESCRIPTION_SMALL}
+          style={[errorStyle, this.errorMessStyle, styles.errorMess]}>
           {this.state.error}
-        </Animated.Text>
+        </Typography>
       </View>
     );
   }
@@ -229,29 +256,29 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: -20,
-    marginBottom: 30
+    marginBottom: 30,
   },
   moneyInput: {
     paddingHorizontal: 0,
     paddingRight: 28,
     paddingVertical: 10,
     fontSize: 18,
-    borderBottomWidth: 2,
-    zIndex: 0
+    zIndex: 0,
   },
   errorMess: {
     marginTop: 5,
-    color: 'red',
-    fontSize: 12,
-    zIndex: -1
+    zIndex: -1,
   },
   clearBtn: {
     position: 'absolute',
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1
-  }
+    zIndex: 1,
+  },
+  clearIcon: {
+    fontSize: 22,
+  },
 });
 
 export default Input;

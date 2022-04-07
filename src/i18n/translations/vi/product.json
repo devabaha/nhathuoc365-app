@@ -27,8 +27,17 @@
     "unitPrice": "Đơn giá",
     "value": "Giá còn {{price}} khi mua {{quantity}} sản phẩm"
   },
-  "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
+  "dropShip": {
+    "quantity": "Số lượng",
+    "price": "Giá bán",
+    "wishingPrice": "Giá muốn bán",
+    "errorWishingPrice": "*Phải cao hơn giá bán",
+    "grossProfit": "Lợi nhuận gộp"
+  },
+  "relatedItems": "Sản phẩm cùng danh mục",
+  "relatedNews": "Tin tức liên quan",
   "goToStore": "Vào cửa hàng",
   "copyContent": "Đã sao chép nội dung bài viết sản phẩm",
-  "placeholderRating": "Nhập đánh giá của bạn..."
+  "placeholderRating": "Nhập đánh giá của bạn...",
+  "noStoreFound": "Không tìm thấy kho hàng"
 }

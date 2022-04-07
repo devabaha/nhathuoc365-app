@@ -862,6 +862,11 @@ class Store {
   @action setEnterItem(isEnterItem) {
     this.isEnterItem = isEnterItem;
   }
+
+  @observable theme = {};
+  @action setTheme(theme) {
+    this.theme = theme;
+  }
 }
 
 export default new Store();

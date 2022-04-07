@@ -1,5 +1,4 @@
 import appConfig from 'app-config';
-import {Actions} from 'react-native-router-flux';
 import store from '../store';
 import {servicesHandler, SERVICES_TYPE} from './servicesHandler';
 
@@ -7,14 +6,16 @@ const touchedTabs = {};
 let productOpening = false;
 
 export default function handleTabBarOnPress(props) {
-  // const isTouched = () => touchedTabs[props.navigation.state.key];
-  switch (props.navigation.state.key) {
+  const sceneKey = props.routeName || props.navigation?.state?.key;
+  // const isTouched = () => touchedTabs[sceneKey];
+  switch (sceneKey) {
     case appConfig.routes.scanQrCodeTab:
       if (productOpening) return;
       productOpening = true;
 
       const service = {
         type: SERVICES_TYPE.OPEN_SHOP,
+        theme: props.theme,
         siteId: store.store_id || appConfig.defaultSiteId,
       };
       servicesHandler(service, null, () => {
@@ -40,6 +41,6 @@ export default function handleTabBarOnPress(props) {
       props.defaultHandler();
   }
 
-  store.setSelectedTab(props.navigation.state.key);
-  touchedTabs[props.navigation.state.key] = true;
+  store.setSelectedTab(sceneKey);
+  touchedTabs[sceneKey] = true;
 }

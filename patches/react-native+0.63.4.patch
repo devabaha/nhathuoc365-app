@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-native/React/Base/RCTTouchHandler.m b/node_modules/react-native/React/Base/RCTTouchHandler.m
+index 8361fdf..39d5679 100644
+--- a/node_modules/react-native/React/Base/RCTTouchHandler.m
++++ b/node_modules/react-native/React/Base/RCTTouchHandler.m
+@@ -367,8 +367,8 @@ - (void)cancel
+ - (BOOL)gestureRecognizer:(__unused UIGestureRecognizer *)gestureRecognizer
+     shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+ {
+-  // Same condition for `failure of` as for `be prevented by`.
+-  return [self canBePreventedByGestureRecognizer:otherGestureRecognizer];
++return NO;	// Same condition for `failure of` as for `be prevented by`.
++//   return [self canBePreventedByGestureRecognizer:otherGestureRecognizer];
+ }
+ 
+ @end

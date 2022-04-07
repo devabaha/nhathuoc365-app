@@ -5,5 +5,8 @@
   "totalOrders": "Orders",
   "referralOrders": "Referral Orders",
   "newReferralMembers": "Referral Members",
-  "joiningDate": "Joining Date"
+  "joiningDate": "Joining Date",
+  "noReportList": "No report list yet",
+  "totalTurnover": "Total turnover",
+  "chooseMonth": "Choose month"
 }

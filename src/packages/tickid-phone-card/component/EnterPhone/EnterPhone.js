@@ -1,13 +1,22 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {Card, TypographyType} from 'src/components/base';
+// images
 import phoneBookImage from '../../assets/images/phone-book.png';
-import config from '../../config';
-import Button from 'react-native-button';
+// custom components
+import {ImageButton, Input, TextButton, Typography} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class EnterPhone extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     data: PropTypes.array,
     editable: PropTypes.bool,
@@ -29,10 +38,10 @@ class EnterPhone extends Component {
     historyTitle: PropTypes.string,
     customRightComponent: PropTypes.oneOfType([
       PropTypes.element,
-      PropTypes.node
+      PropTypes.node,
     ]),
     inputStyle: PropTypes.object,
-    inputContainerStyle: PropTypes.object
+    inputContainerStyle: PropTypes.object,
   };
 
   static defaultProps = {
@@ -51,101 +60,153 @@ class EnterPhone extends Component {
     networkType: '',
     keyboardType: 'phone-pad',
     errorMessage: '',
-    placeholder: 'Nhập số điện thoại',
-    title: 'Nạp đến',
-    historyTitle: 'Xem lịch sử',
     customRightComponent: null,
     inputStyle: {},
-    inputContainerStyle: {}
+    inputContainerStyle: {},
   };
+
+  contactBtnTypoProps = {type: TypographyType.LABEL_SEMI_HUGE};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get currentNetworkType() {
     return this.props.data.find(
-      network => network.type === this.props.networkType
+      (network) => network.type === this.props.networkType,
     );
+  }
+
+  get title() {
+    return this.props.title || this.props.t('contactInput.title');
+  }
+
+  get placeholder() {
+    return this.props.placeholder || this.props.t('contactInput.placeholder');
+  }
+
+  get historyTitle() {
+    return this.props.historyTitle || this.props.t('contactInput.historyTitle');
   }
 
   get hasError() {
     return !!this.props.errorMessage;
   }
 
+  get errorStyle() {
+    return {borderColor: this.theme.color.danger};
+  }
+
+  get errorMessageStyle() {
+    return {color: this.theme.color.danger};
+  }
+
+  get placeholderStyle() {
+    return {
+      color: this.theme.color.placeholder,
+    };
+  }
+
+  get networkImageStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
+  get inputBtnStyle() {
+    return {
+      borderColor: this.theme.color.border,
+      borderWidth: this.theme.layout.borderWidth,
+    };
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.label}>{this.props.title}</Text>
+          <Typography
+            type={TypographyType.LABEL_SEMI_HUGE}
+            style={styles.label}>
+            {this.title}
+          </Typography>
 
           {this.props.showHistory && (
-            <Button onPress={this.props.onShowHistory}>
-              <Text style={styles.viewHistoryText}>
-                {this.props.historyTitle}
-              </Text>
-            </Button>
+            <TextButton
+              typoProps={{type: TypographyType.LABEL_SEMI_LARGE}}
+              onPress={this.props.onShowHistory}
+              primaryHighlight>
+              {this.historyTitle}
+            </TextButton>
           )}
         </View>
         {!!this.props.contactName && (
-          <Text style={styles.contactName}>{this.props.contactName}</Text>
+          <Typography
+            type={TypographyType.LABEL_TINY}
+            style={styles.contactName}>
+            {this.props.contactName}
+          </Typography>
         )}
 
         <View style={styles.enterContact}>
-          <View
+          <Card
             style={[
+              this.inputBtnStyle,
               styles.inputBtn,
-              this.hasError && styles.hasError,
-              this.props.inputContainerStyle
-            ]}
-          >
+              this.hasError && this.errorStyle,
+              this.props.inputContainerStyle,
+            ]}>
             {this.props.editable ? (
               <View style={styles.phoneBtn}>
-                <TextInput
+                <Input
+                  type={TypographyType.LABEL_SEMI_HUGE}
                   style={[styles.input, this.props.inputStyle]}
                   value={this.props.contactPhone}
                   onBlur={this.props.onBlur}
                   onChangeText={this.props.onChangeText}
                   keyboardType={this.props.keyboardType}
-                  placeholder={this.props.placeholder}
-                  placeholderTextColor="#c7c7cd"
+                  placeholder={this.placeholder}
+                  placeholderTextColor={this.theme.color.placeholder}
                 />
               </View>
             ) : (
-              <Button
-                containerStyle={[styles.phoneBtn, this.props.inputStyle]}
-                onPress={this.props.onOpenContact}
-              >
-                {this.props.contactPhone ? (
-                  <Text style={styles.input}>{this.props.contactPhone}</Text>
-                ) : (
-                  <Text style={styles.placeholder}>
-                    {this.props.placeholder}
-                  </Text>
-                )}
-              </Button>
+              <TextButton
+                style={this.props.inputStyle}
+                typoProps={this.contactBtnTypoProps}
+                titleStyle={
+                  this.props.contactPhone ? styles.input : this.placeholderStyle
+                }
+                onPress={this.props.onOpenContact}>
+                {this.props.contactPhone || this.placeholder}
+              </TextButton>
             )}
             {!this.props.hideContact && (
-              <Button
-                containerStyle={styles.contactBtn}
+              <ImageButton
                 onPress={this.props.onOpenContact}
-              >
-                <Image style={styles.phoneBook} source={phoneBookImage} />
-              </Button>
+                style={styles.contactBtn}
+                imageStyle={styles.phoneBook}
+                source={phoneBookImage}
+              />
             )}
-          </View>
+          </Card>
 
-          {!this.props.hideChangeNetwork && !!!this.props.customRightComponent && (
-            <Button
-              onPress={this.props.onPressSelectNetwork}
-              containerStyle={styles.networkBtn}
-            >
-              <Image
-                style={styles.networkImage}
+          {!this.props.hideChangeNetwork &&
+            !!!this.props.customRightComponent && (
+              <ImageButton
+                onPress={this.props.onPressSelectNetwork}
+                style={styles.networkBtn}
+                imageStyle={[this.networkImageStyle, styles.networkImage]}
                 source={this.currentNetworkType.localImage}
               />
-            </Button>
-          )}
+            )}
           {!!this.props.customRightComponent && this.props.customRightComponent}
         </View>
         {this.hasError && (
-          <Text style={styles.errorMessage}>{this.props.errorMessage}</Text>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={[this.errorMessageStyle, styles.errorMessage]}>
+            {this.props.errorMessage}
+          </Typography>
         )}
       </View>
     );
@@ -156,91 +217,69 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     paddingTop: 10,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   headingWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   viewHistoryText: {
-    fontSize: 15,
     fontWeight: '400',
-    color: '#0084ff'
   },
   label: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18
   },
   contactName: {
-    fontSize: 10,
     marginTop: 10,
-    color: config.colors.black,
     fontWeight: 'bold',
-    textTransform: 'uppercase'
-  },
-  placeholder: {
-    fontSize: 18,
-    color: '#C7C7CD'
+    textTransform: 'uppercase',
   },
   inputBtn: {
     flex: 1,
     marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
     flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 10,
-    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
-  hasError: {
-    borderColor: config.colors.red
-  },
+
   errorMessage: {
-    fontSize: 16,
-    color: config.colors.red,
     fontWeight: '400',
-    marginTop: 8
+    marginTop: 8,
   },
   input: {
     paddingTop: 0,
     paddingBottom: 0,
-    fontSize: 18,
     fontWeight: '400',
-    color: '#333',
-    textAlign: 'left'
+    textAlign: 'left',
   },
   phoneBtn: {
-    flex: 1
+    flex: 1,
   },
   contactBtn: {
-    paddingLeft: 32
+    paddingLeft: 32,
   },
   phoneBook: {
     width: 28,
-    height: 28
+    height: 28,
   },
   enterContact: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   networkBtn: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 16
+    marginLeft: 16,
   },
   networkImage: {
     marginTop: 13,
     width: 46,
     height: 46,
     resizeMode: 'contain',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8
-  }
+  },
 });
 
-export default EnterPhone;
+export default withTranslation('transfer')(EnterPhone);

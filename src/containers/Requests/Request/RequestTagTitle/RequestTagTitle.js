@@ -1,47 +1,68 @@
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import OcticonsIcon from 'react-native-vector-icons/Octicons';
-import FontistoIcon from 'react-native-vector-icons/Fontisto';
-
-import appConfig from 'app-config';
-
-import {Container} from 'src/components/Layout';
+import React, {memo} from 'react';
+import {StyleSheet} from 'react-native';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, Typography, Icon} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {},
   icon: {
     marginRight: 0,
-    color: appConfig.colors.primary,
     fontSize: 10,
   },
   title: {
-    fontSize: 12,
-    color: '#666',
     fontStyle: 'italic',
     marginHorizontal: 5,
   },
 });
 
 const RequestTagTitle = ({code, name, containerStyle}) => {
+  const renderIconHashtag = () => {
+    return (
+      <Icon
+        primaryHighlight
+        bundle={BundleIconSetName.FONTISO}
+        name="hashtag"
+        style={styles.icon}
+      />
+    );
+  };
+
+  const renderIconName = () => {
+    return (
+      <Icon
+        primaryHighlight
+        bundle={BundleIconSetName.OCTICONS}
+        name="primitive-dot"
+        style={styles.icon}
+      />
+    );
+  };
+
   return (
     (!!code || !!name) && (
-      <Container row style={[styles.container, containerStyle]}>
+      <Container row noBackground style={[styles.container, containerStyle]}>
         {!!code && (
-          <>
-            <FontistoIcon name="hashtag" style={styles.icon} />
-            <Text style={styles.title}>{code}</Text>
-          </>
+          <Typography
+            type={TypographyType.LABEL_SMALL_TERTIARY}
+            style={styles.title}
+            renderIconBefore={renderIconHashtag}>
+            {code}
+          </Typography>
         )}
 
         {!!name && (
-          <>
-            <OcticonsIcon name="primitive-dot" style={styles.icon} />
-            <Text style={styles.title}>{name}</Text>
-          </>
+          <Typography
+            type={TypographyType.LABEL_SMALL_TERTIARY}
+            style={styles.title}
+            renderIconBefore={renderIconName}>
+            {name}
+          </Typography>
         )}
       </Container>
     )
   );
 };
 
-export default RequestTagTitle;
+export default memo(RequestTagTitle);

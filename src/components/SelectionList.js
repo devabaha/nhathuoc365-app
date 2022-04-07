@@ -1,20 +1,34 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {View, StyleSheet} from 'react-native';
+// configs
+import store from 'app-store';
+import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import {
-  View,
-  Text,
-  StyleSheet,
+  Typography,
+  Icon,
+  BaseButton,
   FlatList,
-  TouchableHighlight,
-} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import store from '../store/Store';
+  Container,
+} from 'src/components/base';
 
 class SelectionList extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     useList: true,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   renderItem({item, index}) {
     if (item.isHidden) {
@@ -22,7 +36,7 @@ class SelectionList extends Component {
     }
 
     if (typeof item.render === 'function') {
-      return item.render();
+      return item.render(index);
     }
 
     var notifyCount = 0;
@@ -30,77 +44,91 @@ class SelectionList extends Component {
       notifyCount = parseInt(store.notify[item.notify]);
     }
 
-    let Icon = FontAwesomeIcon;
-    switch (item.iconType) {
-      case 'MaterialCommunityIcons':
-        Icon = MaterialCommunityIcons;
-        break;
+    let iconBundle = BundleIconSetName.FONT_AWESOME;
+    if (item.iconType) {
+      iconBundle = item.iconType;
     }
 
     return (
       <React.Fragment key={index}>
-        <TouchableHighlight disabled={item.disabled} underlayColor="transparent" onPress={item.onPress}>
-          <>
-            <View
-              style={[
-                styles.profile_list_opt_btn,
-                {
-                  marginTop: item.marginTop ? 8 : 0,
-                  borderTopWidth: item.marginTop ? Util.pixel : 0,
-                  borderColor: '#dddddd',
-                },
-                item.containerStyle,
-              ]}>
-              <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
-                {item.leftIcon || (
-                   <Icon
-                    name={item.icon}
-                    size={item.iconSize || 16}
-                    color={item.iconColor || '#999999'}
-                  />
-                )}
-              </View>
-
-              <View style={styles.labelContainer}>
-                <Text
-                  {...item.labelProps}
-                  style={[styles.profile_list_label, item.labelStyle]}>
-                  {item.label}
-                </Text>
-                {!!item.desc && (
-                  <Text
-                    {...item.desProps}
-                    style={[styles.profile_list_small_label, item.descStyle]}>
-                    {item.desc}
-                  </Text>
-                )}
-              </View>
-
-              {!item.hideAngle && (
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle,
-                  ]}>
-                  {item.rightIcon || (
-                    <Icon name="angle-right" size={16} color="#999999" />
+        <Container
+          style={[
+            {
+              marginTop: item.marginTop ? 8 : 0,
+              borderTopWidth: item.marginTop ? appConfig.device.pixel : 0,
+            },
+            this.profileListContainerExtraStyle,
+            item.wrapperStyle,
+          ]}>
+          <BaseButton
+            useTouchableHighlight
+            disabled={item.disabled}
+            onPress={item.onPress}>
+            <>
+              <View style={[styles.profile_list_opt_btn, item.containerStyle]}>
+                <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
+                  {item.leftIcon || item.svgIcon || (
+                    <Icon
+                      bundle={iconBundle}
+                      name={item.icon}
+                      style={{
+                        color: item.iconColor || this.leftIconDefaultColor,
+                        fontSize: item.iconSize || 16,
+                      }}
+                    />
                   )}
                 </View>
-              )}
 
-              {notifyCount > 0 && (
-                <View style={styles.stores_info_action_notify}>
-                  <Text style={styles.stores_info_action_notify_value}>
-                    {notifyCount}
-                  </Text>
+                <View style={styles.labelContainer}>
+                  <Typography
+                    {...item.labelProps}
+                    type={TypographyType.LABEL_LARGE}
+                    style={[styles.profile_list_label, item.labelStyle]}>
+                    {item.label}
+                  </Typography>
+                  {!!item.desc && (
+                    <Typography
+                      {...item.desProps}
+                      type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+                      style={[styles.profile_list_small_label, item.descStyle]}>
+                      {item.desc}
+                    </Typography>
+                  )}
                 </View>
-              )}
-            </View>
 
-            {typeof item.renderAfter === 'function' && item.renderAfter()}
-          </>
-        </TouchableHighlight>
-        <View style={styles.separator}></View>
+                {!item.hideAngle && (
+                  <View
+                    style={[
+                      styles.profile_list_icon_box,
+                      styles.profile_list_icon_box_angle,
+                    ]}>
+                    {item.rightIcon || (
+                      <Icon
+                        bundle={BundleIconSetName.FONT_AWESOME}
+                        name="angle-right"
+                        style={styles.rightIcon}
+                        neutral
+                      />
+                    )}
+                  </View>
+                )}
+
+                {notifyCount > 0 && (
+                  <View style={styles.stores_info_action_notify}>
+                    <Typography
+                      type={TypographyType.LABEL_EXTRA_SMALL}
+                      style={this.notifyTextStyles}>
+                      {notifyCount}
+                    </Typography>
+                  </View>
+                )}
+              </View>
+
+              {typeof item.renderAfter === 'function' && item.renderAfter()}
+            </>
+          </BaseButton>
+        </Container>
+        <View style={[this.separatorStyle, item.separatorStyle]} />
       </React.Fragment>
     );
   }
@@ -133,6 +161,42 @@ class SelectionList extends Component {
     }
   }
 
+  get profileListContainerExtraStyle() {
+    return {
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get leftIconDefaultColor() {
+    return this.theme.color.neutral;
+  }
+
+  get notifyContainerStyle() {
+    return [
+      styles.stores_info_action_notify,
+      {
+        backgroundColor: this.theme.color.danger,
+        borderRadius: this.theme.layout.borderRadiusMedium,
+      },
+    ];
+  }
+  get notifyTextStyles() {
+    return [
+      styles.stores_info_action_notify_value,
+      {color: this.theme.color.surface},
+    ];
+  }
+
+  get separatorStyle() {
+    return [
+      styles.separator,
+      {
+        height: this.theme.layout.borderWidthPixel,
+        backgroundColor: this.theme.color.border,
+      },
+    ];
+  }
+
   render() {
     return this.renderData();
   }
@@ -143,15 +207,10 @@ SelectionList.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  profile_list_opt: {
-    // borderTopWidth: Util.pixel,
-    // borderBottomWidth: Util.pixel,
-    // borderColor: '#dddddd'
-  },
+  profile_list_opt: {},
   profile_list_opt_btn: {
-    width: Util.size.width,
-    height: 52,
-    backgroundColor: '#ffffff',
+    width: appConfig.device.width,
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
@@ -173,20 +232,17 @@ const styles = StyleSheet.create({
     width: undefined,
     height: '100%',
   },
+  rightIcon: {
+    fontSize: 26,
+  },
   profile_list_label: {
-    fontSize: 16,
-    color: '#000000',
     fontWeight: '400',
   },
   profile_list_small_label: {
-    fontSize: 12,
-    color: '#666666',
     marginTop: 2,
   },
   separator: {
     width: '100%',
-    height: Util.pixel,
-    backgroundColor: '#dddddd',
   },
 
   stores_info_action_notify: {
@@ -194,17 +250,13 @@ const styles = StyleSheet.create({
     minWidth: 16,
     paddingHorizontal: 2,
     height: 16,
-    backgroundColor: 'red',
     top: 4,
     left: 30,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8,
   },
   stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
     fontWeight: '600',
   },
 });

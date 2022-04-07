@@ -1,14 +1,27 @@
 import React, {Component, Fragment} from 'react';
-import {StyleSheet, View, Text, Linking, Alert} from 'react-native';
-
-import appConfig from 'app-config';
-
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {openLink} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import HorizontalInfoItem from 'src/components/account/HorizontalInfoItem';
+import {Container, Typography} from 'src/components/base';
 
 class Intro extends Component {
+  static contextType = ThemeContext;
+
   state = {
     footerData: this.footerData,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps !== this.props) {
@@ -27,12 +40,7 @@ class Intro extends Component {
   }
 
   onPressFooterDataPress = ({value: url}) => {
-    if (url) {
-      Linking.openURL(url).catch((err) => {
-        console.log('open link', err);
-        Alert.alert('Không mở được link');
-      });
-    }
+    openLink(url);
   };
 
   renderFooter() {
@@ -44,7 +52,7 @@ class Intro extends Component {
       (item, index) =>
         !!item.value && (
           <Fragment key={index}>
-            <View style={styles.separator} />
+            <View style={this.separatorStyle} />
             <HorizontalInfoItem
               data={item}
               onSelectedValue={this.onPressFooterDataPress}
@@ -56,20 +64,42 @@ class Intro extends Component {
     );
   }
 
+  get separatorStyle() {
+    return mergeStyles(styles.separator, {
+      backgroundColor: this.theme.color.border,
+      height: this.theme.layout.borderWidth,
+    });
+  }
+
+  get titleContainerStyle() {
+    return mergeStyles(styles.titleContainer, {
+      borderColor: this.theme.color.border,
+      borderTopWidth: this.theme.layout.borderWidthSmall,
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Giới thiệu</Text>
-        </View>
+      <View>
+        <Container style={this.titleContainerStyle}>
+          <Typography type={TypographyType.LABEL_LARGE} style={styles.title}>
+            {this.props.t('aboutLabel')}
+          </Typography>
+        </Container>
         {!!this.props.content && (
           <>
-            <View style={styles.separator} />
-            <View style={styles.contentContainer}>
-              <Text style={styles.content, !this.props.content && styles.noIntro}>
+            <View style={this.separatorStyle} />
+            <Container style={styles.contentContainer}>
+              <Typography
+                type={
+                  !!this.props.content
+                    ? TypographyType.LABEL_MEDIUM
+                    : TypographyType.LABEL_MEDIUM_TERTIARY
+                }
+                style={!this.props.content && styles.noIntro}>
                 {this.props.content}
-              </Text>
-            </View>
+              </Typography>
+            </Container>
           </>
         )}
 
@@ -80,35 +110,20 @@ class Intro extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // marginBottom: 15
-    // flex: 1,
-    // zIndex: 99
-  },
   titleContainer: {
-    backgroundColor: '#f5f5f5',
     padding: 15,
-    borderTopColor: appConfig.colors.border,
-    borderTopWidth: 0.5,
   },
   title: {
     fontWeight: '600',
-    color: '#333',
-    fontSize: 16,
     letterSpacing: 1,
   },
   contentContainer: {
-    backgroundColor: '#fff',
     padding: 15,
   },
-  content: {
-    color: '#333'
-  },
+
   footer: {},
   noIntro: {
-    fontSize: 13,
     fontStyle: 'italic',
-    color: '#666',
     fontWeight: '300',
     textAlign: 'center',
   },
@@ -117,10 +132,8 @@ const styles = StyleSheet.create({
   },
   separator: {
     width: '100%',
-    height: 1,
-    backgroundColor: '#fafafa',
     left: 15,
   },
 });
 
-export default Intro;
+export default withTranslation('profileDetail')(Intro);

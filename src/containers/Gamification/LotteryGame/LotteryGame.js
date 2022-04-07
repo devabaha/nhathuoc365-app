@@ -1,30 +1,37 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  RefreshControl,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {StyleSheet, RefreshControl, KeyboardAvoidingView} from 'react-native';
+// 3-party libs
 import Animated from 'react-native-reanimated';
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import {APIRequest} from '../../../network/Entity';
-import Loading from '../../../components/Loading';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ScreenWrapper, ScrollView} from 'src/components/base';
+import {GAME_TYPE} from '../constants';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
 import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
-import { GAME_TYPE } from '../constants';
-import { Actions } from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
 });
 
 class LotteryGame extends Component {
+  static contextType = ThemeContext;
+
   state = {
     loading: true,
     refreshing: false,
@@ -34,6 +41,11 @@ class LotteryGame extends Component {
   gameJoiningRequest = new APIRequest();
   requests = [this.gameInfoRequest, this.gameJoiningRequest];
   paddingAnimation = new Animated.Value(0);
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   get results() {
     let listResult = this.state.gameInfo.my_turn_selected.split(',');
@@ -47,15 +59,20 @@ class LotteryGame extends Component {
     this.getGameInfo();
     if (!this.props.title) {
       setTimeout(() =>
-        Actions.refresh({
+        refresh({
           title: this.props.t('screen.lotteryGame.mainTitle'),
         }),
       );
     }
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
+    this.updateNavBarDisposer();
   }
 
   handleCollapsing = (isCollapsing, animatedConfig) => {
@@ -66,7 +83,10 @@ class LotteryGame extends Component {
     const {t} = this.props;
     this.gameInfoRequest.cancel();
     try {
-      this.gameInfoRequest.data = APIHandler.lottery_index(store.store_id, this.props.id);
+      this.gameInfoRequest.data = APIHandler.lottery_index(
+        store.store_id,
+        this.props.id,
+      );
       const response = await this.gameInfoRequest.promise();
       console.log(response);
       if (response) {
@@ -152,7 +172,7 @@ class LotteryGame extends Component {
         style={styles.container}
         behavior={appConfig.device.isIOS ? 'padding' : null}>
         {this.state.loading && <Loading center />}
-        <SafeAreaView style={styles.container}>
+        <ScreenWrapper>
           <ScrollView
             refreshControl={
               <RefreshControl
@@ -171,33 +191,36 @@ class LotteryGame extends Component {
               </Animated.View>
             )}
           </ScrollView>
-          {!!this.state.gameInfo && this.state.gameInfo.type === GAME_TYPE.LOTO && (
-            <Footer
-              title="Chọn số nhanh"
-              submitTitle="Gửi số"
-              resultsSubmittedTitle="Số bạn đã chọn"
-              moreTitle="Xem thêm"
-              results={this.results}
-              maxLengthInput={this.state.gameInfo.max_length_input}
-              maxTurn={this.state.gameInfo.max_turn}
-              totalPoint={
-                this.state.gameInfo.my_wallet
-                  ? this.state.gameInfo.my_wallet.balance_view || null
-                  : null
-              }
-              feePoint={this.state.gameInfo.point_count_view}
-              isActive={this.state.gameInfo.is_active}
-              message={this.state.gameInfo.message}
-              onSubmit={this.submit}
-              collapsing={this.handleCollapsing}
-              hasResults={this.state.gameInfo.my_turn.length !== 0}
-              type={this.state.gameInfo.type}
-            />
-          )}
-        </SafeAreaView>
+          {!!this.state.gameInfo &&
+            this.state.gameInfo.type === GAME_TYPE.LOTO && (
+              <Footer
+                title={this.props.t('lotteryGame:footer.title')}
+                submitTitle={this.props.t('lotteryGame:footer.sendNumber')}
+                resultsSubmittedTitle={this.props.t(
+                  'lotteryGame:footer.resultsSubmittedTitle',
+                )}
+                moreTitle={this.props.t('lotteryGame:footer.moreTitle')}
+                results={this.results}
+                maxLengthInput={this.state.gameInfo.max_length_input}
+                maxTurn={this.state.gameInfo.max_turn}
+                totalPoint={
+                  this.state.gameInfo.my_wallet
+                    ? this.state.gameInfo.my_wallet.balance_view || null
+                    : null
+                }
+                feePoint={this.state.gameInfo.point_count_view}
+                isActive={this.state.gameInfo.is_active}
+                message={this.state.gameInfo.message}
+                onSubmit={this.submit}
+                collapsing={this.handleCollapsing}
+                hasResults={this.state.gameInfo.my_turn.length !== 0}
+                type={this.state.gameInfo.type}
+              />
+            )}
+        </ScreenWrapper>
       </KeyboardAvoidingView>
     );
   }
 }
 
-export default withTranslation()(LotteryGame);
+export default withTranslation(['common', 'lotteryGame'])(LotteryGame);

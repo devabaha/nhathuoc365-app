@@ -1,35 +1,34 @@
 import React, {Component} from 'react';
+import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  // Image,
-  TouchableHighlight,
-  StyleSheet,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import store from '../../store/Store';
-import {Actions} from 'react-native-router-flux';
-import FastImage from 'react-native-fast-image';
-
+// configs
 import appConfig from 'app-config';
-import {DiscountBadge} from '../../components/Badges';
-import {ORDER_TYPES} from '../../constants';
-import CTAProduct from '../item/CTAProduct';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {ORDER_TYPES} from 'src/constants';
 import {CART_TYPES} from 'src/constants/cart';
-import {ProductItem} from '../Home/component/ListProducts';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import CTAProduct from 'src/components/item/CTAProduct';
+// custom components
+import {ProductItem} from 'src/components/Home/component/ListProducts';
+import {Container, TextButton, Typography, Icon} from 'src/components/base';
 
 class Items extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      loadMore: false,
-    };
-    this.CTAProduct = new CTAProduct(this);
-  }
+  state = {
+    loadMore: false,
+  };
+  CTAProduct = new CTAProduct(this);
   unmounted = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   isServiceProduct(product = {}) {
     return product.order_type === ORDER_TYPES.BOOKING;
@@ -55,12 +54,6 @@ class Items extends Component {
     });
   };
 
-  goToSchedule = (product) => {
-    Actions.push(appConfig.routes.productSchedule, {
-      productId: product.id,
-    });
-  };
-
   getItemExtraStyle(index) {
     return (
       index % 2 !== 0 && {
@@ -77,7 +70,7 @@ class Items extends Component {
     if (item.type == 'loadMore') {
       renderLoadMore = () => {
         return (
-          <TouchableHighlight
+          <TextButton
             onPress={() => {
               if (onPress) {
                 onPress();
@@ -87,42 +80,27 @@ class Items extends Component {
                 loadMore: true,
               });
             }}
-            underlayColor="transparent"
-            style={[
-              {
-                justifyContent: 'center',
-                alignItems: 'center',
-                flex: 1,
-              },
-            ]}>
+            style={styles.buttonContainer}>
             {this.state.loadMore ? (
               <Indicator size="small" />
             ) : (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <Container style={styles.container}>
                 <Icon
+                  style={styles.iconLoadMore}
+                  bundle={BundleIconSetName.FONT_AWESOME}
                   name="th"
-                  size={24}
-                  color={appConfig.colors.typography.text}
                 />
-                <Text
-                  style={{
-                    marginTop: 8,
-                    ...appConfig.styles.typography.text,
-                  }}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={styles.textLoadMore}>
                   {t('item.more')}
-                </Text>
-              </View>
+                </Typography>
+              </Container>
             )}
-          </TouchableHighlight>
+          </TextButton>
         );
       };
     }
-
-    var quantity = 0;
 
     return (
       <ProductItem
@@ -149,8 +127,6 @@ Items.propTypes = {
 
 const ITEM_SPACING = 15;
 const ITEM_WIDTH = (appConfig.device.width - ITEM_SPACING * 3) / 2;
-const ITEM_HEIGHT = (appConfig.device.width / 2) * 1.333;
-const ITEM_IMG_HEIGHT = (appConfig.device.width / 2) * 1.333 * 0.666;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -160,167 +136,19 @@ const styles = StyleSheet.create({
     width: ITEM_WIDTH,
   },
   container: {
-    borderRadius: 8,
-    ...appConfig.styles.shadow,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  item_box: {
-    width: ITEM_WIDTH,
-    // height: ITEM_HEIGHT,
-    // borderWidth: Util.pixel,
-    // borderWidth: Util.pixel,
-    // borderColor: "#dddddd",
-    backgroundColor: '#ffffff',
-    marginBottom: 15,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  directionRow: {
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
-  item_image_box: {
-    width: ITEM_WIDTH,
-    height: ITEM_WIDTH,
+  textLoadMore: {
+    marginTop: 8,
   },
-  item_image: {
-    zIndex: 1,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-  },
-  item_info_box: {
-    flex: 1,
-    backgroundColor: 'red',
-    // minHeight: "34%",
-    paddingHorizontal: 8,
-    paddingVertical: 7,
-    // position: "absolute",
-    // left: 0,
-    // bottom: 0,
-    justifyContent: 'space-between',
-    backgroundColor: 'rgba(255,255,255,0.7)',
-  },
-  item_info_made: {
-    flexDirection: 'row',
-  },
-  item_info_made_title: {
-    fontSize: 9,
-    // fontWeight: "600",
-    fontWeight: appConfig.device.isIOS ? '400' : '300',
-    color: '#444',
-    paddingHorizontal: 8,
-  },
-  item_info_weight: {
-    // flex: 1,
-    marginLeft: 5,
-    alignItems: 'flex-end',
-  },
-  item_info_name: {
-    fontSize: 13,
-    fontWeight: appConfig.device.isIOS ? '500' : '400',
-    color: '#404040',
-    marginTop: 2,
-    marginBottom: 7,
-    lineHeight: 18,
-  },
-  item_info_price: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: DEFAULT_COLOR,
-  },
-  item_add_cart_btn: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    // width: 50,
-    // height: 50,
-    zIndex: 2,
-  },
-  item_add_cart_box: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: hexToRgbA('#ffffff', 0.8),
-    // backgroundColor: hexToRgbA("#0eac24", .6),
-    paddingVertical: 2,
-    // borderTopLeftRadius: 15,
-    // padding: 10,
-    width: 50,
-    height: 45,
-  },
-  item_add_cart_title: {
-    color: '#0eac24',
-    fontSize: 8,
-    marginTop: 3,
-  },
-
-  item_add_book_title: {
-    color: DEFAULT_COLOR,
-    fontSize: 8,
-  },
-
-  item_safe_off: {
-    zIndex: 1,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: '100%',
-    height: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  item_safe_off_percent: {
-    // backgroundColor: "#fa7f50",
-    backgroundColor: 'yellow',
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    ...elevationShadowStyle(3),
-  },
-  item_safe_off_percent_val: {
-    color: '#ffffff',
-    fontSize: 12,
-  },
-  item_safe_off_price: {
-    color: '#404040',
-    fontSize: 11,
-    textDecorationLine: 'line-through',
-    marginRight: 4,
-  },
-
-  quantity_box: {
-    position: 'absolute',
-    top: 0,
-    right: 8,
-    minWidth: 14,
-    height: 14,
-    borderRadius: 7,
-    overflow: 'hidden',
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 2,
-  },
-  quantity_value: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  price_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  nameLocation: {
-    fontSize: 14,
-    color: 'rgb(0,0,0)',
-    alignSelf: 'center',
-    marginTop: 10,
-    fontWeight: 'bold',
+  iconLoadMore: {
+    fontSize: 24,
   },
 });
 

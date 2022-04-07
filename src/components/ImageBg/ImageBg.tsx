@@ -1,7 +1,10 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import Image from 'src/components/Image';
+// types
 import {ImageBgProps} from '.';
+// custom components
+import Image from 'src/components/Image';
+
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',

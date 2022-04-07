@@ -1,21 +1,37 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Actions} from 'react-native-router-flux';
-import store from '../../store/Store';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
+// helpers
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push, pop} from 'app-helper/routing';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+import {CART_TYPES} from 'src/constants/cart';
+// custom components
+import {Container, Typography, Icon, BaseButton} from 'src/components/base';
 import Loading from '../Loading';
 import Tag from '../Tag';
-import {CART_TYPES} from 'src/constants/cart';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import Image from '../Image';
+import ActionButton from './ActionButton';
 
 class OrdersItemComponent extends Component {
+  static contextType = ThemeContext;
+
   unmounted = false;
   state = {
     goToStoreLoading: false,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentWillUnmount() {
     this.unmounted = true;
@@ -55,7 +71,7 @@ class OrdersItemComponent extends Component {
       !this.props.goStore
       // || store.orderIsPop
     ) {
-      Actions.pop();
+      pop();
     } else {
       this._goToStore(item);
     }
@@ -105,12 +121,16 @@ class OrdersItemComponent extends Component {
       (order.products && Object.values(order.products)[0]);
     if (!product) return;
 
-    Actions.push(appConfig.routes.booking, {
-      bookingId: order.id,
-      siteId: order.site_id,
-      attrs: product.attrs,
-      models: product.models,
-    });
+    push(
+      appConfig.routes.booking,
+      {
+        bookingId: order.id,
+        siteId: order.site_id,
+        attrs: product.attrs,
+        models: product.models,
+      },
+      this.theme,
+    );
   }
 
   _goOrdersItem(item) {
@@ -118,21 +138,33 @@ class OrdersItemComponent extends Component {
     store.setStoreData(item.site);
     // store.setCartData(item);
     if (item.address_id != 0 || item.status != CART_STATUS_ORDERING) {
-      Actions.push(appConfig.routes.paymentConfirm, {
-        goConfirm: true,
-        data: item,
-        from_page: 'orders_item',
-      });
+      push(
+        appConfig.routes.paymentConfirm,
+        {
+          goConfirm: true,
+          data: item,
+          from_page: 'orders_item',
+        },
+        this.theme,
+      );
     } else if (isConfigActive(CONFIG_KEY.PICK_UP_AT_THE_STORE_KEY)) {
-      Actions.push(appConfig.routes.myAddress, {
-        redirect: 'confirm',
-        goBack: true,
-        isVisibleStoreAddress: true,
-      });
+      push(
+        appConfig.routes.myAddress,
+        {
+          redirect: 'confirm',
+          goBack: true,
+          isVisibleStoreAddress: true,
+        },
+        this.theme,
+      );
     } else {
-      Actions.create_address({
-        redirect: 'confirm',
-      });
+      push(
+        appConfig.routes.createAddress,
+        {
+          redirect: 'confirm',
+        },
+        this.theme,
+      );
     }
   }
 
@@ -140,19 +172,27 @@ class OrdersItemComponent extends Component {
     if (this.props.disableGoStore) return;
     store.setStoreData(item.site);
     store.setCartData(item);
-    Actions.push(appConfig.routes.store, {
-      title: item.shop_name,
-    });
+    push(
+      appConfig.routes.store,
+      {
+        title: item.shop_name,
+      },
+      this.theme,
+    );
   }
 
   _goStoreOrders(item) {
     if (this.props.disableGoStore) return;
     store.setStoreData(item.site);
-    Actions.store_orders({
-      store_id: item.site_id,
-      title: item.shop_name,
-      tel: item.tel,
-    });
+    push(
+      appConfig.routes.storeOrders,
+      {
+        store_id: item.site_id,
+        title: item.shop_name,
+        tel: item.tel,
+      },
+      this.theme,
+    );
   }
 
   renderCartIcon() {
@@ -166,13 +206,69 @@ class OrdersItemComponent extends Component {
         break;
     }
     return (
-      <FontAwesomeIcon
-        style={styles.orders_item_icon}
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        style={[styles.orderTypeIcon, this.iconStyle]}
         name={iconName}
-        size={16}
-        color="#999999"
       />
     );
+  }
+
+  renderIconBefore(style) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.FONT_AWESOME}
+        style={[styles.createdIcon, style]}
+        name="clock-o"
+      />
+    );
+  }
+
+  get cartSectionBoxStyle() {
+    return mergeStyles(styles.cart_section_box, {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get iconStyle() {
+    return {
+      color: this.theme.color.iconInactive,
+    };
+  }
+
+  get ordersItemBoxStyle() {
+    return mergeStyles(styles.orders_item_box, {
+      borderColor: this.theme.color.border,
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+    });
+  }
+
+  get rowPaymentStyles() {
+    return mergeStyles(styles.row_payment, {
+      borderTopWidth: this.theme.layout.borderWidthPixel,
+      borderTopColor: this.theme.color.border,
+    });
+  }
+
+  get indexContainerStyle() {
+    return mergeStyles(styles.indexContainer, {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+      borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+      borderBottomLeftRadius: this.theme.layout.borderRadiusHuge,
+    });
+  }
+
+  get cartSectionImage() {
+    return mergeStyles(styles.cart_section_image, {
+      borderRadius: this.theme.layout.borderRadiusHuge,
+    });
+  }
+
+  get wrapperLoadingStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay30,
+    };
   }
 
   render() {
@@ -190,58 +286,70 @@ class OrdersItemComponent extends Component {
     //       item.delivery_details.booking_id);
 
     return (
-      <TouchableHighlight
+      <BaseButton
+        useTouchableHighlight
         underlayColor="transparent"
         onPress={this._goOrdersItemHandler.bind(this, item)}>
-        <View style={[styles.orders_item_box]}>
-          <TouchableHighlight
+        <Container style={this.ordersItemBoxStyle}>
+          <BaseButton
+            useTouchableHighlight
             underlayColor="transparent"
             onPress={this._goStoreOrders.bind(this, item)}>
-            <View style={styles.cart_section_box}>
-              <CachedImage
-                mutable
-                style={styles.cart_section_image}
+            <Container style={this.cartSectionBoxStyle}>
+              <Image
+                style={this.cartSectionImage}
                 source={{uri: item.shop_logo_url}}
               />
-              <Text style={styles.cart_section_title}>{item.shop_name}</Text>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.cart_section_title}>
+                {item.shop_name}
+              </Typography>
               {!!(index + 1) && (
-                <View style={styles.indexContainer}>
-                  <Text style={styles.indexValue}>{index + 1}</Text>
-                </View>
+                <Container style={this.indexContainerStyle}>
+                  <Typography
+                    type={TypographyType.LABEL_SMALL}
+                    style={styles.indexValue}>
+                    {index + 1}
+                  </Typography>
+                </Container>
               )}
-            </View>
-          </TouchableHighlight>
+            </Container>
+          </BaseButton>
 
-          <View style={styles.orders_item_icon_box}>
+          <Container noBackground style={styles.orders_item_icon_box}>
             {this.renderCartIcon()}
             <View style={styles.orders_item_title_container}>
               <Tag
                 label={cartType}
-                fill={appConfig.colors.cartType[item.cart_type]}
+                fill={this.theme.color.cartType[item.cart_type]}
                 animate={false}
                 strokeWidth={0}
                 labelStyle={styles.cartTypeLabel}
                 labelContainerStyle={styles.cartTypeLabelContainer}
               />
-              <Text style={styles.orders_item_icon_title}>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.orders_item_icon_title}>
                 #{item.cart_code}
-              </Text>
+              </Typography>
             </View>
 
             <View style={styles.orders_status_box}>
-              <Text
+              <Typography
+                type={TypographyType.LABEL_SMALL}
                 style={[
                   styles.orders_status_box_title,
                   {
                     color:
-                      appConfig.colors.orderStatus[item.status] ||
-                      appConfig.colors.primary,
+                      this.theme.color.cartStatus[item.status] ||
+                      this.theme.color.persistPrimary,
                   },
                 ]}>
                 {item.status_view}
-              </Text>
+              </Typography>
             </View>
-          </View>
+          </Container>
 
           <View
             style={{
@@ -252,23 +360,19 @@ class OrdersItemComponent extends Component {
             <View style={styles.orders_item_content}>
               {item.orders_time != null && item.orders_time != '' && (
                 <View style={styles.orders_item_time_box}>
-                  <FontAwesomeIcon
-                    style={styles.orders_item_icon}
-                    name="clock-o"
-                    size={12}
-                    color="#999999"
-                  />
-                  <Text style={styles.orders_item_time_title}>
+                  <Typography
+                    type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
+                    renderIconBefore={this.renderIconBefore}>
                     {item.orders_time}
-                  </Text>
+                  </Typography>
                 </View>
               )}
 
               {!!item.payment_status_name && (
                 <Tag
                   label={item.payment_status_name}
-                  fill={hexToRgbA(
-                    appConfig.colors.paymentStatus[item.payment_status],
+                  fill={hexToRgba(
+                    this.theme.color.cartPaymentStatus[item.payment_status],
                     0.1,
                   )}
                   animate={false}
@@ -276,8 +380,9 @@ class OrdersItemComponent extends Component {
                   labelStyle={[
                     styles.cartTypeLabel,
                     {
-                      color:
-                        appConfig.colors.paymentStatus[item.payment_status],
+                      color: this.theme.color.cartPaymentStatus[
+                        item.payment_status
+                      ],
                     },
                   ]}
                   labelContainerStyle={styles.cartTypeLabelContainer}
@@ -321,7 +426,9 @@ class OrdersItemComponent extends Component {
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (
                   <View style={styles.orders_item_content_text}>
-                    <Text style={styles.orders_item_content_value}>
+                    <Typography
+                      type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                      style={styles.orders_item_content_value}>
                       {(() => {
                         var items_string = '';
                         Object.keys(item.products)
@@ -341,7 +448,7 @@ class OrdersItemComponent extends Component {
                           });
                         return sub_string(items_string, 100);
                       })()}
-                    </Text>
+                    </Typography>
                   </View>
                 )}
               </View>
@@ -358,51 +465,56 @@ class OrdersItemComponent extends Component {
           <View style={[styles.orders_item_payment]}>
             {!!item.user_note && (
               <View style={[styles.orders_item_row, styles.noteContainer]}>
-                <FontAwesome5Icon
-                  style={styles.orders_item_icon}
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME_5}
+                  style={[styles.noteIcon, this.iconStyle]}
                   name="pen-square"
-                  size={15}
-                  color="#999999"
                 />
 
-                <Text
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_TERTIARY}
                   style={[styles.orders_item_content_label, styles.note_label]}>
-                  <Text
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM_TERTIARY}
                     style={[
                       styles.orders_item_content_value,
                       styles.note_value,
                     ]}>
                     {item.user_note}
-                  </Text>
-                </Text>
+                  </Typography>
+                </Typography>
               </View>
             )}
 
-            <View style={[styles.orders_item_row, styles.row_payment]}>
+            <View style={[styles.orders_item_row, this.rowPaymentStyles]}>
               {!!item.count_selected && (
-                <Text style={styles.orders_item_content_label}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={styles.orders_item_content_label}>
                   {t('item.totalSelected', {total: item.count_selected})}
-                </Text>
+                </Typography>
               )}
               <View style={styles.orders_status_box}>
-                <Text style={styles.orders_item_content_value}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={styles.orders_item_content_value}>
                   {`${t('item.totalPaymentMessage')}: `}
-                </Text>
-                <Text style={styles.orders_item_price_value}>
+                </Typography>
+
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_PRIMARY}
+                  style={styles.orders_item_price_value}>
                   {item.total_selected}
-                </Text>
+                </Typography>
               </View>
             </View>
           </View>
 
           {this.state.goToStoreLoading && (
-            <Loading
-              center
-              wrapperStyle={{backgroundColor: 'rgba(0,0,0, .06)'}}
-            />
+            <Loading center wrapperStyle={this.wrapperLoadingStyle} />
           )}
-        </View>
-      </TouchableHighlight>
+        </Container>
+      </BaseButton>
     );
   }
 }
@@ -416,10 +528,7 @@ const styles = StyleSheet.create({
   cart_section_box: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
     flexDirection: 'row',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
     paddingVertical: 8,
     marginBottom: 8,
   },
@@ -432,8 +541,6 @@ const styles = StyleSheet.create({
   },
   cart_section_title: {
     flex: 1,
-    color: '#000000',
-    fontSize: 14,
     paddingLeft: 8,
     fontWeight: '500',
   },
@@ -446,10 +553,7 @@ const styles = StyleSheet.create({
   orders_item_box: {
     width: '100%',
     paddingBottom: 8,
-    backgroundColor: '#ffffff',
     marginBottom: 8,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
   },
   orders_item_icon_box: {
     flexDirection: 'row',
@@ -458,21 +562,17 @@ const styles = StyleSheet.create({
   },
   orders_item_icon_title: {
     marginLeft: 5,
-    color: '#404040',
     fontWeight: '500',
   },
 
   orders_item_content: {
     flex: 1,
-    // paddingHorizontal: 15,
   },
   orders_item_row: {
     flexDirection: 'row',
     paddingVertical: 2,
   },
   orders_item_content_label: {
-    fontSize: 14,
-    color: '#404040',
     fontWeight: '500',
   },
   orders_status_box: {
@@ -482,32 +582,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   orders_status_box_title: {
-    fontSize: 12,
     fontWeight: '600',
   },
   orders_item_content_text: {
     marginTop: 8,
     overflow: 'hidden',
     marginRight: 15,
-    // marginLeft: 22,
   },
-  orders_item_content_value: {
-    fontSize: 14,
-    color: '#404040',
-  },
+  orders_item_content_value: {},
   orders_item_payment: {
     width: '100%',
     paddingHorizontal: 15,
     paddingTop: 8,
   },
   orders_item_price_value: {
-    color: appConfig.colors.primary,
-    fontSize: 14,
     fontWeight: '500',
   },
   row_payment: {
-    borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd',
     paddingTop: 8,
     marginTop: 4,
   },
@@ -516,17 +607,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 4,
     marginBottom: 5,
+    marginLeft: 4,
   },
   orders_item_time_title: {
-    fontSize: 12,
-    color: '#666666',
     marginLeft: 4,
   },
   noteContainer: {
     marginTop: 5,
   },
   note_label: {
-    marginLeft: 8,
+    marginLeft: 9,
   },
   note_value: {
     fontWeight: '300',
@@ -548,23 +638,8 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingRight: 18,
     paddingLeft: 10,
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
-    backgroundColor: '#f0f0f0',
   },
-  indexValue: {
-    color: '#666',
-    fontSize: 12,
-  },
-
-  paymentStatusContainer: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-  },
-  paymentStatusTitle: {
-    fontSize: 12,
-  },
+  indexValue: {},
 
   tagContainer: {
     flexWrap: 'wrap',
@@ -575,44 +650,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginRight: 5,
   },
+  orders_item_icon: {},
+  orderTypeIcon: {
+    fontSize: 16,
+  },
+  createdIcon: {
+    fontSize: 12,
+    marginRight: 4,
+  },
+  noteIcon: {
+    fontSize: 15,
+  },
 });
 
 export default withTranslation('orders')(observer(OrdersItemComponent));
-
-const actionBtnStyles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  btnContainer: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderRadius: 3,
-    backgroundColor: appConfig.colors.primary,
-    marginTop: 8,
-  },
-  btnTitle: {
-    color: '#ffffff',
-    fontSize: 12,
-  },
-});
-
-const ActionButton = React.memo(({title, onGoToStore}) => {
-  return (
-    <View style={actionBtnStyles.container}>
-      <TouchableHighlight
-        hitSlop={HIT_SLOP}
-        underlayColor={hexToRgbA(appConfig.colors.primary, 0.9)}
-        onPress={onGoToStore}
-        style={actionBtnStyles.btnContainer}>
-        <Text style={actionBtnStyles.btnTitle}>
-          {title}{' '}
-          <FontAwesomeIcon
-            name="angle-right"
-            style={actionBtnStyles.btnTitle}
-          />
-        </Text>
-      </TouchableHighlight>
-    </View>
-  );
-});
