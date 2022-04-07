@@ -20,8 +20,8 @@ Chi tiết
 4. Tạo Google Analytic: Tạo GA cho web
 5. Code Push: chạy các lệnh sau, thay thế bằng 
 
-appcenter apps create -d tick-test-ios -o iOS -p React-Native
-appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Production
+appcenter apps create -d tick-huongcang-ios -o iOS -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -30,8 +30,8 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Produ
 │ Staging │ │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-appcenter apps create -d tick-test-android -o Android -p React-Native
-appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android Production
+appcenter apps create -d tick-huongcang-android -o Android -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-android Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -39,20 +39,18 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android P
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Staging │ │Ekl91GWSUVXNB4brJzJxUNWNy7ZBnTrFIsQCn
 └────────────┴──────────────────────────────────────────────────────────────────┘
-code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
-code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
 
 ## Sentry
 Check latest codepush label then increase it by 1 and fill in dist option under Upload source maps section.
 
 ### Check latest codepush information
 ##### IOS
-appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-ios
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-huongcang-ios
 ##### Android
-appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-huongcang-android
 
 ### Upload source maps
 ##### Automation
@@ -60,14 +58,14 @@ appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
 `` Direct to root folder (../src) to execute automation ```**`
 ``***********************************************************`
 
-bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry" &&
-bash sentrydp -a app.abaha.net-gmail.com/tick-test-android -p android --deployment Production --description "test sentry"
+bash sentrydp -a app.abaha.net-gmail.com/tick-huongcang-ios -p ios --deployment Production --description "test sentry" &&
+bash sentrydp -a app.abaha.net-gmail.com/tick-huongcang-android -p android --deployment Production --description "test sentry"
 ##### IOS
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-ios ios ./build/CodePush --deployment "Production" --dist "v246"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-ios -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-huongcang-ios ios ./build/CodePush --deployment "Production" --dist "v246"
 ##### Android
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-android android ./build/CodePush --deployment "Production" --dist "v52"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-android -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-huongcang-android android ./build/CodePush --deployment "Production" --dist "v52"
 
 
 ## Sentry
@@ -76,24 +74,24 @@ Check latest codepush label then increase it by 1 and fill in dist option under 
 ### Check latest codepush information
 
 ##### IOS
-appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-ios
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-huongcang-ios
 ##### Android
-appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-test-android
+appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-huongcang-android
 
 
 ### Upload source maps
 
 ##### Automation
 `IOS`
-bash sentrydp -a app.abaha.net-gmail.com/tick-test-ios -p ios --deployment Production --description "test sentry"
+bash sentrydp -a app.abaha.net-gmail.com/tick-huongcang-ios -p ios --deployment Production --description "test sentry"
 `Android`
-bash sentrydp -a app.abaha.net-gmail.com/tick-test-android -p android --deployment Production --description "test sentry"
+bash sentrydp -a app.abaha.net-gmail.com/tick-huongcang-android -p android --deployment Production --description "test sentry"
 
 ##### IOS
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-ios ios ./build/CodePush --deployment "Production" --dist "v246"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-ios -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-huongcang-ios ios ./build/CodePush --deployment "Production" --dist "v246"
 
 ##### Android
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-test-android android ./build/CodePush --deployment "Production" --dist "v36"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-android -d "Production" -m --description "fix re-create request to check payment status in transaction" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./android/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-huongcang-android android ./build/CodePush --deployment "Production" --dist "v36"
 
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 

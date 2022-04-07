@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Easing} from 'react-native';
+import {StyleSheet, View, Easing, Keyboard} from 'react-native';
 // 3-party libs
 import {withTranslation} from 'react-i18next';
 import Modal from 'react-native-modalbox';
@@ -112,6 +112,8 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
   }
 
   componentDidMount(): void {
+    Keyboard.dismiss();
+
     if (this.state.selectedDate) {
       this.setState({}, () => {
         this.scrollListToIndex(
