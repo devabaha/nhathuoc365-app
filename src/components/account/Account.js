@@ -604,6 +604,7 @@ class Account extends Component {
         },
         boxIconStyle: styles.boxIconStyle,
         iconColor: this.theme.color.contentBackgroundWeak,
+        isHidden: !isConfigActive(CONFIG_KEY.ENABLE_THEME_SWITCHER_KEY),
       },
 
       {
