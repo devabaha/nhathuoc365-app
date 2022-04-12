@@ -333,15 +333,19 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
   }
 
   goToStore(category) {
-    push(appConfig.routes.store, {
-      title: category.name,
-      categoryId: category.id,
-      extraCategoryId:
-        Array.isArray(category.list) &&
-        category.list.length !== 0 &&
-        category.id,
-      extraCategoryName: category.name,
-    });
+    push(
+      appConfig.routes.store,
+      {
+        title: category.name,
+        categoryId: category.id,
+        extraCategoryId:
+          Array.isArray(category.list) &&
+          category.list.length !== 0 &&
+          category.id,
+        extraCategoryName: category.name,
+      },
+      this.theme,
+    );
   }
 
   scrollMainCategoryToIndex(category) {
