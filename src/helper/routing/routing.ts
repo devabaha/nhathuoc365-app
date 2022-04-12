@@ -36,7 +36,8 @@ export const refresh: RoutingRefreshFunction = (props, theme) => {
 };
 
 export const replace: RoutingCommonFunction = (sceneKey, props, theme) => {
-  Actions.replace(sceneKey, props);
+  const formattedProps = formatSceneProps(sceneKey, props, theme);
+  Actions.replace(sceneKey, formattedProps);
 };
 
 export const reset: RoutingCommonFunction = (sceneKey, props, theme) => {
