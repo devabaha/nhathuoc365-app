@@ -272,6 +272,7 @@ class ProductItem extends PureComponent {
                               justifyContent: 'center',
                               alignItems: 'center',
                               alignSelf: 'flex-end',
+                              flex: 0.1,
                             }}>
                             {this.state[
                               PRODUCT_BUTTON_ACTION_LOADING_PARAM.ADD_TO_CART
@@ -371,6 +372,7 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingRight: 5,
     fontWeight: '600',
+    letterSpacing: 0,
   },
 
   item_add_cart_box: {
@@ -426,7 +428,7 @@ let styles = StyleSheet.create({
   unitName: {
     marginTop: appConfig.device.isIOS ? 2 : 0,
     top: appConfig.device.isAndroid ? 2 : undefined,
-    lineHeight: appConfig.device.isAndroid ? 11 : undefined,
+    lineHeight: appConfig.device.isAndroid ? 12 : undefined,
   },
 });
 

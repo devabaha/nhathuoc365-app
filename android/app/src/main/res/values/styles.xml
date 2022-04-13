@@ -4,6 +4,7 @@
         <item name="android:windowBackground">@drawable/launch_screen_bitmap</item>
         <item name="android:datePickerDialogTheme">@style/DialogDatePicker.Theme</item>
         <item name="android:forceDarkAllowed">false</item>
+        <item name=“android:overScrollMode”>never</item>
     </style>
 
     <style name="DialogDatePicker.Theme" parent="Theme.AppCompat.Light.Dialog">
