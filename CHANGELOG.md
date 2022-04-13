@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.1.1] - 2020-04-13
+### Fixed
+- [Android] Re-fix crash app because of Webview conflicting with new animation of ScrollView on Android api level >= 31 (Android 12) by [minhnguyenit14@gmail.com].
+
 ## [r13.0.2] - 2020-04-12
 ### Fixed
 - Not update theme in some screen by [minhnguyenit14@gmail.com].
