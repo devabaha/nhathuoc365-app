@@ -277,6 +277,7 @@ class MainNotify extends Component {
         shopName={notify.shop_name}
         created={notify.created}
         content={notify.content}
+        refreshing={this.state.refreshing}
         onPress={(service, callback) =>
           this.handlePressNotify(notify, service, callback)
         }
