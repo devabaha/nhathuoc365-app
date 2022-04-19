@@ -86,6 +86,7 @@ class Confirm extends Component {
     paymentMethod: {},
     loading: false,
     isConfirming: false,
+    deliveryTime: '',
   };
   refs_confirm_page = React.createRef();
   unmounted = false;
@@ -307,6 +308,8 @@ class Confirm extends Component {
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
+            delivery_time:
+              this.state.deliveryTime || this.cartData.delivery_time || '',
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
@@ -1100,6 +1103,9 @@ class Confirm extends Component {
               siteId={this.cartData.site_id}
               cartId={this.cartData.id}
               title={t('confirm.scheduleDelivery.title')}
+              onDeliveryTimeChange={(deliveryTime) => {
+                this.setState({deliveryTime});
+              }}
             />
           )}
 
