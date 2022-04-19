@@ -86,17 +86,23 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     scheduleDeliveryData: [],
   };
 
+  selectedDate =
+    !!this.props.scheduleDateTime && !!this.props.scheduleDeliveryData?.length
+      ? this.props.scheduleDeliveryData.find(
+          (item: any) =>
+            item?.value ===
+            getDateTimeSelected(this.props.scheduleDateTime).date,
+        ) || this.props.scheduleDeliveryData[0]
+      : this.props.scheduleDeliveryData[0];
+
   state = {
-    selectedDate:
-      !!this.props.scheduleDateTime && !!this.props.scheduleDeliveryData?.length
-        ? this.props.scheduleDeliveryData.find(
-            (item: any) =>
-              item?.value ===
-              getDateTimeSelected(this.props.scheduleDateTime).date,
-          )
-        : this.props.scheduleDeliveryData[0],
+    selectedDate: this.selectedDate,
     selectedTime: !!this.props.scheduleDateTime
-      ? {value: getDateTimeSelected(this.props.scheduleDateTime).time}
+      ? this.selectedDate?.time?.find(
+          (item: any) =>
+            item?.value ===
+            getDateTimeSelected(this.props.scheduleDateTime).time,
+        ) || {value: this.selectedDate?.time[0].value}
       : this.props.scheduleDeliveryData[0]?.time[0],
   };
 
@@ -272,9 +278,9 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
           <Header
             selectedLabel={
               !!this.state.selectedTime?.value &&
-              this.state.selectedTime.value +
+              this.state.selectedTime?.value +
                 ' ' +
-                this.state.selectedDate.value
+                this.state.selectedDate?.value
             }
             title={t('confirm.scheduleDelivery.modal.title')}
             cancelTitle={t('common:cancel')}
@@ -294,7 +300,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
                   style={[styles.pickerContainer, styles.leftPickerContainer]}>
                   <Picker
                     refList={this.refListDate}
-                    selectedValue={this.state.selectedDate.value}
+                    selectedValue={this.state.selectedDate?.value}
                     onValueChange={this.onDateChange}
                     data={this.formatScheduleData(
                       this.props.scheduleDeliveryData,
