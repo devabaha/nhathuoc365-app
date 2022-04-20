@@ -1,9 +1,10 @@
-import {debounce} from 'lodash';
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
-
+// 3-party libs
+import {debounce} from 'lodash';
+// types
 import {VideoProps} from '.';
-
+// custom components
 import YoutubeVideoIframe from './YoutubeVideoIframe';
 
 const styles = StyleSheet.create({

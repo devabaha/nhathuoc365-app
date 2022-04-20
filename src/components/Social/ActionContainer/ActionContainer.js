@@ -1,13 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React from 'react';
 import {StyleSheet} from 'react-native';
-import Container from 'src/components/Layout/Container';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+// custom components
+import {Container} from 'src/components/base';
 import ActionBar from './ActionBar';
 import ActionInfo from './ActionInfo';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    paddingHorizontal: 12,
   },
 });
 
@@ -26,10 +26,7 @@ const ActionContainer = ({
   onPressTotalComments = () => {},
 }) => {
   return (
-    <Container
-      style={[styles.container, style]}
-      centerVertical={false}
-      paddingHorizontal={12}>
+    <Container style={[styles.container, style]}>
       <ActionInfo
         isLiked={isLiked}
         totalReaction={likeCount}

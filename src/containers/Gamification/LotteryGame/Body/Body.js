@@ -1,43 +1,40 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
-import Block from './Block';
-import {SUB_COLOR} from '../constants';
-import appConfig from 'app-config';
+// 3-party libs
 import {Table, Row, Col} from 'react-native-table-component';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import Block from './Block';
 
 const styles = StyleSheet.create({
   container: {
     paddingBottom: 100,
   },
-  rulesTitle: {
-    color: SUB_COLOR,
+  rulesTitle: {},
+  resultsTitle: {},
+  table: {
+    marginTop: -1,
   },
-  resultsTitle: {
-    color: appConfig.colors.primary,
-  },
-
-  tableBorder: {
-    borderWidth: 0.5,
-    borderColor: '#888',
-  },
-  tableHeading: {
-    backgroundColor: appConfig.colors.primary,
-  },
+  tableBorder: {},
+  tableHeading: {},
   tableHeadingText: {
-    color: '#fff',
     textTransform: 'uppercase',
   },
   tableCellText: {
     textAlign: 'center',
-    color: '#333',
     paddingVertical: 10,
     fontWeight: '500',
   },
   tableEmptyText: {
     fontStyle: 'italic',
-    color: '#888',
-    paddingVertical: 20
-  }
+    paddingVertical: 20,
+  },
 });
 
 const TABLE_WIDTH_ARR = [
@@ -45,16 +42,22 @@ const TABLE_WIDTH_ARR = [
   (appConfig.device.width - 30) / 2,
 ];
 class Body extends Component {
+  static contextType = ThemeContext;
+
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   renderResults = () => {
     return (
-      <Table borderStyle={styles.tableBorder}>
+      <Table style={styles.table} borderStyle={this.tableBorderStyle}>
         <Row
-          data={[['Ngày'], ['Mã']]}
+          data={[[this.props.t('body.date')], [this.props.t('body.code')]]}
           widthArr={TABLE_WIDTH_ARR}
-          style={styles.tableHeading}
-          textStyle={[styles.tableCellText, styles.tableHeadingText]}
+          style={this.tableHeadingStyle}
+          textStyle={[this.tableCellTextStyle, this.tableHeadingTextStyle]}
         />
         {!!this.props.results.length ? (
           this.props.results.map((result, index) => (
@@ -62,41 +65,81 @@ class Body extends Component {
               key={index}
               data={[[result.created], [result.prediction_number]]}
               widthArr={TABLE_WIDTH_ARR}
-              style={[styles.row, index % 2 && {backgroundColor: '#f5f5f5'}]}
-              textStyle={styles.tableCellText}
+              style={[
+                styles.row,
+                {
+                  backgroundColor:
+                    index % 2 && this.theme.color.contentBackgroundWeak,
+                },
+              ]}
+              textStyle={this.tableCellTextStyle}
             />
           ))
         ) : (
           <Col
-            data={[['Chưa có mã']]}
+            data={[[this.props.t('body.noCode')]]}
             style={styles.tableEmpty}
-            textStyle={[styles.tableCellText, styles.tableEmptyText]}
+            textStyle={[this.tableCellTextStyle, this.tableEmptyTextStyle]}
           />
         )}
       </Table>
     );
   };
 
+  get tableBorderStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.onBackground,
+    };
+  }
+
+  get tableHeadingStyle() {
+    return mergeStyles(styles.tableHeading, {
+      backgroundColor: this.theme.color.persistPrimary,
+    });
+  }
+
+  get tableCellTextStyle() {
+    return mergeStyles(styles.tableCellText, {
+      color: this.theme.color.textPrimary,
+    });
+  }
+
+  get tableHeadingTextStyle() {
+    return mergeStyles(styles.tableHeadingText, {
+      color: this.theme.color.onPersistPrimary,
+    });
+  }
+
+  get resultsTitleStyle() {
+    return mergeStyles(styles.resultsTitle, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
+
+  get tableEmptyTextStyle() {
+    return mergeStyles(styles.tableEmptyText, {
+      color: this.theme.color.textTertiary,
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Block
-          title="Thể lệ"
+          title={this.props.t('body.rulesTitle')}
           content={this.props.rules}
           iconName="balance-scale"
-          titleStyle={styles.rulesTitle}
-          iconStyle={styles.rulesTitle}
         />
         <Block
-          title="Cơ cấu giải thưởng"
+          title={this.props.t('body.prizeStructureTitle')}
           content={this.props.prize}
           iconName="gifts"
         />
         {!!this.props.results && (
           <Block
-            title="Danh sách mã của bạn"
+            title={this.props.t('body.codeList')}
             content={this.props.results}
-            titleStyle={styles.resultsTitle}
             customContent={this.renderResults()}
             // iconName="gifts"
           />
@@ -106,4 +149,4 @@ class Body extends Component {
   }
 }
 
-export default Body;
+export default withTranslation('lotteryGame')(Body);

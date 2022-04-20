@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.1.2] - 2020-04-19
+### Fixed
+- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com], [lamah.dev@gmail.com].
+
+## [r13.1.1] - 2020-04-13
+### Fixed
+- [Android] Re-fix crash app because of Webview conflicting with new animation of ScrollView on Android api level >= 31 (Android 12) by [minhnguyenit14@gmail.com].
+- [CU-27rp3br] Fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
+
+## [r13.0.2] - 2020-04-12
+### Fixed
+- Not update theme in some screen by [minhnguyenit14@gmail.com].
+- price doesn't display correct view in ProductItem by [minhnguyenit14@gmail.com].
+
+## [r13.0.1] - 2020-04-06
+### Added
+- [CU-2gat9mt] Integrate Flurry by [lamah.dev@gmail.com].
+- [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].
+- [CU-1rqjmf4] Theme system by [minhnguyenit14@gmail.com] [kienluu612@gmail.com] [lamah.dev@gmail.com].
+- [CU-1zgz1kh] DeliverySchedule section in Confirm and allow_choose_delivery_time to configKey by [kienluu612@gmail.com].
+- Update autorp to replace color in Themes by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-21nmk91] UI Account tab by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
+- [Android] android:forceDarkAllowed to false by [minhnguyenit14@gmail.com].
+
+## [r12.2.19] - 2022-04-04
+### Added
+- Add optional_kyc_form_register_key in AgencyInformationRegister by [minhnguyenit14@gmail.com].
+
+## [r12.2.18] - 2022-03-17
+### Added
+- [CU-2at9nkq] id in post data of add_payment_method api by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-2fe0mee] Content of the notice when placing an order by [lamah.dev@gmail.com].
+### Fixed
+- App doesn't get push notification additionalData properly by [minhnguyenit14@gmail.com].
+
+## [r12.2.17] - 2022-03-15
+### Fixed
+- [CU-2df5xur] [Android] Error Webview layout apiLevel <= 11 by [minhnguyenit14@gmail.com].
+
 ## [r12.2.16] - 2022-03-08
 ### Fixed
 - Device does not get push_token, user_id at the first time run app by [minhnguyenit14@gmail.com].
@@ -23,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r12.2.13] - 2022-02-11
 ### Fixed
 - [iOS] Uncomment code to enable onesignal push notification by [lamah.dev@gmail.com].
-- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) [minhnguyenit14dev@gmail.com].
+- [Android] Webview crash (https://github.com/react-native-webview/react-native-webview/issues/811#issuecomment-667245566) by [minhnguyenit14dev@gmail.com].
 
 ## [r12.2.12] - 2022-02-09
 ### Changed

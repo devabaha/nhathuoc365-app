@@ -1,58 +1,80 @@
-import React, { Component } from 'react';
-import {
-  View,
-  SafeAreaView,
-  Platform,
-  StyleSheet,
-  Modal as ModalRN,
-  Keyboard
-} from 'react-native';
-import appConfig from 'app-config';
-import EnterPhone from 'app-packages/tickid-phone-card/component/EnterPhone/EnterPhone';
-import { Actions } from 'react-native-router-flux';
-import { config as phoneCardConfig } from 'app-packages/tickid-phone-card';
-import { ScrollView } from 'react-native-gesture-handler';
-import Button from 'react-native-button';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React, {Component} from 'react';
+import {View, Platform, StyleSheet, Keyboard} from 'react-native';
+// 3-party libs
+import {config as phoneCardConfig} from 'app-packages/tickid-phone-card';
 import Communications from 'react-native-communications';
-import Modal from './Payment/Modal';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import EventTracker from '../../../helper/EventTracker';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import EnterPhone from 'app-packages/tickid-phone-card/component/EnterPhone/EnterPhone';
+import Modal from './Payment/Modal';
+import {ScreenWrapper, ScrollView, IconButton} from 'src/components/base';
+import Indicator from 'src/components/Indicator';
 
 class Transfer extends Component {
+  static contextType = ThemeContext;
+
   state = {
     contactThumbnail: '',
     contactName: '',
     contactPhone: '',
     errorMessage: '',
     modalVisible: false,
-    loading: false
+    loading: false,
   };
   eventTracker = new EventTracker();
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   goToScanQR = () => {
-    const { t } = this.props;
-    Actions.push(appConfig.routes.qrBarCode, {
-      title: t('common:screen.transfer.mainTitle'),
-      index: 1,
-      from: appConfig.routes.transfer,
-      wallet: this.props.wallet,
-      address: this.props.address
-    });
+    const {t} = this.props;
+    push(
+      appConfig.routes.qrBarCode,
+      {
+        title: t('common:screen.transfer.mainTitle'),
+        index: 1,
+        from: appConfig.routes.transfer,
+        wallet: this.props.wallet,
+        address: this.props.address,
+      },
+      this.theme,
+    );
   };
 
   handleInputPhoneBlur = () => {};
 
-  handleChangePhoneNumber = contactPhone => {
-    this.setState({ contactPhone });
+  handleChangePhoneNumber = (contactPhone) => {
+    this.setState({contactPhone});
   };
 
   handleShowHistory = () => {
@@ -63,29 +85,33 @@ class Transfer extends Component {
   };
 
   handleOpenContact = () => {
-    const { t } = this.props;
-    Actions.push(phoneCardConfig.routes.contact, {
-      onPressContact: this.handlePressContact,
-      requestContactsPermissionTitle: t(
-        'contact.requestContactsPermissionTitle'
-      ),
-      requestContactsPermissionMessage: t(
-        'contact.requestContactsPermissionMessage'
-      ),
-      notInContactsFamilyName: t('contact.notInContactsFamilyName'),
-      allowAccessContactsMessage: t('contact.allowAccessContactsMessage'),
-      searchContactsPlaceholder: t('contact.searchContactsPlaceholder')
-    });
+    const {t} = this.props;
+    push(
+      phoneCardConfig.routes.contact,
+      {
+        onPressContact: this.handlePressContact,
+        requestContactsPermissionTitle: t(
+          'contact.requestContactsPermissionTitle',
+        ),
+        requestContactsPermissionMessage: t(
+          'contact.requestContactsPermissionMessage',
+        ),
+        notInContactsFamilyName: t('contact.notInContactsFamilyName'),
+        allowAccessContactsMessage: t('contact.allowAccessContactsMessage'),
+        searchContactsPlaceholder: t('contact.searchContactsPlaceholder'),
+      },
+      this.theme,
+    );
   };
 
-  handlePressContact = contact => {
+  handlePressContact = (contact) => {
     Keyboard.dismiss();
-    const { name, displayPhone, data, notInContact } = contact;
-    const { t } = this.props;
+    const {name, displayPhone, data, notInContact} = contact;
+    const {t} = this.props;
 
     if (displayPhone.trim()) {
       let receiverTel = displayPhone.replace(/ /g, '');
-      receiverTel = receiverTel.split('+84').join('0');
+      // receiverTel = receiverTel.split('+84').join('0');
       if (receiverTel.slice(0, 2) === '84') {
         receiverTel = receiverTel.replace('84', '0');
       }
@@ -94,59 +120,63 @@ class Transfer extends Component {
         this.setState({
           contactName: name,
           contactPhone: displayPhone,
-          contactThumbnail: data.thumbnailPath
+          contactThumbnail: data.thumbnailPath,
         });
 
         this.checkReceiverExistence(
           receiverTel,
-          receiverInfo => {
-            Actions.push(appConfig.routes.transferPayment, {
-              title: t('transferPaymentTitle', {
-                walletName: this.props.wallet.name
-              }),
-              wallet: this.props.wallet,
-              receiver: {
-                id: receiverInfo.id,
-                walletAddress: receiverInfo.wallet_address,
-                name: notInContact ? receiverInfo.name : name.trim(),
-                walletName: receiverInfo.name,
-                tel: displayPhone,
-                originTel: receiverInfo.tel,
-                avatar: receiverInfo.avatar || data.thumbnailPath,
-                notInContact
-              }
-            });
+          (receiverInfo) => {
+            push(
+              appConfig.routes.transferPayment,
+              {
+                title: t('transferPaymentTitle', {
+                  walletName: this.props.wallet.name,
+                }),
+                wallet: this.props.wallet,
+                receiver: {
+                  id: receiverInfo.id,
+                  walletAddress: receiverInfo.wallet_address,
+                  name: notInContact ? receiverInfo.name : name.trim(),
+                  walletName: receiverInfo.name,
+                  tel: displayPhone,
+                  originTel: receiverInfo.tel,
+                  avatar: receiverInfo.avatar || data.thumbnailPath,
+                  notInContact,
+                },
+              },
+              this.theme,
+            );
           },
           () => {
             Keyboard.dismiss();
             this.setState({
-              modalVisible: true
+              modalVisible: true,
             });
-          }
+          },
         );
       } else {
         flashShowMessage({
           type: 'danger',
-          message: t('error.sameAccount')
+          message: t('error.sameAccount'),
         });
       }
     } else {
       flashShowMessage({
         type: 'danger',
-        message: t('error.noTel')
+        message: t('error.noTel'),
       });
     }
   };
 
   checkReceiverExistence = async (tel, callBackSuccess, callBackError) => {
-    const data = { tel };
-    this.setState({ loading: true });
+    const data = {tel};
+    this.setState({loading: true});
 
     try {
       const response = await APIHandler.user_get_info_by_phone_number(data);
 
       if (!this.unmounted) {
-        this.setState({ loading: false }, () => {
+        this.setState({loading: false}, () => {
           setTimeout(() => {
             if (
               response.status === STATUS_SUCCESS &&
@@ -158,7 +188,7 @@ class Transfer extends Component {
                 name: response.data.name,
                 wallet_address: response.data.wallet_address,
                 avatar: response.data.img,
-                tel: response.data.tel
+                tel: response.data.tel,
               });
             } else {
               callBackError();
@@ -168,12 +198,15 @@ class Transfer extends Component {
       }
     } catch (error) {
       console.log(error);
-      !this.unmounted && this.setState({ loading: false });
+    } finally {
+      if (this.unmounted) return;
+
+      this.setState({loading: false});
     }
   };
 
   onCloseModal = () => {
-    this.setState({ modalVisible: false });
+    this.setState({modalVisible: false});
   };
 
   onCancelModal = () => {
@@ -183,43 +216,43 @@ class Transfer extends Component {
   onOkModal = () => {
     Communications.textWithoutEncoding(
       this.state.contactPhone,
-      store.user_info.text_sms
+      store.user_info.text_sms,
     );
   };
 
   render() {
-    const { t } = this.props;
-    const title = t('accountNotRegisterYet.title', { appName: APP_NAME_SHOW });
+    const {t} = this.props;
+    const title = t('accountNotRegisterYet.title', {appName: APP_NAME_SHOW});
     const content = t('accountNotRegisterYet.message', {
       tel: this.state.contactPhone,
-      appName: APP_NAME_SHOW
+      appName: APP_NAME_SHOW,
     });
     const okText = t('accountNotRegisterYet.accept');
     const cancelText = t('accountNotRegisterYet.cancel');
 
     return (
-      <ScrollView
-        style={styles.container}
-        keyboardDismissMode={Platform.OS === 'ios' ? 'on-drag' : 'interactive'}
-      >
-        <ModalRN visible={this.state.loading} animationType="fade" transparent>
+      <ScreenWrapper>
+        {this.state.loading && (
           <View style={styles.loading}>
             <Indicator />
           </View>
-        </ModalRN>
+        )}
 
-        <Modal
-          visible={this.state.modalVisible}
-          title={title}
-          content={content}
-          okText={okText}
-          cancelText={cancelText}
-          onRequestClose={this.onCloseModal}
-          onCancel={this.onCancelModal}
-          onOk={this.onOkModal}
-        />
-
-        <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          style={styles.container}
+          keyboardDismissMode={
+            Platform.OS === 'ios' ? 'on-drag' : 'interactive'
+          }>
+          <Modal
+            visible={this.state.modalVisible}
+            title={title}
+            content={content}
+            okText={okText}
+            cancelText={cancelText}
+            onRequestClose={this.onCloseModal}
+            onCancel={this.onCancelModal}
+            onOk={this.onOkModal}
+          />
           <EnterPhone
             editable={false}
             showHistory={false}
@@ -235,45 +268,42 @@ class Transfer extends Component {
             hideContact
             placeholder={t('contactInput.placeholder')}
             customRightComponent={
-              <ScanQRButton onOpenScanQR={this.goToScanQR} />
+              <IconButton
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name="qrcode"
+                onPress={this.goToScanQR}
+                style={styles.scanQRContainer}
+                iconStyle={styles.scanQRIcon}
+              />
             }
-            inputContainerStyle={styles.inputStyle}
           />
-        </SafeAreaView>
-      </ScrollView>
+        </ScrollView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#ffffff'
   },
   loading: {
     flex: 1,
     width: '100%',
     height: '100%',
     position: 'absolute',
-    zIndex: 1
+    zIndex: 1,
   },
   scanQRContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 16,
-    marginTop: 15
+    marginTop: 15,
   },
-  inputStyle: {
-    backgroundColor: '#ffffff'
-  }
+  scanQRIcon: {
+    fontSize: 50,
+  },
 });
 
 export default withTranslation(['transfer', 'common'])(Transfer);
-
-const ScanQRButton = props => (
-  <Button containerStyle={styles.scanQRContainer} onPress={props.onOpenScanQR}>
-    <Icon name="qrcode" size={50} color="#333333" />
-  </Button>
-);

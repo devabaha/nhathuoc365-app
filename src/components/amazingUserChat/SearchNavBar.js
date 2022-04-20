@@ -1,54 +1,83 @@
-import React, { Component } from 'react';
-import { StyleSheet, Animated, Easing, TouchableOpacity } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Animated, Easing, View} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import appConfig from 'app-config';
-import { Header, Icon, Input, Item, Text } from 'native-base';
-import { Actions } from 'react-native-router-flux';
+// helpers
+import {hexToRgba} from 'app-helper';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Input,
+  Icon,
+  Container,
+  TextButton,
+  BaseButton,
+  NavBar,
+} from 'src/components/base';
 
 const defaultListener = () => {};
 const DURATION_FADE = 300;
 
 class SearchNavBar extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onRight: PropTypes.func,
     onChangeSearch: PropTypes.func,
     onClearText: PropTypes.func,
     rightTitle: PropTypes.string,
     searchPlaceholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
     onRight: defaultListener,
     onChangeSearch: defaultListener,
     onClearText: defaultListener,
-    rightTitle: 'Hủy',
-    searchPlaceholder: 'Tìm kiếm khách hàng...',
-    searchValue: ''
+    searchValue: '',
   };
 
   state = {
     focus: false,
-    fadeAnimation: new Animated.Value(0)
+    fadeAnimation: new Animated.Value(0),
   };
   refInput = null;
 
+  rightTitleTypoProps = {
+    onPrimary: true,
+  };
+
+  get theme() {
+    return getTheme(this);
+  }
+
   handleFocusInput() {
-    this.setState({ focus: true });
+    this.setState({focus: true});
     Animated.timing(this.state.fadeAnimation, {
       toValue: 1,
       easing: Easing.ease,
-      duration: DURATION_FADE
+      duration: DURATION_FADE,
+      useNativeDriver: false,
     }).start();
   }
 
   handleBlurInput() {
-    this.setState({ focus: false });
+    this.setState({focus: false});
     Animated.timing(this.state.fadeAnimation, {
       toValue: 0,
       easing: Easing.ease,
-      duration: DURATION_FADE
+      duration: DURATION_FADE,
+      useNativeDriver: false,
     }).start();
   }
 
@@ -68,137 +97,139 @@ class SearchNavBar extends Component {
     }
   }
 
-  handleSearch() {}
-
   handleBack() {
-    Actions.pop();
+    pop();
   }
 
-  render() {
-    const iconProps = {
-      color: '#fff',
-      fontSize: 22
-    };
+  renderSearch = () => {
+    const placeholder =
+      this.props.searchPlaceholder || this.props.t('enterToSearch');
+
+    const searchInputBackgroundColor = [
+      hexToRgba(this.theme.color.coreOverlay, 0),
+      hexToRgba(this.theme.color.coreOverlay, 0.4),
+    ];
 
     return (
-      <Header
-        iosBarStyle="light-content"
-        style={[styles.container]}
-        searchBar
-        rounded
-      >
-        <Item style={[styles.searchInput]}>
+      <Container row noBackground style={styles.headerContainer}>
+        <View style={styles.searchInput}>
           <Animated.View
             style={[
               styles.inputAnimatedWrapper,
+              this.inputAnimatedWrapperStyle,
               {
                 backgroundColor: this.state.fadeAnimation.interpolate({
                   inputRange: [0, 1],
-                  outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,.4)']
-                })
-              }
-            ]}
-          >
-            <TouchableOpacity onPress={this.toggleSearch.bind(this)}>
+                  outputRange: searchInputBackgroundColor,
+                }),
+              },
+            ]}>
+            <BaseButton onPress={this.toggleSearch.bind(this)}>
               <Animated.View
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flex: 1
-                }}
-              >
-                <Icon name="ios-search" size={20} style={iconProps} />
+                  flex: 1,
+                  marginRight: 8,
+                }}>
+                <Icon
+                  bundle={BundleIconSetName.IONICONS}
+                  name="ios-search"
+                  size={20}
+                  style={[styles.searchIcon, this.searchIconStyle]}
+                />
               </Animated.View>
-            </TouchableOpacity>
+            </BaseButton>
             <Input
-              ref={inst => (this.refInput = inst)}
-              placeholder={this.props.searchPlaceholder}
-              placeholderTextColor={'rgba(255, 255, 255, .6)'}
+              ref={(inst) => (this.refInput = inst)}
+              placeholder={placeholder}
               onChangeText={this.props.onChangeSearch}
               onFocus={this.handleFocusInput.bind(this)}
               onBlur={this.handleBlurInput.bind(this)}
               autoFocus
-              style={[
-                styles.input,
-                {
-                  color: 'white'
-                }
-              ]}
+              style={[styles.input, this.inputStyle]}
             />
           </Animated.View>
-        </Item>
+        </View>
+        {this.renderCancelButton()}
+      </Container>
+    );
+  };
 
-        <Button
-          containerStyle={styles.btnCancel}
-          onPress={this.handleBack.bind(this)}
-        >
-          <Text style={styles.textButton}>{this.props.rightTitle}</Text>
-        </Button>
-      </Header>
+  renderCancelButton = () => {
+    const rightTitle = this.props.rightTitle || this.props.t('cancel');
+
+    return (
+      <TextButton
+        typoProps={this.rightTitleTypoProps}
+        style={styles.btnCancel}
+        onPress={this.handleBack.bind(this)}>
+        {rightTitle}
+      </TextButton>
+    );
+  };
+
+  get searchIconStyle() {
+    return {
+      color: this.theme.color.placeholder,
+    };
+  }
+
+  get inputStyle() {
+    return mergeStyles(this.theme.typography[TypographyType.LABEL_LARGE], {
+      color: this.theme.color.onOverlay,
+    });
+  }
+
+  get inputAnimatedWrapperStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
+
+  render() {
+    return (
+      <NavBar
+        navigation={this.props.navigation}
+        renderHeader={this.renderSearch}
+        back={false}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: appConfig.colors.primary
+  headerContainer: {
+    flex: 1,
+    paddingHorizontal: 5,
+    paddingVertical: appConfig.device.isAndroid ? 8 : 6,
   },
   searchInput: {
-    backgroundColor: 'rgba(0,0,0,0)',
-    color: appConfig.colors.white
-  },
-  leftWrapper: {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8
-  },
-  textButton: {
-    color: appConfig.colors.white
-  },
-  icon: {
-    color: appConfig.colors.white
-  },
-  btnClearText: {
-    backgroundColor: '#999',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8
-  },
-  closeIcon: {
-    position: 'relative',
-    top: -1
+    flex: 1,
   },
   btnCancel: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10
+    marginLeft: 10,
   },
   inputAnimatedWrapper: {
     flex: 1,
     width: '100%',
     height: '100%',
-    borderRadius: 5,
-    paddingHorizontal: 5,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   input: {
     flex: 1,
     width: '100%',
     height: '100%',
-    padding: 0
+    padding: 0,
   },
-  title: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600'
-  }
+  searchIcon: {
+    fontSize: 22,
+  },
 });
 
-export default SearchNavBar;
+export default withTranslation()(SearchNavBar);

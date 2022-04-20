@@ -1,14 +1,19 @@
 import React, {Component} from 'react';
-import {View, Image, Text, StyleSheet} from 'react-native';
-import Button from 'react-native-button';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {NotiBadge} from '../../../Badges';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {BASE_SERVICE_DIMENSION, BASE_TITLE_MARGIN} from './constants';
 import {IMAGE_ICON_TYPE} from '../../constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {NotiBadge} from '../../../Badges';
 import Loading from '../../../Loading';
-import {SERVICES_TYPE} from '../../../../helper/servicesHandler';
-
-import appConfig from 'app-config';
+import {BaseButton, Container, Icon, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   buttonWrapper: {
@@ -22,20 +27,20 @@ const styles = StyleSheet.create({
   iconWrapper: {
     width: BASE_SERVICE_DIMENSION,
     height: BASE_SERVICE_DIMENSION,
-    borderRadius: 16,
-    // backgroundColor: '#eee',
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: {
+  image: {
     width: '100%',
     height: '100%',
+  },
+  icon: {
+    fontSize: 32,
   },
   title: {
     textAlign: 'center',
     marginTop: BASE_TITLE_MARGIN,
-    ...appConfig.styles.typography.sub
   },
   notifyWrapper: {
     right: -8,
@@ -49,14 +54,19 @@ const styles = StyleSheet.create({
   loading: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.2)',
   },
 });
 
 class Service extends Component {
+  static contextType = ThemeContext;
+
   state = {
     loading: false,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   handlePress(service) {
     if (this.state.loading) return;
@@ -81,6 +91,18 @@ class Service extends Component {
     });
   }
 
+  get loadingStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay30,
+    };
+  }
+
+  get iconWrapperStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusHuge,
+    };
+  }
+
   render() {
     const {
       service,
@@ -92,25 +114,32 @@ class Service extends Component {
     } = this.props;
 
     return (
-      <Button
+      <BaseButton
         onPress={this.handlePress.bind(this, service)}
-        containerStyle={[styles.buttonWrapper, containerStyle]}>
+        style={[styles.buttonWrapper, containerStyle]}>
         <View style={styles.itemWrapper}>
           <View>
-            <View style={[styles.iconWrapper, itemStyle]}>
+            <Container
+              style={[styles.iconWrapper, this.iconWrapperStyle, itemStyle]}>
               {this.state.loading && (
-                <Loading size="small" center containerStyle={styles.loading} />
-              )}
-              {service.iconType === IMAGE_ICON_TYPE ? (
-                <Image style={styles.icon} source={{uri: service.icon}} />
-              ) : (
-                <MaterialCommunityIcons
-                  name={service.icon}
-                  color="#fff"
-                  size={32}
+                <Loading
+                  size="small"
+                  center
+                  color={this.theme.color.onOverlay}
+                  containerStyle={[styles.loading, this.loadingStyle]}
                 />
               )}
-            </View>
+              {service.iconType === IMAGE_ICON_TYPE ? (
+                <Image style={styles.image} source={{uri: service.icon}} />
+              ) : (
+                <Icon
+                  neutral
+                  bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+                  name={service.icon}
+                  style={styles.icon}
+                />
+              )}
+            </Container>
             <NotiBadge
               containerStyle={styles.notifyWrapper}
               labelStyle={styles.notifyLabel}
@@ -120,9 +149,14 @@ class Service extends Component {
               animation
             />
           </View>
-          <Text style={[styles.title, titleStyle]}>{service.title}</Text>
+          <Typography
+            numberOfLines={2}
+            type={TypographyType.LABEL_SMALL}
+            style={[styles.title, titleStyle]}>
+            {service.title}
+          </Typography>
         </View>
-      </Button>
+      </BaseButton>
     );
   }
 }

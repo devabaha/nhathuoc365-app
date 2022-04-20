@@ -1,10 +1,14 @@
 import React, {useRef} from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
-
+// routing
+import {push} from 'app-helper/routing';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import SectionContainer from '../SectionContainer';
+import {Input, Typography} from 'src/components/base';
 
 const MIN_ADDRESS_HEIGHT = 50;
 const MAX_ADDRESS_HEIGHT = MIN_ADDRESS_HEIGHT * 4;
@@ -13,14 +17,10 @@ const INPUT_HEIGHT = 60;
 
 const styles = StyleSheet.create({
   input_label_help: {
-    fontSize: 12,
     marginTop: 2,
-    color: '#666666',
   },
   input_address_text: {
     width: '100%',
-    color: '#333',
-    fontSize: 14,
     marginTop: 4,
     minHeight: MIN_ADDRESS_HEIGHT,
     maxHeight: MAX_ADDRESS_HEIGHT,
@@ -61,7 +61,7 @@ const NoteSection = ({
   };
 
   const openEditNote = () => {
-    Actions.push(appConfig.routes.modalInput, {
+    push(appConfig.routes.modalInput, {
       backdropPressToClose: true,
       title: t('confirm.note.title'),
       btnTitle: t('confirm.change'),
@@ -113,17 +113,20 @@ const NoteSection = ({
       title={
         title || (
           <>
-            <Text>{`${t('confirm.note.title')} `}</Text>
-            <Text style={styles.input_label_help}>
+            {`${t('confirm.note.title')} `}
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM}
+              style={styles.input_label_help}>
               ({t('confirm.note.description')})
-            </Text>
+            </Typography>
           </>
         )
       }
       actionBtnTitle={isShowActionTitle && t('confirm.change')}
       onPressActionBtn={handlePressActionBtn}>
       <View pointerEvents={editable ? 'auto' : 'none'}>
-        <TextInput
+        <Input
+          type={TypographyType.LABEL_MEDIUM}
           ref={refInput}
           style={[
             styles.input_address_text,

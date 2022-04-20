@@ -62,10 +62,36 @@ import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
 import vi_request from './vi/request.json';
 import en_request from './en/request.json';
+import vi_rating from './vi/rating.json';
+import en_rating from './en/rating.json';
+import vi_chat from './vi/chat.json';
+import en_chat from './en/chat.json';
+import vi_agencyInformationRegister from './vi/agencyInformationRegister.json';
+import en_agencyInformationRegister from './en/agencyInformationRegister.json';
+import vi_lotteryGame from './vi/lotteryGame.json';
+import en_lotteryGame from './en/lotteryGame.json';
+import vi_productStamp from './vi/productStamp.json';
+import en_productStamp from './en/productStamp.json';
+import vi_phoneCardContact from './vi/phoneCardContact.json';
+import en_phoneCardContact from './en/phoneCardContact.json';
+import vi_filterProduct from './vi/filterProduct.json';
+import en_filterProduct from './en/filterProduct.json';
+import vi_airlineTicket from './vi/airlineTicket.json';
+import en_airlineTicket from './en/airlineTicket.json';
+import vi_premium from './vi/premium.json';
+import en_premium from './en/premium.json';
+import vi_payWallet from './vi/payWallet.json';
+import en_payWallet from './en/payWallet.json';
+import vi_phoneCard from './vi/phoneCard.json';
+import en_phoneCard from './en/phoneCard.json';
+import vi_domainSelector from './vi/domainSelector.json';
+import en_domainSelector from './en/domainSelector.json';
 import vi_gpsStore from './vi/gpsStore.json';
 import en_gpsStore from './en/gpsStore.json';
 import vi_license from './vi/license.json';
 import en_license from './en/license.json';
+import vi_theme from './vi/theme.json';
+import en_theme from './en/theme.json';
 
 export default {
   [languages.vi.value]: {
@@ -100,8 +126,22 @@ export default {
     salesReport: vi_salesReport,
     progressTracking: vi_progressTracking,
     request: vi_request,
+    rating: vi_rating,
+    chat: vi_chat,
+    agencyInformationRegister: vi_agencyInformationRegister,
+    lotteryGame: vi_lotteryGame,
+    productStamp: vi_productStamp,
+    phoneCardContact: vi_phoneCardContact,
+    gpsStore: vi_gpsStore,
+    filterProduct: vi_filterProduct,
+    airlineTicket: vi_airlineTicket,
+    premium: vi_premium,
+    payWallet: vi_payWallet,
+    phoneCard: vi_phoneCard,
+    domainSelector: vi_domainSelector,
     gpsStore: vi_gpsStore,
     license: vi_license,
+    theme: vi_theme,
   },
   [languages.en.value]: {
     common: en_common,
@@ -135,7 +175,21 @@ export default {
     salesReport: en_salesReport,
     progressTracking: en_progressTracking,
     request: en_request,
+    rating: en_rating,
+    chat: en_chat,
+    agencyInformationRegister: en_agencyInformationRegister,
+    lotteryGame: en_lotteryGame,
+    productStamp: en_productStamp,
+    phoneCardContact: en_phoneCardContact,
+    gpsStore: en_gpsStore,
+    filterProduct: en_filterProduct,
+    airlineTicket: en_airlineTicket,
+    premium: en_premium,
+    payWallet: en_payWallet,
+    phoneCard: en_phoneCard,
+    domainSelector: en_domainSelector,
     gpsStore: en_gpsStore,
     license: en_license,
+    theme: en_theme,
   },
 };

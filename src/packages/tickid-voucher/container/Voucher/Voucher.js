@@ -1,34 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+// configs
 import config from '../../config';
+import store from 'app-store';
+// helpers
+import {internalFetch} from '../../helper/apiFetch';
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+import {showMessage} from '../../constants';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
+import CampaignEntity from '../../entity/CampaignEntity';
+// custom components
 import BaseContainer from '../BaseContainer';
 import VoucherComponent from '../../component/Voucher';
-import CampaignEntity from '../../entity/CampaignEntity';
-import { internalFetch } from '../../helper/apiFetch';
-import store from 'app-store';
-import { showMessage } from '../../constants';
-import EventTracker from '../../../../helper/EventTracker';
 
 class Voucher extends BaseContainer {
+  static contextType = ThemeContext;
+
   static propTypes = {
-    from: PropTypes.oneOf(['home', 'deeplink'])
+    from: PropTypes.oneOf(['home', 'deeplink']),
   };
 
   static defaultProps = {
-    from: undefined
+    from: undefined,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    refreshing: false,
+    apiFetching: false,
+    provinceSelected: '',
+    campaigns: [],
+    newVoucherNum: 0,
+  };
+  eventTracker = new EventTracker();
 
-    this.state = {
-      refreshing: false,
-      apiFetching: false,
-      provinceSelected: '',
-      campaigns: [],
-      newVoucherNum: 0
-    };
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
   }
 
   get isFromHome() {
@@ -44,61 +53,69 @@ class Voucher extends BaseContainer {
     this.eventTracker.clearTracking();
   }
 
-  handlePressVoucher = campaign => {
-    config.route.push(config.routes.voucherDetail, {
-      campaignId: campaign.data.id,
-      from: this.props.from,
-      title: campaign.data.title,
-      forceReload: this.getListCampaigns
-    });
+  handlePressVoucher = (campaign) => {
+    config.route.push(
+      config.routes.voucherDetail,
+      {
+        campaignId: campaign.data.id,
+        from: this.props.from,
+        title: campaign.data.title,
+        forceReload: this.getListCampaigns,
+      },
+      this.theme,
+    );
   };
 
   handlePressMyVoucher = () => {
-    config.route.push(config.routes.myVoucher, {
-      from: this.props.from,
-      forceReload: this.getListCampaigns
-    });
+    config.route.push(
+      config.routes.myVoucher,
+      {
+        from: this.props.from,
+        forceReload: this.getListCampaigns,
+      },
+      this.theme,
+    );
   };
 
-  handlePressSelectProvince = ({ setProvince, provinceSelected }) => {
+  handlePressSelectProvince = ({setProvince, provinceSelected}) => {
     config.route.push(config.routes.voucherSelectProvince, {
       provinceSelected: provinceSelected,
       onSelectProvince: setProvince,
-      onClose: config.route.pop
+      onClose: config.route.pop,
     });
   };
 
   getListCampaigns = async (city = '', showLoading = true) => {
     if (showLoading) {
-      this.setState({ apiFetching: true });
+      this.setState({apiFetching: true});
     }
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const options = {
-        method: 'POST'
+        method: 'POST',
       };
       if (city) {
-        options.body = { city };
+        options.body = {city};
       }
       const response = await internalFetch(
         config.rest.listCampaigns(),
-        options
+        options,
       );
       if (response.status === config.httpCode.success) {
         const campaigns = response.data.campaigns.map(
-          campaign => new CampaignEntity(campaign)
+          (campaign) => new CampaignEntity(campaign),
         );
 
         if (store.deep_link_data) {
           const campaign = campaigns.find(
-            campaign => campaign.data.id === store.deep_link_data.id
+            (campaign) => campaign.data.id === store.deep_link_data.id,
           );
           if (campaign) {
             this.handlePressVoucher(campaign);
           } else {
             showMessage({
               type: 'danger',
-              message: t('api.error.notFound')
+              message: t('api.error.notFound'),
             });
           }
         }
@@ -106,7 +123,7 @@ class Voucher extends BaseContainer {
         this.setState({
           campaigns,
           newVoucherNum: response.data.new_voucher_num,
-          provinceSelected: response.data.city
+          provinceSelected: response.data.city,
         });
       }
     } catch (error) {
@@ -114,14 +131,14 @@ class Voucher extends BaseContainer {
     } finally {
       this.setState({
         refreshing: false,
-        apiFetching: false
+        apiFetching: false,
       });
       store.setDeepLinkData(null);
     }
   };
 
   handleOnRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     setTimeout(() => {
       const apiFetching = false;
@@ -129,8 +146,8 @@ class Voucher extends BaseContainer {
     }, 1000);
   };
 
-  handleSetProvince = provinceSelected => {
-    this.setState({ provinceSelected });
+  handleSetProvince = (provinceSelected) => {
+    this.setState({provinceSelected});
     this.getListCampaigns(provinceSelected);
   };
 
@@ -147,7 +164,7 @@ class Voucher extends BaseContainer {
         onRefresh={this.handleOnRefresh}
         onPressSelectProvince={this.handlePressSelectProvince.bind(this, {
           setProvince: this.handleSetProvince,
-          provinceSelected: this.state.provinceSelected
+          provinceSelected: this.state.provinceSelected,
         })}
         t={this.props.t}
       />

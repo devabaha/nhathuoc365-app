@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
-
+// 3-party libs
 import {useValue} from 'react-native-redash';
 import {
   State,
@@ -8,9 +8,11 @@ import {
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {Easing} from 'react-native-reanimated';
-
-import {themes} from '../themes';
-
+// helpers
+import {getThemes} from '../themes';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
 import Ripple from './Ripple';
 
 const styles = StyleSheet.create({
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
   },
   ripplesMask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: themes.colors.background,
   },
 });
 
@@ -51,6 +52,12 @@ const TimeSkipper = ({
   onSingleLeftTap = (state: TapGestureHandlerGestureEvent) => {},
   onSingleRightTap = (state: TapGestureHandlerGestureEvent) => {},
 }) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
   const refSkipperSingleLeftTap = useRef<any>();
   const refSkipperSingleRightTap = useRef<any>();
   const refSkipperDoubleLeftTap = useRef<any>();
@@ -354,13 +361,14 @@ const TimeSkipper = ({
     return [
       styles.ripplesMask,
       {
+        backgroundColor: themes.colors.background,
         opacity: animatedDoubleLeftTapValue.interpolate({
           inputRange: [0, 1],
           outputRange: [0, 0.1],
         }),
       },
     ];
-  }, []);
+  }, [themes]);
 
   const rightRipplesMaskStyle = useMemo(() => {
     return [

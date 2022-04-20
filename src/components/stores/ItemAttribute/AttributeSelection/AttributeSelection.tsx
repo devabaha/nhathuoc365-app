@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View, ViewStyle} from 'react-native';
 import PropTypes from 'prop-types';
-
-import appConfig from 'app-config';
-
-import ModernList, {LIST_TYPE} from 'app-packages/tickid-modern-list';
-
+// types
 import {AttributeSelectionProps} from '.';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {LIST_TYPE} from 'app-packages/tickid-modern-list';
+import {TypographyType} from 'src/components/base';
+// custom components
+import ModernList from 'app-packages/tickid-modern-list';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -18,35 +23,18 @@ const MIN_QUANTITY = 1;
 const MODEL_SEPARATOR = '-';
 
 const styles = StyleSheet.create({
-  label: {
-    color: '#444',
-    fontSize: 16,
-  },
-  containerDisabled: {
-    backgroundColor: '#f1f1f1',
-  },
-  titleDisabled: {
-    color: '#bababa',
-  },
   separate: {
-    height: 0.5,
-    backgroundColor: '#eee',
     marginHorizontal: 10,
     position: 'absolute',
     left: 0,
     right: 0,
     zIndex: 1,
   },
-
-  active: {
-    backgroundColor: appConfig.colors.primary,
-  },
-  textActive: {
-    color: appConfig.colors.white,
-  },
 });
 
 export class AttributeSelection extends Component<AttributeSelectionProps> {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onSelectAttr: PropTypes.func,
     models: PropTypes.object,
@@ -78,6 +66,10 @@ export class AttributeSelection extends Component<AttributeSelectionProps> {
     selectedModel: {},
     selectedModelKey: '',
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.updateData(this.props.attrs, this.props.models, () => {
@@ -339,22 +331,25 @@ export class AttributeSelection extends Component<AttributeSelectionProps> {
     return modelKeyMap.join(MODEL_SEPARATOR);
   };
 
+  get separateStyle(): ViewStyle {
+    return {
+      height: this.theme.layout.borderWidthSmall,
+      backgroundColor: this.theme.color.border,
+    };
+  }
+
   render() {
     return this.state.viewData.map((attr, indx) => {
       return (
         <View key={indx}>
-          {indx > 0 && <View style={styles.separate} />}
+          {indx > 0 && <View style={[this.separateStyle, styles.separate]} />}
           <ModernList
             data={attr.data}
             mainKey={VALUE_KEY}
             type={LIST_TYPE.TAG}
             headerTitle={attr.label}
             onPressItem={this.handlePressProductAttr}
-            headerTitleStyle={styles.label}
-            activeStyle={styles.active}
-            activeTextStyle={styles.textActive}
-            disabledStyle={styles.containerDisabled}
-            disabledTextStyle={styles.titleDisabled}
+            headerTitleStyle={this.theme.typography[TypographyType.LABEL_LARGE]}
           />
         </View>
       );

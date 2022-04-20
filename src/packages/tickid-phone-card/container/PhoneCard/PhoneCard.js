@@ -1,88 +1,118 @@
 import React from 'react';
-import { Text, StyleSheet, SafeAreaView } from 'react-native';
-import { TabView, TabBar } from 'react-native-tab-view';
+import {StyleSheet} from 'react-native';
+// 3-party libs
+import {TabView, TabBar} from 'react-native-tab-view';
+import {withTranslation} from 'react-i18next';
+import Loading from '@tickid/tickid-rn-loading';
+// configs
+import config from '../../config';
+// network
+import {internalFetch} from '../../helper/apiFetch';
+// helpers
+import {normalize} from '../../helper/normalizer';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
+import EventTracker from '../../../../helper/EventTracker';
+// custom components
 import PrepayContainer from '../Prepay';
-import BuyCardContainer from '../BuyCard';
 import KPlusPaidContainer from '../KPlusPaid';
 import BaseContainer from '../BaseContainer';
-import config from '../../config';
-import { internalFetch } from '../../helper/apiFetch';
-import { normalize } from '../../helper/normalizer';
-import Loading from '@tickid/tickid-rn-loading';
-import EventTracker from '../../../../helper/EventTracker';
+import {
+  ScreenWrapper,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
 
 class PhoneCard extends BaseContainer {
+  static contextType = ThemeContext;
+
   static defaultProps = {
-    indexTab: 0
+    indexTab: 0,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    index: this.props.indexTab,
+    routes: [],
+    cardServiceData: {},
+    isReady: false,
+    refreshing: false,
+  };
 
-    this.state = {
-      index: this.props.indexTab,
-      routes: [],
-      cardServiceData: {},
-      isReady: false,
-      refreshing: false
-    };
+  updateNavBarDisposer = () => {};
+  eventTracker = new EventTracker();
 
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this.getPhoneCardServices();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
     this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
+    this.updateNavBarDisposer();
     this.eventTracker.clearTracking();
   }
 
   getPhoneCardServices = () => {
     internalFetch(config.rest.phoneCardService() + this.props.serviceId)
-      .then(response => {
-        const { routes, ...normalizeData } = normalize(response.data);
+      .then((response) => {
+        const {routes, ...normalizeData} = normalize(response.data);
         this.setState({
           routes,
-          cardServiceData: normalizeData
+          cardServiceData: normalizeData,
         });
       })
       .finally(() => {
         this.setState({
           isReady: true,
-          refreshing: false
+          refreshing: false,
         });
       });
   };
 
-  renderTabBarLabel = ({ focused, route: { title } }) => {
+  renderTabBarLabel = ({focused, route: {title}}) => {
     return (
-      <Text style={[styles.tabBarLabel, focused && styles.tabBarLabelAvtive]}>
+      <Typography
+        type={TypographyType.LABEL_MEDIUM}
+        style={[
+          styles.tabBarLabel,
+          focused && [styles.tabBarLabelActive, this.tabBarLabelActiveStyle],
+        ]}>
         {title}
-      </Text>
+      </Typography>
     );
   };
 
   handleRefresh = () => {
     this.setState({
-      refreshing: true
+      refreshing: true,
     });
 
     setTimeout(this.getPhoneCardServices, 1000);
   };
 
-  renderScene = ({ route }) => {
+  renderScene = ({route}) => {
     const extraProps = {};
     extraProps.hideContact = true;
 
     switch (route.keyView) {
       case 'phone_paid':
-        extraProps.errorEmptyMessage = 'Vui lòng nhập số điện thoại';
+        extraProps.errorEmptyMessage = this.props.t('enterPhoneNumber');
+        extraProps.placeholder = this.props.t('enterPhoneNumberPlaceholder');
 
         return (
           <PrepayContainer
-            prefix="trước"
+            prefix={this.props.t('prepayPrefix')}
             routeKey={route.key}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
@@ -91,14 +121,17 @@ class PhoneCard extends BaseContainer {
           />
         );
       case 'internet_paid':
-        extraProps.placeholder = 'Nhập số tài khoản';
-        extraProps.errorLengthMessage = 'Số tài khoản cần ít nhất 9 ký tự';
+        extraProps.placeholder = this.props.t('enterAccountCode');
         extraProps.validLength = 9;
+        extraProps.errorLengthMessage = this.props.t(
+          'error.accountCodeMinLength',
+          {minLength: extraProps.validLength},
+        );
         extraProps.keyboardType = 'default';
 
         return (
           <PrepayContainer
-            prefix="trước"
+            prefix={this.props.t('prepayPrefix')}
             routeKey={route.key}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
@@ -106,20 +139,16 @@ class PhoneCard extends BaseContainer {
             {...extraProps}
           />
         );
-      case 'phone_card':
-        return (
-          <BuyCardContainer
-            routeKey={route.key}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}
-            {...this.state.cardServiceData}
-          />
-        );
       case 'kplus_paid':
-        extraProps.placeholder = 'Nhập số tài khoản';
-        extraProps.errorEmptyMessage = 'Vui lòng nhập mã số tài khoản';
-        extraProps.errorLengthMessage = 'Số tài khoản cần ít nhất 12 số';
+        extraProps.placeholder = this.props.t('enterAccountCode');
+        extraProps.errorEmptyMessage = this.props.t(
+          'enterAccountCodePlaceholder',
+        );
         extraProps.validLength = 12;
+        extraProps.errorLengthMessage = this.props.t(
+          'error.accountCodeMinLength',
+          {minLength: extraProps.validLength},
+        );
         extraProps.keyboardType = 'number-pad';
 
         return (
@@ -136,57 +165,69 @@ class PhoneCard extends BaseContainer {
     }
   };
 
+  get tabBarStyle() {
+    return {
+      backgroundColor: this.theme.color.surface,
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get indicatorStyle() {
+    return {
+      backgroundColor: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get tabBarLabelActiveStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+    };
+  }
+
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <ScreenWrapper>
         {this.state.isReady ? (
           <TabView
             navigationState={this.state}
-            renderTabBar={props => {
+            renderTabBar={(props) => {
               return (
                 <TabBar
                   {...props}
                   renderLabel={this.renderTabBarLabel}
-                  indicatorStyle={styles.indicatorStyle}
-                  style={styles.tabBarStyle}
+                  indicatorStyle={[styles.indicatorStyle, this.indicatorStyle]}
+                  style={this.tabBarStyle}
+                  tabStyle={styles.tabStyle}
                 />
               );
             }}
             renderScene={this.renderScene}
-            onIndexChange={index => this.setState({ index })}
-            initialLayout={{ width: config.device.width }}
-            style={styles.tabBarContainer}
+            onIndexChange={(index) => this.setState({index})}
+            initialLayout={{width: config.device.width}}
           />
         ) : (
           <Loading loading />
         )}
-      </SafeAreaView>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  tabBarStyle: {
-    backgroundColor: config.colors.white
-  },
   tabBarLabel: {
-    color: '#666',
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
+    textAlign: 'center',
   },
-  tabBarLabelAvtive: {
+  tabBarLabelActive: {
     fontWeight: 'bold',
-    color: config.colors.primary
   },
   indicatorStyle: {
-    backgroundColor: config.colors.primary,
-    height: 3
+    height: 3,
   },
-  tabBarContainer: {
-    backgroundColor: '#fff'
-  }
+  tabStyle: {
+    alignItems: undefined,
+  },
 });
 
-export default PhoneCard;
+export default withTranslation('phoneCard')(PhoneCard);

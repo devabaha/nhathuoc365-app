@@ -1,24 +1,36 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import appConfig from 'app-config';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// 3-party libs
 import ImagePicker from 'react-native-image-picker';
-import ProfileContext from '../ProfileContext';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import ProfileContext from 'src/containers/Profile/ProfileContext';
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography} from 'src/components/base';
 import PremiumIcon from 'src/components/PremiumIcon';
 import Loading from 'src/components/Loading';
 import NavBarButton from '../NavBar/NavBarButton';
 import ImageBackground from 'src/components/ImageBg';
 import Image from 'src/components/Image';
-import {Container} from 'src/components/Layout';
+import Row from './Row';
 
 class Header extends Component {
-  static contextType = ProfileContext;
-  state = {
-    coverLoading: false,
-  };
+  static contextType = ThemeContext;
+
+  state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
 
   onChangeCover = () => {
-    this.setState({coverLoading: true});
     const {t} = this.props;
 
     const options = {
@@ -45,14 +57,72 @@ class Header extends Component {
         }
         this.props.uploadTempCover(response);
       }
-
-      this.setState({coverLoading: false});
     });
   };
 
-  render() {
-    const {isMainUser} = this.context;
+  get imageBackgroundWrapperStyle() {
+    return mergeStyles(styles.wrapper, {
+      backgroundColor: this.theme.color.contentBackground,
+    });
+  }
 
+  get coverLoadingBtnContainerStyle() {
+    return mergeStyles(
+      [styles.cameraIconContainer, styles.coverCameraIconContainer],
+      {
+        backgroundColor: this.theme.color.overlay60,
+      },
+    );
+  }
+
+  get coverLoadingBtnIconStyle() {
+    return mergeStyles(styles.cameraIcon, {
+      color: this.theme.color.iconInactive,
+    });
+  }
+
+  get avatarLoadingBtnContainerStyle() {
+    return mergeStyles(
+      [styles.avatarCorner, styles.avatarCameraIconContainer],
+      {
+        backgroundColor: this.theme.color.overlay60,
+      },
+    );
+  }
+
+  get avatarLoadingBtnIconStyle() {
+    return mergeStyles(styles.avatarCameraIcon, {
+      color: this.theme.color.iconInactive,
+    });
+  }
+
+  get coverBottomSpaceStyle() {
+    return mergeStyles(styles.coverBottomSpace, {
+      borderTopColor: this.theme.color.border,
+    });
+  }
+
+  get avatarWrapperStyle() {
+    return mergeStyles(styles.avatarWrapper, {
+      borderColor: this.theme.color.border,
+      backgroundColor: this.theme.color.contentBackground,
+    });
+  }
+
+  get avatarLoadingWrapperStyle() {
+    return {
+      backgroundColor: this.theme.color.overlay60,
+    };
+  }
+
+  get distanceTitleStyle() {
+    return mergeStyles(
+      styles.iconDistance,
+      this.theme.typography[TypographyType.DESCRIPTION_MEDIUM],
+    );
+  }
+
+  render() {
     const hasHeaderInfo =
       !!this.props.quote ||
       !!this.props.address ||
@@ -60,58 +130,68 @@ class Header extends Component {
       !!this.props.distance;
 
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <ImageBackground
           imageProps={{canTouch: true}}
           source={{uri: this.props.cover}}
-          style={[styles.wrapper]}
+          style={this.imageBackgroundWrapperStyle}
           imageStyle={styles.imageWrapper}>
-          {isMainUser && (
-            <NavBarButton
-              disabled={this.state.coverLoading}
-              containerStyle={[
-                styles.cameraIconContainer,
-                styles.coverCameraIconContainer,
+          {!!this.props.coverLoading && (
+            <Loading
+              wrapperStyle={[
+                this.avatarLoadingWrapperStyle,
+                {zIndex: 0, bottom: AVATAR_BORDER_RADIUS},
               ]}
-              iconStyle={styles.cameraIcon}
-              iconName="camerao"
-              onPress={this.onChangeCover}
+              center
+              size="small"
             />
           )}
-          <View style={styles.coverBottomSpace} />
+          <ProfileContext.Consumer>
+            {({isMainUser}) =>
+              isMainUser && (
+                <NavBarButton
+                  disabled={this.props.coverLoading}
+                  containerStyle={this.coverLoadingBtnContainerStyle}
+                  iconStyle={this.coverLoadingBtnIconStyle}
+                  iconName="camerao"
+                  onPress={this.onChangeCover}
+                />
+              )
+            }
+          </ProfileContext.Consumer>
+          <Container style={this.coverBottomSpaceStyle} />
           <View style={styles.avatarContainer}>
-            <View
+            <Container
               onPress={this.props.onPressAvatar}
-              style={styles.avatarWrapper}>
+              style={this.avatarWrapperStyle}>
               <View style={styles.avatar}>
                 <Image
                   canTouch
                   source={{uri: this.props.avatar}}
                   style={styles.avatar}
-                  loadingColor="#ccc"
-                  errorColor="#ccc"
                 />
                 {!!this.props.avatarLoading && (
                   <Loading
-                    wrapperStyle={styles.avatarLoadingWrapper}
+                    wrapperStyle={this.avatarLoadingWrapperStyle}
                     center
                     size="small"
                   />
                 )}
               </View>
-            </View>
-            {isMainUser && (
-              <NavBarButton
-                disabled={this.props.avatarLoading}
-                containerStyle={[
-                  styles.avatarCameraIconContainer,
-                  styles.avatarCorner,
-                ]}
-                iconStyle={[styles.cameraIcon, styles.avatarCameraIcon]}
-                iconName="camerao"
-                onPress={this.props.onPressAvatar}
-              />
-            )}
+            </Container>
+            <ProfileContext.Consumer>
+              {({isMainUser}) =>
+                isMainUser && (
+                  <NavBarButton
+                    disabled={this.props.avatarLoading}
+                    containerStyle={this.avatarLoadingBtnContainerStyle}
+                    iconStyle={this.avatarLoadingBtnIconStyle}
+                    iconName="camerao"
+                    onPress={this.props.onPressAvatar}
+                  />
+                )
+              }
+            </ProfileContext.Consumer>
           </View>
         </ImageBackground>
 
@@ -123,14 +203,20 @@ class Header extends Component {
                 style={styles.premium}
               />
             )}
-            <Text style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
+            <Typography
+              type={TypographyType.TITLE_HUGE}
+              style={[styles.title, !hasHeaderInfo && styles.noHeaderInfo]}>
               {this.props.name}
-            </Text>
+            </Typography>
           </View>
         </Container>
 
         {!!this.props.quote && (
-          <Text style={styles.subTitle}>{this.props.quote}</Text>
+          <Typography
+            type={TypographyType.DESCRIPTION_SEMI_MEDIUM_TERTIARY}
+            style={styles.subTitle}>
+            {this.props.quote}
+          </Typography>
         )}
         {!!this.props.address && (
           <Row iconName="map-marker" content={this.props.address} />
@@ -138,14 +224,14 @@ class Header extends Component {
         {!!this.props.tel && <Row iconName="phone" content={this.props.tel} />}
         {!!this.props.distance && (
           <Row
-            iconStyle={styles.iconDistance}
-            titleStyle={styles.iconDistance}
+            iconStyle={this.distanceTitleStyle}
+            titleStyle={this.distanceTitleStyle}
             style={styles.distance}
             iconName="safari"
             content={this.props.distance}
           />
         )}
-      </View>
+      </Container>
     );
   }
 }
@@ -165,11 +251,9 @@ const DISTANCE_FROM_ROUND_EDGE_TO_SQUARE_CONNER_OF_AVATAR_CONTAINER =
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     paddingBottom: 15,
   },
   wrapper: {
-    backgroundColor: '#eee',
     width: appConfig.device.width,
     height: appConfig.device.width / 2 + AVATAR_BORDER_RADIUS,
     justifyContent: 'flex-start',
@@ -178,13 +262,11 @@ const styles = StyleSheet.create({
     position: undefined,
   },
   coverBottomSpace: {
-    backgroundColor: '#fff',
     width: appConfig.device.width,
     height: AVATAR_BORDER_RADIUS,
     bottom: 0,
     position: 'absolute',
     borderTopWidth: 3.5,
-    borderTopColor: '#eee',
   },
   avatarContainer: {
     position: 'absolute',
@@ -198,17 +280,12 @@ const styles = StyleSheet.create({
     borderRadius: AVATAR_BORDER_RADIUS,
     overflow: 'hidden',
     borderWidth: 3,
-    borderColor: '#eee',
-    backgroundColor: '#fff',
   },
   avatar: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
-  avatarLoadingWrapper: {
-    backgroundColor: 'rgba(0,0,0,.6)',
-  },
+
   avatarCorner: {
     position: 'absolute',
     right:
@@ -221,7 +298,6 @@ const styles = StyleSheet.create({
   avatarCameraIconContainer: {
     width: AVATAR_CAMERA_ICON_DIMENSIONS,
     height: AVATAR_CAMERA_ICON_DIMENSIONS,
-    backgroundColor: 'rgba(0,0,0,.6)',
   },
   premium: {
     width: PREMIUM_DIMENSIONS,
@@ -230,7 +306,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: PREMIUM_DIMENSIONS / 2,
     position: 'absolute',
-    left: -PREMIUM_DIMENSIONS*1.2,
+    left: -PREMIUM_DIMENSIONS * 1.2,
     top: 0,
   },
   titleContainer: {
@@ -240,8 +316,6 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontWeight: '700',
-    color: '#333',
-    fontSize: 24,
     letterSpacing: 1,
   },
   noHeaderInfo: {
@@ -249,38 +323,13 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     textAlign: 'center',
-    color: '#666',
     marginTop: 5,
     fontWeight: '300',
     fontStyle: 'italic',
-    fontSize: 13,
     paddingHorizontal: 15,
   },
-  infoBlock: {
-    flexDirection: 'row',
-    marginTop: 10,
-    borderTopColor: '#eee',
-    borderTopWidth: 0.5,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    marginTop: 15,
-  },
-  icon: {
-    width: 20,
-    fontSize: 14,
-    marginRight: 0,
-    color: '#333',
-  },
-  rowTitle: {
-    color: '#333',
-    lineHeight: 18,
-    flex: 1,
-  },
+
   iconDistance: {
-    color: '#888',
     fontSize: 14,
     flex: 0,
   },
@@ -295,13 +344,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 5,
     bottom: 5,
-    backgroundColor: 'rgba(0,0,0,.6)',
   },
   coverCameraIconContainer: {
     bottom: AVATAR_BORDER_RADIUS,
   },
   cameraIcon: {
-    color: '#eee',
     fontSize: 18,
   },
   avatarCameraIcon: {
@@ -310,10 +357,3 @@ const styles = StyleSheet.create({
 });
 
 export default withTranslation('editProfile')(Header);
-
-const Row = (props) => (
-  <View style={[styles.row, props.style]}>
-    <Icon name={props.iconName} style={[styles.icon, props.iconStyle]} />
-    <Text style={[styles.rowTitle, props.titleStyle]}>{props.content}</Text>
-  </View>
-);

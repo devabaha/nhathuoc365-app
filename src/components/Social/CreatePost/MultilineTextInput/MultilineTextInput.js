@@ -1,18 +1,20 @@
 import React, {useRef, useState} from 'react';
-import {StyleSheet, TextInput} from 'react-native';
+import {StyleSheet} from 'react-native';
+// custom components
+import {Input, TypographyType} from 'src/components/base';
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: '#fff',
-    fontSize: 16,
     padding: 15,
     paddingTop: 0,
     paddingBottom: 0,
+    textAlignVertical: 'top',
   },
   inputClone: {
     position: 'absolute',
     opacity: 0,
     width: '100%',
+    textAlignVertical: 'top',
   },
 });
 
@@ -86,7 +88,8 @@ const MultilineTextInput = ({
 
   return (
     <>
-      <TextInput
+      <Input
+        type={TypographyType.LABEL_LARGE}
         style={[styles.input, style]}
         placeholder={t('pleasePost')}
         multiline
@@ -101,13 +104,14 @@ const MultilineTextInput = ({
         value={contentText}
       />
 
-      <TextInput
+      <Input
+        type={TypographyType.LABEL_LARGE}
         onLayout={handleInputCloneLayout}
         multiline
         pointerEvents="none"
         style={[styles.input, styles.inputClone]}>
         {contentVisibleText}
-      </TextInput>
+      </Input>
     </>
   );
 };

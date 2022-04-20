@@ -1,18 +1,34 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {default as ModalBox} from 'react-native-modalbox';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import {Calendar} from 'react-native-calendars';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
-
+import {default as ModalBox} from 'react-native-modalbox';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {IconButton, Typography, Container} from 'src/components/base';
 
 const styles = StyleSheet.create({
+  backdropContent: {
+    height: 100,
+    marginTop: 'auto',
+  },
   modal: {
     height: null,
-    paddingBottom: 5 + appConfig.device.bottomSpace,
+    backgroundColor: 'transparent',
+  },
+  contentContainer: {
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
+    overflow: 'hidden',
   },
   iconContainer: {
     position: 'absolute',
@@ -24,19 +40,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 22,
-    color: '#666',
   },
   headingContainer: {
     padding: 30,
     marginBottom: 5,
-    borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderBottomColor: '#ccc',
   },
   heading: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: '#555',
+    fontWeight: 'bold',
     letterSpacing: 1.6,
     textAlign: 'right',
   },
@@ -54,47 +64,76 @@ const ModalCalendar = ({
   innerRef = () => {},
   onPressDate = () => {},
 }) => {
-  const theme = useRef({
-    backgroundColor: appConfig.colors.white,
-    calendarBackground: appConfig.colors.white,
-    textSectionTitleColor: '#2d4150',
-    selectedDayBackgroundColor: appConfig.colors.black,
-    selectedDayTextColor: appConfig.colors.white,
-    todayTextColor: appConfig.colors.primary,
-    // todayBackgroundColor: appConfig.colors.primary,
-    selectedDayTextColor: '#fff',
-    dayTextColor: '#2d4150',
-    textDisabledColor: '#ccc',
-    dotColor: appConfig.colors.primary,
-    selectedDotColor: appConfig.colors.white,
-    arrowColor: appConfig.colors.primary,
-    textDayFontWeight: '300',
-    textMonthFontWeight: 'bold',
-    textDayFontSize: 16,
-    textDayHeaderFontSize: 16,
-  });
+  const {theme} = useTheme();
   const refModal = useRef();
 
   const [selectedDate, setSelectedDate] = useState(current);
+  const [calendarHeight, setCalendarHeight] = useState(0);
+  const [calendarHeightDiff, setCalendarHeightDiff] = useState(0);
+
+  const themeCalendar = useMemo(() => {
+    return {
+      backgroundColor: theme.color.surface,
+      calendarBackground: theme.color.surface,
+      textSectionTitleColor: theme.color.textPrimary,
+      selectedDayBackgroundColor: theme.color.persistPrimary,
+      selectedDayTextColor: theme.color.onPrimary,
+      todayTextColor: theme.color.persistPrimary,
+      // todayBackgroundColor: appConfig.colors.primary,
+      monthTextColor: theme.color.textPrimary,
+      dayTextColor: theme.color.textPrimary,
+      textDisabledColor: theme.color.neutral,
+      dotColor: theme.color.primary,
+      selectedDotColor: appConfig.colors.primary,
+      arrowColor: theme.color.neutral,
+      textDayFontWeight: '300',
+      textMonthFontWeight: 'bold',
+      textDayFontSize: 16,
+      textDayHeaderFontSize: 16,
+    };
+  }, [theme]);
 
   const handleDayPress = useCallback((day) => {
     setSelectedDate(day.dateString);
     onPressDate(day.dateString, handleClose, day);
-  });
+  }, []);
 
   const handleClose = useCallback(() => {
     if (refModal.current) {
       refModal.current.close();
     }
-  });
+  }, []);
 
   const handleCloseModal = () => {
     if (typeof onCloseModal === 'function') {
       onCloseModal();
     } else {
-      Actions.pop();
+      pop();
     }
   };
+
+  const handleContainerLayout = (e) => {
+    if (e.nativeEvent.layout.height > calendarHeight) {
+      const diff = e.nativeEvent.layout.height - calendarHeight;
+      if (!!calendarHeight) {
+        setCalendarHeightDiff(diff > 0 ? diff : 0);
+      }
+      setCalendarHeight(e.nativeEvent.layout.height);
+    }
+  };
+
+  const headerContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.headingContainer,
+        {
+          borderBottomWidth: theme.layout.borderWidth,
+          borderColor: theme.color.border,
+        },
+      ],
+      headingContainerStyle,
+    );
+  }, [theme, headingContainerStyle]);
 
   return (
     <ModalBox
@@ -109,24 +148,44 @@ const ModalCalendar = ({
       }}
       isOpen
       onClosed={handleCloseModal}
-      useNativeDriver>
-      <View style={[styles.headingContainer, headingContainerStyle]}>
-        <TouchableOpacity onPress={handleClose} style={styles.iconContainer}>
-          <FontAwesomeIcon name="close" style={styles.icon} />
-        </TouchableOpacity>
-        <Text style={styles.heading}>{title}</Text>
-      </View>
-      <Calendar
-        theme={theme.current}
-        current={current}
-        onDayPress={handleDayPress}
-        // hideExtraDays
-        markedDates={{
-          [selectedDate]: {selected: true},
-        }}
-        minDate={minDate}
-        enableSwipeMonths
-      />
+      useNativeDriver
+      backdropContent={<Container style={styles.backdropContent} />}>
+      <Container
+        noBackground
+        style={{top: -calendarHeightDiff}}
+        onLayout={handleContainerLayout}>
+        <Container safeLayout style={styles.contentContainer}>
+          <Container style={headerContainerStyle}>
+            <IconButton
+              neutral
+              bundle={BundleIconSetName.FONT_AWESOME}
+              onPress={handleClose}
+              name="close"
+              iconStyle={styles.icon}
+              style={styles.iconContainer}
+            />
+            <Typography
+              type={TypographyType.DISPLAY_SMALL}
+              style={styles.heading}>
+              {title}
+            </Typography>
+          </Container>
+
+          <Container style={{paddingBottom: calendarHeightDiff}}>
+            <Calendar
+              theme={themeCalendar}
+              current={current}
+              onDayPress={handleDayPress}
+              // hideExtraDays
+              markedDates={{
+                [selectedDate]: {selected: true},
+              }}
+              minDate={minDate}
+              enableSwipeMonths
+            />
+          </Container>
+        </Container>
+      </Container>
     </ModalBox>
   );
 };

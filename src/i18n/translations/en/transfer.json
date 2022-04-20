@@ -1,7 +1,8 @@
 {
   "contactInput": {
-    "title": "Transfer to",
-    "placeholder": "Choose a receiver"
+    "title": "Receiver phone number",
+    "placeholder": "Enter name or phone number of receiver",
+    "historyTitle": "View history"
   },
   "contact": {
     "requestContactsPermissionTitle": "Contact",

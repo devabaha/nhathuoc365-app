@@ -1,21 +1,30 @@
-import React, { Component } from 'react';
-import appConfig from 'app-config';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, Text, View, TextInput } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { ifIphoneX } from 'react-native-iphone-x-helper';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Button from 'react-native-button';
+import {Platform, StyleSheet, View} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {NavBar, TextButton, Icon, Input, IconButton} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class SearchNavBar extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onCancel: PropTypes.func,
     onSearch: PropTypes.func,
     onClearText: PropTypes.func,
     placeholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
@@ -26,33 +35,71 @@ class SearchNavBar extends Component {
     searchValue: '',
   };
 
-  renderRight() {
-    return (
-      <Button
-        containerStyle={styles.cancelButton}
-        onPress={() => {
-          Actions.pop();
-          this.props.onCancel();
-        }}
-      >
-        <Text style={styles.cancelText}>Hủy</Text>
-      </Button>
-    );
+  get theme() {
+    return getTheme(this);
   }
 
-  renderMiddle() {
+  get rightButtonTitleStyle() {
+    return {color: this.theme.color.onNavBarBackground};
+  }
+
+  get middleContainerStyle() {
+    return [
+      styles.searchWrapper,
+      {
+        backgroundColor: this.theme.color.overlay60,
+      },
+    ];
+  }
+
+  get placeholderTextColor() {
+    return this.theme.color.onOverlay;
+  }
+
+  get clearWrapperStyle() {
+    return [
+      styles.clearWrapper,
+      {
+        backgroundColor: this.theme.color.neutral,
+      },
+    ];
+  }
+
+  get searchInputStyle() {
+    return {
+      color: this.theme.color.onOverlay,
+    };
+  }
+
+  renderRight = () => {
     return (
-      <View style={styles.searchWrapper}>
+      <TextButton
+        style={styles.cancelButton}
+        typoProps={{type: TypographyType.LABEL_LARGE}}
+        titleStyle={this.rightButtonTitleStyle}
+        onPress={() => {
+          pop();
+          this.props.onCancel();
+        }}>
+        {this.props.t('cancel')}
+      </TextButton>
+    );
+  };
+
+  renderMiddle = () => {
+    return (
+      <View style={this.middleContainerStyle}>
         <Icon
-          size={20}
-          color="#ccc"
+          neutral
+          bundle={BundleIconSetName.IONICONS}
           style={styles.searchIcon}
           name="ios-search"
         />
-        <TextInput
-          style={styles.searchInput}
+        <Input
+          type={TypographyType.LABEL_MEDIUM}
+          style={[styles.searchInput, this.searchInputStyle]}
           placeholder={this.props.placeholder}
-          placeholderTextColor={appConfig.colors.white}
+          placeholderTextColor={this.placeholderTextColor}
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
           numberOfLines={1}
@@ -60,92 +107,74 @@ class SearchNavBar extends Component {
         />
 
         {!!this.props.searchValue && (
-          <Button onPress={this.props.onClearText}>
-            <View style={styles.clearWrapper}>
-              <Icon
-                size={20}
-                color="#ccc"
-                style={{
-                  position: 'relative',
-                  top: 0
-                }}
-                name="ios-close"
-              />
-            </View>
-          </Button>
+          <IconButton
+            style={this.clearWrapperStyle}
+            iconStyle={styles.clearSearchIcon}
+            onPress={this.props.onClearText}
+            name="ios-close"
+            bundle={BundleIconSetName.IONICONS}
+          />
         )}
       </View>
     );
-  }
+  };
 
-  render() {
+  renderHeader = () => {
     return (
       <View style={styles.container}>
         {this.renderMiddle()}
         {this.renderRight()}
       </View>
     );
+  };
+
+  render() {
+    return (
+      <NavBar
+        navigation={this.props.navigation}
+        renderHeader={this.renderHeader}
+        back={false}
+      />
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'row',
-    backgroundColor: appConfig.colors.primary,
-    ...ifIphoneX(
-      {
-        paddingTop: 40,
-        height: 88
-      },
-      {
-        paddingTop: Platform.OS === 'ios' ? 20 : 0,
-        height: Platform.OS === 'ios' ? 64 : 54
-      }
-    ),
+    paddingHorizontal: 10,
   },
   cancelButton: {
     justifyContent: 'center',
-    paddingHorizontal: 16
-  },
-  cancelText: {
-    fontSize: 16,
-    color: '#fff'
+    paddingLeft: 15,
   },
   searchIcon: {
-    // top: 2,
+    fontSize: 20,
   },
   clearWrapper: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     borderRadius: 10,
-    backgroundColor: '#666',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8
+    marginRight: 8,
+  },
+  clearSearchIcon: {
+    fontSize: 13,
   },
   searchWrapper: {
     flex: 1,
     paddingLeft: 10,
-    marginLeft: 10,
     borderRadius: 20,
     alignItems: 'center',
     flexDirection: 'row',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    ...ifIphoneX(
-      {
-        marginTop: 4,
-        marginBottom: 8
-      },
-      {
-        marginVertical: Platform.OS === 'ios' ? 6 : 8,
-      }
-    )
+    marginVertical: Platform.OS === 'ios' ? 6 : 8,
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
-    color: appConfig.colors.white
-  }
+  },
 });
 
-export default SearchNavBar;
+export default withTranslation()(SearchNavBar);

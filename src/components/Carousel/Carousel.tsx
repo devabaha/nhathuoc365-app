@@ -1,16 +1,23 @@
 import React, {Component} from 'react';
 import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import {default as RNCarousel, Pagination} from 'react-native-snap-carousel';
+// types
 import {CarouselProps} from '.';
-
+import {Style} from 'src/Themes/interface';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {hexToRgba} from 'app-helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   container: {
     overflow: 'visible',
   },
   paginationContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     position: 'absolute',
     width: '100%',
     bottom: 0,
@@ -20,16 +27,21 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginHorizontal: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)',
   },
 });
 
 export class Carousel extends Component<CarouselProps> {
+  static contextType = ThemeContext;
+
   state = {
     currentIndex: this.props.firstItem || 0,
   };
   refCarousel = React.createRef<RNCarousel<any>>();
 
+  get theme() {
+    return getTheme(this);
+  }
+  
   componentDidMount() {
     if (this.props.refCarousel) {
       //@ts-ignore
@@ -57,19 +69,28 @@ export class Carousel extends Component<CarouselProps> {
       <Pagination
         dotsLength={this.props.data.length}
         activeDotIndex={this.state.currentIndex}
-        containerStyle={styles.paginationContainer}
-        dotStyle={styles.paginationDot}
-        inactiveDotStyle={
-          {
-            // Define styles for inactive dots here
-            //   backgroundColor: 'rgba(0,0,0, 1)',
-          }
-        }
+        containerStyle={[
+          styles.paginationContainer,
+          this.paginationContainerStyle,
+        ]}
+        dotStyle={[styles.paginationDot, this.paginationDotStyle]}
         inactiveDotOpacity={0.4}
         inactiveDotScale={0.6}
       />
     );
   };
+
+  get paginationContainerStyle(): Style {
+    return {
+      backgroundColor: this.theme.color.overlay60,
+    };
+  }
+
+  get paginationDotStyle() {
+    return {
+      backgroundColor: hexToRgba(this.theme.color.white, 0.92),
+    };
+  }
 
   containerStyle = [styles.container, this.props.containerStyle];
 

@@ -1,23 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Linking, View, StyleSheet} from 'react-native';
+import {Alert} from 'react-native';
+// configs
+import store from 'app-store';
 import config from '../../config';
-import BaseContainer from '../BaseContainer';
-import {USE_ONLINE, showMessage} from '../../constants';
-import VoucherDetailComponent from '../../component/VoucherDetail';
-import ModalConfirm from '../../component/ModalConfirm';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {openMap} from 'app-helper/map';
+import {internalFetch} from '../../helper/apiFetch';
+import {isLatitude, isLongitude} from '../../helper/validator';
+import {showMessage} from '../../constants';
+import {getTheme} from 'src/Themes/Theme.context';
+import {openLink} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {USE_ONLINE} from '../../constants';
+// entities
 import CampaignEntity from '../../entity/CampaignEntity';
 import AddressEntity from '../../entity/AddressEntity';
 import SiteEntity from '../../entity/SiteEntity';
-import {internalFetch} from '../../helper/apiFetch';
-import {isLatitude, isLongitude} from '../../helper/validator';
-import EventTracker from '../../../../helper/EventTracker';
-import {openMap} from '../../../../helper/map';
-import store from 'app-store';
+// custom components
+import {ScreenWrapper} from 'src/components/base';
+import BaseContainer from '../BaseContainer';
+import VoucherDetailComponent from '../../component/VoucherDetail';
+import ModalConfirm from '../../component/ModalConfirm';
 
 const defaultFn = () => {};
 
 class VoucherDetail extends BaseContainer {
+  static contextType = ThemeContext;
   /**
    * Transfer campaignId or voucherId to load the corresponding data
    */
@@ -71,6 +83,10 @@ class VoucherDetail extends BaseContainer {
     this.eventTracker = new EventTracker();
   }
 
+  get theme() {
+    return getTheme(this);
+  }
+
   get isFromHome() {
     return this.props.from === 'home';
   }
@@ -120,7 +136,7 @@ class VoucherDetail extends BaseContainer {
   }
 
   handlePressCampaignProvider = (store) => {
-    config.route.pushToStoreBySiteData(store.data);
+    config.route.pushToStoreBySiteData(store.data, this.theme);
   };
 
   handleOpenScanScreen = (voucher) => {
@@ -157,7 +173,7 @@ class VoucherDetail extends BaseContainer {
         config.route.pop();
 
         setTimeout(() => {
-          config.route.push(config.routes.myVoucher);
+          config.route.push(config.routes.myVoucher, {}, this.theme);
           onCheckMyVoucher();
         }, 0);
       },
@@ -360,7 +376,7 @@ class VoucherDetail extends BaseContainer {
         });
         this.props.onUseVoucherOnlineSuccess(response.data, true);
         if (this.isFromHome) {
-          config.route.backToMainAndOpenShop(response.data.site);
+          config.route.backToMainAndOpenShop(response.data.site, this.theme);
         }
       } else {
         showMessage({
@@ -380,7 +396,7 @@ class VoucherDetail extends BaseContainer {
   };
 
   handlePressAddressPhoneNumber = (phoneNumber) => {
-    Linking.openURL(`tel:${phoneNumber}`);
+    openLink(`tel:${phoneNumber}`);
   };
 
   handlePressAddressLocation = ({latitude, longitude}) => {
@@ -484,7 +500,7 @@ class VoucherDetail extends BaseContainer {
   render() {
     const {t} = this.props;
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         <VoucherDetailComponent
           canUseNow={this.state.canUseNow || this.isFromMyVoucher}
           canBuyCampaign={this.canBuyCampaign}
@@ -530,51 +546,9 @@ class VoucherDetail extends BaseContainer {
           onCancel={() => this.setState({useOnlineConfirmVisible: false})}
           onConfirm={this.handleUseOnlineConfirm}
         />
-      </View>
+      </ScreenWrapper>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  confirmContent: {
-    padding: 16,
-  },
-  confirmText: {
-    fontSize: 15,
-    fontWeight: '400',
-    color: '#666',
-  },
-  confirmBtnWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 32,
-  },
-  confirmBtnContainer: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#666',
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  btnContainerCancel: {
-    marginRight: 8,
-  },
-  btnContainerOk: {
-    marginLeft: 8,
-    borderColor: config.colors.primary,
-    backgroundColor: config.colors.primary,
-  },
-  confirmBtn: {},
-  btnCancel: {
-    color: '#666',
-  },
-  btnOk: {
-    color: '#fff',
-  },
-});
 
 export default withTranslation(['voucher', 'common'])(observer(VoucherDetail));

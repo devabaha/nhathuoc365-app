@@ -4,7 +4,19 @@
       "title": "Select month"
     }
   },
+  "tableHead": {
+    "orderCode": "Order code",
+    "orderPrice": "Order pric",
+    "incomePercent": "Income percent",
+    "income": "Income",
+    "position": "Position"
+  },
+
   "total_revenue": "Total Revenue",
   "level": "Level",
-  "total_commission_month": "Total commission month"
+  "total_commission_month": "Total",
+  "noOrder": "No order yet",
+  "listOrders": "List orders in month",
+  "chooseMonth": "Choose month",
+  "totalCommissionIncome": "Total commission income"
 }

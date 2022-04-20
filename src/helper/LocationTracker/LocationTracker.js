@@ -13,11 +13,19 @@ const gpsTrackingListener = new EventEmitter();
 const GPS_TRACKING_EVENT_NAME = 'gps_tracking';
 
 class LocationTracker {
-  listener = null;
+  /** @private */
+  _listener = null;
+
+  /** @private */
   geolocationWatchId = 0;
+
+  /** @private */
   appState = 'active';
+
+  /** @private */
   isPermissionGranted = false;
 
+  /** @private */
   gpsConfig = {
     // timeout for getting GPS (ms)
     timeout: 5000,
@@ -31,10 +39,11 @@ class LocationTracker {
     this.gpsConfig = {...this.gpsConfig, ...gpsConfig};
   }
 
-  getListener() {
-    return this.listener;
+  get listener() {
+    return this._listener;
   }
 
+  /** @private */
   watchLocation = async (isPermissionGranted = this.isPermissionGranted) => {
     this.isPermissionGranted = isPermissionGranted;
 
@@ -79,13 +88,14 @@ class LocationTracker {
     );
   };
 
+  /** @private */
   updateLocation = (position) => {
     gpsTrackingListener.emit(GPS_TRACKING_EVENT_NAME, position);
   };
 
   addListener(listener, isPermissionGranted) {
     console.log('location_tracker_add_listener');
-    this.listener = listener;
+    this._listener = listener;
     gpsTrackingListener.addListener(GPS_TRACKING_EVENT_NAME, listener);
     AppState.addEventListener('change', this.handleAppStateChange);
     this.watchLocation(isPermissionGranted);
@@ -94,11 +104,12 @@ class LocationTracker {
   removeListener() {
     console.log('location_tracker_remove_listener');
     Geolocation.clearWatch(this.geolocationWatchId);
-    gpsTrackingListener.removeListener(GPS_TRACKING_EVENT_NAME, this.listener);
+    gpsTrackingListener.removeListener(GPS_TRACKING_EVENT_NAME, this._listener);
     AppState.removeEventListener('change', this.handleAppStateChange);
-    this.listener = null;
+    this._listener = null;
   }
 
+  /** @private */
   handleAppStateChange = (nextAppState) => {
     if (
       this.appState.match(/inactive|background/) &&

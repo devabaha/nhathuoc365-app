@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-
+// 3-party libs
 import {interpolateAll, combine, splitPathString, separate} from 'flubber';
 import extractBrush from 'react-native-svg/src/lib/extract/extractBrush';
 import extractStroke from 'react-native-svg/src/lib/extract/extractStroke';
-
 import Animated, {
   Easing,
   block,
@@ -16,19 +15,23 @@ import Animated, {
   useValue,
   lessOrEq,
 } from 'react-native-reanimated';
-
-import appConfig from 'app-config';
-
-import PlayPauseButton from './PlayPauseButton';
-import Tracker from './Tracker';
-import {timingFunction} from './helper';
 import {
   State,
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
+// types
+import {Style} from 'src/Themes/interface';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {timingFunction} from './helper';
+import {hexToRgba} from 'app-helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// custom components
+import PlayPauseButton from './PlayPauseButton';
+import Tracker from './Tracker';
 import TimeSkipper from './TimeSkipper';
-import {themes} from './themes';
 
 const PLAY_SVG_PATH =
   'M 133 440 a 35.37 35.37 0 0 1 -17.5 -4.67 c -12 -6.8 -19.46 -20 -19.46 -34.33 V 111 c 0 -14.37 7.46 -27.53 19.46 -34.33 a 35.13 35.13 0 0 1 35.77 0.45 l 247.85 148.36 a 36 36 0 0 1 0 61 l -247.89 148.4 A 35.5 35.5 0 0 1 133 440 Z';
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: appConfig.colors.overlay,
   },
   contentContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -83,15 +85,8 @@ const styles = StyleSheet.create({
   },
   playContainer: {
     position: 'absolute',
-    justifyContent:'center',
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  icon: {
-    color: themes.colors.primary,
-    fontSize: 24,
-  },
-  playIcon: {
-    fontSize: 48,
   },
 
   footer: {
@@ -121,6 +116,8 @@ const Controls = ({
   onChangingProgress = (progress: number) => {},
   onChangedProgress = (progress: number) => {},
 }) => {
+  const {theme} = useTheme();
+
   const refPlayPath = useRef<any>();
   const refSkipperSingleLeftTap = useRef<any>();
   const refSkipperSingleRightTap = useRef<any>();
@@ -307,9 +304,9 @@ const Controls = ({
         fill: extractBrush(
           playValue > 1
             ? //@ts-ignore
-              hexToRgbA(themes.colors.primary, 0)
+              hexToRgba(theme.color.onOverlay, 0)
             : //@ts-ignore
-              hexToRgbA(themes.colors.primary, 1),
+              hexToRgba(theme.color.onOverlay, 1),
         ),
         ...stroke,
       });
@@ -440,13 +437,25 @@ const Controls = ({
     return waitFor;
   }, [isEnd, currentTime]);
 
+  const maskStyle: Style = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.mask,
+        {
+          backgroundColor: theme.color.overlay60,
+        },
+      ],
+      animatedVisibleMaskStyle,
+    );
+  }, [theme, animatedVisibleMaskStyle]);
+
   return (
     <View style={[styles.container, containerStyle]}>
       <TapGestureHandler
         onHandlerStateChange={handleTapStateChange}
         waitFor={tapGestureWaitFor}>
         <Animated.View style={styles.contentContainer}>
-          <Animated.View style={[styles.mask, animatedVisibleMaskStyle]} />
+          <Animated.View style={maskStyle} />
           <Animated.View
             pointerEvents={isControlsVisible ? 'auto' : 'none'}
             style={[styles.body, animatedVisibleControlsStyle]}

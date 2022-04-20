@@ -1,57 +1,80 @@
-import React, { Component, PureComponent } from 'react';
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Image,
-  SafeAreaView
-} from 'react-native';
-import appConfig from 'app-config';
+import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { Actions } from 'react-native-router-flux';
+// 3-party libs
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// helpers
+import {formatMoney} from './helper';
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import Input from './Input';
-import Button from '../../../Button';
-import { formatMoney } from './helper';
-import EventTracker from '../../../../helper/EventTracker';
+import Button from 'src/components/Button';
+import PaymentWallet from './PaymentWallet';
+import Image from 'src/components/Image';
+import {Container, ScreenWrapper, Typography} from 'src/components/base';
 
 const MAX_NOTE_LENGTH = 160;
 
 class Payment extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     contactName: PropTypes.string,
     contactPhone: PropTypes.string,
     contactThumbnail: PropTypes.string,
-    receiver: PropTypes.object
+    receiver: PropTypes.object,
   };
   static defaultProps = {
     contactName: '',
     contactPhone: '',
     contactThumbnail: '',
-    receiver: {}
+    receiver: {},
   };
 
   state = {
     note: '',
-    moneyError: ''
+    moneyError: '',
   };
   moneyInput = React.createRef();
   noteInput = React.createRef();
   unmounted = false;
   eventTracker = new EventTracker();
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   onNoteChange = (e, note) => {
-    this.setState({ note });
+    this.setState({note});
   };
 
   goToConfirm = () => {
@@ -63,14 +86,18 @@ class Payment extends Component {
           ' ' +
           this.props.wallet.symbol;
 
-        Actions.push(appConfig.routes.transferConfirm, {
-          receiver: this.props.receiver,
-          wallet: this.props.wallet,
-          originPrice: this.moneyInput.current.inputText,
-          price,
-          originTotalPrice: this.moneyInput.current.formattedText,
-          totalPrice: price
-        });
+        push(
+          appConfig.routes.transferConfirm,
+          {
+            receiver: this.props.receiver,
+            wallet: this.props.wallet,
+            originPrice: this.moneyInput.current.inputText,
+            price,
+            originTotalPrice: this.moneyInput.current.formattedText,
+            totalPrice: price,
+          },
+          this.theme,
+        );
       }
     }
   };
@@ -79,22 +106,22 @@ class Payment extends Component {
     let moneyError = '';
     const min_transfer_view = formatMoney(this.props.wallet.min_transfer);
     const max_transfer_view = formatMoney(this.props.wallet.max_transfer);
-    const { t } = this.props;
+    const {t} = this.props;
 
     try {
       if (!text) {
         moneyError = t('validate.empty');
       } else if (text < Number(this.props.wallet.min_transfer)) {
         moneyError = t('validate.min', {
-          money: min_transfer_view + this.props.wallet.symbol
+          money: min_transfer_view + this.props.wallet.symbol,
         });
       } else if (text > Number(this.props.wallet.max_transfer)) {
         moneyError = t('validate.max', {
-          money: max_transfer_view + this.props.wallet.symbol
+          money: max_transfer_view + this.props.wallet.symbol,
         });
       }
 
-      this.setState({ moneyError });
+      this.setState({moneyError});
 
       return !!!moneyError;
     } catch (err) {
@@ -105,7 +132,7 @@ class Payment extends Component {
   }
 
   clearMoneyError = () => {
-    this.setState({ moneyError: '' });
+    this.setState({moneyError: ''});
   };
 
   handleOnBlurMoney = () => {
@@ -123,91 +150,123 @@ class Payment extends Component {
       contactName = contactName.split(' ');
       contactName.map(
         (name, index) =>
-          index <= 2 && (shortTitle += name.charAt(0).toUpperCase())
+          index <= 2 && (shortTitle += name.charAt(0).toUpperCase()),
       );
     }
 
     return (
       <>
-        {!!this.props.receiver.avatar ? (
+        {!this.props.receiver.avatar ? (
           <Image
             style={styles.avatar}
-            source={{ uri: this.props.receiver.avatar }}
+            source={{uri: this.props.receiver.avatar}}
             resizeMode="cover"
           />
         ) : (
-          <Text style={styles.shortContactName}>{shortTitle}</Text>
+          <Typography
+            onContentBackground
+            type={TypographyType.LABEL_HUGE}
+            style={styles.shortContactName}>
+            {shortTitle}
+          </Typography>
         )}
       </>
     );
   };
 
-  render() {
-    const { t } = this.props;
-    const extraStyle = this.props.showWallet && { top: -60 };
-    return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={appConfig.device.isIOS ? 'padding' : null}
-      >
-        <SafeAreaView style={{ flex: 1 }}>
-          <ScrollView
-            style={[styles.container, styles.scrollView]}
-            contentContainerStyle={styles.contentContainerStyle}
-            keyboardShouldPersistTaps="handled"
-          >
-            {!!this.props.showWallet && (
-              <PaymentWallet
-                sourceTitle="Nguồn tiền"
-                sourceValue={this.props.wallet.name}
-                balanceTitle="Số dư"
-                balanceValue={this.props.wallet.balance_view}
-              />
-            )}
-            <View style={[styles.box, extraStyle]}>
-              <View style={styles.user}>
-                <View style={styles.avatarContainer}>
-                  {this.renderAvatar()}
-                </View>
+  get activeBoxStyle() {
+    return {
+      borderTopWidth: this.theme.layout.borderWidth,
+      borderBottomWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
 
-                <View style={styles.informationContainer}>
-                  <Text style={styles.title}>{this.props.receiver.name}</Text>
-                  <Text style={styles.subTitle}>{this.props.receiver.tel}</Text>
-                  {!!this.props.receiver.address && (
-                    <Text style={styles.subTitle}>
-                      {this.props.receiver.address}
-                    </Text>
-                  )}
-                </View>
+  get avatarContainerStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.primaryHighlight,
+      backgroundColor: this.theme.color.contentBackground,
+    };
+  }
+
+  render() {
+    const {t} = this.props;
+    const extraStyle = this.props.showWallet && {top: -60};
+    const btnContainerStyle = {bottom: store.keyboardTop};
+
+    return (
+      <ScreenWrapper>
+        <KeyboardAwareScrollView
+          extraHeight={300}
+          keyboardShouldPersistTaps="handled">
+          {!!this.props.showWallet && (
+            <PaymentWallet
+              sourceTitle={t('paymentWallet.source')}
+              sourceValue={this.props.wallet.name}
+              balanceTitle={t('paymentWallet.balance')}
+              balanceValue={this.props.wallet.balance_view}
+            />
+          )}
+
+          <Container style={[styles.box, this.activeBoxStyle, extraStyle]}>
+            <View style={styles.user}>
+              <View style={[this.avatarContainerStyle, styles.avatarContainer]}>
+                {this.renderAvatar()}
               </View>
 
-              <Input
-                ref={this.moneyInput}
-                placeholder={t('input.money.placeholder')}
-                keyboardType="number-pad"
-                title={t('input.money.title')}
-                errorMess={this.state.moneyError}
-                onChange={this.clearMoneyError}
-                onClear={this.clearMoneyError}
-                onBlur={this.handleOnBlurMoney}
-              />
-
-              <Input
-                ref={this.noteInput}
-                onChange={this.onNoteChange}
-                placeholder={t('input.note.placeholder')}
-                title={t('input.note.title', {
-                  counter: `${this.state.note.length}/${MAX_NOTE_LENGTH}`
-                })}
-                multiline
-                maxLength={MAX_NOTE_LENGTH}
-                containerStyle={{ marginBottom: 0 }}
-              />
+              <View style={styles.informationContainer}>
+                <Typography
+                  type={TypographyType.LABEL_HUGE}
+                  style={styles.title}>
+                  {this.props.receiver.name}
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_LARGE_TERTIARY}
+                  style={styles.subTitle}>
+                  {this.props.receiver.tel}
+                </Typography>
+                {!!this.props.receiver.address && (
+                  <Typography
+                    type={TypographyType.DESCRIPTION_MEDIUM}
+                    style={styles.subTitle}>
+                    {this.props.receiver.address}
+                  </Typography>
+                )}
+              </View>
             </View>
-          </ScrollView>
-          <Button title={t('transferBtnTitle')} onPress={this.goToConfirm} />
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+
+            <Input
+              ref={this.moneyInput}
+              placeholder={t('input.money.placeholder')}
+              keyboardType="number-pad"
+              title={t('input.money.title')}
+              errorMess={this.state.moneyError}
+              onChange={this.clearMoneyError}
+              onClear={this.clearMoneyError}
+              onBlur={this.handleOnBlurMoney}
+            />
+
+            <Input
+              ref={this.noteInput}
+              onChange={this.onNoteChange}
+              placeholder={t('input.note.placeholder')}
+              title={t('input.note.title', {
+                counter: `${this.state.note.length}/${MAX_NOTE_LENGTH}`,
+              })}
+              multiline
+              maxLength={MAX_NOTE_LENGTH}
+              containerStyle={{marginBottom: 0}}
+            />
+          </Container>
+        </KeyboardAwareScrollView>
+        <Button
+          safeLayout={!store.keyboardTop}
+          containerStyle={btnContainerStyle}
+          title={t('transferBtnTitle')}
+          onPress={this.goToConfirm}
+        />
+      </ScreenWrapper>
     );
   }
 }
@@ -216,125 +275,50 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
-  contentContainerStyle: {
-    flexGrow: 1
-  },
-  scrollView: {
-    backgroundColor: '#eae9ef'
-  },
+
   box: {
-    backgroundColor: 'white',
     marginTop: 60,
     marginBottom: 10,
     paddingBottom: 15,
-    borderColor: '#d9d9d9',
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderRightWidth: 0,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   user: {
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    top: -40
+    top: -40,
   },
   avatarContainer: {
     width: 80,
     height: 80,
     overflow: 'hidden',
     borderRadius: 40,
-    borderColor: appConfig.colors.primary,
-    backgroundColor: '#ccc',
-    borderWidth: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: '100%',
     height: '100%',
     position: 'absolute',
-    zIndex: 1
+    zIndex: 1,
   },
   shortContactName: {
-    fontSize: 24,
-    color: 'white',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   informationContainer: {
     marginTop: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     marginTop: 15,
     marginBottom: 5,
-    fontSize: 20
   },
   subTitle: {
     marginTop: 5,
-    color: '#8e8e8e',
-    fontSize: 16
-  }
+  },
 });
 
 export default withTranslation('payment')(observer(Payment));
-
-class PaymentWallet extends PureComponent {
-  render() {
-    return (
-      <View style={paymentWalletStyles.container}>
-        <View style={paymentWalletStyles.left}>
-          <Text style={paymentWalletStyles.title}>
-            {this.props.sourceTitle}
-          </Text>
-          <Text style={paymentWalletStyles.value}>
-            {this.props.sourceValue}
-          </Text>
-        </View>
-        <View style={paymentWalletStyles.right}>
-          <Text style={paymentWalletStyles.title}>
-            {this.props.balanceTitle}
-          </Text>
-          <Text style={paymentWalletStyles.value}>
-            {this.props.balanceValue}
-          </Text>
-        </View>
-      </View>
-    );
-  }
-}
-
-const paymentWalletStyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    paddingVertical: 15,
-    paddingBottom: 50,
-    backgroundColor: '#fafafa'
-  },
-  left: {
-    flex: 1,
-    borderRightWidth: 0.5,
-    borderRightColor: '#ccc',
-    paddingHorizontal: 15
-  },
-  right: {
-    flex: 1,
-    alignItems: 'flex-end',
-    paddingHorizontal: 15
-  },
-  title: {
-    marginBottom: 10,
-    color: '#888',
-    fontSize: 13
-  },
-  value: {
-    fontWeight: '500',
-    fontSize: 15,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    color: '#333'
-  }
-});

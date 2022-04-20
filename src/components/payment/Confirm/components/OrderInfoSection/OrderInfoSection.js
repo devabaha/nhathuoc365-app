@@ -1,24 +1,23 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
-import appConfig from 'app-config';
-
-import {Container} from 'src/components/Layout';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import SectionContainer from '../SectionContainer';
 import Tag from 'src/components/Tag';
+import {Typography, Container} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     paddingLeft: 22,
-    marginTop:3
+    marginTop: 3,
   },
 
-  desc_content: {
-    fontSize: 12,
-    color: '#666666',
-  },
   orders_status: {
-    fontSize: 12,
     fontWeight: '600',
   },
 
@@ -33,7 +32,6 @@ const styles = StyleSheet.create({
   cartTypeMainContainer: {},
   cartTypeContainer: {},
   cartTypeLabelContainer: {
-    // marginRight: 5,
     paddingVertical: 3,
   },
   cartTypeLabel: {
@@ -51,34 +49,47 @@ const OrderInfoSection = ({
   paymentStatusCode,
   paymentStatusView,
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('orders');
+
+  const actionBtnTitleStyle = useMemo(() => {
+    return {color: theme.color.textTertiary};
+  }, [theme]);
+
+  const orderStatusStyle = useMemo(() => {
+    return mergeStyles(styles.orders_status, {
+      color: theme.color.cartStatus[statusCode] || theme.color.primaryHighlight,
+    });
+  }, [theme, statusCode]);
+
+  const paymentStatusLabelStyle = useMemo(() => {
+    return mergeStyles(styles.cartTypeLabel, {
+      color: theme.color.cartPaymentStatus[paymentStatusCode],
+    });
+  }, [theme, paymentStatusCode]);
+
+  const paymentStatusColor = useMemo(() => {
+    return hexToRgba(theme.color.cartPaymentStatus[paymentStatusCode], 0.1);
+  }, [theme, paymentStatusCode]);
+
   return (
     <SectionContainer
       title={t('confirm.information.title')}
       iconName="info-circle"
       actionBtnTitle={t('confirm.information.status')}
-      actionBtnTitleStyle={{
-        color: '#666666',
-      }}>
+      actionBtnTitleStyle={actionBtnTitleStyle}>
       <Container centerVertical={false} style={styles.container}>
         <View style={styles.block}>
-          <Text style={styles.desc_content}>
+          <Typography type={TypographyType.DESCRIPTION_SMALL_TERTIARY}>
             {`${t('confirm.information.ordersCode')}:`} {code}
-          </Text>
+          </Typography>
 
-          <Text
-            style={[
-              [
-                styles.orders_status,
-                {
-                  color:
-                    appConfig.colors.orderStatus[statusCode] ||
-                    appConfig.colors.primary,
-                },
-              ],
-            ]}>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={orderStatusStyle}>
             {statusView}
-          </Text>
+          </Typography>
         </View>
 
         <View style={[styles.block, styles.tagContainer]}>
@@ -87,7 +98,7 @@ const OrderInfoSection = ({
               <View style={styles.cartTypeContainer}>
                 <Tag
                   label={typeView}
-                  fill={appConfig.colors.cartType[typeCode]}
+                  fill={theme.color.cartType[typeCode]}
                   animate={false}
                   strokeWidth={0}
                   labelStyle={styles.cartTypeLabel}
@@ -101,18 +112,10 @@ const OrderInfoSection = ({
             <View style={styles.cartTypeContainer}>
               <Tag
                 label={paymentStatusView}
-                fill={hexToRgbA(
-                  appConfig.colors.paymentStatus[paymentStatusCode],
-                  0.1,
-                )}
+                fill={paymentStatusColor}
                 animate={false}
                 strokeWidth={0}
-                labelStyle={[
-                  styles.cartTypeLabel,
-                  {
-                    color: appConfig.colors.paymentStatus[paymentStatusCode],
-                  },
-                ]}
+                labelStyle={paymentStatusLabelStyle}
                 labelContainerStyle={styles.cartTypeLabelContainer}
               />
             </View>

@@ -1,3 +1,16 @@
 {
-  "searchSalePointPlaceholder": "Search a sale point..."
+  "searchSalePointPlaceholder": "Search a sale point...",
+  "createApp": "Create new app",
+  "searchStorePlaceholder": "Search store...",
+  "welcomeMessage": "Welcome",
+  "appCreatingMessage": "Please create a new App or choose your App in the list to experience it right away.",
+  "accessDenyMessage": "Can not access",
+  "cantOpenLinkMessage": "This link can not be opened.",
+  "locationPermissionNotGranted": "Can not granted location permission",
+  "requestTimeoutMessage": "Request timeout",
+  "requiredPermissionMessage": "Please enable Location and grant us Location permission for the best experience.",
+  "storeItem": {
+    "call": "Call",
+    "cannotConnect": "Can not connect"
+  }
 }

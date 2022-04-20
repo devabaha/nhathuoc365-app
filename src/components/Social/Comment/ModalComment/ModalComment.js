@@ -1,74 +1,67 @@
 import React, {Component} from 'react';
-import {StatusBar, StyleSheet, TouchableOpacity} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import appConfig from 'app-config';
-
+import {StatusBar, StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
 import Comment from '../Comment';
+import {IconButton} from 'src/components/base';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  modal: {
-    overflow: 'hidden',
-  },
-  header: {
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
-    zIndex: 1,
-  },
-  title: {
-    position: 'absolute',
-    textAlign: 'center',
-    width: '100%',
-    fontWeight: '600',
-    fontSize: 18,
-  },
-  iconContainer: {
-    padding: 15,
-  },
-  icon: {
-    // marginLeft: 15,
-    fontSize: 28,
-    color: '#333',
-  },
-
   reloadContainer: {
     padding: 8,
     marginHorizontal: 4,
   },
   reloadIcon: {
     fontSize: 24,
-    color: appConfig.colors.primary,
   },
 });
 
 class ModalComment extends Component {
+  static contextType = ThemeContext;
+
   refModal = React.createRef();
   refComment = React.createRef();
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     setTimeout(() =>
-      Actions.refresh({
+      refresh({
         title: this.props.title || this.props.t('comment'),
         right: () => (
-          <TouchableOpacity
+          <IconButton
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            name="lightning-bolt"
             onPress={this.handleReload}
             hitSlop={HIT_SLOP}
-            style={styles.reloadContainer}>
-            <MaterialCommunityIcon
-              style={styles.reloadIcon}
-              name="lightning-bolt"
-            />
-          </TouchableOpacity>
+            style={styles.reloadContainer}
+            iconStyle={this.reloadIconStyle}
+          />
         ),
       }),
     );
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
-  
+
+  componentWillUnmount() {
+    this.updateNavBarDisposer();
+  }
 
   componentDidUpdate(prevProps, prevState) {
     setTimeout(() => StatusBar.setBarStyle('dark-content', true), 800);
@@ -79,6 +72,12 @@ class ModalComment extends Component {
       this.refComment.current._getMessages(true);
     }
   };
+
+  get reloadIconStyle() {
+    return mergeStyles(styles.reloadIcon, {
+      color: this.theme.color.persistPrimary,
+    });
+  }
 
   render() {
     return (

@@ -56,8 +56,10 @@
     "accept": "Confirm",
     "cancel": "Cancel",
     "close": "Close",
+    "noTitle": "No title yet",
+    "message": "Message default!",
     "province": {
-      "title": "Select Province/City",
+      "title": "Select Province/ City",
       "placeholder": "Search",
       "notFound": "No result for \"{{searchText}}\""
     },
@@ -83,6 +85,8 @@
         "shop": "shop"
       }
     },
-    "providedBy": "Provided by"
+    "providedBy": "Provided by",
+    "map": "Map",
+    "descriptionShowBarcode": "Give the Barcode to the staff to receive the promotion."
   }
 }

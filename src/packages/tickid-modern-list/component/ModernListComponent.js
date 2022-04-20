@@ -1,25 +1,30 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+// constants
+import {TypographyType} from 'src/components/base';
+import {LIST_TYPE} from '../constants';
+// custom components
 import NormalList from './NormalList';
 import TagList from './TagList';
-import {LIST_TYPE} from '../constants';
-import Animated from 'react-native-reanimated';
+import {BaseButton, Container, Typography} from 'src/components/base';
 
 class ModernListComponent extends Component {
   state = {};
 
   renderHeader() {
     return (
-      <TouchableOpacity
+      <BaseButton
         style={[styles.headerContent]}
         disabled={!this.props.onHeaderPress}
         onPress={this.props.onHeaderPress}>
         {this.props.headerLeftComponent}
-        <Text style={[styles.headerTitle, this.props.headerTitleStyle]}>
+        <Typography
+          type={TypographyType.LABEL_LARGE_TERTIARY}
+          style={[styles.headerTitle, this.props.headerTitleStyle]}>
           {this.props.headerTitle}
-        </Text>
+        </Typography>
         {this.props.headerRightComponent}
-      </TouchableOpacity>
+      </BaseButton>
     );
   }
 
@@ -53,24 +58,26 @@ class ModernListComponent extends Component {
     const body = this.renderBody();
 
     return (
-      <Animated.View style={[styles.container, this.props.containerStyle]}>
+      <Container
+        reanimated
+        style={[styles.container, this.props.containerStyle]}>
         <View style={[styles.headerWrapper, this.props.headerWrapperStyle]}>
           {header}
         </View>
 
-        <Animated.View
+        <Container
+          reanimated
           style={[styles.container, styles.body, this.props.bodyWrapperStyle]}
           onLayout={this.props.onBodyLayout}>
           {body}
-        </Animated.View>
-      </Animated.View>
+        </Container>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
     // flex: 0.00001
   },
   headerWrapper: {
@@ -83,9 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 16,
     flex: 1,
-    color: '#555',
   },
   body: {
     overflow: 'hidden',

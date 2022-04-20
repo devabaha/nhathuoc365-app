@@ -1,23 +1,28 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {View, StyleSheet} from 'react-native';
+import PropTypes from 'prop-types';
+// 3-party libs
+import Animated, {event, divide, Easing} from 'react-native-reanimated';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// constants
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
   INDICATOR_HORIZONTAL_WIDTH,
 } from '../../constants';
-import appConfig from 'app-config';
-import HorizontalIndicator from './HorizontalIndicator';
-import Animated, {event, divide, Easing} from 'react-native-reanimated';
-import store from 'app-store';
 import {
   BASE_SERVICE_DIMENSION,
   BASE_TITLE_MARGIN,
   SERVICE_DIMENSION_INCREMENT_PERCENTAGE,
   TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
+// custom components
 import Service from './Service';
-import {SERVICES_TYPE} from 'src/helper/servicesHandler';
+import HorizontalIndicator from './HorizontalIndicator';
+import {Container, ScrollView} from 'src/components/base';
+// themes
 import Themes from 'src/Themes';
 
 const homeThemes = Themes.getNameSpace('home');
@@ -25,51 +30,11 @@ const listServiceStyle = homeThemes('styles.home.listService');
 
 let styles = StyleSheet.create({
   container: {
-    // paddingVertical: 6,
     marginBottom: -15,
-    backgroundColor: '#fff',
-  },
-  buttonWrapper: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-  },
-  itemWrapper: {
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    width: BASE_SERVICE_DIMENSION,
-    height: BASE_SERVICE_DIMENSION,
-    borderRadius: 16,
-    backgroundColor: '#eee',
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    width: '100%',
-    height: '100%',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#333',
-    marginTop: BASE_TITLE_MARGIN,
-  },
-  notifyWrapper: {
-    right: -8,
-    top: -8,
-    minWidth: 20,
-    height: 20,
-  },
-  notifyLabel: {
-    fontSize: 12,
   },
   horizontalIndicator: {
     width: INDICATOR_HORIZONTAL_WIDTH,
     alignSelf: 'center',
-    // marginTop: 8,
     marginBottom: 15,
   },
 });
@@ -313,6 +278,8 @@ class ListServices extends Component {
   }
 
   render() {
+    if (!this.props.listService?.length) return null;
+
     const visibleStyle = {
       opacity: this.animatedVisibleValue,
       transform: [
@@ -326,8 +293,11 @@ class ListServices extends Component {
     };
 
     return (
-      <Animated.View style={[styles.container, visibleStyle, this.props.containerStyle]}>
-        <Animated.ScrollView
+      <Container
+        reanimated
+        style={[styles.container, visibleStyle, this.props.containerStyle]}>
+        <ScrollView
+          reanimated
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}
           horizontal={this.isHorizontal}
@@ -347,9 +317,9 @@ class ListServices extends Component {
           <View onLayout={this.handleLayoutHorizontalContent.bind(this)}>
             {this.renderListService()}
           </View>
-        </Animated.ScrollView>
+        </ScrollView>
         {this.scrollEnabled && this.renderHorizontalIndicator()}
-      </Animated.View>
+      </Container>
     );
   }
 }

@@ -11,5 +11,5 @@ export interface BookingProductInfoProps {
   onSelectAttr: (selectedAttr: any, model: string) => void;
   onChangeQuantity: (quantity: string) => void;
 
-  t: TFunction;
+  t?: TFunction;
 }

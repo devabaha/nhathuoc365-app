@@ -1,38 +1,55 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useMemo} from 'react';
+import {View, StyleSheet, BackHandler, Platform} from 'react-native';
 import PropTypes from 'prop-types';
-import {
-  TouchableOpacity,
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  BackHandler
-} from 'react-native';
-import BgrStatusBar, {
-  showBgrStatusIfOffsetTop
-} from 'app-packages/tickid-bgr-status-bar';
-import successImage from '../../assets/images/success.png';
-import SubmitButton from '../../component/SubmitButton';
-import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
-import CardItem from '../CardItem';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// configs
 import config from '../../config';
-import EventTracker from '../../../../helper/EventTracker';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {showBgrStatusIfOffsetTop} from 'app-packages/tickid-bgr-status-bar';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// entities
+import EventTracker from 'app-helper/EventTracker';
+// constants
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {
+  ScrollView,
+  Icon,
+  Typography,
+  ScreenWrapper,
+  Container,
+  TextButton,
+} from 'src/components/base';
+import SubmitButton from '../../component/SubmitButton';
+import {FieldItemWrapper, FieldItem} from '../../component/FieldItem';
+import CardItem from '../CardItem';
+import StatusBarBackground from 'app-packages/tickid-bgr-status-bar';
 
 BuyCardSuccess.propTypes = {
   isBuyCard: PropTypes.bool,
   bookResponse: PropTypes.object,
   serviceId: PropTypes.string,
-  historyTitle: PropTypes.string
+  historyTitle: PropTypes.string,
 };
 
 function BuyCardSuccess({
   isBuyCard = false,
+  historyTitle: historyTitleProp = '',
   bookResponse = undefined,
-  historyTitle = 'Lịch sử nạp',
-  serviceId = undefined
+  serviceId = undefined,
 }) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('phoneCard');
+
   const eventTracker = new EventTracker();
+
+  const historyTitle = historyTitleProp || t('rechargeHistory');
+
+  const viewHistoryTitleTypoProps = {type: TypographyType.LABEL_MEDIUM};
 
   useEffect(() => {
     function backHandlerListener() {
@@ -47,11 +64,15 @@ function BuyCardSuccess({
     };
   });
 
-  const pushToCardBuyed = () => {
-    config.route.push(config.routes.cardHistory, {
-      serviceId,
-      title: historyTitle
-    });
+  const pushToBoughtCard = () => {
+    config.route.push(
+      config.routes.cardHistory,
+      {
+        serviceId,
+        title: historyTitle,
+      },
+      theme,
+    );
   };
 
   const comeBackHome = () => {
@@ -59,40 +80,79 @@ function BuyCardSuccess({
   };
 
   const handleShowBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
-    'buy_card_succcess',
-    140
+    config.routes.buyCardSuccess,
+    140,
   );
 
-  const item = bookResponse.data;
+  const item = bookResponse?.data || {};
+
+  const renderCheckIcon = (titleStyle, fontStyle) => {
+    return (
+      <Icon
+        bundle={BundleIconSetName.IONICONS}
+        name="checkmark-circle"
+        style={[fontStyle, styles.checkIcon]}
+      />
+    );
+  };
+
+  const successTextStyle = useMemo(() => {
+    return {
+      color: theme.color.white,
+    };
+  }, [theme]);
+
+  const headerStyle = useMemo(() => {
+    return mergeStyles(styles.header, {
+      backgroundColor: theme.color.success,
+    });
+  }, [theme]);
+
+  const viewHistoryTitleStyle = useMemo(() => {
+    return {
+      color: theme.color.accent2,
+    };
+  }, [theme]);
 
   return (
-    <View style={styles.container}>
+    <ScreenWrapper style={styles.container}>
       <ScrollView
-        bounces={false}
         scrollEventThrottle={16}
-        onScroll={handleShowBgrStatusIfOffsetTop}
-      >
-        <View style={styles.header}>
-          <Image source={successImage} style={styles.successImage} />
-          <Text style={styles.successText}>Giao dịch thành công</Text>
+        onScroll={handleShowBgrStatusIfOffsetTop}>
+        <View style={headerStyle}>
+          <Typography
+            type={TypographyType.TITLE_LARGE}
+            style={[styles.successText, successTextStyle]}
+            renderIconBefore={renderCheckIcon}>
+            {t('success.title')}
+          </Typography>
         </View>
 
-        <View style={styles.messageWrapper}>
-          <Text style={styles.successMessage}>{bookResponse.message}</Text>
-        </View>
+        <Container style={styles.messageWrapper}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={styles.successMessage}>
+            {bookResponse?.message}
+          </Typography>
+        </Container>
 
-        <View style={styles.listCards}>
+        <Container style={styles.listCards}>
           <View style={styles.listCardHeadingBox}>
-            <Text style={styles.heading}>
-              {isBuyCard ? 'Thẻ đã mua' : 'Thông tin nạp'}
-            </Text>
+            <Typography
+              type={TypographyType.TITLE_SEMI_LARGE}
+              style={styles.heading}>
+              {isBuyCard
+                ? t('success.boughtCard')
+                : t('success.rechargeInformation')}
+            </Typography>
 
-            <TouchableOpacity
-              style={styles.viewCardBuyedBtn}
-              onPress={pushToCardBuyed}
-            >
-              <Text style={styles.viewCardBuyedText}>Xem lịch sử</Text>
-            </TouchableOpacity>
+            <TextButton
+              typoProps={viewHistoryTitleTypoProps}
+              style={styles.viewBoughtCardBtn}
+              titleStyle={viewHistoryTitleStyle}
+              onPress={pushToBoughtCard}>
+              {t('viewHistory')}
+            </TextButton>
           </View>
 
           <CardItem
@@ -110,25 +170,30 @@ function BuyCardSuccess({
             cardCode={item.data && item.data.code}
             cardSeri={item.data && item.data.serial}
           />
-        </View>
+        </Container>
 
-        <View style={styles.orderInfoWraper}>
+        <Container style={styles.orderInfoWrapper}>
           <FieldItemWrapper separate>
-            <FieldItem label="Trạng thái giao dịch" value={item.status_view} />
+            <FieldItem
+              label={t('success.transactionStatus')}
+              value={item.status_view}
+            />
           </FieldItemWrapper>
           <FieldItemWrapper>
-            <FieldItem label="Mã giao dịch" value={item.service_code} />
+            <FieldItem label={t('transactionCode')} value={item.service_code} />
           </FieldItemWrapper>
-        </View>
+        </Container>
       </ScrollView>
+
       <SubmitButton
-        onPress={comeBackHome}
+        safeLayout
+        title={t('success.backToHome')}
         style={styles.comeHomeBtn}
-        title="Màn hình chính"
+        onPress={comeBackHome}
       />
 
-      <BgrStatusBar />
-    </View>
+      <StatusBarBackground />
+    </ScreenWrapper>
   );
 }
 
@@ -136,71 +201,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    paddingBottom: config.device.bottomSpace
   },
   header: {
     alignItems: 'center',
-    backgroundColor: '#007575',
-    paddingTop: 40,
-    paddingBottom: 20
-  },
-  successImage: {
-    width: 72,
-    height: 72
+    paddingTop:
+      40 + (Platform.OS === 'ios' ? config.device.statusBarHeight : 0),
+    paddingBottom: 30,
   },
   successText: {
     marginTop: 16,
-    fontSize: 18,
-    color: config.colors.white,
-    fontWeight: '600'
+    fontWeight: 'bold',
   },
   messageWrapper: {
     paddingHorizontal: 14,
     paddingVertical: 20,
-    backgroundColor: config.colors.white
   },
   successMessage: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   listCards: {
     marginTop: 8,
     paddingBottom: 16,
-    backgroundColor: config.colors.white
   },
   listCardHeadingBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingTop: 16,
   },
   heading: {
     fontWeight: 'bold',
-    color: config.colors.black,
-    fontSize: 18,
-    marginLeft: 16
+    marginLeft: 16,
   },
-  viewCardBuyedBtn: {
-    padding: 16
-  },
-  viewCardBuyedText: {
-    fontSize: 16,
-    color: '#0084ff',
-    textAlign: 'center',
-    fontWeight: '600'
-  },
-  orderInfoWraper: {
-    marginTop: 8,
-    backgroundColor: '#fff',
+  viewBoughtCardBtn: {
     paddingHorizontal: 16,
-    paddingBottom: 8
+  },
+  orderInfoWrapper: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   comeHomeBtn: {
-    marginTop: 8
-  }
+    marginTop: 8,
+  },
 
-  //25AE88
+  checkIcon: {
+    fontSize: 70,
+  },
 });
 
 export default BuyCardSuccess;

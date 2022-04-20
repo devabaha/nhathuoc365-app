@@ -1,38 +1,48 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
-import store from '../../../store/Store';
+import {View, StyleSheet} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
+import EventTracker from 'app-helper/EventTracker';
+import {getTheme} from 'src/Themes/Theme.context';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
 import History from './History';
 import Info from './Info';
-import appConfig from 'app-config';
-import Loading from '../../Loading';
-import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
+import Loading from 'src/components/Loading';
+import PointRechargeButton from 'src/components/Home/component/PrimaryActions/PointRechargeButton';
 import {
-  isActivePackageOptionConfig,
-  PACKAGE_OPTIONS_TYPE,
-} from '../../../helper/packageOptionsHandler';
-import EventTracker from '../../../helper/EventTracker';
+  FlatList,
+  Typography,
+  Icon,
+  ScreenWrapper,
+  Container,
+  BaseButton,
+} from 'src/components/base';
 
 class VndWallet extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      historiesData: null,
-      wallet: props.wallet,
-      activeTab: 0,
-      loading: true,
-    };
+  state = {
+    historiesData: null,
+    wallet: this.props.wallet,
+    activeTab: 0,
+    loading: true,
+  };
 
-    this.unmounted = false;
-    this.eventTracker = new EventTracker();
+  unmounted = false;
+  eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
@@ -41,11 +51,18 @@ class VndWallet extends Component {
       setTimeout(() => this.changeActiveTab(this.props.tabIndex));
     }
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   async _getWallet() {
@@ -71,20 +88,28 @@ class VndWallet extends Component {
   }
 
   _goTransfer() {
-    Actions.push(appConfig.routes.transfer, {
-      wallet: this.state.wallet,
-      address: this.state.wallet.address,
-    });
+    push(
+      appConfig.routes.transfer,
+      {
+        wallet: this.state.wallet,
+        address: this.state.wallet.address,
+      },
+      this.theme,
+    );
   }
 
   _goQRCode() {
     const {t} = this.props;
 
-    Actions.push(appConfig.routes.qrBarCode, {
-      title: t('common:screen.qrBarCode.walletAddressTitle'),
-      wallet: this.state.wallet,
-      address: this.state.wallet.address,
-    });
+    push(
+      appConfig.routes.qrBarCode,
+      {
+        title: t('common:screen.qrBarCode.walletAddressTitle'),
+        wallet: this.state.wallet,
+        address: this.state.wallet.address,
+      },
+      this.theme,
+    );
   }
 
   _onScrollEnd(e) {
@@ -111,114 +136,112 @@ class VndWallet extends Component {
     }
   };
 
-  renderRow({item, index}) {
-    return (
-      <View>
-        <View style={styles.containerRowView}>
-          <Icon
-            style={{flex: 1, marginLeft: 20}}
-            name={item.change >= 0 ? 'plus-square' : 'minus-square'}
-            size={25}
-            color="rgb(0,0,0)"
-          />
-          <View style={{flex: 6, flexDirection: 'column'}}>
-            <Text style={{fontSize: 16}}>{item.content}</Text>
-            <View style={styles.bottomRowView}>
-              <Text style={styles.dateText}>{item.created}</Text>
-              <Text style={styles.pointText}>{item.change}</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.lineRowView} />
-      </View>
-    );
-  }
+  renderWalletAddress = () => (
+    <Icon
+      bundle={BundleIconSetName.FONT_AWESOME}
+      name="qrcode"
+      style={styles.iconQRcode}
+    />
+  );
 
   renderTopLabelCoin() {
-    var {wallet} = this.state;
-    const {user_info} = store;
+    const {wallet} = this.state;
     const {t} = this.props;
 
     return (
-      <View>
-        <View style={styles.add_store_actions_box}>
-          <View style={styles.row}>
-            <TouchableHighlight
+      <Container row style={this.topLabelContainerStyle}>
+        <Container flex row noBackground>
+          <Container flex noBackground>
+            <BaseButton
+              useTouchableHighlight
               onPress={this._goQRCode.bind(this)}
-              underlayColor="transparent"
-              style={styles.add_store_action_btn}>
-              <View style={styles.add_store_action_btn_box}>
-                <Icon name="qrcode" size={30} color="#333333" />
-                <Text style={styles.add_store_action_label}>
+              style={styles.walletAdressContainer}>
+              <View
+                style={[
+                  styles.add_store_action_btn_box,
+                  this.tabRightSeparatorStyle,
+                ]}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  style={styles.add_store_action_label}
+                  renderIconBefore={this.renderWalletAddress}>
                   {t('common:screen.qrBarCode.walletAddressTitle')}
-                </Text>
+                </Typography>
               </View>
-            </TouchableHighlight>
+            </BaseButton>
+          </Container>
 
-            {/* <TouchableHighlight
-            onPress={this._goTransfer.bind(this)}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="minus-square-o" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('common:screen.transfer.mainTitle')}
-              </Text>
-            </View>
-          </TouchableHighlight> */}
-            {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP) && (
-              <View style={styles.add_store_action_btn}>
-                <PointRechargeButton
-                  label="Nạp điểm"
-                  containerStyle={styles.add_store_action_btn_box}
+          {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP) && (
+            <Container flex noBackground>
+              <PointRechargeButton
+                label={t('header.topUp')}
+                wrapperStyle={styles.pointRechargeWrapperStyle}
+                containerStyle={[
+                  styles.pointRechargeContainerStyle,
+                  styles.add_store_action_btn_box,
+                  this.tabRightSeparatorStyle,
+                ]}
+              />
+            </Container>
+          )}
+        </Container>
+
+        <BaseButton useTouchableHighlight style={styles.add_store_action_btn}>
+          <Container style={styles.balanceContainer} flex noBackground>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.add_store_action_label_balance}
+              renderInlineIconBefore={() => (
+                <Icon
+                  bundle={BundleIconSetName.FONT_AWESOME}
+                  name="ticket"
+                  style={styles.rightIcon}
                 />
-              </View>
-            )}
-          </View>
-          <TouchableHighlight
-            // onPress={() => Actions.vnd_wallet({})}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}>
-            <View
+              )}>
+              {'  '}
+              {t('header.balance')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_HUGE_PRIMARY}
               style={[
-                styles.add_store_action_btn_box_balance,
-                {borderRightWidth: 0},
+                styles.add_store_action_content,
+                {
+                  color: wallet.color,
+                },
               ]}>
-              <Text
-                style={[
-                  styles.add_store_action_label_balance,
-                  {
-                    textAlign: 'left',
-                    width: '100%',
-                    paddingHorizontal: 15,
-                  },
-                ]}>
-                <Icon name={wallet?.icon} size={16} color={wallet?.color} />{' '}
-                {'  '}
-                {t('header.balance')}
-              </Text>
-              <Text
-                style={[
-                  styles.add_store_action_content,
-                  {
-                    textAlign: 'right',
-                    width: '100%',
-                    paddingHorizontal: 15,
-                    color: wallet?.color,
-                  },
-                ]}>
-                {wallet?.balance_view}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </View>
+              {wallet.balance_view}
+            </Typography>
+          </Container>
+        </BaseButton>
+      </Container>
     );
   }
 
+  get topLabelContainerStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get tabRightSeparatorStyle() {
+    return {
+      borderRightColor: this.theme.color.border,
+      borderRightWidth: this.theme.layout.borderWidth,
+    };
+  }
+
+  get activeTabStyle() {
+    return [
+      styles.activeTab,
+      {
+        borderBottomColor: this.theme.color.primaryHighlight,
+      },
+    ];
+  }
+
   render() {
-    var {wallet, activeTab, historiesData} = this.state;
+    const {wallet, activeTab, historiesData} = this.state;
     const {t} = this.props;
     const data = [
       {
@@ -247,303 +270,113 @@ class VndWallet extends Component {
       },
     ];
     const tabHeader = data.map((d, i) => (
-      <TouchableHighlight
+      <BaseButton
+        useTouchableHighlight
         key={d.key}
-        underlayColor="transparent"
-        style={[
-          styles.tabStyle,
-          d.key === activeTab && styles.activeTab,
-          ,
-          {paddingVertical: 15},
-        ]}
+        style={[styles.tabStyle, d.key === activeTab && this.activeTabStyle]}
         onPress={() => this.changeActiveTab(d.key)}>
-        <View
-          style={[
-            i !== data.length - 1 && {
-              borderRightColor: '#dddddd',
-              borderRightWidth: 1,
-            },
-          ]}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: '#404040',
-            }}>
+        <View style={i !== data.length - 1 && this.tabRightSeparatorStyle}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={[
+              {
+                textAlign: 'center',
+              },
+              d.key === activeTab && {fontWeight: 'bold'},
+            ]}>
             {d.title}
-          </Text>
+          </Typography>
         </View>
-      </TouchableHighlight>
+      </BaseButton>
     ));
     return (
-      <View style={styles.container}>
+      <ScreenWrapper>
         {this.state.loading && <Loading center />}
-        {this.renderTopLabelCoin()}
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#dddddd',
-            borderBottomWidth: 1,
-          }}>
-          {tabHeader}
-        </View>
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          ref={(ref) => (this.flatlist = ref)}
-          data={data}
-          keyExtractor={(item) => item.key.toString()}
-          horizontal={true}
-          onScrollToIndexFailed={() => {}}
-          pagingEnabled
-          style={{
-            width: Util.size.width,
-          }}
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          onMomentumScrollEnd={this._onScrollEnd.bind(this)}
-          getItemLayout={(data, index) => {
-            return {
-              length: Util.size.width,
-              offset: Util.size.width * index,
-              index,
-            };
-          }}
-          renderItem={({item, index}) => {
-            return item.component;
-          }}
-        />
+        <Container flex noBackground>
+          {this.renderTopLabelCoin()}
+          <Container row>{tabHeader}</Container>
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            ref={(ref) => (this.flatlist = ref)}
+            data={data}
+            keyExtractor={(item) => item.key.toString()}
+            horizontal={true}
+            pagingEnabled
+            style={styles.contentContainerStyle}
+            onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+            getItemLayout={(data, index) => {
+              return {
+                length: appConfig.device.width,
+                offset: appConfig.device.width * index,
+                index,
+              };
+            }}
+            renderItem={({item, index}) => {
+              return item.component;
+            }}
+          />
+        </Container>
         <View />
-        {/* <View>
-          <Text>Nạp qua Ví Momo</Text>
-          <Text>Số tài khoản nhận: 0988888888</Text>
-          <Text>Nội dung: 0983982021</Text>
-          <Text>Lưu ý: Chỉ nhập mã, không nhập thêm gì khác vào nội dung</Text>
-          <Text>Thời gian xác nhận nạp tiền thành công: 5 phút</Text>
-        </View>
-        <View style={styles.lineView} />
-        <View>
-          <Text>Rút tiền qua Ví Momo</Text>
-          <Text>Số điện thoại nhận: 0988888888</Text>
-          <Text>Mã thanh toán: 0983982021</Text>
-          <Text>Rút</Text>
-          <Text>Thời gian xác nhận và rút tiền thành công: 5 phút</Text>
-        </View>
-        <View style={styles.lineView} /> */}
-        {/* <Text style={styles.historyCoinText}>Lịch sử giao dịch:</Text> */}
-        {/* <FlatList
-          data={this.state.historiesData}
-          renderItem={(item, index) => this.renderRow(item, index)}
-        /> */}
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-
-    marginBottom: 0,
-    backgroundColor: '#ffffff',
-  },
-  profile_list_opt_btn: {
-    width: Util.size.width,
-    height: 32,
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 4,
-    marginTop: 20,
-    borderTopWidth: 0,
-    borderColor: '#dddddd',
-  },
-  point_icon: {
-    width: 60,
-    height: 60,
-  },
-  iconView: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  profile_list_icon_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 70,
-    height: 70,
-  },
-  profile_list_label: {
-    fontSize: 18,
-    color: '#000000',
-    fontWeight: '400',
-  },
-  profile_list_small_label: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 2,
-  },
-  labelCoinParentView: {
-    flex: 5,
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  labelCoinView: {
-    marginTop: 0,
-    marginLeft: 0,
-    marginRight: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  lineView: {
-    marginTop: 10,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 10,
-    height: 1,
-    backgroundColor: '#dddddd',
-  },
-  lineViewWallet: {
-    marginTop: 1,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 1,
-    height: 1,
-    backgroundColor: '#dddddd',
-  },
-  lineRowView: {
-    marginTop: 0,
-    marginLeft: 10,
-    marginRight: 10,
-    height: 1,
-    backgroundColor: '#dddddd',
-  },
-  newsCoinView: {
-    flexDirection: 'row',
-    height: 30,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  historyCoinText: {
-    marginLeft: 20,
-    marginBottom: 20,
-    fontSize: 18,
-    color: 'rgb(0,0,0)',
-  },
-  containerRowView: {
-    flex: 1,
-    height: 70,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  bottomRowView: {
-    marginTop: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  dateText: {
-    fontSize: 12,
-    color: 'rgb(150,150,150)',
-  },
-  pointText: {
-    fontSize: 16,
-    color: 'rgb(0,0,0)',
-    fontWeight: 'bold',
-    marginRight: 15,
-  },
-
-  profile_cover_box: {
-    width: '100%',
-    backgroundColor: '#ccc',
-    height: 120,
-  },
-  profile_cover: {
-    width: '100%',
-    height: '100%',
-  },
-  profile_avatar_box: {
-    position: 'absolute',
-    bottom: 20,
-    left: 24,
-    width: 70,
-    height: 70,
-    backgroundColor: '#cccccc',
-    borderWidth: 2,
-    borderColor: '#ffffff',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  profile_avatar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    // resizeMode: 'cover'
-  },
-  stores_box: {
-    marginBottom: 8,
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
-
-  add_store_actions_box: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingVertical: 8,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   add_store_action_btn: {
     flex: 1,
-    paddingVertical: 4,
-    justifyContent: 'flex-start',
+    paddingVertical: 10,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    // width: ~~((Util.size.width - 16) / 2),
-    // width: ~~(Util.size.width / 4),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb',
-  },
-  add_store_action_btn_box_balance: {
-    flex: 1,
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb',
+    paddingHorizontal: 5,
   },
   add_store_action_label: {
-    fontSize: 14,
-    color: '#404040',
     marginTop: 4,
+    textAlign: 'center',
   },
   add_store_action_label_balance: {
-    fontSize: 14,
-    color: '#333333',
     marginTop: 4,
     fontWeight: '600',
+    textAlign: 'left',
   },
   add_store_action_content: {
-    fontSize: 19,
+    textAlign: 'right',
     marginTop: 5,
-    color: '#51A9FF',
     fontWeight: '800',
     flex: 1,
   },
+  contentContainerStyle: {
+    width: appConfig.device.width,
+  },
   tabStyle: {
     flex: 1,
-    borderBottomColor: '#dddddd',
-    borderBottomWidth: 1,
+    paddingVertical: 15,
   },
   activeTab: {
-    borderBottomColor: DEFAULT_COLOR,
     borderBottomWidth: 4,
+  },
+  iconQRcode: {
+    fontSize: 30,
+  },
+  rightIcon: {
+    fontSize: 16,
+  },
+  pointRechargeWrapperStyle: {
+    flex: 1,
+    paddingVertical: 10,
+  },
+  pointRechargeContainerStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  balanceContainer: {
+    paddingHorizontal: 15,
+  },
+  walletAdressContainer: {
+    paddingVertical: 10,
   },
 });
 

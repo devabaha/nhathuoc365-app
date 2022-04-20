@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ViewPropTypes } from 'react-native';
-import Button from 'react-native-button';
-import config from '../../config';
+import {StyleSheet, ViewPropTypes} from 'react-native';
+// custom components
+import Button from 'src/components/Button';
+import Image from 'src/components/Image';
 
 SubmitButton.propTypes = {
   onPress: PropTypes.func,
@@ -11,7 +12,7 @@ SubmitButton.propTypes = {
   iconSource: PropTypes.oneOfType([
     PropTypes.shape({
       uri: PropTypes.string,
-      headers: PropTypes.objectOf(PropTypes.string)
+      headers: PropTypes.objectOf(PropTypes.string),
     }),
     PropTypes.number,
     PropTypes.arrayOf(
@@ -19,64 +20,43 @@ SubmitButton.propTypes = {
         uri: PropTypes.string,
         width: PropTypes.number,
         height: PropTypes.number,
-        headers: PropTypes.objectOf(PropTypes.string)
-      })
-    )
-  ])
+        headers: PropTypes.objectOf(PropTypes.string),
+      }),
+    ),
+  ]),
 };
 
 SubmitButton.defaultProps = {
   onPress: () => {},
-  title: 'Nhãn mặc định',
-  style: undefined,
-  iconSource: undefined
 };
 
 function SubmitButton(props) {
-  const extraStyle = {
-    backgroundColor: config.colors.primary
-  };
+  const renderIconLeft = useCallback(() => {
+    return (
+      !!props.iconSource && (
+        <Image style={styles.icon} source={props.iconSource} />
+      )
+    );
+  }, [props.iconSource]);
+
   return (
-    <View style={[styles.submitWrapper, props.style]}>
-      <Button
-        containerStyle={[styles.submitBtn, extraStyle]}
-        onPress={props.onPress}
-      >
-        {!!props.iconSource && (
-          <Image style={styles.icon} source={props.iconSource} />
-        )}
-        <Text style={styles.submitTitle}>{props.title}</Text>
-      </Button>
-    </View>
+    <Button
+      safeLayout={props.safeLayout}
+      title={props.title}
+      containerStyle={props.style}
+      onPress={props.onPress}
+      renderIconLeft={renderIconLeft}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  submitWrapper: {
-    backgroundColor: config.colors.white,
-    height: 62,
-    paddingHorizontal: 16,
-    justifyContent: 'center'
-  },
-  submitBtn: {
-    backgroundColor: config.colors.primary,
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center'
-  },
-  submitTitle: {
-    color: config.colors.white,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16
-  },
   icon: {
     width: 18,
     height: 18,
     marginRight: 8,
-    position: 'relative',
-    top: -2
-  }
+    top: -2,
+  },
 });
 
 export default SubmitButton;

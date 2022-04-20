@@ -6,6 +6,7 @@
   },
   "emptyMessage": "Chưa có đơn hàng nào",
   "encourageMessage": "Mua sắm ngay",
+  "goStore": "Vào cửa hàng",
   "item": {
     "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
@@ -99,6 +100,22 @@
     "copy": {
       "title": "Sao chép",
       "success": "Sao chép thành công"
+    },
+    "scheduleDelivery": {
+      "title": "Thời gian giao hàng",
+      "detailLabel": "Đơn hàng sẽ được giao vào ",
+      "description": "Hẹn lịch giao cho đơn hàng",
+      "modal": {
+        "title": "Chọn giờ nhận",
+        "todayLabel": "Hôm nay ",
+        "deliveryNowLabel": "Giao ngay"
+      }
     }
-  }
+  },
+  "callErrorAlert": {
+    "cantCall": "Không thể liên lạc",
+    "notRegisterPhoneYet": "Người dùng{{username}} chưa đăng ký số điện thoại",
+    "confirm": "Đã hiểu"
+  },
+  "noServiceOrder": "Bạn chưa có đơn dịch vụ"
 }

@@ -10,50 +10,53 @@
  * @example Category of Beemart, Tiki.
  */
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import IconFeather from 'react-native-vector-icons/Feather';
-import Button from 'react-native-button';
+import {View, StyleSheet} from 'react-native';
+// types
+import {MultiLevelCategoryProps} from '.';
+import {Style} from 'src/Themes/interface';
+// configs
+import appConfig from 'app-config';
+import store from 'app-store';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {servicesHandler} from 'src/helper/servicesHandler';
+import EventTracker from 'src/helper/EventTracker';
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {pop, push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {RightButtonNavbarType} from 'src/components/RightButtonNavBar/constants';
+import {CATEGORY_TYPE, TEMP_CATEGORIES} from './constants';
+import {BundleIconSetName, NavBarWrapper} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// images
+//@ts-ignore
+import SVGEmptyBoxOpen from 'src/images/empty-box-open.svg';
+//@ts-ignore
+import PNGBackImageBtn from 'src/images/back_chevron.png';
+// custom components
 import Category from './Category';
 import SubCategory from './SubCategory';
-//@ts-ignore
-import appConfig from 'app-config';
-//@ts-ignore
-import store from 'app-store';
-import {MultiLevelCategoryProps} from '.';
-import {APIRequest} from '../../../network/Entity';
-import APIHandler from '../../../network/APIHandler';
-import {Actions} from 'react-native-router-flux';
-import Loading from '../../Loading';
-//@ts-ignore
-import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
-import NoResult from '../../NoResult';
-import {
-  CATEGORY_POSITION_TYPE,
-  CATEGORY_TYPE,
-  TEMP_CATEGORIES,
-} from './constants';
-import {servicesHandler} from '../../../helper/servicesHandler';
-import RightButtonNavBar from '../../RightButtonNavBar';
-import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
-import EventTracker from '../../../helper/EventTracker';
-import {Container} from 'src/components/Layout';
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import RightButtonNavBar from 'src/components/RightButtonNavBar';
 import Header from 'src/components/Home/component/Header';
-
-const BACK_IMAGE_BTN = require('src/images/back_chevron.png');
+import {
+  ImageButton,
+  Container,
+  FlatList,
+  IconButton,
+  ScreenWrapper,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  headerWrapper: {
-    backgroundColor: appConfig.colors.primary,
   },
   headerContentContainer: {
     paddingBottom: 8,
@@ -61,11 +64,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: 'row',
-  },
-  mainCategories: {
-    backgroundColor: '#fff',
-    borderRightColor: '#aaa',
-    borderRightWidth: 0.5,
   },
   mainCategoryTitle: {
     fontWeight: '600',
@@ -76,7 +74,6 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   searchIcon: {
-    color: appConfig.colors.white,
     fontSize: 26,
     top: appConfig.device.isAndroid ? 1 : 0,
   },
@@ -90,6 +87,8 @@ const styles = StyleSheet.create({
 });
 
 class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     type: CATEGORY_TYPE.FIX_2_LEVEL,
     siteId: store.store_id,
@@ -116,6 +115,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
   requests = [this.getMultiLevelCategoriesRequest];
 
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps: MultiLevelCategoryProps, nextState: any) {
     if (
@@ -156,12 +159,14 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
   componentDidMount() {
     this.getMultiLevelCategories();
 
-    setTimeout(() => {
-      Actions.refresh({
-        right: this._renderRightButton(),
-        navBar: () => null,
-      });
-    });
+    // setTimeout(() => {
+    //   refresh(
+    //     {
+    //       right: this._renderRightButton(),
+    //       navBar: () => null,
+    //     },
+    //   );
+    // });
     this.eventTracker.logCurrentView();
   }
 
@@ -173,7 +178,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     return (
       <View style={[styles.right_btn_box]}>
         {/* <RightButtonOrders tel={store.store_data.tel} /> */}
-        <Button
+        <IconButton
+          bundle={BundleIconSetName.FEATHER}
+          name="search"
+          iconStyle={this.iconSearchStyle}
           onPress={() => {
             //@ts-ignore
             const {t} = this.props;
@@ -182,7 +190,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               name: t('stores:tabs.store.title'),
               id: 0,
             });
-            Actions.push(appConfig.routes.searchStore, {
+            push(appConfig.routes.searchStore, {
               categories: categories,
               category_id: 0,
               // category_name:
@@ -190,10 +198,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               //         ? this.state.selectedMainCategory.name
               //         : ''
             });
-          }}>
-          <IconFeather name="search" style={styles.searchIcon} />
-        </Button>
-        <RightButtonNavBar type={RIGHT_BUTTON_TYPE.SHOPPING_CART} />
+          }}
+        />
+        <RightButtonNavBar type={RightButtonNavbarType.SHOPPING_CART} />
       </View>
     );
   }
@@ -224,11 +231,20 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
               : categories.find(
                   (cate) => cate.id === this.state.selectedMainCategory.id,
                 ) || defaultSelectedCategory;
-          // this.setState({
-          //   //   type: CATEGORY_TYPE.FIX_2_LEVEL,
-          //   categories: this.formatCategories(TEMP_CATEGORIES),
-          //   selectedMainCategory: TEMP_CATEGORIES[0],
-          // });
+          // this.setState(
+          //   {
+          //     type: CATEGORY_TYPE.FIX_2_LEVEL,
+          //     categories,
+          //     // categories: this.formatCategories(TEMP_CATEGORIES),
+          //     // selectedMainCategory: TEMP_CATEGORIES[0],
+          //   },
+          //   () => {
+          //     setTimeout(
+          //       () => this.onPressMainCategory(selectedMainCategory),
+          //       300,
+          //     );
+          //   },
+          // );
           this.setState(
             (prevState: any) => ({
               type: response.data.type || prevState.type,
@@ -266,10 +282,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     }
   }
 
-  handleBack = () => Actions.pop();
+  handleBack = () => pop();
 
   handleSearch = () => {
-    Actions.push(appConfig.routes.searchStore, {
+    push(appConfig.routes.searchStore, {
       categories: null,
       category_id: 0,
       category_name: '',
@@ -317,15 +333,19 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
   }
 
   goToStore(category) {
-    Actions.push(appConfig.routes.store, {
-      title: category.name,
-      categoryId: category.id,
-      extraCategoryId:
-        Array.isArray(category.list) &&
-        category.list.length !== 0 &&
-        category.id,
-      extraCategoryName: category.name,
-    });
+    push(
+      appConfig.routes.store,
+      {
+        title: category.name,
+        categoryId: category.id,
+        extraCategoryId:
+          Array.isArray(category.list) &&
+          category.list.length !== 0 &&
+          category.id,
+        extraCategoryName: category.name,
+      },
+      this.theme,
+    );
   }
 
   scrollMainCategoryToIndex(category) {
@@ -353,7 +373,6 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         image={category.image}
         title={category.name}
         onPress={() => this.onPressMainCategory(category)}
-        containerStyle={{borderTopColor: '#fff', borderTopWidth: 0.5}}
         titleStyle={styles.mainCategoryTitle}
       />
     );
@@ -393,65 +412,95 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
   renderBack = () => {
     return (
-      <TouchableOpacity
+      <ImageButton
         //@ts-ignore
         hitSlop={HIT_SLOP}
         style={styles.backContainer}
-        onPress={this.handleBack}>
-        <Image source={BACK_IMAGE_BTN} style={[styles.back]} />
-      </TouchableOpacity>
+        onPress={this.handleBack}
+        imageStyle={styles.back}
+        source={PNGBackImageBtn}
+      />
     );
   };
 
+  get iconSearchStyle() {
+    return mergeStyles(styles.searchIcon, {
+      color: this.theme.color.onNavBarBackground,
+    });
+  }
+
+  get navBarStyle(): Style {
+    return {
+      backgroundColor: this.theme.color.navBarBackground,
+    };
+  }
+
+  get mainCategoriesStyle(): Style {
+    return {
+      borderRightColor: this.theme.color.border,
+      borderRightWidth: this.theme.layout.borderWidthSmall,
+    };
+  }
+
+  get emptyBoxColor() {
+    return this.theme.color.iconInactive;
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Header
-          wrapperStyle={styles.headerWrapper}
-          contentContainer={styles.headerContentContainer}
-          placeholder={this.props.title}
-          renderLeft={this.renderBack}
-          goToSearch={this.handleSearch}
-        />
-        {this.state.loading && <Loading center />}
-        <View style={styles.mainContainer}>
-          <View style={styles.mainCategories}>
-            <FlatList
-              ref={this.refMainCategory}
-              scrollEventThrottle={16}
-              extraData={this.state.selectedMainCategory.id}
-              showsVerticalScrollIndicator={false}
-              data={this.state.categories}
-              contentContainerStyle={{
-                paddingBottom: appConfig.device.bottomSpace,
-              }}
-              renderItem={this.renderMainCategory.bind(this)}
-              keyExtractor={(item, index) => index.toString()}
-              onScrollToIndexFailed={() => {}}
-              getItemLayout={(data, index) => ({
-                index,
-                length: appConfig.device.width / 4,
-                offset: (appConfig.device.width / 4) * index,
-              })}
-            />
-          </View>
+      <>
+        <NavBarWrapper appNavBar={false} containerStyle={this.navBarStyle}>
+          <Header
+            wrapperStyle={this.navBarStyle}
+            contentContainer={styles.headerContentContainer}
+            placeholder={this.props.title}
+            renderLeft={this.renderBack}
+            goToSearch={this.handleSearch}
+          />
+        </NavBarWrapper>
+        <ScreenWrapper>
+          {this.state.loading && <Loading center />}
+          <View style={styles.mainContainer}>
+            <Container style={this.mainCategoriesStyle}>
+              <FlatList
+                safeLayout
+                ref={this.refMainCategory}
+                scrollEventThrottle={16}
+                extraData={this.state.selectedMainCategory.id}
+                showsVerticalScrollIndicator={false}
+                data={this.state.categories}
+                renderItem={this.renderMainCategory.bind(this)}
+                keyExtractor={(item, index) => index.toString()}
+                onScrollToIndexFailed={() => {}}
+                getItemLayout={(data, index) => ({
+                  index,
+                  length: appConfig.device.width / 4,
+                  offset: (appConfig.device.width / 4) * index,
+                })}
+              />
+            </Container>
 
-          <Container flex centerVertical={false}>
-            {Array.isArray(this.state.categories) &&
-            this.state.categories.length !== 0
-              ? this.renderSubCategories()
-              : !this.state.loading && (
-                  <NoResult
-                    containerStyle={styles.container}
-                    icon={
-                      <SVGEmptyBoxOpen fill="#aaa" width="100" height="100" />
-                    }
-                    message="Chưa có danh mục"
-                  />
-                )}
-          </Container>
-        </View>
-      </View>
+            <Container flex centerVertical>
+              {Array.isArray(this.state.categories) &&
+              this.state.categories.length !== 0
+                ? this.renderSubCategories()
+                : !this.state.loading && (
+                    <NoResult
+                      containerStyle={styles.container}
+                      icon={
+                        <SVGEmptyBoxOpen
+                          fill={this.emptyBoxColor}
+                          width="100"
+                          height="100"
+                        />
+                      }
+                      message={this.props.t('noCategory')}
+                    />
+                  )}
+            </Container>
+          </View>
+        </ScreenWrapper>
+      </>
     );
   }
 }

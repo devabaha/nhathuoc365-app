@@ -1,143 +1,180 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  TextInput,
-  Keyboard,
-  SafeAreaView
-} from 'react-native';
+import {StyleSheet, View, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {NavBar, TextButton, Input, IconButton, Icon} from 'src/components/base';
 
-import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
+class PlaceNavBar extends Component {
+  static contextType = ThemeContext;
 
-export default class PlaceNavBar extends Component {
   static propTypes = {
-    onChangeText: PropTypes.func
-  }
+    onChangeText: PropTypes.func,
+  };
 
   static defaultProps = {
-    onChangeText: value => value
+    onChangeText: (value) => value,
+  };
+
+  state = {
+    keyword: '',
+  };
+
+  get theme() {
+    return getTheme(this);
   }
 
-  constructor(props) {
-    super(props);
+  onChangeTextValue = (value) => {
+    this.setState(
+      {
+        keyword: value,
+      },
+      () => {
+        this.props.onChangeText(value);
+      },
+    );
+  };
 
-    this.state = {
-      keyword: ''
-    }
+  clearKeyWork = () => {
+    return this.setState(
+      {
+        keyword: '',
+      },
+      () => {
+        this.props.onChangeText('');
+      },
+    );
+  };
+
+  renderNavBar = () => {
+    return (
+      <View style={this.containerStyle}>
+        <View style={this.middleContainerStyle}>
+          <Icon
+            neutral
+            bundle={BundleIconSetName.FONT_AWESOME}
+            style={styles.searchIcon}
+            name="search"
+          />
+          <Input
+            type={TypographyType.LABEL_MEDIUM}
+            style={[styles.searchInput, this.searchInputStyle]}
+            placeholder={this.props.t('placeholder')}
+            placeholderTextColor={this.placeholderTextColor}
+            onChangeText={this.onChangeTextValue}
+            value={this.state.keyword}
+            numberOfLines={1}
+            autoFocus={this.props.autoFocus}
+          />
+
+          {this.state.keyword != '' && (
+            <IconButton
+              style={styles.clearWrapper}
+              iconStyle={[styles.clearSearchIcon]}
+              onPress={this.clearKeyWork}
+              name="times-circle"
+              bundle={BundleIconSetName.FONT_AWESOME}
+            />
+          )}
+        </View>
+        <TextButton
+          style={styles.cancelButton}
+          typoProps={{type: TypographyType.LABEL_LARGE}}
+          titleStyle={this.rightButtonTitleStyle}
+          onPress={() => {
+            Keyboard.dismiss();
+            pop();
+          }}>
+          {this.props.t('voucher:modal.close')}
+        </TextButton>
+      </View>
+    );
+  };
+
+  get rightButtonTitleStyle() {
+    return {color: this.theme.color.onNavBarBackground};
+  }
+
+  get middleContainerStyle() {
+    return [
+      styles.searchWrapper,
+      {
+        backgroundColor: this.theme.color.overlay60,
+      },
+    ];
+  }
+
+  get placeholderTextColor() {
+    return this.theme.color.onOverlay;
+  }
+
+  get searchInputStyle() {
+    return {
+      color: this.theme.color.onOverlay,
+    };
+  }
+
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderBottomColor: this.theme.color.border,
+    });
   }
 
   render() {
-    var { onChangeText } = this.props;
-    var { keyword } = this.state;
-
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.content}>
-
-          <View style={{
-            backgroundColor: '#ffffff',
-            width: Util.size.width - 8 - 80,
-            height: 34,
-            marginLeft: 8,
-            borderRadius: 5,
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-
-            <Icon style={{
-              paddingHorizontal: 10
-            }} name="search" size={16} color="#999999" />
-
-            <TextInput
-              underlineColorAndroid="transparent"
-              style={{
-                fontSize: 15,
-                padding: 0,
-                margin: 0,
-                width: Util.size.width - 8 - 80 - 64,
-                color: '#404040',
-                height: 32,
-                marginTop: isIOS ? 2 : 1
-              }}
-              value={keyword}
-              onChangeText={value => {
-                this.setState({
-                  keyword: value
-                }, () => {
-                  onChangeText(value);
-                });
-              }}
-              placeholder="Tìm tỉnh thành phố hoặc sân bay"
-              />
-
-            {keyword != '' && (
-              <TouchableHighlight
-                style={{
-                  flex: 1,
-                  height: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onPress={() => {
-                  this.setState({
-                    keyword: ''
-                  }, () => {
-                    onChangeText('');
-                  });
-                }}
-                underlayColor="transparent">
-                <Icon name="times-circle" size={16} color="#cccccc" />
-              </TouchableHighlight>
-            )}
-          </View>
-
-          <View style={{
-            width: 80,
-            height: '100%',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <TouchableHighlight
-              style={{
-                padding: 8
-              }}
-              onPress={() => {
-                Keyboard.dismiss();
-                Actions.pop();
-              }}
-              underlayColor="transparent">
-              <Text style={{
-                fontSize: 16,
-                color: '#ffffff',
-                fontWeight: '600'
-              }}>Đóng</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </SafeAreaView>
+      <NavBar
+        navigation={this.props.navigation}
+        renderHeader={() => this.renderNavBar()}
+      />
     );
   }
 }
 
-const NAV_HEIGHT = isIOS ? 84 : 54;
-
 const styles = StyleSheet.create({
   container: {
-    height: NAV_HEIGHT,
-    flexDirection: 'row',
-    paddingTop: isIOS ? 20 : 0,
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#828287',
-    backgroundColor: DEFAULT_COLOR
-  },
-  content: {
-    // marginTop:20,
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center'
-  }
+    paddingHorizontal: 10,
+  },
+  cancelButton: {
+    justifyContent: 'center',
+    paddingLeft: 15,
+  },
+  searchIcon: {
+    fontSize: 16,
+  },
+  clearWrapper: {
+    width: 16,
+    height: 16,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  clearSearchIcon: {
+    fontSize: 13,
+  },
+  searchWrapper: {
+    flex: 1,
+    paddingLeft: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginVertical: Platform.OS === 'ios' ? 6 : 8,
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
 });
+
+export default withTranslation(['airlineTicket', 'voucher'])(PlaceNavBar);

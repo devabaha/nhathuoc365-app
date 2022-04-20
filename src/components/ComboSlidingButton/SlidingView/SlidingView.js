@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
-import { Animated, View, StyleSheet, Easing } from 'react-native';
+import React, {Component} from 'react';
+import {Animated, StyleSheet, Easing} from 'react-native';
+// custom components
+import {Container} from 'src/components/base';
 
 class SlidingView extends Component {
   static defaultProps = {
@@ -7,11 +9,11 @@ class SlidingView extends Component {
     duration: 300,
     easing: Easing.cubic,
     transparentElement: false,
-    onFinishAnimation: () => {}
+    onFinishAnimation: () => {},
   };
   state = {
     animatedSliding: new Animated.Value(0),
-    height: 0
+    height: 0,
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -20,8 +22,8 @@ class SlidingView extends Component {
         toValue: nextProps.slide ? 1 : 0,
         duration: nextProps.duration,
         easing: nextProps.easing,
-        useNativeDriver: true
-      }).start(({ finished }) => {
+        useNativeDriver: true,
+      }).start(({finished}) => {
         finished && this.props.onFinishAnimation(nextProps.slide);
       });
     }
@@ -34,7 +36,7 @@ class SlidingView extends Component {
   }
 
   onLayout(e) {
-    this.setState({ height: e.nativeEvent.layout.height });
+    this.setState({height: e.nativeEvent.layout.height});
   }
 
   render() {
@@ -43,21 +45,20 @@ class SlidingView extends Component {
         {
           translateY: this.state.animatedSliding.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, this.state.height]
-          })
-        }
+            outputRange: [0, this.state.height],
+          }),
+        },
       ],
       opacity: this.state.animatedSliding.interpolate({
         inputRange: [0, 0.5, 1],
-        outputRange: [1, 1, 0]
-      })
+        outputRange: [1, 1, 0],
+      }),
     };
     return (
       <Animated.View
         onLayout={this.onLayout.bind(this)}
-        style={[styles.container, extraStyle, this.props.containerStyle]}
-      >
-        {!this.props.transparentElement && <View style={styles.bg} />}
+        style={[styles.container, extraStyle, this.props.containerStyle]}>
+        {!this.props.transparentElement && <Container style={styles.bg} />}
         {this.props.children}
       </Animated.View>
     );
@@ -70,14 +71,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   bg: {
-    backgroundColor: '#fff',
     position: 'absolute',
     height: '100%',
-    width: '100%'
-  }
+    width: '100%',
+  },
 });
 
 export default SlidingView;

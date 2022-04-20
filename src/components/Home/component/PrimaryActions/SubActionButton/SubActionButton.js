@@ -1,7 +1,10 @@
-import React from 'react';
-import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {Typography, Icon, BaseButton} from 'src/components/base';
+import {useTheme} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
   add_store_action_btn: {
@@ -10,44 +13,56 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
+    // marginBottom: 2,
   },
   add_store_action_label: {
-    fontSize: 14,
-    color: '#404040',
     marginTop: 4,
     textAlign: 'center',
   },
   icon: {
-    fontSize: 28,
-    color: appConfig.colors.primary,
-    left: 1
+    fontSize: 30,
+    left: 1,
   },
 });
 
 const SubActionButton = ({
-    iconName,
-    label,
-    
-    wrapperStyle = {},
-    containerStyle  ={},
-    iconStyle = {},
-    labelStyle = {},
+  iconName,
+  label,
 
-    onPress = () => {},
+  wrapperStyle = {},
+  containerStyle = {},
+  iconStyle = {},
+  labelStyle = {},
+
+  useTouchableHighlight = true,
+  onPress = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const iconBaseStyle = useMemo(() => {
+    return {color: theme.color.persistPrimary};
+  }, [theme]);
+
   return (
-    <TouchableOpacity
+    <BaseButton
+      useTouchableHighlight={useTouchableHighlight}
       onPress={onPress}
       style={[styles.add_store_action_btn, wrapperStyle]}>
       <View style={[styles.add_store_action_btn_box, containerStyle]}>
-        <Ionicons name={iconName} style={[styles.icon, iconStyle]} />
+        <Icon
+          bundle={BundleIconSetName.IONICONS}
+          name={iconName}
+          style={[styles.icon, iconBaseStyle, iconStyle]}
+        />
         {!!label && (
-          <Text style={[styles.add_store_action_label, labelStyle]}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={[styles.add_store_action_label, labelStyle]}>
             {label}
-          </Text>
+          </Typography>
         )}
       </View>
-    </TouchableOpacity>
+    </BaseButton>
   );
 };
 

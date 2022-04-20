@@ -1,17 +1,22 @@
 import React, {useEffect, useMemo, useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Animated, {Easing, Extrapolate, useValue} from 'react-native-reanimated';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import appConfig from 'app-config';
-import {themes} from '../../themes';
-
-const AnimatedAntDesignIcon = Animated.createAnimatedComponent(AntDesignIcon);
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import Animated, {Easing, useValue} from 'react-native-reanimated';
+// types
+import {Style} from 'src/Themes/interface';
+// helpers
+import {getThemes} from '../../themes';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Icon} from 'src/components/base';
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    backgroundColor: themes.colors.background,
   },
   iconContainer: {
     position: 'absolute',
@@ -21,7 +26,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    color: '#fff',
     marginHorizontal: 3,
   },
 });
@@ -40,6 +44,12 @@ const Ripple = ({
   },
   onFinishAnimation = (id: any) => {},
 }) => {
+  const {theme} = useTheme();
+
+  const themes = useMemo(() => {
+    return getThemes(theme);
+  }, [theme]);
+
   const rippleId = useRef(id);
   const animatedShowIconValue = useValue(0);
   const animatedShowValue = useValue(0);
@@ -82,22 +92,27 @@ const Ripple = ({
       const end = start + customRange;
 
       return (
-        <RippleIcon
+        <Icon
           key={index}
-          iconName={iconName}
-          style={{
-            fontSize: Math.min(size / 8, 16),
-            opacity: animatedShowIconValue.interpolate({
-              inputRange: [start, middle, end],
-              outputRange: [0, 1, 0],
-            }),
-          }}
+          reanimated
+          bundle={BundleIconSetName.ANT_DESIGN}
+          name={iconName}
+          style={[
+            iconStyle,
+            {
+              fontSize: Math.min(size / 8, 16),
+              opacity: animatedShowIconValue.interpolate({
+                inputRange: [start, middle, end],
+                outputRange: [0, 1, 0],
+              }),
+            },
+          ]}
         />
       );
     });
   };
 
-  const extraIconContainerStyle = useMemo(() => {
+  const extraIconContainerStyle: Style = useMemo(() => {
     switch (direction) {
       case 'ltr':
         return {
@@ -114,34 +129,40 @@ const Ripple = ({
     }
   }, [direction]);
 
+  const containerStyle = useMemo(() => {
+    return mergeStyles(styles.container, {
+      backgroundColor: themes.colors.background,
+      left: x - size / 2,
+      top: y - size / 2,
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      opacity: animatedHideValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0.1, 0],
+      }),
+      transform: [
+        {
+          scale: animatedShowValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, scale],
+          }),
+        },
+      ],
+    });
+  }, [themes]);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: themes.colors.primary,
+    });
+  }, [themes]);
+
   return (
     <>
-      <Animated.View
-        style={[
-          styles.container,
-          {
-            left: x - size / 2,
-            top: y - size / 2,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            opacity: animatedHideValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.1, 0],
-            }),
-            transform: [
-              {
-                scale: animatedShowValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, scale],
-                }),
-              },
-            ],
-          },
-        ]}></Animated.View>
+      <Animated.View style={containerStyle} />
 
       <View style={[styles.iconContainer, {width: viewableAreaWidth}]}>
-        {/* @ts-ignore */}
         <Animated.View style={[extraIconContainerStyle]}>
           {renderIcons()}
         </Animated.View>
@@ -156,9 +177,3 @@ const areEquals = (prevProps, nextProps) => {
 };
 
 export default React.memo(Ripple, areEquals);
-
-const RippleIcon = ({style, iconName}) => {
-  return (
-    <AnimatedAntDesignIcon name={iconName} style={[styles.icon, style, {}]} />
-  );
-};

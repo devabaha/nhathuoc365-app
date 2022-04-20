@@ -1,24 +1,46 @@
-import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text, Linking } from 'react-native';
-import { default as ModalBox } from 'react-native-modalbox';
-import { Actions } from 'react-native-router-flux';
+import React, {PureComponent} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import {default as ModalBox} from 'react-native-modalbox';
+// configs
 import appConfig from 'app-config';
-import Button from '../Button';
-import APIHandler from '../../network/APIHandler';
-import Loading from '../Loading';
 import store from 'app-store';
-import EventTracker from '../../helper/EventTracker';
-
-const PLATFROM_STORE = appConfig.device.isIOS ? 'App Store' : 'Play Store';
-const BACKGROUND_IMAGE = require('../../images/thanks.jpg');
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+import {mergeStyles} from 'src/Themes/helper';
+import {openLink} from 'app-helper';
+// routing
+import {pop} from 'app-helper/routing';
+// context
+import {ThemeContext, getTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import APIHandler from '../../network/APIHandler';
+// images
+import JPGBackgroundImage from 'src/images/thanks.jpg';
+// custom components
+import {Container, Typography} from 'src/components/base';
+import Button from 'src/components/Button';
+import Loading from '../Loading';
+import Image from '../Image';
 
 class RateApp extends PureComponent {
+  static contextType = ThemeContext;
+
   state = {
-    loading: false
+    loading: false,
   };
+
   ref_modal = React.createRef();
   unmounted = false;
   eventTracker = new EventTracker();
+
+  platformStore = appConfig.device.isIOS ? 'App Store' : 'Play Store';
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
@@ -29,35 +51,35 @@ class RateApp extends PureComponent {
   }
 
   rateApp = async () => {
-    const { t } = this.props;
-    this.setState({ loading: true });
+    const {t} = this.props;
+    this.setState({loading: true});
     const url = store.store_data ? store.store_data.link_update : null;
-    url && Linking.openURL(url);
+    url && openLink(url);
 
     try {
       const response = await APIHandler.user_rate_app();
       if (response && response.status === STATUS_SUCCESS) {
         flashShowMessage({
           type: 'success',
-          message: response.message
+          message: response.message,
         });
         this.onClose();
       } else {
         flashShowMessage({
           type: 'danger',
-          message: response.message || t('common:api.error.message')
+          message: response.message || t('common:api.error.message'),
         });
       }
     } catch (err) {
       console.log('rate_app', err);
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message')
+        message: t('common:api.error.message'),
       });
     } finally {
       !this.unmounted &&
         this.setState({
-          loading: false
+          loading: false,
         });
     }
   };
@@ -69,41 +91,70 @@ class RateApp extends PureComponent {
   };
 
   onClosedModal = () => {
-    Actions.pop();
+    pop();
   };
 
+  get modalStyle() {
+    return mergeStyles(styles.modal, {
+      borderBottomLeftRadius: this.theme.layout.borderRadiusLarge,
+      borderBottomRightRadius: this.theme.layout.borderRadiusLarge,
+    });
+  }
+
+  get containerStyle() {
+    return mergeStyles(styles.container, {
+      borderBottomLeftRadius: this.theme.layout.borderRadiusLarge,
+      borderBottomRightRadius: this.theme.layout.borderRadiusLarge,
+    });
+  }
+
+  get headingContainerStyle() {
+    return mergeStyles(styles.headingContainer, {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <ModalBox
         entry="top"
         position="top"
-        style={[styles.modal]}
+        style={this.modalStyle}
         backButtonClose
         ref={this.ref_modal}
         isOpen
         onClosed={this.onClosedModal}
         useNativeDriver
         swipeToClose={false}
-        backdropPressToClose={false}
-      >
+        backdropPressToClose={false}>
         {this.state.loading && <Loading center />}
-        <CachedImage source={BACKGROUND_IMAGE} style={styles.image} />
-        <View style={styles.container}>
-          <View style={styles.headingContainer}>
-            <Text style={styles.heading}>{t('title')}</Text>
-          </View>
+        <Image source={JPGBackgroundImage} style={styles.image} />
+        <Container style={this.containerStyle}>
+          <Container noBackground style={this.headingContainerStyle}>
+            <Typography type={TypographyType.TITLE_HUGE} style={styles.heading}>
+              {t('title')}
+            </Typography>
+          </Container>
           <View style={styles.bodyContainer}>
-            <Text style={styles.body}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.body}>
               {t('message.first', {
                 appName: APP_NAME_SHOW,
-                storeName: PLATFROM_STORE
+                storeName: this.platformStore,
               })}
-            </Text>
-            <Text style={styles.body}>{t('message.second')}</Text>
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM_TERTIARY}
+              style={styles.body}>
+              {t('message.second')}
+            </Typography>
           </View>
           <View style={styles.footerContainer}>
             <Button
+              neutral
               title={t('btn.cancel')}
               containerStyle={styles.btnContainer}
               btnContainerStyle={styles.btnCancel}
@@ -116,7 +167,7 @@ class RateApp extends PureComponent {
               onPress={this.rateApp}
             />
           </View>
-        </View>
+        </Container>
       </ModalBox>
     );
   }
@@ -124,62 +175,55 @@ class RateApp extends PureComponent {
 
 const styles = StyleSheet.create({
   modal: {
+    backgroundColor: 'transparent',
     height: null,
     width: '80%',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
   },
   container: {
     paddingHorizontal: 15,
-    paddingTop: '1%'
+    paddingTop: '1%',
   },
   image: {
     width: '100%',
     height: appConfig.device.height * 0.35,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   headingContainer: {
     paddingVertical: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   heading: {
-    fontSize: 24,
     fontWeight: '800',
-    color: '#444',
-    letterSpacing: 1.6
+    letterSpacing: 1.6,
   },
   bodyContainer: {
+    alignItems: 'center',
     padding: 10,
-    paddingTop: 0
+    paddingTop: 0,
   },
   body: {
     marginTop: 15,
-    fontSize: 15,
     lineHeight: 20,
-    color: '#444'
   },
   footerContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   btnContainer: {
     flex: 1,
     paddingTop: 10,
     paddingBottom: 15,
-    paddingHorizontal: 0
+    paddingHorizontal: 0,
   },
   btnAccept: {
     borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0
+    borderBottomLeftRadius: 0,
   },
   btnCancel: {
-    backgroundColor: '#aaa',
     borderTopRightRadius: 0,
-    borderBottomRightRadius: 0
-  }
+    borderBottomRightRadius: 0,
+  },
 });
 
 export default withTranslation(['rateApp', 'common'])(RateApp);

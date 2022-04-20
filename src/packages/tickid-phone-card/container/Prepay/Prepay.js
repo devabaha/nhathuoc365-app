@@ -1,22 +1,34 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
 import PropTypes from 'prop-types';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import config from '../../config';
+// helpers
+import replaceAll from '../../helper/replaceAll';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// entities
+import EventTracker from '../../../../helper/EventTracker';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import {
-  Text,
-  View,
   ScrollView,
-  StyleSheet,
-  Platform,
-  RefreshControl
-} from 'react-native';
+  Container,
+  RefreshControl,
+  Typography,
+} from 'src/components/base';
 import EnterPhoneComponent from '../../component/EnterPhone';
 import ChangeNetworkModal from '../../component/ChangeNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SubmitButton from '../../component/SubmitButton';
-import replaceAll from '../../helper/replaceAll';
-import EventTracker from '../../../../helper/EventTracker';
 
 class Prepay extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     refreshing: PropTypes.bool,
     routeKey: PropTypes.string.isRequired,
@@ -24,13 +36,13 @@ class Prepay extends Component {
     listServices: PropTypes.array,
     networksOfService: PropTypes.object,
     cardsOfNetwork: PropTypes.object,
-    prefix: PropTypes.oneOf(['trước', 'sau']),
+    prefix: PropTypes.string,
     onRefresh: PropTypes.func,
     hideContact: PropTypes.bool,
     errorEmptyMessage: PropTypes.string,
     errorLengthMessage: PropTypes.string,
     validLength: PropTypes.number,
-    keyboardType: PropTypes.string
+    keyboardType: PropTypes.string,
   };
 
   static defaultProps = {
@@ -40,39 +52,49 @@ class Prepay extends Component {
     listServices: [],
     networksOfService: {},
     cardsOfNetwork: {},
-    prefix: 'trước',
     onRefresh: () => {},
     hideContact: false,
-    errorEmptyMessage: 'Vui lòng nhập số điện thoại',
-    errorLengthMessage: 'Số điện thoại không hợp lệ',
     validLength: 10,
-    keyboardType: undefined
+    keyboardType: undefined,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    errorMessage: '',
+    cardValueType: '',
+    contactName: config.defaultContactName,
+    contactPhone: config.defaultContactPhone,
+    networkType: this.currentNetworks[0].type,
+  };
+  eventTracker = new EventTracker();
 
-    this.state = {
-      errorMessage: '',
-      cardValueType: '',
-      contactName: config.defaultContactName,
-      contactPhone: config.defaultContactPhone,
-      networkType: this.currentNetworks[0].type
-    };
-    this.eventTracker = new EventTracker();
+  get theme() {
+    return getTheme(this);
+  }
+
+  get errorEmptyMessage() {
+    return (
+      this.props.errorEmptyMessage ||
+      this.props.t('enterAccountCodePlaceholder')
+    );
+  }
+
+  get errorLengthMessage() {
+    return (
+      this.props.errorLengthMessage || this.props.t('error.invalidPhoneNumber')
+    );
   }
 
   get prefixNetWorksPhoneNumber() {
     const currentNetworks = this.currentNetworks;
 
-    return currentNetworks.map(network => ({
+    return currentNetworks.map((network) => ({
       type: network.type,
-      prefix: network.prefix
+      prefix: network.prefix,
     }));
   }
 
   get currentService() {
-    const { services, routeKey } = this.props;
+    const {services, routeKey} = this.props;
     return services[routeKey];
   }
 
@@ -82,7 +104,7 @@ class Prepay extends Component {
 
   get selectedNetwork() {
     return this.currentNetworks.find(
-      network => network.type === this.state.networkType
+      (network) => network.type === this.state.networkType,
     );
   }
 
@@ -93,7 +115,7 @@ class Prepay extends Component {
   get selectedCard() {
     if (!this.state.cardValueType) return {};
     return this.currentCards.find(
-      card => card.type === this.state.cardValueType
+      (card) => card.type === this.state.cardValueType,
     );
   }
 
@@ -104,7 +126,7 @@ class Prepay extends Component {
 
   componentDidMount() {
     this.setState({
-      cardValueType: this.currentCards[0].type
+      cardValueType: this.currentCards[0].type,
     });
     this.eventTracker.logCurrentView();
   }
@@ -114,65 +136,69 @@ class Prepay extends Component {
   }
 
   handleOpenContact = () => {
-    config.route.push(config.routes.contact, {
-      onPressContact: this.handlePressContact
-    });
+    config.route.push(
+      config.routes.contact,
+      {
+        onPressContact: this.handlePressContact,
+      },
+      this.theme,
+    );
   };
 
-  handlePressContact = contact => {
+  handlePressContact = (contact) => {
     config.route.pop();
     this.setState({
       contactName: contact.name,
-      contactPhone: contact.displayPhone
+      contactPhone: contact.displayPhone,
     });
   };
 
   handlePressSelectNetwork = () => {
     this.setState({
-      visibleNetwork: true
+      visibleNetwork: true,
     });
   };
 
-  handleNetworkChange = network => {
+  handleNetworkChange = (network) => {
     this.setState(
       {
         networkType: network.type,
-        visibleNetwork: false
+        visibleNetwork: false,
       },
       () => {
         const alsoHasType = this.currentCards.some(
-          card => card.type === this.state.cardValueType
+          (card) => card.type === this.state.cardValueType,
         );
         // if not exist card type, reset default card type to first
         if (!alsoHasType) {
           this.setState({
-            cardValueType: this.currentCards[0].type
+            cardValueType: this.currentCards[0].type,
           });
         }
-      }
+      },
     );
   };
 
-  handleSelectCardValue = cardValue => {
+  handleSelectCardValue = (cardValue) => {
     this.setState({
-      cardValueType: cardValue.type
+      cardValueType: cardValue.type,
     });
   };
 
   handleValidate = () => {
     if (!this.contactPhone) {
       this.setState({
-        errorMessage: this.props.errorEmptyMessage
+        errorMessage: this.errorEmptyMessage,
       });
       return false;
     } else if (this.contactPhone.length < this.props.validLength) {
       this.setState({
-        errorMessage: this.props.errorLengthMessage
+        errorMessage: this.errorLengthMessage,
       });
       return false;
     } else {
       this.setState({
-        errorMessage: ''
+        errorMessage: '',
       });
       return true;
     }
@@ -181,42 +207,50 @@ class Prepay extends Component {
   handleContinue = () => {
     const isValid = this.handleValidate();
     if (isValid) {
-      config.route.push(config.routes.buyCardConfirm, {
-        type: this.currentService.name,
-        card: this.selectedCard,
-        wallet: this.props.wallet,
-        hasPass: this.props.hasPass,
-        network: this.selectedNetwork,
-        serviceId: this.currentService.id,
-        historyTitle: this.currentService.history_title,
-        contactName: this.state.contactName,
-        contactPhone: this.contactPhone
-      });
+      config.route.push(
+        config.routes.buyCardConfirm,
+        {
+          type: this.currentService.name,
+          card: this.selectedCard,
+          wallet: this.props.wallet,
+          hasPass: this.props.hasPass,
+          network: this.selectedNetwork,
+          serviceId: this.currentService.id,
+          historyTitle: this.currentService.history_title,
+          contactName: this.state.contactName,
+          contactPhone: this.contactPhone,
+        },
+        this.theme,
+      );
     }
   };
 
   handleShowHistory = () => {
-    config.route.push(config.routes.cardHistory, {
-      title: this.currentService.history_title,
-      serviceId: this.currentService.id
-    });
+    config.route.push(
+      config.routes.cardHistory,
+      {
+        title: this.currentService.history_title,
+        serviceId: this.currentService.id,
+      },
+      this.theme,
+    );
   };
 
-  handleChangePhoneNumber = text => {
+  handleChangePhoneNumber = (text) => {
     this.updateNetworkByPrefixPhoneNumber(text);
     this.setState({
       contactPhone: text,
       contactName: '',
-      errorMessage: ''
+      errorMessage: '',
     });
   };
 
-  updateNetworkByPrefixPhoneNumber = phoneNumber => {
+  updateNetworkByPrefixPhoneNumber = (phoneNumber) => {
     if (phoneNumber.length >= 4) {
       const inputPrefix = phoneNumber.slice(0, 3);
       const prefixNetWorks = this.prefixNetWorksPhoneNumber;
-      const network = prefixNetWorks.find(prefixNetWork =>
-        prefixNetWork.prefix.includes(inputPrefix)
+      const network = prefixNetWorks.find((prefixNetWork) =>
+        prefixNetWork.prefix.includes(inputPrefix),
       );
       if (network) {
         this.handleNetworkChange(network);
@@ -230,7 +264,7 @@ class Prepay extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -240,8 +274,7 @@ class Prepay extends Component {
           }
           keyboardDismissMode={
             Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-          }
-        >
+          }>
           <EnterPhoneComponent
             editable
             data={this.currentNetworks}
@@ -270,36 +303,41 @@ class Prepay extends Component {
             networkType={this.state.networkType}
             visible={this.state.visibleNetwork}
             onNetworkChange={this.handleNetworkChange}
-            onClose={() => this.setState({ visibleNetwork: false })}
+            onClose={() => this.setState({visibleNetwork: false})}
           />
 
           {!!this.currentService.content && (
-            <Text style={styles.content}>{this.currentService.content}</Text>
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={styles.content}>
+              {this.currentService.content}
+            </Typography>
           )}
 
           <View style={styles.bottomSpace} />
         </ScrollView>
 
-        <SubmitButton onPress={this.handleContinue} title="Nạp ngay" />
-      </View>
+        <SubmitButton
+          safeLayout
+          onPress={this.handleContinue}
+          title={this.props.t('rechargeNow')}
+        />
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   bottomSpace: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   content: {
-    fontSize: 12,
-    color: '#333',
-    fontWeight: '400',
     marginLeft: 16,
-    marginTop: 24
-  }
+    marginTop: 24,
+  },
 });
 
-export default Prepay;
+export default withTranslation('phoneCard')(Prepay);

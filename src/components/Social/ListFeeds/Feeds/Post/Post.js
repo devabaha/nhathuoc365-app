@@ -1,26 +1,27 @@
-import React, {useState, useCallback, useEffect, useRef} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import FastImage from 'react-native-fast-image';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import appConfig from 'app-config';
-import {LINE_HEIGHT_OF_CONTENT} from 'src/constants/social/post';
-import {isShowFullContent, renderGridImages} from 'app-helper/social';
+import React, {useState, useCallback, useEffect, useRef, useMemo} from 'react';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+// helpers
 import {getNewsFeedSize} from 'app-helper/image';
-
-import Container from 'src/components/Layout/Container';
+import {isShowFullContent, renderGridImages} from 'app-helper/social';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {LINE_HEIGHT_OF_CONTENT} from 'src/constants/social/post';
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
+// custom components
+import {
+  BaseButton,
+  Container,
+  Icon,
+  IconButton,
+  Typography,
+  TypographyType,
+} from 'src/components/base';
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
 import TextPressable from 'src/components/TextPressable';
 import Image from 'src/components/Image';
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   container: {},
@@ -43,13 +44,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userName: {
-    color: '#333',
     fontWeight: '600',
     flex: 1,
   },
   description: {
-    fontSize: 12,
-    color: '#666',
     marginTop: 3,
   },
   thumbnailContainer: {
@@ -64,26 +62,20 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     padding: 15,
-    backgroundColor: '#eee',
   },
   category: {
-    color: appConfig.colors.primary,
     fontWeight: '500',
     marginBottom: 7,
     letterSpacing: 0.3,
   },
   title: {
-    color: '#333',
     fontWeight: 'bold',
-    fontSize: 16,
   },
   contentContainer: {
     paddingHorizontal: 15,
   },
   content: {
-    color: '#333',
     alignSelf: 'flex-start',
-    fontSize: 15,
     lineHeight: LINE_HEIGHT_OF_CONTENT,
   },
 
@@ -92,7 +84,6 @@ const styles = StyleSheet.create({
   },
 
   groupNameDirectionIcon: {
-    color: '#666',
     fontSize: 10,
   },
 
@@ -101,13 +92,15 @@ const styles = StyleSheet.create({
     marginRight: 0,
     right: 0,
   },
+  seeMore: {
+    top: (appConfig.device.pixel * 16) / 2,
+  },
 
   moreContainer: {
     marginLeft: 30,
   },
   moreIcon: {
     fontSize: 18,
-    color: appConfig.colors.text,
   },
 });
 
@@ -128,6 +121,8 @@ const Post = ({
   onPressAvatar = () => {},
   onPressMoreActions = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const truncatedContent = useRef('');
   const canShowFullMessage = useRef(false);
   const isShowFullPostContent = useCallback(() => {
@@ -155,17 +150,26 @@ const Post = ({
     }
   }, [isShowFullMessage, content]);
 
+  const groupNameDirectionIconStyle = useMemo(
+    () =>
+      mergeStyles(styles.groupNameDirectionIcon, {
+        color: theme.color.iconInactive,
+      }),
+    [theme],
+  );
+
   const renderGroupName = () => {
     return !!group?.name ? (
-      <Text>
+      <>
         {' '}
-        <AntDesignIcon
+        <Icon
+          bundle={BundleIconSetName.ANT_DESIGN}
           name="caretright"
-          style={styles.groupNameDirectionIcon}
+          style={groupNameDirectionIconStyle}
         />
         {'  '}
         <TextPressable onPress={onPressGroup}>{group.name}</TextPressable>
-      </Text>
+      </>
     ) : (
       ''
     );
@@ -174,12 +178,14 @@ const Post = ({
   const renderMoreButton = () => {
     return (
       showMoreActionsButton && (
-        <TouchableOpacity
+        <IconButton
+          bundle={BundleIconSetName.IONICONS}
+          name="ios-ellipsis-horizontal"
           hitSlop={HIT_SLOP}
           style={styles.moreContainer}
-          onPress={onPressMoreActions}>
-          <Ionicons name="ios-ellipsis-horizontal" style={styles.moreIcon} />
-        </TouchableOpacity>
+          iconStyle={styles.moreIcon}
+          onPress={onPressMoreActions}
+        />
       )
     );
   };
@@ -194,12 +200,18 @@ const Post = ({
     );
   }, [images]);
 
+  const titleStyle = useMemo(() => {
+    return mergeStyles(styles.title, {
+      color: theme.color.onContentBackground,
+    });
+  }, [theme]);
+
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <Container centerVertical={false} style={styles.container}>
-        <Container row style={styles.block}>
-          <TouchableHighlight
-            underlayColor="rgba(0,0,0,.6)"
+      <Container style={styles.container}>
+        <Container row centerVertical style={styles.block}>
+          <BaseButton
+            useTouchableHighlight
             onPress={onPressAvatar}
             style={styles.avatarContainer}>
             <Image
@@ -207,39 +219,59 @@ const Post = ({
               style={styles.avatar}
               resizeMode="cover"
             />
-          </TouchableHighlight>
-          <Container centerVertical={false} style={styles.userNameContainer}>
-            <Container row>
-              <Text style={styles.userName}>
+          </BaseButton>
+          <Container style={styles.userNameContainer}>
+            <Container row centerVertical>
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.userName}>
                 <TextPressable onPress={onPressUserName}>
                   {userName}
                 </TextPressable>
 
                 {renderGroupName()}
-              </Text>
+              </Typography>
 
               {renderMoreButton()}
             </Container>
             {!!description && (
-              <Text style={styles.description}>{description}</Text>
+              <Typography
+                type={TypographyType.DESCRIPTION_SMALL}
+                style={styles.description}>
+                {description}
+              </Typography>
             )}
           </Container>
         </Container>
 
-        <Container centerVertical={false}>
+        <Container>
           {!!content && (
-            <Container centerVertical={false} style={styles.contentContainer}>
-              <TouchableWithoutFeedback onPress={handleToggleExpandMessage}>
-                <Text selectable style={styles.content}>
-                  {isShowFullMessage ? content : truncatedContent.current}
-                </Text>
+            <Container style={styles.contentContainer}>
+              <TouchableWithoutFeedback
+                onLongPress={() => {}}
+                onPress={handleToggleExpandMessage}>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  selectable
+                  style={styles.content}>
+                  {isShowFullMessage ? content : truncatedContent.current}{' '}
+                  {canShowFullMessage.current && !isShowFullMessage && (
+                    <SeeMoreBtn
+                      containerStyle={styles.seeMoreContainer}
+                      lineHeight={LINE_HEIGHT_OF_CONTENT}
+                      titleStyle={styles.seeMore}
+                      onPress={handleShowFullMessage}
+                    />
+                  )}
+                </Typography>
               </TouchableWithoutFeedback>
-              {canShowFullMessage.current && !isShowFullMessage && (
+
+              {/* {canShowFullMessage.current && !isShowFullMessage && (
                 <SeeMoreBtn
                   containerStyle={styles.seeMoreContainer}
                   onPress={handleShowFullMessage}
                 />
-              )}
+              )} */}
             </Container>
           )}
 
@@ -248,16 +280,24 @@ const Post = ({
 
         <Container>
           {!!thumbnailUrl && (
-            <FastImage
+            <Image
               source={{uri: thumbnailUrl}}
               style={styles.thumbnailContainer}
             />
           )}
           {!!title && (
-            <View style={styles.titleContainer}>
-              {!!category && <Text style={styles.category}>{category}</Text>}
-              <Text style={styles.title}>{title}</Text>
-            </View>
+            <Container content style={styles.titleContainer}>
+              {!!category && (
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM_PRIMARY}
+                  style={[styles.category]}>
+                  {category}
+                </Typography>
+              )}
+              <Typography type={TypographyType.LABEL_LARGE} style={titleStyle}>
+                {title}
+              </Typography>
+            </Container>
           )}
         </Container>
       </Container>

@@ -1,12 +1,18 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
-import {Actions} from 'react-native-router-flux';
-
-import {APIRequest} from 'src/network/Entity';
+import equal from 'deep-equal';
+import {Observer} from 'mobx-react';
+import {debounce} from 'lodash';
+import {reaction, toJS} from 'mobx';
+import Clipboard from '@react-native-community/clipboard';
+// configs
+import appConfig from 'app-config';
 import store from 'app-store';
-import Feeds from 'src/components/Social/ListFeeds/Feeds';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
+import {servicesHandler} from 'app-helper/servicesHandler';
 import {
   formatStoreSocialPosts,
   getRelativeTime,
@@ -14,18 +20,24 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
-import {Observer} from 'mobx-react';
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
 import NoResult from 'src/components/NoResult';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import Loading from 'src/components/Loading';
-
-import appConfig from 'app-config';
-import {reaction, toJS} from 'mobx';
-import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
+import Feeds from 'src/components/Social/ListFeeds/Feeds';
+import ActionBarText from 'src/components/Social/ListFeeds/Feeds/ActionBarText';
+import {FlatList, RefreshControl} from 'src/components/base';
+// skeleton
 import PostsSkeleton from './PostsSkeleton';
-import {debounce} from 'lodash';
-import equal from 'deep-equal';
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -35,19 +47,13 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingVertical: 10,
   },
-  statusText: {
-    padding: 15,
-    textAlign: 'center',
-    color: '#333',
-    fontStyle: 'italic',
-  },
-
   feedsContainer: {
     marginBottom: 10,
   },
 });
 
 const Posts = ({
+  safeLayout,
   groupId,
   posts: postsProp,
   siteId = store.store_data?.id,
@@ -59,9 +65,11 @@ const Posts = ({
   onRefresh: onRefreshProp = () => {},
   ListHeaderComponent,
 }) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation(['common', 'social']);
-  const moreActionOptions = [t('edit'), t('delete'), t('cancel')];
+  const moreActionOptions = [t('edit'), t('copy'), t('delete'), t('cancel')];
 
   const limit = useRef(limitProp);
   const page = useRef(1);
@@ -208,7 +216,7 @@ const Posts = ({
 
       try {
         const response = await getPostsRequest.promise();
-        console.log('abc', response, data);
+        // console.log('abc', response, data);
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {
@@ -308,7 +316,14 @@ const Posts = ({
   );
 
   const handleActionBarPress = useCallback((type, feeds) => {
-    handleSocialActionBarPress(SOCIAL_DATA_TYPES.POST, type, feeds);
+    handleSocialActionBarPress(
+      SOCIAL_DATA_TYPES.POST,
+      type,
+      feeds,
+      undefined,
+      undefined,
+      theme,
+    );
   }, []);
 
   const handlePostingComplete = useCallback(() => {
@@ -367,9 +382,12 @@ const Posts = ({
           });
           break;
         case 1:
-          Actions.push(appConfig.routes.modalConfirm, {
+          Clipboard.setString(feeds.content);
+          Toast.show(t('copied'));
+          break;
+        case 2:
+          push(appConfig.routes.modalConfirm, {
             message: t('social:postDeleteConfirmMessage'),
-            isConfirm: true,
             yesTitle: t('delete'),
             noTitle: t('cancel'),
             yesConfirm: () => deletePost(feeds.id),
@@ -382,9 +400,9 @@ const Posts = ({
 
   const handlePressMoreActions = useCallback(
     (feeds) => {
-      Actions.push(appConfig.routes.modalActionSheet, {
+      push(appConfig.routes.modalActionSheet, {
         options: moreActionOptions,
-        destructiveButtonIndex: 1,
+        destructiveButtonIndex: moreActionOptions.length - 2,
         onPress: (index) => handlePressMoreActionOption(index, feeds),
       });
     },
@@ -397,7 +415,7 @@ const Posts = ({
       style={
         feeds.is_accepted !== undefined &&
         !feeds.is_accepted && {
-          color: appConfig.colors.status.warning,
+          color: theme.color.warning,
         }
       }
     />
@@ -451,6 +469,8 @@ const Posts = ({
                   SOCIAL_BUTTON_TYPES.COMMENT,
                   feeds,
                   false,
+                  undefined,
+                  theme,
                 )
               }
               onPressMoreActions={() => handlePressMoreActions(feeds)}
@@ -471,6 +491,7 @@ const Posts = ({
 
   return (
     <FlatList
+      safeLayout={safeLayout}
       contentContainerStyle={styles.contentContainer}
       data={posts}
       renderItem={renderPost}

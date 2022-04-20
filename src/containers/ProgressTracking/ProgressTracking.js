@@ -1,17 +1,21 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import {StyleSheet} from 'react-native';
+// 3-party libs
 import useIsMounted from 'react-is-mounted-hook';
-
-import appConfig from 'app-config';
-
+// helpers
+import {servicesHandler} from 'app-helper/servicesHandler';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+// entities
 import {APIRequest} from 'src/network/Entity';
-
-import NoResult from 'src/components/NoResult';
-import ScreenWrapper from 'src/components/ScreenWrapper';
+// custom components
+import {ScreenWrapper, FlatList, RefreshControl} from 'src/components/base';
 import Loading from 'src/components/Loading';
 import ProgressItem from './ProgressItem';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import NoResult from 'src/components/NoResult';
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -19,7 +23,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const ProgressTracking = () => {
+const ProgressTracking = ({navigation}) => {
+  const {theme} = useTheme();
+
   const isMounted = useIsMounted();
   const {t} = useTranslation();
   const [getListProgressItemRequest] = useState(new APIRequest());
@@ -27,6 +33,14 @@ const ProgressTracking = () => {
   const [listProgressItem, setListProgressItem] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
 
   useEffect(() => {
     getListProgressItem();
@@ -74,6 +88,7 @@ const ProgressTracking = () => {
       type: SERVICES_TYPE.PROGRESS_TRACKING_DETAIL,
       title: progressItem.product?.name,
       id: progressItem.id,
+      theme: theme,
     });
   }, []);
 
@@ -85,7 +100,7 @@ const ProgressTracking = () => {
   const renderListEmpty = () => {
     return (
       !isLoading && (
-        <NoResult iconName="note-multiple" message="Chưa có dữ liệu" />
+        <NoResult iconName="note-multiple" message={t('noResult')} />
       )
     );
   };
@@ -107,6 +122,7 @@ const ProgressTracking = () => {
     <ScreenWrapper>
       {isLoading && <Loading center />}
       <FlatList
+        safeLayout
         data={listProgressItem}
         renderItem={renderProgressItem}
         contentContainerStyle={styles.contentContainer}

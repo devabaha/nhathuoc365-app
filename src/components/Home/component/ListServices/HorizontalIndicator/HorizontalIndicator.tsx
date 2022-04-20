@@ -1,74 +1,106 @@
-import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
-import { HorizontalIndicatorProps } from '.';
-//@ts-ignore
-import appConfig from 'app-config';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+// 3-party libs
+import Animated, {Easing} from 'react-native-reanimated';
+// types
+import {HorizontalIndicatorProps} from '.';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {hexToRgba} from 'app-helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#fff',
-        borderRadius: 2,
-        height: 3,
-        width: 50,
-        overflow: 'hidden'
-    },
-    indicator: {
-        borderRadius: 2,
-        height: '100%',
-        width: '30%'
-    }
-})
+  container: {
+    borderRadius: 2,
+    height: 3,
+    width: 50,
+    overflow: 'hidden',
+  },
+  indicator: {
+    borderRadius: 2,
+    height: '100%',
+    width: '30%',
+  },
+});
 
 class HorizontalIndicator extends Component<HorizontalIndicatorProps> {
-    static defaultProps = {
-        color: appConfig.colors.primary,
-    }
-    state = {};
-    animatedIndicatorWidth = new Animated.Value(0);
+  static contextType = ThemeContext;
 
-    componentDidMount() {
-        setTimeout(() =>
-            Animated.timing(this.animatedIndicatorWidth, {
-                toValue: this.props.indicatorWidth,
-                easing: Easing.quad,
-                duration: 200
-            }).start()
-        );
-    }
+  state = {};
+  animatedIndicatorWidth = new Animated.Value(0);
 
-    componentDidUpdate() {
-        setTimeout(() =>
-            Animated.timing(this.animatedIndicatorWidth, {
-                toValue: this.props.indicatorWidth,
-                easing: Easing.quad,
-                duration: 200
-            }).start()
-        );
-    }
+  get theme() {
+    return getTheme(this);
+  }
 
-    get containerStyle() {
-        return {
-            backgroundColor: this.props.foregroundColor ||
-                //@ts-ignore
-                hexToRgbA(this.props.color, .25)
-        }
-    }
+  get indicatorColor() {
+    return (
+      this.props.indicatorColor ||
+      this.props.color ||
+      this.theme.color.persistPrimary
+    );
+  }
 
-    get indicatorStyle() {
-        return {
-            backgroundColor: this.props.indicatorColor || this.props.color,
-            width: this.animatedIndicatorWidth
-        }
-    }
+  get foregroundColor() {
+    return (
+      this.props.foregroundColor ||
+      this.props.color ||
+      this.theme.color.primaryHighlight
+    );
+  }
 
-    render() {
-        return (
-            <View style={[styles.container, this.containerStyle, this.props.containerStyle]}>
-                <Animated.View style={[styles.indicator, this.indicatorStyle, this.props.indicatorStyle]} />
-            </View>
-        );
-    }
+  componentDidMount() {
+    setTimeout(() =>
+      Animated.timing(this.animatedIndicatorWidth, {
+        toValue: this.props.indicatorWidth,
+        easing: Easing.quad,
+        duration: 200,
+      }).start(),
+    );
+  }
+
+  componentDidUpdate() {
+    setTimeout(() =>
+      Animated.timing(this.animatedIndicatorWidth, {
+        toValue: this.props.indicatorWidth,
+        easing: Easing.quad,
+        duration: 200,
+      }).start(),
+    );
+  }
+
+  get containerStyle() {
+    return {
+      backgroundColor: hexToRgba(this.foregroundColor, 0.25),
+    };
+  }
+
+  get indicatorStyle() {
+    return {
+      backgroundColor: this.indicatorColor as string,
+      width: this.animatedIndicatorWidth,
+    };
+  }
+
+  render() {
+    return (
+      <View
+        style={[
+          styles.container,
+          this.containerStyle,
+          this.props.containerStyle,
+        ]}>
+        <Animated.View
+          style={[
+            styles.indicator,
+            this.indicatorStyle,
+            this.props.indicatorStyle,
+          ]}
+        />
+      </View>
+    );
+  }
 }
 
 export default HorizontalIndicator;

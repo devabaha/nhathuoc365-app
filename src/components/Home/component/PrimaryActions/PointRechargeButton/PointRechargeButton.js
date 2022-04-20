@@ -1,32 +1,16 @@
 import React from 'react';
-
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// configs
 import store from 'app-store';
-import appConfig from 'app-config';
-import {
-  servicesHandler,
-  SERVICES_TYPE
-} from '../../../../../helper/servicesHandler';
+// helpers
+import {servicesHandler} from 'app-helper/servicesHandler';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {SERVICES_TYPE} from 'app-helper/servicesHandler';
+// custom components
 import SubActionButton from '../SubActionButton';
-
-const styles = StyleSheet.create({
-  add_store_action_btn: {
-    paddingVertical: 4
-  },
-  add_store_action_btn_box: {
-    alignItems: 'center'
-  },
-  add_store_action_label: {
-    fontSize: 14,
-    color: '#404040',
-    marginTop: 4
-  },
-  icon: {
-    fontSize: 28,
-    color: appConfig.colors.primary
-  }
-});
 
 const PointRechargeButton = ({
   label,
@@ -34,31 +18,36 @@ const PointRechargeButton = ({
   containerStyle,
   iconName = 'ios-add-circle',
   iconStyle,
-  labelStyle,
-  onPress = () => {}
+
+  useTouchableHighlight,
+  onPress = () => {},
 }) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation();
+
   function goPaymentMethod() {
     const service = {
       type: SERVICES_TYPE.PAYMENT_METHOD,
       showPrice: false,
       showSubmit: false,
       storeId: store.app_id,
-      title: 'Hướng dẫn nạp'
+      title: t('vndWallet:rechargeInstructions'),
+      theme: theme,
     };
     onPress(service);
     servicesHandler(service);
   }
 
   return (
-    <SubActionButton 
-    iconName={iconName}
-    label={label}
-
-    wrapperStyle={wrapperStyle}
-    containerStyle={containerStyle}
-    iconStyle={iconStyle}
-
-    onPress={goPaymentMethod}
+    <SubActionButton
+      iconName={iconName}
+      label={label}
+      wrapperStyle={wrapperStyle}
+      containerStyle={containerStyle}
+      iconStyle={iconStyle}
+      useTouchableHighlight={useTouchableHighlight}
+      onPress={goPaymentMethod}
     />
   );
 };

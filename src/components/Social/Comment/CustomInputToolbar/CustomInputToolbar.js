@@ -1,24 +1,23 @@
-import React, {Component, useCallback, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-  Keyboard,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Keyboard} from 'react-native';
+// 3-party libs
 import {InputToolbar} from 'react-native-gifted-chat';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-
-import Container from 'src/components/Layout/Container';
-import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   PREVIEW_IMAGE_HEIGHT,
   REPLYING_BAR_HEIGHT,
   PADDING_IMAGE_HEIGHT,
 } from 'src/constants/social/comments';
-import {TouchableOpacity as GestureTouchableOpacity} from 'react-native-gesture-handler';
+import {TypographyType, BundleIconSetName} from 'src/components/base';
+// custom components
+import {Container, IconButton, Typography} from 'src/components/base';
+import Image from 'src/components/Image';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,17 +32,14 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   separator: {
-    ...elevationShadowStyle(3),
     top: -1,
     position: 'absolute',
     width: '100%',
     height: 2,
-    backgroundColor: '#fff',
     zIndex: -1,
   },
   mainContentContainer: {
     zIndex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 15,
   },
   replyingContainer: {
@@ -51,14 +47,10 @@ const styles = StyleSheet.create({
   },
   replyingPrefix: {
     flex: 1,
-    color: '#666',
-    fontSize: 12,
     fontStyle: 'italic',
   },
   replyingName: {
-    color: '#333',
     fontWeight: '500',
-    fontSize: 14,
   },
   closeIconContainer: {
     paddingVertical: 12,
@@ -66,32 +58,25 @@ const styles = StyleSheet.create({
     marginRight: -15,
   },
   closeIcon: {
-    color: '#666',
     fontSize: 14,
   },
   replyingSeparator: {
     width: '100%',
     height: 0.5,
-    backgroundColor: '#eee',
     bottom: 5,
   },
 
   previewImagesContainer: {
     paddingVertical: PADDING_IMAGE_HEIGHT,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
   },
   previewImageContainer: {
     alignItems: 'flex-start',
     alignSelf: 'flex-start',
   },
   previewImage: {
-    borderRadius: 8,
+    flex: 1,
   },
-  closeImageContainer: {
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#666',
+  closeIconContainer: {
     padding: 5,
     alignSelf: 'flex-start',
     marginLeft: 5,
@@ -99,24 +84,26 @@ const styles = StyleSheet.create({
   mentionContainer: {
     paddingHorizontal: 5,
     paddingVertical: 2,
-    // backgroundColor: hexToRgbA(appConfig.colors.primary, 0.28),
-    borderRadius: 4,
     marginLeft: 7,
     marginRight: -5,
   },
   mention: {
-    // color: '#fff',
-    color: appConfig.colors.primary,
     fontWeight: '500',
   },
 });
 
 class CustomInputToolbar extends Component {
+  static contextType = ThemeContext;
+
   state = {
     toolbarHeight: 44,
     isKeyboardShowing: false,
   };
   unmounted = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
@@ -149,7 +136,7 @@ class CustomInputToolbar extends Component {
 
   renderPreviewImages(images) {
     return (
-      <Container row style={styles.previewImagesContainer}>
+      <Container row style={this.previewImagesContainerStyle}>
         {images.map((image, index) => {
           const aspectRatio = (image.width || 1) / (image.height || 1);
           return (
@@ -157,20 +144,22 @@ class CustomInputToolbar extends Component {
               <Image
                 source={{uri: image.uri}}
                 style={[
-                  styles.previewImage,
+                  this.previewImageStyle,
                   {
-                    flex: 1,
                     aspectRatio,
                     maxHeight: PREVIEW_IMAGE_HEIGHT,
                     maxWidth: PREVIEW_IMAGE_HEIGHT * aspectRatio,
                   },
                 ]}
               />
-              <GestureTouchableOpacity
-                style={[styles.closeImageContainer]}
-                onPress={() => this.props.onCancelPreviewImage(image)}>
-                <AntDesignIcon name="close" style={styles.closeIcon} />
-              </GestureTouchableOpacity>
+              <IconButton
+                useGestureHandler
+                neutral
+                style={this.closeImageContainerStyle}
+                onPress={() => this.props.onCancelPreviewImage(image)}
+                name="close"
+                iconStyle={styles.closeIcon}
+              />
             </Container>
           );
         })}
@@ -181,11 +170,48 @@ class CustomInputToolbar extends Component {
   renderMention(replyingMentionName) {
     return (
       !!replyingMentionName && (
-        <View style={styles.mentionContainer}>
-          <Text style={styles.mention}>{replyingMentionName}</Text>
+        <View style={this.mentionContainerStyle}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM_PRIMARY}
+            style={styles.mention}>
+            {replyingMentionName}
+          </Typography>
         </View>
       )
     );
+  }
+
+  get previewImagesContainerStyle() {
+    return mergeStyles(styles.previewImagesContainer, {
+      borderBottomWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get previewImageStyle() {
+    return mergeStyles(styles.previewImage, {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    });
+  }
+
+  get closeImageContainerStyle() {
+    return mergeStyles(styles.closeIconContainer, {
+      borderRadius: this.theme.layout.borderRadiusHuge,
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    });
+  }
+
+  get replyingSeparatorStyle() {
+    return mergeStyles(styles.replyingSeparator, {
+      backgroundColor: this.theme.color.border,
+    });
+  }
+
+  get mentionContainerStyle() {
+    return mergeStyles(styles.mentionContainer, {
+      borderRadius: this.theme.layout.borderRadiusExtraSmall,
+    });
   }
 
   render() {
@@ -211,37 +237,40 @@ class CustomInputToolbar extends Component {
                   <Container
                     onStartShouldSetResponder={() => false}
                     onStartShouldSetResponderCapture={() => true}
-                    style={[styles.replyWrapper, {top}]}
-                    centerVertical={false}>
-                    <View style={styles.separator} />
-                    <View style={styles.mainContentContainer}>
+                    style={[styles.replyWrapper, {top}]}>
+                    <Container shadow style={styles.separator} />
+                    <Container style={styles.mainContentContainer}>
                       {!!replyingUserId && (
                         <>
                           <Container row style={styles.replyingContainer}>
-                            <Text
+                            <Typography
                               numberOfLines={1}
+                              type={TypographyType.LABEL_SMALL_TERTIARY}
                               style={styles.replyingPrefix}>
                               {t('replying')}{' '}
-                              <Text style={styles.replyingName}>
+                              <Typography
+                                style={styles.replyingName}
+                                type={TypographyType.LABEL_MEDIUM}>
                                 {replyingName}
-                              </Text>
-                            </Text>
-                            <GestureTouchableOpacity
+                              </Typography>
+                            </Typography>
+                            <IconButton
+                              useGestureHandler
+                              neutral
                               hitSlop={HIT_SLOP}
                               style={styles.closeIconContainer}
-                              onPress={this.handleCancelReplying}>
-                              <AntDesignIcon
-                                name="close"
-                                style={styles.closeIcon}
-                              />
-                            </GestureTouchableOpacity>
+                              bundle={BundleIconSetName.IONICONS}
+                              name="close"
+                              iconStyle={styles.closeIcon}
+                              onPress={this.handleCancelReplying}
+                            />
                           </Container>
-                          <View style={styles.replyingSeparator} />
+                          <View style={this.replyingSeparatorStyle} />
                         </>
                       )}
                       {!!previewImages &&
                         this.renderPreviewImages(previewImages)}
-                    </View>
+                    </Container>
                   </Container>
                 )}
                 <Container row>

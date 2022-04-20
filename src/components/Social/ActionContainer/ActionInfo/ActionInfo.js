@@ -1,16 +1,21 @@
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import Container from 'src/components/Layout/Container';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+// helper
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constant
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Container, Typography} from 'src/components/base';
 import Pressable from 'src/components/Pressable';
-import FloatingIcons from 'src/components/Social/FloatingIcons ';
+import FloatingIcons from 'src/components/Social/FloatingIcons';
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'space-between',
   },
   extraBottom: {
-    borderBottomWidth: Util.pixel,
-    borderColor: '#ddd',
     paddingVertical: 5,
   },
   block: {
@@ -24,10 +29,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   totalReaction: {},
-  text: {
-    fontSize: 13,
-    color: '#666',
-  },
+  text: {},
 });
 
 const FLOATING_ICONS = [
@@ -45,30 +47,42 @@ const ActionInfo = ({
   hasInfoExtraBottom = true,
   onPressTotalComments = () => {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('social');
 
   const hasContent =
     !!isLiked || !!totalReaction || (!disableComment && !!totalComments);
 
+  const extraBottomStyle = useMemo(() => {
+    return mergeStyles(styles.extraBottom, {
+      borderBottomWidth: theme.layout.borderWidthPixel,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
   return (
     <Container
       row
+      noBackground
       style={[
         styles.container,
-        (hasInfoExtraBottom || hasContent) && styles.extraBottom,
+        (hasInfoExtraBottom || hasContent) && extraBottomStyle,
       ]}>
       {!!isLiked || !!totalReaction ? (
-        <Container row style={styles.block}>
+        <Container row noBackground style={styles.block}>
           <FloatingIcons
             icons={FLOATING_ICONS}
             wrapperStyle={styles.floatingIcons}
           />
-          <Text style={styles.text}>
+          <Typography
+            type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
+            style={styles.text}>
             {!!isLiked && t('self')}
             {!!totalReaction && !!isLiked && ' ' + t('and') + ' '}
             {!!totalReaction &&
               totalReaction + (!!isLiked ? ' ' + t('others') : '')}
-          </Text>
+          </Typography>
         </Container>
       ) : (
         <Container />
@@ -76,10 +90,12 @@ const ActionInfo = ({
 
       {!disableComment && !!totalComments && (
         <Pressable style={styles.end} onPress={onPressTotalComments}>
-          <Container row style={styles.block}>
-            <Text style={styles.text}>
+          <Container row noBackground style={styles.block}>
+            <Typography
+              type={TypographyType.DESCRIPTION_SEMI_MEDIUM}
+              style={styles.text}>
               {totalComments} {totalCommentsTitle || t('comments')}
-            </Text>
+            </Typography>
           </Container>
         </Pressable>
       )}

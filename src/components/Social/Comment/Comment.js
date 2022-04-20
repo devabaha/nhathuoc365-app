@@ -1,44 +1,40 @@
 import React, {Component} from 'react';
-import {
-  findNodeHandle,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {findNodeHandle, Keyboard, StyleSheet, View} from 'react-native';
+// 3-party libs
+import moment from 'moment';
 import Clipboard from '@react-native-community/clipboard';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import FoundationIcon from 'react-native-vector-icons/Foundation';
-
-import TickidChat from 'app-packages/tickid-chat';
-
-import Loading from 'src/components/Loading';
-import {APIRequest} from 'src/network/Entity';
-
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+// helpers
+import TickidChat from 'app-packages/tickid-chat';
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {languages} from 'src/i18n/constants';
-import moment from 'moment';
-import {COMPONENT_TYPE, config} from 'app-packages/tickid-chat/constants';
-import CustomMessage from './CustomMessage';
-import CustomInputToolbar from './CustomInputToolbar';
+import {COMPONENT_TYPE} from 'app-packages/tickid-chat/constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
 import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   REPLYING_BAR_HEIGHT,
   ACCESSORY_TYPE,
   MAX_RATING_VALUE,
 } from 'src/constants/social';
-import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
-import Image from 'src/components/Image';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import CustomMessage from './CustomMessage';
+import CustomInputToolbar from './CustomInputToolbar';
 import TextPressable from 'src/components/TextPressable';
-import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import {RatingAccessory} from './Accessory';
-import {Container} from 'src/components/Layout';
-import {Actions} from 'react-native-router-flux';
+import {ImageButton, IconButton, Icon, Container} from 'src/components/base';
+import EmptyChat from 'app-packages/tickid-chat/component/EmptyChat';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -62,28 +58,19 @@ const styles = StyleSheet.create({
   emptyChatContainer: {
     paddingBottom: '200%',
   },
-  emptyIcon: {
-    fontSize: 80,
-    color: '#909090',
-  },
   userNameContainer: {
     paddingHorizontal: 10,
     paddingTop: 5,
     marginBottom: 2,
+    alignItems: 'flex-start',
   },
   userName: {
-    color: '#333',
     fontWeight: '700',
-    fontSize: 13,
   },
-  titleError: {
-    color: appConfig.colors.status.danger,
-  },
+  titleError: {},
 
   accessoryContainer: {
-    justifyContent: 'center',
-    // borderTopColor: '#b2b2b2',
-    // borderTopWidth: StyleSheet.hairlineWidth,
+    height: '100%',
   },
   ratingContainer: {
     marginVertical: 4,
@@ -91,11 +78,16 @@ const styles = StyleSheet.create({
   ratingIcon: {
     marginRight: 2,
     fontSize: 13,
-    color: appConfig.colors.marigold,
+  },
+
+  actionIconStyle: {
+    fontSize: 22,
   },
 });
 
 class Comment extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     site_id: store.store_data?.id,
     user_id: store.user_info?.id,
@@ -167,6 +159,10 @@ class Comment extends Component {
     this.deleteTitle,
     this.cancelTitle,
   ];
+
+  get theme() {
+    return getTheme(this);
+  }
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -782,7 +778,7 @@ class Comment extends Component {
     }
     this.collapseComposer();
 
-    Actions.push(appConfig.routes.modalActionSheet, {
+    push(appConfig.routes.modalActionSheet, {
       options,
       destructiveButtonIndex,
       onPress: async (buttonIndex) => {
@@ -862,9 +858,8 @@ class Comment extends Component {
   confirmDeleteMessage = async (commentId) => {
     await new Promise((resolve) => {
       setTimeout(() => {
-        Actions.push(appConfig.routes.modalConfirm, {
+        push(appConfig.routes.modalConfirm, {
           message: this.props.t('social:commentDeleteConfirmMessage'),
-          isConfirm: true,
           yesTitle: this.props.t('delete'),
           noTitle: this.props.t('cancel'),
           yesConfirm: async () => {
@@ -932,7 +927,6 @@ class Comment extends Component {
       !this.state.isEditingComment && (
         <CustomInputToolbar
           {...props}
-          accessoryStyle={styles.accessoryContainer}
           previewImages={this.state.previewImages}
           replyingName={replyingName}
           replyingUserId={replyingMention?.user_id}
@@ -954,7 +948,7 @@ class Comment extends Component {
       : this.props.t('social:posting');
     const isHighlight =
       this.state.replyingComment.id === props.currentMessage?.id;
-    const messageBottomTitleStyle = isError && styles.titleError;
+    const messageBottomTitleStyle = isError && this.titleErrorStyle;
     if (typeof props.currentMessage.id === 'string') {
     }
 
@@ -992,13 +986,14 @@ class Comment extends Component {
     if (!rating) return null;
 
     return (
-      <Container row style={styles.ratingContainer}>
+      <Container noBackground row style={styles.ratingContainer}>
         {Array.from({length: MAX_RATING_VALUE}).map((star, index) => {
           return (
-            <FontAwesomeIcon
+            <Icon
               key={index}
+              bundle={BundleIconSetName.FONT_AWESOME}
               name={index < rating ? 'star' : 'star-o'}
-              style={styles.ratingIcon}
+              style={this.ratingIconStyle}
             />
           );
         })}
@@ -1012,14 +1007,14 @@ class Comment extends Component {
       (props.currentMessage?.user_id && 'ID' + props.currentMessage?.user_id);
     return (
       <View style={styles.userNameContainer}>
-        <Text style={styles.userName}>
-          <TextPressable
-            onPress={() =>
-              this.handlePressUserName(props.currentMessage?.user_id)
-            }>
-            {userName}
-          </TextPressable>
-        </Text>
+        <TextPressable
+          type={TypographyType.LABEL_SEMI_MEDIUM}
+          style={styles.userName}
+          onPress={() =>
+            this.handlePressUserName(props.currentMessage?.user_id)
+          }>
+          {userName}
+        </TextPressable>
         {this.renderRatings(props.currentMessage?.star)}
       </View>
     );
@@ -1046,16 +1041,15 @@ class Comment extends Component {
         borderRadius: avatarDimension / 2,
       },
     };
+
     return (
-      <TouchableHighlight
-        underlayColor="rgba(0,0,0,.6)"
+      <ImageButton
+        useTouchableHighlight
         style={props.containerStyle.left}
-        onPress={() => this.handlePressUserName(props.currentMessage?.user_id)}>
-        <Image
-          style={props.imageStyle.left}
-          source={{uri: props.currentMessage?.user?.avatar || 'any'}}
-        />
-      </TouchableHighlight>
+        imageStyle={props.imageStyle.left}
+        source={{uri: props.currentMessage?.user?.avatar || 'any'}}
+        onPress={() => this.handlePressUserName(props.currentMessage?.user_id)}
+      />
     );
   };
 
@@ -1065,16 +1059,22 @@ class Comment extends Component {
 
   renderActions = (props) => {
     const disabled = !!this.state.previewImages.length;
+
     return (
-      <TouchableOpacity
+      <IconButton
+        bundle={BundleIconSetName.ANT_DESIGN}
+        name="picture"
         style={styles.composerAction}
-        onPress={disabled ? () => {} : this.handlePressGallery}>
-        <AntDesignIcon
-          size={25}
-          name="picture"
-          color={disabled ? '#eee' : config.blurColor}
-        />
-      </TouchableOpacity>
+        iconStyle={[
+          styles.actionIconStyle,
+          {
+            color: disabled
+              ? this.actionIconDisabledColor
+              : this.actionIconInactiveColor,
+          },
+        ]}
+        onPress={disabled ? () => {} : this.handlePressGallery}
+      />
     );
   };
 
@@ -1085,15 +1085,23 @@ class Comment extends Component {
         !this.refTickidChat.state.text && !this.state.previewImages.length;
     }
     return (
-      <TouchableOpacity
-        style={[styles.composerAction, styles.sendContainer]}
-        onPress={disabled ? () => {} : this.handlePressSend}>
-        <FontAwesomeIcon
-          size={22}
+      <Container>
+        <IconButton
+          disabled={disabled}
+          bundle={BundleIconSetName.FONT_AWESOME}
           name="paper-plane"
-          color={disabled ? '#eee' : config.focusColor}
+          style={[styles.composerAction, styles.sendContainer]}
+          iconStyle={[
+            styles.actionIconStyle,
+            {
+              color: disabled
+                ? this.actionIconDisabledColor
+                : this.actionIconActiveColor,
+            },
+          ]}
+          onPress={disabled ? () => {} : this.handlePressSend}
         />
-      </TouchableOpacity>
+      </Container>
     );
   };
 
@@ -1113,8 +1121,34 @@ class Comment extends Component {
           break;
       }
     });
-    return <Container row>{accessory}</Container>;
+    return (
+      <Container row style={styles.accessoryContainer}>
+        {accessory}
+      </Container>
+    );
   };
+
+  get actionIconDisabledColor() {
+    return this.theme.color.disabled;
+  }
+
+  get actionIconInactiveColor() {
+    return this.theme.color.iconInactive;
+  }
+
+  get actionIconActiveColor() {
+    return this.theme.color.accent2;
+  }
+
+  get titleErrorStyle() {
+    return mergeStyles(styles.titleError, {color: this.theme.color.danger});
+  }
+
+  get ratingIconStyle() {
+    return mergeStyles(styles.ratingIcon, {
+      color: this.theme.color.marigold,
+    });
+  }
 
   render() {
     const paddingTop =
@@ -1138,9 +1172,8 @@ class Comment extends Component {
             !this.state.loading ? (
               <EmptyChat
                 style={styles.emptyChatContainer}
-                icon={
-                  <FoundationIcon name="comments" style={styles.emptyIcon} />
-                }
+                iconName="comments"
+                iconBundle={BundleIconSetName.FOUNDATION}
                 message={this.props.t('social:emptyComment')}
               />
             ) : (
@@ -1149,7 +1182,7 @@ class Comment extends Component {
           }
           // Root props
           setHeader={this.props.setHeader}
-          defaultStatusBarColor={appConfig.colors.primary}
+          defaultStatusBarColor={this.theme.color.primary}
           // Refs
           ref={(inst) => (this.refTickidChat = inst)}
           refGiftedChat={(_, inst) => (this.refGiftedChat = inst)}
@@ -1193,6 +1226,7 @@ class Comment extends Component {
               ? this.renderAccessory
               : undefined
           }
+          onListViewPress={this.handleCancelReplying}
         />
       </>
     );

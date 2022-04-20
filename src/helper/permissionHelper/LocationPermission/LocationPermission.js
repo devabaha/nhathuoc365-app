@@ -1,17 +1,16 @@
-import {Alert, Linking} from 'react-native';
 import {RESULTS, PERMISSIONS, request, check} from 'react-native-permissions';
 import AndroidOpenSettings from 'react-native-android-open-settings';
-import {Actions} from 'react-native-router-flux';
 
 import appConfig from 'app-config';
 import {LOCATION_PERMISSION_TYPE, REQUEST_RESULT_TYPE} from '../constants';
-
-const LOCATION_TITLE = 'Vị trí';
-const REQUEST_TIMEOUT_MESSAGE = 'Hết thời gian yêu cầu.';
-const REQUEST_PERMISSION_MESSAGE =
-  'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
+import i18n from 'i18next';
+import {openLink} from 'app-helper';
+import {push} from 'app-helper/routing';
+import {Linking} from 'react-native';
 
 class LocationPermission {
+  t = i18n.getFixedT(undefined, 'common');
+
   callPermission = async (type, callback = (result) => {}) => {
     const permissionGranted = await this.handleLocationPermission(type);
     callback(permissionGranted);
@@ -64,28 +63,23 @@ class LocationPermission {
       case REQUEST_RESULT_TYPE.NOT_GRANTED:
       case REQUEST_RESULT_TYPE.BLOCKED:
         appConfig.device.isIOS
-          ? this.openSettingIOS('app-settings:')
+          ? this.openSettingIOS()
           : this.openSettingsAndroid(errorCode);
         break;
       case REQUEST_RESULT_TYPE.NOT_AVAILABLE:
         appConfig.device.isIOS
-          ? this.openSettingIOS('App-Prefs:root=Privacy&path=LOCATION')
+          ? this.openSettingIOS()
           : this.openSettingsAndroid(errorCode);
         break;
     }
   };
 
   openSettingIOS = (url) => {
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (!supported) {
-          console.log("Can't handle settings url", url);
-          Alert.alert('Không thể truy cập', 'Đường dẫn này không thể mở được.');
-        } else {
-          Linking.openURL(url);
-        }
-      })
-      .catch((err) => console.error('An error occurred', err));
+    if (!url) {
+      Linking.openSettings();
+    } else {
+      openLink(url);
+    }
   };
 
   openSettingsAndroid = (type) => {
@@ -115,18 +109,20 @@ class LocationPermission {
     const content =
       errContent ||
       (errCode === REQUEST_RESULT_TYPE.TIMEOUT
-        ? REQUEST_TIMEOUT_MESSAGE
-        : REQUEST_PERMISSION_MESSAGE);
+        ? this.t('requestTimeout')
+        : this.t('requireLocation'));
 
     const yesTitle =
       confirmTitle ||
-      (errCode === REQUEST_RESULT_TYPE.TIMEOUT ? 'Thử lại' : 'Cài đặt');
-    const noTitle = cancelTitle || 'Huỷ';
+      (errCode === REQUEST_RESULT_TYPE.TIMEOUT
+        ? this.t('tryAgain')
+        : this.t('settings'));
+    const noTitle = cancelTitle || this.t('cancel');
 
-    Actions.push(appConfig.routes.modalConfirm, {
+    push(appConfig.routes.modalConfirm, {
       momo: true,
       otherClose,
-      title: title || `Cho phép truy cập ${LOCATION_TITLE}`,
+      title: title || this.t('allowLocationAccess'),
       content,
       yesTitle,
       noTitle,

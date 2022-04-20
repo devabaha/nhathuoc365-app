@@ -1,0 +1,19 @@
+{
+  "title": "Domains",
+  "label": "Change API - change your life",
+  "placeholder": {
+    "aipDomain": "api domain",
+    "imageDomain": "image domain (optional)",
+    "socialDomain": "social domain (optional)"
+  },
+  "save": "Please save it?",
+  "noteTitle": "Maybe you need to know!",
+  "note": [
+    "Type 'hs ' for fast typing 'https://'.",
+    "Type 'ht ' for fast typing 'http://'.",
+    "If field is left blank image/ social domain then the system will automatically choose according to the selected api domain:\r\n- Api domain is a live domain -> image/ social domain using live domain.\r\n- Api domain not live domain -> image/ social domain using dev domain"
+  ],
+  "historyTitle": "What did you enter??",
+  "historyLabel": "Save only the most recent {{maxSave}} data!",
+  "noHistory": "Nothing entered yet :)"
+}

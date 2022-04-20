@@ -42,6 +42,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Octicons from 'react-native-vector-icons/Octicons';
 import Zocial from 'react-native-vector-icons/Zocial';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {Platform} from 'react-native';
 
 export const BUNDLE_ICON_SETS = {
   AntDesign,
@@ -118,7 +119,24 @@ export const MEDIA_TYPE = {
   YOUTUBE_VIDEO: 'youtube',
 };
 
+export const HIT_SLOP = {
+  top: 15,
+  right: 15,
+  bottom: 15,
+  left: 15,
+};
+
+export const THEME_STORAGE_KEY = 'theme_storage_key';
+
 export const EULA_AGREEMENT_USER_DECISION_DATA_KEY =
   'eulaAgreementUserDecisionData';
 
 export const EULA_AGREEMENT_LAST_UPDATED = '2022-01-12';
+
+export const NAV_BAR_HEIGHT = Platform.select({
+  ios: 44,
+  android: 54,
+  windows: 54,
+});
+
+export const STATUS_SUCCESS = 200;

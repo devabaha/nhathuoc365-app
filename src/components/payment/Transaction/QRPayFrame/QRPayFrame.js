@@ -1,6 +1,13 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import appConfig from 'app-config';
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 const WIDTH = 15;
 const HEIGHT = 3;
@@ -8,7 +15,7 @@ const HEIGHT = 3;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 30
+    marginVertical: 30,
   },
   frameContainer: {
     position: 'absolute',
@@ -22,15 +29,12 @@ const styles = StyleSheet.create({
   title: {
     position: 'absolute',
     top: -15,
-    color: appConfig.colors.primary,
     fontWeight: 'bold',
-    fontSize: 20,
     textTransform: 'uppercase',
-    letterSpacing: .3
+    letterSpacing: 0.3,
   },
   frame: {
     position: 'absolute',
-    backgroundColor: appConfig.colors.primary,
   },
   frameTopLeftHorizontal: {
     top: 0,
@@ -83,22 +87,36 @@ const styles = StyleSheet.create({
 });
 
 const QRPayFrame = ({children, style}) => {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation();
+
+  const frameStyle = useMemo(() => {
+    return mergeStyles(styles.frame, {
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
   return (
     <View style={[styles.container, style]}>
       {children}
-      <Text style={styles.title}>QR Pay</Text>
+      <Typography
+        type={TypographyType.TITLE_LARGE_PRIMARY}
+        style={styles.title}>
+        {t('qrPayLabel')}
+      </Typography>
       <View style={styles.frameContainer}>
-        <View style={[styles.frame, styles.frameTopLeftHorizontal]} />
-        <View style={[styles.frame, styles.frameTopLeftVertical]} />
+        <View style={[frameStyle, styles.frameTopLeftHorizontal]} />
+        <View style={[frameStyle, styles.frameTopLeftVertical]} />
 
-        <View style={[styles.frame, styles.frameTopRightHorizontal]} />
-        <View style={[styles.frame, styles.frameTopRightVertical]} />
+        <View style={[frameStyle, styles.frameTopRightHorizontal]} />
+        <View style={[frameStyle, styles.frameTopRightVertical]} />
 
-        <View style={[styles.frame, styles.frameBottomLeftHorizontal]} />
-        <View style={[styles.frame, styles.frameBottomLeftVertical]} />
+        <View style={[frameStyle, styles.frameBottomLeftHorizontal]} />
+        <View style={[frameStyle, styles.frameBottomLeftVertical]} />
 
-        <View style={[styles.frame, styles.frameBottomRightHorizontal]} />
-        <View style={[styles.frame, styles.frameBottomRightVertical]} />
+        <View style={[frameStyle, styles.frameBottomRightHorizontal]} />
+        <View style={[frameStyle, styles.frameBottomRightVertical]} />
       </View>
     </View>
   );

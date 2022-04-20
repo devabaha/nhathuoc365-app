@@ -1,23 +1,34 @@
 import React, {Component} from 'react';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  Animated,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import {View, Animated, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-
+// 3-party libs
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import appConfig from 'app-config';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {DAY_NAME_IN_WEEK, DATE_FORMAT} from '../constants';
+import {
+  TypographyType,
+  BundleIconSetName,
+  IconButton,
+} from 'src/components/base';
+// custom components
 import Day from './Day';
+import {
+  BaseButton,
+  Typography,
+  Icon,
+  Container,
+  FlatList,
+} from 'src/components/base';
 
 class DateTimePicker extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
-    containerStyle: PropTypes.object,
     componentPaddingHorizontal: PropTypes.number,
     minWidthDate: PropTypes.number,
     selectedDate: PropTypes.string,
@@ -27,7 +38,6 @@ class DateTimePicker extends Component {
   };
 
   static defaultProps = {
-    containerStyle: {},
     componentPaddingHorizontal: 15,
     minWidthDate: 23,
     selectedDate: moment().format(DATE_FORMAT),
@@ -55,6 +65,10 @@ class DateTimePicker extends Component {
     animatedNext: new Animated.Value(0),
   };
   refDayFlatList = React.createRef();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   getDefaultDates(selectedDate, startDate, endDate, disabledDates) {
     let dates = [],
@@ -495,6 +509,7 @@ class DateTimePicker extends Component {
     };
 
     const extraPrevStyle = {
+      backgroundColor: this.theme.color.overlay30,
       transform: [{scale: this.state.animatedPrevious}],
       opacity: this.state.animatedPrevious.interpolate({
         inputRange: [0, 0.618, 1],
@@ -504,6 +519,7 @@ class DateTimePicker extends Component {
     };
 
     const extraNextStyle = {
+      backgroundColor: this.theme.color.overlay30,
       transform: [{scale: this.state.animatedNext}],
       opacity: this.state.animatedNext.interpolate({
         inputRange: [0, 0.618, 1],
@@ -514,35 +530,33 @@ class DateTimePicker extends Component {
 
     return (
       <View style={[styles.headerContainer, extraContainerStyle]}>
-        <TouchableOpacity
-          disabled={disabledPrevious}
-          hitSlop={HIT_SLOP}
-          onPress={() => this.changeDayFlatListIndex(-1)}>
-          <View style={styles.btnContainer}>
-            <Animated.View style={[styles.bgBtn, extraPrevStyle]} />
-            <Icon
-              name="pan-left"
-              style={[styles.icon, disabledPrevious && styles.iconDisabled]}
-            />
-          </View>
-        </TouchableOpacity>
+        <View style={styles.btnContainer}>
+          <Container animated style={[styles.bgBtn, extraPrevStyle]} />
+          <IconButton
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            name="pan-left"
+            iconStyle={styles.icon}
+            disabled={disabledPrevious}
+            hitSlop={HIT_SLOP}
+            onPress={() => this.changeDayFlatListIndex(-1)}
+          />
+        </View>
 
-        <Text style={styles.title}>
+        <Typography type={TypographyType.TITLE_SEMI_LARGE} style={styles.title}>
           {this.selectedMonth} {this.selectedYear}
-        </Text>
+        </Typography>
 
-        <TouchableOpacity
-          disabled={disabledNext}
-          hitSlop={HIT_SLOP}
-          onPress={() => this.changeDayFlatListIndex(1)}>
-          <View style={styles.btnContainer}>
-            <Animated.View style={[styles.bgBtn, extraNextStyle]} />
-            <Icon
-              name="pan-right"
-              style={[styles.icon, disabledNext && styles.iconDisabled]}
-            />
-          </View>
-        </TouchableOpacity>
+        <View style={styles.btnContainer}>
+          <Container animated style={[styles.bgBtn, extraNextStyle]} />
+          <IconButton
+            bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+            name="pan-right"
+            iconStyle={styles.icon}
+            disabled={disabledNext}
+            hitSlop={HIT_SLOP}
+            onPress={() => this.changeDayFlatListIndex(1)}
+          />
+        </View>
       </View>
     );
   }
@@ -550,9 +564,12 @@ class DateTimePicker extends Component {
   renderDayInWeek() {
     return DAY_NAME_IN_WEEK.map((dayName, index) => {
       return (
-        <Text key={index} style={styles.subTitle}>
+        <Typography
+          type={TypographyType.LABEL_LARGE_TERTIARY}
+          key={index}
+          style={styles.subTitle}>
           {dayName}
-        </Text>
+        </Typography>
       );
     });
   }
@@ -584,26 +601,28 @@ class DateTimePicker extends Component {
 
   renderDate() {
     return (
-      !!this.state.componentWidth && <FlatList
-        ref={this.refDayFlatList}
-        contentContainerStyle={styles.dateContentContainer}
-        onScrollEndDrag={this.onDayScrollEnd.bind(this)}
-        onScrollToIndexFailed={(e) => console.log(e)}
-        initialNumToRender={5}
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled
-        horizontal
-        data={this.state.dates}
-        renderItem={this.renderDay.bind(this)}
-        keyExtractor={(item, index) => index.toString()}
-        onEndReached={this.loadMoreDate.bind(this)}
-        onEndReachedThreshold={0.1}
-        getItemLayout={(data, index) => ({
-          length: this.state.componentWidth,
-          offset: this.state.componentWidth * index,
-          index,
-        })}
-      />
+      !!this.state.componentWidth && (
+        <FlatList
+          ref={this.refDayFlatList}
+          contentContainerStyle={styles.dateContentContainer}
+          onScrollEndDrag={this.onDayScrollEnd.bind(this)}
+          onScrollToIndexFailed={(e) => console.log(e)}
+          initialNumToRender={5}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          horizontal
+          data={this.state.dates}
+          renderItem={this.renderDay.bind(this)}
+          keyExtractor={(item, index) => index.toString()}
+          onEndReached={this.loadMoreDate.bind(this)}
+          onEndReachedThreshold={0.1}
+          getItemLayout={(data, index) => ({
+            length: this.state.componentWidth,
+            offset: this.state.componentWidth * index,
+            index,
+          })}
+        />
+      )
     );
   }
 
@@ -620,6 +639,12 @@ class DateTimePicker extends Component {
         <View style={styles.dateContainer}>{this.renderDate()}</View>
       </View>
     );
+  }
+
+  get iconDisableStyle() {
+    return mergeStyles(styles.iconDisabled, {
+      color: this.theme.color.iconInactive,
+    });
   }
 
   render() {
@@ -644,13 +669,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 30,
-    color: '#555',
   },
   bodyContainer: {},
   title: {
     textTransform: 'uppercase',
-    fontSize: 18,
-    color: appConfig.colors.text,
   },
   dayNameContainer: {
     flexDirection: 'row',
@@ -659,8 +681,6 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     textTransform: 'uppercase',
-    fontSize: 16,
-    color: '#555',
   },
   dayInWeekContainer: {
     flex: 1,
@@ -673,9 +693,7 @@ const styles = StyleSheet.create({
   dateContentContainer: {
     justifyContent: 'center',
   },
-  iconDisabled: {
-    color: '#aaa',
-  },
+  iconDisabled: {},
   btnContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -685,7 +703,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#aaa',
   },
 });
 

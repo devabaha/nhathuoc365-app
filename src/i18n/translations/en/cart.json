@@ -1,7 +1,7 @@
 {
   "popup": {
     "edit": {
-      "message": "The shopping cart (if existed) will be removed! Do you still want to edit this order?"
+      "message": "The current shopping cart (if existed) will be removed! Do you still want to edit this order?"
     },
     "remove": {
       "message": "Do you want to remove this product from the cart?"
@@ -11,6 +11,12 @@
     },
     "cancelBooking": {
       "message": "Are you sure to cancel this booking?"
+    },
+    "reorder": {
+      "message": "The current shopping cart (if existed) will be removed! Do you still want to re-order this order?"
+    },
+    "changeCartType": {
+      "message": "\r\n• Your ordering cart type is {{cartTypeKeyword}}.\r\n\r\n• Press {{btnTitle}} to cancel current cart and create new one for this type.\r\n"
     }
   },
   "notification": {
@@ -27,5 +33,6 @@
     "total": "TOTAL",
     "order": "ORDER",
     "cart": "CART"
-  }
+  },
+  "quantityInput": "Enter quantity"
 }

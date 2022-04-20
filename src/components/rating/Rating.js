@@ -1,26 +1,42 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  TextInput,
-  ScrollView,
-  Keyboard
-} from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, Keyboard} from 'react-native';
+//3-party libs
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push, pop} from 'app-helper/routing';
+// context
+import {getTheme, ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName} from 'src/components/base/Icon/constants';
+// custom components
+import {
+  Container,
+  Typography,
+  TypographyType,
+  ScrollView,
+  Input,
+  ScreenWrapper,
+  TextButton,
+  IconButton,
+  Icon,
+} from 'src/components/base';
 import OrdersItemComponent from '../orders/OrdersItemComponent';
-import EventTracker from '../../helper/EventTracker';
+import Button from 'src/components/Button';
+import Loading from '../Loading';
 
-const DEFAULT_RATING_MSG =
-  'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
 const STARS = [1, 2, 3, 4, 5];
 const MIN_TO_RATE_APP = 4;
 const MAX_TO_TAKE_FEEDBACK = 3;
 
 class Rating extends Component {
+  static contextType = ThemeContext;
+
   constructor(props) {
     super(props);
 
@@ -30,62 +46,73 @@ class Rating extends Component {
       cart_data: props.cart_data,
       rating_data: null,
       had_action: false,
-      rating_msg: DEFAULT_RATING_MSG,
+      rating_msg: this.props.t('defaultRating'),
       rating_selection: [],
-      comment: ''
+      comment: '',
+      loading: false,
     };
+    this.unmounted = false;
+    this.refInputContainer = React.createRef();
+
     this.eventTracker = new EventTracker();
+
+    this.updateNavBarDisposer = () => {};
+  }
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      this.keyboardDidShow
+      this.keyboardDidShow,
     );
     this.keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      this.keyboardDidHide
+      this.keyboardDidHide,
     );
     this.getSiteDetailData();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
     this.eventTracker.clearTracking();
+    this.updateNavBarDisposer();
   }
 
-  keyboardDidShow = e => {
-    this.setState(
-      {
-        keyboardShow: true,
-        keyboardHeight: e.endCoordinates.height
-      },
-      () => {
-        setTimeout(() => {
-          this.refRating && this.refRating.scrollToEnd({ animated: true });
-        }, 0);
-      }
-    );
+  keyboardDidShow = (e) => {
+    this.setState({
+      keyboardShow: true,
+      keyboardHeight: e.endCoordinates.height,
+    });
+    this.refRating && this.refRating.scrollToEnd();
   };
 
   keyboardDidHide = () => {
     layoutAnimation();
     this.setState({
       keyboardShow: false,
-      keyboardHeight: 0
+      keyboardHeight: 0,
     });
   };
-  
+
   getSiteDetailData = async () => {
-    const { site_id } = this.state.cart_data;
+    const {site_id} = this.state.cart_data;
     try {
       const response = await APIHandler.site_detail(site_id);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.rating_data) {
           this.setState({
-            rating_data: JSON.parse(response.data.rating_data)
+            rating_data: JSON.parse(response.data.rating_data),
           });
         }
       }
@@ -94,8 +121,8 @@ class Rating extends Component {
     }
   };
 
-  setStar = current => {
-    this.setState(prevState => {
+  setStar = (current) => {
+    this.setState((prevState) => {
       if (prevState.current == 1 && current == 1) {
         current = 0;
       }
@@ -104,29 +131,33 @@ class Rating extends Component {
         had_action: true,
         rating_msg:
           current <= MAX_TO_TAKE_FEEDBACK
-            ? 'Chúng tôi cần cải thiện điều gì?'
-            : DEFAULT_RATING_MSG
+            ? this.props.t('description')
+            : this.props.t('defaultRating'),
       };
     });
   };
 
   renderStar = () => {
-    const { current } = this.state;
+    const {current} = this.state;
     return STARS.map((star, index) => {
       let active = current >= star;
       return (
-        <TouchableHighlight
+        <IconButton
+          useTouchableHighlight
           key={index}
           onPress={this.setStar.bind(this, star)}
           underlayColor="transparent"
-        >
-          <Icon
-            style={styles.starIcon}
-            name="star"
-            size={36}
-            color={active ? 'rgb(255, 235, 0)' : 'rgba(0, 0, 0, .2)'}
-          />
-        </TouchableHighlight>
+          bundle={BundleIconSetName.FONT_AWESOME}
+          name="star"
+          iconStyle={[
+            styles.starIcon,
+            {
+              color: active
+                ? this.theme.color.goldenYellow
+                : this.theme.color.textSecondary,
+            },
+          ]}
+        />
       );
     });
   };
@@ -134,47 +165,63 @@ class Rating extends Component {
   onSave = async () => {
     Keyboard.dismiss();
 
-    try {
-      const { current, comment, rating_selection } = this.state;
-      const { site_id, id } = this.state.cart_data;
+    this.setState({loading: true});
 
-      const response = await APIHandler.site_cart_rating(site_id, id, {
+    try {
+      const {current, comment, rating_selection} = this.state;
+      const {site_id, id, cart_code} = this.state.cart_data;
+      const params = {
         star: current,
         comment,
-        rating_data: rating_selection.join(', ')
-      });
+        rating_data: rating_selection.join(', '),
+      };
 
+      const apiHandler = this.props.isServiceFeedback
+        ? APIHandler.service_rating(cart_code, params)
+        : APIHandler.site_cart_rating(site_id, id, params);
+
+      const response = await apiHandler;
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        Actions.pop();
+        pop();
 
         if (
           current >= MIN_TO_RATE_APP &&
           response.data &&
           response.data.vote_app_flag
         ) {
-          Actions.push(appConfig.routes.modalRateApp);
+          push(appConfig.routes.modalRateApp, this.theme);
         } else {
           flashShowMessage({
-            message: 'Góp ý của bạn đã được ghi nhận!',
-            type: 'success'
+            message: this.props.t('message'),
+            type: 'success',
           });
         }
+      } else {
+        flashShowMessage({
+          message: response.message || this.props.t('common:api.error.message'),
+          type: 'danger',
+        });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      if (this.unmounted) return;
+
+      this.setState({loading: false});
     }
   };
 
-  isRatingSelected = rating => {
+  isRatingSelected = (rating) => {
     return this.state.rating_selection.indexOf(rating.name) != -1;
   };
 
-  pushRating = rating => {
+  pushRating = (rating) => {
     const index = this.state.rating_selection.indexOf(rating.name);
     if (index == -1) {
       this.state.rating_selection.push(rating.name);
       this.setState({
-        rating_selection: this.state.rating_selection
+        rating_selection: this.state.rating_selection,
       });
     }
   };
@@ -184,7 +231,7 @@ class Rating extends Component {
     if (index != -1) {
       this.state.rating_selection.splice(index, 1);
       this.setState({
-        rating_selection: this.state.rating_selection
+        rating_selection: this.state.rating_selection,
       });
     }
   }
@@ -196,6 +243,41 @@ class Rating extends Component {
       this.pushRating(rating);
     }
   }
+  get ratingNoteStyle() {
+    return mergeStyles(styles.ratingNote, {
+      backgroundColor: this.theme.color.contentBackgroundWeak,
+    });
+  }
+
+  get inactiveIconColor() {
+    return this.theme.color.iconInactive;
+  }
+
+  get activeIconColor() {
+    return this.theme.color.persistPrimary;
+  }
+
+  get textButtonTypoProps() {
+    return {type: TypographyType.LABEL_TINY_TERTIARY};
+  }
+
+  get ratingMoreStyle() {
+    return mergeStyles(styles.ratingMore, {
+      borderWidth: this.theme.layout.borderWidthLarge,
+    });
+  }
+
+  renderIconLeft = (titleStyle) => {
+    return (
+      <View style={[this.ratingMoreStyle, titleStyle]}>
+        <Icon
+          name="truck"
+          bundle={BundleIconSetName.FONT_AWESOME}
+          style={[titleStyle, styles.iconTruck]}
+        />
+      </View>
+    );
+  };
 
   render() {
     const {
@@ -204,160 +286,145 @@ class Rating extends Component {
       rating_data,
       had_action,
       rating_msg,
-      comment
+      comment,
     } = this.state;
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper safeLayout={!store.keyboardTop}>
+        {this.state.loading && <Loading center />}
         <ScrollView
-          ref={ref => (this.refRating = ref)}
+          ref={(ref) => (this.refRating = ref)}
           keyboardShouldPersistTaps="handled"
-        >
+          contentContainerStyle={{
+            paddingBottom: store.keyboardTop,
+          }}>
           <View style={styles.cartView}>
-            <OrdersItemComponent disableGoDetail={true} item={cart_data} />
+            <OrdersItemComponent
+              disableGoStore={this.props.disableGoStore}
+              disableGoDetail={true}
+              item={cart_data}
+            />
           </View>
 
-          <View
-            style={[
-              styles.feedbackWrapper,
-              {
-                marginBottom: this.state.keyboardHeight
-              }
-            ]}
-          >
-            <Text style={styles.descText}>
-              Vui lòng đánh giá chất lượng phục vụ cho đơn hàng
-            </Text>
+          <Container style={[styles.feedbackWrapper]}>
+            <Typography
+              type={TypographyType.LABEL_MEDIUM}
+              style={styles.descText}>
+              {this.props.t('titleRating')}
+            </Typography>
 
-            <View style={styles.starBox}>{this.renderStar()}</View>
+            <Container style={styles.starBox}>{this.renderStar()}</Container>
 
             <View style={styles.content}>
-              <Text style={styles.questText}>{rating_msg}</Text>
+              <Typography
+                type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+                style={styles.questText}>
+                {rating_msg}
+              </Typography>
+
               {current <= 3 && rating_data && had_action && (
                 <View style={styles.ratingMoreBox}>
                   {rating_data.map((rating, index) => {
                     const active = this.isRatingSelected(rating);
-
+                    const mainColor = active
+                      ? this.activeIconColor
+                      : this.inactiveIconColor;
                     return (
-                      <TouchableHighlight
+                      <TextButton
+                        underlayColor="transparent"
+                        useTouchableHighlight
                         key={index}
                         onPress={this.ratingHandle.bind(this, rating)}
-                        underlayColor="transparent"
-                      >
-                        <View
-                          style={{
-                            alignItems: 'center'
-                          }}
-                        >
-                          <View
-                            style={[
-                              styles.ratingMore,
-                              {
-                                borderColor: active
-                                  ? appConfig.colors.primary
-                                  : '#999999'
-                              }
-                            ]}
-                          >
-                            <Icon
-                              name="truck"
-                              size={24}
-                              color={
-                                active ? appConfig.colors.primary : '#999999'
-                              }
-                            />
-                          </View>
-                          <Text
-                            style={[
-                              styles.ratingShip,
-                              {
-                                color: active
-                                  ? appConfig.colors.primary
-                                  : '#999999'
-                              }
-                            ]}
-                          >
-                            {rating.name}
-                          </Text>
-                        </View>
-                      </TouchableHighlight>
+                        column
+                        typoProps={this.textButtonTypoProps}
+                        titleStyle={[
+                          styles.ratingShip,
+                          {
+                            color: mainColor,
+                            borderColor: mainColor,
+                          },
+                        ]}
+                        renderIconLeft={this.renderIconLeft}>
+                        {rating.name}
+                      </TextButton>
                     );
                   })}
                 </View>
               )}
 
-              <TextInput
-                ref={ref => (this.refs_cart_note = ref)}
-                style={styles.ratingNote}
-                keyboardType="default"
+              <Input
+                ref={(ref) => (this.refs_cart_note = ref)}
+                style={this.ratingNoteStyle}
                 maxLength={1000}
-                placeholder="Nhập ghi chú của bạn tại đây"
-                placeholderTextColor="#999999"
-                multiline={true}
-                underlineColorAndroid="transparent"
-                onChangeText={value => {
+                placeholder={this.props.t('placeholderInput')}
+                multiline
+                onChangeText={(value) => {
                   this.setState({
-                    comment: value
+                    comment: value,
                   });
                 }}
                 value={comment}
               />
             </View>
-          </View>
+          </Container>
         </ScrollView>
 
-        <View style={styles.submitBtnWrapper}>
-          <TouchableHighlight onPress={this.onSave} underlayColor="transparent">
-            <View style={styles.submitBtnContent}>
-              <Text style={styles.submitLabel}>GỬI ĐÁNH GIÁ</Text>
-            </View>
-          </TouchableHighlight>
+        <View
+          style={{
+            bottom: store.keyboardTop,
+          }}>
+          <Button
+            showBackground
+            onPress={this.onSave}
+            style={styles.submitBtnContent}
+            underlayColor="transparent"
+            titleStyle={styles.submitLabel}
+            title={this.props.t('sendRating')}
+          />
         </View>
-      </View>
+      </ScreenWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   descText: {
-    color: '#333',
     marginTop: 2,
     marginLeft: 10,
     marginRight: 10,
-    fontSize: 14,
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   starBox: {
     marginTop: 32,
     marginBottom: 20,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   starIcon: {
-    marginHorizontal: 8
+    fontSize: 36,
+    marginHorizontal: 8,
   },
 
   content: {
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 15,
   },
   questText: {
-    color: '#404040',
-    fontSize: 14,
-    marginTop: 16,
-    textAlign: 'center'
+    marginTop: 10,
+    textAlign: 'center',
   },
   ratingNote: {
-    fontSize: 14,
     width: appConfig.device.width - 32,
     minHeight: 90,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)',
     marginTop: 10,
     paddingVertical: 16,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
+    textAlignVertical: 'top',
+    marginTop: 30,
   },
   ratingMoreBox: {
     width: appConfig.device.width,
@@ -365,49 +432,36 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingHorizontal: 15,
     marginTop: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   ratingMore: {
-    borderWidth: 2,
-    borderColor: '#999999',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 8,
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
-  ratingShip: {
-    color: '#999999',
-    fontSize: 10
-  },
+  ratingShip: {},
   cartView: {
     marginLeft: 0,
     marginRight: 0,
-    width: '100%'
+    width: '100%',
   },
   submitBtnWrapper: {
     width: appConfig.device.width,
     height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: appConfig.colors.white
   },
-  submitBtnContent: {
-    width: appConfig.device.width - 30,
-    height: 42,
-    backgroundColor: appConfig.colors.primary,
-    borderRadius: 3,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
+  submitBtnContent: {},
   submitLabel: {
-    color: '#ffffff',
-    fontSize: 15,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   feedbackWrapper: {
     paddingVertical: 16,
-    backgroundColor: appConfig.colors.white
-  }
+  },
+  iconTruck: {
+    fontSize: 24,
+  },
 });
 
-export default Rating;
+export default withTranslation(['rating', 'common'])(observer(Rating));

@@ -6,6 +6,7 @@
   },
   "address": {
     "title": "1. Address",
+    "myAddress": "My addresses",
     "receive": "SHIPPING ADDRESS",
     "new": "Add new address",
     "delivery": "Deliver to this address",
@@ -14,7 +15,8 @@
     "permissionNotGranted": "Your location could not be determined",
     "confirmPermission": "Allow access Location",
     "noStore": "There are no stores",
-    "store": "Store address"
+    "store": "Store address",
+    "errMsgNotAllowLocationPermission": "Please allow location permission to display stores in order of nearest!"
   },
   "confirm": {
     "title": "2. Confirmation"

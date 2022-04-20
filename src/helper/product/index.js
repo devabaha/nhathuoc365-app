@@ -1,1 +1,8 @@
-export {isOutOfStock, isUnpaid, isPaid, canTransaction, goConfirm} from './product';
+export {
+  isOutOfStock,
+  isUnpaid,
+  isPaid,
+  canTransaction,
+  hasVideo,
+  goConfirm,
+} from './product';

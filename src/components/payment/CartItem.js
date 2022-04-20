@@ -1,26 +1,36 @@
 import React, {Component} from 'react';
-import {
-  TouchableHighlight,
-  TouchableOpacity,
-  Text,
-  View,
-  StyleSheet,
-} from 'react-native';
-import {DiscountBadge} from '../Badges';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import {Actions} from 'react-native-router-flux';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import ExtraQuantityInput from '../cart/CartItem/ExtraQuantityInput';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// images
 import SVGCoupon from 'src/images/coupon.svg';
+// custom components
+import {
+  BaseButton,
+  Container,
+  Icon,
+  IconButton,
+  OutlinedButton,
+  Typography,
+} from 'src/components/base';
+import Indicator from 'src/components/Indicator';
+import Image from 'src/components/Image';
+import {DiscountBadge} from 'src/components/Badges';
+import ExtraQuantityInput from '../cart/CartItem/ExtraQuantityInput';
 
 const styles = StyleSheet.create({
-  cart_item_box_container: {
-    backgroundColor: '#ffffff',
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
-  },
+  cart_item_box_container: {},
   cart_item_box: {
     width: '100%',
     paddingVertical: 15,
@@ -37,16 +47,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   cart_item_check_icon: {
-    color: appConfig.colors.primary,
     fontSize: 24,
-  },
-  cart_item_check: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 0,
-    paddingRight: 0,
-    marginRight: 0,
-    backgroundColor: '#fff',
   },
   cart_item_image_box: {
     width: 100,
@@ -54,7 +55,6 @@ const styles = StyleSheet.create({
   },
   cart_item_image: {
     height: '100%',
-    resizeMode: 'contain',
   },
   cart_item_info: {
     flex: 1,
@@ -64,14 +64,10 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   cart_item_info_name: {
-    color: '#000000',
-    fontSize: 14,
     fontWeight: '600',
     paddingRight: 30,
   },
   cart_item_sub_info_name: {
-    color: '#555',
-    fontSize: 12,
     marginTop: 3,
   },
   cart_item_price_box: {
@@ -81,27 +77,19 @@ const styles = StyleSheet.create({
   },
   cart_item_price_price_safe_off: {
     textDecorationLine: 'line-through',
-    fontSize: 14,
-    color: '#666666',
     marginLeft: 7,
   },
-  cart_item_price_price: {
-    fontSize: 15,
-    color: appConfig.colors.primary,
-  },
+  cart_item_price_price: {},
   cart_item_quantity_container: {
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 8,
     borderRadius: 11,
-    backgroundColor: '#f0f0f0',
-    height: 22,
-    minWidth: 22,
+    height: 20,
+    minWidth: 20,
   },
   cart_item_quantity_mess: {
-    fontSize: 12,
-    color: '#333',
     textAlign: 'center',
   },
   cart_item_actions: {
@@ -124,9 +112,6 @@ const styles = StyleSheet.create({
   cart_item_actions_btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: Util.pixel,
-    borderColor: '#666666',
-    borderRadius: 3,
     position: 'absolute',
     right: 0,
   },
@@ -142,7 +127,6 @@ const styles = StyleSheet.create({
     right: undefined,
   },
   cart_item_remove_btn: {
-    backgroundColor: 'rgba(255,255,255,.9)',
     borderWidth: 0,
     top: 15,
     right: 18,
@@ -150,7 +134,6 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   cart_item_remove_icon: {
-    color: '#333',
     fontSize: 15,
   },
   store_cart_item_qnt_container: {
@@ -163,12 +146,8 @@ const styles = StyleSheet.create({
   },
   cart_item_actions_quantity: {
     textAlign: 'center',
-    color: '#404040',
-    fontWeight: '500',
   },
   cart_item_btn_label: {
-    color: '#404040',
-    fontSize: 20,
     lineHeight: isIOS ? 20 : 24,
   },
   discountBadge: {
@@ -176,13 +155,11 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     height: undefined,
-    backgroundColor: '#fff',
     width: undefined,
   },
   discountBadgeContent: {
     padding: 3,
     paddingHorizontal: 5,
-    backgroundColor: '#FD0D1C',
   },
 
   discountContentContainer: {
@@ -195,25 +172,46 @@ const styles = StyleSheet.create({
     marginRight: 7,
   },
   discountContent: {
-    color: appConfig.colors.primary,
-    fontWeight: '400',
     flex: 1,
-    fontSize: 13,
   },
 });
 
 class CartItem extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      check_loading: false,
-      increment_loading: false,
-      decrement_loading: false,
-      isUpdateQuantityLoading: false,
-    };
+  static defaultProps = {
+    onProductLoadingStateChange: () => {},
+  };
 
-    this.refModal = null;
+  state = {
+    check_loading: false,
+    increment_loading: false,
+    decrement_loading: false,
+    isUpdateQuantityLoading: false,
+  };
+
+  refModal = null;
+
+  cartItemActionBtnTitleTypoProps = {type: TypographyType.LABEL_HUGE};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextState.isUpdateQuantityLoading !==
+        this.state.isUpdateQuantityLoading ||
+      nextState.decrement_loading !== this.state.decrement_loading ||
+      nextState.increment_loading !== this.state.increment_loading
+    ) {
+      this.props.onProductLoadingStateChange(
+        nextState.isUpdateQuantityLoading ||
+          nextState.decrement_loading ||
+          nextState.increment_loading,
+      );
+    }
+    return true;
   }
 
   _checkBoxHandler(item) {
@@ -280,7 +278,7 @@ class CartItem extends Component {
   // xử lý trừ số lượng, số lượng = 0 confirm xoá
   _item_qnt_decrement_handler(item) {
     if (item.quantity <= 1) {
-      this.props.parentCtx._removeItemCartConfirm(item);
+      this.props.onRemoveCartItem(item);
     } else {
       this._item_qnt_decrement(item);
     }
@@ -441,10 +439,10 @@ class CartItem extends Component {
   };
 
   onShowModalChangeQuantity = () => {
-    Actions.push(appConfig.routes.modalInput, {
+    push(appConfig.routes.modalInput, {
       backdropPressToClose: true,
-      title: 'Nhập số lượng',
-      btnTitle: 'Chọn',
+      title: this.props.t('quantityInput'),
+      btnTitle: this.props.t('common:select'),
       onSubmit: this.handleSelectQuantity,
       description: `${this.props.item?.name}${
         this.props.item?.classification &&
@@ -464,10 +462,18 @@ class CartItem extends Component {
   };
 
   onPressCartItem = () => {
-    Actions.push(appConfig.routes.item, {
-      item: this.props.item,
-      title: this.props.item.name,
-    });
+    push(
+      appConfig.routes.item,
+      {
+        item: this.props.item,
+        title: this.props.item.name,
+      },
+      this.theme,
+    );
+  };
+
+  handleRemoveCartItem = () => {
+    this.props.onRemoveCartItem(this.props.item);
   };
 
   renderFooterActionBtn() {
@@ -478,10 +484,16 @@ class CartItem extends Component {
 
     if (!!this.props.noAction) {
       return (
-        <View style={styles.cart_item_quantity_container}>
-          <Text style={styles.cart_item_quantity_mess}>
+        <View
+          style={[
+            styles.cart_item_quantity_container,
+            this.cartItemQuantityContainer,
+          ]}>
+          <Typography
+            type={TypographyType.LABEL_SMALL}
+            style={styles.cart_item_quantity_mess}>
             {item.quantity_view}
-          </Text>
+          </Typography>
         </View>
       );
     }
@@ -490,7 +502,7 @@ class CartItem extends Component {
       <View style={styles.cart_item_actions}>
         <View style={styles.cart_item_quantity}>
           <View style={styles.cart_item_quantity_content}>
-            <TouchableOpacity
+            <BaseButton
               hitSlop={HIT_SLOP}
               onPress={
                 this.state.isUpdateQuantityLoading ||
@@ -504,57 +516,58 @@ class CartItem extends Component {
                   styles.store_cart_item_qnt_container,
                   styles.store_cart_item_qnt_wrapper_text,
                 ]}>
-                <Text
+                <Typography
+                  type={TypographyType.LABEL_SEMI_MEDIUM}
                   style={[
                     styles.cart_item_actions_quantity,
                     styles.store_cart_item_qnt_container,
                     {opacity: this.state.isUpdateQuantityLoading ? 0 : 1},
                   ]}>
                   {item.quantity_view}
-                </Text>
+                </Typography>
 
                 {this.state.isUpdateQuantityLoading && (
                   <Indicator size="small" />
                 )}
               </View>
-            </TouchableOpacity>
+            </BaseButton>
 
-            <TouchableHighlight
+            <OutlinedButton
+              useTouchableHighlight
+              typoProps={this.cartItemActionBtnTitleTypoProps}
               style={[
                 styles.cart_item_actions_btn,
+                styles.cart_item_actions_btn_container,
                 styles.cart_item_actions_btn_left,
+                this.cartItemActionsBtn,
               ]}
-              underlayColor="#eee"
+              titleStyle={styles.cart_item_btn_label}
               hitSlop={HIT_SLOP}
               onPress={
                 is_processing
-                  ? null
+                  ? () => {}
                   : this._item_qnt_decrement_handler.bind(this, item)
               }>
-              <View style={styles.cart_item_actions_btn_container}>
-                {decrement_loading ? (
-                  <Indicator size="small" />
-                ) : (
-                  <Text style={styles.cart_item_btn_label}>-</Text>
-                )}
-              </View>
-            </TouchableHighlight>
+              {decrement_loading ? <Indicator size="small" /> : '-'}
+            </OutlinedButton>
 
-            <TouchableHighlight
-              style={styles.cart_item_actions_btn}
-              underlayColor="#eee"
+            <OutlinedButton
+              useTouchableHighlight
+              typoProps={this.cartItemActionBtnTitleTypoProps}
+              style={[
+                styles.cart_item_actions_btn,
+                styles.cart_item_actions_btn_container,
+                this.cartItemActionsBtn,
+              ]}
+              titleStyle={styles.cart_item_btn_label}
               hitSlop={HIT_SLOP}
               onPress={
-                is_processing ? null : this._item_qnt_increment.bind(this, item)
+                is_processing
+                  ? () => {}
+                  : this._item_qnt_increment.bind(this, item)
               }>
-              <View style={styles.cart_item_actions_btn_container}>
-                {increment_loading ? (
-                  <Indicator size="small" />
-                ) : (
-                  <Text style={styles.cart_item_btn_label}>+</Text>
-                )}
-              </View>
-            </TouchableHighlight>
+              {increment_loading ? <Indicator size="small" /> : '+'}
+            </OutlinedButton>
           </View>
         </View>
 
@@ -562,28 +575,60 @@ class CartItem extends Component {
           {check_loading ? (
             <Indicator size="small" />
           ) : (
-            <TouchableOpacity
+            <BaseButton
               hitSlop={{right: 50, bottom: 50, left: 50, top: 50}}
               onPress={
                 is_processing ? null : this._checkBoxHandler.bind(this, item)
               }>
-              <FeatherIcon
+              <Icon
+                bundle={BundleIconSetName.FEATHER}
                 name={item.selected == 1 ? 'check-circle' : 'circle'}
-                style={styles.cart_item_check_icon}
+                style={[styles.cart_item_check_icon, this.iconStyle]}
               />
-            </TouchableOpacity>
+            </BaseButton>
           )}
         </View>
       </View>
     );
   }
 
+  get cartItemQuantityContainer() {
+    return {
+      backgroundColor: this.theme.color.contentBackground,
+    };
+  }
+
+  get cartItemActionsBtn() {
+    return {
+      borderWidth: this.theme.layout.borderWidthSmall,
+      borderColor: this.theme.color.border,
+      borderRadius: this.theme.layout.borderRadiusSmall,
+    };
+  }
+
+  get iconStyle() {
+    return {
+      color: this.theme.color.primaryHighlight,
+    };
+  }
+
+  get cartItemBoxContainerStyle() {
+    return {
+      borderBottomWidth: this.theme.layout.borderWidthPixel,
+      borderColor: this.theme.color.border,
+    };
+  }
+
   render() {
     const item = this.props.item;
     if (this.props.noAction && !item.selected) return null;
     return (
-      <TouchableHighlight underlayColor="#ccc" onPress={this.onPressCartItem}>
-        <View style={styles.cart_item_box_container}>
+      <BaseButton onPress={this.onPressCartItem}>
+        <Container
+          style={[
+            styles.cart_item_box_container,
+            this.cartItemBoxContainerStyle,
+          ]}>
           <View style={styles.cart_item_box}>
             <View
               style={[
@@ -593,35 +638,43 @@ class CartItem extends Component {
                   height: 80,
                 },
               ]}>
-              <CachedImage
-                mutable
+              <Image
                 style={styles.cart_item_image}
+                resizeMode="contain"
                 source={{uri: item.image}}
               />
             </View>
 
             <View style={styles.cart_item_info}>
               <View style={styles.cart_item_info_content}>
-                <Text numberOfLines={2} style={styles.cart_item_info_name}>
+                <Typography
+                  type={TypographyType.LABEL_MEDIUM}
+                  numberOfLines={2}
+                  style={styles.cart_item_info_name}>
                   {item.name}
-                </Text>
+                </Typography>
 
                 {!!item.classification && (
-                  <Text
+                  <Typography
+                    type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
                     numberOfLines={1}
                     style={styles.cart_item_sub_info_name}>
                     {item.classification}
-                  </Text>
+                  </Typography>
                 )}
 
                 <View style={styles.cart_item_price_box}>
-                  <Text style={styles.cart_item_price_price}>
+                  <Typography
+                    type={TypographyType.LABEL_SEMI_LARGE_PRIMARY}
+                    style={styles.cart_item_price_price}>
                     {item.price_view}
-                  </Text>
+                  </Typography>
                   {!!item.discount_view && (
-                    <Text style={styles.cart_item_price_price_safe_off}>
+                    <Typography
+                      type={TypographyType.LABEL_SEMI_LARGE_TERTIARY}
+                      style={styles.cart_item_price_price_safe_off}>
                       {item.discount_view}
-                    </Text>
+                    </Typography>
                   )}
                 </View>
 
@@ -638,18 +691,17 @@ class CartItem extends Component {
             )}
 
             {!!!this.props.noAction && (
-              <TouchableOpacity
-                onPress={this.props.onRemoveCartItem}
-                hitSlop={HIT_SLOP}
+              <IconButton
+                bundle={BundleIconSetName.ANT_DESIGN}
+                name="close"
                 style={[
                   styles.cart_item_actions_btn,
                   styles.cart_item_remove_btn,
-                ]}>
-                <AntDesignIcon
-                  name="close"
-                  style={styles.cart_item_remove_icon}
-                />
-              </TouchableOpacity>
+                ]}
+                neutral
+                iconStyle={styles.cart_item_remove_icon}
+                onPress={this.handleRemoveCartItem}
+              />
             )}
           </View>
           {!!item.discount_content && (
@@ -658,17 +710,19 @@ class CartItem extends Component {
                 style={styles.discountContentIcon}
                 width={18}
                 height={18}
-                fill={appConfig.colors.primary}
+                fill={this.theme.color.primaryHighlight}
               />
-              <Text style={styles.discountContent}>
+              <Typography
+                type={TypographyType.LABEL_SEMI_MEDIUM_PRIMARY}
+                style={styles.discountContent}>
                 {item.discount_content}
-              </Text>
+              </Typography>
             </View>
           )}
-        </View>
-      </TouchableHighlight>
+        </Container>
+      </BaseButton>
     );
   }
 }
 
-export default CartItem;
+export default withTranslation(['cart', 'common'])(CartItem);

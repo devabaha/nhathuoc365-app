@@ -1,28 +1,52 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import fingerprintImage from './assets/images/fingerprint.png';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import {useTranslation} from 'react-i18next';
+// constants
+import {BundleIconSetName} from 'src/components/base';
+// custom components
+import {Icon, TextButton} from 'src/components/base';
 
 FingerprintButton.propTypes = {
   label: PropTypes.string,
   onPress: PropTypes.func,
-  visible: PropTypes.bool
+  visible: PropTypes.bool,
 };
 
 FingerprintButton.defaultProps = {
-  label: 'Xác thực vân tay',
   onPress: () => {},
-  visible: true
+  visible: true,
 };
 
 function FingerprintButton(props) {
   if (!props.visible) return null;
+
+  const {t} = useTranslation();
+
+  const label = props.label || t('verifyFingerprint');
+
+  const renderFingerprintIcon = useCallback(
+    (titleStyle, buttonStyle, fontStyle) => {
+      return (
+        <Icon
+          bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+          name="fingerprint"
+          style={[fontStyle, styles.fingerPrintIcon]}
+        />
+      );
+    },
+    [],
+  );
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={props.onPress}>
-        <Image style={styles.icon} source={fingerprintImage} />
-        <Text style={styles.label}>{props.label}</Text>
-      </TouchableOpacity>
+      <TextButton
+        style={styles.button}
+        renderIconLeft={renderFingerprintIcon}
+        onPress={props.onPress}>
+        {label}
+      </TextButton>
     </View>
   );
 }
@@ -33,18 +57,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    alignSelf: 'center',
   },
-  icon: {
-    width: 22,
-    height: 22,
-    marginRight: 8
+  fingerPrintIcon: {
+    fontSize: 20,
+    marginRight: 5,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#333'
-  }
 });
 
 export default FingerprintButton;

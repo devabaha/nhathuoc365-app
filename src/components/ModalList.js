@@ -1,28 +1,40 @@
 import React, {PureComponent} from 'react';
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  TouchableHighlight,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
+// 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import EventTracker from '../helper/EventTracker';
-import appConfig from 'app-config';
+// configs
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// helpers
+import EventTracker from 'app-helper/EventTracker';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Icon,
+  FlatList,
+  Container,
+  Typography,
+  BaseButton,
+} from 'src/components/base';
 
 class Modal extends PureComponent {
+  static contextType = ThemeContext;
   static defaultProps = {
     entry: 'bottom',
     position: 'bottom',
     footerComponent: () => {},
-    ref_modal: () => {}
+    ref_modal: () => {},
   };
   state = {};
   ref_modal = null;
   eventTracker = new EventTracker();
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
@@ -39,68 +51,146 @@ class Modal extends PureComponent {
   };
 
   renderItem({item}) {
-    if(!item) return;
+    if (!item) return;
     const isSelected =
       this.props.selectedItem && item.id === this.props.selectedItem.id;
-    const extraStyle = isSelected && styles.selectedItemContainer;
-    return (
-      <TouchableHighlight
-        underlayColor="rgba(0,0,0,.1)"
-        onPress={() => this.props.onPressItem(item, this.onClose)}
-        style={styles.container}>
-        <View style={[styles.itemContainer, extraStyle]}>
-          {!!item.image && (
-            <View style={styles.itemImageContainer}>
-              <Image style={styles.itemImage} source={{uri: item.image}} />
-            </View>
-          )}
-          <View style={styles.itemInfoContainer}>
-            <Text style={[styles.title, this.props.titleStyle]}>
-              {item.title}
-            </Text>
-            {!!item.renderDescription
-              ? item.renderDescription(styles.description)
-              : !!item.description && (
-                  <Text style={styles.description}>{item.description}</Text>
-                )}
-          </View>
+    const extraStyle = isSelected && {
+      backgroundColor: this.theme.color.underlay,
+    };
 
-          {isSelected && (
-            <Icon name="dot-circle-o" style={styles.selectedIcon} />
-          )}
-        </View>
-      </TouchableHighlight>
+    const contentContainerStyle = mergeStyles(
+      [
+        styles.itemContainer,
+        {
+          borderBottomColor: this.theme.color.border,
+          borderBottomWidth: this.theme.layout.borderWidthSmall,
+        },
+      ],
+      extraStyle,
+    );
+
+    const descriptionStyle = mergeStyles(
+      styles.description,
+      this.theme.typography[TypographyType.DESCRIPTION_SEMI_MEDIUM],
+    );
+
+    const selectedIconStyle = mergeStyles(styles.selectedIcon, {
+      color: this.theme.color.primaryHighlight,
+    });
+
+    return (
+      <Container>
+        <BaseButton
+          useTouchableHighlight
+          underlayColor={this.theme.color.underlay}
+          onPress={() => this.props.onPressItem(item, this.onClose)}
+          style={styles.container}>
+          <View style={contentContainerStyle}>
+            {!!item.image && (
+              <View style={styles.itemImageContainer}>
+                <Image
+                  style={[styles.itemImage, this.imageStyle]}
+                  source={{uri: item.image}}
+                />
+              </View>
+            )}
+            <View style={styles.itemInfoContainer}>
+              <Typography
+                type={TypographyType.TITLE_MEDIUM}
+                style={[styles.title, this.props.labelStyle]}>
+                {item.title}
+              </Typography>
+              {!!item.renderDescription
+                ? item.renderDescription(descriptionStyle)
+                : !!item.description && (
+                    <Typography
+                      type={TypographyType.DESCRIPTION_MEDIUM}
+                      style={descriptionStyle}>
+                      {item.description}
+                    </Typography>
+                  )}
+            </View>
+
+            {isSelected && (
+              <Icon
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name="dot-circle-o"
+                style={selectedIconStyle}
+              />
+            )}
+          </View>
+        </BaseButton>
+      </Container>
     );
   }
 
+  get modalStyle() {
+    return {
+      borderTopLeftRadius: this.theme.layout.borderRadiusHuge,
+      borderTopRightRadius: this.theme.layout.borderRadiusHuge,
+    };
+  }
+
+  get imageStyle() {
+    return {
+      borderRadius: this.theme.layout.borderRadiusMedium,
+    };
+  }
+
   render() {
+    const headingStyle = mergeStyles(
+      [
+        styles.headingContainer,
+        {
+          borderBottomColor: this.theme.color.border,
+          borderBottomWidth: this.theme.layout.borderWidth,
+        },
+      ],
+      this.props.headingContainerStyle,
+    );
+
+    const iconStyle = mergeStyles(styles.icon, {
+      color: this.theme.color.iconInactive,
+    });
+
     return (
       <ModalBox
         entry={this.props.entry}
         position={this.props.position}
-        style={[styles.modal, this.props.modalStyle]}
+        style={[styles.modal, this.modalStyle, this.props.modalStyle]}
         backButtonClose
-        ref={inst => {
+        ref={(inst) => {
           this.props.ref_modal(inst);
           this.ref_modal = inst;
         }}
         isOpen
         onClosed={this.props.onCloseModal}
         useNativeDriver>
-        <View style={[styles.headingContainer, this.props.headingContainerStyle]}>
-          <TouchableOpacity onPress={this.onClose} style={styles.iconContainer}>
-            <Icon name="close" style={styles.icon} />
-          </TouchableOpacity>
-          <Text style={styles.heading}>{this.props.heading}</Text>
-        </View>
-        <FlatList
-          data={this.props.data}
-          renderItem={this.renderItem.bind(this)}
-          keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={this.props.ListEmptyComponent}
-          {...this.props.listProps}
-        />
-        {this.props.footerComponent()}
+        <Container>
+          <View style={headingStyle}>
+            <BaseButton onPress={this.onClose} style={styles.iconContainer}>
+              <Icon
+                bundle={BundleIconSetName.FONT_AWESOME}
+                name="close"
+                style={iconStyle}
+              />
+            </BaseButton>
+            <Typography
+              type={TypographyType.DISPLAY_SMALL}
+              style={styles.heading}>
+              {this.props.heading}
+            </Typography>
+          </View>
+          <FlatList
+            safeLayout
+            data={this.props.data}
+            renderItem={this.renderItem.bind(this)}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={this.props.ListEmptyComponent}
+            {...this.props.listProps}
+          />
+          {this.props.footerComponent()}
+        </Container>
       </ModalBox>
     );
   }
@@ -112,8 +202,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     height: '80%',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    overflow: 'hidden',
   },
   iconContainer: {
     position: 'absolute',
@@ -125,18 +214,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 22,
-    color: '#666',
   },
   headingContainer: {
     padding: 30,
-    borderBottomWidth: 1,
     borderStyle: 'solid',
-    borderBottomColor: '#ccc',
   },
   heading: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: '#555',
+    fontWeight: 'bold',
     letterSpacing: 1.6,
     textAlign: 'right',
   },
@@ -145,16 +229,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     padding: 15,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
   },
-  selectedItemContainer: {
-    backgroundColor: '#f5f5f5',
-  },
+  selectedItemContainer: {},
   itemImageContainer: {
     width: 55,
     height: 55,
-    borderRadius: 8,
     overflow: 'hidden',
     marginRight: 15,
   },
@@ -166,19 +245,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#444',
     letterSpacing: 1.15,
   },
   description: {
-    fontSize: 13,
-    color: '#666',
     marginTop: 2,
   },
   selectedIcon: {
     fontSize: 20,
-    color: appConfig.colors.primary,
     marginLeft: 15,
   },
 });

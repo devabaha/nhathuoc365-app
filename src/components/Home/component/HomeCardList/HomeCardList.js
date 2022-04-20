@@ -1,30 +1,58 @@
 import React, {Component} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography, FlatList, TextButton} from 'src/components/base';
 
-import appConfig from 'app-config';
 class HomeCardList extends Component {
+  static contextType = ThemeContext;
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get showAllTitleStyle() {
+    return {color: this.theme.color.accent2};
+  }
+
   render() {
     const props = this.props;
     const {t} = props;
 
-    const contentContainerStyle = [styles.listContentContainer, this.props.contentContainerStyle]
+    const contentContainerStyle = [
+      styles.listContentContainer,
+      this.props.contentContainerStyle,
+    ];
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, props.containerStyle]}>
         <View style={styles.content}>
-          <Text style={styles.title}>{props.title}</Text>
+          {!!props.title && (
+            <Typography
+              type={TypographyType.TITLE_LARGE}
+              style={[styles.title, this.props.titleStyle]}>
+              {props.title}
+            </Typography>
+          )}
 
           {props.onShowAll ? (
-            <Button
-              containerStyle={styles.showAllBtn}
-              underlayColor="transparent"
+            <TextButton
+              style={styles.showAllBtn}
+              titleStyle={[
+                this.showAllTitleStyle,
+                this.props.showAllTitleStyle,
+              ]}
               onPress={props.onShowAll}>
-              <Text style={styles.viewAll}>{t('viewAll')}</Text>
-            </Button>
+              {t('viewAll')}
+            </TextButton>
           ) : (
-            <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
+            <View style={styles.showAllBtn} />
           )}
         </View>
 
@@ -63,14 +91,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    ...appConfig.styles.typography.heading1,
     flex: 1,
     marginRight: 20,
   },
-  viewAll: {
-    ...appConfig.styles.typography.text,
-    color: '#0084ff',
-  },
+  viewAll: {},
   listContainer: {
     overflow: 'visible',
   },
@@ -90,7 +114,6 @@ HomeCardList.propTypes = {
 
 HomeCardList.defaultProps = {
   data: [],
-  onShowAll: defaultListener,
   children: defaultListener,
 };
 

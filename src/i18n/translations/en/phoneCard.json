@@ -1,0 +1,110 @@
+{
+  "enterPhoneNumber": "Please enter phone number",
+  "enterPhoneNumberPlaceholder": "Enter phone number",
+  "enterAccountCode": "Enter account number",
+  "enterAccountCodePlaceholder": "Please enter account number",
+  "error": {
+    "accountCodeMinLength": "Account number must be at least {{minLength}} digits",
+    "invalidPhoneNumber": "Invalid phone number"
+  },
+  "prepayPrefix": "Before",
+  "rechargeNow": "Recharge now",
+  "changeNetwork": "Change network",
+  "changeNetworkNote": "Note that you can only change the network provider when you have registered to switch network and keep your phone number",
+  "cardPrice": "Card price",
+  "buyCardCode": "Buy phone card",
+  "quickBuy": "Quick buy",
+  "pricePrefix": "Price",
+  "selectNetwork": "Select network",
+  "selectPackage": "Select package",
+  "quantity": "Quantity",
+  "totalSubCard": "Total sub card",
+  "total": "Total",
+  "noHistory": "No history yet",
+  "noHistoryDescription": "No recharge or card purchases yet",
+  "shareCardSuccess": "Send card success!",
+  "sendCard": "Send card",
+  "copyCardCodeAndSerial": "Copy card code and serial",
+  "copyCard": "Copy card",
+  "copyCardCode": "Copy card code",
+  "copySerial": "Copy card serial",
+  "copyPrepaidSyntax": "Copy the syntax to recharge prepaid card",
+  "copyPostpaidSyntax": "Copy the syntax to recharge postpaid card",
+  "copiedCardCode": "Copied card code",
+  "copiedSerial": "Copied card serial",
+  "copiedCardCodeAndSerial": "Copied card code and serial",
+  "copiedPrepaidSyntax": "Copied the syntax to recharge prepaid card",
+  "copiedPostpaidSyntax": "Copied the syntax to recharge postpaid card",
+  "network": "Network",
+  "cardNumber": "Card number",
+  "serialNumber": "Serial",
+  "rechargeSyntax": "Recharge syntax",
+  "cardPrepaidRechargeSyntax": "Card prepaid recharge syntax",
+  "cardPostpaidRechargeSyntax": "Card postpaid recharge syntax",
+  "sendCardInfo": "Send card information",
+  "sendFullCardInfo": "Send full card information",
+  "markAsUnused": "Mark as unused",
+  "markAsUsed": "Mark as used",
+  "markAsUnpaid": "Mark as unpaid",
+  "markAsPaid": "Mark as paid",
+  "paidCard": "Paid",
+  "usedCard": "Used",
+  "confirm": {
+    "moneySource": "Money source",
+    "transaction": {
+      "detail": "Transaction detail",
+      "type": "Transaction type",
+      "form": {
+        "sendTo": "Recharge to",
+        "tel": "Phone number",
+        "network": "Network",
+        "cardNumber": "Card number",
+        "subCardNumber": "Sub number",
+        "month": "Month",
+        "value": "Value",
+        "quantity": "Quantity",
+        "discount": "Discount",
+        "fee": {
+          "title": "Transaction fee",
+          "value": "Free"
+        },
+        "price": "Total price"
+      }
+    },
+    "error": {
+      "passwordNotMatch": {
+        "title": "Password not match",
+        "message": "Please try again!",
+        "accept": "Try again"
+      },
+      "network": "The connection may have trouble, please try again!"
+    },
+    "fingerprintScanner": {
+      "authenMessage": "Use Touch ID to unlock and confirm"
+    },
+    "secure": "Secure SSL/TLS, every transaction information is encrypted safely",
+    "confirm": "Confirm",
+    "modal": {
+      "newPass": {
+        "title": "Create new password",
+        "message": "For safety, please create a transaction password"
+      },
+      "renEnterPass": {
+        "title": "Re-enter password",
+        "message": "Re-enter password to confirm"
+      }
+    }
+  },
+  "enterPassword": "Enter password",
+  "forgetPassword": "Forget password",
+  "rechargeHistory": "Recharge history",
+  "success": {
+    "title": "Transaction success",
+    "boughtCard": "Paid card",
+    "rechargeInformation": "Recharge information",
+    "transactionStatus": "Transaction status",
+    "backToHome": "Back to home"
+  },
+  "transactionCode": "Transaction code",
+  "viewHistory": "View history"
+}

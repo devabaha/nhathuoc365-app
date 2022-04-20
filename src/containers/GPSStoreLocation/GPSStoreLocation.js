@@ -1,49 +1,53 @@
 import React, {Component} from 'react';
 import {
   StyleSheet,
-  SafeAreaView,
-  RefreshControl,
   View,
   Alert,
-  Text,
-  FlatList,
   Linking,
-  TextInput,
   AppState,
-  TouchableOpacity,
   Keyboard,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
+// 3-party libs
 import {debounce} from 'lodash';
 import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
 import {getPreciseDistance} from 'geolib';
 import AndroidOpenSettings from 'react-native-android-open-settings';
-import Loading from '../../components/Loading';
-import Modal from '../../components/account/Transfer/Payment/Modal';
+// configs
 import appConfig from 'app-config';
 import store from 'app-store';
-import {APIRequest} from '../../network/Entity';
-import EventTracker from '../../helper/EventTracker';
+// helpers
+import EventTracker from 'src/helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// routing
+import {push, reset} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import Modal from 'src/components/account/Transfer/Payment/Modal';
 import Button from 'src/components/Button';
-import StoreItem from '../GPSListStore/StoreItem';
+import StoreItem from 'src/containers/GPSListStore/StoreItem';
 import NoResult from 'src/components/NoResult';
+import {
+  BaseButton,
+  Container,
+  FlatList,
+  Input,
+  RefreshControl,
+  Typography,
+} from 'src/components/base';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   searchInput: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     margin: 15,
-  },
-  contentContainer: {
-    flexGrow: 1,
   },
   welcomeMessageContainer: {
     flexDirection: 'row',
@@ -55,27 +59,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   modalText: {
-    color: '#555',
     letterSpacing: 0.3,
-    fontSize: 16,
     textAlign: 'center',
   },
   deceptionModal: {
     borderTopWidth: 3,
-    borderColor: hexToRgbA(appConfig.colors.primary, 0.05),
     padding: 15,
   },
   modalTextUserStyle: {
-    color: appConfig.colors.primary,
-    fontSize: 20,
     fontWeight: 'bold',
   },
   createAppBtn: {
     marginTop: 15,
-  },
-  disabledDistance: {
-    backgroundColor: '#f5f5f5',
-    color: '#aaa',
   },
 });
 
@@ -92,15 +87,12 @@ const REQUEST_LOCATION_ERROR_TYPE = {
 
 const MAX_SELF_TRY_REQUEST_LOCATION_TIME = 2;
 
-const SEARCH_PLACE_HOLDER = 'Tìm kiếm cửa hàng...';
-const WELCOME_MESSAGE = 'Xin chào';
-const APP_CREATING_MESSAGE =
-  'Bạn hãy tạo App mới hoặc chọn App của bạn trong danh sách để trải nghiệm ngay nhé.';
-
 class GPSStoreLocation extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     back: true,
-    searchable: false,
+    searchable: true,
     appCreatable: false,
   };
   state = {
@@ -128,10 +120,25 @@ class GPSStoreLocation extends Component {
   timeoutUpdateLocation = null;
   eventTracker = new EventTracker();
 
+  searchPlaceholder = this.props.t('searchStorePlaceholder');
+  welcomeMessage = this.props.t('welcomeMessage');
+  appCreatingMessage = this.props.t('appCreatingMessage');
+
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
     this.requestLocationPermission();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
@@ -140,6 +147,8 @@ class GPSStoreLocation extends Component {
     AppState.removeEventListener('change', this.handleAppStateChange);
     // Geolocation.stopObserving();
     Geolocation.clearWatch(this.watchID);
+
+    this.updateNavBarDisposer();
   }
 
   handleChangeSearch = debounce((searchValue = '', loading = true) => {
@@ -250,7 +259,7 @@ class GPSStoreLocation extends Component {
 
   handleSaveLocation = debounce((position, loading = false) => {
     if (this.unmounted) return;
-    
+
     const {coords} = position;
     if (coords) {
       const {longitude, latitude} = coords;
@@ -358,7 +367,7 @@ class GPSStoreLocation extends Component {
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           store.resetCartData();
-          Actions.reset(appConfig.routes.sceneWrapper);
+          reset(appConfig.routes.sceneWrapper);
         }
       }
     } catch (err) {
@@ -374,7 +383,7 @@ class GPSStoreLocation extends Component {
   };
 
   onPressRegisterStore() {
-    Actions.push(appConfig.routes.registerStore);
+    push(appConfig.routes.registerStore);
   }
 
   handleLocationError = () => {
@@ -402,7 +411,10 @@ class GPSStoreLocation extends Component {
       .then((supported) => {
         if (!supported) {
           console.log("Can't handle settings url", url);
-          Alert.alert('Không thể truy cập', 'Đường dẫn này không thể mở được.');
+          Alert.alert(
+            this.props.t('accessDenyMessage'),
+            this.props.t('cantOpenLinkMessage'),
+          );
         } else {
           Linking.openURL(url);
         }
@@ -430,14 +442,20 @@ class GPSStoreLocation extends Component {
     const longitude = this.state.longitude;
     if (latitude && longitude) {
       return (
-        <Text>
+        <Typography
+          style={this.distanceStyle}
+          type={TypographyType.LABEL_EXTRA_SMALL}>
           {getPreciseDistance(
             {latitude, longitude},
             {latitude: Number(lat), longitude: Number(lng)},
             100,
           ) / 1000}
-          <Text style={styles.distanceUnitTxt}>km</Text>
-        </Text>
+          <Typography
+            style={this.distanceStyle}
+            type={TypographyType.LABEL_EXTRA_SMALL}>
+            km
+          </Typography>
+        </Typography>
       );
     }
     return '-';
@@ -446,12 +464,10 @@ class GPSStoreLocation extends Component {
   renderStore = ({item: store}) => {
     const disabledDistanceStyle =
       (!this.state.isConnectGPS || this.state.requestLocationErrorCode !== 0) &&
-      styles.disabledDistance;
+      this.disabledDistanceStyle;
 
     return (
-      <TouchableOpacity
-        activeOpacity={0.5}
-        onPress={() => this.onStorePress(store)}>
+      <BaseButton activeOpacity={0.5} onPress={() => this.onStorePress(store)}>
         <StoreItem
           name={store.name}
           image={store.image}
@@ -464,25 +480,35 @@ class GPSStoreLocation extends Component {
           distance={this.calculateDiffDistance(store.lng, store.lat)}
           disabledDistanceStyle={disabledDistanceStyle}
         />
-      </TouchableOpacity>
+      </BaseButton>
     );
   };
 
   renderFooter = () => {
     return (
       !!this.props.appCreatable && (
-        <View style={styles.deceptionModal}>
+        <View style={[styles.deceptionModal, this.deceptionModalStyle]}>
           <View style={styles.welcomeMessageContainer}>
-            <Text style={styles.modalText}>{WELCOME_MESSAGE}</Text>
-            <Text style={!!store.user_info.name && styles.modalTextUserStyle}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              style={styles.modalText}>
+              {this.welcomeMessage}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_HUGE_PRIMARY}
+              style={!!store.user_info.name && styles.modalTextUserStyle}>
               {!!store.user_info.name ? ' ' + store.user_info.name : ''}!
-            </Text>
+            </Typography>
           </View>
 
-          <Text style={styles.modalText}>{APP_CREATING_MESSAGE}</Text>
+          <Typography
+            type={TypographyType.DESCRIPTION_MEDIUM_TERTIARY}
+            style={styles.modalText}>
+            {this.appCreatingMessage}
+          </Typography>
           <View style={styles.createAppBtn}>
             <Button
-              title="Tạo app"
+              title={this.props.t('createApp')}
               onPress={this.onPressRegisterStore.bind(this)}
             />
           </View>
@@ -491,22 +517,54 @@ class GPSStoreLocation extends Component {
     );
   };
 
+  get deceptionModalStyle() {
+    return {
+      borderColor: this.theme.color.primary5,
+    };
+  }
+
+  get searchInputStyle() {
+    return [
+      styles.searchInput,
+      {
+        borderWidth: this.theme.layout.borderWidth,
+        borderColor: this.theme.color.border,
+        borderRadius: this.theme.layout.borderRadiusMedium,
+      },
+    ];
+  }
+
+  get distanceStyle() {
+    return {
+      color: this.theme.color.primary,
+    };
+  }
+
+  get disabledDistanceStyle() {
+    return {
+      backgroundColor: this.theme.color.contentBackground,
+      color: this.theme.color.iconInactive,
+    };
+  }
+
   render() {
-    const title = 'Không truy cập được Vị trí';
+    const {t} = this.props;
+
+    const title = t('locationPermissionNotGranted');
     const content =
       this.state.requestLocationErrorCode ===
       REQUEST_LOCATION_ERROR_TYPE.TIMEOUT
-        ? 'Hết thời gian yêu cầu.'
-        : 'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
+        ? t('requestTimeoutMessage')
+        : t('requiredPermissionMessage');
     const okText =
       this.state.requestLocationErrorCode ===
       REQUEST_LOCATION_ERROR_TYPE.TIMEOUT
-        ? 'Thử lại'
-        : 'Cài đặt';
-    const cancelText = 'Bỏ qua';
+        ? t('common:tryAgain')
+        : t('common:settings');
+    const cancelText = t('common:skip');
 
     return (
-      <View style={styles.container}>
+      <Container flex>
         {this.state.loading && <Loading center />}
         <Modal
           visible={this.state.modalVisible}
@@ -523,15 +581,15 @@ class GPSStoreLocation extends Component {
         />
 
         {!!this.props.searchable && (
-          <TextInput
+          <Input
             onChangeText={this.handleChangeSearch}
-            style={styles.searchInput}
-            placeholder={SEARCH_PLACE_HOLDER}
+            style={this.searchInputStyle}
+            placeholder={this.searchPlaceholder}
           />
         )}
         {!!this.state.stores && (
           <FlatList
-            contentContainerStyle={styles.contentContainer}
+            safeLayout={!this.props.appCreatable}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             data={this.state.stores}
@@ -539,7 +597,10 @@ class GPSStoreLocation extends Component {
             ListFooterComponent={this.renderFooter}
             keyExtractor={(item, index) => index.toString()}
             ListEmptyComponent={
-              <NoResult icon={<View />} message="Không có cửa hàng" />
+              <NoResult
+                icon={<View />}
+                message={this.props.t('address:address.noStore')}
+              />
             }
             refreshControl={
               <RefreshControl
@@ -549,9 +610,9 @@ class GPSStoreLocation extends Component {
             }
           />
         )}
-      </View>
+      </Container>
     );
   }
 }
 
-export default withTranslation()(GPSStoreLocation);
+export default withTranslation('gpsStore')(GPSStoreLocation);

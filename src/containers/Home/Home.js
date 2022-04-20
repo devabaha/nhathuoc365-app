@@ -1,51 +1,60 @@
 import React, {Component} from 'react';
-
+// configs
 import store from 'app-store';
 import appConfig from 'app-config';
-import {Actions} from 'react-native-router-flux';
-import HomeComponent from '../../components/Home';
+// helpers
 import {executeJobs} from '../../helper/jobsOnReset';
-import {servicesHandler, SERVICES_TYPE} from '../../helper/servicesHandler';
+import {servicesHandler} from '../../helper/servicesHandler';
+import {getTheme} from 'src/Themes/Theme.context';
+import {checkIfEULAAgreed, updateEULAUserDecision} from 'app-helper';
+import {isConfigActive} from 'app-helper/configKeyHandler';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
+import {SERVICES_TYPE} from '../../helper/servicesHandler';
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+// entities
 import EventTracker from '../../helper/EventTracker';
-import {formatStoreSocialPosts} from 'app-helper/social';
-import {checkIfEULAAgreed, updateEULAUserDecision} from 'app-helper';
-import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+// custom components
+import HomeComponent from '../../components/Home';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      refreshing: false,
-      apiFetching: false,
-      storeFetching: false,
-      isDarkStatusBar: false,
-      site: null,
-      sites: null,
-      title_sites: null,
-      newses: null,
-      notices: null,
-      campaigns: null,
-      promotions: null,
-      services: [],
-      products: [],
-      listService: [],
-      listServiceConfig: {
-        type: LIST_SERVICE_TYPE.VERTICAL,
-        items_per_row: MIN_ITEMS_PER_ROW,
-      },
-      primaryActions: null,
-      product_groups: [],
-      news_categories: [],
-      product_categories: [],
-    };
-    this.eventTracker = new EventTracker();
-  }
+  state = {
+    refreshing: false,
+    apiFetching: false,
+    storeFetching: false,
+    isDarkStatusBar: false,
+    site: null,
+    sites: null,
+    title_sites: null,
+    newses: null,
+    notices: null,
+    campaigns: null,
+    promotions: null,
+    services: [],
+    products: [],
+    listService: [],
+    listServiceConfig: {
+      type: LIST_SERVICE_TYPE.VERTICAL,
+      items_per_row: MIN_ITEMS_PER_ROW,
+    },
+    primaryActions: null,
+    product_groups: [],
+    news_categories: [],
+    product_categories: [],
+  };
+  eventTracker = new EventTracker();
   homeDataLoaded = false;
+
+  get theme() {
+    return getTheme(this);
+  }
 
   componentDidMount() {
     this.getHomeDataFromApi();
@@ -59,7 +68,10 @@ class Home extends Component {
 
   handleExecuteTempDeepLink() {
     if (store.tempDeepLinkData) {
-      servicesHandler(store.tempDeepLinkData.params, store.tempDeepLinkData.t);
+      servicesHandler(
+        {...(store.tempDeepLinkData.params || {}), theme: this.theme},
+        store.tempDeepLinkData.t,
+      );
       store.setTempDeepLinkData(null);
     }
   }
@@ -91,14 +103,16 @@ class Home extends Component {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
-          Actions.rating({
+          servicesHandler({
+            type: SERVICES_TYPE.RATING,
+            theme: this.theme,
             cart_data: response.data.vote_cart,
           });
         }
         console.log(response.data);
         action(() => {
           store.setStoreData(response.data.site);
-          // store.setAppData(response.data.app);
+          store.setAppData(response.data.app);
           store.setPackageOptions(response.data.package_options || {});
         })();
 
@@ -158,6 +172,7 @@ class Home extends Component {
     if (store.popupClickedID !== popup.modified) {
       const popupService = {
         type: SERVICES_TYPE.POP_UP,
+        theme: this.theme,
         image: popup.image_url,
         // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
         delay: popup.delay !== undefined ? popup.delay : 2000,
@@ -199,21 +214,30 @@ class Home extends Component {
   };
 
   handlePressedSurplusNext = () => {
-    servicesHandler({type: SERVICES_TYPE.WALLET});
+    servicesHandler({type: SERVICES_TYPE.WALLET, theme: this.theme});
   };
 
   handlePressCommission = () => {
-    Actions.push(appConfig.routes.commissionIncomeStatement);
+    servicesHandler({
+      type: SERVICES_TYPE.COMMISSION_INCOME_STATEMENT,
+      theme: this.theme,
+    });
   };
 
   handlePromotionPressed = (item) => {
-    servicesHandler(item, this.props.t);
+    servicesHandler({...item, theme: this.theme}, this.props.t);
   };
 
+  /**
+   *
+   * @deprecated
+   */
   handleVoucherPressed = (item) => {
-    Actions.notify_item({
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      theme: this.theme,
       title: item.title,
-      data: item,
+      news: item,
     });
   };
 
@@ -221,6 +245,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
+    service.theme = this.theme;
 
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
@@ -233,6 +258,7 @@ class Home extends Component {
     // store.setSelectedTab(appConfig.routes.customerCardWallet);
     servicesHandler({
       type: SERVICES_TYPE.GPS_LIST_SITE,
+      theme: this.theme,
     });
   };
 
@@ -246,50 +272,63 @@ class Home extends Component {
   };
 
   handleShowAllCampaigns = () => {
-    Actions.push(appConfig.routes.mainVoucher, {
+    servicesHandler({
+      type: SERVICES_TYPE.LIST_VOUCHER,
+      theme: this.theme,
       from: 'home',
     });
   };
 
   handleShowAllNews = (title, categoryId) => {
-    servicesHandler({type: SERVICES_TYPE.NEWS_CATEGORY, title, categoryId});
-    // Actions.push(appConfig.routes.newsTab, {
-    //   title,
-    //   id,
-    // });
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_CATEGORY,
+      theme: this.theme,
+      title,
+      categoryId,
+    });
   };
 
   handlePressSiteItem = (store, callBack) => {
     servicesHandler(
-      {type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id},
+      {
+        type: SERVICES_TYPE.OPEN_SHOP,
+        theme: this.theme,
+        siteId: store.id,
+      },
       this.props.t,
       callBack,
     );
   };
 
   handlePressCampaignItem = (campaign) => {
-    Actions.push(appConfig.routes.voucherDetail, {
+    servicesHandler({
+      type: SERVICES_TYPE.VOUCHER_CAMPAIGN_DETAIL,
+      theme: this.theme,
       title: campaign.title,
       campaignId: campaign.id,
       from: 'home',
     });
   };
 
-  handlePressNewItem = (item) => {
-    Actions.notify_item({
+  handlePressNewsItem = (item) => {
+    servicesHandler({
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      theme: this.theme,
       title: item.title,
-      data: item,
+      news: item,
     });
   };
 
   handlePressButtonChat = () => {
     if (store.user_info && this.state.site) {
-      Actions.amazing_chat({
+      servicesHandler({
+        type: SERVICES_TYPE.CHAT,
         titleStyle: {width: 220},
         phoneNumber: this.state.site.tel,
         title: this.state.site.name,
         site_id: this.state.site.id,
         user_id: store.user_info.id,
+        theme: this.theme,
       });
     }
   };
@@ -298,6 +337,7 @@ class Home extends Component {
     servicesHandler({
       type: SERVICES_TYPE.SOCIAL,
       siteId: store?.store_data?.id,
+      theme: this.theme,
     });
   };
 
@@ -327,9 +367,11 @@ class Home extends Component {
     //   productId: product.id,
     // };
     // servicesHandler(service, this.props.t, callBack);
-    Actions.push(appConfig.routes.item, {
+    servicesHandler({
+      type: SERVICES_TYPE.PRODUCT_DETAIL,
+      theme: this.theme,
       title: product.name,
-      item: product,
+      product,
     });
   };
 
@@ -342,7 +384,8 @@ class Home extends Component {
       (response) => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);
-          Actions.push(appConfig.routes.searchStore, {
+          servicesHandler({
+            type: SERVICES_TYPE.SEARCH_STORE,
             categories: null,
             category_id: 0,
             category_name: '',
@@ -365,6 +408,7 @@ class Home extends Component {
   render() {
     return (
       <HomeComponent
+        navigation={this.props.navigation}
         site={this.state.site}
         sites={this.state.sites}
         title_sites={this.state.title_sites}
@@ -398,7 +442,7 @@ class Home extends Component {
         onShowAllNews={(title, id) => this.handleShowAllNews(title, id)}
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
-        onPressNewItem={this.handlePressNewItem}
+        onPressNewItem={this.handlePressNewsItem}
         onPressNoti={this.handlePressButtonChat}
         onPressCommission={this.handlePressCommission}
         goToSocial={this.goToSocial}

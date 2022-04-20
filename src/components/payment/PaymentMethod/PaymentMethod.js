@@ -1,25 +1,41 @@
 import React, {Component} from 'react';
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  RefreshControl,
-} from 'react-native';
-import ModernList from 'app-packages/tickid-modern-list';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import Loading from '@tickid/tickid-rn-loading';
-import {Actions} from 'react-native-router-flux';
+// configs
 import appConfig from 'app-config';
-import Button from '../../Button';
 import store from 'app-store';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import EventTracker from 'app-helper/EventTracker';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {pop, push, refresh} from 'app-helper/routing';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {PAYMENT_METHOD_TYPES} from 'src/constants/payment';
+import {TypographyType} from 'src/components/base';
+// custom components
+import ModernList from 'app-packages/tickid-modern-list';
+import Button from 'src/components/Button';
 import PaymentRow from './PaymentRow';
-import EventTracker from '../../../helper/EventTracker';
-import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
+import TotalPrice from './TotalPrice';
+import NoPaymentMethod from './NoPaymentMethod';
+import PaymentMethodDetailLogo from './PaymentMethodDetailLogo';
+import {
+  Container,
+  RefreshControl,
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+} from 'src/components/base';
 
 const DEFAULT_OBJECT = {};
 
 class PaymentMethod extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     onUpdatePaymentMethod: () => {},
     showPrice: true,
@@ -41,9 +57,15 @@ class PaymentMethod extends Component {
   unmounted = false;
   eventTracker = new EventTracker();
 
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
   componentDidMount() {
     setTimeout(() => {
-      Actions.refresh({
+      refresh({
         title:
           this.props.title ||
           this.props.t('common:screen.paymentMethod.mainTitle'),
@@ -51,11 +73,18 @@ class PaymentMethod extends Component {
     });
     this.getPaymentMethod();
     this.eventTracker.logCurrentView();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+
+    this.updateNavBarDisposer();
   }
 
   getPaymentMethod = async () => {
@@ -98,7 +127,7 @@ class PaymentMethod extends Component {
 
   handleConfirm = async () => {
     if (this.state.selectedMethod === DEFAULT_OBJECT) {
-      Actions.pop();
+      pop();
       return;
     }
 
@@ -117,6 +146,7 @@ class PaymentMethod extends Component {
         this.state.selectedPaymentMethodDetail?.gateway !== undefined
           ? this.state.selectedPaymentMethodDetail.gateway
           : this.state.selectedMethod.gateway,
+      id: this.state.selectedMethod.id,
       payment_type: this.state.selectedMethod.type,
       payment_content: '',
       payment_method_id: this.state.selectedPaymentMethodDetail?.id || '',
@@ -138,7 +168,7 @@ class PaymentMethod extends Component {
               type: 'success',
               message: response.message,
             });
-            Actions.pop();
+            pop();
           }
         } else {
           flashShowMessage({
@@ -186,18 +216,22 @@ class PaymentMethod extends Component {
         // case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
         // case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
         // if (!isSelected) {
-        Actions.push(appConfig.routes.internetBanking, {
-          title: item.title,
-          siteId: store?.store_data?.id,
-          paymentMethodId: item.id,
-          onPressPaymentMethodDetail: (selectedPaymentMethodDetail) => {
-            this.handleSelectPaymentMethodDetail(
-              item,
-              isSelected,
-              selectedPaymentMethodDetail,
-            );
+        push(
+          appConfig.routes.internetBanking,
+          {
+            title: item.title,
+            siteId: store?.store_data?.id,
+            paymentMethodId: item.id,
+            onPressPaymentMethodDetail: (selectedPaymentMethodDetail) => {
+              this.handleSelectPaymentMethodDetail(
+                item,
+                isSelected,
+                selectedPaymentMethodDetail,
+              );
+            },
           },
-        });
+          this.theme,
+        );
         // } else {
         //   this.handleSelectPaymentMethodDetail(item, isSelected);
         // }
@@ -246,15 +280,16 @@ class PaymentMethod extends Component {
     const extraFee = this.props.extraFee || {};
 
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <ScrollView
+          safeLayout={!this.props.showSubmit}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh}
             />
           }>
-          <View style={styles.box}>
+          <Container style={styles.box}>
             {this.state.loading && <Loading loading />}
             <ModernList
               scrollEnabled={false}
@@ -268,27 +303,45 @@ class PaymentMethod extends Component {
                 )
               }
             />
-          </View>
+          </Container>
 
           {this.props.showPrice && (
-            <View style={[styles.box, {paddingVertical: 7}]}>
+            <Container style={[styles.box, {paddingVertical: 7}]}>
               <View style={styles.priceInfoRow}>
-                <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
-                <Text style={styles.priceValue}>{this.props.price}</Text>
+                <Typography
+                  type={TypographyType.LABEL_LARGE_TERTIARY}
+                  style={styles.priceLabel}>
+                  {t('payment.tempPrice')}
+                </Typography>
+                <Typography
+                  type={TypographyType.LABEL_LARGE}
+                  style={styles.priceValue}>
+                  {this.props.price}
+                </Typography>
               </View>
               {Object.keys(extraFee).map((key, index) => {
                 return (
                   <View key={index} style={styles.priceInfoRow}>
-                    <Text style={styles.priceLabel}>{key}</Text>
-                    <Text style={styles.priceValue}>{extraFee[key]}</Text>
+                    <Typography
+                      type={TypographyType.LABEL_LARGE_TERTIARY}
+                      style={styles.priceLabel}>
+                      {key}
+                    </Typography>
+                    <Typography
+                      type={TypographyType.LABEL_LARGE}
+                      style={styles.priceValue}>
+                      {extraFee[key]}
+                    </Typography>
                   </View>
                 );
               })}
-            </View>
+            </Container>
           )}
         </ScrollView>
         {this.props.showSubmit && (
           <Button
+            safeLayout
+            showBackground
             renderBefore={
               this.props.showPrice && (
                 <TotalPrice t={t} value={this.props.totalPrice} />
@@ -299,7 +352,7 @@ class PaymentMethod extends Component {
             onPress={this.handleConfirm}
           />
         )}
-      </View>
+      </ScreenWrapper>
     );
   }
 }
@@ -308,32 +361,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  paymentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  check: {
-    fontSize: 18,
-    marginRight: 10,
-  },
-  paymentMethodLabel: {
-    fontSize: 15,
-    fontWeight: '500',
-    marginBottom: 3,
-  },
-  subPaymentMethodLabel: {
-    fontSize: 13,
-    color: '#8c8c8c',
-  },
   box: {
     marginBottom: 15,
-    backgroundColor: '#fff',
   },
   priceInfoRow: {
     flexDirection: 'row',
@@ -344,81 +373,13 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     flex: 1,
-    color: '#555',
-    fontSize: 16,
   },
   priceValue: {
     fontWeight: '500',
-    color: '#242424',
-    fontSize: 16,
   },
   confirmContainer: {
-    backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingBottom: appConfig.device.bottomSpace || 15,
-  },
-  totalPriceInfoRow: {
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 0,
-    paddingTop: 0,
-  },
-  totalPriceValue: {
-    color: DEFAULT_COLOR,
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  paymentMethodDetailLogoContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  paymentMethodDetailLogo: {
-    marginLeft: 10,
-    resizeMode: 'contain',
-    width: 50,
-    height: 50,
-    flex: 1,
-  },
-  noResultContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 15,
-  },
-  noResultText: {
-    color: '#777',
   },
 });
 
 export default withTranslation(['paymentMethod', 'common'])(PaymentMethod);
-
-const TotalPrice = (props) => {
-  return (
-    <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
-      <Text style={[styles.priceLabel, styles.totalPriceText]}>
-        {props.t('payment.totalPrice')}
-      </Text>
-      <Text style={[styles.totalPriceValue, styles.totalPriceText]}>
-        {props.value}
-      </Text>
-    </View>
-  );
-};
-
-const PaymentMethodDetailLogo = (props) => {
-  return (
-    <View style={styles.paymentMethodDetailLogoContainer}>
-      <CachedImage
-        mutable
-        source={{uri: props.image}}
-        style={styles.paymentMethodDetailLogo}
-      />
-    </View>
-  );
-};
-
-const NoPaymentMethod = (props) => (
-  <View style={styles.noResultContainer}>
-    <Text style={styles.noResultText}>{props.message}</Text>
-  </View>
-);

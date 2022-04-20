@@ -1,18 +1,36 @@
-import Store from 'app-store';
-import React, {memo, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native';
-import {Table, TableWrapper, Row} from 'react-native-table-component';
-import APIHandler from 'src/network/APIHandler';
-import {APIRequest} from 'src/network/Entity';
-import appConfig from 'app-config';
-import Container from 'src/components/Layout/Container';
-import ScreenWrapper from 'src/components/ScreenWrapper';
-import Loading from 'src/components/Loading';
-import Button from 'react-native-button';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-import NoResult from 'src/components/NoResult';
+import React, {memo, useEffect, useMemo, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
+import {Table, Row} from 'react-native-table-component';
 import {isEmpty} from 'lodash';
-import {Actions} from 'react-native-router-flux';
+// configs
+import appConfig from 'app-config';
+// network
+import APIHandler from 'src/network/APIHandler';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+// routing
+import {push, refresh} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import {APIRequest} from 'src/network/Entity';
+// custom components
+import Loading from 'src/components/Loading';
+import NoResult from 'src/components/NoResult';
+import {
+  Container,
+  FlatList,
+  ScreenWrapper,
+  ScrollView,
+  Typography,
+  IconButton,
+  BaseButton,
+  Icon,
+} from 'src/components/base';
 
 const dataReportBaseUnit = 170;
 const tableDataReportWidthArr = [
@@ -29,7 +47,11 @@ const tableNewMemberWidthArr = [
   newMembersBaseUnit,
 ];
 
-function SalesReport() {
+function SalesReport({navigation}) {
+  const {theme} = useTheme();
+
+  const {t} = useTranslation('salesReport');
+
   const [loading, setLoading] = useState(true);
   const [months, setMonths] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState();
@@ -37,7 +59,14 @@ function SalesReport() {
   const [stats, setStats] = useState({});
   const [reportRevenue, setReportRevenue] = useState([]);
   const [newReferralMembers, setNewReferralMembers] = useState([]);
-  const {t} = useTranslation('salesReport');
+
+  useEffect(() => {
+    if (!navigation) return;
+
+    const updateNavBarDisposer = updateNavbarTheme(navigation, theme);
+
+    return updateNavBarDisposer;
+  }, [theme]);
 
   const tableReportHead = [
     t('name'),
@@ -137,10 +166,15 @@ function SalesReport() {
     getInvitedRevenue(month);
   };
 
+  const onHardRefresh = () => {
+    setLoading(true);
+    getInvitedRevenue();
+  };
+
   const openYearMonthPicker = () => {
     if (months.length === 0) return;
-    Actions.push(appConfig.routes.modalPicker, {
-      title: 'Chọn tháng',
+    push(appConfig.routes.modalPicker, {
+      title: t('chooseMonth'),
       selectedValue: selectedMonth,
       selectedLabel: selectedMonth,
       data: months,
@@ -150,92 +184,214 @@ function SalesReport() {
 
   const renderColumnReferral = ({item, index}) => {
     return (
-      <View style={[styles.itemReferral]}>
-        <Container flex center style={styles.referralHeaderContainer}>
-          <Text style={styles.heading}>
+      <View style={columnReferralStyle}>
+        <Container flex center style={[referralHeaderContainerStyle]}>
+          <Typography type={TypographyType.LABEL_SMALL} style={styles.heading}>
             {/* {index === 0 ? stats['total_revenue_title'] : t(item)} */}
             {item.title}
-          </Text>
+          </Typography>
 
-          {index > 0 && <View style={[styles.referralSeparator]} />}
+          {index > 0 && <View style={referralSeparatorStyle} />}
         </Container>
-        <Container style={[styles.revenueValueContainer]}>
-          <Text style={styles.valueText} numberOfLines={2}>
+        <Container noBackground style={[styles.revenueValueContainer]}>
+          <Typography
+            type={TypographyType.LABEL_LARGE}
+            style={styles.valueText}
+            numberOfLines={2}>
             {item.value}
-          </Text>
+          </Typography>
         </Container>
       </View>
     );
   };
+
+  const renderRight = () => {
+    return (
+      <IconButton
+        bundle={BundleIconSetName.IONICONS}
+        name="ios-reload"
+        iconStyle={reloadButtonStyle}
+        hitSlop={HIT_SLOP}
+        onPress={onHardRefresh}
+      />
+    );
+  };
+
   useEffect(() => {
     getInvitedRevenue();
 
+    setTimeout(() =>
+      refresh({
+        right: renderRight(),
+      }),
+    );
     return () => {
       cancelRequests(requests);
     };
   }, []);
 
+  const headingContainerStyle = useMemo(() => {
+    return mergeStyles(styles.headingContainer, {
+      borderBottomWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const yearMonthBtnContainerStyle = useMemo(() => {
+    return {
+      borderWidth: theme.layout.borderWidth,
+      borderColor: theme.color.border,
+      borderRadius: theme.layout.borderRadiusSmall,
+    };
+  }, [theme]);
+
+  const selectMonthContainerStyle = useMemo(() => {
+    return mergeStyles(styles.selectMonthContainer, {
+      borderRadius: theme.layout.borderRadiusExtraSmall,
+    });
+  }, [theme]);
+
+  const yearMonthIconStyle = useMemo(() => {
+    return mergeStyles(styles.yearMonthIcon, {
+      color: theme.color.onPrimaryHighlight,
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const tableBorderStyle = useMemo(() => {
+    return {
+      borderWidth: theme.layout.borderWidthSmall,
+      borderColor: theme.color.border,
+    };
+  }, [theme]);
+
+  const tableHeaderStyle = useMemo(() => {
+    return mergeStyles(styles.tableHeader, {
+      backgroundColor: theme.color.primaryHighlight,
+    });
+  }, [theme]);
+
+  const tableHeadingTextStyle = useMemo(() => {
+    return mergeStyles(styles.tableHeadingText, {
+      color: theme.color.onPrimaryHighlight,
+    });
+  }, [theme]);
+
+  const reportRowStyle = useMemo(() => {
+    return mergeStyles(styles.row, {backgroundColor: theme.color.surface});
+  }, [theme]);
+
+  const evenReportRowStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.contentBackgroundWeak,
+    };
+  }, [theme]);
+
+  const tableCellTextStyle = useMemo(() => {
+    return mergeStyles(styles.tableCellText, {
+      color: theme.color.textPrimary,
+    });
+  }, [theme]);
+
+  const columnReferralStyle = useMemo(() => {
+    return mergeStyles(styles.itemReferral, {
+      borderColor: theme.color.border,
+    });
+  }, [theme]);
+
+  const referralHeaderContainerStyle = useMemo(() => {
+    return mergeStyles(styles.referralHeaderContainer, {
+      ...evenReportRowStyle,
+    });
+  }, [theme]);
+
+  const referralSeparatorStyle = useMemo(() => {
+    return mergeStyles(styles.referralSeparator, {
+      borderBottomColor: theme.color.contentBackgroundWeak,
+    });
+  }, [theme]);
+
+  const reloadButtonStyle = useMemo(() => {
+    return mergeStyles(styles.reload, {
+      color: theme.color.onNavBarBackground,
+    });
+  }, [theme]);
+
   return (
     <ScreenWrapper>
       {loading && <Loading center />}
       <Container style={styles.headingWrapper}>
-        <Container row style={styles.headingContainer}>
-          <Button
-            containerStyle={styles.yearMonthBtnContainer}
+        <Container row style={headingContainerStyle}>
+          <BaseButton
+            style={yearMonthBtnContainerStyle}
             onPress={openYearMonthPicker}>
-            <Container row centerVertical style={styles.selectMonthContainer}>
-              <AntDesignIcon name="calendar" style={styles.yearMonthIcon} />
-              <Text style={styles.yearMonthTxt}>{selectedMonth}</Text>
+            <Container row centerVertical style={selectMonthContainerStyle}>
+              <Icon
+                bundle={BundleIconSetName.ANT_DESIGN}
+                name="calendar"
+                style={yearMonthIconStyle}
+              />
+              <Typography
+                type={TypographyType.LABEL_MEDIUM}
+                style={styles.yearMonthTxt}>
+                {selectedMonth}
+              </Typography>
             </Container>
-          </Button>
+          </BaseButton>
 
           <Container flex style={styles.totalIncomeContainer}>
-            <Text style={styles.totalIncomeTitle}>Tổng doanh số</Text>
-            <Text style={styles.incomeTxt}>{stats.total_revenue}</Text>
+            <Typography
+              type={TypographyType.LABEL_TINY}
+              style={styles.totalIncomeTitle}>
+              {t('totalTurnover')}
+            </Typography>
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
+              style={styles.incomeTxt}>
+              {stats.total_revenue}
+            </Typography>
           </Container>
         </Container>
       </Container>
       {!!reportRevenue?.length && (
-        <View>
+        <Container>
           <FlatList
-            contentContainerStyle={styles.referralRevenueReportContentContainer}
             data={reportRevenue}
             keyExtractor={(i) => i}
             renderItem={renderColumnReferral}
             numColumns={3}
             scrollEnabled={false}
           />
-        </View>
+        </Container>
       )}
 
-      <Text style={styles.reportTitle}>{t('referralOrders')}</Text>
+      <Typography type={TypographyType.TITLE_LARGE} style={styles.reportTitle}>
+        {t('referralOrders')}
+      </Typography>
 
       <View style={styles.block}>
-        <ScrollView
-          horizontal
-          contentContainerStyle={styles.listContentContainer}>
+        <ScrollView horizontal>
           <View>
-            <Table borderStyle={styles.tableBorder}>
+            <Table borderStyle={tableBorderStyle}>
               <Row
                 data={tableReportHead}
                 widthArr={tableDataReportWidthArr}
-                style={styles.tableHeader}
-                textStyle={styles.tableHeadingText}
+                style={tableHeaderStyle}
+                textStyle={tableHeadingTextStyle}
               />
             </Table>
             {hasRevenue() && (
-              <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={styles.tableBorder}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={styles.dataWrapper}>
+                <Table borderStyle={tableBorderStyle}>
                   {dataReport.map((rowData, index) => (
                     <Row
                       key={index}
                       data={rowData}
                       widthArr={tableDataReportWidthArr}
-                      style={[
-                        styles.row,
-                        index % 2 && {backgroundColor: '#f5f5f5'},
-                      ]}
-                      textStyle={styles.tableCellText}
+                      style={[reportRowStyle, index % 2 && evenReportRowStyle]}
+                      textStyle={tableCellTextStyle}
                     />
                   ))}
                 </Table>
@@ -248,43 +404,48 @@ function SalesReport() {
           <NoResult
             containerStyle={styles.noResultContainer}
             icon={<View />}
-            message="Chưa có danh sách"
+            message={t('noReportList')}
           />
         )}
       </View>
 
-      <Text style={styles.reportTitle}>{t('newReferralMembers')}</Text>
+      <Typography type={TypographyType.TITLE_LARGE} style={styles.reportTitle}>
+        {t('newReferralMembers')}
+      </Typography>
 
       <View style={styles.block}>
-        <ScrollView
-          horizontal
-          contentContainerStyle={styles.listContentContainer}>
+        <ScrollView horizontal>
           <View>
-            <Table borderStyle={styles.tableBorder}>
+            <Table borderStyle={tableBorderStyle}>
               <Row
                 data={tableNewMembersHead}
                 widthArr={tableNewMemberWidthArr}
-                style={styles.tableHeader}
-                textStyle={styles.tableHeadingText}
+                style={tableHeaderStyle}
+                textStyle={tableHeadingTextStyle}
               />
             </Table>
             {hasNewReferralMembers() && (
-              <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={styles.tableBorder}>
-                  {newReferralMembers.map((rowData, index) => (
-                    <Row
-                      key={index}
-                      data={rowData}
-                      widthArr={tableNewMemberWidthArr}
-                      style={[
-                        styles.row,
-                        index % 2 && {backgroundColor: '#f5f5f5'},
-                      ]}
-                      textStyle={styles.tableCellText}
-                    />
-                  ))}
-                </Table>
-              </ScrollView>
+              <Container flex>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  safeLayout
+                  style={styles.dataWrapper}>
+                  <Table borderStyle={tableBorderStyle}>
+                    {newReferralMembers.map((rowData, index) => (
+                      <Row
+                        key={index}
+                        data={rowData}
+                        widthArr={tableNewMemberWidthArr}
+                        style={[
+                          reportRowStyle,
+                          index % 2 && evenReportRowStyle,
+                        ]}
+                        textStyle={tableCellTextStyle}
+                      />
+                    ))}
+                  </Table>
+                </ScrollView>
+              </Container>
             )}
           </View>
         </ScrollView>
@@ -293,7 +454,7 @@ function SalesReport() {
           <NoResult
             containerStyle={styles.noResultContainer}
             icon={<View />}
-            message="Chưa có danh sách"
+            message={t('noReportList')}
           />
         )}
       </View>
@@ -303,48 +464,27 @@ function SalesReport() {
 const styles = StyleSheet.create({
   reload: {
     fontSize: 22,
-    color: '#fff',
     right: 12,
   },
   headingWrapper: {
-    backgroundColor: '#fff',
     paddingTop: 15,
     paddingHorizontal: 15,
   },
   headingContainer: {
-    borderBottomWidth: 0.5,
-    borderColor: '#ddd',
     paddingBottom: 15,
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-    paddingTop: 30,
-    backgroundColor: '#fff',
   },
   tableHeader: {
     height: 50,
-    backgroundColor: appConfig.colors.primary,
-  },
-  yearMonthBtnContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    borderWidth: 0.5,
-    borderColor: '#333',
   },
   selectMonthContainer: {
     overflow: 'hidden',
-    borderRadius: 4,
   },
   yearMonthIcon: {
     height: '100%',
     fontSize: 18,
-    color: '#fff',
     padding: 10,
-    backgroundColor: appConfig.colors.primary,
   },
   yearMonthTxt: {
-    color: '#333',
     padding: 10,
   },
   totalIncomeContainer: {
@@ -352,42 +492,25 @@ const styles = StyleSheet.create({
   },
   totalIncomeTitle: {
     textTransform: 'uppercase',
-    fontSize: 10,
     fontWeight: '500',
     letterSpacing: 1,
-    color: '#333',
     marginBottom: 3,
   },
   incomeTxt: {
-    fontSize: 18,
     fontWeight: 'bold',
-    color: appConfig.colors.primary,
     letterSpacing: 0.6,
   },
-  incomeUnitTxt: {
-    fontWeight: '300',
-    color: '#333',
-    fontSize: 12,
-    letterSpacing: 0,
-  },
 
-  referralRevenueReportContentContainer: {
-    backgroundColor: '#fff',
-  },
   itemReferral: {
     flex: 1,
     justifyContent: 'center',
-    borderColor: '#888',
   },
   referralHeaderContainer: {
-    backgroundColor: '#f5f5f5',
     paddingHorizontal: 5,
     paddingVertical: 10,
   },
   heading: {
-    fontSize: 12,
     textAlign: 'center',
-    color: '#333',
     textTransform: 'uppercase',
   },
   referralSeparator: {
@@ -404,7 +527,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 7,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#f5f5f5',
   },
   revenueValueContainer: {
     justifyContent: 'flex-end',
@@ -412,28 +534,22 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   valueText: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
     textAlign: 'center',
   },
   reportTitle: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    fontSize: 20,
-    color: '#333',
     fontWeight: 'bold',
   },
   tableHeadingText: {
     textAlign: 'center',
-    color: '#fff',
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   tableCellText: {
     textAlign: 'center',
-    color: '#333',
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
@@ -442,17 +558,8 @@ const styles = StyleSheet.create({
   },
   row: {
     minHeight: 40,
-    backgroundColor: '#fff',
   },
 
-  tableBorder: {
-    borderWidth: 0.5,
-    borderColor: '#888',
-  },
-
-  listContentContainer: {
-    flexGrow: 1,
-  },
   block: {
     flex: 1,
   },

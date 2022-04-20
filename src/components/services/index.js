@@ -1,4 +1,3 @@
-import { default as ServiceOrders } from './Orders';
-import { default as ServiceFeedback } from './Feedback';
+import {default as ServiceOrders} from './Orders';
 
-export { ServiceOrders, ServiceFeedback };
+export {ServiceOrders};

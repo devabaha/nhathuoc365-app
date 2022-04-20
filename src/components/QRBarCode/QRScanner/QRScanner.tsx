@@ -1,19 +1,30 @@
-import React, { Component } from 'react';
-import { withTranslation } from 'react-i18next';
-import { StyleSheet, Dimensions, View, Text, Alert } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Dimensions, View, Alert} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Button from 'react-native-button';
 import {
   check,
   PERMISSIONS,
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
-
+// configs
 import appConfig from 'app-config';
-
-import { QRScannerProps } from '.';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {
+  TypographyType,
+  BundleIconSetName,
+  AppFilledButton,
+} from 'src/components/base';
+// custom components
+import {Typography, Icon, TextButton} from 'src/components/base';
+import {QRScannerProps} from '.';
 import QRBackground from '../QRBackground';
 import QRFrame from '../QRFrame';
 
@@ -25,22 +36,14 @@ const styles = StyleSheet.create({
   },
   centerText: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#404040',
     marginLeft: 8,
     paddingHorizontal: 15,
   },
 
   permissionNotGrantedBtn: {
     marginTop: 12,
-    backgroundColor: '#d9d9d9',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 5,
-  },
-  permissionNotGrantedSetting: {
-    fontSize: 14,
-    color: '#404040',
   },
 
   qrMarkerContainer: {
@@ -50,10 +53,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   qrFrameContainer: {
-    borderColor: '#333',
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  icon: {
+    fontSize: 26,
   },
 });
 
@@ -100,20 +105,26 @@ const CAMERA_STYLE = {
 };
 
 class QRScanner extends Component<QRScannerProps> {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     refQRScanner: null,
-    onRead: () => { },
-    onChangePermission: () => { }
-  }
+    onRead: () => {},
+    onChangePermission: () => {},
+  };
 
   state = {
-    permissionCameraGranted: undefined
+    permissionCameraGranted: undefined,
   };
   unmounted = false;
 
+  get theme() {
+    return getTheme(this);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
-      return true
+      return true;
     }
 
     return false;
@@ -138,13 +149,13 @@ class QRScanner extends Component<QRScannerProps> {
       permissionCameraGranted !== this.state.permissionCameraGranted &&
       !this.unmounted
     ) {
-      this.setState({ permissionCameraGranted });
+      this.setState({permissionCameraGranted});
       this.props.onChangePermission(permissionCameraGranted);
     }
   }
 
   checkCameraPermission = async () => {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!appConfig.device.isAndroid && !appConfig.device.isIOS) {
       Alert.alert(t('common:system.camera.error.notSupport'));
       return false;
@@ -183,11 +194,11 @@ class QRScanner extends Component<QRScannerProps> {
   };
 
   onPressSetting = () => {
-    const { t } = this.props;
+    const {t} = this.props;
     openSettings().catch(() =>
       Alert.alert(t('common:system.settings.error.accessProblem')),
     );
-  }
+  };
 
   renderCustomMarker() {
     return (
@@ -203,7 +214,7 @@ class QRScanner extends Component<QRScannerProps> {
           />
           <View
             style={[
-              styles.qrFrameContainer,
+              this.qrFrameContainerStyle,
               {
                 top: SCAN_AREA_TOP,
                 left: SCAN_AREA_LEFT,
@@ -213,36 +224,55 @@ class QRScanner extends Component<QRScannerProps> {
           </View>
         </View>
       )
-    )
+    );
+  }
+
+  renderIconBefore(titleStyle) {
+    return (
+      <Icon
+        bundle={BundleIconSetName.MATERIAL_COMMUNITY_ICONS}
+        style={[titleStyle, styles.icon]}
+        name="camera-party-mode"
+      />
+    );
   }
 
   renderAuthorizedView() {
-    const { t } = this.props;
+    const {t} = this.props;
+    const settingLabel: string = t('settingLabel');
     return (
-      this.props.notAuthorizedView || (
-        this.state.permissionCameraGranted === false ? (
-          <View style={[styles.topContent]}>
-            <Text style={styles.centerText}>
-              <Icon name="camera-party-mode" size={16} color="#404040" />
-              {' ' + t('common:system.camera.access.request')}
-            </Text>
-            <Button
-              containerStyle={styles.permissionNotGrantedBtn}
-              style={styles.permissionNotGrantedSetting}
-              onPress={this.onPressSetting}>
-              {t('settingLabel')}
-            </Button>
-          </View>
-        ) : (
-            <View style={styles.topContent}>
-              <Text style={styles.centerText}>
-                <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' ' + t('qrGuideMessage')}
-              </Text>
-            </View>
-          )
-      )
-    )
+      this.props.notAuthorizedView ||
+      (this.state.permissionCameraGranted === false ? (
+        <View style={[styles.topContent]}>
+          <Typography
+            renderIconBefore={this.renderIconBefore}
+            type={TypographyType.LABEL_LARGE}
+            style={styles.centerText}>
+            {' ' + t('common:system.camera.access.request')}
+          </Typography>
+          <AppFilledButton
+            style={styles.permissionNotGrantedBtn}
+            onPress={this.onPressSetting}>
+            {settingLabel}
+          </AppFilledButton>
+        </View>
+      ) : (
+        <View style={styles.topContent}>
+          <Typography
+            renderIconBefore={this.renderIconBefore}
+            type={TypographyType.LABEL_LARGE}
+            style={styles.centerText}>
+            {' ' + t('qrGuideMessage')}
+          </Typography>
+        </View>
+      ))
+    );
+  }
+
+  get qrFrameContainerStyle() {
+    return mergeStyles(styles.qrFrameContainer, {
+      borderColor: this.theme.color.border,
+    });
   }
 
   render() {
@@ -257,7 +287,9 @@ class QRScanner extends Component<QRScannerProps> {
         showMarker
         checkAndroid6Permissions
         permissionDialogTitle=""
-        permissionDialogMessage={this.props.t('common:system.camera.access.request')}
+        permissionDialogMessage={this.props.t(
+          'common:system.camera.access.request',
+        )}
         onRead={this.props.onRead}
         customMarker={this.renderCustomMarker()}
         notAuthorizedView={this.renderAuthorizedView()}
@@ -266,6 +298,6 @@ class QRScanner extends Component<QRScannerProps> {
       />
     );
   }
-};
+}
 
 export default withTranslation(['qrBarCode', 'common'])(QRScanner);

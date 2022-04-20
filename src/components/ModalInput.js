@@ -1,17 +1,25 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  TextInput,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useEffect, useRef, useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+// 3-party libs
 import {default as ModalBox} from 'react-native-modalbox';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-import Button from '../components/Button';
 import {Actions} from 'react-native-router-flux';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import Button from '../components/Button';
+import {
+  Card,
+  Container,
+  Typography,
+  IconButton,
+  Input,
+} from 'src/components/base';
 
 function ModalInput({
   refModal = () => {},
@@ -29,6 +37,8 @@ function ModalInput({
   extraInput = null,
   backdropPressToClose = false,
 }) {
+  const {theme} = useTheme();
+
   const [text, setPrice] = useState(value);
   let ref_modal = null;
   let ref_input = useRef();
@@ -74,6 +84,33 @@ function ModalInput({
     refModal(ref);
   }
 
+  const headingContainerStyle = useMemo(() => {
+    return mergeStyles(styles.headingContainer, {
+      borderBottomColor: theme.color.border,
+      borderBottomWidth: theme.layout.borderWidth,
+    });
+  }, []);
+
+  const textInputBaseContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.textInputContainer,
+        {
+          borderWidth: theme.layout.borderWidth,
+          borderColor: theme.color.border,
+          borderRadius: theme.layout.borderRadiusSmall,
+        },
+      ],
+      textInputContainerStyle,
+    );
+  }, [theme]);
+
+  const iconStyle = useMemo(() => {
+    return mergeStyles(styles.icon, {
+      color: theme.color.iconInactive,
+    });
+  }, [theme]);
+
   return (
     <ModalBox
       entry="top"
@@ -86,37 +123,51 @@ function ModalInput({
       useNativeDriver
       swipeToClose={false}
       backdropPressToClose={backdropPressToClose}>
-      <View style={styles.headingContainer}>
-        <TouchableOpacity onPress={onClosing} style={styles.iconContainer}>
-          <Icon name="close" style={styles.icon} />
-        </TouchableOpacity>
-        <Text style={styles.heading}>{title}</Text>
-      </View>
-
-      <View style={styles.body}>
-        {!!description && <Text style={styles.description}>{description}</Text>}
-        <View style={[styles.textInputContainer, textInputContainerStyle]}>
-          <TextInput
-            ref={ref_input}
-            value={getFormattedText()}
-            onChangeText={onChangeText}
-            {...textInputProps}
-            style={[styles.textInput, textInputStyle]}
+      <Card>
+        <Container noBackground style={headingContainerStyle}>
+          <IconButton
+            onPress={onClosing}
+            style={styles.iconContainer}
+            iconStyle={iconStyle}
+            bundle={BundleIconSetName.FONT_AWESOME}
+            name="close"
           />
-          {extraInput}
-        </View>
-      </View>
+          <Typography type={TypographyType.TITLE_LARGE} style={styles.heading}>
+            {title}
+          </Typography>
+        </Container>
 
-      <Button
-        disabled={
-          btnDisabled !== undefined
-            ? btnDisabled
-            : !getFormattedText() || getFormattedText() == 0
-        }
-        title={btnTitle}
-        onPress={handleSubmit}
-        containerStyle={styles.btnContainer}
-      />
+        <View style={styles.body}>
+          {!!description && (
+            <Typography
+              type={TypographyType.LABEL_SMALL}
+              style={styles.description}>
+              {description}
+            </Typography>
+          )}
+          <Container style={textInputBaseContainerStyle}>
+            <Input
+              ref={ref_input}
+              value={getFormattedText()}
+              onChangeText={onChangeText}
+              {...textInputProps}
+              style={[styles.textInput, textInputStyle]}
+            />
+            {extraInput}
+          </Container>
+        </View>
+
+        <Button
+          disabled={
+            btnDisabled !== undefined
+              ? btnDisabled
+              : !getFormattedText() || getFormattedText() == 0
+          }
+          title={btnTitle}
+          onPress={handleSubmit}
+          containerStyle={styles.btnContainer}
+        />
+      </Card>
     </ModalBox>
   );
 }
@@ -128,7 +179,7 @@ const styles = StyleSheet.create({
   modal: {
     maxWidth: '80%',
     height: undefined,
-    borderRadius: 8,
+    backgroundColor: 'transparent',
   },
   iconContainer: {
     position: 'absolute',
@@ -140,19 +191,14 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 18,
-    color: '#666',
   },
   headingContainer: {
     padding: 30,
     paddingBottom: 15,
-    borderBottomWidth: 2,
-    borderBottomColor: appConfig.colors.primary,
   },
   heading: {
     marginTop: 10,
-    fontSize: 22,
     fontWeight: '800',
-    color: '#555',
     letterSpacing: 1.6,
     textAlign: 'center',
   },
@@ -161,21 +207,15 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   description: {
-    fontSize: 13,
-    color: '#666',
     marginBottom: 12,
   },
   textInputContainer: {
-    borderWidth: 0.5,
-    borderColor: '#ddd',
-    borderRadius: 4,
     padding: appConfig.device.ratio * 3,
     paddingHorizontal: 15,
     paddingBottom: appConfig.device.ratio * 3 + 1,
-    marginBottom: 0
+    marginBottom: 0,
   },
   textInput: {
-    color: '#242424',
     paddingVertical: 0,
     paddingHorizontal: 0,
   },

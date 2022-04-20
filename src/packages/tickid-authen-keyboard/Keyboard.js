@@ -1,59 +1,133 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import cleanImage from './assets/images/backspace.png';
-import { KEYBOARD_DEFINITION } from './constants';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {KEYBOARD_DEFINITION} from './constants';
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import {
+  Icon,
+  Container,
+  FilledButton,
+  TextButton,
+  Typography,
+} from 'src/components/base';
 
 Keyboard.propTypes = {
   onPress: PropTypes.func,
-  onClear: PropTypes.func
+  onClear: PropTypes.func,
 };
 
 Keyboard.defaultProps = {
   onPress: () => {},
-  onClear: () => {}
+  onClear: () => {},
 };
 
 function Keyboard(props) {
+  const {theme} = useTheme();
+
+  const numberValueTypoProps = {type: TypographyType.LABEL_GIGANTIC};
+
+  const renderTextDescription = (text, titleStyle, buttonStyle, fontStyle) => {
+    return (
+      !!text && (
+        <Typography
+          type={TypographyType.DESCRIPTION_SMALL_TERTIARY}
+          style={[fontStyle, styles.text]}>
+          {text}
+        </Typography>
+      )
+    );
+  };
+
   const renderButtons = () => {
     return KEYBOARD_DEFINITION.map((button, index) => {
+      const isMiddleButton = index % 3 === 1;
       switch (button.type) {
         case 'button':
           return (
-            <View style={styles.buttonWrapper} key={index}>
-              <TouchableOpacity
+            <Container
+              style={[
+                buttonWrapperStyle,
+                isMiddleButton && buttonMiddleWrapperStyle,
+              ]}
+              key={index}>
+              <TextButton
+                typoProps={numberValueTypoProps}
                 style={styles.button}
-                onPress={() => props.onPress(button.value)}
-              >
-                <Text style={styles.value}>{button.value}</Text>
-                {!!button.text && (
-                  <Text style={styles.text}>{button.text}</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+                renderIconRight={(...args) =>
+                  renderTextDescription(button.text, ...args)
+                }
+                onPress={() => props.onPress(button.value)}>
+                {button.value}
+              </TextButton>
+            </Container>
           );
         case null:
           return (
-            <View style={styles.buttonWrapper} key={index}>
-              <View style={[styles.button, styles.buttonEmpty]} />
+            <View
+              style={[
+                buttonWrapperStyle,
+                isMiddleButton && buttonMiddleWrapperStyle,
+              ]}
+              key={index}>
+              <View style={[styles.button, subButtonStyle]} />
             </View>
           );
         case 'clean':
           return (
-            <View style={styles.buttonWrapper} key={index}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClear]}
-                onPress={() => props.onClear()}
-              >
-                <Image style={styles.cleanIcon} source={cleanImage} />
-              </TouchableOpacity>
+            <View
+              style={[
+                buttonWrapperStyle,
+                isMiddleButton && buttonMiddleWrapperStyle,
+              ]}
+              key={index}>
+              <FilledButton
+                style={[styles.button, subButtonStyle]}
+                onPress={() => props.onClear()}>
+                <Icon
+                  bundle={BundleIconSetName.IONICONS}
+                  name="backspace"
+                  style={[styles.cleanIcon, cleanButtonStyle]}
+                />
+              </FilledButton>
             </View>
           );
       }
     });
   };
 
-  return <View style={styles.container}>{renderButtons()}</View>;
+  const buttonWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.buttonWrapper, {
+      borderColor: theme.color.border,
+      borderTopWidth: theme.layout.borderWidth,
+    });
+  }, [theme]);
+
+  const buttonMiddleWrapperStyle = useMemo(() => {
+    return mergeStyles(styles.buttonWrapper, {
+      borderLeftWidth: theme.layout.borderWidth,
+      borderRightWidth: theme.layout.borderWidth,
+    });
+  }, [theme]);
+
+  const subButtonStyle = useMemo(() => {
+    return {
+      backgroundColor: theme.color.contentBackgroundStrong,
+    };
+  }, [theme]);
+
+  const cleanButtonStyle = useMemo(() => {
+    return {
+      color: theme.color.surface,
+    };
+  }, [theme]);
+
+  return <Container style={styles.container}>{renderButtons()}</Container>;
 }
 
 const styles = StyleSheet.create({
@@ -61,42 +135,28 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: '#f1f1f1'
   },
   buttonWrapper: {
-    borderColor: '#ccc',
-    width: '33.33333333%',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderRightWidth: StyleSheet.hairlineWidth
+    width: `${100 / 3}%`,
   },
   button: {
+    flexDirection: 'column',
     width: '100%',
     minHeight: 58,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    paddingVertical: 7
+    paddingVertical: 7,
   },
   buttonClear: {
     justifyContent: 'center',
-    backgroundColor: '#ccc'
   },
-  buttonEmpty: {
-    backgroundColor: '#ccc'
-  },
-  value: {
-    fontSize: 24,
-    fontWeight: '400',
-    color: '#000'
-  },
+  buttonEmpty: {},
+  value: {},
   text: {
-    fontSize: 12,
     fontWeight: '300',
-    color: '#000'
   },
   cleanIcon: {
-    width: 22,
-    height: 22
-  }
+    fontSize: 28,
+  },
 });
 
 export default Keyboard;

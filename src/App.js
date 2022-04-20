@@ -12,7 +12,6 @@ import {
   Text,
   TextInput,
   LogBox,
-  StatusBar,
 } from 'react-native';
 import {
   Scene,
@@ -28,46 +27,32 @@ import {
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
 import FoodHubCartButton from './components/FoodHubCartButton';
+import * as Sentry from '@sentry/react-native';
 import {CloseButton} from 'app-packages/tickid-navbar';
-import handleStatusBarStyle from './helper/handleStatusBarStyle';
+import handleStatusBarStyle from './helper/statusBar';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
-import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
-import AddStore from './components/Home/AddStore';
-import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
-import Register from './components/account/Register';
-// import PhoneAuth from './components/account/PhoneAuth';
 import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
-import ForgetVerify from './components/account/ForgetVerify';
-import ForgetActive from './components/account/ForgetActive';
-import NewPass from './components/account/NewPass';
 import StoreContainer from './components/stores/Stores';
 import SearchNavBarContainer from './components/stores/SearchNavBar';
-import StoresList from './components/stores/StoresList';
 import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
-import Cart from './components/cart/Cart';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
 import PaymentMethod from './components/payment/PaymentMethod';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
-import ViewOrdersItem from './components/orders/ViewOrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
-import SearchStore from './components/Home/SearchStore';
-import ListStore from './components/Home/ListStore';
-import ScanQRCode from './components/Home/ScanQRCode';
-import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import ChooseLocation from './components/Home/ChooseLocation';
@@ -99,9 +84,8 @@ import {
   SearchChat,
   SearchChatNavBar,
 } from './components/amazingChat';
-import MdCardConfirm from './components/services/MdCardConfirm';
-import {ServiceOrders, ServiceFeedback} from './components/services';
-import TabIcon from './components/TabIcon';
+import {ServiceOrders} from './components/services';
+import TabBar, {TabIcon} from './components/TabBar';
 import {
   initialize as initializeRadaModule,
   Category,
@@ -149,7 +133,7 @@ import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
 import CountryPicker from './components/CountryPicker';
-import NetWorkInfo from './components/NetWorkInfo';
+import NetworkInfo from './components/NetworkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
@@ -204,8 +188,15 @@ import MainNotify from './components/notify/MainNotify';
 import ModalActionSheet from './components/ModalActionSheet';
 import Requests, {RequestDetail, RequestCreation} from './containers/Requests';
 import ModalDateTimePicker from './components/ModalDateTimePicker';
+import {ThemeProvider} from './Themes/Theme.context';
+import {BASE_LIGHT_THEME} from './Themes/Theme.light';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {pop, push, reset} from 'app-helper/routing';
+import {StatusBar} from './components/base';
 import ModalLicense from './components/ModalLicense';
+import {setAppLanguage} from './i18n/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalDeliverySchedule from './components/payment/Confirm/components/DeliveryScheduleSection/ModalDeliverySchedule';
 
 /**
  * Not allow font scaling
@@ -237,10 +228,10 @@ initializePhoneCardModule({
     endpoint: () => BaseAPI.apiDomain,
   },
   route: {
-    push: Actions.push,
-    pop: Actions.pop,
+    push: push,
+    pop: pop,
     pushToMain: () => {
-      Actions.reset(appConfig.routes.primaryTabbar);
+      reset(appConfig.routes.primaryTabbar);
     },
   },
 });
@@ -265,26 +256,30 @@ initializeVoucherModule({
     endpoint: () => BaseAPI.apiDomain,
   },
   route: {
-    push: Actions.push,
-    pop: Actions.pop,
-    backToMainAndOpenShop: (siteData) => {
+    push,
+    pop,
+    backToMainAndOpenShop: (siteData, theme) => {
       addJob(() => {
-        action(() => {
-          store.setStoreData(siteData);
-          Actions.push(appConfig.routes.store, {
-            title: siteData.name,
-          });
-        })();
-      });
-      Actions.reset(appConfig.routes.primaryTabbar);
-    },
-    pushToStoreBySiteData: (siteData) => {
-      action(() => {
         store.setStoreData(siteData);
-        Actions.push(appConfig.routes.store, {
+        push(
+          appConfig.routes.store,
+          {
+            title: siteData.name,
+          },
+          theme,
+        );
+      });
+      reset(appConfig.routes.primaryTabbar);
+    },
+    pushToStoreBySiteData: (siteData, theme) => {
+      store.setStoreData(siteData);
+      push(
+        appConfig.routes.store,
+        {
           title: siteData.name,
-        });
-      })();
+        },
+        theme,
+      );
     },
   },
 });
@@ -316,6 +311,14 @@ initializeRadaModule({
 class App extends Component {
   constructor(props) {
     super(props);
+
+    // codePush.clearUpdates();
+    if (__DEV__) {
+      console.log('DEVELOPMENT');
+    } else {
+      this.initSentry();
+      this.codePushSyncManually();
+    }
 
     this.state = {
       header: null,
@@ -357,12 +360,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // codePush.clearUpdates();
-    if (__DEV__) {
-      console.log('DEVELOPMENT');
-    } else {
-      this.codePushSyncManually();
-    }
     this.codePushGetMetaData();
     this.handleSubscribeBranchIO();
     this.handleAddListenerOneSignal();
@@ -374,6 +371,48 @@ class App extends Component {
   componentWillUnmount() {
     store.branchIOUnsubscribe();
   }
+
+  initSentry = async (update) => {
+    let sentryOptions = {
+      dsn: appConfig.sentry.dsn,
+      release: ``,
+    };
+
+    const formatSentryOptions = (updateData) => {
+      return {
+        ...sentryOptions,
+        release: `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+codepush:${
+          updateData.label
+        }`,
+        dist: updateData.label,
+      };
+    };
+
+    if (update) {
+      sentryOptions = formatSentryOptions(update);
+    } else {
+      try {
+        let codePushUpdate = await AsyncStorage.getItem('codePushUpdate');
+        codePushUpdate = JSON.parse(codePushUpdate);
+
+        if (
+          !!codePushUpdate &&
+          codePushUpdate.appVersion === DeviceInfo.getVersion()
+        ) {
+          sentryOptions = formatSentryOptions(codePushUpdate);
+        } else {
+          sentryOptions = {
+            ...sentryOptions,
+            release: `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${DeviceInfo.getBuildNumber()}`,
+          };
+        }
+      } catch (e) {
+        console.log('sentry init error', e);
+      }
+    }
+
+    Sentry.init(sentryOptions);
+  };
 
   executeTempDeepLinkData = async (tempDeepLinkData = null) => {
     if (!tempDeepLinkData) {
@@ -392,7 +431,7 @@ class App extends Component {
           store.isHomeLoaded ||
           tempDeepLinkData.type === SERVICES_TYPE.AFFILIATE
         ) {
-          servicesHandler(tempDeepLinkData, t);
+          servicesHandler({...tempDeepLinkData, theme: store.theme}, t);
         } else {
           store.setTempDeepLinkData({params: tempDeepLinkData, t});
         }
@@ -432,12 +471,11 @@ class App extends Component {
             return;
           }
         }
-
         this.tempDeepLinkData = params;
 
         if (params['+clicked_branch_link']) {
           if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
-            servicesHandler(params, t);
+            servicesHandler({...params, theme: store.theme}, t);
           } else {
             store.setTempDeepLinkData({params, t});
           }
@@ -451,12 +489,14 @@ class App extends Component {
     store.branchIOSubscribe(branchIOSubscribe);
   };
 
-  handleOpenningNotification = (notification) => {
+  handleOpeningNotification = ({notification}) => {
     const {t} = this.props;
-    const params = notification.additionalData;
+    const params = notification?.additionalData;
     console.log(params);
+    if (!params) return;
+
     if (store.isHomeLoaded) {
-      servicesHandler(params, t);
+      servicesHandler({...params, theme: store.theme}, t);
     } else {
       store.setTempDeepLinkData({params, t});
     }
@@ -490,6 +530,8 @@ class App extends Component {
       if (!update) {
         console.log('The app is up to date!');
       } else {
+        AsyncStorage.setItem('codePushUpdate', JSON.stringify(update));
+
         AsyncStorage.setItem(
           'tempDeepLinkData',
           JSON.stringify(this.tempDeepLinkData),
@@ -631,7 +673,7 @@ class App extends Component {
     //Method for handling notifications opened
     OneSignal.setNotificationOpenedHandler((notification) => {
       console.log('OneSignal: notification opened:', notification);
-      this.handleOpenningNotification(notification);
+      this.handleOpeningNotification(notification);
     });
 
     OneSignal.addSubscriptionObserver((event) => {
@@ -656,92 +698,78 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{overflow: 'scroll', flex: 1}}>
-        {/* <GPSStoreLocation /> */}
-        {this.state.header}
-        <NetWorkInfo />
-        <RootRouter
-          appLanguage={this.state.appLanguage}
-          t={this.props.t}
-          setHeader={this.setHeader}
-          setOverlayComponent={this.setOverlayComponent}
-        />
-        {this.state.overlayComponent && (
-          <View style={{...StyleSheet.absoluteFillObject}}>
-            {this.state.overlayComponent}
-          </View>
-        )}
-        <Drawer />
-        <FlashMessage icon={'auto'} />
-        <AwesomeAlert
-          useNativeDriver
-          show={this.state.isOpenCodePushModal}
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          showCancelButton={false}
-          showConfirmButton={false}
-          customView={
-            <AppCodePush
-              title={
-                this.state.titleUpdateCodePushModal ||
-                this.titleUpdateCodePushModal
-              }
-              description={
-                this.state.descriptionUpdateCodePushModal ||
-                this.descriptionUpdateCodePushModal
-              }
-              progress={this.state.codePushUpdateProgress}
-              onProgressComplete={this.handleCodePushProgressComplete}
-              onPressConfirm={() => this.closeCodePushModal()}
-            />
-          }
-        />
-      </View>
+      <ThemeProvider initial={BASE_LIGHT_THEME}>
+        <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
+          <StatusBar />
+          {this.state.header}
+          <NetworkInfo />
+          <RootRouter
+            appLanguage={this.state.appLanguage}
+            t={this.props.t}
+            setHeader={this.setHeader}
+          />
+          <Drawer />
+          <FlashMessage icon={'auto'} />
+          <AwesomeAlert
+            useNativeDriver
+            show={this.state.isOpenCodePushModal}
+            closeOnTouchOutside={false}
+            closeOnHardwareBackPress={false}
+            showCancelButton={false}
+            showConfirmButton={false}
+            contentContainerStyle={styles.awesomeAlertContainer}
+            customView={
+              <AppCodePush
+                title={
+                  this.state.titleUpdateCodePushModal ||
+                  this.titleUpdateCodePushModal
+                }
+                description={
+                  this.state.descriptionUpdateCodePushModal ||
+                  this.descriptionUpdateCodePushModal
+                }
+                progress={this.state.codePushUpdateProgress}
+                onProgressComplete={this.handleCodePushProgressComplete}
+                onPressConfirm={() => this.closeCodePushModal()}
+              />
+            }
+          />
+        </SafeAreaProvider>
+      </ThemeProvider>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
   tabBarStyle: {
-    borderTopWidth: Util.pixel,
-    borderColor: '#cccccc',
-    backgroundColor: '#ffffff',
-    opacity: 1,
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 10,
-    shadowOpacity: 0.3,
-    elevation: 2,
+    borderTopWidth: 0,
+    // borderColor: '#cccccc',
+    // shadowColor: 'black',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowRadius: 10,
+    // shadowOpacity: 0.3,
+    // elevation: 2,
+    // backgroundColor: 'transparent',
+    overflow: 'visible',
+    height: 44 + appConfig.device.bottomSpace,
   },
-  content: {
-    width: Util.size.width,
-    height: 28,
-    backgroundColor: '#FFD2D2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: isIOS ? 20 : 0,
+  awesomeAlertContainer: {
+    backgroundColor: 'transparent',
   },
-  message: {
-    color: '#D8000C',
-    fontSize: 14,
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: appConfig.colors.primary,
+  accountSceneNavBar: {
+    ...whiteNavBarConfig.navigationBarStyle,
+    height: 70,
+    borderBottomWidth: 0.5,
   },
 });
 
 // wrap App with codepush HOC
 // export default App;
 export default withTranslation()(
-  codePush({checkFrequency: codePush.CheckFrequency.MANUAL})(App),
+  codePush({checkFrequency: codePush.CheckFrequency.MANUAL})(Sentry.wrap(App)),
 );
 
 class RootRouter extends Component {
@@ -784,15 +812,17 @@ class RootRouter extends Component {
     this.props.setHeader(header);
   }
 
+  handleStateChange = (prevState, newState, action) => {
+    handleStatusBarStyle(prevState, newState, action);
+  };
+
   render() {
     const {t} = this.props;
     return (
       <Router
         store={store}
         backAndroidHandler={handleBackAndroid}
-        onStateChange={(prevState, newState, action) => {
-          handleStatusBarStyle(prevState, newState, action);
-        }}
+        onStateChange={this.handleStateChange}
         {...routerConfig}>
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
@@ -812,9 +842,11 @@ class RootRouter extends Component {
                   showLabel={false}
                   key={appConfig.routes.primaryTabbar}
                   tabBarStyle={styles.tabBarStyle}
-                  activeBackgroundColor="#ffffff"
-                  inactiveBackgroundColor="#ffffff"
+                  tabBarComponent={TabBar}
+                  // activeBackgroundColor={this.theme.color.surface}
+                  // inactiveBackgroundColor={this.theme.color.surface}
                   tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
+                  safeAreaInset={{bottom: 'never'}}
                   {...navBarConfig}>
                   {/* ================ HOME TAB ================ */}
                   <Stack
@@ -872,7 +904,8 @@ class RootRouter extends Component {
                   {/* ================ SCAN QR TAB ================ */}
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
-                    icon={FoodHubCartButton}>
+                    icon={TabIcon}
+                    storeIcon>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -932,36 +965,23 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
-                    navigationBarStyle={{
-                      backgroundColor: '#fff',
-                      height: 70,
-                    }}
                     headerLayoutPreset="left"
                     iconSize={24}
                     iconSVG={SVGAccount}>
                     <Scene
-                      titleStyle={{
-                        color: '#333',
-                        fontSize: 25,
-                        fontWeight: 'bold',
-                        paddingTop: 20,
-                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
+                      {...whiteNavBarConfig}
+                      navigationBarStyle={styles.accountSceneNavBar}
+                      titleStyle={{
+                        fontSize: 25,
+                        paddingTop: 20,
+                        paddingLeft: 15,
+                      }}
                     />
                   </Stack>
                 </Tabs>
-
-                {/* ================ CUSTOMER CARD WALLET ================ */}
-                <Stack key={appConfig.routes.customerCardWallet}>
-                  <Scene
-                    key={`${appConfig.routes.customerCardWallet}_1`}
-                    component={CustomerCardWallet}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
 
                 {/* ================ REQUESTS ================ */}
                 <Stack key={appConfig.routes.requests}>
@@ -1005,9 +1025,9 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ AIRLINE TICKET RESULT ================ */}
-                <Stack key={appConfig.routes.result}>
+                <Stack key={appConfig.routes.airlineTicketResult}>
                   <Scene
-                    key={`${appConfig.routes.result}_1`}
+                    key={`${appConfig.routes.airlineTicketResult}_1`}
                     component={Result}
                     {...navBarConfig}
                     back
@@ -1015,24 +1035,23 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ AIRLINE TICKET PLACE ================ */}
-                <Stack key={appConfig.routes.place}>
+                <Stack key={appConfig.routes.airlineTicketPlace}>
                   <Scene
-                    key={`${appConfig.routes.place}_1`}
+                    key={`${appConfig.routes.airlineTicketPlace}_1`}
                     component={Place}
-                    navBar={({onChangeText}) => (
-                      <PlaceNavBar {...{onChangeText}} />
-                    )}
+                    {...navBarConfig}
+                    navBar={PlaceNavBar}
                   />
                 </Stack>
 
                 {/* ================ AIRLINE TICKET DATEPICKER ================ */}
-                <Stack key={appConfig.routes.datePicker}>
+                <Stack key={appConfig.routes.airlineTicketDatePicker}>
                   <Scene
                     modal={true}
                     panHandlers={null}
-                    title="Chọn ngày"
+                    title={t('screen.chooseDate.mainTitle')}
                     {...navBarConfig}
-                    key={`${appConfig.routes.datePicker}_1`}
+                    key={`${appConfig.routes.airlineTicketDatePicker}_1`}
                     component={DatePicker}
                     back
                   />
@@ -1041,7 +1060,6 @@ class RootRouter extends Component {
                 {/* ================ AIRLINE TICKET ================ */}
                 <Stack key={appConfig.routes.airlineTicket}>
                   <Scene
-                    title="Tìm chuyến bay"
                     key={`${appConfig.routes.airlineTicket}_1`}
                     component={AirlineTicket}
                     {...navBarConfig}
@@ -1074,14 +1092,16 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.listUserChat}>
                   <Scene
                     key={`${appConfig.routes.listUserChat}_1`}
-                    title={t('screen.listUserChat.mainTitle')}
                     component={ListUserChat}
                     navBar={ListUserChatNavBar}
                     {...navBarConfig}
                     back
                   />
+                </Stack>
+
+                <Stack key={appConfig.routes.searchUserChat}>
                   <Scene
-                    key={appConfig.routes.searchUserChat}
+                    key={`${appConfig.routes.searchUserChat}_1`}
                     component={SearchUserChat}
                     navBar={SearchUserChatNavBar}
                     {...navBarConfig}
@@ -1285,7 +1305,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.newsTab}>
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
-                    {...navBarConfig}
                     component={SocialNews}
                     {...navBarConfig}
                     back
@@ -1338,16 +1357,6 @@ class RootRouter extends Component {
                     title={t('screen.voucher.mainTitle')}
                     component={VoucherContainer}
                     {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                {/* ================ VOUCHER DETAIL ================ */}
-                <Stack key={appConfig.routes.voucherDetail}>
-                  <Scene
-                    key={`${appConfig.routes.voucherDetail}_1`}
-                    component={VoucherDetailContainer}
-                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
@@ -1442,21 +1451,11 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="create_address">
+                <Stack key={appConfig.routes.createAddress}>
                   <Scene
-                    key="create_address_1"
+                    key={`${appConfig.routes.createAddress}_1`}
                     // title="Thêm địa chỉ"
                     component={CreateAddress}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="register">
-                  <Scene
-                    key="register_1"
-                    title={t('screen.register.mainTitle')}
-                    component={Register}
                     {...navBarConfig}
                     back
                   />
@@ -1480,46 +1479,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.forgetVerify}>
-                  <Scene
-                    key={`${appConfig.routes.forgetVerify}_1`}
-                    title="Lấy lại mật khẩu"
-                    component={ForgetVerify}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.forgetActive}>
-                  <Scene
-                    key={`${appConfig.routes.forgetActive}_1`}
-                    title="Kích hoạt tài khoản"
-                    component={ForgetActive}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.newPass}>
-                  <Scene
-                    key={`${appConfig.routes.newPass}_1`}
-                    title="Tạo mật khẩu mới"
-                    component={NewPass}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="cart">
-                  <Scene
-                    key="cart_1"
-                    title={t('screen.cart.mainTitle')}
-                    component={Cart}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.store}>
                   {/* <RNRFDrawer
                   key={appConfig.routes.store}
@@ -1538,20 +1497,9 @@ class RootRouter extends Component {
                   {/* </RNRFDrawer> */}
                 </Stack>
 
-                <Stack key="stores_list">
-                  <Scene
-                    key="stores_list_1"
-                    title="Cửa hàng"
-                    component={StoresList}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.searchStore}>
                   <Scene
                     key={`${appConfig.routes.searchStore}_1`}
-                    title="Tìm kiếm"
                     component={SearchStoreContainer}
                     navBar={SearchNavBarContainer}
                     {...navBarConfig}
@@ -1586,9 +1534,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="rating">
+                <Stack key={appConfig.routes.rating}>
                   <Scene
-                    key="rating_1"
+                    key={`${appConfig.routes.rating}_1`}
                     title={t('screen.feedback.mainTitle')}
                     component={Rating}
                     {...navBarConfig}
@@ -1596,21 +1544,11 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="orders_item">
+                <Stack key={appConfig.routes.ordersDetail}>
                   <Scene
-                    key="orders_item_1"
+                    key={`${appConfig.routes.ordersDetail}_1`}
                     title={t('screen.ordersDetail.mainTitle')}
                     component={OrdersItem}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="view_orders_item">
-                  <Scene
-                    key="view_orders_item_1"
-                    title="Thông tin đơn hàng"
-                    component={ViewOrdersItem}
                     {...navBarConfig}
                     back
                   />
@@ -1664,46 +1602,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="search_store">
-                  <Scene
-                    key="search_store_1"
-                    title="Tìm cửa hàng"
-                    component={SearchStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key={appConfig.routes.scanQrCode}>
-                  <Scene
-                    key={`${appConfig.routes.scanQrCode}_1`}
-                    title={t('screen.qrBarCode.scanTitle')}
-                    component={ScanQRCode}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="list_store">
-                  <Scene
-                    key="list_store_1"
-                    title="Cửa hàng"
-                    component={ListStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="add_store">
-                  <Scene
-                    key="add_store_1"
-                    title="Thêm cửa hàng"
-                    component={AddStore}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={`${appConfig.routes.storeOrders}`}>
                   <Scene
                     key={`${appConfig.routes.storeOrders}_1`}
@@ -1719,23 +1617,10 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="chat">
-                  <Scene key="chat_1" component={Chat} {...navBarConfig} back />
-                </Stack>
-
                 <Stack key={appConfig.routes.webview}>
                   <Scene
-                    key="webview_1"
+                    key={`${appConfig.routes.webview}_1`}
                     component={WebView}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
-                <Stack key="_add_ref">
-                  <Scene
-                    key="_add_ref_1"
-                    component={AddRef}
                     {...navBarConfig}
                     back
                   />
@@ -1816,9 +1701,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="affiliate">
+                <Stack key={appConfig.routes.affiliate}>
                   <Scene
-                    key="affiliate_1"
+                    key={`${appConfig.routes.affiliate}_1`}
                     component={Affiliate}
                     {...navBarConfig}
                     back
@@ -1895,17 +1780,17 @@ class RootRouter extends Component {
 
                 <Stack key={appConfig.routes.listChat}>
                   <Scene
-                    hideNavBar={false}
                     key={`${appConfig.routes.listChat}_1`}
-                    title="Danh sách Chat"
                     component={ListChat}
                     navBar={ListChatNavBar}
                     {...navBarConfig}
                     back
                   />
+                </Stack>
+
+                <Stack key={appConfig.routes.searchChat}>
                   <Scene
-                    hideNavBar={false}
-                    key="search_chat"
+                    key={`${appConfig.routes.searchChat}_1`}
                     component={SearchChat}
                     navBar={SearchChatNavBar}
                     {...navBarConfig}
@@ -1913,9 +1798,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="amazing_chat">
+                <Stack key={appConfig.routes.amazingChat}>
                   <Scene
-                    key="amazing_chat_1"
+                    key={`${appConfig.routes.amazingChat}_1`}
                     hideNavBar={false}
                     component={AmazingChat}
                     setHeader={this.setHeader.bind(this)}
@@ -1979,20 +1864,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="md_card_confirm">
-                  <Scene
-                    key="md_card_confirm_1"
-                    title={t('screen.ordersDetail.confirmTitle')}
-                    component={MdCardConfirm}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.serviceOrders}>
                   <Scene
                     key={`${appConfig.routes.serviceOrders}_1`}
-                    title="Đơn dịch vụ"
                     component={ServiceOrders}
                     {...navBarConfig}
                     back
@@ -2030,22 +1904,14 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.serviceFeedback}>
-                  <Scene
-                    key={`${appConfig.routes.serviceFeedback}_1`}
-                    title={t('screen.feedback.mainTitle')}
-                    component={ServiceFeedback}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key={appConfig.routes.resetPassword}>
                   <Scene
                     key={`${appConfig.routes.resetPassword}_1`}
                     title={t('screen.resetPassword.mainTitle')}
                     component={ResetPassword}
                     hideNavBar
+                    {...whiteNavBarConfig}
+                    back
                   />
                 </Stack>
 
@@ -2195,7 +2061,7 @@ class RootRouter extends Component {
 
               {/* ================ MODAL AIRLINE TICKET CUSTOMER ================ */}
               <Stack
-                key={appConfig.routes.customer}
+                key={appConfig.routes.airlineTicketCustomer}
                 component={Customer}
                 hideNavBar
               />
@@ -2205,6 +2071,12 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalLicense}
                 component={ModalLicense}
               />
+
+              {/* ================ MODAL LICENSE================ */}
+              <Stack
+                key={appConfig.routes.modalDeliverySchedule}
+                component={ModalDeliverySchedule}
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -2212,6 +2084,7 @@ class RootRouter extends Component {
               <Scene
                 key={`${appConfig.routes.modalWebview}_1`}
                 component={WebView}
+                {...whiteNavBarConfig}
                 renderBackButton={CloseButton}
                 back
               />
@@ -2273,6 +2146,7 @@ class RootRouter extends Component {
               <Scene
                 key={`${appConfig.routes.transaction}_1`}
                 component={Transaction}
+                {...whiteNavBarConfig}
                 hideNavBar
                 back
               />

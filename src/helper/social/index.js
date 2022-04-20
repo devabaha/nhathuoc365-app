@@ -1,5 +1,4 @@
 import store from 'app-store';
-import {Actions} from 'react-native-router-flux';
 import {
   SOCIAL_BUTTON_TYPES,
   SOCIAL_DATA_TYPES,
@@ -15,6 +14,7 @@ import {
   MAX_LENGTH_CONTENT,
   MAX_LINE_OF_CONTENT,
 } from 'src/constants/social/post';
+import {push} from 'app-helper/routing';
 
 export {getPostGridImagesType, renderGridImages};
 
@@ -136,21 +136,25 @@ export const handleSocialActionBarPress = (
   feeds,
   isCommentInputAutoFocus = true,
   extraProps = {},
+  theme,
 ) => {
   switch (actionType) {
     case SOCIAL_BUTTON_TYPES.LIKE:
       likeSocial(dataType, feeds);
       break;
     case SOCIAL_BUTTON_TYPES.COMMENT:
-      Actions.push(appConfig.routes.modalComment, {
-        // title: 'Bình luận',
-        title: feeds.title || feeds.name,
-        object: feeds?.object,
-        object_id: feeds?.object_id || feeds?.id,
-        site_id: feeds.site_id,
-        autoFocus: isCommentInputAutoFocus,
-        ...extraProps,
-      });
+      push(
+        appConfig.routes.modalComment,
+        {
+          title: feeds.title || feeds.name,
+          object: feeds?.object,
+          object_id: feeds?.object_id || feeds?.id,
+          site_id: feeds.site_id,
+          autoFocus: isCommentInputAutoFocus,
+          ...extraProps,
+        },
+        theme,
+      );
       break;
     case SOCIAL_BUTTON_TYPES.SHARE:
       share(feeds.url, feeds.title);

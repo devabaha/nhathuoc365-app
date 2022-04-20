@@ -1,13 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import config from '../../config';
-import Button from 'react-native-button';
-import { Image, View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Entypo';
+import {View, StyleSheet} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {BundleIconSetName, TypographyType} from 'src/components/base';
+// custom components
+import Image from 'src/components/Image';
+import {BaseButton, Typography, Icon, Container} from 'src/components/base';
 
 const defaultListener = () => {};
 
 class ContactItem extends Component {
+  static contextType = ThemeContext;
+
   static propTypes = {
     onPress: PropTypes.func,
     hasThumbnail: PropTypes.bool,
@@ -15,7 +23,7 @@ class ContactItem extends Component {
     familyName: PropTypes.string,
     givenName: PropTypes.string,
     displayPhone: PropTypes.string,
-    notInContact: PropTypes.bool
+    notInContact: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -25,8 +33,12 @@ class ContactItem extends Component {
     familyName: '',
     givenName: '',
     displayPhone: '',
-    notInContact: false
+    notInContact: false,
   };
+
+  get theme() {
+    return getTheme(this);
+  }
 
   shouldComponentUpdate(nextProps) {
     return (
@@ -39,13 +51,30 @@ class ContactItem extends Component {
     );
   }
 
-  getAvatarFromName = name => {
-    const names = name.split(' ').map(name => name.charAt(0).toUpperCase());
+  getAvatarFromName = (name) => {
+    const names = name.split(' ').map((name) => name.charAt(0).toUpperCase());
     if (names.length >= 3) {
       names.length = 3;
     }
     return names.join('');
   };
+
+  get thumbnailStyle() {
+    return {
+      borderWidth: this.theme.layout.borderWidth,
+      borderColor: this.theme.color.border,
+    };
+  }
+
+  get userIconStyle() {
+    return {
+      color: this.theme.color.neutral,
+    };
+  }
+
+  get separateStyle() {
+    return {backgroundColor: this.theme.color.border};
+  }
 
   render() {
     const {
@@ -55,44 +84,52 @@ class ContactItem extends Component {
       familyName,
       givenName,
       displayPhone,
-      notInContact
+      notInContact,
     } = this.props;
     const name = `${familyName ? `${familyName} ` : ''}${givenName}`;
     return (
-      <Button onPress={onPress}>
-        <View style={styles.wrapper}>
+      <BaseButton onPress={onPress}>
+        <Container row style={styles.wrapper}>
           {hasThumbnail ? (
-            <Image style={styles.thumbnail} source={{ uri: thumbnailPath }} />
+            <Image
+              style={[this.thumbnailStyle, styles.thumbnail]}
+              source={{uri: thumbnailPath}}
+            />
           ) : (
-            <View style={styles.thumbnail}>
+            <View style={[this.thumbnailStyle, styles.thumbnail]}>
               {notInContact ? (
                 <Icon
+                  bundle={BundleIconSetName.ENTYPO}
                   name="user"
-                  color="#a5a5a5"
-                  size={40}
-                  style={styles.userIcon}
+                  style={[styles.userIcon, this.userIconStyle]}
                 />
               ) : (
-                <Text style={{ color: config.colors.primary }}>
+                <Typography type={TypographyType.LABEL_MEDIUM_PRIMARY}>
                   {this.getAvatarFromName(name)}
-                </Text>
+                </Typography>
               )}
             </View>
           )}
           <View style={styles.infoWrapper}>
-            <Text style={styles.name}>
+            <Typography type={TypographyType.LABEL_LARGE} style={styles.name}>
               {notInContact ? displayPhone : name}
-            </Text>
-            <Text style={styles.phone}>
+            </Typography>
+            <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
               {notInContact ? name : displayPhone}
-            </Text>
+            </Typography>
           </View>
 
-          {notInContact && <Text style={styles.select}>Chọn</Text>}
+          {notInContact && (
+            <Typography
+              type={TypographyType.LABEL_SEMI_HUGE_PRIMARY}
+              style={styles.select}>
+              {this.props.t('choose')}
+            </Typography>
+          )}
 
-          <View style={styles.separate} />
-        </View>
-      </Button>
+          <View style={[styles.separate, this.separateStyle]} />
+        </Container>
+      </BaseButton>
     );
   }
 }
@@ -101,10 +138,6 @@ const styles = StyleSheet.create({
   wrapper: {
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative'
   },
   separate: {
     position: 'absolute',
@@ -112,40 +145,30 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 1,
     left: 78,
-    backgroundColor: '#ebebeb'
   },
   thumbnail: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#ccc',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   userIcon: {
     position: 'absolute',
-    bottom: -5
+    bottom: -5,
+    fontSize: 40,
   },
   infoWrapper: {
     marginLeft: 10,
-    flex: 1
+    flex: 1,
   },
   name: {
     fontWeight: '500',
-    fontSize: 16,
-    color: '#333'
-  },
-  phone: {
-    fontSize: 15,
-    color: '#666'
   },
   select: {
-    color: config.colors.primary,
-    fontSize: 18,
-    paddingRight: 15
-  }
+    paddingRight: 15,
+  },
 });
 
-export default ContactItem;
+export default withTranslation('common')(ContactItem);

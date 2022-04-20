@@ -1,16 +1,21 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
+import React, {useMemo} from 'react';
+import {StyleSheet, View} from 'react-native';
+// configs
 import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
 import Image from 'src/components/Image';
+import {Container, Typography} from 'src/components/base';
 
 const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
-    backgroundColor: '#fff',
     flexDirection: 'row',
-    borderColor: '#eee',
-    borderBottomWidth: 1,
   },
   imgContainer: {
     width: 120,
@@ -18,7 +23,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 15,
-    borderRadius: 8,
     overflow: 'hidden',
   },
   image: {
@@ -32,30 +36,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
     marginBottom: appConfig.device.isIOS ? 3 : 0,
-    color: '#444',
     fontWeight: '500',
   },
-  subTitle: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '400',
-  },
   highlight: {
-    fontSize: 18,
-    color: '#404040',
     fontWeight: 'bold',
     marginBottom: appConfig.device.isIOS ? 2 : -2,
   },
   description: {
-    color: '#888',
-    fontSize: 14,
     fontWeight: '400',
-  },
-  note: {
-    color: '#888',
-    fontSize: 14,
   },
   deleteText: {
     textDecorationLine: 'line-through',
@@ -74,57 +63,95 @@ const ProductInfo = ({
   unitName,
   inventory,
   extraInfoComponent = null,
-  imageContainerStyle = {},
-  headerStyle = {},
+  imageContainerStyle: imageContainerStyleProp = {},
+  headerStyle: headerStyleProp = {},
 }) => {
+  const {theme} = useTheme();
+
   const {t} = useTranslation('product');
+
+  const imageContainerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.imgContainer,
+        imageUri || {
+          backgroundColor: theme.color.contentBackground,
+        },
+      ],
+      imageContainerStyleProp,
+    );
+  }, [theme, imageContainerStyleProp, imageUri]);
+
+  const headerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.header,
+        {
+          borderBottomWidth: theme.layout.borderWidth,
+          borderColor: theme.color.border,
+        },
+      ],
+      headerStyleProp,
+    );
+  }, [theme, headerStyleProp]);
 
   return (
     <>
-      <View style={[styles.header, headerStyle]}>
-        <View
-          style={[
-            styles.imgContainer,
-            imageUri || {
-              backgroundColor: '#eee',
-            },
-            imageContainerStyle,
-          ]}>
-          <Image canTouch source={{uri: imageUri}} style={styles.image} />
+      <Container style={headerStyle}>
+        <View style={imageContainerStyle}>
+          <Image
+            canTouch
+            resizeMode="contain"
+            source={{uri: imageUri}}
+            style={styles.image}
+          />
         </View>
 
         <View style={styles.info}>
           <View style={{marginBottom: 10}}>
-            <Text numberOfLines={2} style={styles.title}>
+            <Typography
+              type={TypographyType.LABEL_LARGE}
+              numberOfLines={2}
+              style={styles.title}>
               {title}
-            </Text>
-            <Text numberOfLines={subTitleNumberOfLines} style={styles.note}>
+            </Typography>
+            <Typography
+              type={TypographyType.DESCRIPTION_MEDIUM}
+              numberOfLines={subTitleNumberOfLines}>
               {subTitle}
-            </Text>
+            </Typography>
           </View>
           <View>
             {!!discountPrice && (
-              <Text style={[styles.note, styles.deleteText]}>
+              <Typography
+                type={TypographyType.DESCRIPTION_MEDIUM}
+                style={styles.deleteText}>
                 {discountPrice}
-              </Text>
+              </Typography>
             )}
             {!!price && (
-              <Text style={styles.highlight}>
+              <Typography
+                type={TypographyType.LABEL_HUGE}
+                style={styles.highlight}>
                 {price}
                 {!!unitName && (
-                  <Text style={styles.description}>/ {unitName}</Text>
+                  <Typography
+                    type={TypographyType.LABEL_MEDIUM_TERTIARY}
+                    style={styles.description}>
+                    / {unitName}
+                  </Typography>
                 )}
-              </Text>
+              </Typography>
             )}
             {!!inventory && (
-              <Text style={styles.note}>
-                {`${t('attr.stock')}:`} <Text>{inventory}</Text>
-              </Text>
+              <Typography type={TypographyType.LABEL_MEDIUM_TERTIARY}>
+                {`${t('attr.stock')}:`} {inventory}
+              </Typography>
             )}
             {extraInfoComponent}
           </View>
         </View>
-      </View>
+      </Container>
     </>
   );
 };

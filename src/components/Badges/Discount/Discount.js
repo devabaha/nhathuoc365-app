@@ -1,8 +1,18 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import appConfig from 'app-config';
+import {StyleSheet, View} from 'react-native';
+// helpers
+import {getTheme} from 'src/Themes/Theme.context';
+import {mergeStyles} from 'src/Themes/helper';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {TypographyType} from 'src/components/base';
+// custom components
+import {Typography} from 'src/components/base';
 
 class Discount extends Component {
+  static contextType = ThemeContext;
+
   static defaultProps = {
     label: '',
     left: true,
@@ -10,15 +20,27 @@ class Discount extends Component {
     tailSpace: 0,
     containerStyle: {},
     contentContainerStyle: {},
-    backgroundColor: appConfig.colors.sale,
   };
   state = {};
+
+  get theme() {
+    return getTheme(this);
+  }
+
+  get contentStyle() {
+    return mergeStyles(styles.content, {color: this.theme.color.white});
+  }
+
+  get backgroundColor() {
+    return this.props.backgroundColor || this.theme.color.sale;
+  }
+
   render() {
     const extraStyle = {
       [this.props.right ? 'right' : 'left']: -this.props.tailSpace,
     };
     const extraContainerStyle = {
-      backgroundColor: this.props.backgroundColor,
+      backgroundColor: this.backgroundColor,
     };
     const tailStyle = {
       borderTopWidth: this.props.tailSpace,
@@ -27,7 +49,7 @@ class Discount extends Component {
       borderRightColor: 'transparent',
       bottom: -this.props.tailSpace,
       [this.props.right ? 'right' : 'left']: 0,
-      borderTopColor: LightenColor(this.props.backgroundColor, -30),
+      borderTopColor: LightenColor(this.backgroundColor, -30),
     };
 
     return (
@@ -38,9 +60,11 @@ class Discount extends Component {
             extraContainerStyle,
             this.props.contentContainerStyle,
           ]}>
-          <Text style={[styles.content, this.props.contentStyle]}>
+          <Typography
+            type={TypographyType.LABEL_MEDIUM}
+            style={[this.contentStyle, this.props.contentStyle]}>
             {this.props.label}
-          </Text>
+          </Typography>
         </View>
         <View style={[styles.tail, tailStyle]} />
       </View>
@@ -62,7 +86,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   content: {
-    color: '#fff',
     fontWeight: 'bold',
   },
   tail: {

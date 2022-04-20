@@ -1,4 +1,4 @@
-import {ActionBtn} from './BubbleBottom';
+import ActionBtn from './ActionBtn';
 
 export {default} from './BubbleBottom';
 

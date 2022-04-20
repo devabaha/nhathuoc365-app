@@ -1,11 +1,13 @@
-import appConfig from 'app-config';
+import {Style, Theme} from 'src/Themes/interface';
 
-export const themes = {
-  colors: {
-    background: appConfig.colors.sceneBackground,
-    primary: appConfig.colors.white,
-    highlight: appConfig.colors.primary,
-    secondary: appConfig.colors.icon,
-    overlay: appConfig.colors.overlay
-  },
+export const getThemes = (theme: Theme) => {
+  return {
+    colors: {
+      background: theme.color.background as string,
+      primary: theme.color.white as string,
+      highlight: theme.color.primary as string,
+      secondary: theme.color.iconInactive as string,
+      overlay: theme.color.overlay60 as string,
+    },
+  };
 };

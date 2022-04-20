@@ -222,7 +222,7 @@ class QRPaymentInfo extends Component<QRPaymentInfoProps> {
 
     render() {
         const { t } = this.props;
-        const disabled = this.state.moneyError || !!!this.state.moneyValue;
+        const disabled = !!this.state.moneyError || !!!this.state.moneyValue;
         return (
             <KeyboardAvoidingView
                 style={styles.container}

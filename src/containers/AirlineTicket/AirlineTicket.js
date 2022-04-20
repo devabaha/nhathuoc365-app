@@ -1,30 +1,44 @@
-/* @flow */
-
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  ScrollView,
-} from 'react-native';
-
-import Store from '../../store';
-import FindTickets from '../AirlineTicket/component/FindTicket';
+import {StyleSheet} from 'react-native';
+// 3-party libs
+import {withTranslation} from 'react-i18next';
+// configs
+import store from 'app-store';
 import appConfig from 'app-config';
+// helpers
+import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {getTheme} from 'src/Themes/Theme.context';
+// context
+import {ThemeContext} from 'src/Themes/Theme.context';
+// custom components
+import FindTickets from '../AirlineTicket/component/FindTicket';
+import {ScreenWrapper, Container, ScrollView} from 'src/components/base';
+import Button from 'src/components/Button';
 
 class AirlineTicket extends Component {
-  constructor(props) {
-    super(props);
+  static contextType = ThemeContext;
 
-    this.state = {
-      finish: false,
-    };
+  state = {
+    finish: false,
+  };
+  updateNavBarDisposer = () => {};
+
+  get theme() {
+    return getTheme(this);
   }
 
   componentDidMount() {
     this._getData();
-    Store.getAirportData();
+    store.getAirportData();
+
+    this.updateNavBarDisposer = updateNavbarTheme(
+      this.props.navigation,
+      this.theme,
+    );
+  }
+
+  componentWillUnmount() {
+    this.updateNavBarDisposer();
   }
 
   _getData = async () => {
@@ -32,7 +46,7 @@ class AirlineTicket extends Component {
       var response = await APIHandler.site_info();
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
-          Store.setSiteData(response.data);
+          store.setSiteData(response.data);
         })();
       }
     } catch (e) {
@@ -48,21 +62,18 @@ class AirlineTicket extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScreenWrapper style={styles.container}>
         <ScrollView>
           <FindTickets ref={(ref) => (this.ref_ticket = ref)} />
         </ScrollView>
 
-        <View style={styles.boxBtnSearch}>
-          <TouchableHighlight
+        <Container safeLayout noBackground style={styles.boxBtnSearch}>
+          <Button
             onPress={() => this.ref_ticket.onSearch()}
-            underlayColor="transparent">
-            <View style={styles.btnSearchContent}>
-              <Text style={styles.textBtnSearch}>Tìm kiếm</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </View>
+            title={this.props.t('modal.province.placeholder')}
+          />
+        </Container>
+      </ScreenWrapper>
     );
   }
 }
@@ -70,25 +81,11 @@ class AirlineTicket extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   boxBtnSearch: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  btnSearchContent: {
-    width: Util.size.width * 0.916,
-    height: Util.size.width * 0.916 * 0.1515,
-    backgroundColor: appConfig.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-  },
-  textBtnSearch: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
-export default AirlineTicket;
+
+export default withTranslation('voucher')(AirlineTicket);

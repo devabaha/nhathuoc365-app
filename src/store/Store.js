@@ -334,7 +334,7 @@ class Store {
 
   @action setAppData(data) {
     this.app_data = data;
-    this.app_id = data.id;
+    this.app_id = data?.id;
   }
 
   @action setDeepLinkData(data) {
@@ -861,6 +861,11 @@ class Store {
   @observable isEnterItem = false;
   @action setEnterItem(isEnterItem) {
     this.isEnterItem = isEnterItem;
+  }
+
+  @observable theme = {};
+  @action setTheme(theme) {
+    this.theme = theme;
   }
 }
 
