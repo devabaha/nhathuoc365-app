@@ -98,8 +98,10 @@ class DeliveryScheduleSection extends React.Component {
       if (this.unmounted) return;
 
       if (response && response?.status === STATUS_SUCCESS) {
+        this.props.onDeliveryTimeChange(response.data?.delivery_time || '');
+
         this.setState({
-          scheduleDeliveryTime: response.data?.delivery_time || '',
+          scheduleDeliveryTime: response.data?.delivery_time,
         });
 
         flashShowMessage({

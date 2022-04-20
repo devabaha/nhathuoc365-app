@@ -44,7 +44,8 @@ class NotifyItemComponent extends Component {
       nextProps.title !== this.props.title ||
       nextProps.shopName !== this.props.shopName ||
       nextProps.created !== this.props.created ||
-      nextProps.content !== this.props.content
+      nextProps.content !== this.props.content || 
+      nextProps.refreshing !== this.props.refreshing
     ) {
       return true;
     }
