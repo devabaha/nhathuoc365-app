@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r13.1.3] - 2020-04-28
 ### Changed
 - [CU-29c31qg] maxWidth and maxHeight of images when uploading to server by [kienluu612@gmail.com]
+### Fixed
+- [CU-27rp3br] Re-fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
 
 ## [r13.1.2] - 2020-04-19
 ### Fixed
