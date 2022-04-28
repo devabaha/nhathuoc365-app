@@ -15,10 +15,13 @@ import store from 'app-store';
 // helpers
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 //routing
 import {pop, push, refresh} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
+//constants
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import FloatingLabelInput from 'src/components/FloatingLabelInput';
 import Loading from 'src/components/Loading';
@@ -176,7 +179,7 @@ class Creation extends Component {
 
   takePicture(key, values) {
     this.setState({uploadImageLoading: true});
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       title: this.props.t('request:option.title'),
       cancelButtonTitle: this.props.t('cancel'),
       takePhotoButtonTitle: this.props.t('cameraLabel'),
@@ -186,7 +189,7 @@ class Creation extends Component {
         skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {

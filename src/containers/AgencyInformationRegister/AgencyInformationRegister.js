@@ -20,12 +20,14 @@ import store from 'app-store';
 import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {isConfigActive} from 'app-helper/configKeyHandler';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {pop, push} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {CONFIG_KEY} from 'app-helper/configKeyHandler';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import FloatingLabelInput from 'src/components/FloatingLabelInput';
 import Loading from 'src/components/Loading';
@@ -189,7 +191,7 @@ class AgencyInformationRegister extends Component {
   takePicture(key) {
     const {t} = this.props;
 
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       title: t('takePicture.title'),
       cancelButtonTitle: t('takePicture.cancel'),
       takePhotoButtonTitle: t('takePicture.takePhoto'),
@@ -199,7 +201,7 @@ class AgencyInformationRegister extends Component {
         skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {
