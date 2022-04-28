@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
 import {mergeStyles} from 'src/Themes/helper';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {pop, push} from 'app-helper/routing';
 // context
@@ -14,6 +15,7 @@ import ProfileContext from 'src/containers/Profile/ProfileContext';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import ImageItem from './ImageItem';
 import {
@@ -115,12 +117,14 @@ class Gallery extends Component {
   };
 
   openLibrary() {
-    ImagePicker.openPicker({
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER, {
       includeExif: true,
       multiple: true,
       includeBase64: true,
       mediaType: 'photo',
-    }).then((images) => {
+    });
+
+    ImagePicker.openPicker(options).then((images) => {
       pop();
       this.uploaded = true;
       const imgs = this.nomarlizeImages(images);
@@ -129,10 +133,12 @@ class Gallery extends Component {
   }
 
   openCamera() {
-    ImagePicker.openCamera({
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER, {
       includeExif: true,
       includeBase64: true,
-    }).then((image) => {
+    });
+
+    ImagePicker.openCamera(options).then((image) => {
       pop();
       this.uploaded = true;
       const img = this.nomarlizeImages([image])[0];
