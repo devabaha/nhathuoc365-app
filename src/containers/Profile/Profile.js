@@ -10,6 +10,7 @@ import appConfig from 'app-config';
 // helpers
 import EventTracker from 'src/helper/EventTracker';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {push, reset} from 'app-helper/routing';
 // context
@@ -17,6 +18,7 @@ import {ThemeContext} from 'src/Themes/Theme.context';
 import {ProfileProvider} from './ProfileContext';
 // constants
 import {BundleIconSetName} from 'src/components/base';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import Header from './Header';
 import Gallery from './Gallery';
@@ -484,7 +486,7 @@ class Profile extends Component {
   onTapAvatar = () => {
     const {t} = this.props;
 
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       cameraType: 'front',
       rotation: 360,
       title: t('account:avatarPicker.title'),
@@ -497,7 +499,7 @@ class Profile extends Component {
         // skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {

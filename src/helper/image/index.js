@@ -4,7 +4,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
 
-import {IMAGE_RATIOS} from 'src/constants/image';
+import {IMAGE_PICKER_TYPE, IMAGE_RATIOS, MAX_IMAGE_UPLOAD_DIMENSION} from 'src/constants/image';
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
 import {saveImage} from './imageSavingHandler';
 import {downloadImage} from './imageDownloadingHandler';
@@ -28,13 +28,15 @@ export const openLibrary = (
   callbackSuccess = () => {},
   closeModal = () => {},
 ) => {
-  ImageCropPicker.openPicker({
+  const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER, {
     includeExif: true,
     multiple: true,
     includeBase64: true,
     mediaType: 'photo',
     maxFiles: 10,
-  })
+  });
+
+  ImageCropPicker.openPicker(options)
     .then((response) => {
       // console.log(response);
       closeModal();
@@ -52,13 +54,13 @@ export const openCamera = async (
   callbackSuccess = () => {},
   closeModal = () => {},
 ) => {
-  const options = {
+  const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
     rotation: 360,
     storageOptions: {
       skipBackup: false,
       path: 'images',
     },
-  };
+  });
 
   ImagePicker.launchCamera(options, (response) => {
     if (response.error) {
@@ -177,6 +179,25 @@ export const normalizePostImageData = async (image) => {
   };
 
   return imageData;
+};
+
+export const getPickerOptions = (type, options) => {
+  switch (type) {
+    case IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER:
+      return {
+        ...options,
+        height: MAX_IMAGE_UPLOAD_DIMENSION,
+        width: MAX_IMAGE_UPLOAD_DIMENSION,
+      };
+    case IMAGE_PICKER_TYPE.RN_IMAGE_PICKER:
+      return {
+        ...options,
+        maxHeight: MAX_IMAGE_UPLOAD_DIMENSION,
+        maxWidth: MAX_IMAGE_UPLOAD_DIMENSION,
+      };
+    default:
+      return options;
+  }
 };
 
 export {saveImage, downloadImage};

@@ -7,11 +7,13 @@ import appConfig from 'app-config';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 // context
 import ProfileContext from 'src/containers/Profile/ProfileContext';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType} from 'src/components/base';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import {Container, Typography} from 'src/components/base';
 import PremiumIcon from 'src/components/PremiumIcon';
@@ -33,7 +35,7 @@ class Header extends Component {
   onChangeCover = () => {
     const {t} = this.props;
 
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       title: t('coverPicker.title'),
       cancelButtonTitle: t('coverPicker.cancelTitle'),
       takePhotoButtonTitle: t('coverPicker.takePhotoTitle'),
@@ -43,7 +45,7 @@ class Header extends Component {
         skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {

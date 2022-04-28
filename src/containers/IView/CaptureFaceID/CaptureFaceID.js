@@ -7,10 +7,13 @@ import store from 'app-store';
 // helpers
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {pop} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
+// constants
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // entities
 import {APIRequest} from 'src/network/Entity';
 
@@ -66,14 +69,14 @@ class CaptureFaceID extends Component {
   }
 
   openCamera() {
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       cameraType: 'front',
       rotation: 360,
       storageOptions: {
         skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.launchCamera(options, (response) => {
       if (response.error) {
