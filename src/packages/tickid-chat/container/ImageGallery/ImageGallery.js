@@ -21,6 +21,7 @@ import ImagePicker from 'react-native-image-picker';
 // helpers
 import {setStater, willUpdateState} from '../../helper';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 // constants
 import {
   HEIGHT,
@@ -31,6 +32,7 @@ import {
   BOTTOM_OFFSET_GALLERY,
   ANDROID_STATUS_BAR_HEIGHT,
 } from '../../constants';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // custom components
 import {FlatList} from 'src/components/base';
 import {
@@ -679,14 +681,14 @@ class ImageGallery extends Component {
 
     willUpdateState(this.unmounted, () => {
       if (permissionCameraGranted === RESULTS.GRANTED) {
-        const options = {
+        const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
           quality: 1,
           storageOptions: {
             cameraRoll: isIos,
             skipBackup: true,
             path: 'images',
           },
-        };
+        });
 
         ImagePicker.launchCamera(options, (response) => {
           if (response.data) {
