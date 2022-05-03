@@ -12,8 +12,6 @@ import TickidChat from 'app-packages/tickid-chat';
 import {default as DetailCard} from '../Card';
 import {Typography} from 'src/components/base';
 
-const UPLOAD_URL = APIHandler.url_user_upload_image();
-
 class Comments extends Component {
   constructor(props) {
     super(props);
@@ -46,6 +44,10 @@ class Comments extends Component {
     this.giftedChatExtraProps.showUserAvatar = true;
 
     return this.giftedChatExtraProps;
+  }
+
+  get uploadURL() {
+    return APIHandler.url_user_upload_image(store.store_id);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -186,7 +188,7 @@ class Comments extends Component {
             )}
             // Gallery props
             galleryVisible={false}
-            uploadURL={UPLOAD_URL}
+            uploadURL={this.uploadURL}
             onSendImage={this.props.onSendTempImage}
             onUploadedImage={(response) =>
               this.props.onSendImage({image: response.data.name})

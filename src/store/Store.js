@@ -759,7 +759,7 @@ class Store {
       let images = Array.from({length: listUploadImage.length});
       let totalUploaded = 0;
       const requests = uploadImages(
-        APIHandler.url_user_upload_image(),
+        APIHandler.url_user_upload_image(data?.site_id),
         listUploadImage,
         (progress, image, index) => {
           imagesProgress[index] = progress * (100 / listUploadImage.length);

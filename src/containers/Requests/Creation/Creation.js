@@ -222,7 +222,7 @@ class Creation extends Component {
     // call api post my form data
     RNFetchBlob.fetch(
       'POST',
-      APIHandler.url_user_upload_image(),
+      APIHandler.url_user_upload_image(this.props.siteId),
       {
         'Content-Type': 'multipart/form-data',
       },

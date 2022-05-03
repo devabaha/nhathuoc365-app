@@ -4,7 +4,15 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
 
+<<<<<<< HEAD
 import {IMAGE_PICKER_TYPE, IMAGE_RATIOS, MAX_IMAGE_UPLOAD_DIMENSION} from 'src/constants/image';
+=======
+import {
+  IMAGE_PICKER_TYPE,
+  IMAGE_RATIOS,
+  MAX_IMAGE_UPLOAD_DIMENSION,
+} from 'src/constants/image';
+>>>>>>> app-core/core-master
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
 import {saveImage} from './imageSavingHandler';
 import {downloadImage} from './imageDownloadingHandler';
@@ -186,8 +194,8 @@ export const getPickerOptions = (type, options) => {
     case IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER:
       return {
         ...options,
-        height: MAX_IMAGE_UPLOAD_DIMENSION,
-        width: MAX_IMAGE_UPLOAD_DIMENSION,
+        compressImageMaxWidth: MAX_IMAGE_UPLOAD_DIMENSION,
+        compressImageMaxHeight: MAX_IMAGE_UPLOAD_DIMENSION,
       };
     case IMAGE_PICKER_TYPE.RN_IMAGE_PICKER:
       return {

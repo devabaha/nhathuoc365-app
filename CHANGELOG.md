@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.1.4] - 2020-05-03
+### Changed
+- [CU-2gat37b] imageDomain to LIVE_API_DOMAIN by [kienluu612@gmail.com].
+
 ## [r13.1.3] - 2020-04-28
 ### Changed
 - [CU-29c31qg] maxWidth and maxHeight of images when uploading to server by [kienluu612@gmail.com]

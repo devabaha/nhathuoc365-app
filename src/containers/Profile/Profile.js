@@ -363,7 +363,7 @@ class Profile extends Component {
         // call api post my form data
         RNFetchBlob.fetch(
           'POST',
-          APIHandler.url_user_upload_image(),
+          APIHandler.url_user_upload_image(store.store_id),
           {
             'Content-Type': 'multipart/form-data',
           },
