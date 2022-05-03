@@ -4,15 +4,11 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
 
-<<<<<<< HEAD
-import {IMAGE_PICKER_TYPE, IMAGE_RATIOS, MAX_IMAGE_UPLOAD_DIMENSION} from 'src/constants/image';
-=======
 import {
   IMAGE_PICKER_TYPE,
   IMAGE_RATIOS,
   MAX_IMAGE_UPLOAD_DIMENSION,
 } from 'src/constants/image';
->>>>>>> app-core/core-master
 import {getBase64Image} from 'app-packages/tickid-chat/helper';
 import {saveImage} from './imageSavingHandler';
 import {downloadImage} from './imageDownloadingHandler';
