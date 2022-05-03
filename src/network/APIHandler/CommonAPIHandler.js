@@ -752,15 +752,15 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * URL upload avatar
    */
-  url_user_add_avatar() {
-    return url_for(API.USER_ADD_AVATAR);
+  url_user_add_avatar(site_id) {
+    return url_for(API.USER_ADD_AVATAR+ '/' + site_id);
   }
 
   /**
    * URL upload avatar
    */
-  url_user_upload_image() {
-    return url_for(API.UPLOAD_IMAGE);
+  url_user_upload_image(site_id) {
+    return url_for(API.UPLOAD_IMAGE + '/' + site_id);
   }
 
   /**

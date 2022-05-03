@@ -19,7 +19,6 @@ import {Container} from 'src/components/base';
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
-const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 class Chat extends Component {
   static contextType = ThemeContext;
@@ -64,6 +63,10 @@ class Chat extends Component {
 
   get theme() {
     return getTheme(this);
+  }
+
+  get uploadURL() {
+    return APIHandler.url_user_upload_image(this.state.site?.id);
   }
 
   get giftedChatProps() {
@@ -351,7 +354,7 @@ class Chat extends Component {
         // galleryVisible={appConfig.device.isIOS}
         galleryVisible={false}
         useModalGallery
-        uploadURL={UPLOAD_URL}
+        uploadURL={this.uploadURL}
         onSendImage={this.handleSendImage}
         onUploadedImage={(response) =>
           this._onSend({image: response.data.name})
