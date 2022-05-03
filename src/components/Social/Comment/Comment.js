@@ -143,7 +143,6 @@ class Comment extends Component {
     this.deleteCommentAPI,
     this.likeRequest,
   ];
-  uploadURL = APIHandler.url_user_upload_image();
 
   ratingValue = 0;
 
@@ -162,6 +161,10 @@ class Comment extends Component {
 
   get theme() {
     return getTheme(this);
+  }
+
+  get uploadURL() {
+    return APIHandler.url_user_upload_image(this.props.site_id);
   }
 
   handleKeyboardDidShow = () => {
