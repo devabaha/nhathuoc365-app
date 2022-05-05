@@ -617,6 +617,7 @@ const styles = StyleSheet.create({
   },
   note_label: {
     marginLeft: 9,
+    flex: 1,
   },
   note_value: {
     fontWeight: '300',
