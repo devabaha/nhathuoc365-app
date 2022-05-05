@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Animated, Easing} from 'react-native';
 // 3-party libs
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getBundleId, getVersion} from 'react-native-device-info';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -12,6 +13,7 @@ import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
 import {rgbaToRgb, hexToRgba} from 'app-helper';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {getOnStoreAppMetadata} from 'app-packages/on-store-app-metadata-check';
 // routing
 import {replace} from 'app-helper/routing';
 // context
@@ -71,12 +73,38 @@ class Launch extends Component {
     }
   };
 
+  checkOnStoreAppMetadata = async () => {
+    const data = {bundleId: getBundleId()};
+    const metadata = await getOnStoreAppMetadata({data});
+
+    const versionCodeToNumber = (versionCode) => {
+      return Number(versionCode.split('.').join(''));
+    };
+
+    if (metadata) {
+      return {
+        ios_reviewing:
+          appConfig.device.isIOS &
+          (versionCodeToNumber(getVersion()) >
+            versionCodeToNumber(metadata.version))
+            ? 1
+            : 0,
+      };
+    } else {
+      return {};
+    }
+  };
+
   handleAuthorization = async () => {
+    const metadata = await this.checkOnStoreAppMetadata();
+    console.log(metadata);
+
     try {
       const response = await APIHandler.user_login({
         fb_access_token: '',
         language: this.props.appLanguage,
         locale: languages[this.props.appLanguage].locale,
+        ...metadata,
       });
       setTimeout(() => {
         this.handleAuthWithResponse(response);
