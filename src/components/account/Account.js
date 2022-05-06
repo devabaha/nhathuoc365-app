@@ -18,6 +18,7 @@ import {getTheme} from 'src/Themes/Theme.context';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
 import {openLink, saveTheme} from 'app-helper';
 import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {pop, push} from 'app-helper/routing';
 // context
@@ -30,6 +31,7 @@ import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 import {PACKAGE_OPTIONS_TYPE} from 'app-helper/packageOptionsHandler';
 import {BASE_LIGHT_THEME} from 'src/Themes/Theme.light';
 import {BASE_DARK_THEME, BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 // entities
 import {APIRequest} from 'src/network/Entity';
 import EventTracker from 'app-helper/EventTracker';
@@ -692,7 +694,7 @@ class Account extends Component {
   onTapAvatar() {
     const {t} = this.props;
 
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       cameraType: 'front',
       rotation: 360,
       title: t('avatarPicker.title'),
@@ -703,7 +705,7 @@ class Account extends Component {
         // skipBackup: true,
         path: 'images',
       },
-    };
+    });
 
     ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {

@@ -31,6 +31,7 @@ import appConfig from 'app-config';
 // helpers
 import {getColorTheme, setStater} from '../../helper';
 import {getTheme} from 'src/Themes/Theme.context';
+import {getPickerOptions} from 'app-helper/image';
 // routing
 import {push} from 'app-helper/routing';
 // context
@@ -52,6 +53,7 @@ import {
   HAS_NOTCH,
   MAX_PIN,
 } from '../../constants';
+import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
 import MasterToolBar from '../MasterToolBar';
@@ -456,12 +458,14 @@ class TickidChat extends Component {
   };
 
   openLibrary = () => {
-    ImageCropPicker.openPicker({
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_CROP_PICKER, {
       includeExif: true,
       multiple: this.props.isMultipleImagePicker,
       includeBase64: true,
       mediaType: 'photo',
-    })
+    });
+
+    ImageCropPicker.openPicker(options)
       .then((images) => {
         console.log(images);
         this.closeModal();
@@ -490,13 +494,14 @@ class TickidChat extends Component {
   };
 
   openCamera = async () => {
-    const options = {
+    const options = getPickerOptions(IMAGE_PICKER_TYPE.RN_IMAGE_PICKER, {
       rotation: 360,
       storageOptions: {
         skipBackup: true,
         path: 'images',
       },
-    };
+    });
+    
     ImagePicker.launchCamera(options, (response) => {
       if (response.error) {
         console.log(response);
