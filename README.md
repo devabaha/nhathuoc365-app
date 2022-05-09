@@ -58,8 +58,8 @@ appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-nhathuoc365-a
 `` Direct to root folder (../src) to execute automation ```**`
 ``***********************************************************`
 
-bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -p ios --deployment Production --description "test sentry" &&
-bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-android -p android --deployment Production --description "test sentry"
+bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -p ios --deployment Production --description "release tag r13.1.4" &&
+bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-android -p android --deployment Production --description "release tag r13.1.4"
 ##### IOS
 
 appcenter codepush release-react -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -d "Production" -m --description "test sentry" --sourcemap-output --output-dir ./build && export SENTRY_PROPERTIES=./ios/sentry.properties && sentry-cli react-native appcenter app.abaha.net-gmail.com/tick-nhathuoc365-ios ios ./build/CodePush --deployment "Production" --dist "v246"
