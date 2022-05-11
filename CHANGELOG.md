@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- [CU-28fkqg7] Comment font-size, line-height, color of customStyle in CustomAutoHeightWebview by [lamah.dev@gmail.com].
 
 ## [r13.1.4] - 2020-05-03
 ### Changed
