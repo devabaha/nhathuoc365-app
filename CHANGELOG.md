@@ -7,31 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r13.1.4] - 2020-05-03
+## [r13.1.5] - 2022-05-12
+### Fixed
+- [CU-2gat37b] remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
+
+## [r13.1.4] - 2022-05-03
 ### Changed
 - [CU-2gat37b] imageDomain to LIVE_API_DOMAIN by [kienluu612@gmail.com].
 
-## [r13.1.3] - 2020-04-28
+## [r13.1.3] - 2022-04-28
 ### Changed
 - [CU-29c31qg] maxWidth and maxHeight of images when uploading to server by [kienluu612@gmail.com]
 ### Fixed
 - [CU-27rp3br] Re-fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
 
-## [r13.1.2] - 2020-04-19
+## [r13.1.2] - 2022-04-19
 ### Fixed
 - [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com], [lamah.dev@gmail.com].
 
-## [r13.1.1] - 2020-04-13
+## [r13.1.1] - 2022-04-13
 ### Fixed
 - [Android] Re-fix crash app because of Webview conflicting with new animation of ScrollView on Android api level >= 31 (Android 12) by [minhnguyenit14@gmail.com].
 - [CU-27rp3br] Fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
 
-## [r13.0.2] - 2020-04-12
+## [r13.0.2] - 2022-04-12
 ### Fixed
 - Not update theme in some screen by [minhnguyenit14@gmail.com].
 - price doesn't display correct view in ProductItem by [minhnguyenit14@gmail.com].
 
-## [r13.0.1] - 2020-04-06
+## [r13.0.1] - 2022-04-06
 ### Added
 - [CU-2gat9mt] Integrate Flurry by [lamah.dev@gmail.com].
 - [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].
