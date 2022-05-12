@@ -9,7 +9,8 @@ buildscript {
     }
     repositories {
         google()
-        jcenter()
+        // jcenter() // sunset.
+        gradlePluginPortal()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.0.1")
@@ -32,7 +33,8 @@ allprojects {
         }
 
         google()
-        jcenter()
+        // jcenter() // sunset.
+        gradlePluginPortal()
         // ADD THIS
         maven { url 'https://maven.google.com' }
 
