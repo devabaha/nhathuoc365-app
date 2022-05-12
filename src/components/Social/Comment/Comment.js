@@ -518,7 +518,7 @@ class Comment extends Component {
       object,
       object_id,
       site_id,
-      content: message.text || '',
+      content: message.content || '',
       image: message.image || '',
       parent_id: message.real_parent_id || '',
       reply_id: message.reply_id || '',
