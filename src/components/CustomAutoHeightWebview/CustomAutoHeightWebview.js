@@ -26,23 +26,23 @@ const getCustomStyle = (theme) => {
     padding-right: 15px;
     color: ${theme.typography[TypographyType.LABEL_LARGE].color}
   }
-  * {
-    font-family: 'arial';
-  }
+  // * {
+  //   font-family: 'arial';
+  // }
   a {
     // pointer-events:none;
     // text-decoration: none !important;
     color: ${theme.color.primaryHighlight}!important
   }
   p, li, span {
-    font-size: ${theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
-    line-height: 24px;
-    color: ${theme.typography[TypographyType.LABEL_LARGE].color}
+    // font-size: ${theme.typography[TypographyType.LABEL_LARGE].fontSize}px;
+    // line-height: 24px;
+    // color: ${theme.typography[TypographyType.LABEL_LARGE].color}
   }
-  img {
-    max-width: 100% !important;
-    height: auto !important;
-  }
+  // img {
+  //   max-width: 100% !important;
+  //   height: auto !important;
+  // }
 `;
 };
 

@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r13.1.5] - 2022-05-12
 ### Fixed
 - [CU-2gat37b] remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
+- [CU-28fkqg7] Comment font-size, line-height, color of customStyle in CustomAutoHeightWebview by [lamah.dev@gmail.com].
+- UI in OpRegister by [minhnguyenit14@gmail.com].
 
 ## [r13.1.4] - 2022-05-03
 ### Changed

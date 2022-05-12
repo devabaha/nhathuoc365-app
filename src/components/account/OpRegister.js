@@ -75,6 +75,7 @@ class OpRegister extends Component {
     listWarehouse: [],
 
     eulaTextHeight: 0,
+    containerHeight: 0,
   };
 
   updateReferCodeDisposer = reaction(
@@ -390,6 +391,12 @@ class OpRegister extends Component {
     }
   };
 
+  handleContainerLayout = (e) => {
+    if (e.nativeEvent.layout.height > this.state.containerHeight) {
+      this.setState({containerHeight: e.nativeEvent.layout.height});
+    }
+  };
+
   openEULAAgreement = () => {
     Keyboard.dismiss();
 
@@ -611,14 +618,11 @@ class OpRegister extends Component {
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScreenWrapper>
+        <ScreenWrapper onLayout={this.handleContainerLayout}>
           {loading && <Loading center />}
           <View
             style={{
-              height:
-                appConfig.device.height -
-                NAV_BAR_HEIGHT -
-                appConfig.device.statusBarHeight,
+              height: this.state.containerHeight,
             }}>
             <ScrollView
               contentContainerStyle={
@@ -743,41 +747,43 @@ class OpRegister extends Component {
               )}
             </ScrollView>
 
-            <Container
-              shadow
-              safeLayout={!store.keyboardTop}
-              style={[
-                this.btnContainerStyle,
-                {
-                  // bottom: store.keyboardTop,
-                },
-              ]}>
-              <View style={styles.eulaAgreementMessage}>
-                <Typography
-                  type={TypographyType.LABEL_SMALL}
-                  onLayout={this.handleLayoutEULAText}>
-                  {t('common:agreeToEulaAgreement.prefix', {
-                    title: t('confirm.register.title'),
-                  })}
-                  <TextPressable
-                    type={TypographyType.LABEL_SEMI_MEDIUM_PRIMARY}
-                    onPress={this.openEULAAgreement}
-                    style={styles.eulaAgreementHighlightMessage}>
-                    {t('common:eulaAgreement')}
-                  </TextPressable>
-                  {t('common:agreeToEulaAgreement.suffix')}
-                </Typography>
-              </View>
+            {!!this.state.containerHeight && (
+              <Container
+                shadow
+                safeLayout={!store.keyboardTop}
+                style={[
+                  this.btnContainerStyle,
+                  {
+                    // bottom: store.keyboardTop,
+                  },
+                ]}>
+                <View style={styles.eulaAgreementMessage}>
+                  <Typography
+                    type={TypographyType.LABEL_SMALL}
+                    onLayout={this.handleLayoutEULAText}>
+                    {t('common:agreeToEulaAgreement.prefix', {
+                      title: t('confirm.register.title'),
+                    })}
+                    <TextPressable
+                      type={TypographyType.LABEL_SEMI_MEDIUM_PRIMARY}
+                      onPress={this.openEULAAgreement}
+                      style={styles.eulaAgreementHighlightMessage}>
+                      {t('common:eulaAgreement')}
+                    </TextPressable>
+                    {t('common:agreeToEulaAgreement.suffix')}
+                  </Typography>
+                </View>
 
-              <Button
-                onPress={this._onSave.bind(this)}
-                disabled={disabled}
-                containerStyle={styles.address_continue}
-                renderTitleComponent={(titleStyle) =>
-                  this.renderTitleButton(titleStyle)
-                }
-              />
-            </Container>
+                <Button
+                  onPress={this._onSave.bind(this)}
+                  disabled={disabled}
+                  containerStyle={styles.address_continue}
+                  renderTitleComponent={(titleStyle) =>
+                    this.renderTitleButton(titleStyle)
+                  }
+                />
+              </Container>
+            )}
           </View>
         </ScreenWrapper>
       </TouchableWithoutFeedback>
