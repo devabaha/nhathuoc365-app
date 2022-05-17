@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r13.1.6] - 2022-05-17
 ### Changed
 - [CU-2am3km6] close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
 
