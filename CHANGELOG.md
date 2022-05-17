@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [CU-2am3km6] close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
 
 ## [r13.1.5] - 2022-05-12
 ### Fixed
@@ -25,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r13.1.2] - 2022-04-19
 ### Fixed
-- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com], [lamah.dev@gmail.com].
+- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
 ## [r13.1.1] - 2022-04-13
 ### Fixed
