@@ -772,6 +772,8 @@ class Confirm extends Component {
   }
 
   async _cancelCart() {
+    this._closePopupCancel();
+
     if (this.item_cancel) {
       try {
         const response = await APIHandler.site_cart_canceling(
@@ -796,8 +798,6 @@ class Confirm extends Component {
         console.log(e + ' site_cart_canceling');
       }
     }
-
-    this._closePopupCancel();
   }
 
   _closePopupCancel() {
@@ -821,6 +821,8 @@ class Confirm extends Component {
   }
 
   async _copyCart() {
+    this._closePopupCopy();
+
     if (this.item_coppy) {
       this.reorderRequest.data = APIHandler.cart_reorder(
         this.item_coppy.site_id,
@@ -855,11 +857,11 @@ class Confirm extends Component {
         console.log(e + ' site_cart_reorder');
       }
     }
-
-    this._closePopupCopy();
   }
 
   async _editCart() {
+    this._closePopupEdit();
+
     if (this.item_edit) {
       try {
         const response = await APIHandler.site_cart_update_ordering(
@@ -889,8 +891,6 @@ class Confirm extends Component {
         console.log(e + ' site_cart_update_ordering');
       }
     }
-
-    this._closePopupEdit();
   }
 
   _closePopupEdit() {
@@ -1005,7 +1005,7 @@ class Confirm extends Component {
         </ScreenWrapper>
       );
     }
-console.log(typeof cart_data?.commissions?.map)
+    console.log(typeof cart_data?.commissions?.map);
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const is_ready = cart_data.status == CART_STATUS_READY;

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.1.6] - 2022-05-17
+### Changed
+- [CU-2am3km6] close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
+
 ## [r13.1.5] - 2022-05-12
 ### Fixed
 - [CU-2gat37b] remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
@@ -25,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [r13.1.2] - 2022-04-19
 ### Fixed
-- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com], [lamah.dev@gmail.com].
+- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
 ## [r13.1.1] - 2022-04-13
 ### Fixed
