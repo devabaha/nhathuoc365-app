@@ -81,14 +81,14 @@ class Launch extends Component {
       return Number(versionCode.split('.').join(''));
     };
 
-    if (metadata) {
+    if (metadata && appConfig.device.isIOS) {
       return {
         ios_reviewing:
-          appConfig.device.isIOS &
-          (versionCodeToNumber(getVersion()) >
-            versionCodeToNumber(metadata.version))
+          versionCodeToNumber(getVersion()) >
+          versionCodeToNumber(metadata.version)
             ? 1
             : 0,
+        ios_store_version: versionCodeToNumber(metadata.version),
       };
     } else {
       return {};
