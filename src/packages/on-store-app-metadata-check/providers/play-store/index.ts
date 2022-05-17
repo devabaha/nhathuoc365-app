@@ -22,7 +22,7 @@ export const getAndroidAppMetadata: (
           /Current Version.+?>([\d.-]+)<\/span>/,
         );
 
-        return {version: match[3].trim()};
+        return {version: match[1]?.trim()};
       } catch (error) {
         throw error;
       }

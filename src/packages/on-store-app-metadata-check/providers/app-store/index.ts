@@ -19,7 +19,7 @@ export const getIOSAppMetadata: (
           },
         );
 
-        return {version: response.data.results[0].version};
+        return {version: response.data.results?.[0].version};
       } catch (error) {
         throw error;
       }
