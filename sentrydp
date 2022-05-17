@@ -14,12 +14,18 @@ while [[ "$#" -gt 0 ]]; do
     esac
     shift
 done
+
+
+echo -e "\n=========================================================";
+echo "🚀 Codepush progress $codepushAppName - $codepushAppPlatform";
+echo -e "+++++++++++\n";
+
 echo "Getting latest released codepush information...";
 
 declare index=0;
 if [[ $codepushAppPlatform -eq "ios" ]]
 then
-index=0;
+    index=0;
 fi
 
 declare codePushInformation=$(appcenter codepush deployment list --output=json  -a "$codepushAppName");
@@ -35,7 +41,7 @@ def addition(n):
        global label
        label = n["latestRelease"]["label"]
        return;
-       
+
 list(map(addition, obj))
 print(label)');
 
@@ -47,6 +53,15 @@ echo "Next label    : v$nextReleaseLabelNumber";
 echo "Deployment    : $codepushDeployment";
 echo "====================================================";
 echo "Codepush & Sentry deploy....";
+
+if [[ $(sentry-cli --version) ]]
+then
+    true;
+else
+    echo "⛔ sentry-cli not found ⛔";
+    echo "enter login password (if needed) to install sentry-cli";
+    sudo npm install -g @sentry/cli --unsafe-perm
+fi
 
 appcenter codepush release-react -a "$codepushAppName" -d "$codepushDeployment" -m --description \""$codepushDescription"\" --sourcemap-output --output-dir ./build \
 && export SENTRY_PROPERTIES=./"$codepushAppPlatform"/sentry.properties \
