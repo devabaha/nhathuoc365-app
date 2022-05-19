@@ -54,6 +54,8 @@ const NavBar = ({
   noBackground = false,
   back = true,
 
+  onBack = () => {},
+
   renderLeft = undefined,
   renderRight = undefined,
   renderTitle = undefined,
@@ -79,8 +81,8 @@ const NavBar = ({
   ]);
 
   const handleBack = useCallback(() => {
-    pop();
-  }, []);
+    onBack ? onBack() : pop();
+  }, [onBack]);
 
   const renderBaseBack = () => {
     return (
@@ -111,7 +113,10 @@ const NavBar = ({
       ) : (
         <Container noBackground flex row>
           <Container noBackground row style={styles.leftContainer}>
-            {back && (renderBack ? renderBack(navBarTheme.iconStyle) : renderBaseBack())}
+            {back &&
+              (renderBack
+                ? renderBack(navBarTheme.iconStyle)
+                : renderBaseBack())}
             {renderLeft && renderLeft()}
           </Container>
 
