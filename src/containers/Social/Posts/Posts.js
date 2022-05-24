@@ -90,7 +90,7 @@ const Posts = ({
   const postsAlternative = useRef(posts || []);
 
   useEffect(() => {
-    setPosts(postsProp);
+    setPosts(postsProp || []);
     setStoreSocialPosts(postsProp || []);
   }, [postsProp]);
 
@@ -185,7 +185,7 @@ const Posts = ({
     return () => {
       disposer();
     };
-  }, [addPostingData, disablePostUpdating]);
+  }, [addPostingData, disablePostUpdating, posts]);
 
   const setStoreSocialPosts = (posts) => {
     store.setSocialPosts(
@@ -331,13 +331,16 @@ const Posts = ({
       store.socialPostingData.progress === 100 ||
       store.socialPostingData.error
     ) {
-      setTimeout(() => {
-        store.setSocialPostingData();
+      setTimeout(async () => {
         page.current = 1;
-        getPosts(page.current, limit.current, true);
+        try {
+          await getPosts(page.current, limit.current, true);
+        } finally {
+          store.setSocialPostingData();
+        }
       }, 500);
     }
-  }, []);
+  }, [getPosts]);
 
   const deletePost = useCallback(
     async (feedsId) => {
