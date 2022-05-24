@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r13.1.7] - 2022-05-24
 ### Fixed
 - Bugs when create post in social by [minhnguyenit14@gmail.com].
+- image domain wrong for test_device by [minhnguyenit14@gmail.com].
 
 ## [r13.1.6] - 2022-05-17
 ### Changed
