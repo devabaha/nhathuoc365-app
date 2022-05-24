@@ -113,9 +113,11 @@ const CreatePost = ({
 
   useEffect(() => {
     setTimeout(() => {
-      refresh({
-        right: () => renderPostBtn(),
-      });
+      if (!isUnmounted.current) {
+        refresh({
+          right: () => renderPostBtn(),
+        });
+      }
     });
   }, [
     images,
@@ -125,6 +127,8 @@ const CreatePost = ({
     contentTextProp,
     imagesProp,
     editMode,
+    handlePost,
+    t,
   ]);
 
   useEffect(() => {
@@ -219,6 +223,7 @@ const CreatePost = ({
       postData.images = images;
     }
     canBack.current = true;
+    isUnmounted.current = true;
     pop();
     if (editMode) {
       store.socialCreatePost(postData, t, undefined, true);

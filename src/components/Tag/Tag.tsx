@@ -267,12 +267,12 @@ const Tag = ({
 
 const areEquals = (prev: TagProps, next: TagProps) => {
   const areEquals =
-    prev.fill === next.fill ||
-    prev.strokeColor === next.strokeColor ||
-    prev.containerStyle === next.containerStyle ||
-    prev.label === next.label ||
-    prev.labelContainerStyle === next.labelContainerStyle ||
-    prev.labelStyle === next.labelStyle ||
+    prev.fill === next.fill &&
+    prev.strokeColor === next.strokeColor &&
+    prev.containerStyle === next.containerStyle &&
+    prev.label === next.label &&
+    prev.labelContainerStyle === next.labelContainerStyle &&
+    prev.labelStyle === next.labelStyle &&
     prev.strokeWidth === next.strokeWidth;
   return areEquals;
 };
