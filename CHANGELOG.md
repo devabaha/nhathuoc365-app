@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [CU-2ck57mj] error when deleting an image in the Profile gallery by [kienluu612@gmail.com].
 
 ## [r13.1.7] - 2022-05-24
 ### Fixed
