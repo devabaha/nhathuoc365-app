@@ -440,6 +440,17 @@ class Profile extends Component {
     }
   }
 
+  deleteImageById = (images) => {
+    const gallery = [...(this.state.gallery || [])];
+
+    const deleteImageIndex = gallery.findIndex((img) => {
+      return img.id == images;
+    });
+
+    gallery.splice(deleteImageIndex, 1);
+    this.setState({gallery});
+  };
+
   deleteImage = async (images) => {
     this.setState({loading: true});
     if (!Array.isArray(images)) {
@@ -455,9 +466,8 @@ class Profile extends Component {
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
-          this.setState({
-            gallery: this.formatGallery(response.data.images || []),
-          });
+          this.deleteImageById(images);
+
           flashShowMessage({
             type: 'success',
             message: response.message,

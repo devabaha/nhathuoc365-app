@@ -105,7 +105,12 @@ class ItemImageViewer extends Component {
       case HEADER_BUTTON_TYPE.MORE:
         push(
           appConfig.routes.modalActionSheet,
-          this.props.moreActionSheetOptions,
+          this.props.moreActionSheetOptions
+            ? this.props.moreActionSheetOptions(
+                this.props.images[this.state.currentIndex],
+                this.state.currentIndex,
+              )
+            : undefined,
         );
         break;
       default:
