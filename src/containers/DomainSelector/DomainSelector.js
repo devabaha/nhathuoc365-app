@@ -470,9 +470,7 @@ class DomainSelector extends Component {
       ? this.formatDomainName(
           this.state[this.DOMAIN_ATTRIBUTE.IMAGE_DOMAIN.domainParamName],
         )
-      : isAPIDomainLive
-      ? LIVE_IMAGE_DOMAIN
-      : DEV_IMAGE_DOMAIN;
+      : apiDomainName;
     const socialDomainName = this.state[
       this.DOMAIN_ATTRIBUTE.SOCIAL_DOMAIN.domainParamName
     ]

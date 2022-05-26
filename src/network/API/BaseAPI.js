@@ -11,8 +11,8 @@ export const DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
 export const SPRINT_DEV_API_DOMAIN = 'https://apiapp.abaha.click/';
 export const PRE_RELEASE_API_DOMAIN = 'https://apiapp.abaha.link/';
 
-export const LIVE_IMAGE_DOMAIN = 'https://img.abaha.vn/';
-export const DEV_IMAGE_DOMAIN = 'https://img.tickid.top/';
+export const LIVE_IMAGE_DOMAIN = LIVE_API_DOMAIN;
+export const DEV_IMAGE_DOMAIN = LIVE_API_DOMAIN;
 
 export const LIVE_SOCIAL_DOMAIN = 'https://social.abaha.vn/';
 export const DEV_SOCIAL_DOMAIN = 'https://social.tickid.top/';
@@ -22,7 +22,7 @@ export const LIVE_AIRLINE_TICKET_DOMAIN = 'https://webbanve.net/';
 class BaseAPI {
   constructor(
     apiDomain = LIVE_API_DOMAIN,
-    imageDomain = LIVE_API_DOMAIN,
+    imageDomain = LIVE_IMAGE_DOMAIN,
     socialDomain = LIVE_SOCIAL_DOMAIN,
     airlineTicketDomain = LIVE_AIRLINE_TICKET_DOMAIN,
   ) {
