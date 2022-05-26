@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r13.1.8] - 2022-05-26
 ### Fixed
 - [CU-2ck57mj] error when deleting an image in the Profile gallery by [kienluu612@gmail.com].
+- Re-fix image domain wrong for test_device by [minhnguyenit14@gmail.com].
 
 ## [r13.1.7] - 2022-05-24
 ### Fixed
