@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import {Alert, StyleSheet} from 'react-native';
-// 3-party libs
-import Communications from 'react-native-communications';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 import {getTheme} from 'src/Themes/Theme.context';
@@ -9,6 +7,8 @@ import {getTheme} from 'src/Themes/Theme.context';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName} from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import {IconButton} from 'src/components/base';
 

@@ -1,8 +1,5 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
-// 3-party libs
-import Communications from 'react-native-communications';
-// helpers
 import {openMap} from 'app-helper/map';
 // constants
 import {
@@ -10,6 +7,8 @@ import {
   BundleIconSetName,
   AppOutlinedButton,
 } from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // images
 import SVGMap from 'src/images/map.svg';
 // custom components

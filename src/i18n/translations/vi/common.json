@@ -380,5 +380,6 @@
   "allowLocationAccess": "Cho phép truy cập Vị trí",
   "location": "Vị trí",
   "requestTimeout": "Hết thời gian yêu cầu",
-  "requireLocation": "Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất"
+  "requireLocation": "Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất",
+  "cantCall": "Không thể liên lạc"
 }
