@@ -1,7 +1,5 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
-// 3-party libs
-import Communications from 'react-native-communications';
 // helpers
 import {openMap} from 'src/helper/map';
 import {mergeStyles} from 'src/Themes/helper';
@@ -9,6 +7,8 @@ import {mergeStyles} from 'src/Themes/helper';
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {TypographyType, BundleIconSetName} from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import Image from 'src/components/Image';
 import Loading from 'src/components/Loading';

@@ -3,7 +3,6 @@ import {StyleSheet, Animated, Easing, Alert, View} from 'react-native';
 // 3-party libs
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import Communications from 'react-native-communications';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -19,6 +18,8 @@ import {ProfileProvider} from './ProfileContext';
 // constants
 import {BundleIconSetName} from 'src/components/base';
 import {IMAGE_PICKER_TYPE} from 'src/constants/image';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import Header from './Header';
 import Gallery from './Gallery';
