@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [CU-2d9zj99] reset app when user changing sale point by [kienluu612@gmail.com].
+### Fixed
+- [CU-2cyrhy5] wrong merchant_id in Transaction when processing payment with VNPayMerchant by [kienluu612@gmail.com].
 
 ## [r13.1.8] - 2022-05-26
 ### Fixed
