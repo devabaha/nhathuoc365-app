@@ -408,9 +408,7 @@ const Transaction = ({
             vnPayMerchant.show({
               isSandbox: !!transData.isSandbox,
               paymentUrl: transData.url,
-              tmn_code: JSON.parse(
-                store?.store_data?.config_vnpay_payment || '{}',
-              )?.terminal_id,
+              tmn_code: transData.merchant_id
             });
             break;
           default:
