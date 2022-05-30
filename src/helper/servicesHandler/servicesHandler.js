@@ -1,6 +1,6 @@
 import {Actions} from 'react-native-router-flux';
 import {Alert, Linking} from 'react-native';
-import Communications from 'react-native-communications';
+import Communications from 'app-helper/Communications';
 import i18n from 'i18next';
 
 import appConfig from 'app-config';
