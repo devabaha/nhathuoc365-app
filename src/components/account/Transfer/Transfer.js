@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {View, Platform, StyleSheet, Keyboard} from 'react-native';
 // 3-party libs
 import {config as phoneCardConfig} from 'app-packages/tickid-phone-card';
-import Communications from 'react-native-communications';
 // configs
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -16,6 +15,8 @@ import {push} from 'app-helper/routing';
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName} from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import EnterPhone from 'app-packages/tickid-phone-card/component/EnterPhone/EnterPhone';
 import Modal from './Payment/Modal';

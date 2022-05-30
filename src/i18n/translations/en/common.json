@@ -380,5 +380,6 @@
   "allowLocationAccessLocation": "Allow location access",
   "location": "Location",
   "requestTimeout": "Request timeout",
-  "requireLocation": "Please enable Location and grant Location access to the app to get the best usage experience"
+  "requireLocation": "Please enable Location and grant Location access to the app to get the best usage experience",
+  "cantCall": "Unable to contact"
 }

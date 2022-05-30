@@ -10,24 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-2d9zj99] reset app when user changing sale point by [kienluu612@gmail.com].
 ### Fixed
 - [CU-2cyrhy5] wrong merchant_id in Transaction when processing payment with VNPayMerchant by [kienluu612@gmail.com].
+- [CU-2dv30at] Communications.phonecall not working by [lamah.dev@gmail.com].
 
 ## [r13.1.8] - 2022-05-26
 ### Fixed
-- [CU-2ck57mj] error when deleting an image in the Profile gallery by [kienluu612@gmail.com].
+- [CU-2ck57mj] Error when deleting an image in the Profile gallery by [kienluu612@gmail.com].
 - Re-fix image domain wrong for test_device by [minhnguyenit14@gmail.com].
 
 ## [r13.1.7] - 2022-05-24
 ### Fixed
 - Bugs when create post in social by [minhnguyenit14@gmail.com].
-- image domain wrong for test_device by [minhnguyenit14@gmail.com].
+- Image domain wrong for test_device by [minhnguyenit14@gmail.com].
 
 ## [r13.1.6] - 2022-05-17
 ### Changed
-- [CU-2am3km6] close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
+- [CU-2am3km6] Close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
 
 ## [r13.1.5] - 2022-05-12
 ### Fixed
-- [CU-2gat37b] remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
+- [CU-2gat37b] Remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
 - [CU-28fkqg7] Comment font-size, line-height, color of customStyle in CustomAutoHeightWebview by [lamah.dev@gmail.com].
 - UI in OpRegister by [minhnguyenit14@gmail.com].
 
