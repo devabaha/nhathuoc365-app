@@ -12,6 +12,7 @@ export const DARK_STATUS_BAR_SCENES = [
   appConfig.routes.modalEditImages,
   appConfig.routes.socialCreatePost,
 
+  appConfig.routes.mixedVoucher,
   appConfig.routes.myVoucher,
   appConfig.routes.voucherDetail,
   appConfig.routes.voucherScanner,

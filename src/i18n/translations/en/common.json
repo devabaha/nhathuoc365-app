@@ -76,6 +76,9 @@
     "myVoucher": {
       "mainTitle": "My Voucher"
     },
+    "mixedVoucher": {
+      "mainTitle": "Voucher"
+    },
     "news": {
       "mainTitle": "News"
     },
