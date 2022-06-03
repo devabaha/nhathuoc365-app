@@ -28,12 +28,14 @@ import Header from 'src/components/ModalPicker/Header';
 const styles = StyleSheet.create({
   modal: {
     height: null,
+    maxHeight: appConfig.device.height * 0.8,
     backgroundColor: 'transparent',
     justifyContent: 'center',
     overflow: 'hidden',
   },
   container: {
     width: '100%',
+    flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -53,6 +55,9 @@ const styles = StyleSheet.create({
   },
   pickerWrapper: {
     flexDirection: 'row',
+    flexShrink: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   pickerContainer: {
     paddingHorizontal: 15,
@@ -72,9 +77,6 @@ const styles = StyleSheet.create({
     right: 15,
     top: 20,
     zIndex: 999,
-  },
-  androidItem: {
-    height: 50,
   },
 });
 
@@ -106,6 +108,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
       : this.props.scheduleDeliveryData[0]?.time[0],
   };
 
+  hourMinuteIndex = 0;
   refModal = React.createRef<any>();
   refListDate = React.createRef<any>();
   refListTime = React.createRef<any>();
@@ -113,35 +116,19 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     type: TypographyType.TITLE_MEDIUM,
   };
 
+  listEmptyIconBundle = BundleIconSetName.MATERIAL_COMMUNITY_ICONS;
+  listEmptyTitleStyle = this.theme.typography[
+    TypographyType.DESCRIPTION_MEDIUM_TERTIARY
+  ];
+
   get theme() {
     return getTheme(this);
   }
 
   componentDidMount(): void {
     Keyboard.dismiss();
-
-    if (this.state.selectedDate) {
-      this.setState({}, () => {
-        this.scrollListToIndex(
-          this.refListDate,
-          this.props.scheduleDeliveryData.length &&
-            this.props.scheduleDeliveryData.findIndex(
-              (d) =>
-                d.value ===
-                getDateTimeSelected(this.props.scheduleDateTime).date,
-            ),
-        );
-
-        this.scrollListToIndex(
-          this.refListTime,
-          this.state.selectedDate?.time?.length &&
-            this.state.selectedDate?.time.findIndex(
-              (t) => t.value === this.state.selectedTime?.value,
-            ),
-        );
-      });
-    }
   }
+
   closeModal = () => {
     if (this.refModal.current) {
       this.refModal.current.close();
@@ -149,21 +136,25 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
   };
 
   onDateChange = (date, dateIndex) => {
-    const timeData = this.props.scheduleDeliveryData[dateIndex]?.time || [];
-    const timeIndex = timeData.findIndex(
-      ({value}) => value === this.state.selectedTime?.value,
-    );
+    let timeIndex = 0;
 
     this.setState(
-      (prevState: any) => ({
-        selectedDate: this.props.scheduleDeliveryData[dateIndex],
-        selectedTime:
-          timeData?.length && timeIndex !== -1
-            ? prevState.selectedTime
-            : timeData[0]
-            ? timeData[0] || ''
-            : prevState.selectedTime,
-      }),
+      (prevState: any) => {
+        const timeData = this.props.scheduleDeliveryData[dateIndex]?.time || [];
+
+        timeIndex = timeData.findIndex(
+          ({value}) => value === prevState.selectedTime?.value,
+        );
+        return {
+          selectedDate: this.props.scheduleDeliveryData[dateIndex],
+          selectedTime:
+            timeData?.length && timeIndex !== -1
+              ? prevState.selectedTime
+              : timeData[0]
+              ? timeData[0] || ''
+              : prevState.selectedTime,
+        };
+      },
       () => {
         if (this.refListTime.current) {
           this.scrollListToIndex(this.refListTime, timeIndex);
@@ -173,21 +164,27 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
   };
 
   scrollListToIndex = (refList, timeIndex) => {
-    setTimeout(
-      () =>
-        refList.current &&
-        refList.current.scrollToIndex({
-          index: timeIndex - 1 < 0 ? 0 : timeIndex - 1,
-        }),
-      timeIndex * 30,
-    );
+    refList.current &&
+      refList.current.scrollToIndex({
+        index: timeIndex < 0 ? 0 : timeIndex,
+      });
   };
 
   onTimeChange = (time, timeIndex) => {
-    this.setState({selectedTime: {value: time}});
+    this.setState({
+      selectedTime: this.state.selectedDate.time[timeIndex],
+    });
+
+    this.hourMinuteIndex = timeIndex;
   };
 
   handleConfirm = () => {
+    if (this.state.selectedDate?.today && this.hourMinuteIndex === 0) {
+      this.props.onConfirm('');
+      this.closeModal();
+      return;
+    }
+
     const scheduleDateTime = `${this.state.selectedDate?.value} ${this.state.selectedTime?.value}`;
 
     const formattedScheduleTime = moment(
@@ -202,7 +199,9 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
 
   formatScheduleData = (data) => {
     if (data[0]?.today) {
-      data[0].time[0].label = 'Giao ngay';
+      data[0].time[0].label = this.props.t(
+        'confirm.scheduleDelivery.modal.deliveryNowLabel',
+      );
     }
     return data;
   };
@@ -274,7 +273,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
         easing={Easing.quad}
         animationDuration={250}
         onClosed={pop}>
-        <Container safeLayout style={[styles.container, this.containerStyle]}>
+        <Container style={[styles.container, this.containerStyle]}>
           <Header
             selectedLabel={
               !!this.state.selectedTime?.value &&
@@ -285,15 +284,13 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
             title={t('confirm.scheduleDelivery.modal.title')}
             cancelTitle={t('common:cancel')}
             confirmTitle={t('common:done')}
-            // onHeaderLayout={this.onHeaderLayout}
             onCancelPress={this.closeModal}
             onSelectPress={this.handleConfirm}
             confirmDisabled={!this.props.scheduleDeliveryData?.length}
           />
-
           <View style={styles.pickerWrapper}>
             {!!this.props.scheduleDeliveryData?.length ? (
-              <Container noBackground center flex row>
+              <>
                 <Container
                   noBackground
                   flex
@@ -305,57 +302,31 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
                     data={this.formatScheduleData(
                       this.props.scheduleDeliveryData,
                     )}
-                    listEmptyIconBundle={
-                      BundleIconSetName.MATERIAL_COMMUNITY_ICONS
-                    }
+                    listEmptyIconBundle={this.listEmptyIconBundle}
                     listEmptyIconName="clock-alert"
                     listEmptyIconSize={32}
-                    listEmptyTitleStyle={
-                      this.theme.typography[
-                        TypographyType.DESCRIPTION_MEDIUM_TERTIARY
-                      ]
-                    }
-                    androidItemStyle={styles.androidItem}
+                    listEmptyTitleStyle={this.listEmptyTitleStyle}
                     androidItemTextStyle={this.androidItemPickerStyles}
-                    getAndroidItemLayout={(data, index) => {
-                      return {
-                        length: 50,
-                        offset: 50 * index,
-                        index,
-                      };
-                    }}
+                    androidItemHeight={50}
                   />
                 </Container>
 
-                <Container flex style={styles.pickerContainer}>
+                <Container noBackground flex style={styles.pickerContainer}>
                   <Picker
                     refList={this.refListTime}
                     selectedValue={this.state.selectedTime?.value}
                     onValueChange={this.onTimeChange}
                     data={this.state.selectedDate?.time || []}
-                    listEmptyIconBundle={
-                      BundleIconSetName.MATERIAL_COMMUNITY_ICONS
-                    }
+                    listEmptyIconBundle={this.listEmptyIconBundle}
                     listEmptyIconName="clock-alert"
                     listEmptyIconSize={32}
-                    listEmptyTitleStyle={
-                      this.theme.typography[
-                        TypographyType.DESCRIPTION_MEDIUM_TERTIARY
-                      ]
-                    }
-                    androidItemStyle={styles.androidItem}
+                    listEmptyTitleStyle={this.listEmptyTitleStyle}
                     androidItemTextStyle={this.androidItemPickerStyles}
                     androidInitNumToRender={50}
-                    getAndroidItemLayout={(data, index) => {
-                      return {
-                        length: 50,
-                        offset: 50 * index,
-                        index,
-                      };
-                    }}
+                    androidItemHeight={50}
                   />
                 </Container>
-              </Container>
+              </>
             ) : (
               this.renderEmpty()
             )}
