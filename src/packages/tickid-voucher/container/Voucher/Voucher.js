@@ -61,6 +61,8 @@ class Voucher extends BaseContainer {
         from: this.props.from,
         title: campaign.data.title,
         forceReload: this.getListCampaigns,
+        onGetVoucherSuccess: this.props.onGetVoucherSuccess,
+        onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
       },
       this.theme,
     );
@@ -167,6 +169,7 @@ class Voucher extends BaseContainer {
           provinceSelected: this.state.provinceSelected,
         })}
         t={this.props.t}
+        isDisableHeader={this.props.isDisableHeader}
       />
     );
   }

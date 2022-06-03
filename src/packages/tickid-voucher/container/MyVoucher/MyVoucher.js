@@ -235,4 +235,4 @@ class MyVoucher extends BaseContainer {
   }
 }
 
-export default withTranslation('voucher')(observer(MyVoucher));
+export default withTranslation('voucher', {withRef: true})(observer(MyVoucher));

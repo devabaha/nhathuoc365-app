@@ -25,6 +25,7 @@ import {ScreenWrapper} from 'src/components/base';
 import BaseContainer from '../BaseContainer';
 import VoucherDetailComponent from '../../component/VoucherDetail';
 import ModalConfirm from '../../component/ModalConfirm';
+import {Actions} from 'react-native-router-flux';
 
 const defaultFn = () => {};
 
@@ -35,6 +36,7 @@ class VoucherDetail extends BaseContainer {
    */
   static propTypes = {
     mode: PropTypes.string,
+    popTarget: PropTypes.string,
     from: PropTypes.oneOf(['home', 'deeplink']),
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -55,6 +57,7 @@ class VoucherDetail extends BaseContainer {
     onUseVoucherOnlineSuccess: defaultFn,
     onUseVoucherOnlineFailure: defaultFn,
     forceReload: defaultFn,
+    onGetVoucherSuccess: defaultFn,
   };
 
   constructor(props) {
@@ -296,6 +299,7 @@ class VoucherDetail extends BaseContainer {
           campaign: new CampaignEntity(response.data.campaign),
           canUseNow: true,
         });
+        this.props.onGetVoucherSuccess();
 
         /**
          * @NOTE: 201 means the user has this voucher
@@ -481,6 +485,7 @@ class VoucherDetail extends BaseContainer {
           campaign: new CampaignEntity(response.data.campaign),
           canUseNow: true,
         });
+        this.props.onGetVoucherSuccess();
       } else {
         showMessage({
           type: 'danger',
