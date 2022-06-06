@@ -18,9 +18,7 @@ export const getAndroidAppMetadata: (
             signal: controller.signal,
           },
         );
-        const match = response.data.match(
-          /Current Version.+?>([\d.-]+)<\/span>/,
-        );
+        const match = response.data.match(/\[\[\[['"]((\d+\.)+\d+)['"]\]\],/);
 
         return {version: match[1]?.trim()};
       } catch (error) {

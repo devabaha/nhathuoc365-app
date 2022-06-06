@@ -74,27 +74,14 @@ class Launch extends Component {
   };
 
   checkOnStoreAppMetadata = async () => {
-    if (appConfig.device.isIOS) {
-      const data = {bundleId: getBundleId()};
-      const metadata = await getOnStoreAppMetadata({data});
+    const data = {bundleId: getBundleId()};
+    const metadata = await getOnStoreAppMetadata({data});
 
-      const versionCodeToNumber = (versionCode) => {
-        return Number(versionCode.split('.').join(''));
-      };
-
-      return metadata
-        ? {
-            ios_reviewing:
-              versionCodeToNumber(getVersion()) >
-              versionCodeToNumber(metadata.version)
-                ? 1
-                : 0,
-            ios_store_version: metadata.version,
-          }
-        : {};
-    } else {
-      return {};
-    }
+    return metadata
+      ? {
+          store_version: metadata.version,
+        }
+      : {};
   };
 
   handleAuthorization = async () => {
