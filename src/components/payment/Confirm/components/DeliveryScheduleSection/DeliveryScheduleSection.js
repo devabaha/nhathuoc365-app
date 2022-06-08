@@ -46,7 +46,7 @@ class DeliveryScheduleSection extends React.Component {
   state = {
     loading: false,
     scheduleDeliveryData: [],
-    scheduleDeliveryTime: '',
+    scheduleDeliveryTime: null,
   };
   unmounted = false;
 
@@ -54,17 +54,21 @@ class DeliveryScheduleSection extends React.Component {
     this.unmounted = true;
   }
 
-  get dateTimeFormatted() {
-    const scheduleDateTime =
-      this.state.scheduleDeliveryTime || this.props.dateTime;
+  get scheduleDateTime() {
+    return this.state.scheduleDeliveryTime != null
+      ? this.state.scheduleDeliveryTime
+      : this.props.dateTime;
+  }
 
-    if (!scheduleDateTime) {
+  get dateTimeFormatted() {
+    if (!this.scheduleDateTime) {
       return null;
     }
 
-    const deliveryTime = moment(scheduleDateTime, 'YYYY-MM-DD HH:mm:ss').format(
-      'DD/MM/YYYY HH:mm',
-    );
+    const deliveryTime = moment(
+      this.scheduleDateTime,
+      'YYYY-MM-DD HH:mm:ss',
+    ).format('DD/MM/YYYY HH:mm');
 
     const [date, time] = deliveryTime.split(' ');
     if (!!date && !!time) {
@@ -98,10 +102,10 @@ class DeliveryScheduleSection extends React.Component {
       if (this.unmounted) return;
 
       if (response && response?.status === STATUS_SUCCESS) {
-        this.props.onDeliveryTimeChange(response.data?.delivery_time || '');
+        this.props.onDeliveryTimeChange(response.data?.delivery_time || null);
 
         this.setState({
-          scheduleDeliveryTime: response.data?.delivery_time,
+          scheduleDeliveryTime: response.data?.delivery_time || '',
         });
 
         flashShowMessage({
@@ -138,8 +142,7 @@ class DeliveryScheduleSection extends React.Component {
         this.setState({scheduleDeliveryData: response.data || []}, () => {
           push(appConfig.routes.modalDeliverySchedule, {
             siteId: this.props.siteId,
-            scheduleDateTime:
-              this.state.scheduleDeliveryTime || this.props.dateTime,
+            scheduleDateTime: this.scheduleDateTime,
             scheduleDeliveryData: this.state.scheduleDeliveryData,
             onConfirm: (scheduleTime) => {
               this.setState({

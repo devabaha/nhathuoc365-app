@@ -127,6 +127,8 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
 
   componentDidMount(): void {
     Keyboard.dismiss();
+
+    this.formatScheduleData();
   }
 
   closeModal = () => {
@@ -197,13 +199,15 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     this.closeModal();
   };
 
-  formatScheduleData = (data) => {
-    if (data[0]?.today) {
-      data[0].time[0].label = this.props.t(
+  formatScheduleData = () => {
+    if (
+      this.props.scheduleDeliveryData.length &&
+      this.props.scheduleDeliveryData[0].today
+    ) {
+      this.props.scheduleDeliveryData[0].time[0].label = this.props.t(
         'confirm.scheduleDelivery.modal.deliveryNowLabel',
       );
     }
-    return data;
   };
 
   renderEmpty = () => {
@@ -260,6 +264,14 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
   render() {
     const {t} = this.props;
 
+    const headerSelectedLabel =
+      this.state.selectedDate.today && this.hourMinuteIndex === 0
+        ? t('confirm.scheduleDelivery.modal.deliveryNowLabel') +
+          ' ' +
+          this.state.selectedDate?.value
+        : !!this.state.selectedTime?.label &&
+          this.state.selectedTime?.label + ' ' + this.state.selectedDate?.value;
+
     return (
       <Modal
         ref={this.refModal}
@@ -275,12 +287,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
         onClosed={pop}>
         <Container style={[styles.container, this.containerStyle]}>
           <Header
-            selectedLabel={
-              !!this.state.selectedTime?.value &&
-              this.state.selectedTime?.value +
-                ' ' +
-                this.state.selectedDate?.value
-            }
+            selectedLabel={headerSelectedLabel}
             title={t('confirm.scheduleDelivery.modal.title')}
             cancelTitle={t('common:cancel')}
             confirmTitle={t('common:done')}
@@ -299,9 +306,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
                     refList={this.refListDate}
                     selectedValue={this.state.selectedDate?.value}
                     onValueChange={this.onDateChange}
-                    data={this.formatScheduleData(
-                      this.props.scheduleDeliveryData,
-                    )}
+                    data={this.props.scheduleDeliveryData}
                     listEmptyIconBundle={this.listEmptyIconBundle}
                     listEmptyIconName="clock-alert"
                     listEmptyIconSize={32}

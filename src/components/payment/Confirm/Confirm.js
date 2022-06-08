@@ -86,7 +86,6 @@ class Confirm extends Component {
     paymentMethod: {},
     loading: false,
     isConfirming: false,
-    deliveryTime: '',
   };
   refs_confirm_page = React.createRef();
   unmounted = false;
@@ -96,6 +95,7 @@ class Confirm extends Component {
   requests = [this.getShippingInfoRequest, this.reorderRequest];
   eventTracker = new EventTracker();
   refNoteModalInput = null;
+  deliveryTime = null;
 
   get theme() {
     return getTheme(this);
@@ -274,7 +274,7 @@ class Confirm extends Component {
           const response = await APIHandler.site_cart_note(store.store_id, {
             user_note: store.user_cart_note,
           });
-          console.log(response);
+
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               if (typeof callback == 'function') {
@@ -308,8 +308,7 @@ class Confirm extends Component {
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
-            delivery_time:
-              this.state.deliveryTime || this.cartData.delivery_time || '',
+            delivery_time: this.deliveryTime || '',
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
@@ -1104,7 +1103,7 @@ class Confirm extends Component {
               cartId={this.cartData.id}
               title={t('confirm.scheduleDelivery.title')}
               onDeliveryTimeChange={(deliveryTime) => {
-                this.setState({deliveryTime});
+                this.deliveryTime = deliveryTime;
               }}
             />
           )}
