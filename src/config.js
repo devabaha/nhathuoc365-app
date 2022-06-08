@@ -408,6 +408,8 @@ class Config {
 
       // Rating
       rating: 'rating',
+
+      mixedVoucher: 'mixedVoucher'
     };
   }
 }

@@ -76,6 +76,9 @@
     "myVoucher": {
       "mainTitle": "Voucher của tôi"
     },
+    "mixedVoucher": {
+      "mainTitle": "Voucher"
+    },
     "news": {
       "mainTitle": "Tin tức"
     },

@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CU-2azm63y] module Schedule Delivery by [kienluu612@gmail.com].
 ### Changed
 - Re-design android wheel picker by [kienluu612@gmail.com].
+- [CU-2c7mez8] Upgrade the flow of using voucher in the order by [lamah.dev@gmail.com].
+
 ## [r13.1.9] - 2022-05-30
 ### Changed
 - [CU-2d9zj99] reset app when user changing sale point by [kienluu612@gmail.com].

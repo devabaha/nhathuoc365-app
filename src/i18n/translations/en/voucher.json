@@ -88,5 +88,9 @@
     "providedBy": "Provided by",
     "map": "Map",
     "descriptionShowBarcode": "Give the Barcode to the staff to receive the promotion."
+  },
+  "mixedVoucherTabs":{
+    "myVoucher": "My vouchers",
+    "storeVoucher": "Store Vouchers"
   }
 }

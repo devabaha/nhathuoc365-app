@@ -197,6 +197,7 @@ import ModalLicense from './components/ModalLicense';
 import {setAppLanguage} from './i18n/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalDeliverySchedule from './components/payment/Confirm/components/DeliveryScheduleSection/ModalDeliverySchedule';
+import MixedVoucher from 'src/containers/MixedVoucher';
 
 /**
  * Not allow font scaling
@@ -1346,6 +1347,17 @@ class RootRouter extends Component {
                     component={MultiLevelCategory}
                     hideNavBar
                     {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ Voucher Container ================ */}
+                <Stack key={appConfig.routes.mixedVoucher}>
+                  <Scene
+                    key={`${appConfig.routes.mixedVoucher}_1`}
+                    title={t('screen.mixedVoucher.mainTitle')}
+                    component={MixedVoucher}
+                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
