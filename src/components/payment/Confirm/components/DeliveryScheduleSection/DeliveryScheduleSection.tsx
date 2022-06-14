@@ -3,14 +3,20 @@ import {StyleSheet} from 'react-native';
 // 3-party libs
 import moment from 'moment';
 import {withTranslation} from 'react-i18next';
+// types
+import {DeliveryScheduleSectionProps} from '.';
 // configs
 import appConfig from 'app-config';
+// helpers
+import {flashShowMessage, isValidDate} from 'app-helper';
+import {getDateTimeSelected} from './helper';
 // routing
 import {push} from 'app-helper/routing';
 // entities
 import APIHandler from 'src/network/APIHandler';
-// custom components
+// constants
 import {TypographyType} from 'src/components/base';
+import {STATUS_SUCCESS} from 'src/constants';
 // custom components
 import SectionContainer from '../SectionContainer';
 import {Typography, Container} from 'src/components/base';
@@ -42,7 +48,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class DeliveryScheduleSection extends React.Component {
+class DeliveryScheduleSection extends React.Component<DeliveryScheduleSectionProps> {
   state = {
     loading: false,
     scheduleDeliveryData: [],
@@ -58,6 +64,18 @@ class DeliveryScheduleSection extends React.Component {
     return this.state.scheduleDeliveryTime != null
       ? this.state.scheduleDeliveryTime
       : this.props.dateTime;
+  }
+
+  get scheduleDate() {
+    if (isValidDate(this.scheduleDateTime)) {
+      return getDateTimeSelected(this.scheduleDateTime).date;
+    }
+  }
+
+  get scheduleTime() {
+    if (isValidDate(this.scheduleDateTime)) {
+      return getDateTimeSelected(this.scheduleDateTime).time;
+    }
   }
 
   get dateTimeFormatted() {
@@ -142,14 +160,15 @@ class DeliveryScheduleSection extends React.Component {
         this.setState({scheduleDeliveryData: response.data || []}, () => {
           push(appConfig.routes.modalDeliverySchedule, {
             siteId: this.props.siteId,
-            scheduleDateTime: this.scheduleDateTime,
+            selectedDate: this.scheduleDate,
+            selectedTime: this.scheduleTime,
             scheduleDeliveryData: this.state.scheduleDeliveryData,
-            onConfirm: (scheduleTime) => {
+            onConfirm: (scheduleDateTime) => {
               this.setState({
                 loading: true,
               });
 
-              this.handleUpdateCartInfo(scheduleTime);
+              this.handleUpdateCartInfo(scheduleDateTime);
             },
           });
         });
@@ -174,6 +193,7 @@ class DeliveryScheduleSection extends React.Component {
     const {t} = this.props;
 
     return (
+      // @ts-ignore
       <SectionContainer
         marginTop
         title={this.props.title}

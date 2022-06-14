@@ -137,7 +137,7 @@ const Picker = ({
 
   const renderListEmpty = () => {
     return (
-      <Container center>
+      <Container flex center>
         <NoResult
           iconBundle={listEmptyIconBundle}
           iconName={listEmptyIconName}

@@ -12,7 +12,6 @@ import moment from 'moment';
 import appConfig from 'app-config';
 // helpers
 import {getTheme} from 'src/Themes/Theme.context';
-import {getDateTimeSelected} from './helpers';
 // routing
 import {pop} from 'app-helper/routing';
 // context
@@ -88,24 +87,25 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     scheduleDeliveryData: [],
   };
 
-  selectedDate =
-    !!this.props.scheduleDateTime && !!this.props.scheduleDeliveryData?.length
-      ? this.props.scheduleDeliveryData.find(
-          (item: any) =>
-            item?.value ===
-            getDateTimeSelected(this.props.scheduleDateTime).date,
-        ) || this.props.scheduleDeliveryData[0]
-      : this.props.scheduleDeliveryData[0];
+  initSelectedDate = !!this.props.scheduleDeliveryData.length
+    ? !!this.props.selectedDate
+      ? this.props.scheduleDeliveryData.find((item: any) => {
+          return item?.value === this.props.selectedDate;
+        }) || this.props.scheduleDeliveryData?.[0]
+      : this.props.scheduleDeliveryData?.[0]
+    : undefined;
+
+  initSelectedTime = !!this.initSelectedDate
+    ? !!this.props.selectedTime
+      ? this.initSelectedDate?.time?.find(
+          (item: any) => item?.value === this.props.selectedTime,
+        ) || {value: this.initSelectedDate?.time?.[0]?.value}
+      : this.props.scheduleDeliveryData?.[0]?.time?.[0]
+    : undefined;
 
   state = {
-    selectedDate: this.selectedDate,
-    selectedTime: !!this.props.scheduleDateTime
-      ? this.selectedDate?.time?.find(
-          (item: any) =>
-            item?.value ===
-            getDateTimeSelected(this.props.scheduleDateTime).time,
-        ) || {value: this.selectedDate?.time[0].value}
-      : this.props.scheduleDeliveryData[0]?.time[0],
+    selectedDate: this.initSelectedDate,
+    selectedTime: this.initSelectedTime,
   };
 
   hourMinuteIndex = 0;
@@ -202,7 +202,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
   formatScheduleData = () => {
     if (
       this.props.scheduleDeliveryData.length &&
-      this.props.scheduleDeliveryData[0].today
+      this.props.scheduleDeliveryData?.[0]?.today
     ) {
       this.props.scheduleDeliveryData[0].time[0].label = this.props.t(
         'confirm.scheduleDelivery.modal.deliveryNowLabel',
@@ -265,7 +265,7 @@ class ModalDeliverySchedule extends Component<ModalDeliveryScheduleProps> {
     const {t} = this.props;
 
     const headerSelectedLabel =
-      this.state.selectedDate.today && this.hourMinuteIndex === 0
+      this.state.selectedDate?.today && this.hourMinuteIndex === 0
         ? t('confirm.scheduleDelivery.modal.deliveryNowLabel') +
           ' ' +
           this.state.selectedDate?.value
