@@ -88,5 +88,9 @@
     "providedBy": "Cung cấp bởi",
     "map": "Bản đồ",
     "descriptionShowBarcode": "Đưa mã Barcode cho nhân viên cửa hàng để nhận khuyến mại."
+  },
+  "mixedVoucherTabs": {
+    "myVoucher": "Voucher của tôi",
+    "storeVoucher": "Voucher cửa hàng"
   }
 }

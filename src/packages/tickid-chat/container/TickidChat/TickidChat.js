@@ -24,7 +24,6 @@ import {
 } from 'react-native-gifted-chat';
 import ImagePicker from 'react-native-image-picker';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import Communications from 'react-native-communications';
 import Clipboard from '@react-native-community/clipboard';
 // configs
 import appConfig from 'app-config';
@@ -55,6 +54,8 @@ import {
 } from '../../constants';
 import {IMAGE_PICKER_TYPE} from 'src/constants/image';
 import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import MasterToolBar from '../MasterToolBar';
 import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
@@ -501,7 +502,7 @@ class TickidChat extends Component {
         path: 'images',
       },
     });
-    
+
     ImagePicker.launchCamera(options, (response) => {
       if (response.error) {
         console.log(response);

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 
-// library
-import Communications from 'react-native-communications';
+// entities
+import Communications from 'app-helper/Communications';
 
 import NavButton from './NavButton';
 
@@ -12,7 +12,7 @@ export default class HomeNavBar extends Component {
   }
 
   render() {
-    var { title } = this.props;
+    var {title} = this.props;
 
     return (
       <View style={styles.container}>
@@ -52,36 +52,36 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0
+    right: 0,
   },
   leftNav: {
-    flex: 1
+    flex: 1,
   },
   centerNav: {
     flex: 2,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   rightNav: {
     flex: 1,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   title: {
     color: '#ffffff',
     fontSize: 17,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   btnCloseBox: {
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   btnClose: {
-    padding: 8
+    padding: 8,
   },
   btnTitle: {
     fontSize: 16,
     color: '#ffffff',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });

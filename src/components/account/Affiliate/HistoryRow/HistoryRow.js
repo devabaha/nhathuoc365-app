@@ -1,13 +1,13 @@
 import React, {memo, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
-// 3-party libs
-import Communications from 'react-native-communications';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {BundleIconSetName, TypographyType} from 'src/components/base';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import {Typography, Icon, BaseButton} from 'src/components/base';
 

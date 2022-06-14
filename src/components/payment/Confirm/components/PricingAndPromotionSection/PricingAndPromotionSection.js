@@ -102,13 +102,13 @@ const PricingAndPromotionSection = ({
     if (selectedVoucher) {
       openCurrentVoucher(selectedVoucher);
     } else {
-      openMyVoucher();
+      openMixedVoucher();
     }
   };
 
-  const openMyVoucher = () => {
+  const openMixedVoucher = () => {
     push(
-      appConfig.routes.myVoucher,
+      appConfig.routes.mixedVoucher,
       {
         mode: USE_ONLINE,
         siteId,

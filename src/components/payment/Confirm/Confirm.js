@@ -1164,6 +1164,8 @@ class Confirm extends Component {
             isPromotionSelectable={single}
             selectedVoucher={cart_data.user_voucher}
             siteId={cart_data.site_id}
+            orderId={cart_data.id}
+            orderType={cart_data.cart_type}
             voucherStatus={cart_data.voucher_status}
           />
 

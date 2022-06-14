@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 // 3-party libs
 import Clipboard from '@react-native-community/clipboard';
-import Communications from 'react-native-communications';
 import {withTranslation} from 'react-i18next';
 // configs
 import config from '../../config';
@@ -11,6 +10,8 @@ import {internalFetch} from '../../helper/apiFetch';
 // helpers
 import rnShare from '../../helper/rnShare';
 import {showMessage} from '../../constants';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import CardItemComponent from '../../component/CardItem';
 import ModalOverlay from '../../component/ModalOverlay';

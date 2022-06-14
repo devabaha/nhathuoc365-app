@@ -157,6 +157,10 @@ export class Booking extends Component {
     return this.state.booking?.store || {};
   }
 
+  get addressInfo() {
+    return this.state.booking?.address || {};
+  }
+
   get voucher() {
     return this.state.booking?.user_voucher || {};
   }
@@ -772,17 +776,16 @@ export class Booking extends Component {
           )}
 
           <StoreInfoSection
-            image={this.storeInfo.img}
-            name={this.storeInfo.name}
-            address={this.storeInfo.address}
-            tel={this.storeInfo.phone}
-            originLatitude={this.storeInfo.lat}
-            originLongitude={this.storeInfo.lng}
+            name={this.addressInfo.name}
+            address={this.addressInfo.address}
+            tel={this.addressInfo.tel}
+            originLatitude={this.addressInfo.latitude}
+            originLongitude={this.addressInfo.longitude}
             onPressActionBtn={
               this.editable ? this.handleChangeStore : undefined
             }
             customContent={
-              !this.storeInfo?.id && (
+              !this.addressInfo?.id && (
                 <AppOutlinedButton
                   primaryHighlight
                   disabled={!this.editable}

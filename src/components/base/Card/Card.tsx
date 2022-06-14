@@ -1,14 +1,16 @@
 import React, {memo, forwardRef, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
-
+// types
 import {CardProps} from '.';
 import {Ref} from '..';
-
-import {useTheme} from 'src/Themes/Theme.context';
+// helpers
 import {mergeStyles} from 'src/Themes/helper';
-
-import Container from '../Container';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {CardBorderRadiusType} from './constants';
+// custom components
+import Container from '../Container';
 
 const createStyles = (theme) => {
   const styles = StyleSheet.create({
@@ -37,7 +39,6 @@ const Card = forwardRef(
   (
     {
       children,
-      reanimated,
       animated,
       borderRadiusSize = CardBorderRadiusType.MEDIUM,
       style,

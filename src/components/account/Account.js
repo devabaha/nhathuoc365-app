@@ -20,7 +20,7 @@ import {openLink, saveTheme} from 'app-helper';
 import {isActivePackageOptionConfig} from 'app-helper/packageOptionsHandler';
 import {getPickerOptions} from 'app-helper/image';
 // routing
-import {pop, push} from 'app-helper/routing';
+import {push, reset} from 'app-helper/routing';
 // context
 import {ThemeContext} from 'src/Themes/Theme.context';
 // constants
@@ -384,7 +384,6 @@ class Account extends Component {
             placeholder: this.props.t('gpsStore:searchSalePointPlaceholder'),
             onPress: (store) => {
               this.onSelectWarehouse(store);
-              pop();
             },
           }),
         boxIconStyle: [styles.boxIconStyle],
@@ -901,6 +900,7 @@ class Account extends Component {
     } finally {
       if (this.unmounted) return;
       this.setState({isWarehouseLoading: false});
+      reset(appConfig.routes.sceneWrapper);
     }
   }
 
