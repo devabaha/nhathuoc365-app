@@ -7,5 +7,7 @@ export interface ModalDeliveryScheduleProps {
 
   scheduleDeliveryData?: Array<any>;
   scheduleDateTime?: string;
+  selectedDate?: string;
+  selectedTime?: string;
   onConfirm?: (scheduleTime: string) => void;
 }

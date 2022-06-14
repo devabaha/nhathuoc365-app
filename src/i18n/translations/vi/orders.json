@@ -104,7 +104,7 @@
     "scheduleDelivery": {
       "title": "Thời gian giao hàng",
       "detailLabel": "Đơn hàng sẽ được giao vào ",
-      "description": "Hẹn lịch giao cho đơn hàng",
+      "description": "Đơn hàng sẽ được giao sớm nhất có thể",
       "modal": {
         "title": "Chọn giờ nhận",
         "todayLabel": "Hôm nay ",

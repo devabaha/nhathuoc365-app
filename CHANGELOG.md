@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.2.1] - 2020-06-14
+## Changed
+- Re-design android wheel picker by [kienluu612@gmail.com].
+### Fixed
+- [CU-2azm63y] module Schedule Delivery by [kienluu612@gmail.com].
+
 ## [r13.1.10] - 2022-06-14
 ### Added
 - new Alert mechanic by [minhnguyenit14gmail.com].

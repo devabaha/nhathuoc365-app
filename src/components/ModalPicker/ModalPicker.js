@@ -4,6 +4,8 @@ import {Easing, StyleSheet, Platform} from 'react-native';
 import Modal from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient';
+// configs
+import appConfig from 'app-config';
 // helpers
 import EventTracker from 'app-helper/EventTracker';
 import {mergeStyles} from 'src/Themes/helper';
@@ -187,11 +189,13 @@ class ModalPicker extends PureComponent {
           confirmDisabled={confirmDisabled}
         />
         {/* {this.renderPicker()} */}
-        <Picker
-          data={this.props.data}
-          selectedValue={this.state.selectedValue}
-          onValueChange={this.onValueChange}
-        />
+        <Container>
+          <Picker
+            data={this.props.data}
+            selectedValue={this.state.selectedValue}
+            onValueChange={this.onValueChange}
+          />
+        </Container>
       </Modal>
     );
   }
@@ -201,6 +205,10 @@ const styles = StyleSheet.create({
   modal: {
     overflow: 'hidden',
     height: undefined,
+    minHeight: appConfig.device.isAndroid
+      ? appConfig.device.height * 0.35
+      : undefined,
+    maxHeight: appConfig.device.height * 0.8,
   },
   languagePickerSelectTextDisabled: {},
   languagePickerItem: {},
