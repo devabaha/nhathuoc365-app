@@ -1,5 +1,5 @@
 import React, {useCallback, useRef, useState, useEffect, useMemo} from 'react';
-import {Alert, BackHandler, Keyboard, StyleSheet, View} from 'react-native';
+import {BackHandler, Keyboard, StyleSheet, View} from 'react-native';
 import {reaction} from 'mobx';
 // configs
 import appConfig from 'app-config';
@@ -17,6 +17,8 @@ import {useTheme} from 'src/Themes/Theme.context';
 // constants
 import {MAX_TOTAL_UPLOAD_IMAGES} from 'src/constants/social/post';
 import {TypographyType} from 'src/components/base';
+// entities
+import Alert from 'app-helper/Alert';
 // custom components
 import {
   AppFilledButton,
@@ -423,7 +425,7 @@ const CreatePost = ({
             ]}
           />
           <BaseButton
-            disabled={isOverNumberOfUploadImages}
+            // disabled={isOverNumberOfUploadImages}
             onPress={goToEditImages}
             style={styles.block}>
             <View pointerEvents="none">{renderGridImages(images)}</View>

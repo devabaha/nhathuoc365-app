@@ -133,9 +133,11 @@ const StoreInfoSection = ({
       <Container noBackground row style={styles.contentContainer}>
         {customContent || (
           <>
-            <View style={styles.imageContainer}>
-              <Image source={{uri: image}} />
-            </View>
+            {!!image && (
+              <View style={styles.imageContainer}>
+                <Image source={{uri: image}} />
+              </View>
+            )}
 
             <Container noBackground flex style={styles.mainContentContainer}>
               <Typography numberOfLines={2} type={TypographyType.LABEL_LARGE}>

@@ -198,6 +198,8 @@ import {setAppLanguage} from './i18n/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalDeliverySchedule from './components/payment/Confirm/components/DeliveryScheduleSection/ModalDeliverySchedule';
 import MixedVoucher from 'src/containers/MixedVoucher';
+import {default as CustomAlert} from 'src/components/Alert';
+import {AlertContextProvider} from './shared/contexts';
 
 /**
  * Not allow font scaling
@@ -700,42 +702,45 @@ class App extends Component {
   render() {
     return (
       <ThemeProvider initial={BASE_LIGHT_THEME}>
-        <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
-          <StatusBar />
-          {this.state.header}
-          <NetworkInfo />
-          <RootRouter
-            appLanguage={this.state.appLanguage}
-            t={this.props.t}
-            setHeader={this.setHeader}
-          />
-          <Drawer />
-          <FlashMessage icon={'auto'} />
-          <AwesomeAlert
-            useNativeDriver
-            show={this.state.isOpenCodePushModal}
-            closeOnTouchOutside={false}
-            closeOnHardwareBackPress={false}
-            showCancelButton={false}
-            showConfirmButton={false}
-            contentContainerStyle={styles.awesomeAlertContainer}
-            customView={
-              <AppCodePush
-                title={
-                  this.state.titleUpdateCodePushModal ||
-                  this.titleUpdateCodePushModal
-                }
-                description={
-                  this.state.descriptionUpdateCodePushModal ||
-                  this.descriptionUpdateCodePushModal
-                }
-                progress={this.state.codePushUpdateProgress}
-                onProgressComplete={this.handleCodePushProgressComplete}
-                onPressConfirm={() => this.closeCodePushModal()}
-              />
-            }
-          />
-        </SafeAreaProvider>
+        <AlertContextProvider>
+          <SafeAreaProvider style={{overflow: 'scroll', flex: 1}}>
+            <StatusBar />
+            {this.state.header}
+            <NetworkInfo />
+            <RootRouter
+              appLanguage={this.state.appLanguage}
+              t={this.props.t}
+              setHeader={this.setHeader}
+            />
+            <Drawer />
+            <CustomAlert />
+            <FlashMessage icon={'auto'} />
+            <AwesomeAlert
+              useNativeDriver
+              show={this.state.isOpenCodePushModal}
+              closeOnTouchOutside={false}
+              closeOnHardwareBackPress={false}
+              showCancelButton={false}
+              showConfirmButton={false}
+              contentContainerStyle={styles.awesomeAlertContainer}
+              customView={
+                <AppCodePush
+                  title={
+                    this.state.titleUpdateCodePushModal ||
+                    this.titleUpdateCodePushModal
+                  }
+                  description={
+                    this.state.descriptionUpdateCodePushModal ||
+                    this.descriptionUpdateCodePushModal
+                  }
+                  progress={this.state.codePushUpdateProgress}
+                  onProgressComplete={this.handleCodePushProgressComplete}
+                  onPressConfirm={() => this.closeCodePushModal()}
+                />
+              }
+            />
+          </SafeAreaProvider>
+        </AlertContextProvider>
       </ThemeProvider>
     );
   }

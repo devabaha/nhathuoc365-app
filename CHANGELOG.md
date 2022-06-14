@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- new Alert mechanic by [minhnguyenit14gmail.com].
 ### Changed
 - [CU-2c7mez8] Upgrade the flow of using voucher in the order by [lamah.dev@gmail.com].
+- Comment READ_CONTACTS permissions in AndroidManifest by [minhnguyenit14@gmail.com].
 
 ## [r13.1.9] - 2022-05-30
 ### Changed
