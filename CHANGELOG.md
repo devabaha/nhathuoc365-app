@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r13.1.10]
+## [r13.1.10] - 2022-06-14
 ### Added
 - new Alert mechanic by [minhnguyenit14gmail.com].
 ### Changed
