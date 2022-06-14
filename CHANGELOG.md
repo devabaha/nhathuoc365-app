@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [r13.2.1] - 2020-06-14
+### Added
+- Format decimal separator according to location, language by [minhnguyenit14@gmail.com].
 ## Changed
 - Re-design android wheel picker by [kienluu612@gmail.com].
 ### Fixed
