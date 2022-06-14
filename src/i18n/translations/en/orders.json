@@ -104,7 +104,7 @@
     "scheduleDelivery": {
       "title": "Delivery time",
       "detailLabel": "Your order will be delivered at ",
-      "description": "Schedule the delivery time for your order",
+      "description": "Your order will be delivered as soon as possible",
       "modal": {
         "title": "Schedule Delivery",
         "todayLabel": "Today ",

@@ -764,6 +764,11 @@
   dependencies:
     react-native-iphone-x-helper "^1.0.3"
 
+"@delightfulstudio/react-native-wheel-picker-android@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@delightfulstudio/react-native-wheel-picker-android/-/react-native-wheel-picker-android-2.1.3.tgz#e99922c933e2e8191a0115b8da48b93b93a84807"
+  integrity sha512-jbO0ZNBslHAFjq1+q7t5/ZW2t29xbBAF6Xmky0h0N05+E9gVmdsc7ugJZgQLWkiqiYdm5zSWl/MJWwabBVw6pQ==
+
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
