@@ -365,6 +365,13 @@ class Confirm extends Component {
                 message: response.message,
               });
             } else {
+              if (response.data?.error && response.data?.reload_page) {
+                this.setState({loading: true, isConfirming: false});
+                this._getOrdersItem(
+                  this.state.data.site_id,
+                  this.state.data.id,
+                );
+              }
               flashShowMessage({
                 type: 'danger',
                 message: response.message || t('common:api.error.message'),
@@ -1166,6 +1173,11 @@ class Confirm extends Component {
             orderId={cart_data.id}
             orderType={cart_data.cart_type}
             voucherStatus={cart_data.voucher_status}
+            isWalletEditable={single && !this.state.isConfirming}
+            showSelectedOnlyWallet={!single || this.state.isConfirming}
+            cartId={cart_data.id}
+            listWallets={cart_data.used_wallets}
+            onProductLoadingStateChange={this.handleProductLoading}
           />
 
           <CommissionsSection commissions={cart_data?.commissions} />

@@ -117,5 +117,11 @@
     "notRegisterPhoneYet": "User{{username}} not registered phone number",
     "confirm": "OK"
   },
-  "noServiceOrder": "You do not have service order"
+  "noServiceOrder": "You do not have service order",
+  "wallet": {
+    "enterPointLabel": "Enter points",
+    "enterPointUse": "Enter the number of points you want to use",
+    "notUsePoint": "Not use",
+    "walletBalance": "Balance: {{balance}}"
+  }
 }

@@ -25,7 +25,6 @@ import {ScreenWrapper} from 'src/components/base';
 import BaseContainer from '../BaseContainer';
 import VoucherDetailComponent from '../../component/VoucherDetail';
 import ModalConfirm from '../../component/ModalConfirm';
-import {Actions} from 'react-native-router-flux';
 
 const defaultFn = () => {};
 
