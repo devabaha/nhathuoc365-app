@@ -117,5 +117,11 @@
     "notRegisterPhoneYet": "Người dùng{{username}} chưa đăng ký số điện thoại",
     "confirm": "Đã hiểu"
   },
-  "noServiceOrder": "Bạn chưa có đơn dịch vụ"
+  "noServiceOrder": "Bạn chưa có đơn dịch vụ",
+  "wallet": {
+    "enterPointLabel": "Nhập điểm",
+    "enterPointUse": "Nhập số điểm bạn muốn sử dụng",
+    "notUsePoint": "Không sử dụng",
+    "walletBalance": "Số dư: {{balance}}"
+  }
 }
