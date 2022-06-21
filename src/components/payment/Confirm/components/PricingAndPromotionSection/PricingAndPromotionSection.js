@@ -14,10 +14,17 @@ import {BundleIconSetName, TypographyType} from 'src/components/base';
 // custom components
 import SectionContainer from '../SectionContainer';
 import {Typography, Icon, BaseButton} from 'src/components/base';
+import WalletSection from '../WalletSection';
 
 const USE_ONLINE = 'USE_ONLINE';
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 0,
+  },
+  walletContainer: {
+    paddingHorizontal: 15,
+  },
   address_name_box: {
     flexDirection: 'row',
   },
@@ -93,6 +100,11 @@ const PricingAndPromotionSection = ({
   onUseVoucherOnlineSuccess,
   onRemoveVoucherOnlineSuccess,
   voucherStatus,
+  isWalletEditable,
+  listWallets,
+  cartId,
+  showSelectedOnlyWallet,
+  onProductLoadingStateChange = (loading) => {},
 }) => {
   const {theme} = useTheme();
 
@@ -214,6 +226,18 @@ const PricingAndPromotionSection = ({
           );
         })}
       </SectionContainer>
+
+      {listWallets && (
+        <WalletSection
+          containerStyle={styles.container}
+          walletContainerStyle={styles.walletContainer}
+          cartId={cartId}
+          listWallets={listWallets}
+          editable={isWalletEditable}
+          showSelectedOnlyWallet={showSelectedOnlyWallet}
+          onProductLoadingStateChange={onProductLoadingStateChange}
+        />
+      )}
 
       <SectionContainer style={styles.totalPriceContainer}>
         <View style={styles.address_name_box}>

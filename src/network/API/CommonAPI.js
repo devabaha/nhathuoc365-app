@@ -200,6 +200,9 @@ class CommonAPI {
   get CART_SITE_UPDATE() {
     return BaseAPI.apiDomain + 'apiSite/site_cart_update';
   }
+  get SITE_CART_WALLET_UPDATE() {
+    return BaseAPI.apiDomain + 'apiCart/wallet_option';
+  }
 
   // Address
   get SITE_CART_ADD_ADDRESS() {
