@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r13.2.3]
+## [r13.2.3] - 2022-06-22
 ### Added
 - [CU-2fe8ndr] check store_version from client by [minhnguyenit14@gmail.com].
 ### Changed
