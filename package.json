@@ -42,7 +42,7 @@
     "@types/react-native-table-component": "^1.2.3",
     "@types/react-native-video": "^5.0.8",
     "autobind-decorator": "^2.4.0",
-    "axios": "^0.21.0",
+    "axios": "^0.27.2",
     "d3-shape": "^2.0.0",
     "deep-equal": "^2.0.5",
     "flubber": "^0.4.2",

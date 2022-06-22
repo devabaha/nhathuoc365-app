@@ -1,8 +1,11 @@
 {
   "expired": "Expired",
   "available": "Available",
-  "availablePrefix": "Available",
-  "availableSuffix": "day(s)",
+  "remainingTime": {
+    "days": "{{time}} day(s) remaining",
+    "hours": "{{time}} hour(s) remaining",
+    "minutes": "{{time}} minute(s) remaining"
+  },
   "routeTitle": "Route",
   "historyTitle": "History"
 }

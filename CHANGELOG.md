@@ -7,15 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r13.2.3] - 2022-06-22
+### Added
+- [CU-2fe8ndr] check store_version from client by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-2e6mwha] Show more information in ProgressTrackingDetail by [lamah.dev@gmail.com].
+### Fixed 
+- [CU-2hkdkra] Expiration date and status displayed in ProgressItem by [lamah.dev@gmail.com].
+
 ## [r13.2.2] - 2022-06-21
 ### Added
 - [CU-2kbzcey] Allow to adjust the amount of wallet points used in the cart by [lamah.dev@gmail.com].
 
 ## [r13.2.1] - 2022-06-14
 ### Added
-- Format decimal separator according to location, language by [minhnguyenit14@gmail.com].
+- [+ Android native] Format decimal separator according to location, language by [minhnguyenit14@gmail.com].
 ## Changed
-- Re-design android wheel picker by [kienluu612@gmail.com].
+- [+ Android native] Re-design android wheel picker by [kienluu612@gmail.com].
 ### Fixed
 - [CU-2azm63y] module Schedule Delivery by [kienluu612@gmail.com].
 

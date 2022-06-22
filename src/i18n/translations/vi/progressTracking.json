@@ -1,8 +1,11 @@
 {
-    "expired": "Hết hạn",
-    "available": "Còn hạn",
-    "availablePrefix": "Còn",
-    "availableSuffix": "ngày",
-    "routeTitle": "Lộ trình",
-    "historyTitle": "Lịch sử"
+  "expired": "Hết hạn",
+  "available": "Còn hạn",
+  "remainingTime": {
+    "days": "Còn {{time}} ngày",
+    "hours": "Còn {{time}} giờ",
+    "minutes": "Còn {{time}} phút"
+  },
+  "routeTitle": "Lộ trình",
+  "historyTitle": "Lịch sử"
 }
