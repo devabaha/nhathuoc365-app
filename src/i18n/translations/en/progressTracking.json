@@ -2,7 +2,9 @@
   "expired": "Expired",
   "available": "Available",
   "availablePrefix": "Available",
-  "availableSuffix": "day(s)",
+  "availableDays": "Available {{days}} day(s))",
+  "availableHours": "Available {{hours}} hour(s))",
+  "availableMinutes": "Available {{minutes}} minute(s)",
   "routeTitle": "Route",
   "historyTitle": "History"
 }
