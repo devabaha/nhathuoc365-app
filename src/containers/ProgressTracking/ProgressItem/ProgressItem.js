@@ -87,25 +87,25 @@ const ProgressItem = ({
   const getStatus = () => {
     let status = t('available');
     let type = STATUS_TYPE.AVAILABLE;
-    const availableDays = moment(endDate).diff(moment(), 'days');
-    const availableHours = moment(endDate).diff(moment(), 'hours');
-    const availableMinutes = moment(endDate).diff(moment(), 'minutes');
 
-    if (moment(endDate).diff(moment()) <= 0) {
+    const oneHourInMs = 60 * 60 * 1000;
+    const oneDayInMs = 24 * oneHourInMs;
+    const diff = moment(endDate).diff(moment());
+
+    if (diff <= 0) {
       status = t('expired');
       type = STATUS_TYPE.EXPIRED;
-    } else if (availableDays > 0 && availableDays <= 7) {
-      status = t('availableDays', {days: availableDays});
-    } else if (availableDays === 0) {
-      if (availableHours > 0) {
-        status = t('availableHours', {hours: availableHours});
-      } else if (availableHours === 0) {
-        if (availableMinutes > 0) {
-          status = t('availableMinutes', {minutes: availableMinutes});
-        } else if (availableMinutes === 0) {
-          status = t('availableMinutes', {minutes: 1});
-        }
-      }
+    } else if (diff < oneDayInMs * 8) {
+      const typeTime =
+        diff >= oneDayInMs && diff < oneDayInMs * 8
+          ? 'days'
+          : diff >= oneHourInMs && diff < oneDayInMs
+          ? 'hours'
+          : 'minutes';
+
+      const time = moment.duration(diff)[typeTime]() || 1;
+
+      status = t('remainingTime.' + typeTime, {time});
     }
 
     return {status, type};
