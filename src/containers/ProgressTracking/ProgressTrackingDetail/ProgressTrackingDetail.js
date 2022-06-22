@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 // helpers
 import {servicesHandler} from 'app-helper/servicesHandler';
 import {updateNavbarTheme} from 'src/Themes/helper/updateNavBarTheme';
+import {formatUniversalDate} from 'app-helper/datetime';
 //routing
 import {refresh} from 'app-helper/routing';
 // context
@@ -142,7 +143,7 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0, navigation}) => {
   const routesFormatter = (data = []) => {
     return data.map((item, index) => ({
       ...item,
-      title: item.date_time,
+      title: formatUniversalDate(item.date_time),
       description: item.content,
     }));
   };
@@ -215,19 +216,21 @@ const ProgressTrackingDetail = ({id, index: indexProp = 0, navigation}) => {
 
   return (
     <ScreenWrapper>
-      <ProgressItem
-        image={progressTrackingDetail.product?.image}
-        title={progressTrackingDetail.product?.name}
-        code={progressTrackingDetail.warranty_code}
-        startDate={progressTrackingDetail.start_date}
-        endDate={progressTrackingDetail.end_date}
-      />
-
       <ProgressTrackingBar
         loading={isLoading}
         data={routes}
         trackWrapperStyle={styles.trackingWrapper}
         listProps={{
+          ListHeaderComponent: (
+            <ProgressItem
+              image={progressTrackingDetail.product?.image}
+              title={progressTrackingDetail.product?.name}
+              code={progressTrackingDetail.warranty_code}
+              startDate={progressTrackingDetail.start_date}
+              endDate={progressTrackingDetail.end_date}
+              warrantyDetailInfo={progressTrackingDetail.warranty_detail_info}
+            />
+          ),
           ListEmptyComponent: renderEmpty(),
           refreshControl: (
             <RefreshControl
