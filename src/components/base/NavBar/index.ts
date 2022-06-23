@@ -21,6 +21,8 @@ export interface NavBarProps extends NavBarWrapperProps {
   noBackground?: boolean;
   back?: boolean;
 
+  onBack?: () => void;
+
   renderLeft?: () => Children;
   renderRight?: () => Children;
   renderTitle?: () => Children;

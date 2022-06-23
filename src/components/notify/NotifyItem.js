@@ -362,38 +362,38 @@ class NotifyItem extends Component {
         </ScrollView>
 
         {!!item_data && (
-          <Container safeLayout shadow>
-            <ActionContainer
-              isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
-              likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
-              commentsCount={getSocialCommentsCount(
+          <ActionContainer
+            safeLayout
+            shadow
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            commentsCount={getSocialCommentsCount(
+              SOCIAL_DATA_TYPES.NEWS,
+              item_data,
+            )}
+            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            onActionBarPress={(type) =>
+              handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.NEWS,
+                type,
                 item_data,
-              )}
-              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-              onActionBarPress={(type) =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  type,
-                  item_data,
-                  undefined,
-                  undefined,
-                  this.theme,
-                )
-              }
-              hasInfoExtraBottom={false}
-              onPressTotalComments={() =>
-                handleSocialActionBarPress(
-                  SOCIAL_DATA_TYPES.NEWS,
-                  SOCIAL_BUTTON_TYPES.COMMENT,
-                  item_data,
-                  false,
-                  undefined,
-                  this.theme,
-                )
-              }
-            />
-          </Container>
+                undefined,
+                undefined,
+                this.theme,
+              )
+            }
+            hasInfoExtraBottom={false}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
+                SOCIAL_BUTTON_TYPES.COMMENT,
+                item_data,
+                false,
+                undefined,
+                this.theme,
+              )
+            }
+          />
         )}
 
         {/* {item_data != null && item_data.related && (

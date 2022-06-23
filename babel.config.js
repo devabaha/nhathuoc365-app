@@ -13,6 +13,8 @@ module.exports = {
           'app-config': './src/config',
           'app-packages': './src/packages',
           'app-helper': './src/helper',
+          '@data': './src/data',
+          '@shared': './src/shared',
         },
       },
     ],

@@ -3,7 +3,6 @@ import {StyleSheet, Animated, Easing, Alert, View} from 'react-native';
 // 3-party libs
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import Communications from 'react-native-communications';
 // configs
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -19,6 +18,8 @@ import {ProfileProvider} from './ProfileContext';
 // constants
 import {BundleIconSetName} from 'src/components/base';
 import {IMAGE_PICKER_TYPE} from 'src/constants/image';
+// entities
+import Communications from 'app-helper/Communications';
 // custom components
 import Header from './Header';
 import Gallery from './Gallery';
@@ -440,6 +441,17 @@ class Profile extends Component {
     }
   }
 
+  deleteImageById = (images) => {
+    const gallery = [...(this.state.gallery || [])];
+
+    const deleteImageIndex = gallery.findIndex((img) => {
+      return img.id == images;
+    });
+
+    gallery.splice(deleteImageIndex, 1);
+    this.setState({gallery});
+  };
+
   deleteImage = async (images) => {
     this.setState({loading: true});
     if (!Array.isArray(images)) {
@@ -455,9 +467,8 @@ class Profile extends Component {
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS && response.data) {
-          this.setState({
-            gallery: this.formatGallery(response.data.images || []),
-          });
+          this.deleteImageById(images);
+
           flashShowMessage({
             type: 'success',
             message: response.message,

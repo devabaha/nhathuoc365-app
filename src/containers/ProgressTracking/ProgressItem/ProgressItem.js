@@ -4,6 +4,7 @@ import {StyleSheet} from 'react-native';
 import moment from 'moment';
 // helpers
 import {mergeStyles} from 'src/Themes/helper';
+import {formatUniversalDate} from 'app-helper/datetime';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 // constants
@@ -22,7 +23,6 @@ const styles = StyleSheet.create({
     height: 65,
     marginRight: 15,
     overflow: 'hidden',
-    alignSelf: 'center',
   },
   image: {
     width: '100%',
@@ -61,6 +61,10 @@ const styles = StyleSheet.create({
 
   expiredContainer: {},
   expired: {},
+
+  warrantyDetailInfoValue: {
+    marginTop: 5,
+  },
 });
 
 const STATUS_TYPE = {
@@ -74,6 +78,7 @@ const ProgressItem = ({
   startDate,
   endDate,
   image = '',
+  warrantyDetailInfo,
   onPress,
 }) => {
   const {theme} = useTheme();
@@ -82,13 +87,25 @@ const ProgressItem = ({
   const getStatus = () => {
     let status = t('available');
     let type = STATUS_TYPE.AVAILABLE;
-    const availableDays = moment(endDate).diff(moment(), 'days');
-    if (availableDays > 0 && availableDays <= 7) {
-      status =
-        t('availablePrefix') + ' ' + availableDays + ' ' + t('availableSuffix');
-    } else if (availableDays <= 0) {
+
+    const oneHourInMs = 60 * 60 * 1000;
+    const oneDayInMs = 24 * oneHourInMs;
+    const diff = moment(endDate).diff(moment());
+
+    if (diff <= 0) {
       status = t('expired');
       type = STATUS_TYPE.EXPIRED;
+    } else if (diff < oneDayInMs * 8) {
+      const typeTime =
+        diff >= oneDayInMs && diff < oneDayInMs * 8
+          ? 'days'
+          : diff >= oneHourInMs && diff < oneDayInMs
+          ? 'hours'
+          : 'minutes';
+
+      const time = moment.duration(diff)[typeTime]() || 1;
+
+      status = t('remainingTime.' + typeTime, {time});
     }
 
     return {status, type};
@@ -147,7 +164,7 @@ const ProgressItem = ({
   return (
     <BaseButton disabled={!onPress} activeOpacity={0.8} onPress={onPress}>
       <Container style={styles.container}>
-        <Container noBackground row>
+        <Container noBackground row centerVertical={false}>
           <Container noBackground style={imageContainerStyle}>
             <Image source={{uri: image}} style={styles.image} />
           </Container>
@@ -191,12 +208,28 @@ const ProgressItem = ({
               )}
             </Container>
 
+            {!!warrantyDetailInfo && typeof warrantyDetailInfo === 'object' && (
+              <Container flex noBackground style={styles.footerContainer}>
+                {Object.keys(warrantyDetailInfo || {}).map((key) => (
+                  <Typography
+                    key={key}
+                    type={TypographyType.LABEL_SEMI_MEDIUM}
+                    style={
+                      (styles.description, styles.warrantyDetailInfoValue)
+                    }>
+                    {`${key} : ${warrantyDetailInfo[key]}`}
+                  </Typography>
+                ))}
+              </Container>
+            )}
+
             <Container noBackground row style={styles.footerContainer}>
               <Typography
-                type={TypographyType.LABEL_TINY_TERTIARY}
+                type={TypographyType.LABEL_SMALL_TERTIARY}
                 style={styles.description}>
-                {startDate}
-                {!!endDate && ` ~ ${endDate}`}
+                {`${formatUniversalDate(startDate)} ~ ${formatUniversalDate(
+                  endDate,
+                )}`}
               </Typography>
 
               {!!onPress && (

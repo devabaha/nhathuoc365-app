@@ -341,6 +341,16 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Cập nhật lại đơn hàng khi cập nhật điểm sử dụng
+   */
+  site_cart_wallet_update(store_id, cart_id, data) {
+    var api = url_for(
+      API.SITE_CART_WALLET_UPDATE + '/' + store_id + '/' + cart_id,
+    );
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    * Đánh giá ứng dụng
    */
   async user_rate_app() {
@@ -752,8 +762,8 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * URL upload avatar
    */
-  url_user_add_avatar(site_id) {
-    return url_for(API.USER_ADD_AVATAR+ '/' + site_id);
+  url_user_add_avatar() {
+    return url_for(API.USER_ADD_AVATAR);
   }
 
   /**
@@ -1064,7 +1074,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.postAPI(api, data);
   }
 
-/**
+  /**
    * get schedule delivery date time
    *
    */

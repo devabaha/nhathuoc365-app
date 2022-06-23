@@ -168,10 +168,13 @@ class Gallery extends Component {
     push(appConfig.routes.itemImageViewer, {
       images: this.props.data,
       index,
-      moreActionSheetOptions: {
-        options: this.moreActions,
-        destructiveButtonIndex: this.destructiveButtonIndex,
-        onPress: (actionIndex) => this.handlePressAction(image, actionIndex),
+      moreActionSheetOptions: (selectedImage) => {
+        return {
+          options: this.moreActions,
+          destructiveButtonIndex: this.destructiveButtonIndex,
+          onPress: (actionIndex) =>
+            this.handlePressAction(selectedImage, actionIndex),
+        };
       },
     });
   };

@@ -18,7 +18,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r13.1.4';
+    return 'r13.2.4';
   }
 
   get appName() {
@@ -408,6 +408,8 @@ class Config {
 
       // Rating
       rating: 'rating',
+
+      mixedVoucher: 'mixedVoucher',
     };
   }
 }

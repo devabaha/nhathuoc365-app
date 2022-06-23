@@ -7,31 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r13.1.4] - 2020-05-03
+## [r13.2.4] - 2022-06-23
+### Added
+- [CU-2j4m7gn] Key disable_reaction_bar_key to hide ActionContainer by [lamah.dev@gmail.com].
+
+## [r13.2.3] - 2022-06-22
+### Added
+- [CU-2fe8ndr] check store_version from client by [minhnguyenit14@gmail.com].
+### Changed
+- [CU-2e6mwha] Show more information in ProgressTrackingDetail by [lamah.dev@gmail.com].
+### Fixed 
+- [CU-2hkdkra] Expiration date and status displayed in ProgressItem by [lamah.dev@gmail.com].
+
+## [r13.2.2] - 2022-06-21
+### Added
+- [CU-2kbzcey] Allow to adjust the amount of wallet points used in the cart by [lamah.dev@gmail.com].
+
+## [r13.2.1] - 2022-06-14
+### Added
+- [+ Android native] Format decimal separator according to location, language by [minhnguyenit14@gmail.com].
+## Changed
+- [+ Android native] Re-design android wheel picker by [kienluu612@gmail.com].
+### Fixed
+- [CU-2azm63y] module Schedule Delivery by [kienluu612@gmail.com].
+
+## [r13.1.10] - 2022-06-14
+### Added
+- new Alert mechanic by [minhnguyenit14gmail.com].
+### Changed
+- [CU-2c7mez8] Upgrade the flow of using voucher in the order by [lamah.dev@gmail.com].
+- Comment READ_CONTACTS permissions in AndroidManifest by [minhnguyenit14@gmail.com].
+
+## [r13.1.9] - 2022-05-30
+### Changed
+- [CU-2d9zj99] reset app when user changing sale point by [kienluu612@gmail.com].
+### Fixed
+- [CU-2cyrhy5] wrong merchant_id in Transaction when processing payment with VNPayMerchant by [kienluu612@gmail.com].
+- [CU-2dv30at] Communications.phonecall not working by [lamah.dev@gmail.com].
+
+## [r13.1.8] - 2022-05-26
+### Fixed
+- [CU-2ck57mj] Error when deleting an image in the Profile gallery by [kienluu612@gmail.com].
+- Re-fix image domain wrong for test_device by [minhnguyenit14@gmail.com].
+
+## [r13.1.7] - 2022-05-24
+### Fixed
+- Bugs when create post in social by [minhnguyenit14@gmail.com].
+- Image domain wrong for test_device by [minhnguyenit14@gmail.com].
+
+## [r13.1.6] - 2022-05-17
+### Changed
+- [CU-2am3km6] Close popoup before calling action in Confirm by [minhnguyenit14@gmail.com].
+
+## [r13.1.5] - 2022-05-12
+### Fixed
+- [CU-2gat37b] Remove site_id for url_upload_user_avatar, fix mixed comment in Comment by [kienluu612@gmail.com].
+- [CU-28fkqg7] Comment font-size, line-height, color of customStyle in CustomAutoHeightWebview by [lamah.dev@gmail.com].
+- UI in OpRegister by [minhnguyenit14@gmail.com].
+
+## [r13.1.4] - 2022-05-03
 ### Changed
 - [CU-2gat37b] imageDomain to LIVE_API_DOMAIN by [kienluu612@gmail.com].
 
-## [r13.1.3] - 2020-04-28
+## [r13.1.3] - 2022-04-28
 ### Changed
 - [CU-29c31qg] maxWidth and maxHeight of images when uploading to server by [kienluu612@gmail.com]
 ### Fixed
 - [CU-27rp3br] Re-fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
 
-## [r13.1.2] - 2020-04-19
+## [r13.1.2] - 2022-04-19
 ### Fixed
-- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com], [lamah.dev@gmail.com].
+- [CU-2j3w275] Force refresh notify by [minhnguyenit14@gmail.com] [lamah.dev@gmail.com].
 
-## [r13.1.1] - 2020-04-13
+## [r13.1.1] - 2022-04-13
 ### Fixed
 - [Android] Re-fix crash app because of Webview conflicting with new animation of ScrollView on Android api level >= 31 (Android 12) by [minhnguyenit14@gmail.com].
 - [CU-27rp3br] Fix bug DeliverySection in Confirm by [kienluu612@gmail.com].
 
-## [r13.0.2] - 2020-04-12
+## [r13.0.2] - 2022-04-12
 ### Fixed
 - Not update theme in some screen by [minhnguyenit14@gmail.com].
 - price doesn't display correct view in ProductItem by [minhnguyenit14@gmail.com].
 
-## [r13.0.1] - 2020-04-06
+## [r13.0.1] - 2022-04-06
 ### Added
 - [CU-2gat9mt] Integrate Flurry by [lamah.dev@gmail.com].
 - [CU-2dupr2m] Integrate Sentry by [kienluu612@gmail.com].

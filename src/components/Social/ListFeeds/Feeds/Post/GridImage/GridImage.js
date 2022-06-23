@@ -1,15 +1,22 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import Image from 'src/components/Image';
-import Container from 'src/components/Layout/Container';
+import {StyleSheet, TouchableNativeFeedback} from 'react-native';
+// configs
+import appConfig from 'app-config';
+// helpers
+import {mergeStyles} from 'src/Themes/helper';
+// routing
+import {push} from 'app-helper/routing';
+// context
+import {useTheme} from 'src/Themes/Theme.context';
+// constants
 import {IMAGE_SPACING} from 'src/constants/social';
+// components
+import Image from 'src/components/Image';
+import {Container} from 'src/components/base';
 import Overlay from './Overlay';
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: Util.pixel,
-    borderColor: '#ddd',
     marginTop: IMAGE_SPACING,
   },
   image: {
@@ -26,15 +33,30 @@ const GridImage = ({
   overlayTitle,
   containerProps = {},
 }) => {
+  const {theme} = useTheme();
+
   const images = useMemo(() => {
     return [...imagesProp].map((image) => {
       return image;
     });
   }, [imagesProp]);
 
+  const containerStyle = useMemo(() => {
+    return mergeStyles(
+      [
+        styles.container,
+        {
+          borderWidth: theme.layout.borderWidthPixel,
+          borderColor: theme.color.border,
+        },
+      ],
+      style,
+    );
+  }, [theme, style]);
+
   const handlePress = () => {
     if (!!images?.length) {
-      Actions.item_image_viewer({
+      push(appConfig.routes.itemImageViewer, {
         images,
         index,
       });
@@ -43,7 +65,7 @@ const GridImage = ({
 
   return (
     <TouchableNativeFeedback onPress={handlePress}>
-      <Container key={index} style={[styles.container, style]} {...containerProps}>
+      <Container key={index} style={containerStyle} {...containerProps}>
         <Image source={{uri}} style={styles.image} />
         {!!overlayTitle && <Overlay title={overlayTitle} />}
       </Container>

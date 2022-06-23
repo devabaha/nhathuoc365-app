@@ -86,7 +86,6 @@ class Confirm extends Component {
     paymentMethod: {},
     loading: false,
     isConfirming: false,
-    deliveryTime: '',
   };
   refs_confirm_page = React.createRef();
   unmounted = false;
@@ -96,6 +95,7 @@ class Confirm extends Component {
   requests = [this.getShippingInfoRequest, this.reorderRequest];
   eventTracker = new EventTracker();
   refNoteModalInput = null;
+  deliveryTime = null;
 
   get theme() {
     return getTheme(this);
@@ -274,7 +274,7 @@ class Confirm extends Component {
           const response = await APIHandler.site_cart_note(store.store_id, {
             user_note: store.user_cart_note,
           });
-          console.log(response);
+
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               if (typeof callback == 'function') {
@@ -308,8 +308,7 @@ class Confirm extends Component {
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
-            delivery_time:
-              this.state.deliveryTime || this.cartData.delivery_time || '',
+            delivery_time: this.deliveryTime || '',
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
@@ -366,6 +365,13 @@ class Confirm extends Component {
                 message: response.message,
               });
             } else {
+              if (response.data?.error && response.data?.reload_page) {
+                this.setState({loading: true, isConfirming: false});
+                this._getOrdersItem(
+                  this.state.data.site_id,
+                  this.state.data.id,
+                );
+              }
               flashShowMessage({
                 type: 'danger',
                 message: response.message || t('common:api.error.message'),
@@ -772,6 +778,8 @@ class Confirm extends Component {
   }
 
   async _cancelCart() {
+    this._closePopupCancel();
+
     if (this.item_cancel) {
       try {
         const response = await APIHandler.site_cart_canceling(
@@ -796,8 +804,6 @@ class Confirm extends Component {
         console.log(e + ' site_cart_canceling');
       }
     }
-
-    this._closePopupCancel();
   }
 
   _closePopupCancel() {
@@ -821,6 +827,8 @@ class Confirm extends Component {
   }
 
   async _copyCart() {
+    this._closePopupCopy();
+
     if (this.item_coppy) {
       this.reorderRequest.data = APIHandler.cart_reorder(
         this.item_coppy.site_id,
@@ -855,11 +863,11 @@ class Confirm extends Component {
         console.log(e + ' site_cart_reorder');
       }
     }
-
-    this._closePopupCopy();
   }
 
   async _editCart() {
+    this._closePopupEdit();
+
     if (this.item_edit) {
       try {
         const response = await APIHandler.site_cart_update_ordering(
@@ -889,8 +897,6 @@ class Confirm extends Component {
         console.log(e + ' site_cart_update_ordering');
       }
     }
-
-    this._closePopupEdit();
   }
 
   _closePopupEdit() {
@@ -1005,7 +1011,7 @@ class Confirm extends Component {
         </ScreenWrapper>
       );
     }
-console.log(typeof cart_data?.commissions?.map)
+    console.log(typeof cart_data?.commissions?.map);
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const is_ready = cart_data.status == CART_STATUS_READY;
@@ -1104,7 +1110,7 @@ console.log(typeof cart_data?.commissions?.map)
               cartId={this.cartData.id}
               title={t('confirm.scheduleDelivery.title')}
               onDeliveryTimeChange={(deliveryTime) => {
-                this.setState({deliveryTime});
+                this.deliveryTime = deliveryTime;
               }}
             />
           )}
@@ -1164,7 +1170,14 @@ console.log(typeof cart_data?.commissions?.map)
             isPromotionSelectable={single}
             selectedVoucher={cart_data.user_voucher}
             siteId={cart_data.site_id}
+            orderId={cart_data.id}
+            orderType={cart_data.cart_type}
             voucherStatus={cart_data.voucher_status}
+            isWalletEditable={single && !this.state.isConfirming}
+            showSelectedOnlyWallet={!single || this.state.isConfirming}
+            cartId={cart_data.id}
+            listWallets={cart_data.used_wallets}
+            onProductLoadingStateChange={this.handleProductLoading}
           />
 
           <CommissionsSection commissions={cart_data?.commissions} />

@@ -137,6 +137,7 @@ class Voucher extends Component {
 
   renderHeaderComponent = () => {
     const {t} = this.props;
+    if (this.props.isDisableHeader) return null;
 
     return (
       <>
@@ -237,14 +238,19 @@ class Voucher extends Component {
 
   render() {
     return (
-      <ScreenWrapper safeLayout>
+      <ScreenWrapper>
         {this.props.apiFetching && <LoadingComponent loading />}
-
-        <View style={this.headerBackgroundStyle} />
-        {!this.state.hideVoucherX2 && (
-          <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
+        {!this.props.isDisableHeader && (
+          <>
+            <View style={this.headerBackgroundStyle} />
+            {!this.state.hideVoucherX2 && (
+              <Image
+                style={styles.voucherX2Backgound}
+                source={vouchersX2Image}
+              />
+            )}
+          </>
         )}
-
         <FlatList
           safeLayout
           data={this.props.campaigns || []}

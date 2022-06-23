@@ -1,5 +1,9 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
+// helpers
+import {isConfigActive} from 'app-helper/configKeyHandler';
+// constants
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // custom components
 import {Container} from 'src/components/base';
 import ActionBar from './ActionBar';
@@ -22,11 +26,20 @@ const ActionContainer = ({
   hasInfoExtraBottom,
   disableShare,
   renderActionBar,
+  safeLayout,
+  shadow,
   onActionBarPress = () => {},
   onPressTotalComments = () => {},
 }) => {
+  if (isConfigActive(CONFIG_KEY.DISABLE_REACTION_BAR_KEY)) {
+    return null;
+  }
+
   return (
-    <Container style={[styles.container, style]}>
+    <Container
+      safeLayout={safeLayout}
+      shadow={shadow}
+      style={[styles.container, style]}>
       <ActionInfo
         isLiked={isLiked}
         totalReaction={likeCount}

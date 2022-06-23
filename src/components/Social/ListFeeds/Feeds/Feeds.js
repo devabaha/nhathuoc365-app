@@ -3,9 +3,12 @@ import {StyleSheet, Animated} from 'react-native';
 // helpers
 import {hexToRgba} from 'app-helper';
 import {mergeStyles} from 'src/Themes/helper';
+import {isConfigActive} from 'app-helper/configKeyHandler';
 // context
 import {useTheme} from 'src/Themes/Theme.context';
 import {BASE_DARK_THEME_ID} from 'src/Themes/Theme.dark';
+// constants
+import {CONFIG_KEY} from 'app-helper/configKeyHandler';
 // custom components
 import Post from './Post';
 import {Container} from 'src/components/base';
@@ -162,6 +165,9 @@ const Feeds = ({
 
       <Container>
         <Post
+          useSurfaceStyleForTitle={!isConfigActive(
+            CONFIG_KEY.DISABLE_REACTION_BAR_KEY,
+          )}
           group={group}
           category={category}
           avatarUrl={avatarUrl}

@@ -104,7 +104,7 @@
     "scheduleDelivery": {
       "title": "Delivery time",
       "detailLabel": "Your order will be delivered at ",
-      "description": "Schedule the delivery time for your order",
+      "description": "Your order will be delivered as soon as possible",
       "modal": {
         "title": "Schedule Delivery",
         "todayLabel": "Today ",
@@ -117,5 +117,11 @@
     "notRegisterPhoneYet": "User{{username}} not registered phone number",
     "confirm": "OK"
   },
-  "noServiceOrder": "You do not have service order"
+  "noServiceOrder": "You do not have service order",
+  "wallet": {
+    "enterPointLabel": "Enter points",
+    "enterPointUse": "Enter the number of points you want to use",
+    "notUsePoint": "Not use",
+    "walletBalance": "Balance: {{balance}}"
+  }
 }
