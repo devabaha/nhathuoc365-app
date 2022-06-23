@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
 });
 
 const Post = ({
+  useSurfaceStyleForTitle,
   title,
   category,
   group,
@@ -286,7 +287,9 @@ const Post = ({
             />
           )}
           {!!title && (
-            <Container content style={styles.titleContainer}>
+            <Container
+              content={useSurfaceStyleForTitle}
+              style={styles.titleContainer}>
               {!!category && (
                 <Typography
                   type={TypographyType.LABEL_MEDIUM_PRIMARY}
