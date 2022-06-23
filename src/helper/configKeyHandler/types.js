@@ -22,6 +22,7 @@ export const CONFIG_KEY = {
 
   DISABLE_SOCIAL_COMMENT: 'disable_social_comment',
   DISABLE_GOOGLE_FIREBASE_OTP_KEY: 'disable_google_firebase_otp_key',
+  DISABLE_REACTION_BAR_KEY: 'disable_reaction_bar_key',
 
   ABOUT_US_ID: 'about_us_id',
 
