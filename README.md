@@ -58,7 +58,7 @@ appcenter codepush deployment list -a app.abaha.net-gmail.com/tick-nhathuoc365-a
 `` Direct to root folder (../src) to execute automation ```**`
 ``***********************************************************`
 
-bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -p ios --deployment Production --description "release tag r13.1.4" &&
+bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-ios -p ios --deployment Production --description "release tag r13.2.4" &&
 bash sentrydp -a app.abaha.net-gmail.com/tick-nhathuoc365-android -p android --deployment Production --description "release tag r13.1.4"
 ##### IOS
 
